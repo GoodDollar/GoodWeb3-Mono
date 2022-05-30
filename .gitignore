@@ -7,3 +7,4 @@ yarn-error.log*
 !.yarn/plugins
 !.yarn/sdks
 !.yarn/versions
+packages/**/node_modules

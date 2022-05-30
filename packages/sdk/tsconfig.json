@@ -1,0 +1,24 @@
+{
+  "extends": "../../tsconfig.build.json",
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "paths": {
+      "@gd-test-repo/sdk/core": ["./core"]
+    },
+    "rootDir": "src",
+    "outDir": "dist",
+    "skipLibCheck": false,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "declarationMap": true,
+    "composite": true,
+    "types": ["jest", "node", "bn.js"],
+    "typeRoots": ["./node_modules/@types", "./types", "../../node_modules/@types"],
+  },
+  "exclude": ["node_modules"],
+  "include": [
+    "src/**/*.ts", "./types/", 
+    "src/**/*.json","src/**/*.tsx",
+    "src/*.d.ts", "src/**/*.d.ts",
+  ],
+}
