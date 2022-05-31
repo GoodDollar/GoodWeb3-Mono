@@ -1,4 +1,5 @@
 import Web3 from 'web3'
+import { Contract } from 'web3-eth-contract'
 import { AbiItem } from 'web3-utils'
 import UBIScheme from '@gooddollar/goodprotocol/artifacts/contracts/ubi/UBIScheme.sol/UBIScheme.json'
 
@@ -13,7 +14,7 @@ import { UnsupportedChainId } from 'utils/errors'
  * @param {string?} address Deployed contract address in given chain ID.
  * @constructor
  */
-export async function ubiSchemeContract(web3: Web3, address?: string) {
+export async function ubiSchemeContract(web3: Web3, address?: string): Promise<Contract> {
     const chainId = await getChainId(web3)
     if (chainId !== SupportedChainId.FUSE) {
         throw new UnsupportedChainId(chainId)

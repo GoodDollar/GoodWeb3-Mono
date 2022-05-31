@@ -16,7 +16,7 @@ import { LIQUIDITY_PROTOCOL } from 'constants/protocols'
  * @constructor
  */
 export function simpleStakingContractV2(web3: Web3, address: string): Contract {
-    return new Contract(SimpleStakingV2.abi as AbiItem[], address)
+    return new web3.eth.Contract(SimpleStakingV2.abi as AbiItem[], address)
 }
 
 // /**

@@ -1,4 +1,5 @@
 import Web3 from 'web3'
+import { Contract } from 'web3-eth-contract'
 import { BigNumber } from 'ethers'
 import { AbiItem } from 'web3-utils'
 import Uniswap from '@uniswap/v2-periphery/build/IUniswapV2Router02.json'
@@ -130,7 +131,7 @@ export async function swap(
  * @param {string} address Deployed contract address in given chain ID.
  * @constructor
  */
-export async function fuseUniswapContract(web3: Web3, address?: string) {
+export async function fuseUniswapContract(web3: Web3, address?: string): Promise<Contract> {
     const chainId = await getChainId(web3)
     address = address ?? UNISWAP_CONTRACT_ADDRESS[chainId]
 

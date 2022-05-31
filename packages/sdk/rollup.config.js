@@ -16,20 +16,18 @@ const plugins = [
     preferBuiltins: false,
     moduleDirectories: ['node_modules', 'src'],
     extensions: ['.mjs', '.js', '.json', '.node'],
-
   }),
   commonjs(),
   typescript({ 
-    tsconfig: './tsconfig.json',
+    tsconfig: './tsconfig.dist.json',
     exclude: 'node_modules/*',
-    useTsconfigDeclaractionDir: true,
     clean: true,
     module: "esnext",
   }),
 ]
 
 export default {
-  input: { // TODO: Get input list with fs
+  input: {
     index: 'src/index.ts',
     "core/apollo": 'src/core/apollo.ts',
     "core/staking": 'src/core/staking.ts',
