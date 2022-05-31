@@ -31,9 +31,8 @@ export default {
     index: 'src/index.ts',
     "core/apollo": 'src/core/apollo.ts',
     "core/staking": 'src/core/staking.ts',
-    "hooks/useGdSdkContext": "src/hooks/useGdSdkContext.tsx",
-    "hooks/useEnvWeb3": "src/hooks/useEnvWeb3.ts",
     "constants/addresses": "src/constants/addresses.ts",
+    "hooks": "src/hooks/index.ts"
   },
   output: [
     {

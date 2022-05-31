@@ -64,7 +64,7 @@ export async function getList(web3: Web3): Promise<Stake[]> {
   console.log('getting list . . . (sdk-mono)')
     const simpleStakingReleases = await getSimpleStakingContractAddressesV3(web3)
 
-    // cacheClear(getSocialAPY)
+    cacheClear(getSocialAPY)
     // cacheClear(getTokenPriceInUSDC)
     // cacheClear(getReserveRatio)
     // cacheClear(getAPY)
@@ -516,29 +516,29 @@ export const getTokenPriceInUSDC = memoize<
     (_, protocol, token) => protocol + token.address
 )
 
-// export const getReserveSocialAPY = memoize<(web3: Web3, chainId: number) => Promise<Fraction>>(
-//     async (web3, chainId) => {
-//         const marketMaker = await goodMarketMakerContract(web3)
+export const getReserveSocialAPY = memoize<(web3: Web3, chainId: number) => Promise<Fraction>>(
+    async (web3, chainId) => {
+        const marketMaker = await goodMarketMakerContract(web3)
 
-//         const [{ reserveRatio, reserveSupply, gdSupply }, currentPrice, dailyExpansionRate] = await Promise.all([
-//             marketMaker.methods.reserveTokens(CDAI[chainId].address).call(),
-//             marketMaker.methods.currentPrice(CDAI[chainId].address).call(),
-//             marketMaker.methods.reserveRatioDailyExpansion().call()
-//         ])
+        const [{ reserveRatio, reserveSupply, gdSupply }, currentPrice, dailyExpansionRate] = await Promise.all([
+            marketMaker.methods.reserveTokens(CDAI[chainId].address).call(),
+            marketMaker.methods.currentPrice(CDAI[chainId].address).call(),
+            marketMaker.methods.reserveRatioDailyExpansion().call()
+        ])
 
-//         // (reservebalance / (newreserveratio * currentprice)) - gdsupply
-//         const rr = reserveRatio / 1e6
-//         const yearlyDecline = (2 - dailyExpansionRate / 1e27) ** 365
+        // (reservebalance / (newreserveratio * currentprice)) - gdsupply
+        const rr = reserveRatio / 1e6
+        const yearlyDecline = (2 - dailyExpansionRate / 1e27) ** 365
 
-//         const newRR = rr * (2 - yearlyDecline)
-//         const denom = newRR * (currentPrice / 1e8)
-//         const gdGenerated = reserveSupply / 1e8 / denom - gdSupply / 1e2
-//         const socialAPY = new Fraction((gdGenerated * 1e2).toFixed(0), gdSupply).multiply(100) //mul by 100 to return as percentages
+        const newRR = rr * (2 - yearlyDecline)
+        const denom = newRR * (currentPrice / 1e8)
+        const gdGenerated = reserveSupply / 1e8 / denom - gdSupply / 1e2
+        const socialAPY = new Fraction((gdGenerated * 1e2).toFixed(0), gdSupply).multiply(100) //mul by 100 to return as percentages
 
-//         return socialAPY
-//     },
-//     (_, chainId) => chainId
-// )
+        return socialAPY
+    },
+    (_, chainId) => chainId
+)
 /**
  * Returns reserve ratio.
  * @param {Web3} web3 Web3 instance.

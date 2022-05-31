@@ -57,6 +57,7 @@ export declare function getList(web3: Web3): Promise<Stake[]>;
  * @returns {Promise<Fraction>>}
  */
 export declare const getTokenPriceInUSDC: ((web3: Web3, protocol: LIQUIDITY_PROTOCOL, token: Token) => Promise<Fraction | null>) & import("lodash").MemoizedFunction;
+export declare const getReserveSocialAPY: ((web3: Web3, chainId: number) => Promise<Fraction>) & import("lodash").MemoizedFunction;
 /**
  * Returns reserve ratio.
  * @param {Web3} web3 Web3 instance.

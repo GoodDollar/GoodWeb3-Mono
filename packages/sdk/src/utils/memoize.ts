@@ -6,7 +6,6 @@ export {}
  * @returns {void}
  */
 export function delayedCacheClear(memoize: any, delay = 1000): void {
-  console.log('delayed cache memoize object (SDK_MONO) -->', memoize.cache)
   setTimeout(() => memoize.cache.clear(), delay)
 }
 
@@ -16,7 +15,6 @@ export function delayedCacheClear(memoize: any, delay = 1000): void {
  * @returns {void}
  */
 export function cacheClear(memoize: any): void {
-  console.log('cache memoize object(SDK_MONO) -->', memoize.cache)
-  memoize.cache.clear?.call()
+  memoize.cache.clear()
 }
 

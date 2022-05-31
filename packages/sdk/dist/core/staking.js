@@ -1,12 +1,9 @@
-export { g as getList, b as getReserveRatio, a as getTokenPriceInUSDC } from '../chunks/staking.js';
+export { g as getList, c as getReserveRatio, a as getReserveSocialAPY, b as getTokenPriceInUSDC } from '../chunks/staking.js';
 import '../chunks/addresses.js';
 import '../chunks/apollo.js';
 import 'react';
-import '../chunks/index.js';
-import '../chunks/useEnvWeb3.js';
 import 'stream';
 import 'http';
 import 'https';
 import 'os';
 import 'crypto';
-import '../chunks/useGdSdkContext.js';
