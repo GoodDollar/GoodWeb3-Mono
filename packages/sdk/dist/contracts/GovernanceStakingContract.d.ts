@@ -8,7 +8,7 @@ import { Contract } from 'web3-eth-contract';
  */
 export declare function governanceStakingContract(web3: Web3, address?: string): Contract;
 export declare function getGovernanceStakingContracts(): Promise<{
-    address: string;
+    address: string | null;
     release: string;
 }[]>;
 //# sourceMappingURL=GovernanceStakingContract.d.ts.map

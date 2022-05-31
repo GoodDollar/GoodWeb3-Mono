@@ -16,7 +16,7 @@ export const useGovernanceStaking = (activeWeb3?: any, chainId?: number): Array<
     const [stakes, setStakes] = useState<Array<Stake>>([])
 
     const networkType = getNetworkEnv()
-    console.log('useGovernanceStaking networkType -->', {networkType})
+    // console.log('useGovernanceStaking networkType -->', {networkType})
 
     const stakingContractV2 = useMemo(
       () => fuseWeb3 && networkType === 'production' && getContract(SupportedChainId.FUSE, 'GovernanceStakingV2', GovernanceStaking.abi, fuseWeb3),

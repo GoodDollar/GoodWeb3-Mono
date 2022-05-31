@@ -55,31 +55,31 @@ export type simpleStakingAddresses = [
  * @param {Web3} web3 Web3 instance.
  * @returns {Promise<simpleStakingAddresses>}
  */
-export async function getSimpleStakingContractAddressesV3(web3: Web3): Promise<simpleStakingAddresses> {
-    const chainId = await getChainId(web3)
-    const deployments = {v3:'StakingContractsV3', v2:'StakingContractsV2', v1:'StakingContracts'}
-    try {
-      let all:any = []
+ export async function getSimpleStakingContractAddressesV3(web3: Web3): Promise<simpleStakingAddresses> {
+  const chainId = await getChainId(web3)
+  const deployments = {v3:'StakingContractsV3', v2:'StakingContractsV2', v1:'StakingContracts'}
 
-      for (const [release, deployment] of Object.entries(deployments)) {
-        const _addresses = G$ContractAddresses<Array<string[] | string>>(chainId, deployment)
+    let all:any = []
 
-        const addresses = []
-        for (const rawAddress of _addresses) {
-          if (Array.isArray(rawAddress)) {
-              addresses.push(rawAddress[0])
-          } else {
-              addresses.push(rawAddress)
-          }
+    for (const [release, deployment] of Object.entries(deployments)) {
+      try {
+      const _addresses = G$ContractAddresses<Array<string[] | string>>(chainId, deployment)
+
+      const addresses = []
+      for (const rawAddress of _addresses) {
+        if (Array.isArray(rawAddress)) {
+            addresses.push(rawAddress[0])
+        } else {
+            addresses.push(rawAddress)
         }
-        all = [...all, {release: release, addresses: addresses}]
       }
-
-      return all
+      all = [...all, {release: release, addresses: addresses}]
     } catch(error) {
-      console.log('getSimpleStakingConractV3 -->', error)
-      return [{release: '', addresses: ['']}]
+      all = [...all, {release: release, addresses: ''}]
+      continue
     }
+  }
+  return all
 }
 
 /**

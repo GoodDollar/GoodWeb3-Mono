@@ -87,35 +87,36 @@ export async function getList(web3: Web3): Promise<Stake[]> {
     return result
 }
 
-// /**
-//  * Return list of all user's stakes.
-//  * @param {Web3} web3 Web3 instance.
-//  * @param {string} account account address to get staking data for.
-//  * @returns {Promise<Stake[]>}
-//  */
-// export async function getMyList(mainnetWeb3: Web3, fuseWeb3: Web3, account: string): Promise<MyStake[]> {
-//     const simpleStakingReleases = await getSimpleStakingContractAddressesV3(mainnetWeb3)
-//     const governanceStakingAddresses = await getGovernanceStakingContracts()
+/**
+ * Return list of all user's stakes.
+ * @param {Web3} web3 Web3 instance.
+ * @param {string} account account address to get staking data for.
+ * @returns {Promise<Stake[]>}
+ */
+export async function getMyList(mainnetWeb3: Web3, fuseWeb3: Web3, account: string): Promise<MyStake[]> {
+    const simpleStakingReleases = await getSimpleStakingContractAddressesV3(mainnetWeb3)
+    const governanceStakingAddresses = await getGovernanceStakingContracts()
 
-//     cacheClear(getTokenPriceInUSDC)
+    cacheClear(getTokenPriceInUSDC)
 
-//     let stakes: MyStake[] = []
-//     try {
-//         const govStake = governanceStakingAddresses.map(stake => metaMyGovStake(fuseWeb3, account, stake.address, stake.release))
-//         for (const releases of simpleStakingReleases){
-//           if (releases.release){
-//             for (const [key, address] of Object.entries(releases.addresses)){
-//               govStake.push(metaMyStake(mainnetWeb3, address, account, releases.release))
-//             }
-//           }
-//         }
-//         const stakesRawList = await Promise.all(govStake)
-//         stakes = stakesRawList.filter(Boolean) as MyStake[]
-//     } catch (e) {
-//         console.log(e)
-//     }
-//     return stakes
-// }
+    let stakes: MyStake[] = []
+    try {
+        const govStake = governanceStakingAddresses.map(stake => 
+          stake.address ? metaMyGovStake(fuseWeb3, account, stake.address, stake.release) : null)
+        for (const releases of simpleStakingReleases){
+          if (releases.release){
+            for (const [key, address] of Object.entries(releases.addresses)){
+              govStake.push(metaMyStake(mainnetWeb3, address, account, releases.release))
+            }
+          }
+        }
+        const stakesRawList = await Promise.all(govStake)
+        stakes = stakesRawList.filter(Boolean) as MyStake[]
+    } catch (e) {
+        console.log(e)
+    }
+    return stakes
+}
 
 /**
  * Returns meta for each stake.
@@ -162,177 +163,177 @@ async function metaStake(web3: Web3, address: string): Promise<Stake> {
   return result
 }
 
-// /**
-//  * Returns meta for mine stake with rewards.
-//  * @param {Web3} web3 Web3 instance.
-//  * @param {string} address Stake address.
-//  *  @param {string} account account details to fetch.
-//  * @returns {Promise<Stake | null>}
-//  */
-// async function metaMyStake(web3: Web3, address: string, account: string, release: string): Promise<MyStake | null> {
-//     debugGroup(`My stake for ${address}`)
+/**
+ * Returns meta for mine stake with rewards.
+ * @param {Web3} web3 Web3 instance.
+ * @param {string} address Stake address.
+ *  @param {string} account account details to fetch.
+ * @returns {Promise<Stake | null>}
+ */
+async function metaMyStake(web3: Web3, address: string, account: string, release: string): Promise<MyStake | null> {
+    debugGroup(`My stake for ${address}`)
 
-//     const isDeprecated = release !== "v3"
-//     const isSimpleNew = release !== "v1"
+    const isDeprecated = release !== "v3"
+    const isSimpleNew = release !== "v1"
 
-//     const simpleStaking = isSimpleNew ? simpleStakingContractV2(web3, address) : simpleStakingContract(web3, address)
+    const simpleStaking = isSimpleNew ? simpleStakingContractV2(web3, address) : simpleStakingContract(web3, address)
 
-//     const chainId = await getChainId(web3)
+    const chainId = await getChainId(web3)
 
-//     const users = await simpleStaking.methods.users(account).call()
+    const users = await simpleStaking.methods.users(account).call()
 
-//     if (!users || parseInt(users.amount.toString()) === 0) {
-//         debugGroupEnd(`My stake for ${address}`)
-//         return null
-//     }
+    if (!users || parseInt(users.amount.toString()) === 0) {
+        debugGroupEnd(`My stake for ${address}`)
+        return null
+    }
     
-//     const maxMultiplierThreshold = isSimpleNew ? (await simpleStaking.methods.getStats().call())[6] :
-//       simpleStaking.methods.maxMultiplierThreshold().call()
+    const maxMultiplierThreshold = isSimpleNew ? (await simpleStaking.methods.getStats().call())[6] :
+      simpleStaking.methods.maxMultiplierThreshold().call()
 
-//     const [tokenAddress, iTokenAddress, protocolName, threshold] = await Promise.all([
-//         simpleStaking.methods.token().call(),
-//         simpleStaking.methods.iToken().call(),
-//         simpleStaking.methods.name().call(),
-//         maxMultiplierThreshold  
-//     ])
+    const [tokenAddress, iTokenAddress, protocolName, threshold] = await Promise.all([
+        simpleStaking.methods.token().call(),
+        simpleStaking.methods.iToken().call(),
+        simpleStaking.methods.name().call(),
+        maxMultiplierThreshold  
+    ])
 
-//     const [token, iToken] = (await Promise.all([
-//         getTokenByAddress(web3, tokenAddress),
-//         getTokenByAddress(web3, iTokenAddress)
-//     ])) as [Token, Token]
+    const [token, iToken] = (await Promise.all([
+        getTokenByAddress(web3, tokenAddress),
+        getTokenByAddress(web3, iTokenAddress)
+    ])) as [Token, Token]
 
-//     const protocol = getProtocol(protocolName)
-//     const amount = CurrencyAmount.fromRawAmount(token, users.amount.toString())
-//     const multiplier = Math.round(Date.now() / 1000) - parseInt(users.multiplierResetTime) > threshold
+    const protocol = getProtocol(protocolName)
+    const amount = CurrencyAmount.fromRawAmount(token, users.amount.toString())
+    const multiplier = Math.round(Date.now() / 1000) - parseInt(users.multiplierResetTime) > threshold
 
-//     const tokenPrice = await getTokenPriceInUSDC(web3, protocol, token)
+    const tokenPrice = await getTokenPriceInUSDC(web3, protocol, token)
 
-//     let amount$: CurrencyAmount<Currency>
-//     if (tokenPrice) {
-//         const _amountUSDC = amount.multiply(tokenPrice).divide(10 ** token.decimals)
-//         amount$ = CurrencyAmount.fromFractionalAmount(USDC[SupportedChainId.MAINNET], _amountUSDC.numerator, _amountUSDC.denominator)
-//     } else {
-//         amount$ = CurrencyAmount.fromRawAmount(USDC[SupportedChainId.MAINNET], 0)
-//     }
+    let amount$: CurrencyAmount<Currency>
+    if (tokenPrice) {
+        const _amountUSDC = amount.multiply(tokenPrice).divide(10 ** token.decimals)
+        amount$ = CurrencyAmount.fromFractionalAmount(USDC[SupportedChainId.MAINNET], _amountUSDC.numerator, _amountUSDC.denominator)
+    } else {
+        amount$ = CurrencyAmount.fromRawAmount(USDC[SupportedChainId.MAINNET], 0)
+    }
 
-//     debug('Amount', amount.toSignificant(6))
-//     debug('Amount USDC', amount$.toSignificant(6))
+    debug('Amount', amount.toSignificant(6))
+    debug('Amount USDC', amount$.toSignificant(6))
 
-//     const [rewardG$, rewardGDAO] = await Promise.all([
-//         getRewardG$(web3, address, account, isSimpleNew),
-//         getRewardGDAO(web3, address, account)
-//     ])
+    const [rewardG$, rewardGDAO] = await Promise.all([
+        getRewardG$(web3, address, account, isSimpleNew),
+        getRewardGDAO(web3, address, account)
+    ])
 
-//     const { cDAI } = await g$Price()
-//     const ratio = await cDaiPrice(web3, chainId)
+    const { cDAI } = await g$Price()
+    const ratio = await cDaiPrice(web3, chainId)
 
-//     const rewardUSDC = {
-//         claimed: rewardG$.claimed
-//             .multiply(cDAI)
-//             .multiply(ratio),
-//         unclaimed: rewardG$.unclaimed
-//             .multiply(cDAI)
-//             .multiply(ratio),
-//     }
+    const rewardUSDC = {
+        claimed: rewardG$.claimed
+            .multiply(cDAI)
+            .multiply(ratio),
+        unclaimed: rewardG$.unclaimed
+            .multiply(cDAI)
+            .multiply(ratio),
+    }
 
-//     // const DAI = (await getToken(SupportedChainId.MAINNET, 'DAI')) as Token
-//     const G$MainNet = G$[SupportedChainId.MAINNET]
+    // const DAI = (await getToken(SupportedChainId.MAINNET, 'DAI')) as Token
+    const G$MainNet = G$[SupportedChainId.MAINNET]
 
-//     const result = {
-//         address,
-//         protocol,
-//         multiplier,
-//         rewards: {
-//             reward: rewardG$,
-//             reward$: {
-//                 claimed: CurrencyAmount.fromFractionalAmount(
-//                   G$MainNet,
-//                     rewardUSDC.claimed.numerator,
-//                     rewardUSDC.claimed.denominator
-//                 ),
-//                 unclaimed: CurrencyAmount.fromFractionalAmount(
-//                     G$MainNet,
-//                     rewardUSDC.unclaimed.numerator,
-//                     rewardUSDC.unclaimed.denominator
-//                 )
-//             },
-//             GDAO: rewardGDAO
-//         },
-//         stake: { amount, amount$ },
-//         tokens: { A: token, B: iToken },
-//         network: DAO_NETWORK.MAINNET,
-//         isDeprecated: isDeprecated,
-//         isV2: release === "v2"
+    const result = {
+        address,
+        protocol,
+        multiplier,
+        rewards: {
+            reward: rewardG$,
+            reward$: {
+                claimed: CurrencyAmount.fromFractionalAmount(
+                  G$MainNet,
+                    rewardUSDC.claimed.numerator,
+                    rewardUSDC.claimed.denominator
+                ),
+                unclaimed: CurrencyAmount.fromFractionalAmount(
+                    G$MainNet,
+                    rewardUSDC.unclaimed.numerator,
+                    rewardUSDC.unclaimed.denominator
+                )
+            },
+            GDAO: rewardGDAO
+        },
+        stake: { amount, amount$ },
+        tokens: { A: token, B: iToken },
+        network: DAO_NETWORK.MAINNET,
+        isDeprecated: isDeprecated,
+        isV2: release === "v2"
 
-//     }
+    }
 
-//     debug('Reward $ claimed', result.rewards.reward$.claimed.toSignificant(6))
-//     debug('Reward $ unclaimed', result.rewards.reward$.unclaimed.toSignificant(6))
+    debug('Reward $ claimed', result.rewards.reward$.claimed.toSignificant(6))
+    debug('Reward $ unclaimed', result.rewards.reward$.unclaimed.toSignificant(6))
 
-//     debug('Result', result)
+    debug('Result', result)
 
-//     debugGroupEnd(`My stake for ${address}`)
+    debugGroupEnd(`My stake for ${address}`)
 
-//     return result
-// }
+    return result
+}
 
-// /**
-//  * Returns meta for mine stake with rewards.
-//  * @param {Web3} web3 Web3 instance.
-//  *  @param {string} account account details to fetch.
-//  * @returns {Promise<Stake | null>}
-//  */
-// async function metaMyGovStake(web3: Web3, account: string, address?: string, release?: string): Promise<MyStake | null> {
-//   const govStaking = governanceStakingContract(web3, address)
+/**
+ * Returns meta for mine stake with rewards.
+ * @param {Web3} web3 Web3 instance.
+ *  @param {string} account account details to fetch.
+ * @returns {Promise<Stake | null>}
+ */
+async function metaMyGovStake(web3: Web3, account: string, address?: string, release?: string): Promise<MyStake | null> {
+  const govStaking = governanceStakingContract(web3, address)
 
-//   const G$Token = G$[SupportedChainId.FUSE] //gov is always on fuse
-//   const usdcToken = USDC[SupportedChainId.MAINNET]
-//   const users = await govStaking.methods.users(account).call()
-//   if (!users || parseInt(users.amount.toString()) === 0) {
-//       return null
-//   }
+  const G$Token = G$[SupportedChainId.FUSE] //gov is always on fuse
+  const usdcToken = USDC[SupportedChainId.MAINNET]
+  const users = await govStaking.methods.users(account).call()
+  if (!users || parseInt(users.amount.toString()) === 0) {
+      return null
+  }
 
-//   const amount = CurrencyAmount.fromRawAmount(G$Token, users.amount.toString())
+  const amount = CurrencyAmount.fromRawAmount(G$Token, users.amount.toString())
 
-//   const tokenPrice = await g$Price()
+  const tokenPrice = await g$Price()
 
-//   let amount$ = CurrencyAmount.fromRawAmount(G$Token, 0)
-//   if (tokenPrice) {
-//     const value = amount.multiply(tokenPrice.DAI).multiply(1e4)
-//     amount$ = CurrencyAmount.fromFractionalAmount(usdcToken, value.numerator, value.denominator)
-//   } else {
-//     amount$ = CurrencyAmount.fromRawAmount(usdcToken, 0)
-//   }
+  let amount$ = CurrencyAmount.fromRawAmount(G$Token, 0)
+  if (tokenPrice) {
+    const value = amount.multiply(tokenPrice.DAI).multiply(1e4)
+    amount$ = CurrencyAmount.fromFractionalAmount(usdcToken, value.numerator, value.denominator)
+  } else {
+    amount$ = CurrencyAmount.fromRawAmount(usdcToken, 0)
+  }
 
-//   const unclaimed = await govStaking.methods.getUserPendingReward(account).call()
-//   const rewardGDAO = {
-//       claimed: CurrencyAmount.fromRawAmount(GDAO[SupportedChainId.MAINNET], users.rewardMinted.toString()),
-//       unclaimed: CurrencyAmount.fromRawAmount(GDAO[SupportedChainId.MAINNET], unclaimed.toString())
-//   }
+  const unclaimed = await govStaking.methods.getUserPendingReward(account).call()
+  const rewardGDAO = {
+      claimed: CurrencyAmount.fromRawAmount(GDAO[SupportedChainId.MAINNET], users.rewardMinted.toString()),
+      unclaimed: CurrencyAmount.fromRawAmount(GDAO[SupportedChainId.MAINNET], unclaimed.toString())
+  }
 
-//   const G$MainToken = G$[SupportedChainId.MAINNET] as Token
-//   const result = {
-//       address: (govStaking as any)._address,
-//       protocol: LIQUIDITY_PROTOCOL.GOODDAO,
-//       multiplier: false,
-//       rewards: {
-//           reward: {
-//               claimed: CurrencyAmount.fromRawAmount(G$MainToken, 0),
-//               unclaimed: CurrencyAmount.fromRawAmount(G$MainToken, 0)
-//           },
-//           reward$: {
-//               claimed: CurrencyAmount.fromRawAmount(G$MainToken, 0),
-//               unclaimed: CurrencyAmount.fromRawAmount(G$MainToken, 0)
-//           },
-//           GDAO: rewardGDAO
-//       },
-//       stake: { amount, amount$ },
-//       tokens: { A: G$Token, B: G$Token },
-//       network: DAO_NETWORK.FUSE,
-//       isDeprecated: release !== 'v2',
-//     }
-//     return result
-// }
+  const G$MainToken = G$[SupportedChainId.MAINNET] as Token
+  const result = {
+      address: (govStaking as any)._address,
+      protocol: LIQUIDITY_PROTOCOL.GOODDAO,
+      multiplier: false,
+      rewards: {
+          reward: {
+              claimed: CurrencyAmount.fromRawAmount(G$MainToken, 0),
+              unclaimed: CurrencyAmount.fromRawAmount(G$MainToken, 0)
+          },
+          reward$: {
+              claimed: CurrencyAmount.fromRawAmount(G$MainToken, 0),
+              unclaimed: CurrencyAmount.fromRawAmount(G$MainToken, 0)
+          },
+          GDAO: rewardGDAO
+      },
+      stake: { amount, amount$ },
+      tokens: { A: G$Token, B: G$Token },
+      network: DAO_NETWORK.FUSE,
+      isDeprecated: release !== 'v2',
+    }
+    return result
+}
 
 /**
  * Returns protocol name base on staking contact.
@@ -353,56 +354,56 @@ const getProtocol = memoize<(protocolName: string) => LIQUIDITY_PROTOCOL>(
     }
 )
 
-// /**
-//  * Return G$ rewards from stake for account.
-//  * @param {Web3} web3 Web3 instance.
-//  * @param {string} address Stake address.
-//  * @param {string} account User's account address.
-//  * @returns {Promise<MyReward>}
-//  */
-// async function getRewardG$(web3: Web3, address: string, account: string, isDeprecated: boolean): Promise<MyReward> {
-//     const simpleStaking = !isDeprecated ? simpleStakingContractV2(web3, address) : simpleStakingContract(web3, address)
+/**
+ * Return G$ rewards from stake for account.
+ * @param {Web3} web3 Web3 instance.
+ * @param {string} address Stake address.
+ * @param {string} account User's account address.
+ * @returns {Promise<MyReward>}
+ */
+async function getRewardG$(web3: Web3, address: string, account: string, isDeprecated: boolean): Promise<MyReward> {
+    const simpleStaking = !isDeprecated ? simpleStakingContractV2(web3, address) : simpleStakingContract(web3, address)
 
-//     const { 0: claimed, 1: unclaimed } = await simpleStaking.methods.getUserMintedAndPending(account).call()
+    const { 0: claimed, 1: unclaimed } = await simpleStaking.methods.getUserMintedAndPending(account).call()
 
-//     const chainId = await getChainId(web3)
+    const chainId = await getChainId(web3)
 
-//     const result = {
-//         claimed: CurrencyAmount.fromRawAmount(G$[chainId], claimed),
-//         unclaimed: CurrencyAmount.fromRawAmount(G$[chainId], unclaimed)
-//     }
+    const result = {
+        claimed: CurrencyAmount.fromRawAmount(G$[chainId], claimed),
+        unclaimed: CurrencyAmount.fromRawAmount(G$[chainId], unclaimed)
+    }
 
-//     debug(`Reward G$ claimed`, result.claimed.toSignificant(6))
-//     debug(`Reward G$ unclaimed`, result.unclaimed.toSignificant(6))
+    debug(`Reward G$ claimed`, result.claimed.toSignificant(6))
+    debug(`Reward G$ unclaimed`, result.unclaimed.toSignificant(6))
 
-//     return result
-// }
+    return result
+}
 
-// /**
-//  * Return GDAO rewards from stake for account.
-//  * @param {Web3} web3 Web3 instance.
-//  * @param {string} address Stake address.
-//  * @param {string} account User's account address.
-//  */
-// async function getRewardGDAO(web3: Web3, address: string, account: string): Promise<MyReward> {
-//     const stakersDistribution = await stakersDistributionContract(web3)
+/**
+ * Return GDAO rewards from stake for account.
+ * @param {Web3} web3 Web3 instance.
+ * @param {string} address Stake address.
+ * @param {string} account User's account address.
+ */
+async function getRewardGDAO(web3: Web3, address: string, account: string): Promise<MyReward> {
+    const stakersDistribution = await stakersDistributionContract(web3)
 
-//     const chainId = await getChainId(web3)
+    const chainId = await getChainId(web3)
 
-//     const { 0: claimed, 1: unclaimed } = await stakersDistribution.methods
-//         .getUserMintedAndPending([address], account)
-//         .call()
+    const { 0: claimed, 1: unclaimed } = await stakersDistribution.methods
+        .getUserMintedAndPending([address], account)
+        .call()
 
-//     const result = {
-//         claimed: CurrencyAmount.fromRawAmount(GDAO[chainId], claimed),
-//         unclaimed: CurrencyAmount.fromRawAmount(GDAO[chainId], unclaimed)
-//     }
+    const result = {
+        claimed: CurrencyAmount.fromRawAmount(GDAO[chainId], claimed),
+        unclaimed: CurrencyAmount.fromRawAmount(GDAO[chainId], unclaimed)
+    }
 
-//     debug('Reward GDAO claimed', result.claimed.toSignificant(6))
-//     debug('Reward GDAO unclaimed', result.unclaimed.toSignificant(6))
+    debug('Reward GDAO claimed', result.claimed.toSignificant(6))
+    debug('Reward GDAO unclaimed', result.unclaimed.toSignificant(6))
 
-//     return result
-// }
+    return result
+}
 
 /**
  * Return social APY.
