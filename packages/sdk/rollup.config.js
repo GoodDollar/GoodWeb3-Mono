@@ -31,6 +31,7 @@ export default {
     index: 'src/index.ts',
     "hooks/index": "src/hooks/index.ts",
     "constants/index": "src/constants/index.ts",
+    "core/index": "src/core/index.ts",
     "core/apollo": 'src/core/apollo.ts',
     "core/staking": 'src/core/staking.ts',
     "constants/addresses": "src/constants/addresses.ts",

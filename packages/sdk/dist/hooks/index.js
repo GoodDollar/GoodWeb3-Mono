@@ -1,8 +1,8 @@
-import { aa as __read, ak as DAO_NETWORK, ae as getNetworkEnv, S as SupportedChainId, d as __awaiter, e as __generator, ao as CurrencyAmount, a9 as Fraction } from '../chunks/addresses.js';
+import { a9 as __read, an as DAO_NETWORK, ah as getNetworkEnv, S as SupportedChainId, d as __awaiter, e as __generator, ae as CurrencyAmount, ac as Fraction } from '../chunks/addresses.js';
 import { useState, useMemo, useEffect } from 'react';
-import { u as useEnvWeb3, b as getContract, G as GovernanceStaking, a as getReserveSocialAPY } from '../chunks/staking.js';
-export { d as GdSDkContext, c as getRpc, u as useEnvWeb3, e as useGdContextProvider } from '../chunks/staking.js';
-import { G as G$, s as GDAO } from '../chunks/apollo.js';
+import { u as useEnvWeb3, d as getContract, G as GovernanceStaking, a as getReserveSocialAPY } from '../chunks/staking.js';
+export { j as GdSDkContext, h as getRpc, u as useEnvWeb3, k as useGdContextProvider } from '../chunks/staking.js';
+import { H as G$, G as GDAO } from '../chunks/apollo.js';
 import { L as LIQUIDITY_PROTOCOL } from '../chunks/index.js';
 import 'stream';
 import 'http';

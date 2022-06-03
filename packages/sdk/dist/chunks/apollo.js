@@ -1,4 +1,4 @@
-import { _ as __extends, a as __assign, b as __spreadArray, c as __rest, d as __awaiter$g, e as __generator, f as commonjsGlobal, S as SupportedChainId, L as Logger, B as BigNumber, h as hexConcat, g as concat, i as arrayify, j as hexlify, k as getAddress, l as hexZeroPad, t as toUtf8Bytes, m as toUtf8String, n as keccak256, o as nameprep, p as isHexString, q as hexDataSlice, r as require$$0, s as hash, u as hexDataLength, v as splitSignature, w as encode$2, x as stripZeros, y as isBytesLike, z as decode$2, A as getContractAddress, C as isBytes, D as computeHmac, E as ripemd160, F as sha256, G as SupportedAlgorithm, U as UnicodeNormalizationForm, H as joinSignature, I as hexValue, J as formatFixed, K as parseFixed, M as index$3, N as zeroPad, O as hexStripZeros, P as _toEscapedUtf8String, Q as toUtf8CodePoints, R as Utf8ErrorFuncs, T as getIcapAddress, V as getCreate2Address, W as isAddress, X as sha512, Y as pack$2, Z as keccak256$1, $ as sha256$1, a0 as Utf8ErrorReason, a1 as FixedNumber, a2 as ErrorCode, a3 as Token$1, a4 as invariant$2, a5 as WETH9, a6 as UNI_ADDRESS, a7 as G$ContractAddresses, a8 as NativeCurrency, a9 as Fraction, aa as __read, ab as __makeTemplateObject } from './addresses.js';
+import { _ as __extends, a as __assign, b as __spreadArray, c as __rest, d as __awaiter$g, e as __generator, f as commonjsGlobal, S as SupportedChainId, L as Logger, B as BigNumber, h as hexConcat, g as concat, i as arrayify, j as hexlify, k as getAddress, l as hexZeroPad, t as toUtf8Bytes, m as toUtf8String, n as keccak256, o as nameprep, p as isHexString, q as hexDataSlice, r as require$$0, s as hash, u as hexDataLength, v as splitSignature, w as encode$2, x as stripZeros, y as isBytesLike, z as decode$2, A as getContractAddress, C as isBytes, D as computeHmac, E as ripemd160, F as sha256, G as SupportedAlgorithm, U as UnicodeNormalizationForm, H as joinSignature, I as hexValue, J as formatFixed, K as parseFixed, M as index$3, N as zeroPad, O as hexStripZeros, P as _toEscapedUtf8String, Q as toUtf8CodePoints, R as Utf8ErrorFuncs, T as getIcapAddress, V as getCreate2Address, W as isAddress, X as sha512, Y as pack$2, Z as keccak256$1, $ as sha256$1, a0 as Utf8ErrorReason, a1 as FixedNumber, a2 as ErrorCode, a3 as Token$1, a4 as invariant$2, a5 as WETH9, a6 as UNI_ADDRESS, a7 as G$ContractAddresses, a8 as NativeCurrency, a9 as __read, aa as __values, ab as Ether, ac as Fraction, ad as Percent, ae as CurrencyAmount, af as JSBI, ag as __makeTemplateObject } from './addresses.js';
 import 'react';
 
 var genericMessage = "Invariant Violation";
@@ -153,7 +153,7 @@ function _typeof$4(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "func
  * Return true if `value` is object-like. A value is object-like if it's not
  * `null` and has a `typeof` result of "object".
  */
-function isObjectLike$5(value) {
+function isObjectLike$6(value) {
   return _typeof$4(value) == 'object' && value !== null;
 }
 
@@ -379,7 +379,7 @@ var GraphQLError = /*#__PURE__*/function (_Error) {
     _this.path = path !== null && path !== void 0 ? path : undefined;
     var originalExtensions = originalError === null || originalError === void 0 ? void 0 : originalError.extensions;
 
-    if (extensions == null && isObjectLike$5(originalExtensions)) {
+    if (extensions == null && isObjectLike$6(originalExtensions)) {
       _this.extensions = _objectSpread$2({}, originalExtensions);
     } else {
       _this.extensions = extensions !== null && extensions !== void 0 ? extensions : {};
@@ -4807,7 +4807,7 @@ function defineFieldMap(config) {
 }
 
 function isPlainObj(obj) {
-  return isObjectLike$5(obj) && !Array.isArray(obj);
+  return isObjectLike$6(obj) && !Array.isArray(obj);
 }
 
 function fieldsToFieldsConfig(fields) {
@@ -5608,11 +5608,11 @@ var GraphQLFloat = new GraphQLScalarType({
 // a string (ex: MongoDB id objects).
 
 function serializeObject(outputValue) {
-  if (isObjectLike$5(outputValue)) {
+  if (isObjectLike$6(outputValue)) {
     if (typeof outputValue.valueOf === 'function') {
       var valueOfResult = outputValue.valueOf();
 
-      if (!isObjectLike$5(valueOfResult)) {
+      if (!isObjectLike$6(valueOfResult)) {
         return valueOfResult;
       }
     }
@@ -5819,7 +5819,7 @@ function astFromValue(value, type) {
 
 
   if (isInputObjectType(type)) {
-    if (!isObjectLike$5(value)) {
+    if (!isObjectLike$6(value)) {
       return null;
     }
 
@@ -6499,7 +6499,7 @@ var GraphQLDirective = /*#__PURE__*/function () {
     config.name || devAssert(0, 'Directive must be named.');
     Array.isArray(config.locations) || devAssert(0, "@".concat(config.name, " locations must be an Array."));
     var args = (_config$args = config.args) !== null && _config$args !== void 0 ? _config$args : {};
-    isObjectLike$5(args) && !Array.isArray(args) || devAssert(0, "@".concat(config.name, " args must be an object with argument names as keys."));
+    isObjectLike$6(args) && !Array.isArray(args) || devAssert(0, "@".concat(config.name, " args must be an object with argument names as keys."));
     this.args = objectEntries(args).map(function (_ref) {
       var argName = _ref[0],
           argConfig = _ref[1];
@@ -9564,7 +9564,7 @@ function removeClientSetsFromDocument(document) {
     return modifiedDoc;
 }
 
-var hasOwnProperty$a = Object.prototype.hasOwnProperty;
+var hasOwnProperty$e = Object.prototype.hasOwnProperty;
 function mergeDeep() {
     var sources = [];
     for (var _i = 0; _i < arguments.length; _i++) {
@@ -9601,7 +9601,7 @@ var DeepMerger = (function () {
         }
         if (isNonNullObject(source) && isNonNullObject(target)) {
             Object.keys(source).forEach(function (sourceKey) {
-                if (hasOwnProperty$a.call(target, sourceKey)) {
+                if (hasOwnProperty$e.call(target, sourceKey)) {
                     var targetValue = target[sourceKey];
                     if (source[sourceKey] !== targetValue) {
                         var result = _this.reconciler.apply(_this, __spreadArray([target, source, sourceKey], context, false));
@@ -10271,12 +10271,12 @@ if (!prototype[fakeObsSymbol]) {
     prototype[fakeObsSymbol] = function () { return this; };
 }
 
-var toString$1 = Object.prototype.toString;
+var toString$3 = Object.prototype.toString;
 function cloneDeep(value) {
     return cloneDeepHelper(value);
 }
 function cloneDeepHelper(val, seen) {
-    switch (toString$1.call(val)) {
+    switch (toString$3.call(val)) {
         case "[object Array]": {
             seen = seen || new Map;
             if (seen.has(val))
@@ -10765,9 +10765,9 @@ ApolloLink.concat;
 
 var execute = ApolloLink.execute;
 
-var version$j = '3.6.6';
+var version$l = '3.6.6';
 
-var hasOwnProperty$9 = Object.prototype.hasOwnProperty;
+var hasOwnProperty$d = Object.prototype.hasOwnProperty;
 function parseAndCheckHttpResponse(operations) {
     return function (response) { return response
         .text()
@@ -10789,8 +10789,8 @@ function parseAndCheckHttpResponse(operations) {
             throwServerError(response, result, "Response not successful: Received status code ".concat(response.status));
         }
         if (!Array.isArray(result) &&
-            !hasOwnProperty$9.call(result, 'data') &&
-            !hasOwnProperty$9.call(result, 'errors')) {
+            !hasOwnProperty$d.call(result, 'data') &&
+            !hasOwnProperty$d.call(result, 'errors')) {
             throwServerError(response, result, "Server response was missing for query '".concat(Array.isArray(operations)
                 ? operations.map(function (op) { return op.operationName; })
                 : operations.operationName, "'."));
@@ -11054,7 +11054,7 @@ var HttpLink = (function (_super) {
     return HttpLink;
 }(ApolloLink));
 
-var _a$4 = Object.prototype, toString = _a$4.toString, hasOwnProperty$8 = _a$4.hasOwnProperty;
+var _a$4 = Object.prototype, toString$2 = _a$4.toString, hasOwnProperty$c = _a$4.hasOwnProperty;
 var fnToStr = Function.prototype.toString;
 var previousComparisons = new Map();
 /**
@@ -11075,8 +11075,8 @@ function check(a, b) {
     }
     // Object.prototype.toString returns a representation of the runtime type of
     // the given value that is considerably more precise than typeof.
-    var aTag = toString.call(a);
-    var bTag = toString.call(b);
+    var aTag = toString$2.call(a);
+    var bTag = toString$2.call(b);
     // If the runtime types of a and b are different, they could maybe be equal
     // under some interpretation of equality, but for simplicity and performance
     // we just return false instead.
@@ -11102,7 +11102,7 @@ function check(a, b) {
                 return false;
             // Now make sure they have the same keys.
             for (var k = 0; k < keyCount; ++k) {
-                if (!hasOwnProperty$8.call(b, aKeys[k])) {
+                if (!hasOwnProperty$c.call(b, aKeys[k])) {
                     return false;
                 }
             }
@@ -11527,7 +11527,7 @@ var Cache = /** @class */ (function () {
 var parentEntrySlot = new Slot();
 
 var _a$2;
-var hasOwnProperty$7 = Object.prototype.hasOwnProperty;
+var hasOwnProperty$b = Object.prototype.hasOwnProperty;
 var 
 // This Array.from polyfill is restricted to working with Set<any> for now,
 // but we can improve the polyfill and add other input types, as needed. Note
@@ -11858,7 +11858,7 @@ function dep(options) {
         var dep = depsByKey.get(key);
         if (dep) {
             var m_1 = (entryMethodName &&
-                hasOwnProperty$7.call(EntryMethods, entryMethodName)) ? entryMethodName : "setDirty";
+                hasOwnProperty$b.call(EntryMethods, entryMethodName)) ? entryMethodName : "setDirty";
             // We have to use toArray(dep).forEach instead of dep.forEach, because
             // modifying a Set while iterating over it can cause elements in the Set
             // to be removed from the Set before they've been iterated over.
@@ -12092,7 +12092,7 @@ function fieldNameFromStoreName(storeFieldName) {
 }
 function selectionSetMatchesResult(selectionSet, result, variables) {
     if (isNonNullObject(result)) {
-        return isArray$3(result)
+        return isArray$b(result)
             ? result.every(function (item) { return selectionSetMatchesResult(selectionSet, item, variables); })
             : selectionSet.selections.every(function (field) {
                 if (isField(field) && shouldInclude(field, variables)) {
@@ -12109,12 +12109,12 @@ function selectionSetMatchesResult(selectionSet, result, variables) {
 function storeValueIsStoreObject(value) {
     return isNonNullObject(value) &&
         !isReference(value) &&
-        !isArray$3(value);
+        !isArray$b(value);
 }
 function makeProcessedFieldsMerger() {
     return new DeepMerger;
 }
-var isArray$3 = function (a) { return Array.isArray(a); };
+var isArray$b = function (a) { return Array.isArray(a); };
 
 var DELETE = Object.create(null);
 var delModifier = function () { return DELETE; };
@@ -12577,7 +12577,7 @@ function supportsResultCaching(store) {
 
 function shallowCopy$1(value) {
     if (isNonNullObject(value)) {
-        return isArray$3(value)
+        return isArray$b(value)
             ? value.slice(0)
             : __assign({ __proto__: Object.getPrototypeOf(value) }, value);
     }
@@ -12837,7 +12837,7 @@ var StoreReader = (function () {
                             _a));
                     }
                 }
-                else if (isArray$3(fieldValue)) {
+                else if (isArray$b(fieldValue)) {
                     fieldValue = handleMissing(_this.executeSubSelectedArray({
                         field: selection,
                         array: fieldValue,
@@ -12898,7 +12898,7 @@ var StoreReader = (function () {
             if (item === null) {
                 return null;
             }
-            if (isArray$3(item)) {
+            if (isArray$b(item)) {
                 return handleMissing(_this.executeSubSelectedArray({
                     field: field,
                     array: item,
@@ -13092,13 +13092,13 @@ function getSpecifierPaths(spec) {
         var paths_1 = info.paths = [];
         var currentPath_1 = [];
         spec.forEach(function (s, i) {
-            if (isArray$3(s)) {
+            if (isArray$b(s)) {
                 getSpecifierPaths(s).forEach(function (p) { return paths_1.push(currentPath_1.concat(p)); });
                 currentPath_1.length = 0;
             }
             else {
                 currentPath_1.push(s);
-                if (!isArray$3(spec[i + 1])) {
+                if (!isArray$b(spec[i + 1])) {
                     paths_1.push(currentPath_1.slice(0));
                     currentPath_1.length = 0;
                 }
@@ -13113,14 +13113,14 @@ function extractKey(object, key) {
 function extractKeyPath(object, path, extract) {
     extract = extract || extractKey;
     return normalize$1(path.reduce(function reducer(obj, key) {
-        return isArray$3(obj)
+        return isArray$b(obj)
             ? obj.map(function (child) { return reducer(child, key); })
             : obj && extract(obj, key);
     }, object));
 }
 function normalize$1(value) {
     if (isNonNullObject(value)) {
-        if (isArray$3(value)) {
+        if (isArray$b(value)) {
             return value.map(normalize$1);
         }
         return collectSpecifierPaths(Object.keys(value).sort(), function (path) { return extractKeyPath(value, path); });
@@ -13183,7 +13183,7 @@ var Policies = (function () {
         var keyFn = policy && policy.keyFn || this.config.dataIdFromObject;
         while (keyFn) {
             var specifierOrId = keyFn(object, context);
-            if (isArray$3(specifierOrId)) {
+            if (isArray$b(specifierOrId)) {
                 keyFn = keyFieldsFnFromSpecifier(specifierOrId);
             }
             else {
@@ -13226,7 +13226,7 @@ var Policies = (function () {
         setMerge(existing, incoming.merge);
         existing.keyFn =
             keyFields === false ? nullKeyFieldsFn :
-                isArray$3(keyFields) ? keyFieldsFnFromSpecifier(keyFields) :
+                isArray$b(keyFields) ? keyFieldsFnFromSpecifier(keyFields) :
                     typeof keyFields === "function" ? keyFields :
                         existing.keyFn;
         if (fields) {
@@ -13240,7 +13240,7 @@ var Policies = (function () {
                     var keyArgs = incoming.keyArgs, read = incoming.read, merge = incoming.merge;
                     existing.keyFn =
                         keyArgs === false ? simpleKeyArgsFn :
-                            isArray$3(keyArgs) ? keyArgsFnFromSpecifier(keyArgs) :
+                            isArray$b(keyArgs) ? keyArgsFnFromSpecifier(keyArgs) :
                                 typeof keyArgs === "function" ? keyArgs :
                                     existing.keyFn;
                     if (typeof read === "function") {
@@ -13385,7 +13385,7 @@ var Policies = (function () {
             var args = argsFromFieldSpecifier(fieldSpec);
             while (keyFn) {
                 var specifierOrString = keyFn(args, context);
-                if (isArray$3(specifierOrString)) {
+                if (isArray$b(specifierOrString)) {
                     keyFn = keyArgsFnFromSpecifier(specifierOrString);
                 }
                 else {
@@ -13506,7 +13506,7 @@ function normalizeReadFieldOptions(readFieldArgs, objectOrReference, variables) 
 }
 function makeMergeObjectsFunction(store) {
     return function mergeObjects(existing, incoming) {
-        if (isArray$3(existing) || isArray$3(incoming)) {
+        if (isArray$b(existing) || isArray$b(incoming)) {
             throw __DEV__ ? new InvariantError("Cannot automatically merge arrays") : new InvariantError(4);
         }
         if (isNonNullObject(existing) &&
@@ -13735,7 +13735,7 @@ var StoreWriter = (function () {
         if (!field.selectionSet || value === null) {
             return __DEV__ ? cloneDeep(value) : value;
         }
-        if (isArray$3(value)) {
+        if (isArray$b(value)) {
             return value.map(function (item, i) {
                 var value = _this.processFieldValue(item, field, context, getChildMergeTree(mergeTree, i));
                 maybeRecycleChildMergeTree(mergeTree, i);
@@ -13800,7 +13800,7 @@ var StoreWriter = (function () {
         var _a;
         var _this = this;
         if (mergeTree.map.size && !isReference(incoming)) {
-            var e_1 = (!isArray$3(incoming) &&
+            var e_1 = (!isArray$b(incoming) &&
                 (isReference(existing) || storeValueIsStoreObject(existing))) ? existing : void 0;
             var i_1 = incoming;
             if (e_1 && !getStorageArgs) {
@@ -13808,7 +13808,7 @@ var StoreWriter = (function () {
             }
             var changedFields_1;
             var getValue_1 = function (from, name) {
-                return isArray$3(from)
+                return isArray$b(from)
                     ? (typeof name === "number" ? from[name] : void 0)
                     : context.store.getFieldValue(from, String(name));
             };
@@ -13830,7 +13830,7 @@ var StoreWriter = (function () {
                 }
             });
             if (changedFields_1) {
-                incoming = (isArray$3(i_1) ? i_1.slice(0) : __assign({}, i_1));
+                incoming = (isArray$b(i_1) ? i_1.slice(0) : __assign({}, i_1));
                 changedFields_1.forEach(function (value, name) {
                     incoming[name] = value;
                 });
@@ -13911,8 +13911,8 @@ function warnAboutDataLoss(existingRef, incomingObj, storeFieldName, store) {
         return;
     warnings.add(typeDotName);
     var childTypenames = [];
-    if (!isArray$3(existing) &&
-        !isArray$3(incoming)) {
+    if (!isArray$b(existing) &&
+        !isArray$b(incoming)) {
         [existing, incoming].forEach(function (child) {
             var typename = store.getFieldValue(child, "__typename");
             if (typeof typename === "string" &&
@@ -14270,7 +14270,7 @@ function isNetworkRequestInFlight(networkStatus) {
     return networkStatus ? networkStatus < 7 : false;
 }
 
-var assign = Object.assign, hasOwnProperty$6 = Object.hasOwnProperty;
+var assign = Object.assign, hasOwnProperty$a = Object.hasOwnProperty;
 var ObservableQuery = (function (_super) {
     __extends(ObservableQuery, _super);
     function ObservableQuery(_a) {
@@ -14433,7 +14433,7 @@ var ObservableQuery = (function (_super) {
         else {
             reobserveOptions.fetchPolicy = 'network-only';
         }
-        if (__DEV__ && variables && hasOwnProperty$6.call(variables, "variables")) {
+        if (__DEV__ && variables && hasOwnProperty$a.call(variables, "variables")) {
             var queryDef = getQueryDefinition(this.query);
             var vars = queryDef.variableDefinitions;
             if (!vars || !vars.some(function (v) { return v.variable.name.value === "variables"; })) {
@@ -15288,7 +15288,7 @@ function shouldWriteResult(result, errorPolicy) {
     return writeWithErrors;
 }
 
-var hasOwnProperty$5 = Object.prototype.hasOwnProperty;
+var hasOwnProperty$9 = Object.prototype.hasOwnProperty;
 var QueryManager = (function () {
     function QueryManager(_a) {
         var cache = _a.cache, link = _a.link, defaultOptions = _a.defaultOptions, _b = _a.queryDeduplication, queryDeduplication = _b === void 0 ? false : _b, onBroadcast = _a.onBroadcast, _c = _a.ssrMode, ssrMode = _c === void 0 ? false : _c, _d = _a.clientAwareness, clientAwareness = _d === void 0 ? {} : _d, localState = _a.localState, assumeImmutableResults = _a.assumeImmutableResults;
@@ -15443,7 +15443,7 @@ var QueryManager = (function () {
                 this.queries.forEach(function (_a, queryId) {
                     var observableQuery = _a.observableQuery;
                     var queryName = observableQuery && observableQuery.queryName;
-                    if (!queryName || !hasOwnProperty$5.call(updateQueries_1, queryName)) {
+                    if (!queryName || !hasOwnProperty$9.call(updateQueries_1, queryName)) {
                         return;
                     }
                     var updater = updateQueries_1[queryName];
@@ -16176,7 +16176,7 @@ var ApolloClient = (function () {
                 }
             }
         }
-        this.version = version$j;
+        this.version = version$l;
         this.localState = new LocalState({
             cache: cache,
             client: this,
@@ -16498,17 +16498,17 @@ var _Symbol = Symbol$6;
 var Symbol$5 = _Symbol;
 
 /** Used for built-in method references. */
-var objectProto$5 = Object.prototype;
+var objectProto$b = Object.prototype;
 
 /** Used to check objects for own properties. */
-var hasOwnProperty$4 = objectProto$5.hasOwnProperty;
+var hasOwnProperty$8 = objectProto$b.hasOwnProperty;
 
 /**
  * Used to resolve the
  * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
  * of values.
  */
-var nativeObjectToString$1 = objectProto$5.toString;
+var nativeObjectToString$1 = objectProto$b.toString;
 
 /** Built-in value references. */
 var symToStringTag$1 = Symbol$5 ? Symbol$5.toStringTag : undefined;
@@ -16521,7 +16521,7 @@ var symToStringTag$1 = Symbol$5 ? Symbol$5.toStringTag : undefined;
  * @returns {string} Returns the raw `toStringTag`.
  */
 function getRawTag$1(value) {
-  var isOwn = hasOwnProperty$4.call(value, symToStringTag$1),
+  var isOwn = hasOwnProperty$8.call(value, symToStringTag$1),
       tag = value[symToStringTag$1];
 
   try {
@@ -16544,14 +16544,14 @@ var _getRawTag = getRawTag$1;
 
 /** Used for built-in method references. */
 
-var objectProto$4 = Object.prototype;
+var objectProto$a = Object.prototype;
 
 /**
  * Used to resolve the
  * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
  * of values.
  */
-var nativeObjectToString = objectProto$4.toString;
+var nativeObjectToString = objectProto$a.toString;
 
 /**
  * Converts `value` to a string using `Object.prototype.toString`.
@@ -16621,15 +16621,15 @@ var _baseGetTag = baseGetTag$5;
  * // => false
  */
 
-function isObject$2(value) {
+function isObject$3(value) {
   var type = typeof value;
   return value != null && (type == 'object' || type == 'function');
 }
 
-var isObject_1 = isObject$2;
+var isObject_1 = isObject$3;
 
 var baseGetTag$4 = _baseGetTag,
-    isObject$1 = isObject_1;
+    isObject$2 = isObject_1;
 
 /** `Object#toString` result references. */
 var asyncTag = '[object AsyncFunction]',
@@ -16654,8 +16654,8 @@ var asyncTag = '[object AsyncFunction]',
  * _.isFunction(/abc/);
  * // => false
  */
-function isFunction$1(value) {
-  if (!isObject$1(value)) {
+function isFunction$2(value) {
+  if (!isObject$2(value)) {
     return false;
   }
   // The use of `Object#toString` avoids issues with the `typeof` operator
@@ -16664,7 +16664,7 @@ function isFunction$1(value) {
   return tag == funcTag$1 || tag == genTag || tag == asyncTag || tag == proxyTag;
 }
 
-var isFunction_1 = isFunction$1;
+var isFunction_1 = isFunction$2;
 
 var root$6 = _root;
 
@@ -16722,9 +16722,9 @@ function toSource$2(func) {
 
 var _toSource = toSource$2;
 
-var isFunction = isFunction_1,
+var isFunction$1 = isFunction_1,
     isMasked = _isMasked,
-    isObject = isObject_1,
+    isObject$1 = isObject_1,
     toSource$1 = _toSource;
 
 /**
@@ -16738,17 +16738,17 @@ var reIsHostCtor = /^\[object .+?Constructor\]$/;
 
 /** Used for built-in method references. */
 var funcProto = Function.prototype,
-    objectProto$3 = Object.prototype;
+    objectProto$9 = Object.prototype;
 
 /** Used to resolve the decompiled source of functions. */
 var funcToString = funcProto.toString;
 
 /** Used to check objects for own properties. */
-var hasOwnProperty$3 = objectProto$3.hasOwnProperty;
+var hasOwnProperty$7 = objectProto$9.hasOwnProperty;
 
 /** Used to detect if a method is native. */
 var reIsNative = RegExp('^' +
-  funcToString.call(hasOwnProperty$3).replace(reRegExpChar, '\\$&')
+  funcToString.call(hasOwnProperty$7).replace(reRegExpChar, '\\$&')
   .replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$'
 );
 
@@ -16761,10 +16761,10 @@ var reIsNative = RegExp('^' +
  *  else `false`.
  */
 function baseIsNative$1(value) {
-  if (!isObject(value) || isMasked(value)) {
+  if (!isObject$1(value) || isMasked(value)) {
     return false;
   }
-  var pattern = isFunction(value) ? reIsNative : reIsHostCtor;
+  var pattern = isFunction$1(value) ? reIsNative : reIsHostCtor;
   return pattern.test(toSource$1(value));
 }
 
@@ -16851,10 +16851,10 @@ var nativeCreate$2 = _nativeCreate;
 var HASH_UNDEFINED$2 = '__lodash_hash_undefined__';
 
 /** Used for built-in method references. */
-var objectProto$2 = Object.prototype;
+var objectProto$8 = Object.prototype;
 
 /** Used to check objects for own properties. */
-var hasOwnProperty$2 = objectProto$2.hasOwnProperty;
+var hasOwnProperty$6 = objectProto$8.hasOwnProperty;
 
 /**
  * Gets the hash value for `key`.
@@ -16871,7 +16871,7 @@ function hashGet$1(key) {
     var result = data[key];
     return result === HASH_UNDEFINED$2 ? undefined : result;
   }
-  return hasOwnProperty$2.call(data, key) ? data[key] : undefined;
+  return hasOwnProperty$6.call(data, key) ? data[key] : undefined;
 }
 
 var _hashGet = hashGet$1;
@@ -16879,10 +16879,10 @@ var _hashGet = hashGet$1;
 var nativeCreate$1 = _nativeCreate;
 
 /** Used for built-in method references. */
-var objectProto$1 = Object.prototype;
+var objectProto$7 = Object.prototype;
 
 /** Used to check objects for own properties. */
-var hasOwnProperty$1 = objectProto$1.hasOwnProperty;
+var hasOwnProperty$5 = objectProto$7.hasOwnProperty;
 
 /**
  * Checks if a hash value for `key` exists.
@@ -16895,7 +16895,7 @@ var hasOwnProperty$1 = objectProto$1.hasOwnProperty;
  */
 function hashHas$1(key) {
   var data = this.__data__;
-  return nativeCreate$1 ? (data[key] !== undefined) : hasOwnProperty$1.call(data, key);
+  return nativeCreate$1 ? (data[key] !== undefined) : hasOwnProperty$5.call(data, key);
 }
 
 var _hashHas = hashHas$1;
@@ -22354,7 +22354,7 @@ var decimal = {exports: {}};
 
 var Decimal = decimal.exports;
 
-const version$i = "properties/5.6.0";
+const version$k = "properties/5.6.0";
 
 var __awaiter$f = (window && window.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -22365,7 +22365,7 @@ var __awaiter$f = (window && window.__awaiter) || function (thisArg, _arguments,
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-const logger$G = new Logger(version$i);
+const logger$G = new Logger(version$k);
 function defineReadOnly(object, name, value) {
     Object.defineProperty(object, name, {
         enumerable: true,
@@ -22479,9 +22479,9 @@ class Description {
     }
 }
 
-const version$h = "abi/5.6.3";
+const version$j = "abi/5.6.3";
 
-const logger$F = new Logger(version$h);
+const logger$F = new Logger(version$j);
 const _constructorGuard$3 = {};
 let ModifiersBytes$1 = { calldata: true, memory: true, storage: true };
 let ModifiersNest$1 = { calldata: true, memory: true };
@@ -23329,7 +23329,7 @@ function splitNesting$1(value) {
     return result;
 }
 
-const logger$E = new Logger(version$h);
+const logger$E = new Logger(version$j);
 function checkResultErrors$1(result) {
     // Find the first error (if any)
     const errors = [];
@@ -23508,7 +23508,7 @@ class AnonymousCoder$1 extends Coder$1 {
     }
 }
 
-const logger$D = new Logger(version$h);
+const logger$D = new Logger(version$j);
 function pack$1(writer, coders, values) {
     let arrayValues = null;
     if (Array.isArray(values)) {
@@ -23960,7 +23960,7 @@ class TupleCoder$1 extends Coder$1 {
     }
 }
 
-const logger$C = new Logger(version$h);
+const logger$C = new Logger(version$j);
 const paramTypeBytes$1 = new RegExp(/^bytes([0-9]*)$/);
 const paramTypeNumber$1 = new RegExp(/^(u?int)([0-9]*)$/);
 class AbiCoder$1 {
@@ -24043,9 +24043,9 @@ function id(text) {
     return keccak256(toUtf8Bytes(text));
 }
 
-const version$g = "hash/5.6.1";
+const version$i = "hash/5.6.1";
 
-const logger$B = new Logger(version$g);
+const logger$B = new Logger(version$i);
 const Zeros = new Uint8Array(32);
 Zeros.fill(0);
 const Partition = new RegExp("^((.*)\\.)?([^.]+)$");
@@ -24111,7 +24111,7 @@ var __awaiter$e = (window && window.__awaiter) || function (thisArg, _arguments,
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-const logger$A = new Logger(version$g);
+const logger$A = new Logger(version$i);
 const padding = new Uint8Array(32);
 padding.fill(0);
 const NegativeOne = BigNumber.from(-1);
@@ -24535,7 +24535,7 @@ class TypedDataEncoder {
     }
 }
 
-const logger$z = new Logger(version$h);
+const logger$z = new Logger(version$j);
 class LogDescription$1 extends Description {
 }
 class TransactionDescription$1 extends Description {
@@ -25126,7 +25126,7 @@ class Interface$1 {
     }
 }
 
-const version$f = "abstract-provider/5.6.1";
+const version$h = "abstract-provider/5.6.1";
 
 var __awaiter$d = (window && window.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -25137,7 +25137,7 @@ var __awaiter$d = (window && window.__awaiter) || function (thisArg, _arguments,
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-const logger$y = new Logger(version$f);
+const logger$y = new Logger(version$h);
 //export type CallTransactionable = {
 //    call(transaction: TransactionRequest): Promise<TransactionResponse>;
 //};
@@ -25187,7 +25187,7 @@ class Provider {
     }
 }
 
-const version$e = "abstract-signer/5.6.2";
+const version$g = "abstract-signer/5.6.2";
 
 var __awaiter$c = (window && window.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -25198,7 +25198,7 @@ var __awaiter$c = (window && window.__awaiter) || function (thisArg, _arguments,
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-const logger$x = new Logger(version$e);
+const logger$x = new Logger(version$g);
 const allowedTransactionKeys$3 = [
     "accessList", "ccipReadEnabled", "chainId", "customData", "data", "from", "gasLimit", "gasPrice", "maxFeePerGas", "maxPriorityFeePerGas", "nonce", "to", "type", "value"
 ];
@@ -31267,9 +31267,9 @@ elliptic.eddsa = /*RicMoo:ethers:require(./elliptic/eddsa)*/(null);
 
 var EC$1 = elliptic_1.ec;
 
-const version$d = "signing-key/5.6.2";
+const version$f = "signing-key/5.6.2";
 
-const logger$w = new Logger(version$d);
+const logger$w = new Logger(version$f);
 let _curve = null;
 function getCurve() {
     if (!_curve) {
@@ -31345,9 +31345,9 @@ function computePublicKey(key, compressed) {
     return logger$w.throwArgumentError("invalid public or private key", "key", "[REDACTED]");
 }
 
-const version$c = "transactions/5.6.2";
+const version$e = "transactions/5.6.2";
 
-const logger$v = new Logger(version$c);
+const logger$v = new Logger(version$e);
 var TransactionTypes;
 (function (TransactionTypes) {
     TransactionTypes[TransactionTypes["legacy"] = 0] = "legacy";
@@ -31726,7 +31726,7 @@ var lib_esm = /*#__PURE__*/Object.freeze({
     parse: parse
 });
 
-const version$b = "contracts/5.6.2";
+const version$d = "contracts/5.6.2";
 
 var __awaiter$b = (window && window.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -31737,7 +31737,7 @@ var __awaiter$b = (window && window.__awaiter) || function (thisArg, _arguments,
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-const logger$u = new Logger(version$b);
+const logger$u = new Logger(version$d);
 ///////////////////////////////
 const allowedTransactionKeys$1 = {
     chainId: true, data: true, from: true, gasLimit: true, gasPrice: true, nonce: true, to: true, value: true,
@@ -32900,9 +32900,9 @@ function pbkdf2$1(password, salt, iterations, keylen, hashAlgorithm) {
     return hexlify(DK);
 }
 
-const version$a = "wordlists/5.6.1";
+const version$c = "wordlists/5.6.1";
 
-const logger$t = new Logger(version$a);
+const logger$t = new Logger(version$c);
 class Wordlist {
     constructor(locale) {
         logger$t.checkAbstract(new.target, Wordlist);
@@ -32969,9 +32969,9 @@ const wordlists = {
     en: langEn
 };
 
-const version$9 = "hdnode/5.6.2";
+const version$b = "hdnode/5.6.2";
 
-const logger$s = new Logger(version$9);
+const logger$s = new Logger(version$b);
 const N = BigNumber.from("0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141");
 // "Bitcoin seed"
 const MasterSecret = toUtf8Bytes("Bitcoin seed");
@@ -33287,9 +33287,9 @@ function getAccountPath(index) {
     return `m/44'/60'/${index}'/0/0`;
 }
 
-const version$8 = "random/5.6.1";
+const version$a = "random/5.6.1";
 
-const logger$r = new Logger(version$8);
+const logger$r = new Logger(version$a);
 // Debugging line for testing browser lib in node
 //const window = { crypto: { getRandomValues: () => { } } };
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/globalThis
@@ -34129,7 +34129,7 @@ var aesJs = {exports: {}};
 
 var aes = aesJs.exports;
 
-const version$7 = "json-wallets/5.6.1";
+const version$9 = "json-wallets/5.6.1";
 
 function looseArrayify(hexString) {
     if (typeof (hexString) === 'string' && hexString.substring(0, 2) !== '0x') {
@@ -34191,7 +34191,7 @@ function uuidV4(randomBytes) {
     ].join("-");
 }
 
-const logger$q = new Logger(version$7);
+const logger$q = new Logger(version$9);
 class CrowdsaleAccount extends Description {
     isCrowdsaleAccount(value) {
         return !!(value && value._isCrowdsaleAccount);
@@ -34766,7 +34766,7 @@ var __awaiter$a = (window && window.__awaiter) || function (thisArg, _arguments,
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-const logger$p = new Logger(version$7);
+const logger$p = new Logger(version$9);
 // Exported Types
 function hasMnemonic$1(value) {
     return (value != null && value.mnemonic && value.mnemonic.phrase);
@@ -35084,7 +35084,7 @@ function decryptJsonWalletSync(json, password) {
     throw new Error("invalid JSON wallet");
 }
 
-const version$6 = "wallet/5.6.2";
+const version$8 = "wallet/5.6.2";
 
 var __awaiter$9 = (window && window.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -35095,7 +35095,7 @@ var __awaiter$9 = (window && window.__awaiter) || function (thisArg, _arguments,
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-const logger$o = new Logger(version$6);
+const logger$o = new Logger(version$8);
 function isAccount(value) {
     return (value != null && isHexString(value.privateKey, 32) && value.address != null);
 }
@@ -35247,9 +35247,9 @@ function verifyTypedData(domain, types, value, signature) {
     return recoverAddress(TypedDataEncoder.hash(domain, types, value), signature);
 }
 
-const version$5 = "networks/5.6.3";
+const version$7 = "networks/5.6.3";
 
-const logger$n = new Logger(version$5);
+const logger$n = new Logger(version$7);
 function isRenetworkable(value) {
     return (value && typeof (value.renetwork) === "function");
 }
@@ -35506,7 +35506,7 @@ var index$1 = /*#__PURE__*/Object.freeze({
     encode: encode$1
 });
 
-const version$4 = "web/5.6.1";
+const version$6 = "web/5.6.1";
 
 var __awaiter$8 = (window && window.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -35565,7 +35565,7 @@ var __awaiter$7 = (window && window.__awaiter) || function (thisArg, _arguments,
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-const logger$m = new Logger(version$4);
+const logger$m = new Logger(version$6);
 function staller(duration) {
     return new Promise((resolve) => {
         setTimeout(resolve, duration);
@@ -36125,9 +36125,9 @@ var bech32 = {
   fromWords: fromWords
 };
 
-const version$3 = "providers/5.6.8";
+const version$5 = "providers/5.6.8";
 
-const logger$l = new Logger(version$3);
+const logger$l = new Logger(version$5);
 class Formatter {
     constructor() {
         this.formats = this.getDefaultFormats();
@@ -36569,7 +36569,7 @@ var __awaiter$6 = (window && window.__awaiter) || function (thisArg, _arguments,
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-const logger$k = new Logger(version$3);
+const logger$k = new Logger(version$5);
 const MAX_CCIP_REDIRECTS = 10;
 //////////////////////////////
 // Event Serializeing
@@ -38548,7 +38548,7 @@ var __awaiter$5 = (window && window.__awaiter) || function (thisArg, _arguments,
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-const logger$j = new Logger(version$3);
+const logger$j = new Logger(version$5);
 const errorGas = ["call", "estimateGas"];
 function spelunk(value, requireData) {
     if (value == null) {
@@ -39166,7 +39166,7 @@ try {
     }
 }
 catch (error) {
-    const logger = new Logger(version$3);
+    const logger = new Logger(version$5);
     WS = function () {
         logger.throwError("WebSockets not supported in this environment", Logger.errors.UNSUPPORTED_OPERATION, {
             operation: "new WebSocket()"
@@ -39183,7 +39183,7 @@ var __awaiter$4 = (window && window.__awaiter) || function (thisArg, _arguments,
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-const logger$i = new Logger(version$3);
+const logger$i = new Logger(version$5);
 /**
  *  Notes:
  *
@@ -39475,7 +39475,7 @@ var __awaiter$3 = (window && window.__awaiter) || function (thisArg, _arguments,
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-const logger$h = new Logger(version$3);
+const logger$h = new Logger(version$5);
 // A StaticJsonRpcProvider is useful when you *know* for certain that
 // the backend will never change, as it never calls eth_chainId to
 // verify its backend. However, if the backend does change, the effects
@@ -39553,7 +39553,7 @@ class UrlJsonRpcProvider extends StaticJsonRpcProvider {
     }
 }
 
-const logger$g = new Logger(version$3);
+const logger$g = new Logger(version$5);
 // This key was provided to ethers.js by Alchemy to be used by the
 // default provider, but it is recommended that for your own
 // production environments, that you acquire your own API key at:
@@ -39639,7 +39639,7 @@ class AlchemyProvider extends UrlJsonRpcProvider {
     }
 }
 
-const logger$f = new Logger(version$3);
+const logger$f = new Logger(version$5);
 const defaultApiKey$2 = "9f7d929b018cdffb338517efa06f58359e86ff1ffd350bc889738523659e7972";
 function getHost(name) {
     switch (name) {
@@ -39699,7 +39699,7 @@ var __awaiter$2 = (window && window.__awaiter) || function (thisArg, _arguments,
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-const logger$e = new Logger(version$3);
+const logger$e = new Logger(version$5);
 class CloudflareProvider extends UrlJsonRpcProvider {
     static getApiKey(apiKey) {
         if (apiKey != null) {
@@ -39743,7 +39743,7 @@ var __awaiter$1 = (window && window.__awaiter) || function (thisArg, _arguments,
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-const logger$d = new Logger(version$3);
+const logger$d = new Logger(version$5);
 // The transaction has already been sanitized by the calls in Provider
 function getTransactionPostData(transaction) {
     const result = {};
@@ -40151,7 +40151,7 @@ var __awaiter = (window && window.__awaiter) || function (thisArg, _arguments, P
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-const logger$c = new Logger(version$3);
+const logger$c = new Logger(version$5);
 function now() { return (new Date()).getTime(); }
 // Returns to network as long as all agree, or null if any is null.
 // Throws an error if any two networks do not match.
@@ -40712,7 +40712,7 @@ class FallbackProvider extends BaseProvider {
 
 const IpcProvider = null;
 
-const logger$b = new Logger(version$3);
+const logger$b = new Logger(version$5);
 const defaultProjectId = "84842078b09946638c03157f83405213";
 class InfuraWebSocketProvider extends WebSocketProvider {
     constructor(network, apiKey) {
@@ -40896,7 +40896,7 @@ class JsonRpcBatchProvider extends JsonRpcProvider {
 }
 
 /* istanbul ignore file */
-const logger$a = new Logger(version$3);
+const logger$a = new Logger(version$5);
 // Special API key provided by Nodesmith for ethers.js
 const defaultApiKey = "ETHERS_JS_SHARED";
 class NodesmithProvider extends UrlJsonRpcProvider {
@@ -40932,7 +40932,7 @@ class NodesmithProvider extends UrlJsonRpcProvider {
     }
 }
 
-const logger$9 = new Logger(version$3);
+const logger$9 = new Logger(version$5);
 // These are load-balancer-based application IDs
 const defaultApplicationIds = {
     homestead: "6004bcd10040261633ade990",
@@ -41041,7 +41041,7 @@ class PocketProvider extends UrlJsonRpcProvider {
     }
 }
 
-const logger$8 = new Logger(version$3);
+const logger$8 = new Logger(version$5);
 let _nextId = 1;
 function buildWeb3LegacyFetcher(provider, sendFunc) {
     const fetcher = "Web3LegacyFetcher";
@@ -41167,7 +41167,7 @@ class Web3Provider extends JsonRpcProvider {
     }
 }
 
-const logger$7 = new Logger(version$3);
+const logger$7 = new Logger(version$5);
 ////////////////////////
 // Helper Functions
 function getDefaultProvider(network, options) {
@@ -41245,9 +41245,9 @@ var index = /*#__PURE__*/Object.freeze({
     Formatter: Formatter
 });
 
-const version$2 = "abi/5.6.3";
+const version$4 = "abi/5.6.3";
 
-const logger$6 = new Logger(version$2);
+const logger$6 = new Logger(version$4);
 const _constructorGuard = {};
 let ModifiersBytes = { calldata: true, memory: true, storage: true };
 let ModifiersNest = { calldata: true, memory: true };
@@ -42095,7 +42095,7 @@ function splitNesting(value) {
     return result;
 }
 
-const logger$5 = new Logger(version$2);
+const logger$5 = new Logger(version$4);
 function checkResultErrors(result) {
     // Find the first error (if any)
     const errors = [];
@@ -42274,7 +42274,7 @@ class AnonymousCoder extends Coder {
     }
 }
 
-const logger$4 = new Logger(version$2);
+const logger$4 = new Logger(version$4);
 function pack(writer, coders, values) {
     let arrayValues = null;
     if (Array.isArray(values)) {
@@ -42667,7 +42667,7 @@ class TupleCoder extends Coder {
     }
 }
 
-const logger$3 = new Logger(version$2);
+const logger$3 = new Logger(version$4);
 const paramTypeBytes = new RegExp(/^bytes([0-9]*)$/);
 const paramTypeNumber = new RegExp(/^(u?int)([0-9]*)$/);
 class AbiCoder {
@@ -42746,7 +42746,7 @@ class AbiCoder {
 }
 const defaultAbiCoder = new AbiCoder();
 
-const logger$2 = new Logger(version$2);
+const logger$2 = new Logger(version$4);
 class LogDescription extends Description {
 }
 class TransactionDescription extends Description {
@@ -43337,9 +43337,9 @@ class Interface {
     }
 }
 
-const version$1 = "units/5.6.1";
+const version$3 = "units/5.6.1";
 
-const logger$1 = new Logger(version$1);
+const logger$1 = new Logger(version$3);
 const names = [
     "wei",
     "kwei",
@@ -43522,9 +43522,9 @@ var utils = /*#__PURE__*/Object.freeze({
     Indexed: Indexed
 });
 
-const version = "ethers/5.6.8";
+const version$2 = "ethers/5.6.8";
 
-const logger = new Logger(version);
+const logger = new Logger(version$2);
 
 var ethers = /*#__PURE__*/Object.freeze({
     __proto__: null,
@@ -43543,7 +43543,7 @@ var ethers = /*#__PURE__*/Object.freeze({
     logger: logger,
     utils: utils,
     wordlists: wordlists,
-    version: version,
+    version: version$2,
     Wordlist: Wordlist
 });
 
@@ -43554,6 +43554,28 @@ try {
     }
 }
 catch (error) { }
+
+/**
+ * Appends the elements of `values` to `array`.
+ *
+ * @private
+ * @param {Array} array The array to modify.
+ * @param {Array} values The values to append.
+ * @returns {Array} Returns `array`.
+ */
+
+function arrayPush$2(array, values) {
+  var index = -1,
+      length = values.length,
+      offset = array.length;
+
+  while (++index < length) {
+    array[offset + index] = values[index];
+  }
+  return array;
+}
+
+var _arrayPush = arrayPush$2;
 
 /**
  * Checks if `value` is object-like. A value is object-like if it's not `null`
@@ -43580,17 +43602,17 @@ catch (error) { }
  * // => false
  */
 
-function isObjectLike$4(value) {
+function isObjectLike$5(value) {
   return value != null && typeof value == 'object';
 }
 
-var isObjectLike_1 = isObjectLike$4;
+var isObjectLike_1 = isObjectLike$5;
 
 var baseGetTag$3 = _baseGetTag,
-    isObjectLike$3 = isObjectLike_1;
+    isObjectLike$4 = isObjectLike_1;
 
 /** `Object#toString` result references. */
-var argsTag$1 = '[object Arguments]';
+var argsTag$2 = '[object Arguments]';
 
 /**
  * The base implementation of `_.isArguments`.
@@ -43600,22 +43622,22 @@ var argsTag$1 = '[object Arguments]';
  * @returns {boolean} Returns `true` if `value` is an `arguments` object,
  */
 function baseIsArguments$1(value) {
-  return isObjectLike$3(value) && baseGetTag$3(value) == argsTag$1;
+  return isObjectLike$4(value) && baseGetTag$3(value) == argsTag$2;
 }
 
 var _baseIsArguments = baseIsArguments$1;
 
 var baseIsArguments = _baseIsArguments,
-    isObjectLike$2 = isObjectLike_1;
+    isObjectLike$3 = isObjectLike_1;
 
 /** Used for built-in method references. */
-var objectProto = Object.prototype;
+var objectProto$6 = Object.prototype;
 
 /** Used to check objects for own properties. */
-var hasOwnProperty = objectProto.hasOwnProperty;
+var hasOwnProperty$4 = objectProto$6.hasOwnProperty;
 
 /** Built-in value references. */
-var propertyIsEnumerable = objectProto.propertyIsEnumerable;
+var propertyIsEnumerable$1 = objectProto$6.propertyIsEnumerable;
 
 /**
  * Checks if `value` is likely an `arguments` object.
@@ -43635,12 +43657,12 @@ var propertyIsEnumerable = objectProto.propertyIsEnumerable;
  * _.isArguments([1, 2, 3]);
  * // => false
  */
-var isArguments$1 = baseIsArguments(function() { return arguments; }()) ? baseIsArguments : function(value) {
-  return isObjectLike$2(value) && hasOwnProperty.call(value, 'callee') &&
-    !propertyIsEnumerable.call(value, 'callee');
+var isArguments$3 = baseIsArguments(function() { return arguments; }()) ? baseIsArguments : function(value) {
+  return isObjectLike$3(value) && hasOwnProperty$4.call(value, 'callee') &&
+    !propertyIsEnumerable$1.call(value, 'callee');
 };
 
-var isArguments_1 = isArguments$1;
+var isArguments_1 = isArguments$3;
 
 /**
  * Checks if `value` is classified as an `Array` object.
@@ -43666,13 +43688,13 @@ var isArguments_1 = isArguments$1;
  * // => false
  */
 
-var isArray$2 = Array.isArray;
+var isArray$a = Array.isArray;
 
-var isArray_1 = isArray$2;
+var isArray_1 = isArray$a;
 
 var Symbol$3 = _Symbol,
-    isArguments = isArguments_1,
-    isArray$1 = isArray_1;
+    isArguments$2 = isArguments_1,
+    isArray$9 = isArray_1;
 
 /** Built-in value references. */
 var spreadableSymbol = Symbol$3 ? Symbol$3.isConcatSpreadable : undefined;
@@ -43684,12 +43706,51 @@ var spreadableSymbol = Symbol$3 ? Symbol$3.isConcatSpreadable : undefined;
  * @param {*} value The value to check.
  * @returns {boolean} Returns `true` if `value` is flattenable, else `false`.
  */
-function isFlattenable(value) {
-  return isArray$1(value) || isArguments(value) ||
+function isFlattenable$1(value) {
+  return isArray$9(value) || isArguments$2(value) ||
     !!(spreadableSymbol && value && value[spreadableSymbol]);
 }
 
-var _isFlattenable = isFlattenable;
+var _isFlattenable = isFlattenable$1;
+
+var arrayPush$1 = _arrayPush,
+    isFlattenable = _isFlattenable;
+
+/**
+ * The base implementation of `_.flatten` with support for restricting flattening.
+ *
+ * @private
+ * @param {Array} array The array to flatten.
+ * @param {number} depth The maximum recursion depth.
+ * @param {boolean} [predicate=isFlattenable] The function invoked per iteration.
+ * @param {boolean} [isStrict] Restrict to values that pass `predicate` checks.
+ * @param {Array} [result=[]] The initial result value.
+ * @returns {Array} Returns the new flattened array.
+ */
+function baseFlatten$1(array, depth, predicate, isStrict, result) {
+  var index = -1,
+      length = array.length;
+
+  predicate || (predicate = isFlattenable);
+  result || (result = []);
+
+  while (++index < length) {
+    var value = array[index];
+    if (depth > 0 && predicate(value)) {
+      if (depth > 1) {
+        // Recursively flatten arrays (susceptible to call stack limits).
+        baseFlatten$1(value, depth - 1, predicate, isStrict, result);
+      } else {
+        arrayPush$1(result, value);
+      }
+    } else if (!isStrict) {
+      result[result.length] = value;
+    }
+  }
+  return result;
+}
+
+var _baseFlatten = baseFlatten$1;
 
 /**
  * A specialized version of `_.map` for arrays without support for iteratee
@@ -43701,7 +43762,7 @@ var _isFlattenable = isFlattenable;
  * @returns {Array} Returns the new mapped array.
  */
 
-function arrayMap$1(array, iteratee) {
+function arrayMap$2(array, iteratee) {
   var index = -1,
       length = array == null ? 0 : array.length,
       result = Array(length);
@@ -43712,7 +43773,7 @@ function arrayMap$1(array, iteratee) {
   return result;
 }
 
-var _arrayMap = arrayMap$1;
+var _arrayMap = arrayMap$2;
 
 var ListCache$2 = _ListCache;
 
@@ -43831,19 +43892,19 @@ var ListCache = _ListCache,
  * @constructor
  * @param {Array} [entries] The key-value pairs to cache.
  */
-function Stack(entries) {
+function Stack$2(entries) {
   var data = this.__data__ = new ListCache(entries);
   this.size = data.size;
 }
 
 // Add methods to `Stack`.
-Stack.prototype.clear = stackClear;
-Stack.prototype['delete'] = stackDelete;
-Stack.prototype.get = stackGet;
-Stack.prototype.has = stackHas;
-Stack.prototype.set = stackSet;
+Stack$2.prototype.clear = stackClear;
+Stack$2.prototype['delete'] = stackDelete;
+Stack$2.prototype.get = stackGet;
+Stack$2.prototype.has = stackHas;
+Stack$2.prototype.set = stackSet;
 
-var _Stack = Stack;
+var _Stack = Stack$2;
 
 /** Used to stand-in for `undefined` hash values. */
 
@@ -43955,8 +44016,8 @@ var SetCache = _SetCache,
     cacheHas = _cacheHas;
 
 /** Used to compose bitmasks for value comparisons. */
-var COMPARE_PARTIAL_FLAG$1 = 1,
-    COMPARE_UNORDERED_FLAG$1 = 2;
+var COMPARE_PARTIAL_FLAG$5 = 1,
+    COMPARE_UNORDERED_FLAG$3 = 2;
 
 /**
  * A specialized version of `baseIsEqualDeep` for arrays with support for
@@ -43971,8 +44032,8 @@ var COMPARE_PARTIAL_FLAG$1 = 1,
  * @param {Object} stack Tracks traversed `array` and `other` objects.
  * @returns {boolean} Returns `true` if the arrays are equivalent, else `false`.
  */
-function equalArrays$1(array, other, bitmask, customizer, equalFunc, stack) {
-  var isPartial = bitmask & COMPARE_PARTIAL_FLAG$1,
+function equalArrays$2(array, other, bitmask, customizer, equalFunc, stack) {
+  var isPartial = bitmask & COMPARE_PARTIAL_FLAG$5,
       arrLength = array.length,
       othLength = other.length;
 
@@ -43987,7 +44048,7 @@ function equalArrays$1(array, other, bitmask, customizer, equalFunc, stack) {
   }
   var index = -1,
       result = true,
-      seen = (bitmask & COMPARE_UNORDERED_FLAG$1) ? new SetCache : undefined;
+      seen = (bitmask & COMPARE_UNORDERED_FLAG$3) ? new SetCache : undefined;
 
   stack.set(array, other);
   stack.set(other, array);
@@ -44033,7 +44094,7 @@ function equalArrays$1(array, other, bitmask, customizer, equalFunc, stack) {
   return result;
 }
 
-var _equalArrays = equalArrays$1;
+var _equalArrays = equalArrays$2;
 
 var root$4 = _root;
 
@@ -44085,13 +44146,13 @@ var _setToArray = setToArray$1;
 var Symbol$2 = _Symbol,
     Uint8Array$1 = _Uint8Array,
     eq = eq_1,
-    equalArrays = _equalArrays,
+    equalArrays$1 = _equalArrays,
     mapToArray = _mapToArray,
     setToArray = _setToArray;
 
 /** Used to compose bitmasks for value comparisons. */
-var COMPARE_PARTIAL_FLAG = 1,
-    COMPARE_UNORDERED_FLAG = 2;
+var COMPARE_PARTIAL_FLAG$4 = 1,
+    COMPARE_UNORDERED_FLAG$2 = 2;
 
 /** `Object#toString` result references. */
 var boolTag$1 = '[object Boolean]',
@@ -44128,7 +44189,7 @@ var symbolProto$1 = Symbol$2 ? Symbol$2.prototype : undefined,
  * @param {Object} stack Tracks traversed `object` and `other` objects.
  * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
  */
-function equalByTag(object, other, tag, bitmask, customizer, equalFunc, stack) {
+function equalByTag$1(object, other, tag, bitmask, customizer, equalFunc, stack) {
   switch (tag) {
     case dataViewTag$2:
       if ((object.byteLength != other.byteLength) ||
@@ -44166,7 +44227,7 @@ function equalByTag(object, other, tag, bitmask, customizer, equalFunc, stack) {
       var convert = mapToArray;
 
     case setTag$2:
-      var isPartial = bitmask & COMPARE_PARTIAL_FLAG;
+      var isPartial = bitmask & COMPARE_PARTIAL_FLAG$4;
       convert || (convert = setToArray);
 
       if (object.size != other.size && !isPartial) {
@@ -44177,11 +44238,11 @@ function equalByTag(object, other, tag, bitmask, customizer, equalFunc, stack) {
       if (stacked) {
         return stacked == other;
       }
-      bitmask |= COMPARE_UNORDERED_FLAG;
+      bitmask |= COMPARE_UNORDERED_FLAG$2;
 
       // Recursively compare objects (susceptible to call stack limits).
       stack.set(object, other);
-      var result = equalArrays(convert(object), convert(other), bitmask, customizer, equalFunc, stack);
+      var result = equalArrays$1(convert(object), convert(other), bitmask, customizer, equalFunc, stack);
       stack['delete'](object);
       return result;
 
@@ -44193,9 +44254,135 @@ function equalByTag(object, other, tag, bitmask, customizer, equalFunc, stack) {
   return false;
 }
 
-var _equalByTag = equalByTag;
+var _equalByTag = equalByTag$1;
 
-var isBuffer = {exports: {}};
+var arrayPush = _arrayPush,
+    isArray$8 = isArray_1;
+
+/**
+ * The base implementation of `getAllKeys` and `getAllKeysIn` which uses
+ * `keysFunc` and `symbolsFunc` to get the enumerable property names and
+ * symbols of `object`.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @param {Function} keysFunc The function to get the keys of `object`.
+ * @param {Function} symbolsFunc The function to get the symbols of `object`.
+ * @returns {Array} Returns the array of property names and symbols.
+ */
+function baseGetAllKeys$1(object, keysFunc, symbolsFunc) {
+  var result = keysFunc(object);
+  return isArray$8(object) ? result : arrayPush(result, symbolsFunc(object));
+}
+
+var _baseGetAllKeys = baseGetAllKeys$1;
+
+/**
+ * A specialized version of `_.filter` for arrays without support for
+ * iteratee shorthands.
+ *
+ * @private
+ * @param {Array} [array] The array to iterate over.
+ * @param {Function} predicate The function invoked per iteration.
+ * @returns {Array} Returns the new filtered array.
+ */
+
+function arrayFilter$1(array, predicate) {
+  var index = -1,
+      length = array == null ? 0 : array.length,
+      resIndex = 0,
+      result = [];
+
+  while (++index < length) {
+    var value = array[index];
+    if (predicate(value, index, array)) {
+      result[resIndex++] = value;
+    }
+  }
+  return result;
+}
+
+var _arrayFilter = arrayFilter$1;
+
+/**
+ * This method returns a new empty array.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.13.0
+ * @category Util
+ * @returns {Array} Returns the new empty array.
+ * @example
+ *
+ * var arrays = _.times(2, _.stubArray);
+ *
+ * console.log(arrays);
+ * // => [[], []]
+ *
+ * console.log(arrays[0] === arrays[1]);
+ * // => false
+ */
+
+function stubArray$1() {
+  return [];
+}
+
+var stubArray_1 = stubArray$1;
+
+var arrayFilter = _arrayFilter,
+    stubArray = stubArray_1;
+
+/** Used for built-in method references. */
+var objectProto$5 = Object.prototype;
+
+/** Built-in value references. */
+var propertyIsEnumerable = objectProto$5.propertyIsEnumerable;
+
+/* Built-in method references for those with the same name as other `lodash` methods. */
+var nativeGetSymbols = Object.getOwnPropertySymbols;
+
+/**
+ * Creates an array of the own enumerable symbols of `object`.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @returns {Array} Returns the array of symbols.
+ */
+var getSymbols$1 = !nativeGetSymbols ? stubArray : function(object) {
+  if (object == null) {
+    return [];
+  }
+  object = Object(object);
+  return arrayFilter(nativeGetSymbols(object), function(symbol) {
+    return propertyIsEnumerable.call(object, symbol);
+  });
+};
+
+var _getSymbols = getSymbols$1;
+
+/**
+ * The base implementation of `_.times` without support for iteratee shorthands
+ * or max array length checks.
+ *
+ * @private
+ * @param {number} n The number of times to invoke `iteratee`.
+ * @param {Function} iteratee The function invoked per iteration.
+ * @returns {Array} Returns the array of results.
+ */
+
+function baseTimes$1(n, iteratee) {
+  var index = -1,
+      result = Array(n);
+
+  while (++index < n) {
+    result[index] = iteratee(index);
+  }
+  return result;
+}
+
+var _baseTimes = baseTimes$1;
+
+var isBuffer$2 = {exports: {}};
 
 /**
  * This method returns `false`.
@@ -44256,7 +44443,34 @@ var stubFalse_1 = stubFalse;
 	var isBuffer = nativeIsBuffer || stubFalse;
 
 	module.exports = isBuffer;
-} (isBuffer, isBuffer.exports));
+} (isBuffer$2, isBuffer$2.exports));
+
+/** Used as references for various `Number` constants. */
+
+var MAX_SAFE_INTEGER$1 = 9007199254740991;
+
+/** Used to detect unsigned integer values. */
+var reIsUint = /^(?:0|[1-9]\d*)$/;
+
+/**
+ * Checks if `value` is a valid array-like index.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @param {number} [length=MAX_SAFE_INTEGER] The upper bounds of a valid index.
+ * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
+ */
+function isIndex$2(value, length) {
+  var type = typeof value;
+  length = length == null ? MAX_SAFE_INTEGER$1 : length;
+
+  return !!length &&
+    (type == 'number' ||
+      (type != 'symbol' && reIsUint.test(value))) &&
+        (value > -1 && value % 1 == 0 && value < length);
+}
+
+var _isIndex = isIndex$2;
 
 /** Used as references for various `Number` constants. */
 
@@ -44288,27 +44502,27 @@ var MAX_SAFE_INTEGER = 9007199254740991;
  * _.isLength('3');
  * // => false
  */
-function isLength$1(value) {
+function isLength$3(value) {
   return typeof value == 'number' &&
     value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
 }
 
-var isLength_1 = isLength$1;
+var isLength_1 = isLength$3;
 
 var baseGetTag$2 = _baseGetTag,
-    isLength = isLength_1,
-    isObjectLike$1 = isObjectLike_1;
+    isLength$2 = isLength_1,
+    isObjectLike$2 = isObjectLike_1;
 
 /** `Object#toString` result references. */
-var argsTag = '[object Arguments]',
-    arrayTag = '[object Array]',
+var argsTag$1 = '[object Arguments]',
+    arrayTag$1 = '[object Array]',
     boolTag = '[object Boolean]',
     dateTag = '[object Date]',
     errorTag = '[object Error]',
     funcTag = '[object Function]',
     mapTag$1 = '[object Map]',
     numberTag = '[object Number]',
-    objectTag$1 = '[object Object]',
+    objectTag$2 = '[object Object]',
     regexpTag = '[object RegExp]',
     setTag$1 = '[object Set]',
     stringTag = '[object String]',
@@ -44333,12 +44547,12 @@ typedArrayTags[int8Tag] = typedArrayTags[int16Tag] =
 typedArrayTags[int32Tag] = typedArrayTags[uint8Tag] =
 typedArrayTags[uint8ClampedTag] = typedArrayTags[uint16Tag] =
 typedArrayTags[uint32Tag] = true;
-typedArrayTags[argsTag] = typedArrayTags[arrayTag] =
+typedArrayTags[argsTag$1] = typedArrayTags[arrayTag$1] =
 typedArrayTags[arrayBufferTag] = typedArrayTags[boolTag] =
 typedArrayTags[dataViewTag$1] = typedArrayTags[dateTag] =
 typedArrayTags[errorTag] = typedArrayTags[funcTag] =
 typedArrayTags[mapTag$1] = typedArrayTags[numberTag] =
-typedArrayTags[objectTag$1] = typedArrayTags[regexpTag] =
+typedArrayTags[objectTag$2] = typedArrayTags[regexpTag] =
 typedArrayTags[setTag$1] = typedArrayTags[stringTag] =
 typedArrayTags[weakMapTag$1] = false;
 
@@ -44350,8 +44564,8 @@ typedArrayTags[weakMapTag$1] = false;
  * @returns {boolean} Returns `true` if `value` is a typed array, else `false`.
  */
 function baseIsTypedArray$1(value) {
-  return isObjectLike$1(value) &&
-    isLength(value.length) && !!typedArrayTags[baseGetTag$2(value)];
+  return isObjectLike$2(value) &&
+    isLength$2(value.length) && !!typedArrayTags[baseGetTag$2(value)];
 }
 
 var _baseIsTypedArray = baseIsTypedArray$1;
@@ -44431,9 +44645,314 @@ var nodeIsTypedArray = nodeUtil && nodeUtil.isTypedArray;
  * _.isTypedArray([]);
  * // => false
  */
-var isTypedArray = nodeIsTypedArray ? baseUnary(nodeIsTypedArray) : baseIsTypedArray;
+var isTypedArray$2 = nodeIsTypedArray ? baseUnary(nodeIsTypedArray) : baseIsTypedArray;
 
-var isTypedArray_1 = isTypedArray;
+var isTypedArray_1 = isTypedArray$2;
+
+var baseTimes = _baseTimes,
+    isArguments$1 = isArguments_1,
+    isArray$7 = isArray_1,
+    isBuffer$1 = isBuffer$2.exports,
+    isIndex$1 = _isIndex,
+    isTypedArray$1 = isTypedArray_1;
+
+/** Used for built-in method references. */
+var objectProto$4 = Object.prototype;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty$3 = objectProto$4.hasOwnProperty;
+
+/**
+ * Creates an array of the enumerable property names of the array-like `value`.
+ *
+ * @private
+ * @param {*} value The value to query.
+ * @param {boolean} inherited Specify returning inherited property names.
+ * @returns {Array} Returns the array of property names.
+ */
+function arrayLikeKeys$1(value, inherited) {
+  var isArr = isArray$7(value),
+      isArg = !isArr && isArguments$1(value),
+      isBuff = !isArr && !isArg && isBuffer$1(value),
+      isType = !isArr && !isArg && !isBuff && isTypedArray$1(value),
+      skipIndexes = isArr || isArg || isBuff || isType,
+      result = skipIndexes ? baseTimes(value.length, String) : [],
+      length = result.length;
+
+  for (var key in value) {
+    if ((inherited || hasOwnProperty$3.call(value, key)) &&
+        !(skipIndexes && (
+           // Safari 9 has enumerable `arguments.length` in strict mode.
+           key == 'length' ||
+           // Node.js 0.10 has enumerable non-index properties on buffers.
+           (isBuff && (key == 'offset' || key == 'parent')) ||
+           // PhantomJS 2 has enumerable non-index properties on typed arrays.
+           (isType && (key == 'buffer' || key == 'byteLength' || key == 'byteOffset')) ||
+           // Skip index properties.
+           isIndex$1(key, length)
+        ))) {
+      result.push(key);
+    }
+  }
+  return result;
+}
+
+var _arrayLikeKeys = arrayLikeKeys$1;
+
+/** Used for built-in method references. */
+
+var objectProto$3 = Object.prototype;
+
+/**
+ * Checks if `value` is likely a prototype object.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a prototype, else `false`.
+ */
+function isPrototype$1(value) {
+  var Ctor = value && value.constructor,
+      proto = (typeof Ctor == 'function' && Ctor.prototype) || objectProto$3;
+
+  return value === proto;
+}
+
+var _isPrototype = isPrototype$1;
+
+/**
+ * Creates a unary function that invokes `func` with its argument transformed.
+ *
+ * @private
+ * @param {Function} func The function to wrap.
+ * @param {Function} transform The argument transform.
+ * @returns {Function} Returns the new function.
+ */
+
+function overArg$1(func, transform) {
+  return function(arg) {
+    return func(transform(arg));
+  };
+}
+
+var _overArg = overArg$1;
+
+var overArg = _overArg;
+
+/* Built-in method references for those with the same name as other `lodash` methods. */
+var nativeKeys$1 = overArg(Object.keys, Object);
+
+var _nativeKeys = nativeKeys$1;
+
+var isPrototype = _isPrototype,
+    nativeKeys = _nativeKeys;
+
+/** Used for built-in method references. */
+var objectProto$2 = Object.prototype;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty$2 = objectProto$2.hasOwnProperty;
+
+/**
+ * The base implementation of `_.keys` which doesn't treat sparse arrays as dense.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @returns {Array} Returns the array of property names.
+ */
+function baseKeys$1(object) {
+  if (!isPrototype(object)) {
+    return nativeKeys(object);
+  }
+  var result = [];
+  for (var key in Object(object)) {
+    if (hasOwnProperty$2.call(object, key) && key != 'constructor') {
+      result.push(key);
+    }
+  }
+  return result;
+}
+
+var _baseKeys = baseKeys$1;
+
+var isFunction = isFunction_1,
+    isLength$1 = isLength_1;
+
+/**
+ * Checks if `value` is array-like. A value is considered array-like if it's
+ * not a function and has a `value.length` that's an integer greater than or
+ * equal to `0` and less than or equal to `Number.MAX_SAFE_INTEGER`.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is array-like, else `false`.
+ * @example
+ *
+ * _.isArrayLike([1, 2, 3]);
+ * // => true
+ *
+ * _.isArrayLike(document.body.children);
+ * // => true
+ *
+ * _.isArrayLike('abc');
+ * // => true
+ *
+ * _.isArrayLike(_.noop);
+ * // => false
+ */
+function isArrayLike$3(value) {
+  return value != null && isLength$1(value.length) && !isFunction(value);
+}
+
+var isArrayLike_1 = isArrayLike$3;
+
+var arrayLikeKeys = _arrayLikeKeys,
+    baseKeys = _baseKeys,
+    isArrayLike$2 = isArrayLike_1;
+
+/**
+ * Creates an array of the own enumerable property names of `object`.
+ *
+ * **Note:** Non-object values are coerced to objects. See the
+ * [ES spec](http://ecma-international.org/ecma-262/7.0/#sec-object.keys)
+ * for more details.
+ *
+ * @static
+ * @since 0.1.0
+ * @memberOf _
+ * @category Object
+ * @param {Object} object The object to query.
+ * @returns {Array} Returns the array of property names.
+ * @example
+ *
+ * function Foo() {
+ *   this.a = 1;
+ *   this.b = 2;
+ * }
+ *
+ * Foo.prototype.c = 3;
+ *
+ * _.keys(new Foo);
+ * // => ['a', 'b'] (iteration order is not guaranteed)
+ *
+ * _.keys('hi');
+ * // => ['0', '1']
+ */
+function keys$3(object) {
+  return isArrayLike$2(object) ? arrayLikeKeys(object) : baseKeys(object);
+}
+
+var keys_1 = keys$3;
+
+var baseGetAllKeys = _baseGetAllKeys,
+    getSymbols = _getSymbols,
+    keys$2 = keys_1;
+
+/**
+ * Creates an array of own enumerable property names and symbols of `object`.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @returns {Array} Returns the array of property names and symbols.
+ */
+function getAllKeys$1(object) {
+  return baseGetAllKeys(object, keys$2, getSymbols);
+}
+
+var _getAllKeys = getAllKeys$1;
+
+var getAllKeys = _getAllKeys;
+
+/** Used to compose bitmasks for value comparisons. */
+var COMPARE_PARTIAL_FLAG$3 = 1;
+
+/** Used for built-in method references. */
+var objectProto$1 = Object.prototype;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty$1 = objectProto$1.hasOwnProperty;
+
+/**
+ * A specialized version of `baseIsEqualDeep` for objects with support for
+ * partial deep comparisons.
+ *
+ * @private
+ * @param {Object} object The object to compare.
+ * @param {Object} other The other object to compare.
+ * @param {number} bitmask The bitmask flags. See `baseIsEqual` for more details.
+ * @param {Function} customizer The function to customize comparisons.
+ * @param {Function} equalFunc The function to determine equivalents of values.
+ * @param {Object} stack Tracks traversed `object` and `other` objects.
+ * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
+ */
+function equalObjects$1(object, other, bitmask, customizer, equalFunc, stack) {
+  var isPartial = bitmask & COMPARE_PARTIAL_FLAG$3,
+      objProps = getAllKeys(object),
+      objLength = objProps.length,
+      othProps = getAllKeys(other),
+      othLength = othProps.length;
+
+  if (objLength != othLength && !isPartial) {
+    return false;
+  }
+  var index = objLength;
+  while (index--) {
+    var key = objProps[index];
+    if (!(isPartial ? key in other : hasOwnProperty$1.call(other, key))) {
+      return false;
+    }
+  }
+  // Check that cyclic values are equal.
+  var objStacked = stack.get(object);
+  var othStacked = stack.get(other);
+  if (objStacked && othStacked) {
+    return objStacked == other && othStacked == object;
+  }
+  var result = true;
+  stack.set(object, other);
+  stack.set(other, object);
+
+  var skipCtor = isPartial;
+  while (++index < objLength) {
+    key = objProps[index];
+    var objValue = object[key],
+        othValue = other[key];
+
+    if (customizer) {
+      var compared = isPartial
+        ? customizer(othValue, objValue, key, other, object, stack)
+        : customizer(objValue, othValue, key, object, other, stack);
+    }
+    // Recursively compare objects (susceptible to call stack limits).
+    if (!(compared === undefined
+          ? (objValue === othValue || equalFunc(objValue, othValue, bitmask, customizer, stack))
+          : compared
+        )) {
+      result = false;
+      break;
+    }
+    skipCtor || (skipCtor = key == 'constructor');
+  }
+  if (result && !skipCtor) {
+    var objCtor = object.constructor,
+        othCtor = other.constructor;
+
+    // Non `Object` object instances with different constructors are not equal.
+    if (objCtor != othCtor &&
+        ('constructor' in object && 'constructor' in other) &&
+        !(typeof objCtor == 'function' && objCtor instanceof objCtor &&
+          typeof othCtor == 'function' && othCtor instanceof othCtor)) {
+      result = false;
+    }
+  }
+  stack['delete'](object);
+  stack['delete'](other);
+  return result;
+}
+
+var _equalObjects = equalObjects$1;
 
 var getNative$3 = _getNative,
     root$3 = _root;
@@ -44477,7 +44996,7 @@ var DataView = _DataView,
 
 /** `Object#toString` result references. */
 var mapTag = '[object Map]',
-    objectTag = '[object Object]',
+    objectTag$1 = '[object Object]',
     promiseTag = '[object Promise]',
     setTag = '[object Set]',
     weakMapTag = '[object WeakMap]';
@@ -44498,17 +45017,17 @@ var dataViewCtorString = toSource(DataView),
  * @param {*} value The value to query.
  * @returns {string} Returns the `toStringTag`.
  */
-var getTag = baseGetTag$1;
+var getTag$1 = baseGetTag$1;
 
 // Fallback for data views, maps, sets, and weak maps in IE 11 and promises in Node.js < 6.
-if ((DataView && getTag(new DataView(new ArrayBuffer(1))) != dataViewTag) ||
-    (Map$1 && getTag(new Map$1) != mapTag) ||
-    (Promise$1 && getTag(Promise$1.resolve()) != promiseTag) ||
-    (Set$1 && getTag(new Set$1) != setTag) ||
-    (WeakMap$1 && getTag(new WeakMap$1) != weakMapTag)) {
-  getTag = function(value) {
+if ((DataView && getTag$1(new DataView(new ArrayBuffer(1))) != dataViewTag) ||
+    (Map$1 && getTag$1(new Map$1) != mapTag) ||
+    (Promise$1 && getTag$1(Promise$1.resolve()) != promiseTag) ||
+    (Set$1 && getTag$1(new Set$1) != setTag) ||
+    (WeakMap$1 && getTag$1(new WeakMap$1) != weakMapTag)) {
+  getTag$1 = function(value) {
     var result = baseGetTag$1(value),
-        Ctor = result == objectTag ? value.constructor : undefined,
+        Ctor = result == objectTag$1 ? value.constructor : undefined,
         ctorString = Ctor ? toSource(Ctor) : '';
 
     if (ctorString) {
@@ -44524,7 +45043,269 @@ if ((DataView && getTag(new DataView(new ArrayBuffer(1))) != dataViewTag) ||
   };
 }
 
-var _getTag = getTag;
+var _getTag = getTag$1;
+
+var Stack$1 = _Stack,
+    equalArrays = _equalArrays,
+    equalByTag = _equalByTag,
+    equalObjects = _equalObjects,
+    getTag = _getTag,
+    isArray$6 = isArray_1,
+    isBuffer = isBuffer$2.exports,
+    isTypedArray = isTypedArray_1;
+
+/** Used to compose bitmasks for value comparisons. */
+var COMPARE_PARTIAL_FLAG$2 = 1;
+
+/** `Object#toString` result references. */
+var argsTag = '[object Arguments]',
+    arrayTag = '[object Array]',
+    objectTag = '[object Object]';
+
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty = objectProto.hasOwnProperty;
+
+/**
+ * A specialized version of `baseIsEqual` for arrays and objects which performs
+ * deep comparisons and tracks traversed objects enabling objects with circular
+ * references to be compared.
+ *
+ * @private
+ * @param {Object} object The object to compare.
+ * @param {Object} other The other object to compare.
+ * @param {number} bitmask The bitmask flags. See `baseIsEqual` for more details.
+ * @param {Function} customizer The function to customize comparisons.
+ * @param {Function} equalFunc The function to determine equivalents of values.
+ * @param {Object} [stack] Tracks traversed `object` and `other` objects.
+ * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
+ */
+function baseIsEqualDeep$1(object, other, bitmask, customizer, equalFunc, stack) {
+  var objIsArr = isArray$6(object),
+      othIsArr = isArray$6(other),
+      objTag = objIsArr ? arrayTag : getTag(object),
+      othTag = othIsArr ? arrayTag : getTag(other);
+
+  objTag = objTag == argsTag ? objectTag : objTag;
+  othTag = othTag == argsTag ? objectTag : othTag;
+
+  var objIsObj = objTag == objectTag,
+      othIsObj = othTag == objectTag,
+      isSameTag = objTag == othTag;
+
+  if (isSameTag && isBuffer(object)) {
+    if (!isBuffer(other)) {
+      return false;
+    }
+    objIsArr = true;
+    objIsObj = false;
+  }
+  if (isSameTag && !objIsObj) {
+    stack || (stack = new Stack$1);
+    return (objIsArr || isTypedArray(object))
+      ? equalArrays(object, other, bitmask, customizer, equalFunc, stack)
+      : equalByTag(object, other, objTag, bitmask, customizer, equalFunc, stack);
+  }
+  if (!(bitmask & COMPARE_PARTIAL_FLAG$2)) {
+    var objIsWrapped = objIsObj && hasOwnProperty.call(object, '__wrapped__'),
+        othIsWrapped = othIsObj && hasOwnProperty.call(other, '__wrapped__');
+
+    if (objIsWrapped || othIsWrapped) {
+      var objUnwrapped = objIsWrapped ? object.value() : object,
+          othUnwrapped = othIsWrapped ? other.value() : other;
+
+      stack || (stack = new Stack$1);
+      return equalFunc(objUnwrapped, othUnwrapped, bitmask, customizer, stack);
+    }
+  }
+  if (!isSameTag) {
+    return false;
+  }
+  stack || (stack = new Stack$1);
+  return equalObjects(object, other, bitmask, customizer, equalFunc, stack);
+}
+
+var _baseIsEqualDeep = baseIsEqualDeep$1;
+
+var baseIsEqualDeep = _baseIsEqualDeep,
+    isObjectLike$1 = isObjectLike_1;
+
+/**
+ * The base implementation of `_.isEqual` which supports partial comparisons
+ * and tracks traversed objects.
+ *
+ * @private
+ * @param {*} value The value to compare.
+ * @param {*} other The other value to compare.
+ * @param {boolean} bitmask The bitmask flags.
+ *  1 - Unordered comparison
+ *  2 - Partial comparison
+ * @param {Function} [customizer] The function to customize comparisons.
+ * @param {Object} [stack] Tracks traversed `value` and `other` objects.
+ * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
+ */
+function baseIsEqual$2(value, other, bitmask, customizer, stack) {
+  if (value === other) {
+    return true;
+  }
+  if (value == null || other == null || (!isObjectLike$1(value) && !isObjectLike$1(other))) {
+    return value !== value && other !== other;
+  }
+  return baseIsEqualDeep(value, other, bitmask, customizer, baseIsEqual$2, stack);
+}
+
+var _baseIsEqual = baseIsEqual$2;
+
+var Stack = _Stack,
+    baseIsEqual$1 = _baseIsEqual;
+
+/** Used to compose bitmasks for value comparisons. */
+var COMPARE_PARTIAL_FLAG$1 = 1,
+    COMPARE_UNORDERED_FLAG$1 = 2;
+
+/**
+ * The base implementation of `_.isMatch` without support for iteratee shorthands.
+ *
+ * @private
+ * @param {Object} object The object to inspect.
+ * @param {Object} source The object of property values to match.
+ * @param {Array} matchData The property names, values, and compare flags to match.
+ * @param {Function} [customizer] The function to customize comparisons.
+ * @returns {boolean} Returns `true` if `object` is a match, else `false`.
+ */
+function baseIsMatch$1(object, source, matchData, customizer) {
+  var index = matchData.length,
+      length = index,
+      noCustomizer = !customizer;
+
+  if (object == null) {
+    return !length;
+  }
+  object = Object(object);
+  while (index--) {
+    var data = matchData[index];
+    if ((noCustomizer && data[2])
+          ? data[1] !== object[data[0]]
+          : !(data[0] in object)
+        ) {
+      return false;
+    }
+  }
+  while (++index < length) {
+    data = matchData[index];
+    var key = data[0],
+        objValue = object[key],
+        srcValue = data[1];
+
+    if (noCustomizer && data[2]) {
+      if (objValue === undefined && !(key in object)) {
+        return false;
+      }
+    } else {
+      var stack = new Stack;
+      if (customizer) {
+        var result = customizer(objValue, srcValue, key, object, source, stack);
+      }
+      if (!(result === undefined
+            ? baseIsEqual$1(srcValue, objValue, COMPARE_PARTIAL_FLAG$1 | COMPARE_UNORDERED_FLAG$1, customizer, stack)
+            : result
+          )) {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
+var _baseIsMatch = baseIsMatch$1;
+
+var isObject = isObject_1;
+
+/**
+ * Checks if `value` is suitable for strict equality comparisons, i.e. `===`.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` if suitable for strict
+ *  equality comparisons, else `false`.
+ */
+function isStrictComparable$2(value) {
+  return value === value && !isObject(value);
+}
+
+var _isStrictComparable = isStrictComparable$2;
+
+var isStrictComparable$1 = _isStrictComparable,
+    keys$1 = keys_1;
+
+/**
+ * Gets the property names, values, and compare flags of `object`.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @returns {Array} Returns the match data of `object`.
+ */
+function getMatchData$1(object) {
+  var result = keys$1(object),
+      length = result.length;
+
+  while (length--) {
+    var key = result[length],
+        value = object[key];
+
+    result[length] = [key, value, isStrictComparable$1(value)];
+  }
+  return result;
+}
+
+var _getMatchData = getMatchData$1;
+
+/**
+ * A specialized version of `matchesProperty` for source values suitable
+ * for strict equality comparisons, i.e. `===`.
+ *
+ * @private
+ * @param {string} key The key of the property to get.
+ * @param {*} srcValue The value to match.
+ * @returns {Function} Returns the new spec function.
+ */
+
+function matchesStrictComparable$2(key, srcValue) {
+  return function(object) {
+    if (object == null) {
+      return false;
+    }
+    return object[key] === srcValue &&
+      (srcValue !== undefined || (key in Object(object)));
+  };
+}
+
+var _matchesStrictComparable = matchesStrictComparable$2;
+
+var baseIsMatch = _baseIsMatch,
+    getMatchData = _getMatchData,
+    matchesStrictComparable$1 = _matchesStrictComparable;
+
+/**
+ * The base implementation of `_.matches` which doesn't clone `source`.
+ *
+ * @private
+ * @param {Object} source The object of property values to match.
+ * @returns {Function} Returns the new spec function.
+ */
+function baseMatches$1(source) {
+  var matchData = getMatchData(source);
+  if (matchData.length == 1 && matchData[0][2]) {
+    return matchesStrictComparable$1(matchData[0][0], matchData[0][1]);
+  }
+  return function(object) {
+    return object === source || baseIsMatch(object, source, matchData);
+  };
+}
+
+var _baseMatches = baseMatches$1;
 
 var baseGetTag = _baseGetTag,
     isObjectLike = isObjectLike_1;
@@ -44549,12 +45330,42 @@ var symbolTag = '[object Symbol]';
  * _.isSymbol('abc');
  * // => false
  */
-function isSymbol$1(value) {
+function isSymbol$3(value) {
   return typeof value == 'symbol' ||
     (isObjectLike(value) && baseGetTag(value) == symbolTag);
 }
 
-var isSymbol_1 = isSymbol$1;
+var isSymbol_1 = isSymbol$3;
+
+var isArray$5 = isArray_1,
+    isSymbol$2 = isSymbol_1;
+
+/** Used to match property names within property paths. */
+var reIsDeepProp = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/,
+    reIsPlainProp = /^\w*$/;
+
+/**
+ * Checks if `value` is a property name and not a property path.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @param {Object} [object] The object to query keys on.
+ * @returns {boolean} Returns `true` if `value` is a property name, else `false`.
+ */
+function isKey$3(value, object) {
+  if (isArray$5(value)) {
+    return false;
+  }
+  var type = typeof value;
+  if (type == 'number' || type == 'symbol' || type == 'boolean' ||
+      value == null || isSymbol$2(value)) {
+    return true;
+  }
+  return reIsPlainProp.test(value) || !reIsDeepProp.test(value) ||
+    (object != null && value in Object(object));
+}
+
+var _isKey = isKey$3;
 
 var memoize = memoize_1;
 
@@ -44598,7 +45409,7 @@ var reEscapeChar = /\\(\\)?/g;
  * @param {string} string The string to convert.
  * @returns {Array} Returns the property path array.
  */
-var stringToPath = memoizeCapped(function(string) {
+var stringToPath$1 = memoizeCapped(function(string) {
   var result = [];
   if (string.charCodeAt(0) === 46 /* . */) {
     result.push('');
@@ -44609,15 +45420,15 @@ var stringToPath = memoizeCapped(function(string) {
   return result;
 });
 
-var _stringToPath = stringToPath;
+var _stringToPath = stringToPath$1;
 
 var Symbol$1 = _Symbol,
-    arrayMap = _arrayMap,
-    isArray = isArray_1,
-    isSymbol = isSymbol_1;
+    arrayMap$1 = _arrayMap,
+    isArray$4 = isArray_1,
+    isSymbol$1 = isSymbol_1;
 
 /** Used as references for various `Number` constants. */
-var INFINITY = 1 / 0;
+var INFINITY$1 = 1 / 0;
 
 /** Used to convert symbols to primitives and strings. */
 var symbolProto = Symbol$1 ? Symbol$1.prototype : undefined,
@@ -44631,23 +45442,616 @@ var symbolProto = Symbol$1 ? Symbol$1.prototype : undefined,
  * @param {*} value The value to process.
  * @returns {string} Returns the string.
  */
-function baseToString(value) {
+function baseToString$1(value) {
   // Exit early for strings to avoid a performance hit in some environments.
   if (typeof value == 'string') {
     return value;
   }
-  if (isArray(value)) {
+  if (isArray$4(value)) {
     // Recursively convert values (susceptible to call stack limits).
-    return arrayMap(value, baseToString) + '';
+    return arrayMap$1(value, baseToString$1) + '';
   }
-  if (isSymbol(value)) {
+  if (isSymbol$1(value)) {
     return symbolToString ? symbolToString.call(value) : '';
+  }
+  var result = (value + '');
+  return (result == '0' && (1 / value) == -INFINITY$1) ? '-0' : result;
+}
+
+var _baseToString = baseToString$1;
+
+var baseToString = _baseToString;
+
+/**
+ * Converts `value` to a string. An empty string is returned for `null`
+ * and `undefined` values. The sign of `-0` is preserved.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to convert.
+ * @returns {string} Returns the converted string.
+ * @example
+ *
+ * _.toString(null);
+ * // => ''
+ *
+ * _.toString(-0);
+ * // => '-0'
+ *
+ * _.toString([1, 2, 3]);
+ * // => '1,2,3'
+ */
+function toString$1(value) {
+  return value == null ? '' : baseToString(value);
+}
+
+var toString_1 = toString$1;
+
+var isArray$3 = isArray_1,
+    isKey$2 = _isKey,
+    stringToPath = _stringToPath,
+    toString = toString_1;
+
+/**
+ * Casts `value` to a path array if it's not one.
+ *
+ * @private
+ * @param {*} value The value to inspect.
+ * @param {Object} [object] The object to query keys on.
+ * @returns {Array} Returns the cast property path array.
+ */
+function castPath$2(value, object) {
+  if (isArray$3(value)) {
+    return value;
+  }
+  return isKey$2(value, object) ? [value] : stringToPath(toString(value));
+}
+
+var _castPath = castPath$2;
+
+var isSymbol = isSymbol_1;
+
+/** Used as references for various `Number` constants. */
+var INFINITY = 1 / 0;
+
+/**
+ * Converts `value` to a string key if it's not a string or symbol.
+ *
+ * @private
+ * @param {*} value The value to inspect.
+ * @returns {string|symbol} Returns the key.
+ */
+function toKey$4(value) {
+  if (typeof value == 'string' || isSymbol(value)) {
+    return value;
   }
   var result = (value + '');
   return (result == '0' && (1 / value) == -INFINITY) ? '-0' : result;
 }
 
-var _baseToString = baseToString;
+var _toKey = toKey$4;
+
+var castPath$1 = _castPath,
+    toKey$3 = _toKey;
+
+/**
+ * The base implementation of `_.get` without support for default values.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @param {Array|string} path The path of the property to get.
+ * @returns {*} Returns the resolved value.
+ */
+function baseGet$2(object, path) {
+  path = castPath$1(path, object);
+
+  var index = 0,
+      length = path.length;
+
+  while (object != null && index < length) {
+    object = object[toKey$3(path[index++])];
+  }
+  return (index && index == length) ? object : undefined;
+}
+
+var _baseGet = baseGet$2;
+
+var baseGet$1 = _baseGet;
+
+/**
+ * Gets the value at `path` of `object`. If the resolved value is
+ * `undefined`, the `defaultValue` is returned in its place.
+ *
+ * @static
+ * @memberOf _
+ * @since 3.7.0
+ * @category Object
+ * @param {Object} object The object to query.
+ * @param {Array|string} path The path of the property to get.
+ * @param {*} [defaultValue] The value returned for `undefined` resolved values.
+ * @returns {*} Returns the resolved value.
+ * @example
+ *
+ * var object = { 'a': [{ 'b': { 'c': 3 } }] };
+ *
+ * _.get(object, 'a[0].b.c');
+ * // => 3
+ *
+ * _.get(object, ['a', '0', 'b', 'c']);
+ * // => 3
+ *
+ * _.get(object, 'a.b.c', 'default');
+ * // => 'default'
+ */
+function get$1(object, path, defaultValue) {
+  var result = object == null ? undefined : baseGet$1(object, path);
+  return result === undefined ? defaultValue : result;
+}
+
+var get_1 = get$1;
+
+/**
+ * The base implementation of `_.hasIn` without support for deep paths.
+ *
+ * @private
+ * @param {Object} [object] The object to query.
+ * @param {Array|string} key The key to check.
+ * @returns {boolean} Returns `true` if `key` exists, else `false`.
+ */
+
+function baseHasIn$1(object, key) {
+  return object != null && key in Object(object);
+}
+
+var _baseHasIn = baseHasIn$1;
+
+var castPath = _castPath,
+    isArguments = isArguments_1,
+    isArray$2 = isArray_1,
+    isIndex = _isIndex,
+    isLength = isLength_1,
+    toKey$2 = _toKey;
+
+/**
+ * Checks if `path` exists on `object`.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @param {Array|string} path The path to check.
+ * @param {Function} hasFunc The function to check properties.
+ * @returns {boolean} Returns `true` if `path` exists, else `false`.
+ */
+function hasPath$1(object, path, hasFunc) {
+  path = castPath(path, object);
+
+  var index = -1,
+      length = path.length,
+      result = false;
+
+  while (++index < length) {
+    var key = toKey$2(path[index]);
+    if (!(result = object != null && hasFunc(object, key))) {
+      break;
+    }
+    object = object[key];
+  }
+  if (result || ++index != length) {
+    return result;
+  }
+  length = object == null ? 0 : object.length;
+  return !!length && isLength(length) && isIndex(key, length) &&
+    (isArray$2(object) || isArguments(object));
+}
+
+var _hasPath = hasPath$1;
+
+var baseHasIn = _baseHasIn,
+    hasPath = _hasPath;
+
+/**
+ * Checks if `path` is a direct or inherited property of `object`.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Object
+ * @param {Object} object The object to query.
+ * @param {Array|string} path The path to check.
+ * @returns {boolean} Returns `true` if `path` exists, else `false`.
+ * @example
+ *
+ * var object = _.create({ 'a': _.create({ 'b': 2 }) });
+ *
+ * _.hasIn(object, 'a');
+ * // => true
+ *
+ * _.hasIn(object, 'a.b');
+ * // => true
+ *
+ * _.hasIn(object, ['a', 'b']);
+ * // => true
+ *
+ * _.hasIn(object, 'b');
+ * // => false
+ */
+function hasIn$1(object, path) {
+  return object != null && hasPath(object, path, baseHasIn);
+}
+
+var hasIn_1 = hasIn$1;
+
+var baseIsEqual = _baseIsEqual,
+    get = get_1,
+    hasIn = hasIn_1,
+    isKey$1 = _isKey,
+    isStrictComparable = _isStrictComparable,
+    matchesStrictComparable = _matchesStrictComparable,
+    toKey$1 = _toKey;
+
+/** Used to compose bitmasks for value comparisons. */
+var COMPARE_PARTIAL_FLAG = 1,
+    COMPARE_UNORDERED_FLAG = 2;
+
+/**
+ * The base implementation of `_.matchesProperty` which doesn't clone `srcValue`.
+ *
+ * @private
+ * @param {string} path The path of the property to get.
+ * @param {*} srcValue The value to match.
+ * @returns {Function} Returns the new spec function.
+ */
+function baseMatchesProperty$1(path, srcValue) {
+  if (isKey$1(path) && isStrictComparable(srcValue)) {
+    return matchesStrictComparable(toKey$1(path), srcValue);
+  }
+  return function(object) {
+    var objValue = get(object, path);
+    return (objValue === undefined && objValue === srcValue)
+      ? hasIn(object, path)
+      : baseIsEqual(srcValue, objValue, COMPARE_PARTIAL_FLAG | COMPARE_UNORDERED_FLAG);
+  };
+}
+
+var _baseMatchesProperty = baseMatchesProperty$1;
+
+/**
+ * This method returns the first argument it receives.
+ *
+ * @static
+ * @since 0.1.0
+ * @memberOf _
+ * @category Util
+ * @param {*} value Any value.
+ * @returns {*} Returns `value`.
+ * @example
+ *
+ * var object = { 'a': 1 };
+ *
+ * console.log(_.identity(object) === object);
+ * // => true
+ */
+
+function identity$1(value) {
+  return value;
+}
+
+var identity_1 = identity$1;
+
+/**
+ * The base implementation of `_.property` without support for deep paths.
+ *
+ * @private
+ * @param {string} key The key of the property to get.
+ * @returns {Function} Returns the new accessor function.
+ */
+
+function baseProperty$1(key) {
+  return function(object) {
+    return object == null ? undefined : object[key];
+  };
+}
+
+var _baseProperty = baseProperty$1;
+
+var baseGet = _baseGet;
+
+/**
+ * A specialized version of `baseProperty` which supports deep paths.
+ *
+ * @private
+ * @param {Array|string} path The path of the property to get.
+ * @returns {Function} Returns the new accessor function.
+ */
+function basePropertyDeep$1(path) {
+  return function(object) {
+    return baseGet(object, path);
+  };
+}
+
+var _basePropertyDeep = basePropertyDeep$1;
+
+var baseProperty = _baseProperty,
+    basePropertyDeep = _basePropertyDeep,
+    isKey = _isKey,
+    toKey = _toKey;
+
+/**
+ * Creates a function that returns the value at `path` of a given object.
+ *
+ * @static
+ * @memberOf _
+ * @since 2.4.0
+ * @category Util
+ * @param {Array|string} path The path of the property to get.
+ * @returns {Function} Returns the new accessor function.
+ * @example
+ *
+ * var objects = [
+ *   { 'a': { 'b': 2 } },
+ *   { 'a': { 'b': 1 } }
+ * ];
+ *
+ * _.map(objects, _.property('a.b'));
+ * // => [2, 1]
+ *
+ * _.map(_.sortBy(objects, _.property(['a', 'b'])), 'a.b');
+ * // => [1, 2]
+ */
+function property$1(path) {
+  return isKey(path) ? baseProperty(toKey(path)) : basePropertyDeep(path);
+}
+
+var property_1 = property$1;
+
+var baseMatches = _baseMatches,
+    baseMatchesProperty = _baseMatchesProperty,
+    identity = identity_1,
+    isArray$1 = isArray_1,
+    property = property_1;
+
+/**
+ * The base implementation of `_.iteratee`.
+ *
+ * @private
+ * @param {*} [value=_.identity] The value to convert to an iteratee.
+ * @returns {Function} Returns the iteratee.
+ */
+function baseIteratee$1(value) {
+  // Don't store the `typeof` result in a variable to avoid a JIT bug in Safari 9.
+  // See https://bugs.webkit.org/show_bug.cgi?id=156034 for more details.
+  if (typeof value == 'function') {
+    return value;
+  }
+  if (value == null) {
+    return identity;
+  }
+  if (typeof value == 'object') {
+    return isArray$1(value)
+      ? baseMatchesProperty(value[0], value[1])
+      : baseMatches(value);
+  }
+  return property(value);
+}
+
+var _baseIteratee = baseIteratee$1;
+
+/**
+ * Creates a base function for methods like `_.forIn` and `_.forOwn`.
+ *
+ * @private
+ * @param {boolean} [fromRight] Specify iterating from right to left.
+ * @returns {Function} Returns the new base function.
+ */
+
+function createBaseFor$1(fromRight) {
+  return function(object, iteratee, keysFunc) {
+    var index = -1,
+        iterable = Object(object),
+        props = keysFunc(object),
+        length = props.length;
+
+    while (length--) {
+      var key = props[fromRight ? length : ++index];
+      if (iteratee(iterable[key], key, iterable) === false) {
+        break;
+      }
+    }
+    return object;
+  };
+}
+
+var _createBaseFor = createBaseFor$1;
+
+var createBaseFor = _createBaseFor;
+
+/**
+ * The base implementation of `baseForOwn` which iterates over `object`
+ * properties returned by `keysFunc` and invokes `iteratee` for each property.
+ * Iteratee functions may exit iteration early by explicitly returning `false`.
+ *
+ * @private
+ * @param {Object} object The object to iterate over.
+ * @param {Function} iteratee The function invoked per iteration.
+ * @param {Function} keysFunc The function to get the keys of `object`.
+ * @returns {Object} Returns `object`.
+ */
+var baseFor$1 = createBaseFor();
+
+var _baseFor = baseFor$1;
+
+var baseFor = _baseFor,
+    keys = keys_1;
+
+/**
+ * The base implementation of `_.forOwn` without support for iteratee shorthands.
+ *
+ * @private
+ * @param {Object} object The object to iterate over.
+ * @param {Function} iteratee The function invoked per iteration.
+ * @returns {Object} Returns `object`.
+ */
+function baseForOwn$1(object, iteratee) {
+  return object && baseFor(object, iteratee, keys);
+}
+
+var _baseForOwn = baseForOwn$1;
+
+var isArrayLike$1 = isArrayLike_1;
+
+/**
+ * Creates a `baseEach` or `baseEachRight` function.
+ *
+ * @private
+ * @param {Function} eachFunc The function to iterate over a collection.
+ * @param {boolean} [fromRight] Specify iterating from right to left.
+ * @returns {Function} Returns the new base function.
+ */
+function createBaseEach$1(eachFunc, fromRight) {
+  return function(collection, iteratee) {
+    if (collection == null) {
+      return collection;
+    }
+    if (!isArrayLike$1(collection)) {
+      return eachFunc(collection, iteratee);
+    }
+    var length = collection.length,
+        index = fromRight ? length : -1,
+        iterable = Object(collection);
+
+    while ((fromRight ? index-- : ++index < length)) {
+      if (iteratee(iterable[index], index, iterable) === false) {
+        break;
+      }
+    }
+    return collection;
+  };
+}
+
+var _createBaseEach = createBaseEach$1;
+
+var baseForOwn = _baseForOwn,
+    createBaseEach = _createBaseEach;
+
+/**
+ * The base implementation of `_.forEach` without support for iteratee shorthands.
+ *
+ * @private
+ * @param {Array|Object} collection The collection to iterate over.
+ * @param {Function} iteratee The function invoked per iteration.
+ * @returns {Array|Object} Returns `collection`.
+ */
+var baseEach$1 = createBaseEach(baseForOwn);
+
+var _baseEach = baseEach$1;
+
+var baseEach = _baseEach,
+    isArrayLike = isArrayLike_1;
+
+/**
+ * The base implementation of `_.map` without support for iteratee shorthands.
+ *
+ * @private
+ * @param {Array|Object} collection The collection to iterate over.
+ * @param {Function} iteratee The function invoked per iteration.
+ * @returns {Array} Returns the new mapped array.
+ */
+function baseMap$1(collection, iteratee) {
+  var index = -1,
+      result = isArrayLike(collection) ? Array(collection.length) : [];
+
+  baseEach(collection, function(value, key, collection) {
+    result[++index] = iteratee(value, key, collection);
+  });
+  return result;
+}
+
+var _baseMap = baseMap$1;
+
+var arrayMap = _arrayMap,
+    baseIteratee = _baseIteratee,
+    baseMap = _baseMap,
+    isArray = isArray_1;
+
+/**
+ * Creates an array of values by running each element in `collection` thru
+ * `iteratee`. The iteratee is invoked with three arguments:
+ * (value, index|key, collection).
+ *
+ * Many lodash methods are guarded to work as iteratees for methods like
+ * `_.every`, `_.filter`, `_.map`, `_.mapValues`, `_.reject`, and `_.some`.
+ *
+ * The guarded methods are:
+ * `ary`, `chunk`, `curry`, `curryRight`, `drop`, `dropRight`, `every`,
+ * `fill`, `invert`, `parseInt`, `random`, `range`, `rangeRight`, `repeat`,
+ * `sampleSize`, `slice`, `some`, `sortBy`, `split`, `take`, `takeRight`,
+ * `template`, `trim`, `trimEnd`, `trimStart`, and `words`
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Collection
+ * @param {Array|Object} collection The collection to iterate over.
+ * @param {Function} [iteratee=_.identity] The function invoked per iteration.
+ * @returns {Array} Returns the new mapped array.
+ * @example
+ *
+ * function square(n) {
+ *   return n * n;
+ * }
+ *
+ * _.map([4, 8], square);
+ * // => [16, 64]
+ *
+ * _.map({ 'a': 4, 'b': 8 }, square);
+ * // => [16, 64] (iteration order is not guaranteed)
+ *
+ * var users = [
+ *   { 'user': 'barney' },
+ *   { 'user': 'fred' }
+ * ];
+ *
+ * // The `_.property` iteratee shorthand.
+ * _.map(users, 'user');
+ * // => ['barney', 'fred']
+ */
+function map$1(collection, iteratee) {
+  var func = isArray(collection) ? arrayMap : baseMap;
+  return func(collection, baseIteratee(iteratee));
+}
+
+var map_1 = map$1;
+
+var baseFlatten = _baseFlatten,
+    map = map_1;
+
+/**
+ * Creates a flattened array of values by running each element in `collection`
+ * thru `iteratee` and flattening the mapped results. The iteratee is invoked
+ * with three arguments: (value, index|key, collection).
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Collection
+ * @param {Array|Object} collection The collection to iterate over.
+ * @param {Function} [iteratee=_.identity] The function invoked per iteration.
+ * @returns {Array} Returns the new flattened array.
+ * @example
+ *
+ * function duplicate(n) {
+ *   return [n, n];
+ * }
+ *
+ * _.flatMap([1, 2], duplicate);
+ * // => [1, 1, 2, 2]
+ */
+function flatMap(collection, iteratee) {
+  return baseFlatten(map(collection, iteratee), 1);
+}
+
+var flatMap_1 = flatMap;
 
 var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
 var AMPL = new Token$1(SupportedChainId.MAINNET, '0xD46bA6D942050d489DBd938a2C909A5d5039A161', 9, 'AMPL', 'Ampleforth');
@@ -44755,29 +46159,76 @@ var UnsupportedChainId = /** @class */ (function (_super) {
     }
     return InvalidChainId;
 })(Error));
-/** @class */ ((function (_super) {
+var UnsupportedToken = /** @class */ (function (_super) {
     __extends(UnsupportedToken, _super);
     function UnsupportedToken(token) {
         if (token === void 0) { token = 'UNKNOWN'; }
         return _super.call(this, "Unsupported token ".concat(token)) || this;
     }
     return UnsupportedToken;
-})(Error));
-/** @class */ ((function (_super) {
+}(Error));
+var UnexpectedToken = /** @class */ (function (_super) {
     __extends(UnexpectedToken, _super);
     function UnexpectedToken(token) {
         if (token === void 0) { token = 'UNKNOWN'; }
         return _super.call(this, "Unexpected token ".concat(token)) || this;
     }
     return UnexpectedToken;
-})(Error));
-/** @class */ ((function (_super) {
+}(Error));
+var InsufficientLiquidity = /** @class */ (function (_super) {
     __extends(InsufficientLiquidity, _super);
     function InsufficientLiquidity() {
         return _super.call(this, "Insufficient liquidity for this trade") || this;
     }
     return InsufficientLiquidity;
-})(Error));
+}(Error));
+
+/**
+ * Returns current chain ID based on web3 instance.
+ * @param {Web3} web3 Web3 instance.
+ * @returns {Promise<number>}
+ */
+function getChainId(web3) {
+    return __awaiter$g(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            return [2 /*return*/, web3.eth.getChainId()];
+        });
+    });
+}
+/**
+ * Returns current account ID based on web3 instance.
+ * @param {Web3} web3 Web3 instance.
+ * @returns {Promise<number>}
+ */
+function getAccount(web3) {
+    return __awaiter$g(this, void 0, void 0, function () {
+        var _a, account;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0: return [4 /*yield*/, web3.eth.getAccounts()];
+                case 1:
+                    _a = __read.apply(void 0, [_b.sent(), 1]), account = _a[0];
+                    return [2 /*return*/, account];
+            }
+        });
+    });
+}
+
+var _format="hh-sol-artifact-1";var contractName="ERC20";var sourceName="contracts/Interfaces.sol";var abi=[{anonymous:false,inputs:[{indexed:true,internalType:"address",name:"from",type:"address"},{indexed:true,internalType:"address",name:"to",type:"address"},{indexed:false,internalType:"uint256",name:"amount",type:"uint256"}],name:"Transfer",type:"event"},{anonymous:false,inputs:[{indexed:true,internalType:"address",name:"from",type:"address"},{indexed:true,internalType:"address",name:"to",type:"address"},{indexed:false,internalType:"uint256",name:"amount",type:"uint256"},{indexed:false,internalType:"bytes",name:"data",type:"bytes"}],name:"Transfer",type:"event"},{inputs:[{internalType:"address",name:"owner",type:"address"},{internalType:"address",name:"spender",type:"address"}],name:"allowance",outputs:[{internalType:"uint256",name:"",type:"uint256"}],stateMutability:"view",type:"function"},{inputs:[{internalType:"address",name:"spender",type:"address"},{internalType:"uint256",name:"amount",type:"uint256"}],name:"approve",outputs:[{internalType:"bool",name:"",type:"bool"}],stateMutability:"nonpayable",type:"function"},{inputs:[{internalType:"address",name:"addr",type:"address"}],name:"balanceOf",outputs:[{internalType:"uint256",name:"",type:"uint256"}],stateMutability:"view",type:"function"},{inputs:[],name:"decimals",outputs:[{internalType:"uint8",name:"",type:"uint8"}],stateMutability:"view",type:"function"},{inputs:[{internalType:"address",name:"to",type:"address"},{internalType:"uint256",name:"mintAmount",type:"uint256"}],name:"mint",outputs:[{internalType:"uint256",name:"",type:"uint256"}],stateMutability:"nonpayable",type:"function"},{inputs:[],name:"name",outputs:[{internalType:"string",name:"",type:"string"}],stateMutability:"view",type:"function"},{inputs:[],name:"symbol",outputs:[{internalType:"string",name:"",type:"string"}],stateMutability:"view",type:"function"},{inputs:[],name:"totalSupply",outputs:[{internalType:"uint256",name:"",type:"uint256"}],stateMutability:"view",type:"function"},{inputs:[{internalType:"address",name:"to",type:"address"},{internalType:"uint256",name:"amount",type:"uint256"}],name:"transfer",outputs:[{internalType:"bool",name:"",type:"bool"}],stateMutability:"nonpayable",type:"function"},{inputs:[{internalType:"address",name:"sender",type:"address"},{internalType:"address",name:"recipient",type:"address"},{internalType:"uint256",name:"amount",type:"uint256"}],name:"transferFrom",outputs:[{internalType:"bool",name:"",type:"bool"}],stateMutability:"nonpayable",type:"function"}];var bytecode="0x";var deployedBytecode="0x";var linkReferences={};var deployedLinkReferences={};var ERC20 = {_format:_format,contractName:contractName,sourceName:sourceName,abi:abi,bytecode:bytecode,deployedBytecode:deployedBytecode,linkReferences:linkReferences,deployedLinkReferences:deployedLinkReferences};
+
+/**
+ * Returns instance of ERC20 contract.
+ * @param {Web3} web3 Web3 instance.
+ * @param {string} address Deployed contract address in given chain ID.
+ * @constructor
+ */
+function ERC20Contract(web3, address) {
+    return new web3.eth.Contract(ERC20.abi, address);
+}
+
+var name$1="Uniswap Default List";var timestamp$1="2021-01-21T23:57:10.982Z";var version$1={major:2,minor:0,patch:0};var tags$1={};var logoURI$1="ipfs://QmNa8mQkrNKp1WEEeGjFezDmDeodkWRevGFN8JCV7b4Xir";var keywords$1=["uniswap","default"];var tokens$1=[{chainId:1,address:"0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9",name:"Aave",symbol:"AAVE",decimals:18,logoURI:"https://assets.coingecko.com/coins/images/12645/thumb/AAVE.png?1601374110"},{chainId:1,address:"0xfF20817765cB7f73d4bde2e66e067E58D11095C2",name:"Amp",symbol:"AMP",decimals:18,logoURI:"https://assets.coingecko.com/coins/images/12409/thumb/amp-200x200.png?1599625397"},{name:"Aragon Network Token",address:"0x960b236A07cf122663c4303350609A66A7B288C0",symbol:"ANT",decimals:18,chainId:1,logoURI:"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x960b236A07cf122663c4303350609A66A7B288C0/logo.png"},{name:"Balancer",address:"0xba100000625a3754423978a60c9317c58a424e3D",symbol:"BAL",decimals:18,chainId:1,logoURI:"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xba100000625a3754423978a60c9317c58a424e3D/logo.png"},{chainId:1,address:"0xBA11D00c5f74255f56a5E366F4F77f5A186d7f55",name:"Band Protocol",symbol:"BAND",decimals:18,logoURI:"https://assets.coingecko.com/coins/images/9545/thumb/band-protocol.png?1568730326"},{name:"Bancor Network Token",address:"0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C",symbol:"BNT",decimals:18,chainId:1,logoURI:"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C/logo.png"},{name:"Compound",address:"0xc00e94Cb662C3520282E6f5717214004A7f26888",symbol:"COMP",decimals:18,chainId:1,logoURI:"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xc00e94Cb662C3520282E6f5717214004A7f26888/logo.png"},{name:"Curve DAO Token",address:"0xD533a949740bb3306d119CC777fa900bA034cd52",symbol:"CRV",decimals:18,chainId:1,logoURI:"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xD533a949740bb3306d119CC777fa900bA034cd52/logo.png"},{chainId:1,address:"0x41e5560054824eA6B0732E656E3Ad64E20e94E45",name:"Civic",symbol:"CVC",decimals:8,logoURI:"https://assets.coingecko.com/coins/images/788/thumb/civic.png?1547034556"},{name:"Dai Stablecoin",address:"0x6B175474E89094C44Da98b954EedeAC495271d0F",symbol:"DAI",decimals:18,chainId:1,logoURI:"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png"},{chainId:1,address:"0x0AbdAce70D3790235af448C88547603b945604ea",name:"district0x",symbol:"DNT",decimals:18,logoURI:"https://assets.coingecko.com/coins/images/849/thumb/district0x.png?1547223762"},{name:"Gnosis Token",address:"0x6810e776880C02933D47DB1b9fc05908e5386b96",symbol:"GNO",decimals:18,chainId:1,logoURI:"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6810e776880C02933D47DB1b9fc05908e5386b96/logo.png"},{chainId:1,address:"0xc944E90C64B2c07662A292be6244BDf05Cda44a7",name:"The Graph",symbol:"GRT",decimals:18,logoURI:"https://assets.coingecko.com/coins/images/13397/thumb/Graph_Token.png?1608145566"},{chainId:1,address:"0x85Eee30c52B0b379b046Fb0F85F4f3Dc3009aFEC",name:"Keep Network",symbol:"KEEP",decimals:18,logoURI:"https://assets.coingecko.com/coins/images/3373/thumb/IuNzUb5b_400x400.jpg?1589526336"},{name:"Kyber Network Crystal",address:"0xdd974D5C2e2928deA5F71b9825b8b646686BD200",symbol:"KNC",decimals:18,chainId:1,logoURI:"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xdd974D5C2e2928deA5F71b9825b8b646686BD200/logo.png"},{name:"ChainLink Token",address:"0x514910771AF9Ca656af840dff83E8264EcF986CA",symbol:"LINK",decimals:18,chainId:1,logoURI:"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x514910771AF9Ca656af840dff83E8264EcF986CA/logo.png"},{name:"Loom Network",address:"0xA4e8C3Ec456107eA67d3075bF9e3DF3A75823DB0",symbol:"LOOM",decimals:18,chainId:1,logoURI:"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xA4e8C3Ec456107eA67d3075bF9e3DF3A75823DB0/logo.png"},{name:"LoopringCoin V2",address:"0xBBbbCA6A901c926F240b89EacB641d8Aec7AEafD",symbol:"LRC",decimals:18,chainId:1,logoURI:"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xBBbbCA6A901c926F240b89EacB641d8Aec7AEafD/logo.png"},{chainId:1,address:"0x0F5D2fB29fb7d3CFeE444a200298f468908cC942",name:"Decentraland",symbol:"MANA",decimals:18,logoURI:"https://assets.coingecko.com/coins/images/878/thumb/decentraland-mana.png?1550108745"},{name:"Maker",address:"0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2",symbol:"MKR",decimals:18,chainId:1,logoURI:"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2/logo.png"},{chainId:1,address:"0xec67005c4E498Ec7f55E092bd1d35cbC47C91892",name:"Melon",symbol:"MLN",decimals:18,logoURI:"https://assets.coingecko.com/coins/images/605/thumb/melon.png?1547034295"},{name:"Numeraire",address:"0x1776e1F26f98b1A5dF9cD347953a26dd3Cb46671",symbol:"NMR",decimals:18,chainId:1,logoURI:"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x1776e1F26f98b1A5dF9cD347953a26dd3Cb46671/logo.png"},{chainId:1,address:"0x4fE83213D56308330EC302a8BD641f1d0113A4Cc",name:"NuCypher",symbol:"NU",decimals:18,logoURI:"https://assets.coingecko.com/coins/images/3318/thumb/photo1198982838879365035.jpg?1547037916"},{name:"Orchid",address:"0x4575f41308EC1483f3d399aa9a2826d74Da13Deb",symbol:"OXT",decimals:18,chainId:1,logoURI:"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x4575f41308EC1483f3d399aa9a2826d74Da13Deb/logo.png"},{name:"Republic Token",address:"0x408e41876cCCDC0F92210600ef50372656052a38",symbol:"REN",decimals:18,chainId:1,logoURI:"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x408e41876cCCDC0F92210600ef50372656052a38/logo.png"},{name:"Reputation Augur v1",address:"0x1985365e9f78359a9B6AD760e32412f4a445E862",symbol:"REP",decimals:18,chainId:1,logoURI:"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x1985365e9f78359a9B6AD760e32412f4a445E862/logo.png"},{name:"Reputation Augur v2",address:"0x221657776846890989a759BA2973e427DfF5C9bB",symbol:"REPv2",decimals:18,chainId:1,logoURI:"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x221657776846890989a759BA2973e427DfF5C9bB/logo.png"},{name:"Synthetix Network Token",address:"0xC011a73ee8576Fb46F5E1c5751cA3B9Fe0af2a6F",symbol:"SNX",decimals:18,chainId:1,logoURI:"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xC011a73ee8576Fb46F5E1c5751cA3B9Fe0af2a6F/logo.png"},{name:"Storj Token",address:"0xB64ef51C888972c908CFacf59B47C1AfBC0Ab8aC",symbol:"STORJ",decimals:8,chainId:1,logoURI:"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xB64ef51C888972c908CFacf59B47C1AfBC0Ab8aC/logo.png"},{chainId:1,address:"0x8dAEBADE922dF735c38C80C7eBD708Af50815fAa",name:"tBTC",symbol:"TBTC",decimals:18,logoURI:"https://assets.coingecko.com/coins/images/11224/thumb/tBTC.png?1589620754"},{name:"UMA Voting Token v1",address:"0x04Fa0d235C4abf4BcF4787aF4CF447DE572eF828",symbol:"UMA",decimals:18,chainId:1,logoURI:"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x04Fa0d235C4abf4BcF4787aF4CF447DE572eF828/logo.png"},{name:"Uniswap",address:"0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984",symbol:"UNI",decimals:18,chainId:1,logoURI:"ipfs://QmXttGpZrECX5qCyXbBQiqgQNytVGeZW5Anewvh2jc4psg"},{name:"USDCoin",address:"0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",symbol:"USDC",decimals:6,chainId:1,logoURI:"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48/logo.png"},{name:"Tether USD",address:"0xdAC17F958D2ee523a2206206994597C13D831ec7",symbol:"USDT",decimals:6,chainId:1,logoURI:"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xdAC17F958D2ee523a2206206994597C13D831ec7/logo.png"},{name:"Wrapped BTC",address:"0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",symbol:"WBTC",decimals:8,chainId:1,logoURI:"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599/logo.png"},{name:"Wrapped Ether",address:"0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",symbol:"WETH",decimals:18,chainId:1,logoURI:"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2/logo.png"},{chainId:1,address:"0x0bc529c00C6401aEF6D220BE8C6Ea1667F6Ad93e",name:"yearn finance",symbol:"YFI",decimals:18,logoURI:"https://assets.coingecko.com/coins/images/11849/thumb/yfi-192x192.png?1598325330"},{name:"0x Protocol Token",address:"0xE41d2489571d322189246DaFA5ebDe1F4699F498",symbol:"ZRX",decimals:18,chainId:1,logoURI:"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xE41d2489571d322189246DaFA5ebDe1F4699F498/logo.png"},{name:"Dai Stablecoin",address:"0xaD6D458402F60fD3Bd25163575031ACDce07538D",symbol:"DAI",decimals:18,chainId:3,logoURI:"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xaD6D458402F60fD3Bd25163575031ACDce07538D/logo.png"},{name:"Uniswap",address:"0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984",symbol:"UNI",decimals:18,chainId:3,logoURI:"ipfs://QmXttGpZrECX5qCyXbBQiqgQNytVGeZW5Anewvh2jc4psg"},{name:"Wrapped Ether",address:"0xc778417E063141139Fce010982780140Aa0cD5Ab",symbol:"WETH",decimals:18,chainId:3,logoURI:"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xc778417E063141139Fce010982780140Aa0cD5Ab/logo.png"},{name:"Dai Stablecoin",address:"0xc7AD46e0b8a400Bb3C915120d284AafbA8fc4735",symbol:"DAI",decimals:18,chainId:4,logoURI:"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xc7AD46e0b8a400Bb3C915120d284AafbA8fc4735/logo.png"},{name:"Maker",address:"0xF9bA5210F91D0474bd1e1DcDAeC4C58E359AaD85",symbol:"MKR",decimals:18,chainId:4,logoURI:"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xF9bA5210F91D0474bd1e1DcDAeC4C58E359AaD85/logo.png"},{name:"Uniswap",address:"0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984",symbol:"UNI",decimals:18,chainId:4,logoURI:"ipfs://QmXttGpZrECX5qCyXbBQiqgQNytVGeZW5Anewvh2jc4psg"},{name:"Wrapped Ether",address:"0xc778417E063141139Fce010982780140Aa0cD5Ab",symbol:"WETH",decimals:18,chainId:4,logoURI:"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xc778417E063141139Fce010982780140Aa0cD5Ab/logo.png"},{name:"Uniswap",address:"0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984",symbol:"UNI",decimals:18,chainId:5,logoURI:"ipfs://QmXttGpZrECX5qCyXbBQiqgQNytVGeZW5Anewvh2jc4psg"},{name:"Wrapped Ether",address:"0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6",symbol:"WETH",decimals:18,chainId:5,logoURI:"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6/logo.png"},{name:"Dai Stablecoin",address:"0x4F96Fe3b7A6Cf9725f59d353F723c1bDb64CA6Aa",symbol:"DAI",decimals:18,chainId:42,logoURI:"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x4F96Fe3b7A6Cf9725f59d353F723c1bDb64CA6Aa/logo.png"},{name:"Maker",address:"0xAaF64BFCC32d0F15873a02163e7E500671a4ffcD",symbol:"MKR",decimals:18,chainId:42,logoURI:"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xAaF64BFCC32d0F15873a02163e7E500671a4ffcD/logo.png"},{name:"Uniswap",address:"0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984",symbol:"UNI",decimals:18,chainId:42,logoURI:"ipfs://QmXttGpZrECX5qCyXbBQiqgQNytVGeZW5Anewvh2jc4psg"},{name:"Wrapped Ether",address:"0xd0A1E359811322d97991E03f863a0C30C2cF029C",symbol:"WETH",decimals:18,chainId:42,logoURI:"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xd0A1E359811322d97991E03f863a0C30C2cF029C/logo.png"}];var UniswapTokenList = {name:name$1,timestamp:timestamp$1,version:version$1,tags:tags$1,logoURI:logoURI$1,keywords:keywords$1,tokens:tokens$1};
+
+var name="FuseSwap Token List";var timestamp="2021-07-07T17:05:19.835Z";var version={major:2,minor:9,patch:0};var tags={};var logoURI="ipfs://QmQQGd3Kbb8fhxKQLvzPPngzBGd5aydV3QAigLHy53Hr3g";var keywords=["fuseswap","fuse","default"];var tokens=[{name:"BNB on Fuse",address:"0x6acb34b1Df86E254b544189Ec32Cf737e2482058",symbol:"BNB",decimals:18,chainId:122,logoURI:"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xB8c77482e45F1F44dE1745F52C74426C631bDD52/logo.png"},{name:"Dai Stablecoin on Fuse",address:"0x94Ba7A27c7A95863d1bdC7645AC2951E0cca06bA",symbol:"DAI",decimals:18,chainId:122,logoURI:"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png"},{name:"DEXTools on Fuse",address:"0x2f60a843302F1Be3FA87429CA9d684f9091b003c",symbol:"DEXT",decimals:18,chainId:122,logoURI:"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x26CE25148832C04f3d7F26F32478a9fe55197166/logo.png"},{name:"Fuse Dollar",address:"0x249BE57637D8B013Ad64785404b24aeBaE9B098B",symbol:"fUSD",decimals:18,chainId:122,logoURI:"https://fuselogo.s3.eu-central-1.amazonaws.com/fuse-dollar.png"},{name:"GoodDollar",address:"0x495d133B938596C9984d462F007B676bDc57eCEC",symbol:"G$",decimals:2,chainId:122,logoURI:"https://raw.githubusercontent.com/mul53/token-assets/main/assets/etheruem/0x67c5870b4a41d4ebef24d2456547a03f1f3e094b/logo.png"},{name:"Graph Token on Fuse",address:"0x025a4c577198D116Ea499193E6D735FDb2e6E841",symbol:"GRT",decimals:18,chainId:122,logoURI:"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xc944E90C64B2c07662A292be6244BDf05Cda44a7/logo.png"},{name:"Kyber Network Crystal on Fuse",address:"0x43B17749B246fd2a96DE25d9e4184E27E09765b0",symbol:"KNC",decimals:18,chainId:122,logoURI:"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xdd974D5C2e2928deA5F71b9825b8b646686BD200/logo.png"},{name:"ChainLink Token on Fuse",address:"0x0972F26e8943679b043de23df2fD3852177A7c48",symbol:"LINK",decimals:18,chainId:122,logoURI:"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x514910771AF9Ca656af840dff83E8264EcF986CA/logo.png"},{name:"MANTRA DAO on Fuse",address:"0x7F59aE3a787C0d1D640F99883d0e48c22188C54f",symbol:"OM",decimals:18,chainId:122,logoURI:"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x3593D125a4f7849a1B059E64F4517A86Dd60c95d/logo.png"},{name:"USD Coin on Fuse",address:"0x620fd5fa44BE6af63715Ef4E65DDFA0387aD13F5",symbol:"USDC",decimals:6,chainId:122,logoURI:"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48/logo.png"},{name:"Tether USD on Fuse",address:"0xFaDbBF8Ce7D5b7041bE672561bbA99f79c532e10",symbol:"USDT",decimals:6,chainId:122,logoURI:"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xdAC17F958D2ee523a2206206994597C13D831ec7/logo.png"},{name:"Wrapped BTC on Fuse",address:"0x33284f95ccb7B948d9D352e1439561CF83d8d00d",symbol:"WBTC",decimals:8,chainId:122,logoURI:"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599/logo.png"},{name:"Wrapped Ether on Fuse",address:"0xa722c13135930332Eb3d749B2F0906559D2C5b99",symbol:"WETH",decimals:18,chainId:122,logoURI:"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2/logo.png"},{name:"Wrapped Ether on Fuse",address:"0xd8Bf72f3e163B9CF0C73dFdCC316417A5ac20670",symbol:"WETH (Deprecated)",decimals:18,chainId:122,logoURI:"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2/logo.png",isDeprecated:true},{name:"Wrapped Fuse",address:"0x0BE9e53fd7EDaC9F859882AfdDa116645287C629",symbol:"WFUSE",decimals:18,chainId:122,logoURI:"https://fuselogo.s3.eu-central-1.amazonaws.com/wfuse.png"}];var FuseTokenList = {name:name,timestamp:timestamp,version:version,tags:tags,logoURI:logoURI,keywords:keywords,tokens:tokens};
 
 var debug = function () {
     return undefined;
@@ -44787,6 +46238,228 @@ function debugGroup() {
 function debugGroupEnd() {
 }
 
+var cachedTokens = new Map();
+var cachedTokensByAddress = new Map();
+/**
+ * List of tokens from given url.
+ * @see https://tokenlists.org/
+ * @param {string} url Url to fetch.
+ * @returns {TokenType[]} List of tokens.
+ */
+function fetchURL(url) {
+    return __awaiter$g(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            return [2 /*return*/, fetch(url)
+                    .then(function (r) { return r.json(); })
+                    .then(function (r) { return r.tokens; })
+                    .catch(function (e) {
+                    debug(url, e.message);
+                    return [];
+                })];
+        });
+    });
+}
+/**
+ * Cache single token.
+ * @param {SupportedChainId} supportedChainId Chain ID.
+ * @param {Token} token Necessary token.
+ */
+function cacheToken(supportedChainId, token) {
+    return __awaiter$g(this, void 0, void 0, function () {
+        var _a, tokenList, tokenListByAddress;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0: return [4 /*yield*/, getTokens(supportedChainId)];
+                case 1:
+                    _a = __read.apply(void 0, [_b.sent(), 2]), tokenList = _a[0], tokenListByAddress = _a[1];
+                    if (!tokenListByAddress || !tokenList) {
+                        throw new UnsupportedChainId(supportedChainId);
+                    }
+                    if (!tokenList.has(token.symbol) && !tokenListByAddress.has(token.address)) {
+                        tokenList.set(token.symbol, token);
+                        tokenListByAddress.set(token.address, token);
+                    }
+                    return [2 /*return*/];
+            }
+        });
+    });
+}
+/**
+ * Trying to fetch token from predefined list or fetch it from ERC20 contract.
+ * @param {Web3} web3 Web3 instance.
+ * @param {string} address Token address.
+ * @returns {Token | Currency}
+ */
+function getTokenByAddress(web3, address) {
+    return __awaiter$g(this, void 0, void 0, function () {
+        var chainId, token, contract, symbol, decimals, _a;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0: return [4 /*yield*/, getChainId(web3)];
+                case 1:
+                    chainId = _b.sent();
+                    return [4 /*yield*/, getTokenByAddressFromList(chainId, address)];
+                case 2:
+                    token = _b.sent();
+                    if (!!token) return [3 /*break*/, 7];
+                    return [4 /*yield*/, ERC20Contract(web3, address)];
+                case 3:
+                    contract = _b.sent();
+                    return [4 /*yield*/, contract.methods.symbol().call()];
+                case 4:
+                    symbol = _b.sent();
+                    _a = parseInt;
+                    return [4 /*yield*/, contract.methods.decimals().call()];
+                case 5:
+                    decimals = _a.apply(void 0, [(_b.sent()).toString()]);
+                    token = new Token$1(chainId, address, isNaN(decimals) ? 0 : decimals, symbol);
+                    return [4 /*yield*/, cacheToken(chainId, token)];
+                case 6:
+                    _b.sent();
+                    _b.label = 7;
+                case 7: return [2 /*return*/, token];
+            }
+        });
+    });
+}
+/**
+ * Retrieves and cache list of tokens for given chain ID.
+ * @param {SupportedChainId} supportedChainId Chain ID.
+ * @returns {Promise<[Map<string, Currency>, Map<string, Currency>]>} Pairs of `symbol <-> Currency`.
+ */
+function getTokens(supportedChainId) {
+    return __awaiter$g(this, void 0, void 0, function () {
+        var list, tokenList, tokenListByAddress, tokens, _a, tokens_1, tokens_1_1, token, _b, chainId, address, decimals, name_1, symbol, isDeprecated, _token;
+        var e_1, _c;
+        return __generator(this, function (_d) {
+            switch (_d.label) {
+                case 0:
+                    list = TOKEN_LISTS[supportedChainId] || [];
+                    if (cachedTokens.has(supportedChainId)) {
+                        return [2 /*return*/, [cachedTokens.get(supportedChainId), cachedTokensByAddress.get(supportedChainId)]];
+                    }
+                    tokenList = new Map();
+                    tokenListByAddress = new Map();
+                    if (supportedChainId !== SupportedChainId.FUSE) {
+                        tokenList.set('ETH', Ether.onChain(supportedChainId));
+                        tokenListByAddress.set(AddressZero, Ether.onChain(supportedChainId));
+                    }
+                    else {
+                        tokenList.set('FUSE', FUSE);
+                        tokenListByAddress.set(AddressZero, FUSE);
+                    }
+                    _a = flatMap_1;
+                    return [4 /*yield*/, Promise.all(__spreadArray([UniswapTokenList.tokens, FuseTokenList.tokens], __read(list.map(fetchURL)), false))];
+                case 1:
+                    tokens = _a.apply(void 0, [_d.sent()]).filter(Boolean);
+                    try {
+                        for (tokens_1 = __values(tokens), tokens_1_1 = tokens_1.next(); !tokens_1_1.done; tokens_1_1 = tokens_1.next()) {
+                            token = tokens_1_1.value;
+                            _b = token, chainId = _b.chainId, address = _b.address, decimals = _b.decimals, name_1 = _b.name, symbol = _b.symbol, isDeprecated = _b.isDeprecated;
+                            if (isDeprecated) {
+                                continue;
+                            }
+                            if (tokenList.has(symbol) || supportedChainId !== chainId) {
+                                continue;
+                            }
+                            _token = new Token$1(chainId, address, decimals, symbol, name_1);
+                            tokenList.set(symbol, _token);
+                            tokenListByAddress.set(address, _token);
+                        }
+                    }
+                    catch (e_1_1) { e_1 = { error: e_1_1 }; }
+                    finally {
+                        try {
+                            if (tokens_1_1 && !tokens_1_1.done && (_c = tokens_1.return)) _c.call(tokens_1);
+                        }
+                        finally { if (e_1) throw e_1.error; }
+                    }
+                    // Add G$ support.
+                    if (G$[supportedChainId]) {
+                        tokenList.set('G$', G$[supportedChainId]);
+                        tokenListByAddress.set(G$[supportedChainId].address, G$[supportedChainId]);
+                    }
+                    // Add G$X support.
+                    if (GDX[supportedChainId]) {
+                        tokenList.set('GDX', GDX[supportedChainId]);
+                        tokenListByAddress.set(GDX[supportedChainId].address, GDX[supportedChainId]);
+                    }
+                    // Add GDAO support.
+                    if (GDAO[supportedChainId]) {
+                        tokenList.set('GDAO', GDAO[supportedChainId]);
+                        tokenListByAddress.set(GDAO[supportedChainId].address, GDAO[supportedChainId]);
+                    }
+                    cachedTokens.set(supportedChainId, tokenList);
+                    cachedTokensByAddress.set(supportedChainId, tokenListByAddress);
+                    return [2 /*return*/, [tokenList, tokenListByAddress]];
+            }
+        });
+    });
+}
+/**
+ * Get single token from cached list of tokens.
+ * @param {SupportedChainId} supportedChainId Chain ID.
+ * @param {string} symbol Symbol, that represents currency.
+ * @returns {Promise<Currency | undefined>} Given currency or undefined, if it not exists.
+ */
+function getToken(supportedChainId, symbol) {
+    return __awaiter$g(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            return [2 /*return*/, getTokens(supportedChainId).then(function (_a) {
+                    var _b = __read(_a, 1), map = _b[0];
+                    return map.get(symbol);
+                })];
+        });
+    });
+}
+/**
+ * Get single token from cached list of tokens.
+ * @param {SupportedChainId} supportedChainId Chain ID.
+ * @param {string} address Address, that represents currency.
+ * @returns {Promise<Currency | undefined>} Given currency or undefined, if it not exists.
+ */
+function getTokenByAddressFromList(supportedChainId, address) {
+    return __awaiter$g(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            return [2 /*return*/, getTokens(supportedChainId).then(function (_a) {
+                    var _b = __read(_a, 2), map = _b[1];
+                    return map.get(address);
+                })];
+        });
+    });
+}
+
+/**
+ * Return exponent from decimals number.
+ * @param {number | string} decimals Number of decimals.
+ * @returns {JSBI}
+ */
+function toJSBI(decimals) {
+    if (decimals === void 0) { decimals = 18; }
+    if (decimals === 0) {
+        return JSBI.BigInt(1);
+    }
+    return JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(decimals));
+}
+/**
+ * Decimal into JS Big Integer.
+ * @param {number | string} decimal Decimal number.
+ * @param {number | string} decimals Number of decimals.
+ * @returns {JSBI}
+ */
+function decimalToJSBI(decimal, decimals) {
+    if (decimals === void 0) { decimals = 18; }
+    return JSBI.BigInt(new Decimal(decimal).mul(toJSBI(decimals).toString()).toFixed(0));
+}
+/**
+ * Converts decimal number into percent object.
+ * @param {number | string} decimalPercent Percent in decimal representation.
+ * @returns {Percent}
+ */
+function decimalPercentToPercent(decimalPercent) {
+    var _a = __read(new Decimal(decimalPercent).toFraction(1e18), 2), n = _a[0], d = _a[1];
+    return new Percent(n.toFixed(), d.mul(100).toFixed(0));
+}
 /**
  * Converts decimal number into percent object.
  * @param {number | string} decimal Decimal number.
@@ -44794,6 +46467,28 @@ function debugGroupEnd() {
  */
 function decimalToFraction(decimal) {
     return new (Fraction.bind.apply(Fraction, __spreadArray([void 0], __read(new Decimal(decimal).toFraction(1e18).map(function (v) { return v.toFixed(0); })), false)))();
+}
+/**
+ * Returns currency amount object for G$ in given chain ID.
+ * @param {SupportedChainId} chainId Chain ID.
+ * @param {number | string} amount Decimal value of G$ tokens.
+ * @returns {Promise<CurrencyAmount>}
+ */
+function g$FromDecimal(chainId, amount) {
+    return __awaiter$g(this, void 0, void 0, function () {
+        var G$;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, getToken(chainId, 'G$')];
+                case 1:
+                    G$ = _a.sent();
+                    if (!G$) {
+                        throw new Error('Unsupported chain ID');
+                    }
+                    return [2 /*return*/, CurrencyAmount.fromRawAmount(G$, decimalToJSBI(amount, G$.decimals))];
+            }
+        });
+    });
 }
 
 /**
@@ -44892,4 +46587,4 @@ var aaveStaking = memoize_1(function (chainId, token) { return __awaiter$g(void 
 }); }, function (chainId, token) { return chainId + token.address; });
 var templateObject_1, templateObject_2;
 
-export { id as $, AddressZero as A, WBTC as B, UNI as C, DAI as D, ETH2X_FLI as E, FUSE as F, G$ as G, UMA as H, FEI as I, TRIBE as J, FRAX as K, FXS as L, MIR as M, renBTC as N, AMPL as O, lib_esm as P, defineReadOnly as Q, MaxUint256$1 as R, One$1 as S, TOKEN_LISTS as T, UnsupportedChainId as U, NegativeOne$1 as V, WETH9_EXTENDED as W, Description as X, getStatic as Y, Zero$1 as Z, _isFlattenable as _, isArguments_1 as a, scrypt$1 as a0, getDefaultProvider as a1, JsonRpcProvider as a2, Web3Provider as a3, Contract as a4, cacheClear as a5, aaveStaking as a6, CDAI as a7, debugGroupEnd as a8, debugGroup as a9, getClient as aa, isBuffer as b, isTypedArray_1 as c, isFunction_1 as d, isLength_1 as e, _Stack as f, g$Price as g, _equalArrays as h, isArray_1 as i, _equalByTag as j, _getTag as k, isObjectLike_1 as l, isObject_1 as m, isSymbol_1 as n, _baseToString as o, _stringToPath as p, _arrayMap as q, GDX as r, GDAO as s, debug as t, memoize_1 as u, decimalToFraction as v, delayedCacheClear as w, UST as x, USDC as y, USDT as z };
+export { FUSE as $, AMPL as A, cacheClear as B, Contract as C, DAI as D, ETH2X_FLI as E, FEI as F, GDAO as G, G$ as H, aaveStaking as I, JsonRpcProvider as J, getToken as K, CDAI as L, MIR as M, NegativeOne$1 as N, One$1 as O, debugGroupEnd as P, debugGroup as Q, ERC20Contract as R, AddressZero as S, TRIBE as T, UST as U, getAccount as V, WETH9_EXTENDED as W, UnexpectedToken as X, decimalPercentToPercent as Y, Zero$1 as Z, g$FromDecimal as _, getChainId as a, decimalToJSBI as a0, InsufficientLiquidity as a1, UnsupportedToken as a2, UnsupportedChainId as a3, getClient as a4, debug as b, delayedCacheClear as c, decimalToFraction as d, getTokenByAddress as e, USDC as f, g$Price as g, USDT as h, WBTC as i, UNI as j, UMA as k, FRAX as l, memoize_1 as m, FXS as n, flatMap_1 as o, getTokens as p, lib_esm as q, renBTC as r, defineReadOnly as s, MaxUint256$1 as t, Description as u, getStatic as v, id as w, scrypt$1 as x, getDefaultProvider as y, Web3Provider as z };
