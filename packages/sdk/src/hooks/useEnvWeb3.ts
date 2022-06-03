@@ -4,17 +4,42 @@ import Web3 from 'web3'
 import { SupportedChainId, DAO_NETWORK } from 'constants/chains'
 import { getNetworkEnv } from 'constants/addresses'
 import GdSdkContext from './useGdSdkContext'
-export const RPC = {
+
+export interface RPC {
+    MAINNET_RPC: string | undefined,
+    ROPSTEN_RPC: string | undefined,
+    KOVAN_RPC: string | undefined,
+    FUSE_RPC: string | undefined
+}
+
+export const defaultRPC = {
     [SupportedChainId.MAINNET]:
-        process.env.REACT_APP_MAINNET_RPC ||
         (ethers.getDefaultProvider('mainnet') as any).providerConfigs[0].provider.connection.url,
     [SupportedChainId.ROPSTEN]:
-        process.env.REACT_APP_ROPSTEN_RPC ||
         (ethers.getDefaultProvider('ropsten') as any).providerConfigs[0].provider.connection.url,
     [SupportedChainId.KOVAN]:
-        process.env.REACT_APP_KOVAN_RPC ||
         (ethers.getDefaultProvider('kovan') as any).providerConfigs[0].provider.connection.url,
-    [SupportedChainId.FUSE]: process.env.REACT_APP_FUSE_RPC || 'https://rpc.fuse.io'
+    [SupportedChainId.FUSE]: 'https://rpc.fuse.io'
+}
+
+export const getRpc = (chainId: number):string => {
+  const rpcs = localStorage.getItem('GD_RPCS')
+  if (!rpcs) return 'https://rpc.fuse.io'
+  
+  const rpcUrls:RPC = JSON.parse(rpcs)
+
+  switch(chainId) {
+    case 122:
+      return rpcUrls.FUSE_RPC || defaultRPC[chainId]
+    case 1:
+      return rpcUrls.MAINNET_RPC || defaultRPC[chainId]
+    case 42:
+      return rpcUrls.KOVAN_RPC || defaultRPC[chainId]
+    case 3: 
+      return rpcUrls.ROPSTEN_RPC || defaultRPC[chainId]
+    default:
+      return 'https://rpc.fuse.io'
+  }
 }
 
 /**
@@ -33,7 +58,7 @@ export const useEnvWeb3 = (dao: DAO_NETWORK, activeWeb3?: any | undefined, activ
             if (dao === DAO_NETWORK.FUSE) {
               if (activeWeb3 && (activeChainId as number) === SupportedChainId.FUSE) {
                 return setWeb3([activeWeb3, activeChainId as number])
-              } else provider = new Web3.providers.HttpProvider(RPC[SupportedChainId.FUSE])
+              } else provider = new Web3.providers.HttpProvider(getRpc(SupportedChainId.FUSE))
             } else {
                 //"mainnet" contracts can be on different blockchains depending on env
                 switch (networkEnv) {
@@ -41,7 +66,7 @@ export const useEnvWeb3 = (dao: DAO_NETWORK, activeWeb3?: any | undefined, activ
                         if (activeWeb3 && activeChainId && SupportedChainId.MAINNET === (activeChainId as number)) {
                             return setWeb3([activeWeb3, activeChainId as number])
                         }
-                        provider = new Web3.providers.HttpProvider(RPC[SupportedChainId.MAINNET])
+                        provider = new Web3.providers.HttpProvider(getRpc(SupportedChainId.MAINNET))
                         selectedChainId = SupportedChainId.MAINNET
                         break
                     case 'staging':
@@ -53,12 +78,12 @@ export const useEnvWeb3 = (dao: DAO_NETWORK, activeWeb3?: any | undefined, activ
                         ) {
                             return setWeb3([activeWeb3, activeChainId as number])
                         }
-                        provider = new Web3.providers.HttpProvider(RPC[SupportedChainId.KOVAN])
+                        provider = new Web3.providers.HttpProvider(getRpc(SupportedChainId.KOVAN))
                         selectedChainId = SupportedChainId.KOVAN
 
                         break
                     default:
-                        provider = new Web3.providers.HttpProvider(RPC[SupportedChainId.ROPSTEN])
+                        provider = new Web3.providers.HttpProvider(getRpc(SupportedChainId.ROPSTEN))
                         selectedChainId = SupportedChainId.ROPSTEN
                         break
                 }

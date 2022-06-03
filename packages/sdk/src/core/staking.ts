@@ -61,7 +61,6 @@ export type MyStake = {
  * @returns {Promise<Stake[]>}
  */
 export async function getList(web3: Web3): Promise<Stake[]> {
-  console.log('getting list . . . (sdk-mono)')
     const simpleStakingReleases = await getSimpleStakingContractAddressesV3(web3)
 
     cacheClear(getSocialAPY)

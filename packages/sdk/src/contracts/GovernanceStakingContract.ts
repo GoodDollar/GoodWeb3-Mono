@@ -4,6 +4,7 @@ import { AbiItem } from 'web3-utils'
 import GovernanceStaking from '@gooddollar/goodprotocol/artifacts/contracts/governance/GovernanceStaking.sol/GovernanceStaking.json'
 import { G$ContractAddresses } from 'constants/addresses'
 import { SupportedChainId } from 'constants/chains'
+import { getNetworkEnv } from 'constants/'
 
 /**
  * Returns instance of UBIScheme contract.
@@ -18,7 +19,7 @@ export function governanceStakingContract(web3: Web3, address?: string): Contrac
 }
 
 export async function getGovernanceStakingContracts():Promise<{address:string | null, release: string}[]> {
-  const networkType = process.env.REACT_APP_NETWORK || 'staging'
+  const networkType = getNetworkEnv()
 
   const addressv1 = G$ContractAddresses<string>(SupportedChainId.FUSE, 'GovernanceStaking')
   let addressv2 = null

@@ -44854,7 +44854,6 @@ var g$Price = memoize_1(function () { return __awaiter$g(void 0, void 0, void 0,
                 };
                 debug('G$ to DAI ratio', result.DAI.toSignificant(6));
                 debug('G$ to cDAI ratio', result.cDAI.toSignificant(6));
-                console.log('delayedCacheClear sdk-mono');
                 delayedCacheClear(g$Price);
                 return [2 /*return*/, result];
         }

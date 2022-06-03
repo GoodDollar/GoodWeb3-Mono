@@ -2,7 +2,7 @@ export { g as g$Price } from './chunks/apollo.js';
 export { g as getList, a as getReserveSocialAPY } from './chunks/staking.js';
 import './chunks/addresses.js';
 import 'react';
-import './chunks/protocols.js';
+import './chunks/index.js';
 import 'stream';
 import 'http';
 import 'https';

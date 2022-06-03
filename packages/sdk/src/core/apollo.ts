@@ -57,7 +57,6 @@ export const g$Price = memoize<() => Promise<{ DAI: Fraction; cDAI: Fraction }>>
         }
         debug('G$ to DAI ratio', result.DAI.toSignificant(6))
         debug('G$ to cDAI ratio', result.cDAI.toSignificant(6))
-        console.log('delayedCacheClear sdk-mono')
         delayedCacheClear(g$Price)
 
         return result
