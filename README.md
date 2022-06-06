@@ -1,6 +1,7 @@
-This is the official GoodDollar Library.
+This is the official GoodDollar Mono-Repo.
 
-The mono-repo consisting of: 
-- our own themed component library
+The mono-repo is currently consisting of: 
 - our SDK package
-- ?
+
+
+Install:
