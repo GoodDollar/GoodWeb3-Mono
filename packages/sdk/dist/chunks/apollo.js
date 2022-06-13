@@ -46152,13 +46152,13 @@ var UnsupportedChainId = /** @class */ (function (_super) {
     }
     return UnsupportedChainId;
 }(Error));
-/** @class */ ((function (_super) {
+var InvalidChainId = /** @class */ (function (_super) {
     __extends(InvalidChainId, _super);
     function InvalidChainId(expectedChainId) {
         return _super.call(this, "Invalid chain, expected ".concat(expectedChainId)) || this;
     }
     return InvalidChainId;
-})(Error));
+}(Error));
 var UnsupportedToken = /** @class */ (function (_super) {
     __extends(UnsupportedToken, _super);
     function UnsupportedToken(token) {
@@ -46587,4 +46587,4 @@ var aaveStaking = memoize_1(function (chainId, token) { return __awaiter$g(void 
 }); }, function (chainId, token) { return chainId + token.address; });
 var templateObject_1, templateObject_2;
 
-export { FUSE as $, AMPL as A, cacheClear as B, Contract as C, DAI as D, ETH2X_FLI as E, FEI as F, GDAO as G, G$ as H, aaveStaking as I, JsonRpcProvider as J, getToken as K, CDAI as L, MIR as M, NegativeOne$1 as N, One$1 as O, debugGroupEnd as P, debugGroup as Q, getAccount as R, ERC20Contract as S, TRIBE as T, UST as U, decimalPercentToPercent as V, WETH9_EXTENDED as W, AddressZero as X, UnexpectedToken as Y, Zero$1 as Z, g$FromDecimal as _, getChainId as a, decimalToJSBI as a0, InsufficientLiquidity as a1, UnsupportedToken as a2, UnsupportedChainId as a3, getClient as a4, debug as b, delayedCacheClear as c, decimalToFraction as d, getTokenByAddress as e, USDC as f, g$Price as g, USDT as h, WBTC as i, UNI as j, UMA as k, FRAX as l, memoize_1 as m, FXS as n, flatMap_1 as o, getTokens as p, lib_esm as q, renBTC as r, defineReadOnly as s, MaxUint256$1 as t, Description as u, getStatic as v, id as w, scrypt$1 as x, getDefaultProvider as y, Web3Provider as z };
+export { JsonRpcProvider as $, AddressZero as A, FEI as B, CDAI as C, DAI as D, ERC20Contract as E, FUSE as F, G$ as G, FRAX as H, InvalidChainId as I, FXS as J, renBTC as K, AMPL as L, MaxUint256$1 as M, flatMap_1 as N, lib_esm as O, defineReadOnly as P, One$1 as Q, NegativeOne$1 as R, Description as S, TRIBE as T, UnsupportedChainId as U, getStatic as V, WETH9_EXTENDED as W, id as X, scrypt$1 as Y, Zero$1 as Z, getDefaultProvider as _, getChainId as a, Web3Provider as a0, Contract as a1, cacheClear as a2, GDAO as a3, aaveStaking as a4, getClient as a5, getToken as b, getAccount as c, debug as d, delayedCacheClear as e, debugGroupEnd as f, g$Price as g, debugGroup as h, UnexpectedToken as i, decimalPercentToPercent as j, g$FromDecimal as k, decimalToJSBI as l, memoize_1 as m, InsufficientLiquidity as n, UnsupportedToken as o, getTokens as p, decimalToFraction as q, getTokenByAddress as r, UST as s, MIR as t, USDC as u, USDT as v, WBTC as w, ETH2X_FLI as x, UNI as y, UMA as z };

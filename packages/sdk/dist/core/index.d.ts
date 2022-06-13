@@ -1,5 +1,6 @@
 export { g$Price } from './apollo';
-export { getList as getStakingList, getReserveSocialAPY, getMyList } from './staking';
+export { isWhitelisted, check, claim as claimUBI } from './ubi';
+export { getList as getStakingList, getReserveSocialAPY, getMyList, claim, claimGood } from './staking';
 export type { Stake, MyStake, } from './staking';
 export { approve as approveBuy, buy, getMeta as getBuyMeta, getMetaReverse as getBuyMetaReverse } from './buy';
 export type { BuyInfo } from './buy';

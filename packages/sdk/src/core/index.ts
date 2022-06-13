@@ -1,9 +1,13 @@
 export { g$Price } from './apollo'
 
+export { isWhitelisted, check, claim as claimUBI } from './ubi'
+
 export { 
   getList as getStakingList,
   getReserveSocialAPY,
-  getMyList
+  getMyList,
+  claim,
+  claimGood
 } from './staking'
 
 export type {

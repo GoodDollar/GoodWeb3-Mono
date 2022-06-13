@@ -1,4 +1,4 @@
-export { n as approve, q as claim, p as claimGood, g as getList, b as getMyList, m as getReserveRatio, a as getReserveSocialAPY, l as getTokenPriceInUSDC, o as stake, s as stakeGov, w as withdraw } from '../chunks/staking.js';
+export { p as approve, c as claim, d as claimGood, g as getList, b as getMyList, o as getReserveRatio, a as getReserveSocialAPY, n as getTokenPriceInUSDC, q as stake, s as stakeGov, w as withdraw } from '../chunks/staking.js';
 import '../chunks/addresses.js';
 import '../chunks/apollo.js';
 import 'react';
