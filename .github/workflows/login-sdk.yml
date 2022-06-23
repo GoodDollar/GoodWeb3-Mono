@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - "login-sdk/**"
+      - ".github/workflows/login-sdk.yml"
 
   workflow_dispatch:
     inputs:
