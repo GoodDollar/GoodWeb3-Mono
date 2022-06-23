@@ -51,7 +51,7 @@ jobs:
         run: |
           yarn workspace @gooddollar/goodlogin-sdk install
           yarn workspace @gooddollar/goodlogin-sdk install
-      - name: "prepare publish"
+      - name: "npm publish"
         working-directory: ./packages/login-sdk
         shell: bash
         run: |
@@ -65,5 +65,4 @@ jobs:
           else
             echo "Skipping git push --follow-tags"
           fi
-      - name: "npm publish"
-        run: ${{ env.publish_cmd }}
+          ${{ env.publish_cmd }}
