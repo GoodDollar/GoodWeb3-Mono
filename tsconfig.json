@@ -1,0 +1,11 @@
+{
+  "exclude": ["./node_modules", "./node_modules/**/*", "node_modules", "dist"],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "sourceMap": true,
+    "paths": {
+      "@gooddollar/web3sdk": ["./packages/sdk"],
+      "@gooddollar/web3sdk-v2": ["./packages/sdk-v2"]
+    }
+  }
+}
