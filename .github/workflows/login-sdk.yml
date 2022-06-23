@@ -22,7 +22,7 @@ jobs:
       git_email: techadmin@gooddollar.org
       git_username: techadmin
       push_version_commit: true # if your prePublishOnly step pushes git commits, you can omit this input or set it to false.
-      GH_RELEASE_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }} # built in actions token.  Passed tp gh-release if in use.
+      GH_RELEASE_GITHUB_API_TOKEN: ${{ secrets.DEPLOY_GITHUB_TOKEN }} # built in actions token.  Passed tp gh-release if in use.
       NODE_AUTH_TOKEN: ${{ secrets.NPM_DEPLOY_TOKEN }} # user set secret token generated at npm
       publish_cmd: npm publish --access public
     steps:
