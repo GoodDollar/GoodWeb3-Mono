@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  push:
+    paths:
+      - "login-sdk/**"
+
+  workflow_dispatch:
+    inputs:
+      bumpversion:
+        description: "Semantic Version Bump Type (major minor patch)"
+        required: true
+        default: "patch"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/login-sdk
+    name: "version bump and publish to npm"
+    if: github.ref == 'refs/heads/master'
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          # fetch full history so things like auto-changelog work properly
+          fetch-depth: 0
+      - name: Use Node 14
+        uses: actions/setup-node@v3
+        with:
+          node-version: "14"
+          # setting a registry enables the NODE_AUTH_TOKEN env variable where we can set an npm token.  REQUIRED
+          registry-url: "https://registry.npmjs.org"
+      - run: npm install -g yarn
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+      - uses: actions/cache@v2
+        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: "build"
+        run: |
+          yarn
+          yarn rollup
+          USER_INPUT=${{ github.event.inputs.bumpversion }}          
+          VERSION=${USER_INPUT:-"patch"}
+          echo "bumpversion=${VERSION}" >> $GITHUB_ENV
+      - name: Version and publish to npm
+        uses: bcomnes/npm-bump@v2.0.2
+        with:
+          git_email: techadmin@gooddollar.org
+          git_username: techadmin
+          newversion: ${{ env.bumpversion }}
+          push_version_commit: true # if your prePublishOnly step pushes git commits, you can omit this input or set it to false.
+          github_token: ${{ secrets.GITHUB_TOKEN }} # built in actions token.  Passed tp gh-release if in use.
+          npm_token: ${{ secrets.NPM_DEPLOY_TOKEN }} # user set secret token generated at npm
+          publish_cmd: npm publish --access public
