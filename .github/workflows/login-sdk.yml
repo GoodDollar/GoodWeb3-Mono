@@ -19,12 +19,12 @@ jobs:
     name: "version bump and publish to npm"
     if: github.ref == 'refs/heads/master'
     env:
-        git_email: techadmin@gooddollar.org
-        git_username: techadmin
-        push_version_commit: true # if your prePublishOnly step pushes git commits, you can omit this input or set it to false.
-        GH_RELEASE_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }} # built in actions token.  Passed tp gh-release if in use.
-        NODE_AUTH_TOKEN: ${{ secrets.NPM_DEPLOY_TOKEN }} # user set secret token generated at npm
-        publish_cmd: npm publish --access public
+      git_email: techadmin@gooddollar.org
+      git_username: techadmin
+      push_version_commit: true # if your prePublishOnly step pushes git commits, you can omit this input or set it to false.
+      GH_RELEASE_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }} # built in actions token.  Passed tp gh-release if in use.
+      NODE_AUTH_TOKEN: ${{ secrets.NPM_DEPLOY_TOKEN }} # user set secret token generated at npm
+      publish_cmd: npm publish --access public
     steps:
       - uses: actions/checkout@v3
         with:
@@ -50,21 +50,20 @@ jobs:
       - name: "build"
         run: |
           yarn workspace @gooddollar/goodlogin-sdk install
-          yarn workspace @gooddollar/goodlogin-sdk install          
-      - name: "prepare publish"   
+          yarn workspace @gooddollar/goodlogin-sdk install
+      - name: "prepare publish"
         working-directory: ./packages/login-sdk
         shell: bash
         run: |
-        git config --global user.email "${{ env.git_email }}"
-        git config --global user.name "${{ env.git_username }}"
-        USER_INPUT=${{ github.event.inputs.bumpversion }}          
-        VERSION=${USER_INPUT:-"patch"}          
-        npm version ${VERSION}        
-        if [ "${{ env.push_version_commit }}" = "true" ]; then
-          git push --follow-tags
-        else
-          echo "Skipping git push --follow-tags"
-        fi
+          git config --global user.email "${{ env.git_email }}"
+          git config --global user.name "${{ env.git_username }}"
+          USER_INPUT=${{ github.event.inputs.bumpversion }}          
+          VERSION=${USER_INPUT:-"patch"}          
+          npm version ${VERSION}        
+          if [ "${{ env.push_version_commit }}" = "true" ]; then
+            git push --follow-tags
+          else
+            echo "Skipping git push --follow-tags"
+          fi
       - name: "npm publish"
         run: ${{ env.publish_cmd }}
-        
