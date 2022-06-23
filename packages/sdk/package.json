@@ -1,5 +1,5 @@
 {
-  "name": "@gooddollar/sdk",
+  "name": "@gooddollar/web3sdk",
   "version": "0.0.1",
   "description": "GoodDollar SDK package",
   "private": true,
