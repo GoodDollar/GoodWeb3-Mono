@@ -1,0 +1,44 @@
+{
+    "olddao": {
+        "Identity": "0xB7f8BC63BbcaD18155201308C8f3540b07f84F5e"
+    },
+    "develop": {
+        "Identity": "0x202CCe504e04bEd6fC0521238dDf04Bc9E8E15aB"
+    },
+    "develop-mainnet": {
+        "Identity": "0x202CCe504e04bEd6fC0521238dDf04Bc9E8E15aB"
+    },
+    "kovan-mainnet": {
+        "Identity": "0xCA95A91238a9fbE2458aaC54Cf00F99eCAB14E0a"
+    },
+    "fuse": {
+        "Identity": "0x7ccF1011610138b484fCc921858e7971342d213c"
+    },
+    "fuse-mainnet": {
+        "Identity": "0x4D347bda25BEf041BfCB5205deECD1A33ab46db9"
+    },
+    "dapptest": {
+        "Identity": "0x0165878A594ca255338adfa4d48449f69242Eb8F"
+    },
+    "dapptest-mainnet": {
+        "Identity": "0x0165878A594ca255338adfa4d48449f69242Eb8F"
+    },
+    "staging-mainnet": {
+        "Identity": "0x7599F95677cb14d7D8834a58B3b0545a13870A56"
+    },
+    "staging": {
+        "Identity": "0x0af5eF8cdCeddDD9033cEf1E83B0Ae54f3a793A5"
+    },
+    "test": {
+        "Identity": "0xFE0730c6426b87BEBE9bf73474B1310F93617822"
+    },
+    "test-mainnet": {
+        "Identity": "0xc47EF4D1d3C2e18c02B2163A8dAB2F5B5099C3Ff"
+    },
+    "production": {
+        "Identity": "0xFa8d865A962ca8456dF331D78806152d3aC5B84F"
+    },
+    "production-mainnet": {
+        "Identity": "0x76e76e10Ac308A1D54a00f9df27EdCE4801F288b"
+    }
+}
