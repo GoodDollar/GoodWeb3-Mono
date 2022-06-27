@@ -44,7 +44,7 @@ jobs:
         id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('./packages/web3sdk-v2/yarn.lock') }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('./packages/sdk-v2/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-web3sdk-v2
       - name: "build"
