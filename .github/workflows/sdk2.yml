@@ -50,6 +50,7 @@ jobs:
       - name: "build"
         run: |
           yarn workspace @gooddollar/web3sdk-v2 install
+          yarn build
       - name: "npm publish"
         working-directory: ./packages/sdk-v2
         shell: bash
