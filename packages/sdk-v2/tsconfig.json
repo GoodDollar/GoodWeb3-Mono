@@ -22,9 +22,8 @@
     "isolatedModules": true,
     "declaration": true,
     "emitDeclarationOnly": false,
-    "declarationMap": true,
-    "composite": true
+    "declarationMap": true
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "src/stories", "**/*.stories.tsx", "src/types"]
+  "exclude": ["node_modules", "src/stories", "**/*.stories.tsx", "src/types", "**/*.test.*", "__tests__"]
 }

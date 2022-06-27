@@ -14,7 +14,8 @@
   "module": "dist/index.js",
   "files": [
     "dist",
-    "types"
+    "types",
+    "src"
   ],
   "types": "types/index.d.ts",
   "devDependencies": {

@@ -3,8 +3,8 @@ name: Login SDK publish
 on:
   push:
     paths:
-      - "login-sdk/**"
-      - ".github/workflows/login-sdk.yml"
+      - "sdk-v2/**"
+      - ".github/workflows/sdk-v2.yml"
 
   workflow_dispatch:
     inputs:
@@ -49,9 +49,9 @@ jobs:
             ${{ runner.os }}-yarn-login-sdk
       - name: "build"
         run: |
-          yarn workspace @gooddollar/goodlogin-sdk install
+          yarn workspace @gooddollar/web3sdk-v2 install
       - name: "npm publish"
-        working-directory: ./packages/login-sdk
+        working-directory: ./packages/web3sdk-v2
         shell: bash
         run: |
           git config --global user.email "${{ env.git_email }}"

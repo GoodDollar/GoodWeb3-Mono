@@ -1,6 +1,6 @@
 {
   "name": "@gooddollar/web3sdk",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "GoodDollar SDK package",
   "private": true,
   "author": "LewisB <lewis@gooddollar.org>",
