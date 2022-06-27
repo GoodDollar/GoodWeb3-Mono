@@ -51,7 +51,7 @@ jobs:
         run: |
           yarn workspace @gooddollar/web3sdk-v2 install
       - name: "npm publish"
-        working-directory: ./packages/web3sdk-v2
+        working-directory: ./packages/sdk-v2
         shell: bash
         run: |
           git config --global user.email "${{ env.git_email }}"
