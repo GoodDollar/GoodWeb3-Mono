@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useConfig, Call, RawCall } from "@usedapp/core";
-import { encodeCallData } from "@usedapp/core/dist/esm/src/helpers";
+import { encodeCallData } from "@usedapp/core/dist/cjs/src/helpers";
 import { type BaseProviderFactory } from "@usedapp/core/src/constants/type/Config";
 
 import { JsonRpcProvider, BaseProvider } from "@ethersproject/providers";
