@@ -1,10 +1,10 @@
-name: Web3 SDK publish
+name: Web3 V2 SDK publish
 
 on:
   push:
     paths:
-      - "sdk-v2/**"
-      - ".github/workflows/sdk-v2.yml"
+      - "packages/sdk-v2/**"
+      - ".github/workflows/sdk2.yml"
 
   workflow_dispatch:
     inputs:
