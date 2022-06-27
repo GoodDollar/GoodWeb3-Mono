@@ -1,13 +1,14 @@
 {
   "name": "@gooddollar/web3sdk-v2",
   "repository": "https://github.com/GoodDollar/GoodWeb3-mono/packages/sdk-v2",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "ethers and react hooks based on usedapp sdk for GoodDollar protocol",
   "scripts": {
     "build": "ctix r && ctix c && tsc",
     "test": "jest",
     "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook"
+    "build-storybook": "build-storybook",
+    "version": "npm version $npm_package_version --workspaces && git add **/package.json"
   },
   "author": "sirpy",
   "license": "MIT",
