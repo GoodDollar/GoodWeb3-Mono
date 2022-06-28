@@ -3,7 +3,7 @@ name: Login SDK publish
 on:
   push:
     paths:
-      - "login-sdk/**"
+      - "packages/login-sdk/**"
       - ".github/workflows/login-sdk.yml"
 
   workflow_dispatch:
