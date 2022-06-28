@@ -40,11 +40,13 @@ export class ClaimSDK {
     this.contracts = Contracts[envKey as keyof typeof Contracts] as EnvValue;
     provider.getNetwork().then(network => {
       if (network.chainId != this.contracts.networkId)
-        throw new Error(
+        // throw new Error(
+        console.warn(
           `ClaimSDK: provider chainId doesn't much env (${envKey as string}) chainId. provider:${network.chainId} env:${
             this.contracts.networkId
           }`
         );
+      // );
     });
     try {
       const signer = provider.getSigner();
