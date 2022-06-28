@@ -3,7 +3,7 @@ import ContractsAddress from "@gooddollar/goodprotocol/releases/deployment.json"
 import IdentityABI from "@gooddollar/goodprotocol/artifacts/contracts/Interfaces.sol/IIdentity.json";
 import { env } from "process";
 
-interface ResponseType {
+export type LoginResponse = {
   //Wallet address
   a: { value: string; attestation: string };
   //Is address whitelisted
@@ -16,7 +16,7 @@ interface ResponseType {
   e?: { value: string; attestation: string };
   //Mobile
   m?: { value: string; attestation: string };
-   //Avatar 
+  //Avatar
   av?: { value: string; attestation: string };
   //Timestamp of response
   nonce: { value: number; attestation: string };
@@ -24,34 +24,30 @@ interface ResponseType {
   sig: any;
   //Error
   error?: string;
-}
+};
 
-export const parseLoginResponse = async (response: ResponseType) => {
-  const transformObject = (res: ResponseType) => ({
-    walletAddrress: { value: res.a.value, isVerified: false },
-    isAddressWhitelisted: { value: res.v.value, isVerified: false },
-    ...(res?.I?.value ? { location: { value: res.I.value, isVerified: false } } : {}),
-    ...(res?.av?.value ? { avatar: { value: res.av.value, isVerified: false } } : {}),
-    ...(res?.n?.value ? { fullName: { value: res.n.value, isVerified: false } } : {}),
-    ...(res?.m?.value ? { mobile: { value: res.m.value, isVerified: false } } : {}),
-    ...(res?.e?.value ? { email: { value: res.e.value, isVerified: false } } : {}),
-  });
+const transformObject = (res: LoginResponse) => ({
+  walletAddress: { value: res.a.value, isVerified: false },
+  isAddressWhitelisted: { value: res.v.value, isVerified: false },
+  ...(res?.I?.value ? { location: { value: res.I.value, isVerified: false } } : {}),
+  ...(res?.av?.value ? { avatar: { value: res.av.value, isVerified: false } } : {}),
+  ...(res?.n?.value ? { fullName: { value: res.n.value, isVerified: false } } : {}),
+  ...(res?.m?.value ? { mobile: { value: res.m.value, isVerified: false } } : {}),
+  ...(res?.e?.value ? { email: { value: res.e.value, isVerified: false } } : {})
+});
 
+export type ParsedResponse = ReturnType<typeof transformObject> & { verifiedResponse: boolean };
+export const parseLoginResponse = async (response: LoginResponse): Promise<ParsedResponse | void> => {
   if (response?.error) {
-    return response;
+    return;
   }
   const { sig, a, nonce, v } = response;
   const nonceNotToOld = Date.now() - nonce.value >= 300000;
   if (!nonceNotToOld) {
-    const web3Instance = new Web3(
-      new Web3.providers.HttpProvider("https://rpc.fuse.io/")
-    );
+    const web3Instance = new Web3(new Web3.providers.HttpProvider("https://rpc.fuse.io/"));
     const dataToRecover = { ...response };
     delete dataToRecover.sig;
-    const userRecoveredWalletAddress = web3Instance.eth.accounts.recover(
-      JSON.stringify(dataToRecover),
-      sig
-    );
+    const userRecoveredWalletAddress = web3Instance.eth.accounts.recover(JSON.stringify(dataToRecover), sig);
     if (userRecoveredWalletAddress === a.value) {
       const identityContract = new web3Instance.eth.Contract(
         IdentityABI.abi as any,
@@ -59,12 +55,11 @@ export const parseLoginResponse = async (response: ResponseType) => {
         { from: a.value }
       );
       try {
-        const isWhitelisted =
-          v.value && (await identityContract.methods.isWhitelisted(a.value).call());
+        const isAddressWhitelisted = v.value && (await identityContract.methods.isWhitelisted(a.value).call());
         return {
           ...transformObject(response),
-          isWhitelisted,
-          verifiedResponse: true,
+          isAddressWhitelisted,
+          verifiedResponse: true
         };
       } catch (e) {
         console.log(e);
