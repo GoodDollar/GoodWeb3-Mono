@@ -58,7 +58,8 @@ jobs:
           git config --global user.name "${{ env.git_username }}"
           USER_INPUT=${{ github.event.inputs.bumpversion }}          
           VERSION=${USER_INPUT:-"patch"}          
-          npm version ${VERSION}        
+          npm version ${VERSION}      
+          git add package.json  
           if [ "${{ env.push_version_commit }}" = "true" ]; then
             git push --follow-tags
           else
