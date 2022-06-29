@@ -37,7 +37,7 @@
     "react": "^17.0.2"
   },
   "dependencies": {
-    "@gooddollar/goodprotocol": "^1.0.17",
+    "@gooddollar/goodprotocol": "^1.0.20",
     "web3": "^1.7.4"
   }
 }

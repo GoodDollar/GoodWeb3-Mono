@@ -23,6 +23,16 @@ export const sampleGooddollarSignedObject = {
   sig: "0x842bcfa173f420074870f88111d629399ef3f4455b203ce728c3c9007eb89902362e707f2bc8d124d58a8272d6e1f662eebe6d9dc3e2f75c9717036f0023cef21c"
 };
 
+export const sampleWhitelistedGooddollarSignedObject = {
+  a: {
+    value: "0x66582D24FEaD72555adaC681Cc621caCbB208324",
+    attestation: ""
+  },
+  v: { value: true, attestation: "" },
+  nonce: { value: 3312972836304, attestation: "" },
+  sig: "0x50ddf850f78cce38563ae7146b88e616508d9ed547646c8a82a28e5c66fa078f7a4663a811e9580a6d2284a730234210b777cfe3835a2ec7aa79d8c6fe1280a01b"
+};
+
 export const parsedResult = {
   walletAddress: {
     value: "0x76C89a6F67882a228fA999eB8F15080D86B2E8B5",
