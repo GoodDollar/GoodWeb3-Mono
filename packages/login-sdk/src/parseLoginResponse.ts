@@ -26,7 +26,22 @@ export type LoginResponse = {
   error?: string;
 };
 
-const transformObject = (res: LoginResponse) => ({
+export type ParsedValue = {
+  value: string | number | boolean;
+  isVerified: boolean;
+};
+export type ParsedResponse = {
+  verifiedResponse?: boolean;
+  walletAddress: ParsedValue;
+  isAddressWhitelisted: ParsedValue;
+  location?: ParsedValue;
+  avatar?: ParsedValue;
+  fullName?: ParsedValue;
+  mobile?: ParsedValue;
+  email?: ParsedValue;
+};
+
+const transformObject = (res: LoginResponse): ParsedResponse => ({
   walletAddress: { value: res.a.value, isVerified: false },
   isAddressWhitelisted: { value: res.v.value, isVerified: false },
   ...(res?.I?.value ? { location: { value: res.I.value, isVerified: false } } : {}),
@@ -36,14 +51,13 @@ const transformObject = (res: LoginResponse) => ({
   ...(res?.e?.value ? { email: { value: res.e.value, isVerified: false } } : {})
 });
 
-export type ParsedResponse = ReturnType<typeof transformObject> & { verifiedResponse: boolean };
 export const parseLoginResponse = async (response: LoginResponse): Promise<ParsedResponse | void> => {
   if (response?.error) {
     return;
   }
   const { sig, a, nonce, v } = response;
-  const nonceNotToOld = Date.now() - nonce.value >= 300000;
-  if (!nonceNotToOld) {
+  const nonceNotToOld = Date.now() - nonce.value <= 600000;
+  if (nonceNotToOld) {
     const web3Instance = new Web3(new Web3.providers.HttpProvider("https://rpc.fuse.io/"));
     const dataToRecover = { ...response };
     delete dataToRecover.sig;
@@ -58,17 +72,19 @@ export const parseLoginResponse = async (response: LoginResponse): Promise<Parse
         const isAddressWhitelisted = v.value && (await identityContract.methods.isWhitelisted(a.value).call());
         return {
           ...transformObject(response),
-          isAddressWhitelisted,
+          isAddressWhitelisted: { value: isAddressWhitelisted, isVerified: true },
           verifiedResponse: true
         };
       } catch (e) {
-        console.log(e);
+        console.error(e);
         return { ...transformObject(response), verifiedResponse: false };
       }
     } else {
+      console.warn("address mismatch", { userRecoveredWalletAddress, address: a.value });
       return { ...transformObject(response), verifiedResponse: false };
     }
   } else {
+    console.warn("nonce too old");
     return { ...transformObject(response), verifiedResponse: false };
   }
 };

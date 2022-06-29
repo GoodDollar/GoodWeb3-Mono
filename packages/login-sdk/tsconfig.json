@@ -3,6 +3,7 @@
     // Default
     "target": "ESNext",
     "types": ["jest", "node"],
+    "module": "commonjs",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
@@ -16,7 +17,11 @@
     "outDir": "dist",
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
-    "emitDeclarationOnly": true,
-    "baseUrl": "src"
-  }
+    "emitDeclarationOnly": false,
+    "baseUrl": "src",
+    "noEmit": false,
+    "declarationMap": true
+  },
+  "include": ["src"],
+  "exclude": ["src/tests"]
 }

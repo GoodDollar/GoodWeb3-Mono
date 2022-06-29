@@ -50,7 +50,7 @@ jobs:
       - name: "build"
         run: |
           yarn workspace @gooddollar/goodlogin-sdk install
-          yarn workspace @gooddollar/goodlogin-sdk rollup
+          yarn workspace @gooddollar/goodlogin-sdk build
       - name: "npm publish"
         working-directory: ./packages/login-sdk
         shell: bash
