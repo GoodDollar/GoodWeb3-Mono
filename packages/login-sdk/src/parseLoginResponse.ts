@@ -51,7 +51,10 @@ const transformObject = (res: LoginResponse): ParsedResponse => ({
   ...(res?.e?.value ? { email: { value: res.e.value, isVerified: false } } : {})
 });
 
-export const parseLoginResponse = async (response: LoginResponse): Promise<ParsedResponse | void> => {
+export const parseLoginResponse = async (
+  response: LoginResponse,
+  contractsEnv = "production"
+): Promise<ParsedResponse | void> => {
   if (response?.error) {
     return;
   }
@@ -65,7 +68,7 @@ export const parseLoginResponse = async (response: LoginResponse): Promise<Parse
     if (userRecoveredWalletAddress === a.value) {
       const identityContract = new web3Instance.eth.Contract(
         IdentityABI.abi as any,
-        (ContractsAddress as any)[env?.REACT_APP_NETWORK ?? "fuse"].Identity,
+        (ContractsAddress as any)[env?.REACT_APP_NETWORK ?? contractsEnv].Identity,
         { from: a.value }
       );
       try {
