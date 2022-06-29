@@ -39,6 +39,7 @@ export type ParsedResponse = {
   fullName?: ParsedValue;
   mobile?: ParsedValue;
   email?: ParsedValue;
+  error?: string;
 };
 
 const transformObject = (res: LoginResponse): ParsedResponse => ({
@@ -78,16 +79,16 @@ export const parseLoginResponse = async (
           isAddressWhitelisted: { value: isAddressWhitelisted, isVerified: true },
           verifiedResponse: true
         };
-      } catch (e) {
+      } catch (e: any) {
         console.error(e);
-        return { ...transformObject(response), verifiedResponse: false };
+        return { ...transformObject(response), verifiedResponse: false, error: e.message };
       }
     } else {
       console.warn("address mismatch", { userRecoveredWalletAddress, address: a.value });
-      return { ...transformObject(response), verifiedResponse: false };
+      return { ...transformObject(response), verifiedResponse: false, error: "address mismatch" };
     }
   } else {
     console.warn("nonce too old");
-    return { ...transformObject(response), verifiedResponse: false };
+    return { ...transformObject(response), verifiedResponse: false, error: "invalid nonce" };
   }
 };
