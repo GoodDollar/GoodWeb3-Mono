@@ -1,6 +1,7 @@
 # GoodDollar Client SDK
 This is the gooddollar client sdk for integrating login into gooddollar in your website
 - [Example App](https://gooddollar.netlify.app/) to test the functionality
+- [Source Code to the example app](https://github.com/harjaapdhillon16/gooddollarLoginExample)
 
 ## SDK Utilities
  - createLoginLink to generate login link to redirect to the gooddollar wallet 
