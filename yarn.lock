@@ -286,7 +286,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/helper-module-imports@npm:^7.0.0, @babel/helper-module-imports@npm:^7.10.4, @babel/helper-module-imports@npm:^7.12.13, @babel/helper-module-imports@npm:^7.16.7":
+"@babel/helper-module-imports@npm:^7.0.0, @babel/helper-module-imports@npm:^7.12.13, @babel/helper-module-imports@npm:^7.16.7":
   version: 7.16.7
   resolution: "@babel/helper-module-imports@npm:7.16.7"
   dependencies:
@@ -2426,12 +2426,7 @@ __metadata:
   dependencies:
     "@babel/core": ^7.17.5
     "@babel/preset-env": ^7.16.11
-    "@gooddollar/goodprotocol": ^1.0.17
-    "@rollup/plugin-babel": ^5.3.1
-    "@rollup/plugin-commonjs": ^21.0.2
-    "@rollup/plugin-json": ^4.1.0
-    "@rollup/plugin-node-resolve": ^13.1.3
-    "@rollup/plugin-typescript": ^8.3.1
+    "@gooddollar/goodprotocol": ^1.0.20
     "@testing-library/react": ^12.1.4
     "@types/jest": ^27.4.1
     "@types/node": ^17.0.21
@@ -2442,18 +2437,16 @@ __metadata:
     puppeteer-core: ^13.5.1
     react: ^17.0.2
     react-dom: ^17.0.2
-    rollup: ^2.69.1
-    rollup-plugin-dts: ^4.2.0
     ts-jest: ^27.1.3
     ts-node: ^10.7.0
     typescript: ^4.6.2
-    web3: ^1.7.1
+    web3: ^1.7.4
   peerDependencies:
     react: ^17.0.2
   languageName: unknown
   linkType: soft
 
-"@gooddollar/goodprotocol@npm:^1.0.17, @gooddollar/goodprotocol@npm:^1.0.18, @gooddollar/goodprotocol@npm:^1.0.20":
+"@gooddollar/goodprotocol@npm:^1.0.18, @gooddollar/goodprotocol@npm:^1.0.20":
   version: 1.0.20
   resolution: "@gooddollar/goodprotocol@npm:1.0.20"
   dependencies:
@@ -3246,40 +3239,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rollup/plugin-babel@npm:^5.3.1":
-  version: 5.3.1
-  resolution: "@rollup/plugin-babel@npm:5.3.1"
-  dependencies:
-    "@babel/helper-module-imports": ^7.10.4
-    "@rollup/pluginutils": ^3.1.0
-  peerDependencies:
-    "@babel/core": ^7.0.0
-    "@types/babel__core": ^7.1.9
-    rollup: ^1.20.0||^2.0.0
-  peerDependenciesMeta:
-    "@types/babel__core":
-      optional: true
-  checksum: 220d71e4647330f252ef33d5f29700aef2e8284a0b61acfcceb47617a7f96208aa1ed16eae75619424bf08811ede5241e271a6d031f07026dee6b3a2bdcdc638
-  languageName: node
-  linkType: hard
-
-"@rollup/plugin-commonjs@npm:^21.0.2":
-  version: 21.1.0
-  resolution: "@rollup/plugin-commonjs@npm:21.1.0"
-  dependencies:
-    "@rollup/pluginutils": ^3.1.0
-    commondir: ^1.0.1
-    estree-walker: ^2.0.1
-    glob: ^7.1.6
-    is-reference: ^1.2.1
-    magic-string: ^0.25.7
-    resolve: ^1.17.0
-  peerDependencies:
-    rollup: ^2.38.3
-  checksum: e8280f4b6192729f2bdf878c48c451dc441075f2a12f22c688393f48a6b95e8ff83caaacc3df4eb1d81516e08a0e3a669213632879910d85dd630b37bb284df7
-  languageName: node
-  linkType: hard
-
 "@rollup/plugin-commonjs@npm:^22.0.0":
   version: 22.0.1
   resolution: "@rollup/plugin-commonjs@npm:22.0.1"
@@ -3320,7 +3279,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rollup/plugin-node-resolve@npm:^13.1.3, @rollup/plugin-node-resolve@npm:^13.2.0":
+"@rollup/plugin-node-resolve@npm:^13.2.0":
   version: 13.3.0
   resolution: "@rollup/plugin-node-resolve@npm:13.3.0"
   dependencies:
@@ -3336,7 +3295,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rollup/plugin-typescript@npm:^8.3.1, @rollup/plugin-typescript@npm:^8.3.2":
+"@rollup/plugin-typescript@npm:^8.3.2":
   version: 8.3.3
   resolution: "@rollup/plugin-typescript@npm:8.3.3"
   dependencies:
@@ -15622,15 +15581,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"magic-string@npm:^0.26.1":
-  version: 0.26.2
-  resolution: "magic-string@npm:0.26.2"
-  dependencies:
-    sourcemap-codec: ^1.4.8
-  checksum: b4db4e2b370ac8d9ffc6443a2b591b75364bf1fc9121b5a4068d5b89804abff6709d1fa4a0e0c2d54f2e61e0e44db83efdfe219a5ab0ba6d25ee1f2b51fbed55
-  languageName: node
-  linkType: hard
-
 "make-dir@npm:^2.0.0, make-dir@npm:^2.1.0":
   version: 2.1.0
   resolution: "make-dir@npm:2.1.0"
@@ -19369,22 +19319,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rollup-plugin-dts@npm:^4.2.0":
-  version: 4.2.2
-  resolution: "rollup-plugin-dts@npm:4.2.2"
-  dependencies:
-    "@babel/code-frame": ^7.16.7
-    magic-string: ^0.26.1
-  peerDependencies:
-    rollup: ^2.55
-    typescript: ^4.1
-  dependenciesMeta:
-    "@babel/code-frame":
-      optional: true
-  checksum: cf4b45f6cca442a5f44af0f0fb567c8fc540ecb792c763571d1bcda9bf495803bcc8d4eaef451a2dd32f7f391eb822e2b96cc6b86b096db54a4d3935236fd8da
-  languageName: node
-  linkType: hard
-
 "rollup-plugin-flow@npm:^1.1.1":
   version: 1.1.1
   resolution: "rollup-plugin-flow@npm:1.1.1"
@@ -19465,7 +19399,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rollup@npm:^2.69.1, rollup@npm:^2.70.2":
+"rollup@npm:^2.70.2":
   version: 2.75.7
   resolution: "rollup@npm:2.75.7"
   dependencies:
@@ -23095,7 +23029,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"web3@npm:^1.7.1":
+"web3@npm:^1.7.1, web3@npm:^1.7.4":
   version: 1.7.4
   resolution: "web3@npm:1.7.4"
   dependencies:
