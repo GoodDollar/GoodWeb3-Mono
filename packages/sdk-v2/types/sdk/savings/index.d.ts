@@ -1,2 +1,2 @@
-export * from "./Web3Context";
+export * from "./sdk";
 //# sourceMappingURL=index.d.ts.map
