@@ -50,9 +50,13 @@ export class ClaimSDK {
     });
     try {
       const signer = provider.getSigner();
-      signer
-        .getAddress()
-        .then(addr => (this.signer = signer))
+      provider
+        .listAccounts()
+        .then(async accts => {
+          if (accts.length > 0) {
+            this.signer = await provider.getSigner();
+          }
+        })
         .catch((e: any) => {
           console.warn("ClaimSDK: provider has no signer", { signer, provider, error: e.message });
         });

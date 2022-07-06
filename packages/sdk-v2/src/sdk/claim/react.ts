@@ -25,13 +25,14 @@ export const useSDK = (readOnly: boolean = false, env?: EnvKey) => {
       return new ClaimSDK(rolibrary, defaultEnv);
     } else if (library) {
       return new ClaimSDK(library, defaultEnv);
-    } else return new ClaimSDK(new ethers.providers.CloudflareProvider(), defaultEnv);
+    }
+    //else {return new ClaimSDK(new ethers.providers.CloudflareProvider(), defaultEnv);
   }, [library, rolibrary, defaultEnv, readOnly, chainId]);
 
   return sdk;
 };
 
-export const useReadOnlySDK = (env?: EnvKey): ReadOnlyClaimSDK => {
+export const useReadOnlySDK = (env?: EnvKey): ReadOnlyClaimSDK | undefined => {
   return useSDK(true, env);
 };
 
@@ -47,7 +48,7 @@ export const useGetEnvChainId = (env?: EnvKey) => {
 };
 export const useGetContract = (contractName: string, readOnly: boolean = false, env?: EnvKey) => {
   const sdk = useSDK(readOnly, env);
-  return useMemo(() => sdk.getContract(contractName), [contractName, , sdk]);
+  return useMemo(() => sdk?.getContract(contractName), [contractName, , sdk]);
 };
 
 export const useFVLink = () => {
