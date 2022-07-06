@@ -53,11 +53,11 @@ export class ClaimSDK {
       signer
         .getAddress()
         .then(addr => (this.signer = signer))
-        .catch(e => {
-          console.warn("ClaimSDK: provider has no signer", { signer, provider, e });
+        .catch((e: any) => {
+          console.warn("ClaimSDK: provider has no signer", { signer, provider, error: e.message });
         });
-    } catch (e) {
-      console.warn("ClaimSDK: provider has no signer", { provider, e });
+    } catch (e: any) {
+      console.warn("ClaimSDK: provider has no signer", { provider, error: e.message });
     }
   }
 
