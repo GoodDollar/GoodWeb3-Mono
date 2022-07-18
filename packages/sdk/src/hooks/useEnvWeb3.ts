@@ -22,9 +22,12 @@ export const defaultRPC = {
     [SupportedChainId.FUSE]: 'https://rpc.fuse.io'
 }
 
-export const getRpc = (chainId: number):string => {
+export const getRpc = (chainId: number, network?: string):string => {
   const rpcs = localStorage.getItem('GD_RPCS')
   if (!rpcs) return 'https://rpc.fuse.io'
+  if (network === ('staging' || 'fuse')){
+    return 'https://rpc.fuse.io'
+  }
   
   const rpcUrls:RPC = JSON.parse(rpcs)
 
@@ -58,7 +61,7 @@ export const useEnvWeb3 = (dao: DAO_NETWORK, activeWeb3?: any | undefined, activ
             if (dao === DAO_NETWORK.FUSE) {
               if (activeWeb3 && (activeChainId as number) === SupportedChainId.FUSE) {
                 return setWeb3([activeWeb3, activeChainId as number])
-              } else provider = new Web3.providers.HttpProvider(getRpc(SupportedChainId.FUSE))
+              } else provider = new Web3.providers.HttpProvider(getRpc(SupportedChainId.FUSE, activeNetwork))
             } else {
                 //"mainnet" contracts can be on different blockchains depending on env
                 switch (networkEnv) {
