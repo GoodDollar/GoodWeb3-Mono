@@ -9,7 +9,13 @@ const packageJson = require("./package.json");
 export default [
   {
     input: "src/index.ts",
-    external: ["react", "react-dom","web3",'@gooddollar/goodprotocol/artifacts/contracts/Interfaces.sol/IIdentity.json','@gooddollar/goodprotocol/releases/deployment.json'],
+    external: [
+      "react",
+      "react-dom",
+      "web3",
+      "@gooddollar/goodprotocol/artifacts/contracts/Interfaces.sol/IIdentity.json",
+      "@gooddollar/goodprotocol/releases/deployment.json"
+    ],
     output: [
       {
         file: packageJson.main,
@@ -18,14 +24,14 @@ export default [
       {
         file: packageJson.module,
         format: "es"
-      },
+      }
     ],
     plugins: [
-      resolve({preferBuiltins: true, mainFields: ['browser']}),
+      resolve({ preferBuiltins: true, mainFields: ["browser"] }),
       nodeResolve({ extensions: [".ts", ".tsx", ".js"] }),
       json(),
       commonjs(),
-      typescript({ tsconfig: "./tsconfig.json" }),
-    ],
-  },
+      typescript({ tsconfig: "./tsconfig.json", sourceMap: true, inlineSources: true })
+    ]
+  }
 ];

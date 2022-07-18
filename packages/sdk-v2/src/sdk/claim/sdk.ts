@@ -40,22 +40,28 @@ export class ClaimSDK {
     this.contracts = Contracts[envKey as keyof typeof Contracts] as EnvValue;
     provider.getNetwork().then(network => {
       if (network.chainId != this.contracts.networkId)
-        throw new Error(
+        // throw new Error(
+        console.warn(
           `ClaimSDK: provider chainId doesn't much env (${envKey as string}) chainId. provider:${network.chainId} env:${
             this.contracts.networkId
           }`
         );
+      // );
     });
     try {
       const signer = provider.getSigner();
-      signer
-        .getAddress()
-        .then(addr => (this.signer = signer))
-        .catch(e => {
-          console.warn("ClaimSDK: provider has no signer", { signer, provider, e });
+      provider
+        .listAccounts()
+        .then(async accts => {
+          if (accts.length > 0) {
+            this.signer = await provider.getSigner();
+          }
+        })
+        .catch((e: any) => {
+          console.warn("ClaimSDK: provider has no signer", { signer, provider, error: e.message });
         });
-    } catch (e) {
-      console.warn("ClaimSDK: provider has no signer", { provider, e });
+    } catch (e: any) {
+      console.warn("ClaimSDK: provider has no signer", { provider, error: e.message });
     }
   }
 
@@ -102,13 +108,19 @@ export class ClaimSDK {
     };
     const getLink = (firstName: string, callbackUrl?: string, popupMode: boolean = false) => {
       if (!fvSig || !loginSig) throw new Error("missing login or identifier signature");
-      let url = this.env.identityUrl + `/?nonce=${nonce}&firstname=${firstName}&sig=${loginSig}&fvsig=${fvSig}`;
+      const params = new URLSearchParams();
+      params.append("nonce", nonce);
+      params.append("firstname", firstName);
+      params.append("sig", loginSig);
+      params.append("fvsig", fvSig);
+      let url = this.env.identityUrl;
       if (popupMode === false && !callbackUrl) {
         throw new Error("redirect url is missing for redirect mode");
       }
       if (callbackUrl) {
-        url += (popupMode ? "&cbu=" : "&rdu=") + callbackUrl;
+        params.append(popupMode ? "cbu" : "rdu", callbackUrl);
       }
+      url += "?" + params.toString();
       return url;
     };
     return { getLoginSig, getFvSig, getLink };
