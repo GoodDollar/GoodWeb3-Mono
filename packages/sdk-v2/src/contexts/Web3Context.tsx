@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useMemo, useState } from "react";
-import { JsonRpcProvider } from "@ethersproject/providers";
+import { JsonRpcProvider, Web3Provider as W3Provider } from "@ethersproject/providers";
 import { DAppProvider, Config, Chain, Mainnet, Ropsten, Kovan, useEthers, Goerli } from "@usedapp/core";
 import EventEmitter from "eventemitter3";
-import { EnvKey } from "../sdk/claim/sdk";
+import { EnvKey } from "../sdk/base/sdk";
 /**
  * request to switch to network id
  * returns void if no result yet true/false if success
@@ -45,7 +45,7 @@ export const Web3Context = React.createContext<IWeb3Context>({
 type Props = {
   children: React.ReactNode;
   config: Config;
-  web3Provider?: JsonRpcProvider;
+  web3Provider?: JsonRpcProvider | W3Provider;
   env?: EnvKey;
   switchNetworkRequest?: SwitchCallback;
 };
@@ -105,7 +105,7 @@ export const Web3Provider = ({ children, config, web3Provider, switchNetworkRequ
   const [switchNetwork, setSwitchNetwork] = useState<SwitchCallback>();
 
   const setSwitcNetworkCallback = (cb: SwitchCallback) => setSwitchNetwork(() => cb);
-
+  console.log('web3 provider check -->')
   //make sure we have Fuse and mainnet by default and the relevant multicall available from useConfig for useMulticallAtChain hook
   config.networks = [Fuse, Mainnet, Kovan, Ropsten, Goerli, Celo, ...(config.networks || [])];
   config.multicallVersion = config.multicallVersion ? config.multicallVersion : 1;
