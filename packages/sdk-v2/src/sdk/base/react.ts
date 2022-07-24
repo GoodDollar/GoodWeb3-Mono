@@ -2,22 +2,26 @@ import React, { useMemo, useContext } from 'react'
 import { ethers, Signer } from 'ethers'
 import { EnvKey, EnvValue } from './sdk'
 import { Web3Context } from '../../contexts'
-import { useEthers } from '@usedapp/core'
+import { useEthers, useConfig } from '@usedapp/core'
 import { ClaimSDK } from '../claim/sdk'
 import { SavingsSDK } from '../savings/sdk'
 import { BaseSDK } from './sdk'
 import Contracts from '@gooddollar/goodprotocol/releases/deployment.json'
-import { useReadOnlyProvider } from "../../hooks/useMulticallAtChain";
+import { useReadOnlyProvider, getReadOnlyProvider } from "../../hooks/useMulticallAtChain";
 
 export const NAME_TO_SDK: { [key: string]: (typeof ClaimSDK | typeof SavingsSDK) } = {
   claim: ClaimSDK,
   savings: SavingsSDK
 };
 
-type ReqSDK = ClaimSDK | SavingsSDK | undefined
+type RequestedSdk = {
+  sdk: ClaimSDK | SavingsSDK | undefined,
+  readOnly: boolean
+}
+
 export type SdkTypes = 'claim' | 'savings'
 
-export const useReadOnlySDK = (type: SdkTypes, env?: EnvKey): ReqSDK => {
+export const useReadOnlySDK = (type: SdkTypes, env?: EnvKey): RequestedSdk["sdk"] => {
   return useSDK(true, type, env);
 };
 
@@ -43,22 +47,24 @@ export const getSigner = async (signer: void | Signer, account: string) => {
   return signer
 }
 
-export const useSDK = (readOnly: boolean = false, type = 'base', env?: EnvKey): ReqSDK => {
+export const useSDK = (readOnly: boolean = false, type = 'base', env?: EnvKey): RequestedSdk["sdk"] => {
+  const { readOnlyUrls, pollingInterval} = useConfig() // note: polling-interval doesn't seem to take effect, (queryParams[refresh] does!)
   const { library } = useEthers();
   const { chainId, defaultEnv } = useGetEnvChainId(readOnly ? undefined : env); 
   
-  const rolibrary = useReadOnlyProvider(chainId) || library;
-  
+  // const rolibrary = useReadOnlyProvider(chainId) || library;
+  const rolibrary = getReadOnlyProvider(chainId, readOnlyUrls, pollingInterval) ?? library
   const activeEnv = type === 'savings' ? env?.split("-")[0] : env;
-
-  console.log('roLibrary / library -->', rolibrary, library)
+  // console.log('roLibrary / library -->', {rolibrary, library})
   // TODO: use create ref
   const sdk = useMemo<ClaimSDK | SavingsSDK | undefined>(() => {
     console.log('new sdk generating. . .')
     const reqSdk = NAME_TO_SDK[type]
     if (readOnly && rolibrary) {
+      console.log('sdk ro initialize')
       return new reqSdk(rolibrary, activeEnv);
     } else if (library) {
+      console.log('sdk initialize with lib')
       return new reqSdk(library, defaultEnv);
     } 
     // else {
@@ -69,6 +75,3 @@ export const useSDK = (readOnly: boolean = false, type = 'base', env?: EnvKey): 
 
   return sdk
 };
-
-      //TODO-note: why chosen for CloudFlare with only support for mainnet (no testnets)
-      // console.log('default sdk')

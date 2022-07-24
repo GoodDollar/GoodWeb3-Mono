@@ -6,6 +6,18 @@ import { getSigner } from '../base/react'
 
 export class SavingsSDK extends BaseSDK {
 
+  //simple helper for checking an active savings account
+  async hasBalance(
+    account:string
+  ): Promise<boolean | undefined> {
+    const contract = this.getContract("GoodDollarStaking")
+    if (contract && account) {
+      // note-to-self/TODO: Also check for rewards to be claimed // Is deposit and balanceOf equal? // Principle?
+      const hasBalance = (await contract.balanceOf(account))._isBigNumber
+      console.log('hasBalance -->', {hasBalance})
+      return hasBalance
+    }
+  }
 
   async onTokenTransfer( 
     account: string, 
@@ -43,10 +55,8 @@ export class SavingsSDK extends BaseSDK {
         const signer = await getSigner(this.signer, account)
         if (signer instanceof Error) return signer
 
-        //TODO: estimateGas (maybe fixed by gasLimitBufferPercentage)
-        const req = await contract.connect(signer).withdrawStake('100000', {
-          gasLimit: '250000'
-        }).then((res) => {
+        //note: if tx fails on limit, up the gasLimitBufferPercentage (see context config))
+        const req = await contract.connect(signer).withdrawStake('100000', {}).then((res) => {
           console.log('withdraw savings res -->', {res})
         }).catch((e) => {console.log('withdraw req failed -->', {e})})
       } catch (e) {
@@ -54,19 +64,17 @@ export class SavingsSDK extends BaseSDK {
       }
     }
   
-  async getStakerInfo(
-    account: string
-  ) {
+  async getStakerInfo(account: string) {
     if (!account) return
-      const contract = this.getContract("GoodDollarStaking")
-      try {
-        const req = await contract.stakersInfo(account).then((res) => {
-          console.log('stakers info -->', {res})
-          return res
-        })
-        return req
-      } catch (e) { console.log('get staker info failed', {e})}
-    }
+    const contract = this.getContract("GoodDollarStaking")
+    try {
+      const req = await contract.stakersInfo(account).then((res) => {
+        console.log('stakers info -->', {res})
+        return res
+      })
+      return req
+    } catch (e) { console.log('get staker info failed', {e})}
+  }
     
   // TODO: just for testing, remove if unused
   async getChainBlocksPerMonth() {

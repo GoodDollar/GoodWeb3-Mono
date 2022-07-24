@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useConfig, Call, RawCall } from "@usedapp/core";
+import React, { useCallback, useEffect, useRef, useState, useMemo } from "react";
+import { useConfig, Call, RawCall, useEthers } from "@usedapp/core";
 import { encodeCallData } from "@usedapp/core/dist/cjs/src/helpers";
 import { type BaseProviderFactory } from "@usedapp/core/src/constants/type/Config";
 
@@ -8,6 +8,7 @@ import { BigNumber } from "@ethersproject/bignumber";
 import { Contract } from "ethers";
 import { Result } from "@ethersproject/abi";
 import { Provider } from "@ethersproject/providers";
+import { NodeUrls } from "@usedapp/core/dist/cjs/src";
 
 const ABI = [
   "function aggregate(tuple(address target, bytes callData)[] calls) view returns (uint256 blockNumber, bytes[] returnData)"
@@ -68,6 +69,21 @@ export async function multicall(
     return result;
   });
   return state;
+}
+
+export const getReadOnlyProvider = (chainId: number, readOnlyUrls: NodeUrls | undefined, pollingInterval: number) => {
+  if (readOnlyUrls && readOnlyUrls[chainId]) {
+    switch (true) {
+      case readOnlyUrls[chainId] instanceof BaseProvider:
+        return readOnlyUrls[chainId] as JsonRpcProvider;
+      case typeof readOnlyUrls[chainId] === "function":
+        return (readOnlyUrls[chainId] as any) as JsonRpcProvider;
+      case typeof readOnlyUrls[chainId] === "string":
+        const provider = new JsonRpcProvider(readOnlyUrls[chainId] as any);
+        provider.pollingInterval = pollingInterval;
+        return provider;
+    }
+  }
 }
 
 export const useReadOnlyProvider = (chainId: number) => {

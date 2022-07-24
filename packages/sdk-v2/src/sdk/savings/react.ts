@@ -7,23 +7,20 @@ import { EnvKey } from '../base'
 import { SavingsSDK } from './sdk'
 import { GoodDollarStaking, IGoodDollar } from '@gooddollar/goodprotocol/types'
 import usePromise from 'react-use-promise'
+import { Currency, CurrencyAmount, Fraction, Percent, Token } from '@uniswap/sdk-core'
 
-// interface StakerInfo {
-//   deposit: BigNumber,
-//   shares: BigNumber,
-//   rewardsPaid: BigNumber, 
-//   rewardsDonated: BigNumber,
-//   avgDonationRatio: BigNumber
-// }
-
-// export type StakerInfo = {
-//   g$Deposit: CurrencyAmount<Currency> | any,
-//   //shares,
-//   pendingEarned: {G$: CurrencyAmount<Currency>, GOOD: CurrencyAmount<Currency>} | any,
-//   totalDonated: CurrencyAmount<Currency> | any
-//   avgDonationRatio: Percent | any
-
-// }
+//TODO: update to proper types
+export interface StakerInfo {
+  deposit: number,
+  shares: string,
+  earnedRewards: number,
+  earnedAfterDonation: number,
+  totalToDonate: number
+  rewardsPaid: number,
+  rewardsDonated: number,
+  avgDonationRatio: number,
+  principle: CurrencyAmount<Currency> | any
+}
 
 // Savings definition
 // note: Do we show global stats anywhere? (couldn't find it in the figma tbh)
@@ -48,68 +45,90 @@ export const useTransferAndCall = (env?: EnvKey) => {
 
   const {state, send} = useContractFunction(gooddollar, "transferAndCall")
 
-  const dono = ethers.utils.defaultAbiCoder.encode(["uint32"], [50])
-
-  const transfer = (amount: string, donation: number) => send(gdStaking.address, amount, dono).then((res) => {
-    console.log('transfer send . . .')
+  const transfer = (amount: string, donation: string) => send(gdStaking.address, amount, donation).then((res) => {
     return res
   })
-
-  useEffect(() => {
-    console.log('contractFunction -- state -->', {state})
-  }, [state])
   
-  return { transfer }
+  return { transfer, state }
 }
 
 export const useWithdrawSavings = (env?: EnvKey) => {
   const contract = useGetContract("GoodDollarStaking", true, "savings", env) as GoodDollarStaking
   const {state, send} = useContractFunction(contract, "withdrawStake", {transactionName: "Withdraw from savings"})
-  const gasPrice = useGasPrice()
-
-  console.log('gasPrice -->', {gasPrice})
-
-  const override = {
-    gasLimit: '250000'
-  }
-
+  // const gasPrice = useGasPrice()
 
   const withdraw = (amount: string) => send(amount).then((res) => {
-    console.log('withdrawing stake . . .')
     return res
   })
 
-  return { withdraw}
+  return { withdraw, state }
 }
 
 export const useStakerInfo = (refresh: QueryParams["refresh"] = "never", account:string, env?: EnvKey) => {
   const contract = useGetContract("GoodDollarStaking", true, "savings", env) as GoodDollarStaking
-  const { value, error } = useCall({
-    contract: contract,
-    method: 'stakersInfo',
-    args: [account]
-  }, {refresh}) ?? {}
-  // console.log('value -->', {value})
-  // console.log('value -->', {error})
+  // console.log('useStakerInfo refresh -->', {refresh})
+
+  const results = useCalls(
+    [
+      {
+        contract: contract,
+        method: 'stakersInfo',
+        args: [account]
+      },
+      {
+        contract: contract,
+        method: 'getPrinciple',
+        args: [account]
+      },
+      {
+        contract: contract,
+        method: 'earned',
+        args: [account]
+      }
+    ], { refresh }
+  );
+
+  // console.log('stakerInfo -- useCalls-results -->', {results});
+  if (results[0]?.error || results[1]?.error){
+  }
   
-  if (value) {
-    const [deposit, shares, rewardsPaid, rewardsDonated, avgDonationRatio] = value
-    const depositAmount = parseInt(deposit.toFixed(2));
-    const donationRatio = parseInt(avgDonationRatio.toFixed(18))
-    const stakerInfo = {
+  if (!results.includes(undefined)) {
+    const [deposit, shares, rewardsPaid, rewardsDonated, avgDonationRatio] = results[0]?.value
+    const [balance] = results[1]?.value; //note: balance is principle or deposit, whichever is greater
+    const [earnedRewards, earnedRewardsAfterDonation] = results[2]?.value //q: any significant different over stakersInfo and this?
+    // console.log('earned/earnedAfterDono -->', {earnedRewards: earnedRewards.toString(), afterDono: earnedRewardsAfterDonation.toString(),})
+    // note: just for initial testing
+    const depositAmount = parseInt(deposit) / 1e2;
+    const donationRatio = parseInt(avgDonationRatio) / 1e18;
+    const paidRewards = parseInt(rewardsPaid) / 1e2;
+    const donatedRewards = parseInt(rewardsDonated) / 1e2;
+    const rewardsEarned = parseInt(earnedRewards) / 1e2;
+    const earnedAfterDonation = parseInt(earnedRewardsAfterDonation) / 1e2;
+    const totalToDonate = rewardsEarned - (parseInt(earnedRewardsAfterDonation) / 1e2);
+
+    const stakerInfo:StakerInfo = {
       deposit: depositAmount,
       shares: shares.toString(),
-      rewardsPaid: rewardsPaid.toString(),
-      rewardsDonated: rewardsDonated.toString(),
+      earnedRewards: rewardsEarned,
+      earnedAfterDonation: earnedAfterDonation,
+      totalToDonate: totalToDonate, 
+      rewardsPaid: paidRewards,
+      rewardsDonated: donatedRewards,
       avgDonationRatio: donationRatio,
+      principle: '0'
     }
 
     return {
-      stakerInfo: stakerInfo
+      stats: stakerInfo,
+      error: undefined
     }
   } else {
     return {
-      stakerInfo: error
-    }
+      stats: undefined,
+      error: {
+        stakersInfo: results[0]?.error,
+        principle: results[1]?.error
+      }
+   }
   }
 }
