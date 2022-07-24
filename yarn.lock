@@ -2451,7 +2451,7 @@ __metadata:
 
 "@gooddollar/goodprotocol@file:.yalc/@gooddollar/goodprotocol::locator=%40gooddollar%2Fweb3sdk-v2%40workspace%3Apackages%2Fsdk-v2":
   version: 1.0.19
-  resolution: "@gooddollar/goodprotocol@file:.yalc/@gooddollar/goodprotocol#.yalc/@gooddollar/goodprotocol::hash=bdc738&locator=%40gooddollar%2Fweb3sdk-v2%40workspace%3Apackages%2Fsdk-v2"
+  resolution: "@gooddollar/goodprotocol@file:.yalc/@gooddollar/goodprotocol#.yalc/@gooddollar/goodprotocol::hash=2c546d&locator=%40gooddollar%2Fweb3sdk-v2%40workspace%3Apackages%2Fsdk-v2"
   dependencies:
     "@celo-tools/celo-ethers-wrapper": ^0.1.0
     "@celo/contractkit": ^2.0.0
@@ -2468,7 +2468,7 @@ __metadata:
     press-any-key: ^0.1.1
     truffle-plugin-verify: ^0.5.11
     truffle-source-verify: ^0.0.6
-  checksum: 1d1d023243731504cf109ee79d4f877bfcc2f6d16f96a5cb8a9b46d43e8d1b4ded8c54361d43091a83b3a0b370d59569d83be5b610db7ea8025a5d210a1280b6
+  checksum: 9ccc0a78c76ea3a6ca219eb81e6624504b67f8b5eb31699deb3b141c54c7c0c7b552a64829a87b833b23f15dfb51f0152666b60021b7771aa22b102a09107602
   languageName: node
   linkType: hard
 
