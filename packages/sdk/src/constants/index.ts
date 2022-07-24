@@ -1,4 +1,4 @@
-export { getNetworkEnv } from './addresses'
+export { getNetworkEnv, G$ContractAddresses } from './addresses'
 export { LIQUIDITY_PROTOCOL} from './protocols'
 export { DAO_NETWORK, portfolioSupportedAt, SupportedChainId } from './chains'
 export type { TransactionDetails } from './transactions'

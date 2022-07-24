@@ -1,4 +1,4 @@
-import { EnvKey } from "./claim/sdk";
+import { EnvKey } from "./base/sdk";
 
 export const Envs: { [key: EnvKey]: { [key: string]: string } } = {
   production: {

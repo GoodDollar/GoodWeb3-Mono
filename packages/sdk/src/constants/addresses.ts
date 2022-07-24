@@ -3,8 +3,9 @@ import contractsAddresses, { ObjectLike } from '@gooddollar/goodprotocol/release
 
 import { constructSameAddressMap } from '../utils/constructSameAddressMap'
 import { SupportedChainId } from './chains'
+import { ActiveNetworks } from 'hooks'
 
-export const getNetworkEnv = (network?: string): string => {
+export const getNetworkEnv = (network?: string): ActiveNetworks => {
   const localNetwork = localStorage.getItem('GD_NETWORK')
   const parsed = localNetwork ? JSON.parse(localNetwork) : null
   return parsed || network || 'staging'

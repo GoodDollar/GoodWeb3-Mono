@@ -36,7 +36,9 @@ export default {
     "core/staking": 'src/core/staking.ts',
     "constants/addresses": "src/constants/addresses.ts",
     "methods/index": "src/methods/index.ts",
-    "utils/errors": "src/utils/errors.ts"
+    "utils/errors": "src/utils/errors.ts",
+    "entities/index": "src/entities/index.ts",
+    "constants/tokens": "src/constants/tokens.ts"
   },
   output: [
     {
