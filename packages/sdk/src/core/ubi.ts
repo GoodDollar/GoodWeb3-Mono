@@ -31,7 +31,7 @@ export async function check(web3: Web3, address: string): Promise<string> {
     const result = await contract.methods.checkEntitlement().call({from: address})
     debug('UBI', result.toString())
 
-    return result.toString()
+  return result.toString()
 }
 
 /**
