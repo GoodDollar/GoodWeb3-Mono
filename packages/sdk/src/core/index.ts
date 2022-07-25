@@ -6,8 +6,10 @@ export {
   getList as getStakingList,
   getReserveSocialAPY,
   getMyList,
-  claim,
-  claimGood
+  claimG$Reward,
+  claimG$Rewards,
+  claimGoodReward,
+  claimGoodRewards
 } from './staking'
 
 export type {
