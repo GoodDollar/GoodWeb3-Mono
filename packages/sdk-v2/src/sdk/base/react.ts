@@ -51,12 +51,10 @@ export const useSDK = (readOnly: boolean = false, type = 'base', env?: EnvKey): 
   const { readOnlyUrls, pollingInterval} = useConfig() // note: polling-interval doesn't seem to take effect, (queryParams[refresh] does!)
   const { library } = useEthers();
   const { chainId, defaultEnv } = useGetEnvChainId(readOnly ? undefined : env); 
+  console.log('useSdkCalled')
   
-  // const rolibrary = useReadOnlyProvider(chainId) || library;
   const rolibrary = getReadOnlyProvider(chainId, readOnlyUrls, pollingInterval) ?? library
   const activeEnv = type === 'savings' ? env?.split("-")[0] : env;
-  // console.log('roLibrary / library -->', {rolibrary, library})
-  // TODO: use create ref
   const sdk = useMemo<ClaimSDK | SavingsSDK | undefined>(() => {
     console.log('new sdk generating. . .')
     const reqSdk = NAME_TO_SDK[type]

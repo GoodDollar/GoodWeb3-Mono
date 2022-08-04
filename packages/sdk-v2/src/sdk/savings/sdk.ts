@@ -24,22 +24,17 @@ export class SavingsSDK extends BaseSDK {
     amount: string, 
     donation: number,
     onSent?: (transactionHash: string) => void): Promise<void | Error> {
-    console.log('token transfering . . .')
 
     const contract = this.getContract("GoodDollar") 
     const stakeContract = this.getContract("GoodDollarStaking") 
-
-    console.log('onTokenTransfer -- stakeContract -->', {stakeContract})
-      
     try {
-      console.log('amount -->', {amount})
       const signer = await getSigner(this.signer, account)
       if (signer instanceof Error) return signer
 
-      const donation = ethers.utils.defaultAbiCoder.encode(["uint32"], [50])
+      const callData = ethers.constants.HashZero
       const transfer = await contract.connect(signer)
                       // .callStatic
-                      .transferAndCall(stakeContract.address, '100000', donation, {})
+                      .transferAndCall(stakeContract.address, '100000', callData, {})
     } catch (e) {
       console.log('onTokenTransfer failed -->', {e}) 
       return new Error(e as any)
@@ -87,4 +82,3 @@ export class SavingsSDK extends BaseSDK {
 
 // notes
 // --"for example APY=5% then per block = nroot(1+0.05,numberOfBlocksPerYear)"
-// (avgDonoCalc) -- 50*stakeamount1+25*stakeamount2/(stakeamount1+stakeamount2)

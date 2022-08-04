@@ -36,6 +36,10 @@ BigNumber.prototype.muldiv = function(multiplier: BigNumberish, divisor: BigNumb
         : Zero
 }
 
+// BigNumber.prototype.div = function(divisor: BigNumberish): BigNumber {
+//   return BigNumber
+// }
+
 BigNumber.prototype.toFraction = function(decimals: BigNumberish = 18): Fraction {
     return Fraction.from(this, decimals ? BigNumber.from(10).pow(decimals) : Zero)
 }
