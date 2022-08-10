@@ -25,7 +25,7 @@
     "alwaysStrict": true,
     "strictNullChecks": true,
     "noUnusedLocals": false,
-    "noImplicitAny": true,
+    "noImplicitAny": false,
     "noImplicitThis": true,
     "noImplicitReturns": true,
   },

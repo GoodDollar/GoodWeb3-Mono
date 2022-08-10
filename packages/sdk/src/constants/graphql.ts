@@ -1,6 +1,5 @@
 export {}
 import { SupportedChainId } from './chains'
-import { constructSameAddressMap } from 'utils/constructSameAddressMap'
 
 type AddressMap = { [chainId: number]: string }
 

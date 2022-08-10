@@ -1,12 +1,15 @@
 {
-  "extends": "../../tsconfig.build.json",
   "compilerOptions": {
+    "module": "commonjs",
+    "target": "es2019",
+    "lib": ["es2019", "dom"],
     "baseUrl": "./src",
     "paths": {
-      "@gd-test-repo/sdk/core": ["./core"]
+      "@gd-test-repo/sdk/core": ["/core"]
     },
     "rootDir": "src",
     "outDir": "dist",
+    "sourceMap": true,
     "skipLibCheck": false,
     "types": ["jest", "node", "bn.js"],
     "typeRoots": ["./node_modules/@types", "./types", "../../node_modules/@types"],
@@ -14,12 +17,13 @@
     "declaration": true,
     "emitDeclarationOnly": true,
     "declarationMap": true,
+    "declarationDir": "types",
     "composite": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "jsx": "react",
+    "moduleResolution": "node"
   },
-  "include": [
-    "src/**/*.ts", "./types/", 
-    "src/**/*.json", "src/**/*.tsx",
-    "src/*.d.ts", "src/**/*.d.ts",
-  ],
-  "exclude": ["node_modules"],
+  "include": ["src/**/*", "src", "**/*.json"],
+  "exclude": ["node_modules", "*.json", "types"],
 }

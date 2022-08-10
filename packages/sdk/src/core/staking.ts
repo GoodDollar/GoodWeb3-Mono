@@ -850,7 +850,7 @@ async function stakeMeta(
  * @param {function} [onSent] calls when a transaction sent to a blockchain
  * @returns {Promise<void>}
  */
-export async function approve(
+export async function approveStake(
     web3: Web3,
     spender: string,
     amount: string,

@@ -11,11 +11,10 @@ import {
     TradeType
 } from '@uniswap/sdk-core'
 import { Trade } from '@uniswap/v2-sdk'
-import { MaxUint256 } from '@ethersproject/constants'
 import { getToken } from 'methods/tokenLists'
 import { calculateExitContribution } from 'methods/calculateExitContribution'
 import { decimalPercentToPercent, decimalToJSBI, g$FromDecimal } from 'utils/converter'
-import { CDAI, FUSE, G$ } from 'constants/tokens'
+import { CDAI, FUSE } from 'constants/tokens'
 import { cDaiPrice } from 'methods/cDaiPrice'
 import { v2TradeExactIn } from 'methods/v2TradeExactIn'
 // eslint-disable-next-line import/no-cycle
@@ -23,18 +22,17 @@ import { BuyInfo, cDaiToG$, daiToCDai } from './buy'
 import { goodMarketMakerContract } from 'contracts/GoodMarketMakerContract'
 import { getAccount, getChainId } from 'utils/web3'
 import { debug, debugGroup, debugGroupEnd } from 'utils/debug'
-import { InsufficientLiquidity, UnexpectedToken } from 'utils/errors'
+import { UnexpectedToken } from 'utils/errors'
 import { computeRealizedLPFeePercent } from 'utils/prices'
 import { tokenBalance } from 'utils/tokenBalance'
 import { exchangeHelperContract } from 'contracts/ExchangeHelperContract'
-import { ERC20Contract } from 'contracts/ERC20Contract'
-import { G$ContractAddresses } from 'constants/addresses'
 import { SupportedChainId } from 'constants/chains'
 import { v2TradeExactOut } from 'methods/v2TradeExactOut'
 import { ZERO_PERCENT } from 'constants/misc'
 import { TransactionDetails } from 'constants/transactions'
 import * as fuse from 'contracts/FuseUniswapContract'
 import { g$ReservePrice } from 'methods/g$price'
+import { prepareValues } from 'functions/prepareValues'
 
 export type SellInfo = { contribution: Fraction } & BuyInfo
 
@@ -272,7 +270,7 @@ export function realizedLPFeePriceImpact(
  * @param {number | string} amount Amount of given currency.
  * @param {number} slippageTolerance Slippage tolerance while exchange tokens.
  */
-export async function getMeta(
+export async function getSellMeta(
     web3: Web3,
     toSymbol: string,
     amount: number | string,
@@ -411,7 +409,7 @@ export async function getMeta(
  * @param {number | string} toAmount Amount of how much token want to receive.
  * @param {number} slippageTolerance Slippage tolerance while exchange tokens.
  */
-export async function getMetaReverse(
+export async function getSellMetaReverse(
     web3: Web3,
     toSymbol: string,
     toAmount: number | string,
@@ -474,62 +472,64 @@ export async function getMetaReverse(
         return null
     }
 
-    return getMeta(web3, toSymbol, result.toExact(), slippageTolerance)
+    return getSellMeta(web3, toSymbol, result.toExact(), slippageTolerance)
 }
 
-/**
- * Pick necessary date from meta swap.
- * @param {BuyInfo} meta Result of the method getMeta() execution.
- * @returns {input: string, minReturn: string, minCDai: string}
- */
-function prepareValues(meta: BuyInfo): { input: string; minReturn: string; minCDai: string } {
-    if (!meta.route.length) {
-        throw new InsufficientLiquidity()
-    }
+//@deprecated: replaced by functions/prepareValues
+// /**
+//  * Pick necessary date from meta swap.
+//  * @param {BuyInfo} meta Result of the method getMeta() execution.
+//  * @returns {input: string, minReturn: string, minCDai: string}
+//  */
+// function prepareValues(meta: BuyInfo): { input: string; minReturn: string; minCDai: string } {
+//     if (!meta.route.length) {
+//         throw new InsufficientLiquidity()
+//     }
 
-    const input = meta.inputAmount.multiply(meta.inputAmount.decimalScale).toFixed(0)
-    const minReturn = meta.minimumOutputAmount.multiply(meta.minimumOutputAmount.decimalScale).toFixed(0)
-    const minCDai = meta.cDAIAmount ? meta.cDAIAmount.multiply(meta.cDAIAmount.decimalScale).toFixed(0) : '0'
+//     const input = meta.inputAmount.multiply(meta.inputAmount.decimalScale).toFixed(0)
+//     const minReturn = meta.minimumOutputAmount.multiply(meta.minimumOutputAmount.decimalScale).toFixed(0)
+//     const minCDai = meta.cDAIAmount ? meta.cDAIAmount.multiply(meta.cDAIAmount.decimalScale).toFixed(0) : '0'
 
-    debug({
-        input: meta.inputAmount.toSignificant(6),
-        minReturn: meta.minimumOutputAmount.toSignificant(6),
-        minCDai: meta.cDAIAmount ? meta.cDAIAmount.toSignificant(6) : '0'
-    })
+//     debug({
+//         input: meta.inputAmount.toSignificant(6),
+//         minReturn: meta.minimumOutputAmount.toSignificant(6),
+//         minCDai: meta.cDAIAmount ? meta.cDAIAmount.toSignificant(6) : '0'
+//     })
 
-    return { input, minReturn, minCDai }
-}
+//     return { input, minReturn, minCDai }
+// }
 
-/**
- * Approve token usage.
- * @param {Web3} web3 Web3 instance.
- * @param {BuyInfo} meta Result of the method getMeta() execution.
- */
-export async function approve(web3: Web3, meta: BuyInfo): Promise<void> {
-    const chainId = await getChainId(web3)
+//@deprecated: replaced by functions/approve
+// /**
+//  * Approve token usage.
+//  * @param {Web3} web3 Web3 instance.
+//  * @param {BuyInfo} meta Result of the method getMeta() execution.
+//  */
+// export async function approve(web3: Web3, meta: BuyInfo): Promise<void> {
+//     const chainId = await getChainId(web3)
 
-    if (chainId === SupportedChainId.FUSE) {
-        await fuse.approveSell(web3, meta.trade!)
-    } else {
-        const account = await getAccount(web3)
-        const { input } = prepareValues(meta)
-        const bigInput = BigNumber.from(input)
+//     if (chainId === SupportedChainId.FUSE) {
+//         await fuse.approveSell(web3, meta.trade!)
+//     } else {
+//         const account = await getAccount(web3)
+//         const { input } = prepareValues(meta)
+//         const bigInput = BigNumber.from(input)
 
-        const erc20 = ERC20Contract(web3, G$[chainId].address)
+//         const erc20 = ERC20Contract(web3, G$[chainId].address)
 
-        const allowance = await erc20.methods
-            .allowance(account, G$ContractAddresses(chainId, 'ExchangeHelper'))
-            .call()
-            .then((_: string) => BigNumber.from(_))
+//         const allowance = await erc20.methods
+//             .allowance(account, G$ContractAddresses(chainId, 'ExchangeHelper'))
+//             .call()
+//             .then((_: string) => BigNumber.from(_))
 
-        if (bigInput.lte(allowance)) return
-        console.log(G$ContractAddresses(chainId, 'ExchangeHelper'))
+//         if (bigInput.lte(allowance)) return
+//         console.log(G$ContractAddresses(chainId, 'ExchangeHelper'))
 
-        await erc20.methods
-            .approve(G$ContractAddresses(chainId, 'ExchangeHelper'), MaxUint256.toString())
-            .send({ from: account })
-    }
-}
+//         await erc20.methods
+//             .approve(G$ContractAddresses(chainId, 'ExchangeHelper'), MaxUint256.toString())
+//             .send({ from: account })
+//     }
+// }
 
 /**
  * Swap tokens.
@@ -551,7 +551,7 @@ export async function sell(
 
         const contract = await exchangeHelperContract(web3)
 
-        const { input, minReturn, minCDai } = prepareValues(meta)
+        const { input, minReturn, minDai } = prepareValues(meta, 'sell')
 
         // Convert into addresses
         const route: string[] = meta.route.map(token => token.address)
@@ -560,7 +560,7 @@ export async function sell(
             .sell(
                 route,
                 BigNumber.from(input),
-                BigNumber.from(minCDai),
+                BigNumber.from(minDai),
                 BigNumber.from(minReturn),
                 ethers.constants.AddressZero
             )

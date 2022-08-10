@@ -4,7 +4,7 @@ import { AbiItem } from 'web3-utils'
 import GovernanceStaking from '@gooddollar/goodprotocol/artifacts/contracts/governance/GovernanceStaking.sol/GovernanceStaking.json'
 import { G$ContractAddresses } from 'constants/addresses'
 import { SupportedChainId } from 'constants/chains'
-import { getNetworkEnv } from 'constants/'
+import { getNetworkEnv } from 'constants/addresses'
 
 /**
  * Returns instance of UBIScheme contract.

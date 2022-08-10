@@ -12,7 +12,6 @@ import {
     computePriceImpact
 } from '@uniswap/sdk-core'
 import { Trade } from '@uniswap/v2-sdk'
-import { MaxUint256 } from '@ethersproject/constants'
 import { getToken } from 'methods/tokenLists'
 import { decimalPercentToPercent, decimalToJSBI } from 'utils/converter'
 import { CDAI, FUSE } from 'constants/tokens'
@@ -20,12 +19,11 @@ import { cDaiPrice } from 'methods/cDaiPrice'
 import { v2TradeExactIn } from 'methods/v2TradeExactIn'
 import { goodMarketMakerContract } from 'contracts/GoodMarketMakerContract'
 import { getAccount, getChainId } from 'utils/web3'
-import { InsufficientLiquidity, UnexpectedToken, UnsupportedChainId, UnsupportedToken } from 'utils/errors'
+import { UnexpectedToken, UnsupportedChainId, UnsupportedToken } from 'utils/errors'
 import { debug, debugGroup, debugGroupEnd } from 'utils/debug'
 import { ZERO_PERCENT } from 'constants/misc'
 import { exchangeHelperContract } from 'contracts/ExchangeHelperContract'
-import { ERC20Contract } from 'contracts/ERC20Contract'
-import { G$ContractAddresses } from 'constants/addresses'
+import { prepareValues } from 'functions/prepareValues'
 import { computeRealizedLPFeePercent } from 'utils/prices'
 import { SupportedChainId } from 'constants/chains'
 import { v2TradeExactOut } from 'methods/v2TradeExactOut'
@@ -288,7 +286,7 @@ function getLiquidityFee(trade: Trade<Currency, Currency, TradeType>): CurrencyA
  * @param {number} slippageTolerance Slippage tolerance while exchange tokens.
  * @returns {Promise<BuyInfo | null>}
  */
-export async function getMeta(
+export async function getBuyMeta(
     web3: Web3,
     fromSymbol: string,
     amount: number | string,
@@ -445,7 +443,7 @@ export async function getMeta(
  * @param {number} slippageTolerance Slippage tolerance while exchange tokens.
  * @returns {Promise<BuyInfo | null>}
  */
-export async function getMetaReverse(
+export async function getBuyMetaReverse(
     web3: Web3,
     fromSymbol: string,
     toAmount: number | string,
@@ -501,63 +499,66 @@ export async function getMetaReverse(
         return null
     }
 
-    return getMeta(web3, fromSymbol, result.toExact(), slippageTolerance)
+    return getBuyMeta(web3, fromSymbol, result.toExact(), slippageTolerance)
 }
 
-/**
- * Pick necessary date from meta swap.
- * @param {BuyInfo} meta Result of the method getMeta() execution.
- * @returns {input: string, minReturn: string, minDai: string}
- */
-function prepareValues(meta: BuyInfo): { input: string; minReturn: string; minDai: string } {
-    if (!meta.route.length) {
-        throw new InsufficientLiquidity()
-    }
+// /**
+//  * Pick necessary date from meta swap.
+//  * @param {BuyInfo} meta Result of the method getMeta() execution.
+//  * @returns {input: string, minReturn: string, minDai: string}
+//  */
+// function prepareValues(meta: BuyInfo): { input: string; minReturn: string; minDai: string } {
+//     if (!meta.route.length) {
+//         throw new InsufficientLiquidity()
+//     }
 
-    const input = meta.inputAmount.multiply(meta.inputAmount.decimalScale).toFixed(0)
-    const minReturn = meta.minimumOutputAmount.multiply(meta.minimumOutputAmount.decimalScale).toFixed(0)
-    const minDai = meta.DAIAmount ? meta.DAIAmount.multiply(meta.DAIAmount.decimalScale).toFixed(0) : '0'
+//     const input = meta.inputAmount.multiply(meta.inputAmount.decimalScale).toFixed(0)
+//     const minReturn = meta.minimumOutputAmount.multiply(meta.minimumOutputAmount.decimalScale).toFixed(0)
+//     const minDai = meta.DAIAmount ? meta.DAIAmount.multiply(meta.DAIAmount.decimalScale).toFixed(0) : '0'
 
-    debug({
-        input: meta.inputAmount.toSignificant(6),
-        minReturn: meta.minimumOutputAmount.toSignificant(6),
-        minDai: meta.DAIAmount ? meta.DAIAmount.toSignificant(6) : '0'
-    })
+//     debug({
+//         input: meta.inputAmount.toSignificant(6),
+//         minReturn: meta.minimumOutputAmount.toSignificant(6),
+//         minDai: meta.DAIAmount ? meta.DAIAmount.toSignificant(6) : '0'
+//     })
 
-    return { input, minReturn, minDai }
-}
+//     return { input, minReturn, minDai }
+// }
 
+
+
+//@deprecated: replaced by functions/approve
 /**
  * Approve token usage.
  * @param {Web3} web3 Web3 instance.
  * @param {BuyInfo} meta Result of the method getMeta() execution.
  */
-export async function approve(web3: Web3, meta: BuyInfo): Promise<void> {
-    const chainId = await getChainId(web3)
+// export async function approveBuy(web3: Web3, meta: BuyInfo): Promise<void> {
+//     const chainId = await getChainId(web3)
 
-    if (meta.trade && meta.trade.inputAmount.currency.isNative) {
-        return
-    } else if (chainId === SupportedChainId.FUSE) {
-        await fuse.approveBuy(web3, meta.trade!)
-    } else {
-        const account = await getAccount(web3)
-        const { input } = prepareValues(meta)
-        const bigInput = BigNumber.from(input)
+//     if (meta.trade && meta.trade.inputAmount.currency.isNative) {
+//         return
+//     } else if (chainId === SupportedChainId.FUSE) {
+//         await fuse.approveBuy(web3, meta.trade!)
+//     } else {
+//         const account = await getAccount(web3)
+//         const { input } = prepareValues(meta)
+//         const bigInput = BigNumber.from(input)
 
-        const erc20 = ERC20Contract(web3, meta.route[0].address)
+//         const erc20 = ERC20Contract(web3, meta.route[0].address)
 
-        const allowance = await erc20.methods
-            .allowance(account, G$ContractAddresses(chainId, 'ExchangeHelper'))
-            .call()
-            .then((_: string) => BigNumber.from(_))
+//         const allowance = await erc20.methods
+//             .allowance(account, G$ContractAddresses(chainId, 'ExchangeHelper'))
+//             .call()
+//             .then((_: string) => BigNumber.from(_))
 
-        if (bigInput.lte(allowance)) return
+//         if (bigInput.lte(allowance)) return
 
-        await erc20.methods
-            .approve(G$ContractAddresses(chainId, 'ExchangeHelper'), MaxUint256.toString())
-            .send({ from: account })
-    }
-}
+//         await erc20.methods
+//             .approve(G$ContractAddresses(chainId, 'ExchangeHelper'), MaxUint256.toString())
+//             .send({ from: account })
+//     }
+// }
 
 /**
  * Swap tokens.
@@ -574,7 +575,7 @@ export async function buy(web3: Web3, meta: BuyInfo, onSent?: (transactionHash: 
     } else {
         const contract = await exchangeHelperContract(web3)
 
-        const { input, minReturn, minDai } = prepareValues(meta)
+        const { input, minReturn, minDai } = prepareValues(meta, 'buy')
 
         let route: string[]
         // If ETH - change route a little bit to start from a zero address
