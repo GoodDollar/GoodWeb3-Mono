@@ -19,25 +19,16 @@ const plugins = [
   }),
   commonjs(),
   typescript({ 
-    tsconfig: './tsconfig.dist.json',
+    tsconfig: './tsconfig.json',
     exclude: 'node_modules/*',
     clean: true,
     module: "esnext",
+    useTsconfigDeclarationDir: true
   }),
 ]
 
 export default {
-  input: {
-    index: 'src/index.ts',
-    "hooks/index": "src/hooks/index.ts",
-    "constants/index": "src/constants/index.ts",
-    "core/index": "src/core/index.ts",
-    "core/apollo": 'src/core/apollo.ts',
-    "core/staking": 'src/core/staking.ts',
-    "constants/addresses": "src/constants/addresses.ts",
-    "methods/index": "src/methods/index.ts",
-    "utils/errors": "src/utils/errors.ts"
-  },
+  input: {index: 'src/index.ts'},
   output: [
     {
       dir: 'dist',

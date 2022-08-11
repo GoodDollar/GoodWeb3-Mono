@@ -1,9 +1,15 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
-    "target": "es2019",
-    "lib": ["es2019", "dom"],
-    "baseUrl": "./src",
+    "module": "esnext",
+    "target": "es5",
+    "lib": [
+      "es2015",
+      "es5",
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "baseUrl": ".",
     "rootDir": "src",
     "outDir": "dist",
     "types": [],
@@ -11,6 +17,7 @@
     "jsx": "react",
     "declarationDir": "types",
     "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "skipLibCheck": false,
     "sourceMap": true,
@@ -18,8 +25,17 @@
     "isolatedModules": true,
     "declaration": true,
     "emitDeclarationOnly": false,
-    "declarationMap": true
+    "declarationMap": true,
+    "composite": true,
+    "noUnusedLocals": false,
+    "noImplicitAny": false,
+    "noImplicitThis": true,
+    "noImplicitReturns": true,
+    "downlevelIteration": true,
+    "paths": {
+      "*": ["src/*"]
+    }
   },
-  "include": ["src/**/*", "src/**/*.json"],
+  "include": ["src/**/*", "src", "**/*.json", "./types"],
   "exclude": ["node_modules", "types", "*.json"]
 }
