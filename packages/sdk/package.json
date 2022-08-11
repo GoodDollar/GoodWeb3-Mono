@@ -12,7 +12,7 @@
   "scripts": {
     "test": "craco test --env=jsdom",
     "dev": "rollup -c -w",
-    "build": "rm -fr dist && ctix r && ctix s && ctix c && rollup -c && tsc"
+    "build": "rm -fr dist && ctix r && ctix c && cp src/ctixindex.ts src/index.ts && tsc"
   },
   "files": [
     "dist",
