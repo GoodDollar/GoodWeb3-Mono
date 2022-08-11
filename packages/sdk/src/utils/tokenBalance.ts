@@ -30,7 +30,10 @@ export async function tokenBalance(
             _token,
             await web3.eth
                 .getBalance(account)
-                .catch(_ => 0)
+                .catch(e => {
+                  console.log(e.message) 
+                  return 0}
+                )
                 .then(v => v.toString())
         )
     }
