@@ -907,6 +907,7 @@ export async function promiseAll(
   chainId: number, 
   onSent?: (firstTransactionHash: string, from: string, chainId: number) => void,
   onReceipt?: () => void,
+  onError?: (e:any) => void,
   ):Promise<any[]> {
   if (onSent){
     Promise.all(
@@ -915,7 +916,7 @@ export async function promiseAll(
         new Promise<string>((resolve, reject) => {
           transaction.on('transactionHash', (hash: string) => onSent(hash, account, chainId))
           transaction.on('receipt', onReceipt)
-          transaction.on('error', reject)
+          transaction.on('error', onError ? onError : reject)
           resolve('done')
       }) 
       )
@@ -933,6 +934,7 @@ export async function claimGoodRewards(
     web3: Web3,
     onSent?: (firstTransactionHash: string, from: string, chainId: number) => void,
     onReceipt?: () => void,
+    onError?: (e:any) => void,
 ): Promise<TransactionDetails[]> {
     const chainId = await getChainId(web3)
     const account = await getAccount(web3)
@@ -956,7 +958,7 @@ export async function claimGoodRewards(
         transactions.push(stakersDistribution.methods.claimReputation(account, simpleStakingAddresses).send({ from: account }))
     }
 
-    return promiseAll(transactions, account, chainId, onSent, onReceipt)
+    return promiseAll(transactions, account, chainId, onSent, onReceipt, onError)
 }
 
 /**
@@ -968,7 +970,8 @@ export async function claimGoodReward(
     web3: Web3,
     contractAddress: string,
     onSent?: (firstTransactionHash: string, from: string, chainId: number) => void,
-    onReceipt?: () => void
+    onReceipt?: () => void,
+    onError?: (e:any) => void,
 ): Promise<TransactionDetails[]> {
     const chainId = await getChainId(web3)
     const account = await getAccount(web3)
@@ -985,7 +988,7 @@ export async function claimGoodReward(
         transactions.push(stakersDistribution.methods.claimReputation(account, simpleStakingAddress).send({ from: account }))
     }
 
-    return promiseAll(transactions, account, chainId, onSent, onReceipt)
+    return promiseAll(transactions, account, chainId, onSent, onReceipt, onError)
 }
 
 /**
@@ -996,7 +999,8 @@ export async function claimGoodReward(
 export async function claimG$Rewards(
     web3: Web3,
     onSent?: (firstTransactionHash: string, from: string, chainId: number) => void,
-    onReceipt?: () => void
+    onReceipt?: () => void,
+    onError?: (e:any) => void,
 ): Promise<TransactionDetails[]> {
     const chainId = await getChainId(web3)
     const account = await getAccount(web3)
@@ -1021,7 +1025,7 @@ export async function claimG$Rewards(
       }
     }
 
-    return promiseAll(transactions, account, chainId, onSent, onReceipt)
+    return promiseAll(transactions, account, chainId, onSent, onReceipt, onError)
 }
 
 
@@ -1034,7 +1038,8 @@ export async function claimG$Reward(
     web3: Web3,
     contractAddress: string,
     onSent?: (firstTransactionHash: string, from: string, chainId: number) => void,
-    onReceipt?: () => void
+    onReceipt?: () => void,
+    onError?: (e:any) => void,
 ): Promise<TransactionDetails[]> {
     const chainId = await getChainId(web3)
     const account = await getAccount(web3)
@@ -1054,5 +1059,5 @@ export async function claimG$Reward(
         }
     }
 
-    return promiseAll(transactions, account, chainId, onSent, onReceipt)
+    return promiseAll(transactions, account, chainId, onSent, onReceipt, onError)
 }

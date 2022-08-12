@@ -3,8 +3,10 @@ import {nodeResolve}  from '@rollup/plugin-node-resolve';
 import json from '@rollup/plugin-json';
 import commonjs from '@rollup/plugin-commonjs';
 import eslint from '@rollup/plugin-eslint';
+import multiInput from 'rollup-plugin-multi-input';
 
 const plugins = [
+  multiInput({relative: './src'}),
   eslint(),
   json({
     compact: true
@@ -28,7 +30,7 @@ const plugins = [
 ]
 
 export default {
-  input: {index: 'src/index.ts'},
+  input: ['src/**/index.ts'],
   output: [
     {
       dir: 'dist',
