@@ -9,7 +9,7 @@ type ObjectLike = { [key: string]: string | ObjectLike | Array<string[]> | strin
 export const getNetworkEnv = (network?: string): string => {
   const localNetwork = localStorage.getItem("GD_NETWORK");
   const parsed = localNetwork ? JSON.parse(localNetwork) : null;
-  return parsed || network || "staging";
+  return parsed || network || process.env.REACT_APP_NETWORK || "staging";
 };
 
 type AddressMap = { [chainId: number]: string };

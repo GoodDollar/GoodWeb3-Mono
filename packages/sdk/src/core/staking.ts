@@ -101,7 +101,7 @@ export async function getMyList(mainnetWeb3: Web3, fuseWeb3: Web3, account: stri
           stake.address ? metaMyGovStake(fuseWeb3, account, stake.address, stake.release, network) : null)
         for (const releases of simpleStakingReleases){
           if (releases.release){
-            for (const [address] of Object.values(releases.addresses)){
+            for (const address of Object.values(releases.addresses)){
               govStake.push(metaMyStake(mainnetWeb3, address, account, releases.release, network))
             }
           }

@@ -1,13 +1,13 @@
-import { BuyInfo } from 'core/buy'
+import { SwapInfo } from 'core/swap'
 import { InsufficientLiquidity } from 'utils/errors'
 import { debug } from 'utils/debug'
 
 /**
  * Pick necessary date from meta swap.
- * @param {BuyInfo} meta Result of the method getMeta() execution.
+ * @param {SwapInfo} meta Result of the method getMeta() execution.
  * @returns {input: string, minReturn: string, minCDai: string}
  */
- export function prepareValues(meta: BuyInfo, type?: string): { input: string; minReturn: string; minDai: string } {
+ export function prepareValues(meta: SwapInfo, type?: string): { input: string; minReturn: string; minDai: string } {
   if (!meta.route.length) {
       throw new InsufficientLiquidity()
   }

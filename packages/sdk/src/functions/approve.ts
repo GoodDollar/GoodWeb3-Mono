@@ -1,7 +1,7 @@
 import Web3 from 'web3'
 import { BigNumber } from 'ethers'
 import { MaxUint256 } from '@ethersproject/constants'
-import { BuyInfo } from 'core/buy'
+import { SwapInfo } from 'core/swap'
 import { getAccount, getChainId } from 'utils/web3'
 import { G$ContractAddresses } from 'constants/addresses' // todo: import from root constants
 import { SupportedChainId } from 'constants/chains'
@@ -13,9 +13,9 @@ import { G$ } from 'constants/tokens'
 /**
  * Approve token usage.
  * @param {Web3} web3 Web3 instance.
- * @param {BuyInfo} meta Result of the method getMeta() execution.
+ * @param {SwapInfo} meta Result of the method getMeta() execution.
  */
- export async function approve(web3: Web3, meta: BuyInfo, type?: string): Promise<void> {
+ export async function approve(web3: Web3, meta: SwapInfo, type?: string): Promise<void> {
   const chainId = await getChainId(web3)
   const approve = type === 'buy' ? fuse.approveBuy : fuse.approveSell
 
