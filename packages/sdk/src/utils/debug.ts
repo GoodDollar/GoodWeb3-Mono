@@ -1,7 +1,7 @@
 export {}
 export const DEBUG_ENABLED = 0
 
-export const debug = DEBUG_ENABLED ? console.log : (...args: any[]) => undefined // debug fn will show right line number so
+export const debug = DEBUG_ENABLED ? console.log : () => undefined // debug fn will show right line number so
 
 export function debugGroup(...args: any[]) {
     DEBUG_ENABLED && console.group(...args)

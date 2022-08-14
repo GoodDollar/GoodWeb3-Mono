@@ -1,4 +1,4 @@
-import React, {createContext, useContext} from 'react'
+import {createContext, useContext} from 'react'
 import Web3 from 'web3'
 import type { RPC } from './useEnvWeb3'
 
@@ -7,10 +7,6 @@ export interface GdSdkContextInterface {
   activeNetwork: string,
   rpcs: RPC | null,
 }
-
-export type ActiveNetworks = 
-  'fuse-mainnet' | 'staging-mainnet' | 'production-mainnet' | 
-  'fuse' | 'staging' | 'production' | ''
 
 const GdSdkContext = createContext<GdSdkContextInterface>({
   web3: null,

@@ -2,7 +2,7 @@ export {}
 import { BigNumber, BigNumberish } from '@ethersproject/bignumber'
 import { Zero } from '@ethersproject/constants'
 import { parseUnits } from '@ethersproject/units'
-import { Fraction } from '@gooddollar/web3sdk/dist/entities'
+import { Fraction } from '@gooddollar/web3sdk'
 
 
 declare module '@ethersproject/bignumber' {

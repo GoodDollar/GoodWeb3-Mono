@@ -94,7 +94,7 @@ export const useEnvWeb3 = (dao: DAO_NETWORK, activeWeb3?: any | undefined, activ
             setWeb3([new Web3(provider), selectedChainId])
         }
         getProvider()
-    }, [activeWeb3, dao, activeChainId])
+    }, [activeWeb3, dao, activeChainId, activeNetwork])
 
     return web3
 }

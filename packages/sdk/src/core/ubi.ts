@@ -1,7 +1,7 @@
 import Web3 from 'web3'
 
 import { ubiSchemeContract } from 'contracts/UBISchemeContract'
-import { getAccount, getChainId } from 'utils/web3'
+import { getChainId } from 'utils/web3'
 import { debug } from 'utils/debug'
 import { NETWORK_LABELS, SupportedChainId } from 'constants/chains'
 import { InvalidChainId } from 'utils/errors'

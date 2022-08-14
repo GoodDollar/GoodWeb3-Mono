@@ -89,10 +89,11 @@ export type simpleStakingAddresses = [
  */
 
 // TODO: Add function description
-export function getUsdOracle(protocol: LIQUIDITY_PROTOCOL, web3: Web3) {
+export async function getUsdOracle(protocol: LIQUIDITY_PROTOCOL, web3: Web3) {
   let usdOracle: string, deploymentName: string
 
-  const chainId = web3.givenProvider.networkVersion as SupportedChainId
+  const chainId = await getChainId(web3)
+
   const CURRENT_NETWORK = getNetworkEnv()
 
   deploymentName = 'production-mainnet'
