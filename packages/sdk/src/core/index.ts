@@ -1,46 +1,8 @@
-export { g$Price } from './apollo'
-
-export { isWhitelisted, check, claim as claimUBI } from './ubi'
-
-export { 
-  getList as getStakingList,
-  getReserveSocialAPY,
-  getMyList,
-  claimG$Reward,
-  claimG$Rewards,
-  claimGoodReward,
-  claimGoodRewards
-} from './staking'
-
-export type {
-  Stake,
-  MyStake,
-} from './staking'
-
-export {
-  approve as approveBuy,
-  buy,
-  getMeta as getBuyMeta,
-  getMetaReverse as getBuyMetaReverse
-} from './buy'
-
-export type {
-  BuyInfo
-} from './buy'
-
-export {
-  approve as approveSell, 
-  getMeta as getSellMeta,
-  getMetaReverse as getSellMetaReverse,
-  sell
-} from './sell'
-
-export type {
-  SellInfo
-} from './sell'
-
-export { 
-  getList as getTokenList
-} from './tokens'
-
-
+export * from "./apollo";
+export * from "./buy";
+export * from "./rest";
+export * from "./sell";
+export * from "./staking";
+export * from "./swap";
+export * from "./tokens";
+export * from "./ubi";

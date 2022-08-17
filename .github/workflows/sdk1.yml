@@ -1,0 +1,71 @@
+name: Web3 V1 SDK publish
+
+on:
+  push:
+    paths:
+      - "packages/sdk/**"
+      - ".github/workflows/sdk1.yml"
+
+  workflow_dispatch:
+    inputs:
+      bumpversion:
+        description: "Semantic Version Bump Type (major minor patch)"
+        required: true
+        default: "patch"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    name: "version bump and publish to npm"
+    if: github.ref == 'refs/heads/master'
+    env:
+      git_email: techadmin@gooddollar.org
+      git_username: techadmin
+      push_version_commit: true # if your prePublishOnly step pushes git commits, you can omit this input or set it to false.
+      GH_RELEASE_GITHUB_API_TOKEN: ${{ secrets.DEPLOY_GITHUB_TOKEN }} # built in actions token.  Passed tp gh-release if in use.
+      NODE_AUTH_TOKEN: ${{ secrets.NPM_DEPLOY_TOKEN }} # user set secret token generated at npm
+      publish_cmd: npm publish --access public
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          # fetch full history so things like auto-changelog work properly
+          fetch-depth: 0
+      - name: Use Node 14
+        uses: actions/setup-node@v3
+        with:
+          node-version: "14"
+          # setting a registry enables the NODE_AUTH_TOKEN env variable where we can set an npm token.  REQUIRED
+          registry-url: "https://registry.npmjs.org/"
+      - run: npm install -g yarn
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
+      - uses: actions/cache@v3
+        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('./packages/sdk/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-web3sdk
+      - name: "build"
+        run: |
+          yarn workspace @gooddollar/web3sdk install
+          yarn workspace @gooddollar/web3sdk build
+
+      - name: "npm publish"
+        working-directory: ./packages/sdk
+        shell: bash
+        run: |
+          git config --global user.email "${{ env.git_email }}"
+          git config --global user.name "${{ env.git_username }}"
+          USER_INPUT=${{ github.event.inputs.bumpversion }}          
+          VERSION=${USER_INPUT:-"patch"}          
+          export MSG=`npm version ${VERSION}`
+          git add package.json 
+          git commit -m "${MSG}"
+          if [ "${{ env.push_version_commit }}" = "true" ]; then
+            git push --follow-tags
+          else
+            echo "Skipping git push --follow-tags"
+          fi
+          ${{ env.publish_cmd }}

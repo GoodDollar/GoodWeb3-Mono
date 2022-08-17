@@ -17,7 +17,7 @@ import { debug, debugGroup, debugGroupEnd } from 'utils/debug'
 import { stakersDistributionContract } from 'contracts/StakersDistributionContract'
 import { CDAI, G$, GDAO, USDC } from 'constants/tokens'
 import { cacheClear } from 'utils/memoize'
-import { decimalPercentToPercent, decimalToJSBI } from 'utils/converter'
+import { decimalPercentToPercent } from 'utils/converter'
 import { ERC20Contract } from 'contracts/ERC20Contract'
 import { compoundPrice } from 'methods/compoundPrice'
 import { v2TradeExactIn } from 'methods/v2TradeExactIn'
@@ -101,7 +101,7 @@ export async function getMyList(mainnetWeb3: Web3, fuseWeb3: Web3, account: stri
           stake.address ? metaMyGovStake(fuseWeb3, account, stake.address, stake.release, network) : null)
         for (const releases of simpleStakingReleases){
           if (releases.release){
-            for (const [key, address] of Object.entries(releases.addresses)){
+            for (const address of Object.values(releases.addresses)){
               govStake.push(metaMyStake(mainnetWeb3, address, account, releases.release, network))
             }
           }
@@ -599,51 +599,6 @@ const getAPY = memoize<(web3: Web3, address: string, protocol: LIQUIDITY_PROTOCO
 )
 
 /**
- * Return liquidity.
- * @param {Web3} web3 Web3 instance.
- * @param {string} address Stake address.
- * @param {LIQUIDITY_PROTOCOL} protocol Liquidity protocol.
- * @param {Token} token Token for calculation price from.
- * @returns {Promise<Fraction>>}
- */
-const getLiquidity = memoize<
-    (web3: Web3, address: string, protocol: LIQUIDITY_PROTOCOL, token: Token) => Promise<Fraction>
->(
-    async (web3, address, protocol, token) => {
-        const chainId = await getChainId(web3)
-        const simpleStaking = await simpleStakingContract(web3, address)
-
-        debugGroup(`Liquidity for ${token.symbol} in ${protocol} `)
-
-        const zero = new Fraction(0)
-
-        const account = await getAccount(web3)
-        const price = await getTokenPriceInUSDC(web3, protocol, token)
-
-        if (!price) {
-            debug('Liquidity', zero)
-            return zero
-        }
-
-        const USDC = (await getToken(chainId, 'USDC')) as Token
-
-        const totalProductivity = await simpleStaking.methods.totalProductivity().call()
-        debug('Total Productivity', totalProductivity)
-
-        const liquidity = new Fraction(totalProductivity.toString(), 1).multiply(price).divide(10 ** token.decimals)
-
-        const liquidityUSDC = CurrencyAmount.fromFractionalAmount(USDC, liquidity.numerator, liquidity.denominator)
-
-        debug('Liquidity', liquidityUSDC.toSignificant(6))
-
-        debugGroupEnd(`Liquidity for ${token.symbol} in ${protocol}`)
-
-        return liquidityUSDC
-    },
-    (_, address, protocol, token) => address + protocol + token.address
-)
-
-/**
  * Return staked value in USD for SimpleStaking V2.
  * @param {Web3} web3 Web3 instance.
  * @param {string} address Stake address.
@@ -677,7 +632,7 @@ const getStakedValuev2 = memoize<
     )
 
     debug(`current address staking v2 --> ${address}`)
-
+    /*eslint-disable */
     const {0: _accAmountPerShare,
            1: _mintedRewards,
            2: _totalProductivity,
@@ -686,6 +641,7 @@ const getStakedValuev2 = memoize<
            5: _lastRewardBlock,
            6: _maxMultiplierThreshold,
            7: _tokenDecimalDifference} = await simpleStakingv2.getStats()
+    /* eslint-enable */
 
     const USDC = (await getToken(chainId, 'USDC')) as Token
     const tempOracle =  getUsdOracle(protocol, web3)
@@ -808,40 +764,6 @@ const getYearlyRewardG$ = memoize<(web3: Web3, address: string) => Promise<Curre
 )
 
 /**
- * Common information for approve token spend and stake.
- * @param {Web3} web3 Web3 instance.
- * @param {string} address Stake address.
- * @param {number} amount Amount of tokens to stake.
- * @param {boolean} inInterestToken Staking with token (false) or interest token (true)
- * @returns {Promise<{ address: string, amount: string }}
- */
-async function stakeMeta(
-    web3: Web3,
-    address: string,
-    amount: number | string,
-    inInterestToken = false
-): Promise<{ address: string; amount: string }> {
-    const contract = simpleStakingContract(web3, address)
-
-    let tokenAddress
-    if (inInterestToken) {
-        tokenAddress = await contract.methods.iToken().call()
-    } else {
-        tokenAddress = await contract.methods.token().call()
-    }
-
-    const token = (await getTokenByAddress(web3, tokenAddress)) as Token
-
-    const tokenAmount = CurrencyAmount.fromRawAmount(token, decimalToJSBI(amount, token.decimals))
-    const tokenRawAmount = tokenAmount.multiply(tokenAmount.decimalScale).toFixed(0)
-
-    debug('Amount', tokenAmount.toSignificant(6))
-    debug('In interest token', inInterestToken)
-
-    return { address: tokenAddress, amount: tokenRawAmount }
-}
-
-/**
  * Approve token spend for stake.
  * @param {Web3} web3 Web3 instance.
  * @param {string} address Stake address.
@@ -850,7 +772,7 @@ async function stakeMeta(
  * @param {function} [onSent] calls when a transaction sent to a blockchain
  * @returns {Promise<void>}
  */
-export async function approve(
+export async function approveStake(
     web3: Web3,
     spender: string,
     amount: string,
@@ -891,6 +813,7 @@ export async function stakeGov(
     address: string,
     amount: string,
     token: Token,
+    //eslint-disable-next-line 
     inInterestToken = false, //unused - only for compatability with the stake method
     onSent?: (transactionHash: string, from: string) => void
 ): Promise<TransactionDetails> {
@@ -984,6 +907,7 @@ export async function promiseAll(
   chainId: number, 
   onSent?: (firstTransactionHash: string, from: string, chainId: number) => void,
   onReceipt?: () => void,
+  onError?: (e:any) => void,
   ):Promise<any[]> {
   if (onSent){
     Promise.all(
@@ -992,7 +916,7 @@ export async function promiseAll(
         new Promise<string>((resolve, reject) => {
           transaction.on('transactionHash', (hash: string) => onSent(hash, account, chainId))
           transaction.on('receipt', onReceipt)
-          transaction.on('error', reject)
+          transaction.on('error', onError ? onError : reject)
           resolve('done')
       }) 
       )
@@ -1010,7 +934,7 @@ export async function claimGoodRewards(
     web3: Web3,
     onSent?: (firstTransactionHash: string, from: string, chainId: number) => void,
     onReceipt?: () => void,
-    onError?: (e:any) => void
+    onError?: (e:any) => void,
 ): Promise<TransactionDetails[]> {
     const chainId = await getChainId(web3)
     const account = await getAccount(web3)
@@ -1026,7 +950,7 @@ export async function claimGoodRewards(
         const simpleStakingAddresses: any[] = []
         const stakeV3 = simpleStakingReleases.find(releases => releases.release === "v3")
         if (stakeV3){
-          for (const [key, address] of Object.entries(stakeV3.addresses)){
+          for (const [address] of Object.values(stakeV3.addresses)){
             simpleStakingAddresses.push(address)
           }
         }
@@ -1034,7 +958,7 @@ export async function claimGoodRewards(
         transactions.push(stakersDistribution.methods.claimReputation(account, simpleStakingAddresses).send({ from: account }))
     }
 
-    return promiseAll(transactions, account, chainId, onSent, onReceipt)
+    return promiseAll(transactions, account, chainId, onSent, onReceipt, onError)
 }
 
 /**
@@ -1047,7 +971,7 @@ export async function claimGoodReward(
     contractAddress: string,
     onSent?: (firstTransactionHash: string, from: string, chainId: number) => void,
     onReceipt?: () => void,
-    onError?: (e:any) => void
+    onError?: (e:any) => void,
 ): Promise<TransactionDetails[]> {
     const chainId = await getChainId(web3)
     const account = await getAccount(web3)
@@ -1064,7 +988,7 @@ export async function claimGoodReward(
         transactions.push(stakersDistribution.methods.claimReputation(account, simpleStakingAddress).send({ from: account }))
     }
 
-    return promiseAll(transactions, account, chainId, onSent, onReceipt)
+    return promiseAll(transactions, account, chainId, onSent, onReceipt, onError)
 }
 
 /**
@@ -1075,7 +999,8 @@ export async function claimGoodReward(
 export async function claimG$Rewards(
     web3: Web3,
     onSent?: (firstTransactionHash: string, from: string, chainId: number) => void,
-    onReceipt?: () => void
+    onReceipt?: () => void,
+    onError?: (e:any) => void,
 ): Promise<TransactionDetails[]> {
     const chainId = await getChainId(web3)
     const account = await getAccount(web3)
@@ -1086,7 +1011,8 @@ export async function claimG$Rewards(
     const stakeV3 = simpleStakingReleases.find(releases => releases.release === "v3")
 
     if (stakeV3) {
-      for (const [key, address] of Object.entries(stakeV3.addresses)){
+      for (const [address] of Object.values(stakeV3.addresses)){
+        //eslint-disable-next-line
         const [rewardG$, rewardGDAO] = await Promise.all([
           getRewardG$(web3, address, account, false),
           getRewardGDAO(web3, address, account)
@@ -1099,7 +1025,7 @@ export async function claimG$Rewards(
       }
     }
 
-    return promiseAll(transactions, account, chainId, onSent, onReceipt)
+    return promiseAll(transactions, account, chainId, onSent, onReceipt, onError)
 }
 
 
@@ -1112,7 +1038,8 @@ export async function claimG$Reward(
     web3: Web3,
     contractAddress: string,
     onSent?: (firstTransactionHash: string, from: string, chainId: number) => void,
-    onReceipt?: () => void
+    onReceipt?: () => void,
+    onError?: (e:any) => void,
 ): Promise<TransactionDetails[]> {
     const chainId = await getChainId(web3)
     const account = await getAccount(web3)
@@ -1120,6 +1047,7 @@ export async function claimG$Reward(
     const transactions: any[] = []
 
     if (contractAddress) {
+      //eslint-disable-next-line
         const [rewardG$, rewardGDAO] = await Promise.all([
           getRewardG$(web3, contractAddress, account, false),
           getRewardGDAO(web3, contractAddress, account)
@@ -1131,5 +1059,5 @@ export async function claimG$Reward(
         }
     }
 
-    return promiseAll(transactions, account, chainId, onSent, onReceipt)
+    return promiseAll(transactions, account, chainId, onSent, onReceipt, onError)
 }

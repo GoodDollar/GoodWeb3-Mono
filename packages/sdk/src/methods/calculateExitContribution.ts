@@ -1,5 +1,5 @@
 import Web3 from "web3";
-import { Currency, CurrencyAmount, Fraction } from "@uniswap/sdk-core";
+import { Currency, CurrencyAmount } from "@uniswap/sdk-core";
 import { BigNumber, ethers } from "ethers";
 
 import { tokenBalance } from "utils/tokenBalance";

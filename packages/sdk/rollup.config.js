@@ -3,8 +3,10 @@ import {nodeResolve}  from '@rollup/plugin-node-resolve';
 import json from '@rollup/plugin-json';
 import commonjs from '@rollup/plugin-commonjs';
 import eslint from '@rollup/plugin-eslint';
+import multiInput from 'rollup-plugin-multi-input';
 
 const plugins = [
+  multiInput({relative: './src'}),
   eslint(),
   json({
     compact: true
@@ -19,25 +21,16 @@ const plugins = [
   }),
   commonjs(),
   typescript({ 
-    tsconfig: './tsconfig.dist.json',
+    tsconfig: './tsconfig.json',
     exclude: 'node_modules/*',
     clean: true,
     module: "esnext",
+    useTsconfigDeclarationDir: true
   }),
 ]
 
 export default {
-  input: {
-    index: 'src/index.ts',
-    "hooks/index": "src/hooks/index.ts",
-    "constants/index": "src/constants/index.ts",
-    "core/index": "src/core/index.ts",
-    "core/apollo": 'src/core/apollo.ts',
-    "core/staking": 'src/core/staking.ts',
-    "constants/addresses": "src/constants/addresses.ts",
-    "methods/index": "src/methods/index.ts",
-    "utils/errors": "src/utils/errors.ts"
-  },
+  input: ['src/**/index.ts'],
   output: [
     {
       dir: 'dist',
