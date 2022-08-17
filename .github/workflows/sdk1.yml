@@ -49,7 +49,7 @@ jobs:
             ${{ runner.os }}-yarn-web3sdk
       - name: "build"
         run: |
-          yarn workspace @gooddollar/web3sdk install
+          yarn workspace @gooddollar/web3sdk install --immutable
           yarn workspace @gooddollar/web3sdk build
 
       - name: "npm publish"
