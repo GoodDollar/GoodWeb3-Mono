@@ -518,7 +518,7 @@ export const getTokenPriceInUSDC = memoize<
 
 export const getReserveSocialAPY = memoize<(web3: Web3, chainId: number) => Promise<Fraction>>(
     async (web3, chainId) => {
-        const marketMaker = await goodMarketMakerContract(web3)
+        const marketMaker = await goodMarketMakerContract(web3, chainId)
 
         const [{ reserveRatio, reserveSupply, gdSupply }, currentPrice, dailyExpansionRate] = await Promise.all([
             marketMaker.methods.reserveTokens(CDAI[chainId].address).call(),
@@ -547,7 +547,7 @@ export const getReserveSocialAPY = memoize<(web3: Web3, chainId: number) => Prom
  */
 export const getReserveRatio = memoize<(web3: Web3, chainId: number) => Promise<Fraction>>(
     async (web3, chainId) => {
-        const marketMaker = await goodMarketMakerContract(web3)
+        const marketMaker = await goodMarketMakerContract(web3, chainId)
 
         const { reserveRatio } = await marketMaker.methods.reserveTokens(CDAI[chainId].address).call()
 

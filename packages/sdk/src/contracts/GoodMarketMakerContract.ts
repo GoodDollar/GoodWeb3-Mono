@@ -5,7 +5,6 @@ import GoodMarketMaker
   from "@gooddollar/goodprotocol/artifacts/contracts/reserve/GoodMarketMaker.sol/GoodMarketMaker.json"
 
 import { G$ContractAddresses } from "constants/addresses"
-import { getChainId } from "utils/web3"
 
 /**
  * Returns instance of GoodMarket contract.
@@ -13,8 +12,8 @@ import { getChainId } from "utils/web3"
  * @param {string?} address Deployed contract address in given chain ID.
  * @constructor
  */
-export async function goodMarketMakerContract(web3: Web3, address?: string): Promise<Contract> {
-  address = address ?? G$ContractAddresses(await getChainId(web3), 'GoodMarketMaker')
+export async function goodMarketMakerContract(web3: Web3, chainId: number, address?: string): Promise<Contract> {
+  address = address ?? G$ContractAddresses(chainId, 'GoodMarketMaker')
 
   return new web3.eth.Contract(GoodMarketMaker.abi as AbiItem[], address)
 }
