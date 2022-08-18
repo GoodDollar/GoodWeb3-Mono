@@ -36,6 +36,6 @@
       "*": ["src/*"]
     }
   },
-  "include": ["src/**/*", "src", "**/*.json", "./types"],
-  "exclude": ["node_modules", "types", "*.json"]
+  "include": ["src/**/*", "src", "**/*.json"],
+  "exclude": ["node_modules", "*.json"]
 }
