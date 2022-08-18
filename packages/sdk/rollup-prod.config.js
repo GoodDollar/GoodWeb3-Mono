@@ -1,54 +1,48 @@
-// import typescript from 'rollup-plugin-typescript2';
-// import { terser } from 'rollup-plugin-terser';
-// import {nodeResolve}  from '@rollup/plugin-node-resolve';
-// import json from '@rollup/plugin-json';
-// import commonjs from '@rollup/plugin-commonjs';
-// import eslint from '@rollup/plugin-eslint';
-// import nodePolyfills from 'rollup-plugin-node-polyfills';
+import typescript from 'rollup-plugin-typescript2';
+import {nodeResolve}  from '@rollup/plugin-node-resolve';
+import { terser } from 'rollup-plugin-terser';
+import json from '@rollup/plugin-json';
+import commonjs from '@rollup/plugin-commonjs';
+import eslint from '@rollup/plugin-eslint';
+import multiInput from 'rollup-plugin-multi-input';
 
-// // import pkg from './package.json';
+const plugins = [
+  multiInput({relative: './src'}),
+  eslint(),
+  json({
+    compact: true
+  }),
+  nodeResolve({
+    jsnext: true,
+    main: true,
+    browser: true,
+    preferBuiltins: false,
+    moduleDirectories: ['node_modules', 'src'],
+    extensions: ['.mjs', '.js', '.json', '.node'],
+  }),
+  commonjs(),
+  terser(),
+  typescript({ 
+    tsconfig: './tsconfig.json',
+    exclude: 'node_modules/*',
+    clean: true,
+    module: "esnext",
+    useTsconfigDeclarationDir: true
+  }),
+]
 
-// // const external = [
-// //   ...Object.keys(pkg.dependencies || {}),
-// //   ...Object.keys(pkg.peerDependencies || {}),
-// // ]
-
-// export default {
-//   input: './src/index.ts',
-//   output: [
-//     {
-//       dir: 'dist',
-//       format: 'esm',
-//       sourcemap: false,
-//     },
-//   ],
-//   context: "window",
-//   plugins: [
-//     eslint(),
-//     json({
-//       compact: true
-//     }),
-//     nodeResolve({
-//       jsnext: true,
-//       main: true,
-//       browser: true,
-//       preferBuiltins: false
-//     }),
-//     commonjs(),
-//     terser(),
-//     typescript({ 
-//       tsconfig: './tsconfig.json', 
-//       exclude: 'node_modules/*',
-//       useTsconfigDeclarationDir: true,
-//       module: "esnext",
-//       clean: true,
-//     }),
-//     nodePolyfills({
-//       crypto: true,
-//       stream: true,
-//       https: true,
-//       http: true,
-//       os: true
-//     }),
-//   ]
-// };
+export default {
+  input: ['src/**/index.ts'],
+  output: [
+    {
+      dir: 'dist',
+      chunkFileNames: 'chunks/[name].js',
+      // entryFileNames: '[name].js',
+      // file: `core/${path.basename(input)}`,
+      format: 'esm',
+    },
+  ],
+  context: "window",
+  plugins: plugins,
+  external: ['react', 'react-dom', 'react-router-dom']
+};
