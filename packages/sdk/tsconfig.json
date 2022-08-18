@@ -1,25 +1,41 @@
 {
-  "extends": "../../tsconfig.build.json",
   "compilerOptions": {
-    "baseUrl": "./src",
-    "paths": {
-      "@gd-test-repo/sdk/core": ["./core"]
-    },
+    "module": "esnext",
+    "target": "es5",
+    "lib": [
+      "es2015",
+      "es5",
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "baseUrl": ".",
     "rootDir": "src",
     "outDir": "dist",
-    "skipLibCheck": false,
-    "types": ["jest", "node", "bn.js"],
+    "types": [],
     "typeRoots": ["./node_modules/@types", "./types", "../../node_modules/@types"],
+    "jsx": "react",
+    "declarationDir": "types",
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "skipLibCheck": false,
+    "sourceMap": true,
+    "resolveJsonModule": true,
     "isolatedModules": true,
     "declaration": true,
-    "emitDeclarationOnly": true,
+    "emitDeclarationOnly": false,
     "declarationMap": true,
     "composite": true,
+    "noUnusedLocals": false,
+    "noImplicitAny": false,
+    "noImplicitThis": true,
+    "noImplicitReturns": true,
+    "downlevelIteration": true,
+    "paths": {
+      "*": ["src/*"]
+    }
   },
-  "include": [
-    "src/**/*.ts", "./types/", 
-    "src/**/*.json", "src/**/*.tsx",
-    "src/*.d.ts", "src/**/*.d.ts",
-  ],
-  "exclude": ["node_modules"],
+  "include": ["src/**/*", "src", "**/*.json", "./types"],
+  "exclude": ["node_modules", "types", "*.json"]
 }

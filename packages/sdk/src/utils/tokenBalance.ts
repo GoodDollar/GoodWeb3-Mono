@@ -1,6 +1,6 @@
 import Web3 from 'web3'
 import { Currency, CurrencyAmount, NativeCurrency, Token } from '@uniswap/sdk-core'
-
+import { ethers } from 'ethers'
 import { ERC20Contract } from 'contracts/ERC20Contract'
 import { getChainId } from './web3'
 import { getToken } from 'methods/tokenLists'
@@ -30,7 +30,10 @@ export async function tokenBalance(
             _token,
             await web3.eth
                 .getBalance(account)
-                .catch(_ => 0)
+                .catch(e => {
+                  console.log(e.message) 
+                  return 0}
+                )
                 .then(v => v.toString())
         )
     }
@@ -42,3 +45,23 @@ export async function tokenBalance(
             .call()
     )
 }
+
+export const formatBalance = (value: ethers.BigNumberish, decimals = 18, maxFraction = 0) => {
+  const formatted = ethers.utils.formatUnits(value, decimals)
+  if (maxFraction > 0) {
+      const split = formatted.split('.')
+      if (split.length > 1) {
+          return split[0] + '.' + split[1].substr(0, maxFraction)
+      }
+  }
+  return formatted
+}
+
+export const parseBalance = (value: string, decimals = 18) => {
+  return ethers.utils.parseUnits(value || '0', decimals)
+}
+
+export const isEmptyValue = (text: string) =>
+  ethers.BigNumber.isBigNumber(text)
+      ? ethers.BigNumber.from(text).isZero()
+      : text === '' || text.replace(/0/g, '').replace(/\./, '') === ''

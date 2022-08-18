@@ -3,3 +3,4 @@ node_modules
 .vscode
 .yalc
 tsconfig.tsbuildinfo
+types
