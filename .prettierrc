@@ -3,5 +3,21 @@
     "singleQuote": false,
     "bracketSpacing": true,
     "trailingComma": "none",
-    "arrowParens": "avoid"
+    "arrowParens": "avoid",
+    "overrides": [
+        {
+            "files": "sdk-v2/*",
+            "options": {
+                "printWidth": 120,
+                "singleQuote": false,
+                "bracketSpacing": true,
+                "explicitTypes": "always",
+                "trailingComma": "none",
+                "arrowParens": "avoid",
+                "semi": true,
+                "useTabs": false,
+                "tabWidth": 2
+            }
+        }
+    ]
 }

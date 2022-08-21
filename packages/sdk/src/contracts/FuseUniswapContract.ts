@@ -9,7 +9,6 @@ import { Currency, Percent, TradeType } from '@uniswap/sdk-core'
 import { DEFAULT_DEADLINE_FROM_NOW } from 'constants/misc'
 import { isZero } from 'functions/validate'
 import { getAccount, getChainId } from 'utils/web3'
-import { SupportedChainId } from 'constants/chains'
 import { ERC20Contract } from './ERC20Contract'
 import { G$ } from 'constants/tokens'
 import { UNISWAP_CONTRACT_ADDRESS } from 'constants/addresses'
@@ -107,7 +106,6 @@ export async function swap(
     onSent?: (transactionHash: string, from: string) => void,
     deadline: number = DEFAULT_DEADLINE_FROM_NOW // in seconds from now
 ): Promise<any> {
-    const chainId = await getChainId(web3)
     const account = await getAccount(web3)
 
     const contract = await fuseUniswapContract(web3)
@@ -116,7 +114,6 @@ export async function swap(
     const { methodName, args, value } = parameters
 
     const req = contract.methods[methodName](...args).send({
-        ...(chainId === SupportedChainId.FUSE && { gasPrice: 1_000_000_000 }),
         ...(value && !isZero(value) ? { value, from: account } : { from: account })
     })
 

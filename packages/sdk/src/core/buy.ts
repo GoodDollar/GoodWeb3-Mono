@@ -27,7 +27,7 @@ import { SupportedChainId } from 'constants/chains'
 import { v2TradeExactOut } from 'methods/v2TradeExactOut'
 import * as fuse from 'contracts/FuseUniswapContract'
 import { g$ReservePrice } from 'methods/g$price'
-import { cDaiToDai, G$ToCDai, daiToCDai, cDaiToG$, SwapInfo as BuyInfo, XResult as DAIResult} from './swap'
+import { cDaiToDai, G$ToCDai, daiToCDai, cDaiToG$, SwapInfo as BuyInfo, XResult as DAIResult } from './swap'
 
 /**
  * Tries to convert token X into DAI. If it impossible - returns null.
@@ -405,7 +405,11 @@ export async function getBuyMetaReverse(
  * @param {BuyInfo} meta Result of the method getMeta() execution.
  * @param {Function} onSent On sent event listener.
  */
-export async function buy(web3: Web3, meta: BuyInfo, onSent?: (transactionHash: string, from: string) => void): Promise<any> {
+export async function buy(
+    web3: Web3,
+    meta: BuyInfo,
+    onSent?: (transactionHash: string, from: string) => void
+): Promise<any> {
     const chainId = await getChainId(web3)
     const account = await getAccount(web3)
 
@@ -435,10 +439,11 @@ export async function buy(web3: Web3, meta: BuyInfo, onSent?: (transactionHash: 
                 ethers.constants.AddressZero
             )
             .send({
+                type: '0x2', //force eip1599 on ethereum
                 from: account,
                 value: route[0] === ethers.constants.AddressZero ? input : undefined
             })
-            
+
         if (onSent) req.on('transactionHash', (hash: string) => onSent(hash, account))
         return req
     }
