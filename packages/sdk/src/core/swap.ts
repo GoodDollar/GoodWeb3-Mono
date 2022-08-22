@@ -66,7 +66,7 @@ let index = 0
   }
 
   const chainId = await getChainId(web3)
-  const goodMarketMaker = await goodMarketMakerContract(web3)
+  const goodMarketMaker = await goodMarketMakerContract(web3, chainId)
   const G$ = (await getToken(chainId, 'G$')) as Token
 
   const _index = ++index
@@ -168,7 +168,7 @@ let index = 0
   }
 
   const chainId = await getChainId(web3)
-  const goodMarketMaker = await goodMarketMakerContract(web3)
+  const goodMarketMaker = await goodMarketMakerContract(web3, chainId)
 
   debugGroup(`G$ to cDAI`)
 

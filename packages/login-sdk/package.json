@@ -1,7 +1,8 @@
 {
   "name": "@gooddollar/goodlogin-sdk",
-  "version": "1.1.16",
+  "version": "1.1.17",
   "description": "Login SDK for login with Gooddollar wallet",
+  "private": true,
   "scripts": {
     "build": "tsc",
     "test": "jest"
@@ -37,7 +38,7 @@
     "react": "^17.0.2"
   },
   "dependencies": {
-    "@gooddollar/goodprotocol": "^1.0.20",
+    "@gooddollar/goodprotocol": "1.0.27",
     "web3": "^1.7.4"
   }
 }
