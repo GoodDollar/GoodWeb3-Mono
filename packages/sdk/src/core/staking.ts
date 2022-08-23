@@ -838,7 +838,8 @@ export async function stakeGov(
     const account = await getAccount(web3)
 
     const tokenAmount = amount.toBigNumber(token.decimals)
-    const req = contract.methods.stake(tokenAmount).send({ from: account })
+    const gasPrice = await web3.eth.getGasPrice()
+    const req = contract.methods.stake(tokenAmount).send({ from: account, gasPrice: gasPrice })
 
     if (onSent) req.on('transactionHash', (hash: string) => onSent(hash, account))
 
@@ -911,8 +912,10 @@ export async function withdraw(
         .toFixed(0)
 
     let req
-    if (stake.protocol === LIQUIDITY_PROTOCOL.GOODDAO)
-        req = contract.methods.withdrawStake(toWithdraw).send({ from: account })
+    if (stake.protocol === LIQUIDITY_PROTOCOL.GOODDAO){
+      const gasPrice = await web3.eth.getGasPrice()
+      req = contract.methods.withdrawStake(toWithdraw).send({ from: account, gasPrice: gasPrice })
+    }
     else
         req = contract.methods.withdrawStake(toWithdraw, withdrawIntoInterestToken).send({
             from: account,
@@ -967,7 +970,8 @@ export async function claimGoodRewards(
     const transactions: any[] = []
     if (chainId === SupportedChainId.FUSE) {
         const contract = governanceStakingContract(web3)
-        transactions.push(contract.methods.withdrawRewards().send({ from: account }))
+        const gasPrice = await web3.eth.getGasPrice()
+        transactions.push(contract.methods.withdrawRewards().send({ from: account, gasPrice: gasPrice }))
     } else {
         const stakersDistribution = await stakersDistributionContract(web3)
         const simpleStakingReleases = await getSimpleStakingContractAddressesV3(web3)
@@ -1009,7 +1013,8 @@ export async function claimGoodReward(
     const transactions: any[] = []
     if (chainId === SupportedChainId.FUSE) {
         const contract = governanceStakingContract(web3)
-        transactions.push(contract.methods.withdrawRewards().send({ from: account }))
+        const gasPrice = await web3.eth.getGasPrice()
+        transactions.push(contract.methods.withdrawRewards().send({ from: account, gasPrice: gasPrice }))
     } else {
         const stakersDistribution = await stakersDistributionContract(web3)
 
