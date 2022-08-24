@@ -950,7 +950,7 @@ export async function claimGoodRewards(
         const simpleStakingAddresses: any[] = []
         const stakeV3 = simpleStakingReleases.find(releases => releases.release === "v3")
         if (stakeV3){
-          for (const [address] of Object.values(stakeV3.addresses)){
+          for (const address of Object.values(stakeV3.addresses)){
             simpleStakingAddresses.push(address)
           }
         }
@@ -1011,7 +1011,7 @@ export async function claimG$Rewards(
     const stakeV3 = simpleStakingReleases.find(releases => releases.release === "v3")
 
     if (stakeV3) {
-      for (const [address] of Object.values(stakeV3.addresses)){
+      for (const address of Object.values(stakeV3.addresses)){
         //eslint-disable-next-line
         const [rewardG$, rewardGDAO] = await Promise.all([
           getRewardG$(web3, address, account, false),
