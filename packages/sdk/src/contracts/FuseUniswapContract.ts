@@ -112,10 +112,9 @@ export async function swap(
     const parameters = await swapCallArguments(web3, trade, allowedSlippage, deadline)
 
     const { methodName, args, value } = parameters
-    const gasPrice = await web3.eth.getGasPrice()
 
     const req = contract.methods[methodName](...args).send({
-        ...{ gasPrice: gasPrice },
+        ...{ gasPrice: "10000000000" },
         ...(value && !isZero(value) ? { value, from: account } : { from: account })
     })
 

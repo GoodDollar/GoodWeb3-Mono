@@ -790,6 +790,7 @@ const getYearlyRewardG$ = memoize<(web3: Web3, address: string) => Promise<Curre
  */
 export async function approveStake(
     web3: Web3,
+    protocol: LIQUIDITY_PROTOCOL,
     spender: string,
     amount: string,
     token: Token,
@@ -806,9 +807,10 @@ export async function approveStake(
         .then((_: string) => BigNumber.from(_))
 
     if (tokenAmount.lte(allowance)) return
+    const type = protocol === LIQUIDITY_PROTOCOL.GOODDAO ? '0x1' : '0x2' //force eip1599 on ethereum
     const req = ERC20Contract(web3, token.address).methods.approve(spender, MaxApproveValue.toString()).send({
         from: account,
-        type: '0x2' //force eip1599 on ethereum
+        type: type
     })
 
     if (onSent) req.on('transactionHash', onSent)
@@ -838,8 +840,7 @@ export async function stakeGov(
     const account = await getAccount(web3)
 
     const tokenAmount = amount.toBigNumber(token.decimals)
-    const gasPrice = await web3.eth.getGasPrice()
-    const req = contract.methods.stake(tokenAmount).send({ from: account, gasPrice: gasPrice })
+    const req = contract.methods.stake(tokenAmount).send({ from: account, gasPrice: "10000000000" })
 
     if (onSent) req.on('transactionHash', (hash: string) => onSent(hash, account))
 
@@ -913,8 +914,7 @@ export async function withdraw(
 
     let req
     if (stake.protocol === LIQUIDITY_PROTOCOL.GOODDAO){
-      const gasPrice = await web3.eth.getGasPrice()
-      req = contract.methods.withdrawStake(toWithdraw).send({ from: account, gasPrice: gasPrice })
+      req = contract.methods.withdrawStake(toWithdraw).send({ from: account, gasPrice: "10000000000" })
     }
     else
         req = contract.methods.withdrawStake(toWithdraw, withdrawIntoInterestToken).send({
@@ -970,18 +970,18 @@ export async function claimGoodRewards(
     const transactions: any[] = []
     if (chainId === SupportedChainId.FUSE) {
         const contract = governanceStakingContract(web3)
-        const gasPrice = await web3.eth.getGasPrice()
-        transactions.push(contract.methods.withdrawRewards().send({ from: account, gasPrice: gasPrice }))
+        transactions.push(contract.methods.withdrawRewards().send({ from: account, gasPrice: "10000000000" }))
     } else {
         const stakersDistribution = await stakersDistributionContract(web3)
         const simpleStakingReleases = await getSimpleStakingContractAddressesV3(web3)
 
         const simpleStakingAddresses: any[] = []
+
         const stakeV3 = simpleStakingReleases.find(releases => releases.release === 'v3')
         if (stakeV3) {
-            for (const [address] of Object.values(stakeV3.addresses)) {
-                simpleStakingAddresses.push(address)
-            }
+          for (const address of Object.values(stakeV3.addresses)) {
+              simpleStakingAddresses.push(address)
+          }
         }
 
         transactions.push(
@@ -1013,8 +1013,7 @@ export async function claimGoodReward(
     const transactions: any[] = []
     if (chainId === SupportedChainId.FUSE) {
         const contract = governanceStakingContract(web3)
-        const gasPrice = await web3.eth.getGasPrice()
-        transactions.push(contract.methods.withdrawRewards().send({ from: account, gasPrice: gasPrice }))
+        transactions.push(contract.methods.withdrawRewards().send({ from: account, gasPrice: "10000000000" }))
     } else {
         const stakersDistribution = await stakersDistributionContract(web3)
 
@@ -1051,22 +1050,22 @@ export async function claimG$Rewards(
     const stakeV3 = simpleStakingReleases.find(releases => releases.release === 'v3')
 
     if (stakeV3) {
-        for (const [address] of Object.values(stakeV3.addresses)) {
-            //eslint-disable-next-line
-            const [rewardG$, rewardGDAO] = await Promise.all([
-                getRewardG$(web3, address, account, false),
-                getRewardGDAO(web3, address, account)
-            ])
+      for (const address of Object.values(stakeV3.addresses)){
+        //eslint-disable-next-line
+        const [rewardG$, rewardGDAO] = await Promise.all([
+          getRewardG$(web3, address, account, false),
+          getRewardGDAO(web3, address, account)
+        ])
 
-            if (!rewardG$.unclaimed.equalTo(0)) {
-                const simpleStaking = simpleStakingContractV2(web3, address)
-                transactions.push(
-                    simpleStaking.methods.withdrawRewards().send({
-                        from: account,
-                        type: '0x2' //force eip1599 on ethereum
-                    })
-                )
-            }
+        if (!rewardG$.unclaimed.equalTo(0)) {
+            const simpleStaking = simpleStakingContractV2(web3, address)
+            transactions.push(
+                simpleStaking.methods.withdrawRewards().send({
+                    from: account,
+                    type: '0x2' //force eip1599 on ethereum
+                })
+            )
+        }
         }
     }
 
