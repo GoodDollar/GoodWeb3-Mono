@@ -15,31 +15,33 @@ import { G$ } from 'constants/tokens'
  * @param {Web3} web3 Web3 instance.
  * @param {SwapInfo} meta Result of the method getMeta() execution.
  */
- export async function approve(web3: Web3, meta: SwapInfo, type?: string): Promise<void> {
-  const chainId = await getChainId(web3)
-  const approve = type === 'buy' ? fuse.approveBuy : fuse.approveSell
+export async function approve(web3: Web3, meta: SwapInfo, type?: string): Promise<void> {
+    const chainId = await getChainId(web3)
+    const approve = type === 'buy' ? fuse.approveBuy : fuse.approveSell
 
-  if (meta.trade && meta.trade.inputAmount.currency.isNative) { // is this needed
-      console.log('approve isNative')
-      return
-  } else if (chainId === SupportedChainId.FUSE) {
-      await approve(web3, meta.trade!)
-  } else {
-      const account = await getAccount(web3)
-      const { input } = prepareValues(meta)
-      const bigInput = BigNumber.from(input)
-      const address = type === 'buy' ? meta.route[0].address : G$[chainId].address
-      const erc20 = ERC20Contract(web3, address)
+    if (meta.trade && meta.trade.inputAmount.currency.isNative) {
+        // is this needed
+        console.log('approve isNative')
+        return
+    } else if (chainId === SupportedChainId.FUSE) {
+        await approve(web3, meta.trade!)
+    } else {
+        const account = await getAccount(web3)
+        const { input } = prepareValues(meta)
+        const bigInput = BigNumber.from(input)
+        const address = type === 'buy' ? meta.route[0].address : G$[chainId].address
+        const erc20 = ERC20Contract(web3, address)
 
-      const allowance = await erc20.methods
-          .allowance(account, G$ContractAddresses(chainId, 'ExchangeHelper'))
-          .call()
-          .then((_: string) => BigNumber.from(_))
+        const allowance = await erc20.methods
+            .allowance(account, G$ContractAddresses(chainId, 'ExchangeHelper'))
+            .call()
+            .then((_: string) => BigNumber.from(_))
 
-      if (bigInput.lte(allowance)) return
+        if (bigInput.lte(allowance)) return
 
-      await erc20.methods
-          .approve(G$ContractAddresses(chainId, 'ExchangeHelper'), MaxUint256.toString())
-          .send({ from: account })
-  }
+        await erc20.methods.approve(G$ContractAddresses(chainId, 'ExchangeHelper'), MaxUint256.toString()).send({
+            from: account,
+            type: '0x2' //force eip1599 on ethereum
+        })
+    }
 }

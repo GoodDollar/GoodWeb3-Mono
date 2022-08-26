@@ -171,9 +171,10 @@ export async function G$ToXExactOut(
  * @param {Trade<Currency, Currency, TradeType>} trade Trade returned by uniswap.
  * @returns {{ liquidityFee: CurrencyAmount<Currency>, priceImpact: Percent }}
  */
-export function realizedLPFeePriceImpact(
-    trade: Trade<Currency, Currency, TradeType>
-): { liquidityFee: CurrencyAmount<Currency>; priceImpact: Percent } {
+export function realizedLPFeePriceImpact(trade: Trade<Currency, Currency, TradeType>): {
+    liquidityFee: CurrencyAmount<Currency>
+    priceImpact: Percent
+} {
     const realizedLpFeePercent = computeRealizedLPFeePercent(trade)
     const priceImpact = trade.priceImpact.subtract(realizedLpFeePercent)
     const liquidityFee = trade.inputAmount.multiply(realizedLpFeePercent)
@@ -299,7 +300,7 @@ export async function getSellMeta(
 
         GDXBalance = await tokenBalance(web3, 'GDX', account)
     }
-    
+
     debugGroupEnd(`Get meta ${amount} G$ to ${toSymbol}`)
 
     return {
@@ -429,7 +430,10 @@ export async function sell(
                 BigNumber.from(minReturn),
                 ethers.constants.AddressZero
             )
-            .send({ from: account })
+            .send({
+                from: account,
+                type: '0x2' //force eip1599 on ethereum
+            })
 
         if (onSent) req.on('transactionHash', (hash: string) => onSent(hash, account))
         return req
