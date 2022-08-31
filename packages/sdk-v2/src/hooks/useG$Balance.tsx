@@ -20,7 +20,7 @@ export function useG$Balance(refresh: QueryParams["refresh"] = "never", env?: En
       },
       {
         contract: gdStaking,
-        method: 'getStaked',
+        method: 'getSavings',
         args: [account]
       }
     ]
@@ -28,24 +28,13 @@ export function useG$Balance(refresh: QueryParams["refresh"] = "never", env?: En
 
   if (results[0]?.error || results[1]?.error){
   }
-  let depositBalance: string = '0', withdrawBalance: string = '0';
+  let g$Balance: string = '0', savingsBalance: string = '0';
   if (!results.includes(undefined)) {
     const [balance] = results[0]?.value
-    const [userStake] = results[1]?.value
-    depositBalance = parseFloat( (parseInt(balance) / 1e2).toString() ).toFixed(2)
-    withdrawBalance = parseFloat( (parseInt(userStake) / 1e6).toString() ).toFixed(2)
+    const [sBalance] = results[1]?.value
+    g$Balance = parseFloat( (parseInt(balance) / 1e2).toString() ).toFixed(2)
+    savingsBalance = parseFloat( (parseInt(sBalance) / 1e6).toString() ).toFixed(2)
   }
   
-  return { depositBalance: depositBalance, withdrawBalance: withdrawBalance }
+  return { g$Balance: g$Balance, savingsBalance: savingsBalance }
 }
-
-// const { value: tokenBalance } = 
-//   useCall(
-//     account &&
-//       g$ && {
-//         contract: new Contract(g$, ERC20Interface),
-//         method: 'balanceOf',
-//         args: [account],
-//       },
-//     { refresh }
-//   ) ?? {}

@@ -5,7 +5,6 @@ import { Web3Context } from '../../contexts'
 import { useEthers, useConfig } from '@usedapp/core'
 import { ClaimSDK } from '../claim/sdk'
 import { SavingsSDK } from '../savings/sdk'
-import { BaseSDK } from './sdk'
 import Contracts from '@gooddollar/goodprotocol/releases/deployment.json'
 import { useReadOnlyProvider, getReadOnlyProvider } from "../../hooks/useMulticallAtChain";
 
@@ -51,18 +50,14 @@ export const useSDK = (readOnly: boolean = false, type = 'base', env?: EnvKey): 
   const { readOnlyUrls, pollingInterval} = useConfig() // note: polling-interval doesn't seem to take effect, (queryParams[refresh] does!)
   const { library } = useEthers();
   const { chainId, defaultEnv } = useGetEnvChainId(readOnly ? undefined : env); 
-  console.log('useSdkCalled')
   
   const rolibrary = getReadOnlyProvider(chainId, readOnlyUrls, pollingInterval) ?? library
   const activeEnv = type === 'savings' ? env?.split("-")[0] : env;
   const sdk = useMemo<ClaimSDK | SavingsSDK | undefined>(() => {
-    console.log('new sdk generating. . .')
     const reqSdk = NAME_TO_SDK[type]
     if (readOnly && rolibrary) {
-      console.log('sdk ro initialize')
       return new reqSdk(rolibrary, activeEnv);
     } else if (library) {
-      console.log('sdk initialize with lib')
       return new reqSdk(library, defaultEnv);
     } 
     // else {

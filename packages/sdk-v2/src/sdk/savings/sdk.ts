@@ -22,7 +22,6 @@ export class SavingsSDK extends BaseSDK {
   async onTokenTransfer( 
     account: string, 
     amount: string, 
-    donation: number,
     onSent?: (transactionHash: string) => void): Promise<void | Error> {
 
     const contract = this.getContract("GoodDollar") 
@@ -33,8 +32,7 @@ export class SavingsSDK extends BaseSDK {
 
       const callData = ethers.constants.HashZero
       const transfer = await contract.connect(signer)
-                      // .callStatic
-                      .transferAndCall(stakeContract.address, '100000', callData, {})
+                      .transferAndCall(stakeContract.address, amount, callData, {})
     } catch (e) {
       console.log('onTokenTransfer failed -->', {e}) 
       return new Error(e as any)
@@ -51,9 +49,7 @@ export class SavingsSDK extends BaseSDK {
         if (signer instanceof Error) return signer
 
         //note: if tx fails on limit, up the gasLimitBufferPercentage (see context config))
-        const req = await contract.connect(signer).withdrawStake('100000', {}).then((res) => {
-          console.log('withdraw savings res -->', {res})
-        }).catch((e) => {console.log('withdraw req failed -->', {e})})
+        const req = await contract.connect(signer).withdrawStake('100000', {})
       } catch (e) {
         console.log('withdraw savings failed -->', e)
       }
@@ -64,7 +60,6 @@ export class SavingsSDK extends BaseSDK {
     const contract = this.getContract("GoodDollarStaking")
     try {
       const req = await contract.stakersInfo(account).then((res) => {
-        console.log('stakers info -->', {res})
         return res
       })
       return req
@@ -78,7 +73,3 @@ export class SavingsSDK extends BaseSDK {
     return gdStaking.getChainBlocksPerMonth();
   }
 }
-
-
-// notes
-// --"for example APY=5% then per block = nroot(1+0.05,numberOfBlocksPerYear)"
