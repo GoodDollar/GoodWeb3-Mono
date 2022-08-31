@@ -1,0 +1,52 @@
+diff --git a/lib/index.js b/lib/index.js
+index d4d0df7bbbb175d77ad9cc827d169c3fbd81813d..6d8486cd3d10718a14c13278c9c6fb8fba832371 100644
+--- a/lib/index.js
++++ b/lib/index.js
+@@ -53,6 +53,8 @@ var Method = function Method(options) {
+     this.defaultChain = options.defaultChain;
+     this.defaultHardfork = options.defaultHardfork;
+     this.handleRevert = options.handleRevert;
++    this.defaultMaxPriorityFeePerGas = options.defaultMaxPriorityFeePerGas || '0x3b9aca00'; // 1 Gwei
++    this.maxFeePerGasMultiplier = options.maxFeePerGasMultiplier || 1.3;
+ };
+ Method.prototype.setRequestManager = function (requestManager, accounts) {
+     this.requestManager = requestManager;
+@@ -709,9 +711,10 @@ function _handleTxPricing(method, tx) {
+                         delete tx.gasPrice;
+                     }
+                     else {
+-                        maxPriorityFeePerGas = tx.maxPriorityFeePerGas || '0x9502F900'; // 2.5 Gwei
++                      maxPriorityFeePerGas = tx.maxPriorityFeePerGas || method.defaultMaxPriorityFeePerGas
+                         maxFeePerGas = tx.maxFeePerGas ||
+-                            utils.toHex(utils.toBN(block.baseFeePerGas)
++                            utils.toHex(
++                              utils.toBN(Math.ceil(Number(block.baseFeePerGas) * method.maxFeePerGasMultiplier))
+                                 .mul(utils.toBN(2))
+                                 .add(utils.toBN(maxPriorityFeePerGas)));
+                     }
+diff --git a/src/index.js b/src/index.js
+index ffa352506436bbb3087c61cd40bb122948b16202..1bdd237d6447ae44e1adff82d18499402270bf25 100644
+--- a/src/index.js
++++ b/src/index.js
+@@ -62,6 +62,8 @@ var Method = function Method(options) {
+     this.defaultChain = options.defaultChain;
+     this.defaultHardfork = options.defaultHardfork;
+     this.handleRevert = options.handleRevert;
++    this.defaultMaxPriorityFeePerGas = options.defaultMaxPriorityFeePerGas || '0x3b9aca00'; // 1 Gwei
++    this.maxFeePerGasMultiplier = options.maxFeePerGasMultiplier || 1.3;
+ };
+ 
+ Method.prototype.setRequestManager = function (requestManager, accounts) {
+@@ -890,10 +892,10 @@ function _handleTxPricing(method, tx) {
+                         maxFeePerGas = tx.gasPrice;
+                         delete tx.gasPrice;
+                     } else {
+-                        maxPriorityFeePerGas = tx.maxPriorityFeePerGas || '0x9502F900'; // 2.5 Gwei
++                        maxPriorityFeePerGas = tx.maxPriorityFeePerGas || method.defaultMaxPriorityFeePerGas
+                         maxFeePerGas = tx.maxFeePerGas ||
+                             utils.toHex(
+-                                utils.toBN(block.baseFeePerGas)
++                              utils.toBN(Math.ceil(Number(block.baseFeePerGas) * method.maxFeePerGasMultiplier))
+                                     .mul(utils.toBN(2))
+                                     .add(utils.toBN(maxPriorityFeePerGas))
+                             );

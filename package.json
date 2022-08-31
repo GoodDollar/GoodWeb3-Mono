@@ -16,5 +16,8 @@
   "packageManager": "yarn@3.2.1",
   "dependencies": {
     "prettier": "^2.7.1"
+  },
+  "resolutions": {
+    "web3-core-method@1.7.5": "patch:web3-core-method@npm:1.7.5#.yarn/patches/web3-core-method-npm-1.7.5-919ae06220.patch"
   }
 }
