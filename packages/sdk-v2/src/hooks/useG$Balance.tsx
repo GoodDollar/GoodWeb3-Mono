@@ -32,8 +32,9 @@ export function useG$Balance(refresh: QueryParams["refresh"] = "never", env?: En
   if (!results.includes(undefined)) {
     const [balance] = results[0]?.value
     const [sBalance] = results[1]?.value
+    
     g$Balance = parseFloat( (parseInt(balance) / 1e2).toString() ).toFixed(2)
-    savingsBalance = parseFloat( (parseInt(sBalance) / 1e6).toString() ).toFixed(2)
+    savingsBalance = parseFloat( (parseInt(sBalance) / 1e2).toString()).toFixed(2)
   }
   
   return { g$Balance: g$Balance, savingsBalance: savingsBalance }

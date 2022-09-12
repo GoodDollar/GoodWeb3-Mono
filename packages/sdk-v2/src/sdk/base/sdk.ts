@@ -39,7 +39,7 @@ export class BaseSDK {
     // console.log('this envKey -->', {envKey})
     
     this.contracts = Contracts[envKey as keyof typeof Contracts] as EnvValue;
-    console.log('baseSDK -- provider/env -->', {provider, envKey})
+    // console.log('baseSDK -- provider/env -->', {provider, envKey})
     // console.log('this contracts -->', this.contracts)
     provider.getNetwork().then(network => {
       if (network.chainId != this.contracts.networkId)

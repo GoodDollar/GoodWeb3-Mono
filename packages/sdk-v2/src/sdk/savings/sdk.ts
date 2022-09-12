@@ -12,9 +12,8 @@ export class SavingsSDK extends BaseSDK {
   ): Promise<boolean | undefined> {
     const contract = this.getContract("GoodDollarStaking")
     if (contract && account) {
-      // note-to-self/TODO: Also check for rewards to be claimed // Is deposit and balanceOf equal? // Principle?
-      const hasBalance = (await contract.balanceOf(account))._isBigNumber
-      console.log('hasBalance -->', {hasBalance})
+      const balance = (await contract.balanceOf(account)).toString()
+      const hasBalance = balance !== '0'
       return hasBalance
     }
   }
