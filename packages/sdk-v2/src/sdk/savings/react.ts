@@ -24,9 +24,9 @@ export interface StakerInfo {
 }
 
 export interface GlobalStats {
-  totalStaked: CurrencyAmount<Currency>,
-  totalRewardsPaid: CurrencyAmount<Currency>,
-  apy: number
+  totalStaked: CurrencyAmount<Currency> | undefined,
+  totalRewardsPaid: CurrencyAmount<Currency> | undefined,
+  apy: number | undefined
   lastUpdateBlock?: number,
   savings?: number,
 }
@@ -78,32 +78,33 @@ const results = useCalls(
   ],{ refresh });
 
   if (results[0]?.error || results[1]?.error){
-    //TODO: test error handling
+    //TODO: add error handling for reverted transactions
   }
 
-  if (!results.includes(undefined)) {
+  let globalStats:GlobalStats = {
+    totalStaked: undefined,
+    totalRewardsPaid: undefined,
+    apy: undefined
+  }
+
+  if (results[0]){
     const [lastUpdateBlock, totalStaked, totalRewardsPaid, savings] = results[0]?.value
+    const staked = CurrencyAmount.fromRawAmount(G$[122], totalStaked)
+    const rewardsPaid = CurrencyAmount.fromRawAmount(G$[122], totalRewardsPaid)
+    globalStats.totalStaked = staked
+    globalStats.totalRewardsPaid = rewardsPaid
+  }
+
+  if (results[1] && results[2]){
     const {_goodRewardPerBlock: grpb, _gdInterestRatePerBlock: gdIrpb} = results[1]?.value
     const numberOfBlocksPerYear = results[2]?.value
     const apy = (Math.pow((gdIrpb/1e18), numberOfBlocksPerYear) - 1) * 100
-    const staked = CurrencyAmount.fromRawAmount(G$[122], totalStaked)
-    const rewardsPaid = CurrencyAmount.fromRawAmount(G$[122], totalRewardsPaid)
 
-    const globalStats:GlobalStats = {
-      totalStaked: staked,
-      totalRewardsPaid: rewardsPaid,
-      apy: apy
-    }
+    globalStats.apy = apy
+  }
 
-    return {
-      stats: globalStats,
-      error: undefined
-    }
-  } else {
-    return {
-      stats: undefined,
-      error: results
-    }
+  return {
+    stats: globalStats
   }
 }
 
@@ -148,57 +149,3 @@ export const useStakerInfo = (refresh: QueryParams["refresh"] = "never", account
     stats: stakerInfo
   }
 }
-
-
-
-  // {
-  //   contract: contract,
-  //   method: 'stakersInfo',
-  //   args: [account]
-  // },
-  // {
-  //   contract: contract,
-  //   method: 'getSavings',
-  //   args: []
-  // },
-  // {
-  //   contract: contract,
-  //   method: 'goodStakerInfo',
-  //   args: [account]
-  // },
-  // if (!results.includes(undefined)) {
-  //   // const [lastSharePrice, rewardsPaid] = results[0]?.value
-  //   // const [balance] = results[0]?.value // note: total withdrawable amount
-  //   // const [userInfo] = results[3]?.value
-  //   // const earned = results[4]?.value // pendingGD only
-  //   // const deposit = parseInt(userStake) / 1e6
-
-  //   // const withdrawBalance = CurrencyAmount.fromRawAmount(G$[122], balance)
-  //       // const paidRewards = {
-  //   //   g$Minted: CurrencyAmount.fromRawAmount(G$[122], rewardsPaid),
-  //   //   goodMinted: CurrencyAmount.fromRawAmount(G$[122], userInfo.rewardMinted).divide(1e16)
-  //   // }
-
-  //   const [goodReward, g$Reward ] = results[0]?.value
-  //   const [principle] = results[1]?.value; //note: original deposit
-  //   const deposit = CurrencyAmount.fromRawAmount(G$[122], principle)
-
-  //   const claimableRewards = {
-  //     g$Reward: CurrencyAmount.fromRawAmount(G$[122], g$Reward),
-  //     goodReward: CurrencyAmount.fromRawAmount(G$[122], goodReward).divide(1e16)
-  //   }
-
-  //   const stakerInfo:StakerInfo = {
-  //     // balance: withdrawBalance,
-  //     claimable: claimableRewards,
-  //     // rewardsPaid: paidRewards,
-  //     principle: deposit
-  //   }
-
-  //   console.log('stakerInfo (sdk) -->', {stakerInfo})
-
-  //   return {
-  //     stats: stakerInfo,
-  //     error: undefined
-  //   }
-  // } else {
