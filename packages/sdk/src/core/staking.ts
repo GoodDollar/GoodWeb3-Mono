@@ -807,10 +807,8 @@ export async function approveStake(
         .then((_: string) => BigNumber.from(_))
 
     if (tokenAmount.lte(allowance)) return
-    const type = protocol === LIQUIDITY_PROTOCOL.GOODDAO ? '0x1' : '0x2' //force eip1599 on ethereum
     const req = ERC20Contract(web3, token.address).methods.approve(spender, MaxApproveValue.toString()).send({
-        from: account,
-        type: type
+        ...(protocol !== LIQUIDITY_PROTOCOL.GOODDAO ? {from: account, type: '0x2'} : {from: account})
     })
 
     if (onSent) req.on('transactionHash', onSent)
