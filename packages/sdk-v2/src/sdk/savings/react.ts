@@ -77,14 +77,23 @@ const results = useCalls(
     }
   ],{ refresh });
 
-  if (results[0]?.error || results[1]?.error){
-    //TODO: add error handling for reverted transactions
-  }
-
   let globalStats:GlobalStats = {
     totalStaked: undefined,
     totalRewardsPaid: undefined,
     apy: undefined
+  }
+
+
+  if (results[0]?.error){ // one fails, all fails
+    let errMessages: Array<any> = [];
+    for (let i = 0; i < results.length; i++){
+      errMessages.push(results[i]?.error)
+    }
+
+    return {
+      stats: undefined,
+      error: errMessages
+    }
   }
 
   if (results[0]){
@@ -104,7 +113,8 @@ const results = useCalls(
   }
 
   return {
-    stats: globalStats
+    stats: globalStats,
+    error: undefined
   }
 }
 
@@ -129,6 +139,18 @@ export const useStakerInfo = (refresh: QueryParams["refresh"] = "never", account
     claimable: undefined,
     principle: undefined
   }
+
+  if (results[0]?.error){
+    let errMessages: Array<any> = [];
+    for (let i = 0; i < results.length; i++){
+      errMessages.push(results[i]?.error)
+    }
+
+    return {
+      stats: undefined,
+      error: errMessages
+    }
+  }
   
   if (results[0]){
     const [goodReward, g$Reward ] = results[0]?.value
@@ -146,6 +168,7 @@ export const useStakerInfo = (refresh: QueryParams["refresh"] = "never", account
   }
 
   return {
-    stats: stakerInfo
+    stats: stakerInfo,
+    error: undefined
   }
 }
