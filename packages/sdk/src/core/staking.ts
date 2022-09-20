@@ -808,7 +808,8 @@ export async function approveStake(
 
     if (tokenAmount.lte(allowance)) return
     const req = ERC20Contract(web3, token.address).methods.approve(spender, MaxApproveValue.toString()).send({
-        ...(protocol !== LIQUIDITY_PROTOCOL.GOODDAO ? {from: account, type: '0x2'} : {from: account})
+        ...(protocol !== LIQUIDITY_PROTOCOL.GOODDAO ? 
+          {from: account, type: '0x2'} : {from: account, gasPrice: '10000000000'})
     })
 
     if (onSent) req.on('transactionHash', onSent)
