@@ -14,3 +14,7 @@ export const Envs: { [key: EnvKey]: { [key: string]: string } } = {
     identityUrl: "https://fv-standalone--gooddev.netlify.app"
   }
 };
+
+export const getGasPrice: {[key: number]:string} = {
+  122: '10000000000'
+}

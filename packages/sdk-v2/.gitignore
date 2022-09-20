@@ -2,5 +2,6 @@ dist
 node_modules
 .vscode
 .yalc
-types
+type
 tsconfig.tsbuildinfo
+yalc.lock

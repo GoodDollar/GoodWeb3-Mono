@@ -46,7 +46,7 @@ export const getSigner = async (signer: void | Signer, account: string) => {
   return signer
 }
 
-export const useSDK = (readOnly: boolean = false, type = 'base', env?: EnvKey): RequestedSdk["sdk"] => {
+export const useSDK = (readOnly: boolean = false, type:string = 'base', env?: EnvKey): RequestedSdk["sdk"] => {
   const { readOnlyUrls, pollingInterval} = useConfig() // note: polling-interval doesn't seem to take effect, (queryParams[refresh] does!)
   const { library } = useEthers();
   const { chainId, defaultEnv } = useGetEnvChainId(readOnly ? undefined : env); 

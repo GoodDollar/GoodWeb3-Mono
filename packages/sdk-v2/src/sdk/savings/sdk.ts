@@ -48,7 +48,7 @@ export class SavingsSDK extends BaseSDK {
         if (signer instanceof Error) return signer
 
         //note: if tx fails on limit, up the gasLimitBufferPercentage (see context config))
-        const req = await contract.connect(signer).withdrawStake('100000', {})
+        const req = await contract.connect(signer).withdrawStake(amount, {})
       } catch (e) {
         console.log('withdraw savings failed -->', e)
       }
