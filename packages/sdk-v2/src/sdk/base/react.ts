@@ -6,7 +6,7 @@ import { useEthers, useConfig } from '@usedapp/core'
 import { ClaimSDK } from '../claim/sdk'
 import { SavingsSDK } from '../savings/sdk'
 import Contracts from '@gooddollar/goodprotocol/releases/deployment.json'
-import { useReadOnlyProvider, getReadOnlyProvider } from "../../hooks/useMulticallAtChain";
+import { getReadOnlyProvider } from "../../hooks/useMulticallAtChain";
 
 export const NAME_TO_SDK: { [key: string]: (typeof ClaimSDK | typeof SavingsSDK) } = {
   claim: ClaimSDK,
