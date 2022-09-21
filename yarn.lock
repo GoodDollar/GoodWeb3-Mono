@@ -2450,26 +2450,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@gooddollar/goodprotocol@file:.yalc/@gooddollar/goodprotocol::locator=%40gooddollar%2Fweb3sdk-v2%40workspace%3Apackages%2Fsdk-v2":
-  version: 1.0.27
-  resolution: "@gooddollar/goodprotocol@file:.yalc/@gooddollar/goodprotocol#.yalc/@gooddollar/goodprotocol::hash=626849&locator=%40gooddollar%2Fweb3sdk-v2%40workspace%3Apackages%2Fsdk-v2"
-  dependencies:
-    "@gooddollar/goodcontracts": ^2.6.2
-    "@jsier/retrier": ^1.2.4
-    "@openzeppelin/contracts": ^4.5.0
-    "@openzeppelin/contracts-upgradeable": ^4.3.2
-    "@typechain/hardhat": ^6.1.2
-    async-promise-pool: ^1.0.4
-    ethers-multicall: ^0.2.1
-    openzeppelin-solidity: ^4.3.2
-    patch-package: latest
-    press-any-key: ^0.1.1
-    truffle-plugin-verify: ^0.5.11
-    truffle-source-verify: ^0.0.6
-  checksum: c02963dc5f599cc5f1d0b0787696f0f9288ed05da694b0c8401b0462feb6682797f6d3a03ee9201ebb126cc5d8d0f5b819e5c8816c298f9ec2d9344b09473231
-  languageName: node
-  linkType: hard
-
 "@gooddollar/goodprotocol@npm:1.0.27, @gooddollar/goodprotocol@npm:^1.0.27":
   version: 1.0.27
   resolution: "@gooddollar/goodprotocol@npm:1.0.27"
@@ -2490,6 +2470,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@gooddollar/goodprotocol@npm:1.0.29-beta.1":
+  version: 1.0.29-beta.1
+  resolution: "@gooddollar/goodprotocol@npm:1.0.29-beta.1"
+  dependencies:
+    "@gooddollar/goodcontracts": ^2.6.2
+    "@jsier/retrier": ^1.2.4
+    "@openzeppelin/contracts": ^4.5.0
+    "@openzeppelin/contracts-upgradeable": ^4.3.2
+    "@typechain/hardhat": ^6.1.2
+    async-promise-pool: ^1.0.4
+    ethers-multicall: ^0.2.1
+    openzeppelin-solidity: ^4.3.2
+    patch-package: latest
+    press-any-key: ^0.1.1
+    truffle-plugin-verify: ^0.5.11
+    truffle-source-verify: ^0.0.6
+  checksum: 58ec2bd087ce328c4e8354902d36b23719fd81f2404c96945b76d7af9eae55c92d0ef637d5f4048a4a62b9584ab7ce150799f8e0e320a5f8e475971a57cbc4c9
+  languageName: node
+  linkType: hard
+
 "@gooddollar/web3sdk-v2@workspace:packages/sdk-v2":
   version: 0.0.0-use.local
   resolution: "@gooddollar/web3sdk-v2@workspace:packages/sdk-v2"
@@ -2499,7 +2499,8 @@ __metadata:
     "@babel/preset-env": ^7.16.4
     "@babel/preset-react": ^7.16.0
     "@babel/preset-typescript": ^7.16.0
-    "@gooddollar/goodprotocol": "file:.yalc/@gooddollar/goodprotocol"
+    "@gooddollar/goodprotocol": 1.0.29-beta.1
+    "@gooddollar/web3sdk": "workspace:^"
     "@storybook/addon-actions": ^6.3.12
     "@storybook/addon-essentials": ^6.3.12
     "@storybook/addon-info": ^5.3.21
@@ -2541,7 +2542,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@gooddollar/web3sdk@workspace:packages/sdk":
+"@gooddollar/web3sdk@workspace:^, @gooddollar/web3sdk@workspace:packages/sdk":
   version: 0.0.0-use.local
   resolution: "@gooddollar/web3sdk@workspace:packages/sdk"
   dependencies:
