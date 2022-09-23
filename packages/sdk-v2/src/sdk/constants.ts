@@ -15,6 +15,6 @@ export const Envs: { [key: EnvKey]: { [key: string]: string } } = {
   }
 };
 
-export const getGasPrice: {[key: number]:string} = {
+export const chainDefaultGasPrice: {[key: number]:string} = {
   122: '10000000000'
 }

@@ -25,8 +25,20 @@ export interface GlobalStats {
     savings?: number;
 }
 export declare function useSavingsBalance(refresh?: QueryParams["refresh"], env?: EnvKey): {
-    g$Balance: string;
-    savingsBalance: string;
+    g$Balance: {
+        value: undefined;
+        error: Error;
+    } | {
+        value: any;
+        error: undefined;
+    };
+    savingsBalance: {
+        value: undefined;
+        error: Error;
+    } | {
+        value: any;
+        error: undefined;
+    };
 };
 export declare const useSavingsFunctions: (chainId: number, env?: EnvKey) => {
     transfer: (amount: string) => Promise<ethers.providers.TransactionReceipt | undefined>;

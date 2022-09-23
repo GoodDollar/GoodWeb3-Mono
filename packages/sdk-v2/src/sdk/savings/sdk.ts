@@ -26,10 +26,14 @@ export class SavingsSDK extends BaseSDK {
     const contract = this.getContract("GoodDollar") 
     const stakeContract = this.getContract("GoodDollarStaking") 
     try {
+      console.log('contract -->', {contract})
+      console.log('this signer -->', {signer: this.signer})
       const signer = await getSigner(this.signer, account)
+      // console.log('signer -->', {signer})
       if (signer instanceof Error) return signer
 
       const callData = ethers.constants.HashZero
+      // const transfer = await contract.transferAndCall(stakeContract.address, amount, callData, {})
       const transfer = await contract.connect(signer)
                       .transferAndCall(stakeContract.address, amount, callData, {})
     } catch (e) {
@@ -63,12 +67,5 @@ export class SavingsSDK extends BaseSDK {
       })
       return req
     } catch (e) { console.log('get staker info failed', {e})}
-  }
-    
-  // TODO: just for testing, remove if unused
-  async getChainBlocksPerMonth() {
-    const gdStaking = this.getContract("GoodDollarStaking");
-    const blocksPerMonth = await gdStaking.getChainBlocksPerMonth()
-    return gdStaking.getChainBlocksPerMonth();
   }
 }

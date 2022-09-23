@@ -8,6 +8,5 @@ export declare class SavingsSDK extends BaseSDK {
         lastSharePrice: ethers.BigNumber;
         rewardsPaid: ethers.BigNumber;
     }) | undefined>;
-    getChainBlocksPerMonth(): Promise<ethers.BigNumber>;
 }
 //# sourceMappingURL=sdk.d.ts.map

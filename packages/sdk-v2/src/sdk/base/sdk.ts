@@ -1,6 +1,6 @@
 import { BigNumber, Contract, ethers } from "ethers";
 import { providers, Signer } from "ethers";
-import { Envs } from "../constants";
+import { chainDefaultGasPrice, Envs } from "../constants";
 
 //@ts-ignore
 import IdentityABI from "@gooddollar/goodprotocol/artifacts/abis/IIdentity.min.json";
@@ -37,7 +37,7 @@ export class BaseSDK {
     this.provider = provider;
     this.env = Envs[envKey];
     // console.log('this envKey -->', {envKey})
-    
+
     this.contracts = Contracts[envKey as keyof typeof Contracts] as EnvValue;
     // console.log('baseSDK -- provider/env -->', {provider, envKey})
     // console.log('this contracts -->', this.contracts)
@@ -51,12 +51,22 @@ export class BaseSDK {
     });
     try {
       const signer = provider.getSigner();
+      console.log('base sdk provider -->', {provider})
+      console.log('base sdk signer -->', {signer})
+      console.log('base sdk this provider -->', {this: this.provider})
       signer
         .getAddress()
         .then(addr => (this.signer = signer))
         .catch(e => {
           console.warn("BaseSDK: provider has no signer", { signer, provider, e });
         });
+      if (this.signer) {
+        this.signer.getGasPrice = async() => {
+          console.log('getGasPrice sett....')
+          const network = await provider.getNetwork()
+          return BigNumber.from(chainDefaultGasPrice[network.chainId])
+        }
+      }
     } catch (e) {
       console.warn("BaseSDK: provider has no signer", { provider, e });
     }

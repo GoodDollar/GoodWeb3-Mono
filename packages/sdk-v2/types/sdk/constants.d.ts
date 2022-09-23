@@ -4,7 +4,7 @@ export declare const Envs: {
         [key: string]: string;
     };
 };
-export declare const getGasPrice: {
+export declare const chainDefaultGasPrice: {
     [key: number]: string;
 };
 //# sourceMappingURL=constants.d.ts.map

@@ -85,13 +85,36 @@ export const getReadOnlyProvider = (chainId: number, readOnlyUrls: NodeUrls | un
     }
   }
 }
+// todo-fix: useEffect not being triggered 
+export const useReadOnlyProvider = (chainId: number) => {
+  const { readOnlyUrls, pollingInterval } = useConfig();
+  const [provider, setProvider] = useState<JsonRpcProvider>();
+  useEffect(() => {
+    if (readOnlyUrls && readOnlyUrls[chainId]) {
+      switch (true) {
+        case readOnlyUrls[chainId] instanceof BaseProvider:
+          setProvider(readOnlyUrls[chainId] as JsonRpcProvider);
+          break;
+        case typeof readOnlyUrls[chainId] === "function":
+          setProvider((readOnlyUrls[chainId] as any)() as JsonRpcProvider);
+          break;
+        default:
+        case typeof readOnlyUrls[chainId] === "string":
+          const provider = new JsonRpcProvider(readOnlyUrls[chainId] as any);
+          provider.pollingInterval = pollingInterval;
+          setProvider(provider);
+      }
+    }
+  }, []);
+
+  return provider;
+};
 
 /**
  * perform multicall requests to a specific chain using readonly rpcs from usedapp
  */
 export const useMulticallAtChain = (chainId: number) => {
-  const { readOnlyUrls, pollingInterval } = useConfig();
-  const provider = getReadOnlyProvider(chainId, readOnlyUrls, pollingInterval);
+  const provider = useReadOnlyProvider(chainId);
   const { multicallVersion, multicallAddresses } = useConfig();
   const pendingCalls = useRef<{ resolve?: any; calls: Call[]; blockNumber?: number }>({ calls: [] });
 

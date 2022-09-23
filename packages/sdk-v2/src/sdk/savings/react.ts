@@ -6,7 +6,7 @@ import { EnvKey } from '../base'
 import { GoodDollarStaking, IGoodDollar } from '@gooddollar/goodprotocol/types'
 import { Currency, CurrencyAmount } from '@uniswap/sdk-core'
 import { G$ } from '@gooddollar/web3sdk'
-import { getGasPrice } from '../constants'
+import { chainDefaultGasPrice } from '../constants'
 
 export interface StakerInfo {
   claimable: {
@@ -52,22 +52,10 @@ export function useSavingsBalance(refresh: QueryParams["refresh"] = "never", env
     ]
   )
 
-  if (results[0]?.error || results[1]?.error){
-  }
-  let g$Balance: string = '0', savingsBalance: string = '0';
-  if (!results.includes(undefined)) {
-    const [balance] = results[0]?.value
-    const [sBalance] = results[1]?.value
-    
-    g$Balance = parseFloat( (parseInt(balance) / 1e2).toString() ).toFixed(2)
-    savingsBalance = parseFloat( (parseInt(sBalance) / 1e2).toString()).toFixed(2)
-  }
+  const [balance = {value: 0, error:undefined}, sBalance = {value: 0, error: undefined}] = results
   
-  return { g$Balance: g$Balance, savingsBalance: savingsBalance }
+  return { g$Balance: balance, savingsBalance: sBalance }
 }
-
-
-
 
 export const useSavingsFunctions = (chainId: number, env?: EnvKey) => {
   const gooddollar = useGetContract("GoodDollar", true, "savings", env) as IGoodDollar;
@@ -77,47 +65,47 @@ export const useSavingsFunctions = (chainId: number, env?: EnvKey) => {
   const {state: withdrawState, send: sendWithdraw} = useContractFunction(gdStaking, "withdrawStake", {transactionName: "Withdraw from savings"});
   const {state: claimState, send: sendClaim} = useContractFunction(gdStaking, "withdrawRewards", {transactionName: 'Withdraw rewards from savings'});
 
-  let overrides = {}
-  if (chainId === 122){
-    overrides['gasPrice'] = getGasPrice[chainId]
-  }
+  // let overrides = {}
+  // if (chainId === 122){
+  //   overrides['gasPrice'] = chainDefaultGasPrice[chainId]
+  // }
 
   const transfer = useCallback((amount: string) => {
     const callData = ethers.constants.HashZero
-    return sendTransfer(gdStaking.address, amount, callData, overrides)
+    return sendTransfer(gdStaking.address, amount, callData)
   }, [sendTransfer, gdStaking]);
 
   const withdraw = useCallback(async(amount:string, address?: string) => {
-    const shares = address ? await gdStaking.sharesOf(address, overrides) : await gdStaking.amountToShares(amount, overrides) // sharesOf used to withdraw full amount
+    const shares = address ? await gdStaking.sharesOf(address) : await gdStaking.amountToShares(amount) // sharesOf used to withdraw full amount
     return sendWithdraw(shares)
   }, [sendWithdraw]);
 
-  const claim = useCallback(() => sendClaim(overrides), [sendClaim])
+  const claim = useCallback(() => sendClaim(), [sendClaim])
 
   return { transfer, withdraw, claim, transferState, withdrawState, claimState }
 }
 
 export const useGlobalStats = (refresh: QueryParams["refresh"] = "never", chainId: number, env?: EnvKey) => {
-const gdStaking = useGetContract("GoodDollarStaking", true, "savings", env) as GoodDollarStaking;
+  const gdStaking = useGetContract("GoodDollarStaking", true, "savings", env) as GoodDollarStaking;
 
-const results = useCalls(
-  [
-    {
-      contract: gdStaking,
-      method: 'stats',
-      args: [],
-    },
-    {
-      contract: gdStaking,
-      method: 'getRewardsPerBlock',
-      args: []
-    },
-    {
-      contract: gdStaking,
-      method: 'numberOfBlocksPerYear',
-      args: []
-    }
-  ],{ refresh });
+  const results = useCalls(
+    [
+      {
+        contract: gdStaking,
+        method: 'stats',
+        args: [],
+      },
+      {
+        contract: gdStaking,
+        method: 'getRewardsPerBlock',
+        args: []
+      },
+      {
+        contract: gdStaking,
+        method: 'numberOfBlocksPerYear',
+        args: []
+      }
+    ],{ refresh });
 
   let globalStats:GlobalStats = {
     totalStaked: undefined,
