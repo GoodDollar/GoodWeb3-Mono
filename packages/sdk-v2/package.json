@@ -4,7 +4,7 @@
   "version": "0.1.16",
   "description": "ethers and react hooks based on usedapp sdk for GoodDollar protocol",
   "scripts": {
-    "build": "rm -fr dist types && ctix r && ctix c && tsc",
+    "build": "rm -fr dist types tsconfig.tsbuildinfo && ctix r && ctix c && tsc",
     "test": "jest",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook"
