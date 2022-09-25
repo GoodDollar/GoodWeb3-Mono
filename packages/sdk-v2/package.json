@@ -4,7 +4,7 @@
   "version": "0.1.16",
   "description": "ethers and react hooks based on usedapp sdk for GoodDollar protocol",
   "scripts": {
-    "build": "rm -fr dist && ctix r && cp src/ctixindex.ts src/index.ts && ctix c && tsc",
+    "build": "rm -fr dist types && ctix r && ctix c && tsc",
     "test": "jest",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook"
@@ -43,7 +43,7 @@
     "babel-plugin-module-resolver": "^4.1.0",
     "babel-plugin-react-native-web": "^0.18.1",
     "css-loader": "^6.5.1",
-    "ctix": "^1.1.2",
+    "ctix": "^1.4.0",
     "html-webpack-plugin": "^5.5.0",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^27.3.1",
