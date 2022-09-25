@@ -1,7 +1,6 @@
 import React from 'react'
 import { ethers } from "ethers";
 import { BaseSDK } from '../base/sdk'
-import { getSigner } from '../base/react'
 
 
 export class SavingsSDK extends BaseSDK {
@@ -19,23 +18,17 @@ export class SavingsSDK extends BaseSDK {
   }
 
   async onTokenTransfer( 
-    account: string, 
     amount: string, 
-    onSent?: (transactionHash: string) => void): Promise<void | Error> {
+    onSent?: (transactionHash: string) => void): Promise<ethers.ContractTransaction | Error> {
 
     const contract = this.getContract("GoodDollar") 
     const stakeContract = this.getContract("GoodDollarStaking") 
-    try {
-      console.log('contract -->', {contract})
-      console.log('this signer -->', {signer: this.signer})
-      const signer = await getSigner(this.signer, account)
-      // console.log('signer -->', {signer})
-      if (signer instanceof Error) return signer
 
+    try {
       const callData = ethers.constants.HashZero
-      // const transfer = await contract.transferAndCall(stakeContract.address, amount, callData, {})
-      const transfer = await contract.connect(signer)
-                      .transferAndCall(stakeContract.address, amount, callData, {})
+
+      const transfer = contract.transferAndCall(stakeContract.address, amount, callData)
+      return transfer
     } catch (e) {
       console.log('onTokenTransfer failed -->', {e}) 
       return new Error(e as any)
@@ -43,18 +36,16 @@ export class SavingsSDK extends BaseSDK {
   }
   
   async withdraw(
-    account: string,
     amount: string,
-    onSent?: (transactionHash: string) => void): Promise<void | Error> {
+    onSent?: (transactionHash: string) => void): Promise<ethers.ContractTransaction | Error> {
       const contract = this.getContract("GoodDollarStaking")
       try {
-        const signer = await getSigner(this.signer, account)
-        if (signer instanceof Error) return signer
-
         //note: if tx fails on limit, up the gasLimitBufferPercentage (see context config))
-        const req = await contract.connect(signer).withdrawStake(amount, {})
+        const withdraw = await contract.withdrawStake(amount, {})
+        return withdraw
       } catch (e) {
         console.log('withdraw savings failed -->', e)
+        return new Error(e as any)
       }
     }
   

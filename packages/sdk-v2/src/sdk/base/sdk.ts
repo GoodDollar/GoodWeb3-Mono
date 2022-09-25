@@ -39,8 +39,7 @@ export class BaseSDK {
     // console.log('this envKey -->', {envKey})
 
     this.contracts = Contracts[envKey as keyof typeof Contracts] as EnvValue;
-    // console.log('baseSDK -- provider/env -->', {provider, envKey})
-    // console.log('this contracts -->', this.contracts)
+    console.log('baseSDK -- provider/env -->', {provider, envKey})
     provider.getNetwork().then(network => {
       if (network.chainId != this.contracts.networkId)
         throw new Error(
@@ -48,27 +47,28 @@ export class BaseSDK {
             this.contracts.networkId
           }`
         );
+
+      this.provider.getGasPrice = async () => {
+        return BigNumber.from(chainDefaultGasPrice[network.chainId])
+      }
+
     });
+
     try {
-      const signer = provider.getSigner();
-      console.log('base sdk provider -->', {provider})
-      console.log('base sdk signer -->', {signer})
-      console.log('base sdk this provider -->', {this: this.provider})
-      signer
-        .getAddress()
-        .then(addr => (this.signer = signer))
-        .catch(e => {
+        const signer = provider.getSigner();
+        signer.getAddress()
+          .then(addr => {
+            this.signer = signer;
+
+            this.signer.getGasPrice = async() => {
+              const network = await provider.getNetwork();
+              return BigNumber.from(chainDefaultGasPrice[network.chainId]);
+            }
+        }).catch(e => {
           console.warn("BaseSDK: provider has no signer", { signer, provider, e });
         });
-      if (this.signer) {
-        this.signer.getGasPrice = async() => {
-          console.log('getGasPrice sett....')
-          const network = await provider.getNetwork()
-          return BigNumber.from(chainDefaultGasPrice[network.chainId])
-        }
-      }
-    } catch (e) {
-      console.warn("BaseSDK: provider has no signer", { provider, e });
+      } catch (e) {
+        console.warn("BaseSDK: provider has no signer", { provider, e });
     }
   }
 
