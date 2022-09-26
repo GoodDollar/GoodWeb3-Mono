@@ -1,5 +1,5 @@
 import React from 'react';
-import { GooddollarThemeProvider } from '../provider/ThemeProvider'
+import { GooddollarThemeProvider, theme } from '../provider/ThemeProvider'
 import { Button } from 'native-base';
 
 export type BaseButtonProps = {
@@ -13,7 +13,7 @@ export type BaseButtonProps = {
 export function BaseButton({ text }: BaseButtonProps) {
   return (
     <GooddollarThemeProvider>
-      <Button bg={"gooddollar.secondary"}>{text}</Button>
+      <Button bg="gooddollar.secondary">{text}</Button>
     </GooddollarThemeProvider>
   );
 }

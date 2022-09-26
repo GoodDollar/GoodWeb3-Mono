@@ -1,2 +1,2 @@
-export { default as PageStories } from "./Page.stories";
-export * from "./Page.stories";
+export { default as PageStories } from './Page.stories';
+export * from './Page.stories';

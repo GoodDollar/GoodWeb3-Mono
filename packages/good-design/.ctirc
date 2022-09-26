@@ -7,7 +7,6 @@
   // Export filename, if you not pass this field that use "index.ts" or "index.d.ts"
   "exportFilename": "index.ts",
 
-
   // create, single command configuration
   // add ctix comment at first line of creted index.ts file, that remark created from ctix
   "useSemicolon": true,
@@ -18,7 +17,7 @@
   // add ctix comment at first line of creted index.ts file, that remark created from ctix
   "useComment": false,
 
-  // quote mark " or '
+  // quote mark
   "quote": "'",
   // overwrite index.ts file also index.ts file already exist that create backup file
   "overwrite": true,
@@ -28,7 +27,7 @@
   
   // only create command configuration
   // If set true this option, skip empty directory
-  "skipEmptyDir": true
+  "skipEmptyDir": true,
 
 
   // only single command configuration
@@ -36,6 +35,7 @@
   "output": "./",
   // Use rootDir or rootDirs configuration in tsconfig.json.
   "useRootDir": true,
+  "startAt": "./src/",
 
   // only remove command configuration
   // remove with backup file
