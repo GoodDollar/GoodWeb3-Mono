@@ -58,17 +58,12 @@ export function useSavingsBalance(refresh: QueryParams["refresh"] = "never", env
 }
 
 export const useSavingsFunctions = (chainId: number, env?: EnvKey) => {
-  const gooddollar = useGetContract("GoodDollar", true, "savings", env) as IGoodDollar;
-  const gdStaking = useGetContract("GoodDollarStaking", true, "savings", env) as GoodDollarStaking;
+  const gooddollar = useGetContract("GoodDollar", false, "savings", env) as IGoodDollar;
+  const gdStaking = useGetContract("GoodDollarStaking", false, "savings", env) as GoodDollarStaking;
 
   const {state: transferState, send: sendTransfer} = useContractFunction(gooddollar, "transferAndCall", {transactionName: "Transfer to savings"});
   const {state: withdrawState, send: sendWithdraw} = useContractFunction(gdStaking, "withdrawStake", {transactionName: "Withdraw from savings"});
   const {state: claimState, send: sendClaim} = useContractFunction(gdStaking, "withdrawRewards", {transactionName: 'Withdraw rewards from savings'});
-
-  // let overrides = {}
-  // if (chainId === 122){
-  //   overrides['gasPrice'] = chainDefaultGasPrice[chainId]
-  // }
 
   const transfer = useCallback((amount: string) => {
     const callData = ethers.constants.HashZero
