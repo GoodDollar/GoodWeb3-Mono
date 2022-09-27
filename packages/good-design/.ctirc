@@ -35,7 +35,7 @@
   "output": "./",
   // Use rootDir or rootDirs configuration in tsconfig.json.
   "useRootDir": true,
-  "startAt": "./src/",
+  "startAt": "./src/"
 
   // only remove command configuration
   // remove with backup file

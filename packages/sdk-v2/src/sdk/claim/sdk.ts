@@ -18,6 +18,10 @@ const FV_IDENTIFIER_MSG = `Sign this message to create your own unique identifie
 You can use this identifier in the future to delete this anonymized record.
 WARNING: do not sign this message unless you trust the website/application requesting this signature.`;
 
+const FV_IDENTIFIER_MSG2 = `Sign this message to request verifying your account <account> and to create your own secret unique identifier for your anonymized record.
+You can use this identifier in the future to delete this anonymized record.
+WARNING: do not sign this message unless you trust the website/application requesting this signature.`;
+
 export const CONTRACT_TO_ABI: { [key: string]: any } = {
   Identity: IdentityABI,
   UBIScheme: UBISchemeABI
@@ -98,21 +102,23 @@ export class ClaimSDK {
   }
 
   getFVLink() {
-    let loginSig: string, fvSig: string, nonce: string;
+    let loginSig: string, fvSig: string, nonce: string, account: string;
     const getLoginSig = async () => {
       nonce = (Date.now() / 1000).toFixed(0);
       return (loginSig = await this.provider.getSigner().signMessage(FV_LOGIN_MSG + nonce));
     };
     const getFvSig = async () => {
-      return (fvSig = await this.provider.getSigner().signMessage(FV_IDENTIFIER_MSG));
+      const account = await this.provider.getSigner().getAddress();
+      return (fvSig = await this.provider.getSigner().signMessage(FV_IDENTIFIER_MSG2.replace("<account>", account)));
     };
     const getLink = (firstName: string, callbackUrl?: string, popupMode: boolean = false) => {
-      if (!fvSig || !loginSig) throw new Error("missing login or identifier signature");
+      if (!fvSig) throw new Error("missing login or identifier signature");
       const params = new URLSearchParams();
       params.append("nonce", nonce);
       params.append("firstname", firstName);
       params.append("sig", loginSig);
       params.append("fvsig", fvSig);
+      params.append("account", account);
       let url = this.env.identityUrl;
       if (popupMode === false && !callbackUrl) {
         throw new Error("redirect url is missing for redirect mode");
