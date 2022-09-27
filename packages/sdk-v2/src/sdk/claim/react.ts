@@ -29,12 +29,12 @@ export const useIsAddressVerified = (address: string, env?: EnvKey) => {
   return result;
 };
 
-export const useClaim = (refresh: QueryParams["refresh"] = "never") => {
+export const useClaim = (refresh: QueryParams["refresh"] = "never", env?:EnvKey) => {
   const DAY = 1000 * 60 * 60 * 24;
   const { account } = useEthers();
 
-  const ubi = useGetContract("UBIScheme") as UBIScheme;
-  const identity = useGetContract("Identity", true) as IIdentity;
+  const ubi = useGetContract("UBIScheme", true, "claim", env) as UBIScheme;
+  const identity = useGetContract("Identity", true, "claim", env) as IIdentity;
   const claimCall = useContractFunction(ubi, "claim");
 
   // const [entitlement] = usePromise(ubi["checkEntitlement()"]());
