@@ -5,7 +5,6 @@ import { IIdentity, UBIScheme, GoodDollarStaking, IGoodDollar } from "@gooddolla
 export declare const CONTRACT_TO_ABI: {
     [key: string]: any;
 };
-export declare const noBaseFeeChains: Readonly<number[]>;
 export declare type EnvKey = string;
 export declare type EnvValue = any;
 export declare class BaseSDK {

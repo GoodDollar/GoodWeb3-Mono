@@ -1,25 +1,24 @@
-import { QueryParams } from '@usedapp/core';
+import { QueryParams, CurrencyValue } from '@usedapp/core';
 import { ethers } from 'ethers';
 import { EnvKey } from '../base';
-import { Currency, CurrencyAmount } from '@uniswap/sdk-core';
 export interface StakerInfo {
     claimable: {
-        g$Reward: CurrencyAmount<Currency> | any;
-        goodReward: CurrencyAmount<Currency> | any;
+        g$Reward: CurrencyValue | any;
+        goodReward: CurrencyValue | any;
     } | undefined;
-    balance?: CurrencyAmount<Currency> | any;
+    balance?: CurrencyValue | any;
     rewardsPaid?: {
-        g$Minted: CurrencyAmount<Currency> | any;
-        goodMinted: CurrencyAmount<Currency> | any;
+        g$Minted: CurrencyValue | any;
+        goodMinted: CurrencyValue | any;
     };
-    deposit?: CurrencyAmount<Currency> | any;
-    principle?: CurrencyAmount<Currency> | any;
+    deposit?: CurrencyValue | any;
+    principle?: CurrencyValue | any;
     shares?: number | any;
     lastSharePrice?: number | any;
 }
 export interface GlobalStats {
-    totalStaked: CurrencyAmount<Currency> | undefined;
-    totalRewardsPaid: CurrencyAmount<Currency> | undefined;
+    totalStaked: CurrencyValue | undefined;
+    totalRewardsPaid: CurrencyValue | undefined;
     apy: number | undefined;
     lastUpdateBlock?: number;
     savings?: number;
@@ -48,14 +47,14 @@ export declare const useSavingsFunctions: (chainId: number, env?: EnvKey) => {
     withdrawState: import("@usedapp/core").TransactionStatus;
     claimState: import("@usedapp/core").TransactionStatus;
 };
-export declare const useGlobalStats: (refresh: QueryParams["refresh"], chainId: number, env?: EnvKey) => {
+export declare const useGlobalStats: (refresh: QueryParams["refresh"], chainId: number, env: EnvKey) => {
     stats: undefined;
     error: any[];
 } | {
     stats: GlobalStats;
     error: undefined;
 };
-export declare const useStakerInfo: (refresh: QueryParams["refresh"], account: string, chainId: number, env?: EnvKey) => {
+export declare const useStakerInfo: (refresh: QueryParams["refresh"], account: string, chainId: number, env: EnvKey) => {
     stats: undefined;
     error: any[];
 } | {

@@ -1,4 +1,4 @@
-import { ethers, Signer } from 'ethers';
+import { Signer } from 'ethers';
 import { EnvKey } from './sdk';
 import { ClaimSDK } from '../claim/sdk';
 import { SavingsSDK } from '../savings/sdk';
@@ -16,8 +16,8 @@ export declare const useGetEnvChainId: (env?: EnvKey) => {
     defaultEnv: string;
     switchNetworkRequest: import("../../contexts").SwitchCallback | undefined;
 };
-export declare const useGetContract: (contractName: string, readOnly?: boolean, type?: SdkTypes, env?: EnvKey) => ethers.Contract | undefined;
-export declare const getSigner: (signer: void | Signer, account: string) => Promise<ethers.Signer | Error>;
+export declare const useGetContract: (contractName: string, readOnly?: boolean, type?: SdkTypes, env?: EnvKey) => import("ethers").Contract | undefined;
+export declare const getSigner: (signer: void | Signer, account: string) => Promise<Error | Signer>;
 export declare const useSDK: (readOnly?: boolean, type?: string, env?: EnvKey) => RequestedSdk["sdk"];
 export {};
 //# sourceMappingURL=react.d.ts.map
