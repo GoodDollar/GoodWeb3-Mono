@@ -1,12 +1,12 @@
 import React, { useMemo, useContext } from 'react'
-import { ethers, Signer } from 'ethers'
+import { Signer } from 'ethers'
 import { EnvKey, EnvValue } from './sdk'
 import { Web3Context } from '../../contexts'
-import { useEthers, useConfig } from '@usedapp/core'
+import { useEthers } from '@usedapp/core'
 import { ClaimSDK } from '../claim/sdk'
 import { SavingsSDK } from '../savings/sdk'
 import Contracts from '@gooddollar/goodprotocol/releases/deployment.json'
-import { useReadOnlyProvider, getReadOnlyProvider } from '../../hooks/useMulticallAtChain'
+import { useReadOnlyProvider } from '../../hooks/useMulticallAtChain'
 
 export const NAME_TO_SDK: { [key: string]: (typeof ClaimSDK | typeof SavingsSDK) } = {
   claim: ClaimSDK,
@@ -47,13 +47,9 @@ export const getSigner = async (signer: void | Signer, account: string) => {
 }
 
 export const useSDK = (readOnly: boolean = false, type:string = 'base', env?: EnvKey): RequestedSdk["sdk"] => {
-  const { readOnlyUrls, pollingInterval} = useConfig() // note: polling-interval doesn't seem to take effect, (queryParams[refresh] does!)
   const { library } = useEthers();
   const { chainId, defaultEnv } = useGetEnvChainId(readOnly ? undefined : env); 
-  const rolibrary = getReadOnlyProvider(chainId, readOnlyUrls, pollingInterval)
-  // console.log('roLibraryNoHook -->', {roLibraryNoHook})
-  // const rolibrary = useReadOnlyProvider(chainId) ?? library
-  // console.log('rolibrary -->', {rolibrary})
+  const rolibrary = useReadOnlyProvider(chainId) ?? library
   const activeEnv = type === 'savings' ? env?.split("-")[0] : env;
   const sdk = useMemo<ClaimSDK | SavingsSDK | undefined>(() => {
     const reqSdk = NAME_TO_SDK[type]

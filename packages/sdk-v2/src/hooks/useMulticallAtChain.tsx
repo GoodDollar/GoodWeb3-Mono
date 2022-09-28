@@ -71,20 +71,6 @@ export async function multicall(
   return state;
 }
 
-export const getReadOnlyProvider = (chainId: number, readOnlyUrls: NodeUrls | undefined, pollingInterval: number) => {
-  if (readOnlyUrls && readOnlyUrls[chainId]) {
-    switch (true) {
-      case readOnlyUrls[chainId] instanceof BaseProvider:
-        return readOnlyUrls[chainId] as JsonRpcProvider;
-      case typeof readOnlyUrls[chainId] === "function":
-        return (readOnlyUrls[chainId] as any) as JsonRpcProvider;
-      case typeof readOnlyUrls[chainId] === "string":
-        const provider = new JsonRpcProvider(readOnlyUrls[chainId] as any);
-        provider.pollingInterval = pollingInterval;
-        return provider;
-    }
-  }
-}
 // todo-fix: useEffect not being triggered 
 export const useReadOnlyProvider = (chainId: number) => {
   const { readOnlyUrls, pollingInterval } = useConfig();
