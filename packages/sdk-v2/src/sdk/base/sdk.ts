@@ -60,29 +60,16 @@ export class BaseSDK {
 
     try {
       const signer = provider.getSigner();
-      signer.getAddress()
-        .then(addr => async () => {
+      signer.getAddress().then(async addr => {
           const network = await provider.getNetwork();
-
           if (noBaseFeeChains.includes(network.chainId)){
-
-            // These overrides are not used by useDapp hooks, so manual override or rely on default
-            signer.sendTransaction = async(transaction: Deferrable<TransactionRequest>) : Promise<TransactionResponse> => {
-              console.log('sendTransaction')
-                signer._checkProvider("sendTransaction");
-                const tx = await signer.populateTransaction(transaction);
-                tx.type = 0; 
-                const signedTx = await signer.signTransaction(tx);
-                return await this.provider.sendTransaction(signedTx);
-            }
-
+            // The override is not used by useDapp hooks, so manual override or rely on default
             signer.getGasPrice = async() => {
               return BigNumber.from(chainDefaultGasPrice[network.chainId]);
             }
           }
 
           this.signer = signer;
-          console.log('(sdk) this signer -->', {signer})
         }).catch(e => {
           console.warn("BaseSDK: provider has no signer", { signer, provider, e });
         });

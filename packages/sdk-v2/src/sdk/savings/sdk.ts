@@ -1,6 +1,6 @@
 import React from 'react'
 import { ethers } from "ethers";
-import { BaseSDK } from '../base/sdk'
+import { BaseSDK } from '../base/sdk';
 
 
 export class SavingsSDK extends BaseSDK {
@@ -37,11 +37,15 @@ export class SavingsSDK extends BaseSDK {
   
   async withdraw(
     amount: string,
+    isFullWithdraw: boolean,
     onSent?: (transactionHash: string) => void): Promise<ethers.ContractTransaction | Error> {
-      const contract = this.getContract("GoodDollarStaking")
+      const contract = this.getContract("GoodDollarStaking");
       try {
         //note: if tx fails on limit, up the gasLimitBufferPercentage (see context config))
-        const withdraw = await contract.withdrawStake(amount, {})
+        let shares = isFullWithdraw ? 
+          await contract.sharesOf(await contract.signer.getAddress()) : 
+          await contract.amountToShares(amount);
+        const withdraw = contract.withdrawStake(shares);
         return withdraw
       } catch (e) {
         console.log('withdraw savings failed -->', e)
