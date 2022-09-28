@@ -57,7 +57,7 @@
     "typescript": "^4.4.4"
   },
   "dependencies": {
-    "@gooddollar/goodprotocol": "1.0.29-beta.1",
+    "@gooddollar/goodprotocol": "^1.0.29-beta.2",
     "@gooddollar/web3sdk": "workspace:^",
     "@usedapp/core": "^1.0.9",
     "eventemitter3": "^4.0.7",
