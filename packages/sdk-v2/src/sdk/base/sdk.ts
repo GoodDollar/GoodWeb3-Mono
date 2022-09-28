@@ -1,21 +1,18 @@
-import { BigNumber, Contract } from "ethers";
+import { Contract } from "ethers";
 import { providers, Signer } from "ethers";
-import { chainDefaultGasPrice, Envs } from "../constants";
-import { Deferrable } from "@ethersproject/properties";
-import { TransactionRequest, TransactionResponse } from "@ethersproject/abstract-provider";
+import { Envs } from "../constants";
 
 //@ts-ignore
 import IdentityABI from "@gooddollar/goodprotocol/artifacts/abis/IIdentity.min.json";
 //@ts-ignore
 import UBISchemeABI from "@gooddollar/goodprotocol/artifacts/abis/UBIScheme.min.json";
-//@ts-ignore 
-import GoodDollarStakingABI from "@gooddollar/goodprotocol/artifacts/abis/GoodDollarStaking.min.json"
-//@ts-ignore 
+//@ts-ignore
+import GoodDollarStakingABI from "@gooddollar/goodprotocol/artifacts/abis/GoodDollarStaking.min.json";
+//@ts-ignore
 import GoodDollarABI from "@gooddollar/goodprotocol/artifacts/abis/IGoodDollar.min.json";
 import { IIdentity, UBIScheme, GoodDollarStaking, IGoodDollar } from "@gooddollar/goodprotocol/types";
 //@ts-ignore
 import Contracts from "@gooddollar/goodprotocol/releases/deployment.json";
-
 
 export const CONTRACT_TO_ABI: { [key: string]: any } = {
   Identity: IdentityABI,
@@ -23,8 +20,6 @@ export const CONTRACT_TO_ABI: { [key: string]: any } = {
   GoodDollarStaking: GoodDollarStakingABI,
   GoodDollar: GoodDollarABI
 };
-
-export const noBaseFeeChains: Readonly<number[]> = [122, 42220]
 
 // export type EnvKey = keyof typeof Contracts;
 // export type EnvValue = typeof Contracts[EnvKey] & { networkId: number };
@@ -40,10 +35,8 @@ export class BaseSDK {
   constructor(provider: providers.JsonRpcProvider, envKey: EnvKey = "production") {
     this.provider = provider;
     this.env = Envs[envKey];
-    // console.log('this envKey -->', {envKey})
 
     this.contracts = Contracts[envKey as keyof typeof Contracts] as EnvValue;
-    console.log('baseSDK -- provider/env -->', {provider, envKey})
     provider.getNetwork().then(network => {
       if (network.chainId != this.contracts.networkId)
         throw new Error(
@@ -51,30 +44,20 @@ export class BaseSDK {
             this.contracts.networkId
           }`
         );
-
-      this.provider.getGasPrice = async () => {
-        return BigNumber.from(chainDefaultGasPrice[network.chainId])
-      }
-
     });
 
     try {
       const signer = provider.getSigner();
-      signer.getAddress().then(async addr => {
-          const network = await provider.getNetwork();
-          if (noBaseFeeChains.includes(network.chainId)){
-            // The override is not used by useDapp hooks, so manual override or rely on default
-            signer.getGasPrice = async() => {
-              return BigNumber.from(chainDefaultGasPrice[network.chainId]);
-            }
-          }
-
+      signer
+        .getAddress()
+        .then(async addr => {
           this.signer = signer;
-        }).catch(e => {
+        })
+        .catch(e => {
           console.warn("BaseSDK: provider has no signer", { signer, provider, e });
         });
     } catch (e) {
-        console.warn("BaseSDK: provider has no signer", { provider, e });
+      console.warn("BaseSDK: provider has no signer", { provider, e });
     }
   }
 
@@ -97,7 +80,7 @@ export class BaseSDK {
           CONTRACT_TO_ABI["Identity"].abi,
           this.signer || this.provider
         ) as IIdentity;
-      case "GoodDollarStaking": 
+      case "GoodDollarStaking":
         return new Contract(
           this.contracts["GoodDollarStaking"],
           CONTRACT_TO_ABI["GoodDollarStaking"].abi,
