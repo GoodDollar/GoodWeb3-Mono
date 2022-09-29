@@ -2,7 +2,7 @@
   "compilerOptions": {
     // Default
     "target": "es2019",
-    "lib": ["es2019", "dom"],
+    "lib": ["es2019", "dom", "dom.iterable"],
     "module": "commonjs",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
@@ -14,16 +14,19 @@
     "sourceMap": true,
     "outDir": "dist",
     "rootDir": "src",
+    "baseUrl": ".",
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
-    "typeRoots": ["./node_modules/@types"],
+    "typeRoots": ["./node_modules/@types", "../../node_modules/@types"],
     "noEmit": false,
     "isolatedModules": true,
     "declaration": true,
     "emitDeclarationOnly": false,
-    "declarationMap": true
+    "declarationMap": true,
+    "noImplicitAny": false,
+    "composite": true,
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "src"],
   "exclude": ["node_modules", "src/stories", "**/*.stories.tsx", "src/types", "**/*.test.*", "__tests__"]
 }

@@ -29,10 +29,12 @@
   // If set true this option, skip empty directory
   "skipEmptyDir": true
 
+  "startAt": "./src/"
 
   // only single command configuration
   // Output directory. It works only single mode.
   "output": "./",
+
   // Use rootDir or rootDirs configuration in tsconfig.json.
   "useRootDir": true,
 
