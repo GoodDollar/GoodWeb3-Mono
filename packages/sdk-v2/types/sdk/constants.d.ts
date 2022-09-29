@@ -1,13 +1,13 @@
 import { EnvKey } from "./base/sdk";
 import { Token } from "@usedapp/core";
-export declare enum SupportedChainId {
+export declare enum SupportedChains {
     MAINNET = 1,
     ROPSTEN = 3,
     KOVAN = 42,
     FUSE = 122,
     CELO = 42220
 }
-export declare type SUPPORTED_NETWORKS = 'FUSE' | 'CELO';
+export declare type SUPPORTED_NETWORKS = 'FUSE' | 'CELO' | 'MAINNET' | 'KOVAN' | 'ROPSTEN';
 export declare const Envs: {
     [key: EnvKey]: {
         [key: string]: string;
@@ -18,6 +18,6 @@ declare type ObjectLike = {
 };
 export declare function G$(chainId: number, env: EnvKey): Token;
 export declare function GOOD(chainId: number, env: EnvKey): Token;
-export declare function G$ContractAddresses<T = ObjectLike>(chainId: SupportedChainId, name: string, env: EnvKey): T;
+export declare function G$ContractAddresses<T = ObjectLike>(chainId: SupportedChains, name: string, env: EnvKey): T;
 export {};
 //# sourceMappingURL=constants.d.ts.map

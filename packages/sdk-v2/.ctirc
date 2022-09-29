@@ -7,7 +7,6 @@
   // Export filename, if you not pass this field that use "index.ts" or "index.d.ts"
   "exportFilename": "index.ts",
 
-
   // create, single command configuration
   // add ctix comment at first line of creted index.ts file, that remark created from ctix
   "useSemicolon": true,

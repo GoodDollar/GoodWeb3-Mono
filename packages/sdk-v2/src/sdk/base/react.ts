@@ -1,8 +1,8 @@
 import React, { useMemo, useContext } from 'react'
-import { Signer } from 'ethers'
+import { ethers, Signer } from 'ethers'
 import { EnvKey, EnvValue } from './sdk'
 import { Web3Context } from '../../contexts'
-import { useEthers } from '@usedapp/core'
+import { useEthers, useConfig } from '@usedapp/core'
 import { ClaimSDK } from '../claim/sdk'
 import { SavingsSDK } from '../savings/sdk'
 import Contracts from '@gooddollar/goodprotocol/releases/deployment.json'
@@ -48,19 +48,24 @@ export const getSigner = async (signer: void | Signer, account: string) => {
 
 export const useSDK = (readOnly: boolean = false, type:string = 'base', env?: EnvKey): RequestedSdk["sdk"] => {
   const { library } = useEthers();
+  const { readOnlyUrls } = useConfig();
   const { chainId, defaultEnv } = useGetEnvChainId(readOnly ? undefined : env); 
   const rolibrary = useReadOnlyProvider(chainId) ?? library
+
   const activeEnv = type === 'savings' ? env?.split("-")[0] : env;
+  // temp fix for useEffect bug in useReadOnlyProvider
+  const roUrl = readOnlyUrls && readOnlyUrls[chainId] === typeof "string" && readOnlyUrls[chainId]
+  console.log('(sdk) roUrl -->', {roUrl})
+
   const sdk = useMemo<ClaimSDK | SavingsSDK | undefined>(() => {
     const reqSdk = NAME_TO_SDK[type]
     if (readOnly && rolibrary) {
       return new reqSdk(rolibrary, activeEnv);
     } else if (library) {
       return new reqSdk(library, defaultEnv);
+    } else if (readOnly && readOnlyUrls) {
+      return new reqSdk(new ethers.providers.JsonRpcProvider(roUrl as string), defaultEnv);
     } 
-    // else {
-    //   return new reqSdk(new ethers.providers.AlchemyProvider(chainId), defaultEnv) as BaseSDK;
-    // }
   }, [chainId]) //TODO: temp
   // }, [library, rolibrary, readOnly, chainId, defaultEnv, activeEnv]); //TODO-note: which deps to give the least amount of re-renders
 
