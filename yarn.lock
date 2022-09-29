@@ -2347,7 +2347,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@gooddollar/goodprotocol@npm:1.0.27, @gooddollar/goodprotocol@npm:^1.0.27":
+"@gooddollar/goodprotocol@npm:1.0.27":
   version: 1.0.27
   resolution: "@gooddollar/goodprotocol@npm:1.0.27"
   dependencies:
@@ -2367,7 +2367,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/goodprotocol@npm:^1.0.29-beta.2":
+"@gooddollar/goodprotocol@npm:1.0.29-beta.2, @gooddollar/goodprotocol@npm:^1.0.29-beta.2":
   version: 1.0.29-beta.2
   resolution: "@gooddollar/goodprotocol@npm:1.0.29-beta.2"
   dependencies:
@@ -2444,7 +2444,7 @@ __metadata:
   resolution: "@gooddollar/web3sdk@workspace:packages/sdk"
   dependencies:
     "@apollo/client": ^3.2.0
-    "@gooddollar/goodprotocol": ^1.0.27
+    "@gooddollar/goodprotocol": 1.0.29-beta.2
     "@rollup/plugin-alias": ^3.1.9
     "@rollup/plugin-commonjs": ^22.0.0
     "@rollup/plugin-eslint": ^8.0.2
