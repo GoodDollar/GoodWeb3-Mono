@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useMemo, useState } from "react";
-import { JsonRpcProvider } from "@ethersproject/providers";
+import { JsonRpcProvider, Web3Provider as W3Provider } from "@ethersproject/providers";
 import { DAppProvider, Config, Chain, Mainnet, Ropsten, Kovan, useEthers, Goerli } from "@usedapp/core";
 import EventEmitter from "eventemitter3";
-import { EnvKey } from "../sdk/claim/sdk";
+import { EnvKey } from "../sdk/base/sdk";
 /**
  * request to switch to network id
  * returns void if no result yet true/false if success
@@ -45,7 +45,7 @@ export const Web3Context = React.createContext<IWeb3Context>({
 type Props = {
   children: React.ReactNode;
   config: Config;
-  web3Provider?: JsonRpcProvider;
+  web3Provider?: JsonRpcProvider | W3Provider;
   env?: EnvKey;
   switchNetworkRequest?: SwitchCallback;
 };
@@ -105,10 +105,10 @@ export const Web3Provider = ({ children, config, web3Provider, switchNetworkRequ
   const [switchNetwork, setSwitchNetwork] = useState<SwitchCallback>();
 
   const setSwitcNetworkCallback = (cb: SwitchCallback) => setSwitchNetwork(() => cb);
-
   //make sure we have Fuse and mainnet by default and the relevant multicall available from useConfig for useMulticallAtChain hook
   config.networks = [Fuse, Mainnet, Kovan, Ropsten, Goerli, Celo, ...(config.networks || [])];
   config.multicallVersion = config.multicallVersion ? config.multicallVersion : 1;
+  config.gasLimitBufferPercentage = 10;
   config.readOnlyUrls = {
     122: "https://rpc.fuse.io",
     42220: "https://forno.celo.org",
@@ -116,7 +116,7 @@ export const Web3Provider = ({ children, config, web3Provider, switchNetworkRequ
     3: "https://ropsten.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
     5: "https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
     42: "https://kovan.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
-    ...config.readOnlyUrls
+    ...config.readOnlyUrls,
   };
   const defaultAddresses =
     config.multicallVersion === 1 ? getMulticallAddresses(config.networks) : getMulticall2Addresses(config.networks);

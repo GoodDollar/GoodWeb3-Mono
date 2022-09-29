@@ -1,14 +1,5 @@
 import { BigNumber, Contract, ethers } from "ethers";
-import { providers, Signer } from "ethers";
-import { Envs } from "../constants";
-//@ts-ignore
-import IdentityABI from "@gooddollar/goodprotocol/artifacts/abis/IIdentity.min.json";
-//@ts-ignore
-import UBISchemeABI from "@gooddollar/goodprotocol/artifacts/abis/UBIScheme.min.json";
-import { IIdentity, UBIScheme } from "@gooddollar/goodprotocol/types";
-//@ts-ignore
-import Contracts from "@gooddollar/goodprotocol/releases/deployment.json";
-type Ethers = typeof ethers;
+import { BaseSDK } from '../base/sdk'
 
 const FV_LOGIN_MSG = `Sign this message to login into GoodDollar Unique Identity service.
 WARNING: do not sign this message unless you trust the website/application requesting this signature.
@@ -22,78 +13,8 @@ const FV_IDENTIFIER_MSG2 = `Sign this message to request verifying your account 
 You can use this identifier in the future to delete this anonymized record.
 WARNING: do not sign this message unless you trust the website/application requesting this signature.`;
 
-export const CONTRACT_TO_ABI: { [key: string]: any } = {
-  Identity: IdentityABI,
-  UBIScheme: UBISchemeABI
-};
+export class ClaimSDK extends BaseSDK {
 
-// export type EnvKey = keyof typeof Contracts;
-// export type EnvValue = typeof Contracts[EnvKey] & { networkId: number };
-// export type ContractKey = keyof EnvValue;
-export type EnvKey = string;
-export type EnvValue = any;
-
-export class ClaimSDK {
-  provider: providers.JsonRpcProvider;
-  env: typeof Envs[EnvKey];
-  contracts: EnvValue;
-  signer: Signer | void = undefined;
-  constructor(provider: providers.JsonRpcProvider, envKey: EnvKey = "production") {
-    this.provider = provider;
-    this.env = Envs[envKey];
-    this.contracts = Contracts[envKey as keyof typeof Contracts] as EnvValue;
-    provider.getNetwork().then(network => {
-      if (network.chainId != this.contracts.networkId)
-        // throw new Error(
-        console.warn(
-          `ClaimSDK: provider chainId doesn't much env (${envKey as string}) chainId. provider:${network.chainId} env:${
-            this.contracts.networkId
-          }`
-        );
-      // );
-    });
-    try {
-      const signer = provider.getSigner();
-      provider
-        .listAccounts()
-        .then(async accts => {
-          if (accts.length > 0) {
-            this.signer = await provider.getSigner();
-          }
-        })
-        .catch((e: any) => {
-          console.warn("ClaimSDK: provider has no signer", { signer, provider, error: e.message });
-        });
-    } catch (e: any) {
-      console.warn("ClaimSDK: provider has no signer", { provider, error: e.message });
-    }
-  }
-
-  getContract(contractName: "UBIScheme"): UBIScheme;
-  getContract(contractName: "Identity"): IIdentity;
-  getContract(contractName: string): Contract;
-  getContract(contractName: string) {
-    switch (contractName) {
-      case "UBIScheme":
-        return new Contract(
-          this.contracts["UBIScheme"],
-          CONTRACT_TO_ABI["UBIScheme"].abi,
-          this.signer || this.provider
-        ) as UBIScheme;
-      case "Identity":
-        return new Contract(
-          this.contracts["Identity"],
-          CONTRACT_TO_ABI["Identity"].abi,
-          this.signer || this.provider
-        ) as IIdentity;
-      default:
-        return new Contract(
-          this.contracts[contractName],
-          CONTRACT_TO_ABI[contractName].abi,
-          this.signer || this.provider
-        );
-    }
-  }
   async generateFVLink(firstName: string, callbackUrl?: string, popupMode: boolean = false) {
     const steps = this.getFVLink();
     await steps.getLoginSig();
