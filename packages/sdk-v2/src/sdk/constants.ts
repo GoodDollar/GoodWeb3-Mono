@@ -4,6 +4,9 @@ import contractsAddresses from "@gooddollar/goodprotocol/releases/deployment.jso
 
 /* List of supported chains for this sdk. */
 export enum SupportedChainId {
+  MAINNET = 1,
+  ROPSTEN = 3,
+  KOVAN = 42,
   FUSE = 122,
   CELO = 42220
 }
@@ -43,11 +46,18 @@ export function G$ContractAddresses<T = ObjectLike>(chainId: SupportedChainId, n
   let deploymentName = env;
 
   switch (chainId) {
+    case SupportedChainId.KOVAN:
+      deploymentName = "kovan-mainnet";
+      break;
+    case SupportedChainId.MAINNET:
+    case SupportedChainId.ROPSTEN:
+      deploymentName = env + "-mainnet";
+      break;
     case SupportedChainId.FUSE:
       deploymentName = env;
       break;
     case SupportedChainId.CELO:
-      deploymentName = env + '-celo';
+      deploymentName = ( env === 'fuse' ? 'development' : env ) + '-celo';
       break;
   }
 

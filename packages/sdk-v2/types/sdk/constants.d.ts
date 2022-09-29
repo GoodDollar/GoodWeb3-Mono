@@ -1,6 +1,9 @@
 import { EnvKey } from "./base/sdk";
 import { Token } from "@usedapp/core";
 export declare enum SupportedChainId {
+    MAINNET = 1,
+    ROPSTEN = 3,
+    KOVAN = 42,
     FUSE = 122,
     CELO = 42220
 }
