@@ -11,7 +11,7 @@ export enum SupportedChains {
   CELO = 42220
 }
 
-export type SUPPORTED_NETWORKS = 'FUSE' | 'CELO' | 'MAINNET' | 'KOVAN' | 'ROPSTEN'
+export type SUPPORTED_NETWORKS = "FUSE" | "CELO" | "MAINNET" | "KOVAN" | "ROPSTEN";
 
 // export const SUPPORTED_NETWORKS: Readonly<string[]> = ["CELO", "FUSE"]
 
@@ -30,19 +30,19 @@ export const Envs: { [key: EnvKey]: { [key: string]: string } } = {
   }
 };
 
-type ObjectLike = { [key: string]: string | ObjectLike | Array<string[]> | string[] };
+type ObjectLike = { [key: string]: string | ObjectLike | Array<string[]> | string[] | number };
 
-export function G$(chainId:number, env: EnvKey):Token {
-  const address = G$ContractAddresses(chainId, 'GoodDollar', env) as string
-  return new Token('GoodDollar', 'G$', chainId, address, 2)
+export function G$(chainId: number, env: EnvKey): Token {
+  const address = G$ContractAddresses(chainId, "GoodDollar", env) as string;
+  return new Token("GoodDollar", "G$", chainId, address, 2);
 }
 
-export function GOOD(chainId:number, env: EnvKey):Token {
-  const address = G$ContractAddresses(chainId, 'GReputation', env) as string
-  return new Token('GDAO', 'GOOD', chainId, address, 18)
+export function GOOD(chainId: number, env: EnvKey): Token {
+  const address = G$ContractAddresses(chainId, "GReputation", env) as string;
+  return new Token("GDAO", "GOOD", chainId, address, 18);
 }
 
-export function G$ContractAddresses<T = ObjectLike>(chainId: SupportedChains, name: string, env: EnvKey): T {
+export function G$ContractAddresses<T = ObjectLike>(chainId: number, name: string, env: EnvKey): T {
   let deploymentName = env;
 
   switch (chainId) {
@@ -57,7 +57,7 @@ export function G$ContractAddresses<T = ObjectLike>(chainId: SupportedChains, na
       deploymentName = env;
       break;
     case SupportedChains.CELO:
-      deploymentName = ( env === 'fuse' ? 'development' : env ) + '-celo';
+      deploymentName = (env === "fuse" ? "development" : env) + "-celo";
       break;
   }
 

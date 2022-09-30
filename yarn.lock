@@ -2397,7 +2397,6 @@ __metadata:
     "@babel/preset-react": ^7.16.0
     "@babel/preset-typescript": ^7.16.0
     "@gooddollar/goodprotocol": ^1.0.29-beta.2
-    "@gooddollar/web3sdk": "workspace:^"
     "@storybook/addon-actions": ^6.3.12
     "@storybook/addon-essentials": ^6.3.12
     "@storybook/addon-info": ^5.3.21
@@ -2439,7 +2438,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@gooddollar/web3sdk@workspace:^, @gooddollar/web3sdk@workspace:packages/sdk":
+"@gooddollar/web3sdk@workspace:packages/sdk":
   version: 0.0.0-use.local
   resolution: "@gooddollar/web3sdk@workspace:packages/sdk"
   dependencies:

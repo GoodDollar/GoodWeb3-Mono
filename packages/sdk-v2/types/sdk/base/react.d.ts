@@ -1,18 +1,18 @@
-import { ethers, Signer } from 'ethers';
-import { EnvKey } from './sdk';
-import { ClaimSDK } from '../claim/sdk';
-import { SavingsSDK } from '../savings/sdk';
+import { ethers, Signer } from "ethers";
+import { EnvKey } from "./sdk";
+import { ClaimSDK } from "../claim/sdk";
+import { SavingsSDK } from "../savings/sdk";
 export declare const NAME_TO_SDK: {
-    [key: string]: (typeof ClaimSDK | typeof SavingsSDK);
+    [key: string]: typeof ClaimSDK | typeof SavingsSDK;
 };
 declare type RequestedSdk = {
     sdk: ClaimSDK | SavingsSDK | undefined;
     readOnly: boolean;
 };
-export declare type SdkTypes = 'claim' | 'savings';
+export declare type SdkTypes = "claim" | "savings";
 export declare const useReadOnlySDK: (type: SdkTypes, env?: EnvKey) => RequestedSdk["sdk"];
 export declare const useGetEnvChainId: (env?: EnvKey) => {
-    chainId: any;
+    chainId: number;
     defaultEnv: string;
     switchNetworkRequest: import("../../contexts").SwitchCallback | undefined;
 };
