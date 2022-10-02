@@ -65,8 +65,8 @@ export const useSDK = (readOnly: boolean = false, type: string = "base", env?: E
   const { chainId, defaultEnv } = useGetEnvChainId(readOnly ? env : undefined); //when not readonly we ignore env and get the env user is connected to
   const rolibrary = useReadOnlyProvider(chainId) ?? library;
 
-  console.log("useSDK", { type, readOnly, env, chainId, defaultEnv, rolibrary: !!rolibrary });
   const sdk = useMemo<ClaimSDK | SavingsSDK | undefined>(() => {
+    console.log("useSDK", { type, readOnly, env, chainId, defaultEnv, rolibrary: !!rolibrary });
     const reqSdk = NAME_TO_SDK[type];
     if (readOnly && rolibrary) {
       return new reqSdk(rolibrary, defaultEnv);
