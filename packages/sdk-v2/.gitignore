@@ -5,3 +5,4 @@ node_modules
 type
 tsconfig.tsbuildinfo
 yalc.lock
+storybook-static
