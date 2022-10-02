@@ -1,6 +1,6 @@
 import React, { useMemo, useContext } from "react";
 import { Signer } from "ethers";
-import { EnvKey, EnvValue } from "./sdk";
+import { BaseSDK, EnvKey, EnvValue } from "./sdk";
 import { Web3Context } from "../../contexts";
 import { useEthers } from "@usedapp/core";
 import { ClaimSDK } from "../claim/sdk";
@@ -8,17 +8,18 @@ import { SavingsSDK } from "../savings/sdk";
 import Contracts from "@gooddollar/goodprotocol/releases/deployment.json";
 import { useReadOnlyProvider } from "../../hooks/useMulticallAtChain";
 
-export const NAME_TO_SDK: { [key: string]: typeof ClaimSDK | typeof SavingsSDK } = {
+export const NAME_TO_SDK: { [key: string]: typeof ClaimSDK | typeof SavingsSDK | typeof BaseSDK } = {
   claim: ClaimSDK,
-  savings: SavingsSDK
+  savings: SavingsSDK,
+  base: BaseSDK
 };
 
 type RequestedSdk = {
-  sdk: ClaimSDK | SavingsSDK | undefined;
+  sdk: ClaimSDK | SavingsSDK | BaseSDK | undefined;
   readOnly: boolean;
 };
 
-export type SdkTypes = "claim" | "savings";
+export type SdkTypes = "claim" | "savings" | "base";
 
 export const useReadOnlySDK = (type: SdkTypes, env?: EnvKey): RequestedSdk["sdk"] => {
   return useSDK(true, type, env);
@@ -27,8 +28,8 @@ export const useReadOnlySDK = (type: SdkTypes, env?: EnvKey): RequestedSdk["sdk"
 export const useGetEnvChainId = (env?: EnvKey) => {
   const { chainId } = useEthers();
   const web3Context = useContext(Web3Context);
-  let connectedEnv = web3Context.env || "";
-
+  let baseEnv = web3Context.env || "";
+  let connectedEnv = baseEnv;
   switch (chainId) {
     case 1:
     case 3:
@@ -44,13 +45,14 @@ export const useGetEnvChainId = (env?: EnvKey) => {
   return {
     chainId: Number((Contracts[defaultEnv as keyof typeof Contracts] as EnvValue).networkId),
     defaultEnv,
+    baseEnv,
     connectedEnv,
     switchNetworkRequest: web3Context.switchNetwork
   };
 };
 
 export const useGetContract = (contractName: string, readOnly: boolean = false, type?: SdkTypes, env?: EnvKey) => {
-  const sdk = useSDK(readOnly, type, env);
+  const sdk = useSDK(readOnly, "base", env);
   return useMemo(() => sdk?.getContract(contractName), [contractName, , sdk]);
 };
 
@@ -65,8 +67,7 @@ export const useSDK = (readOnly: boolean = false, type: string = "base", env?: E
   const { chainId, defaultEnv } = useGetEnvChainId(readOnly ? env : undefined); //when not readonly we ignore env and get the env user is connected to
   const rolibrary = useReadOnlyProvider(chainId) ?? library;
 
-  const sdk = useMemo<ClaimSDK | SavingsSDK | undefined>(() => {
-    console.log("useSDK", { type, readOnly, env, chainId, defaultEnv, rolibrary: !!rolibrary });
+  const sdk = useMemo<ClaimSDK | SavingsSDK | BaseSDK | undefined>(() => {
     const reqSdk = NAME_TO_SDK[type];
     if (readOnly && rolibrary) {
       return new reqSdk(rolibrary, defaultEnv);

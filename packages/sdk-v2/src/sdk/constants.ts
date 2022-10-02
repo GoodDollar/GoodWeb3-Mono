@@ -18,15 +18,18 @@ export type SUPPORTED_NETWORKS = "FUSE" | "CELO" | "MAINNET" | "KOVAN" | "ROPSTE
 export const Envs: { [key: EnvKey]: { [key: string]: string } } = {
   production: {
     dappUrl: "https://wallet.gooddollar.org",
-    identityUrl: "https://goodid.gooddollar.org"
+    identityUrl: "https://goodid.gooddollar.org",
+    backend: "https://goodserver.gooddollar.org"
   },
   staging: {
     dappUrl: "https://goodqa.netlify.app",
-    identityUrl: "https://goodidqa.netlify.app"
+    identityUrl: "https://goodid-qa.vercel.app",
+    backend: "https://goodserver-qa.herokuapp.com"
   },
   fuse: {
     dappUrl: "https://gooddev.netlify.app",
-    identityUrl: "https://fv-standalone--gooddev.netlify.app"
+    identityUrl: "https://goodid-dev.vercel.app",
+    backend: "https://good-server.herokuapp.com"
   }
 };
 
