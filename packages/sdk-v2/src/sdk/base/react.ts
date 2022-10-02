@@ -50,19 +50,16 @@ export const useSDK = (readOnly: boolean = false, type: string = "base", env?: E
   const { library } = useEthers();
   const { chainId, defaultEnv } = useGetEnvChainId(readOnly ? undefined : env);
   const rolibrary = useReadOnlyProvider(chainId) ?? library;
-  const activeEnv = type === "savings" ? env?.split("-")[0] : env;
+
   const sdk = useMemo<ClaimSDK | SavingsSDK | undefined>(() => {
     const reqSdk = NAME_TO_SDK[type];
     if (readOnly && rolibrary) {
-      return new reqSdk(rolibrary, activeEnv);
+      return new reqSdk(rolibrary, env);
     } else if (library) {
       return new reqSdk(library, defaultEnv);
+    } else {
+      console.error("Error detecting readonly urls from config");
     }
-    // else {
-    //   return new reqSdk(new ethers.providers.AlchemyProvider(chainId), defaultEnv) as BaseSDK;
-    // }
-  }, [chainId]); //TODO: temp
-  // }, [library, rolibrary, readOnly, chainId, defaultEnv, activeEnv]); //TODO-note: which deps to give the least amount of re-renders
-
+  }, [library, rolibrary, readOnly, chainId, defaultEnv, env, chainId]);
   return sdk;
 };

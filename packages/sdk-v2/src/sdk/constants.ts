@@ -3,7 +3,7 @@ import { Token } from "@usedapp/core";
 import contractsAddresses from "@gooddollar/goodprotocol/releases/deployment.json";
 
 /* List of supported chains for this sdk. */
-export enum SupportedChainId {
+export enum SupportedChains {
   MAINNET = 1,
   ROPSTEN = 3,
   KOVAN = 42,
@@ -11,7 +11,7 @@ export enum SupportedChainId {
   CELO = 42220
 }
 
-export type SUPPORTED_NETWORKS = 'FUSE' | 'CELO'
+export type SUPPORTED_NETWORKS = "FUSE" | "CELO" | "MAINNET" | "KOVAN" | "ROPSTEN";
 
 // export const SUPPORTED_NETWORKS: Readonly<string[]> = ["CELO", "FUSE"]
 
@@ -30,34 +30,34 @@ export const Envs: { [key: EnvKey]: { [key: string]: string } } = {
   }
 };
 
-type ObjectLike = { [key: string]: string | ObjectLike | Array<string[]> | string[] };
+type ObjectLike = { [key: string]: string | ObjectLike | Array<string[]> | string[] | number };
 
-export function G$(chainId:number, env: EnvKey):Token {
-  const address = G$ContractAddresses(chainId, 'GoodDollar', env) as string
-  return new Token('GoodDollar', 'G$', chainId, address, 2)
+export function G$(chainId: number, env: EnvKey): Token {
+  const address = G$ContractAddresses(chainId, "GoodDollar", env) as string;
+  return new Token("GoodDollar", "G$", chainId, address, 2);
 }
 
-export function GOOD(chainId:number, env: EnvKey):Token {
-  const address = G$ContractAddresses(chainId, 'GReputation', env) as string
-  return new Token('GDAO', 'GOOD', chainId, address, 18)
+export function GOOD(chainId: number, env: EnvKey): Token {
+  const address = G$ContractAddresses(chainId, "GReputation", env) as string;
+  return new Token("GDAO", "GOOD", chainId, address, 18);
 }
 
-export function G$ContractAddresses<T = ObjectLike>(chainId: SupportedChainId, name: string, env: EnvKey): T {
+export function G$ContractAddresses<T = ObjectLike>(chainId: number, name: string, env: EnvKey): T {
   let deploymentName = env;
 
   switch (chainId) {
-    case SupportedChainId.KOVAN:
+    case SupportedChains.KOVAN:
       deploymentName = "kovan-mainnet";
       break;
-    case SupportedChainId.MAINNET:
-    case SupportedChainId.ROPSTEN:
+    case SupportedChains.MAINNET:
+    case SupportedChains.ROPSTEN:
       deploymentName = env + "-mainnet";
       break;
-    case SupportedChainId.FUSE:
+    case SupportedChains.FUSE:
       deploymentName = env;
       break;
-    case SupportedChainId.CELO:
-      deploymentName = ( env === 'fuse' ? 'development' : env ) + '-celo';
+    case SupportedChains.CELO:
+      deploymentName = (env === "fuse" ? "development" : env) + "-celo";
       break;
   }
 
