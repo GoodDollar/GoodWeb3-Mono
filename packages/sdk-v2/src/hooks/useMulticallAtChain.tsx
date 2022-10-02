@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { useConfig, Call, RawCall } from "@usedapp/core";
 import { encodeCallData } from "@usedapp/core/dist/cjs/src/helpers";
 
@@ -71,7 +71,7 @@ export async function multicall(
 
 export const useReadOnlyProvider = (chainId: number) => {
   const { readOnlyUrls, pollingInterval } = useConfig();
-  const [provider] = useState<JsonRpcProvider | undefined>(() => {
+  const provider = useMemo<JsonRpcProvider | undefined>(() => {
     if (readOnlyUrls && readOnlyUrls[chainId]) {
       switch (true) {
         case readOnlyUrls[chainId] instanceof BaseProvider:
@@ -85,7 +85,7 @@ export const useReadOnlyProvider = (chainId: number) => {
           return provider;
       }
     }
-  });
+  }, [readOnlyUrls, pollingInterval, chainId]);
 
   return provider;
 };
