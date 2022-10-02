@@ -6,21 +6,21 @@ import { first } from "lodash";
 import usePromise from "react-use-promise";
 import { UBIScheme } from "@gooddollar/goodprotocol/types/UBIScheme";
 import { EnvKey } from "../base/sdk";
-import { ClaimSDK } from './sdk'
+import { ClaimSDK } from "./sdk";
 import { IIdentity } from "@gooddollar/goodprotocol/types";
 
-import { useSDK, useReadOnlySDK, useGetContract } from '../base/react'
+import { useSDK, useReadOnlySDK, useGetContract, useGetEnvChainId } from "../base/react";
 
 type Ethers = typeof ethers;
 
 export const useFVLink = () => {
-  const sdk = useSDK(true, 'claim', undefined) as ClaimSDK;
-  
+  const sdk = useSDK(true, "claim") as ClaimSDK;
+
   return useMemo(() => sdk.getFVLink(), [sdk]);
 };
 
 export const useIsAddressVerified = (address: string, env?: EnvKey) => {
-  const sdk = useReadOnlySDK('claim', env) as ClaimSDK;
+  const sdk = useReadOnlySDK("claim", env) as ClaimSDK;
 
   const result = usePromise(() => {
     if (address && sdk) return sdk.isAddressVerified(address);
@@ -29,9 +29,10 @@ export const useIsAddressVerified = (address: string, env?: EnvKey) => {
   return result;
 };
 
-export const useClaim = (refresh: QueryParams["refresh"] = "never", env?:EnvKey) => {
+export const useClaim = (refresh: QueryParams["refresh"] = "never", env?: EnvKey) => {
   const DAY = 1000 * 60 * 60 * 24;
   const { account } = useEthers();
+  const { chainId } = useGetEnvChainId(env);
 
   const ubi = useGetContract("UBIScheme", true, "claim", env) as UBIScheme;
   const identity = useGetContract("Identity", true, "claim", env) as IIdentity;
@@ -61,7 +62,7 @@ export const useClaim = (refresh: QueryParams["refresh"] = "never", env?:EnvKey)
         args: [account]
       } //this reverts in some cases, bug in contract
     ],
-    { refresh }
+    { refresh, chainId }
   );
 
   const periodStart = (first(results[2]?.value) || BigNumber.from("0")) as BigNumber;

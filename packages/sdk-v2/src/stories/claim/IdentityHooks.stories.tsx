@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { W3Wrapper } from "../W3Wrapper";
 import { ComponentStory, ComponentMeta } from "@storybook/react";
-import { useFVLink, useIsAddressVerified, useSDK } from "../../sdk/claim/react";
+import { useFVLink, useIsAddressVerified } from "../../sdk/claim/react";
+import { useSDK } from "../../sdk/base/react";
 
 export interface PageProps {
   address?: string;
@@ -10,7 +11,7 @@ export interface PageProps {
 
 const Web3Component = (params: PageProps) => {
   const [fvVerificatoinLink, setLink] = useState<string>();
-  const library = useSDK();
+  const library = useSDK(true, "claim");
   const isVerified = useIsAddressVerified(params.address || "");
   const fvlink = useFVLink();
   return (
