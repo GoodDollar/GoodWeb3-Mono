@@ -1,13 +1,13 @@
 import { EnvKey } from "./base/sdk";
 import { Token } from "@usedapp/core";
-export declare const SupportedChains: {
-    MAINNET: number;
-    ROPSTEN: number;
-    KOVAN: number;
-    FUSE: number;
-    CELO: number;
-};
-export declare type SUPPORTED_NETWORKS = 'FUSE' | 'CELO' | 'MAINNET' | 'KOVAN' | 'ROPSTEN';
+export declare enum SupportedChains {
+    MAINNET = 1,
+    ROPSTEN = 3,
+    KOVAN = 42,
+    FUSE = 122,
+    CELO = 42220
+}
+export declare type SUPPORTED_NETWORKS = "FUSE" | "CELO" | "MAINNET" | "KOVAN" | "ROPSTEN";
 export declare const Envs: {
     [key: EnvKey]: {
         [key: string]: string;

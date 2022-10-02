@@ -1,5 +1,6 @@
-import { QueryParams, CurrencyValue } from '@usedapp/core';
-import { ethers } from 'ethers';
+import { QueryParams, CurrencyValue } from "@usedapp/core";
+import { ethers } from "ethers";
+import { EnvKey } from "../base";
 export interface StakerInfo {
     claimable: {
         g$Reward: CurrencyValue | any;
@@ -15,14 +16,14 @@ export interface StakerInfo {
     shares?: number | any;
     lastSharePrice?: number | any;
 }
-export interface GlobalStats {
+export interface SavingsStats {
     totalStaked: CurrencyValue | undefined;
     totalRewardsPaid: CurrencyValue | undefined;
     apy: number | undefined;
     lastUpdateBlock?: number;
     savings?: number;
 }
-export declare function useSavingsBalance(refresh?: QueryParams["refresh"]): {
+export declare function useSavingsBalance(refresh?: QueryParams["refresh"], env?: EnvKey): {
     g$Balance: {
         value: undefined;
         error: Error;
@@ -46,11 +47,11 @@ export declare const useSavingsFunctions: () => {
     withdrawState: import("@usedapp/core").TransactionStatus;
     claimState: import("@usedapp/core").TransactionStatus;
 };
-export declare const useGlobalStats: (refresh?: QueryParams["refresh"]) => {
+export declare const useSavingsStats: (refresh?: QueryParams["refresh"], env?: EnvKey) => {
     stats: undefined;
     error: any[];
 } | {
-    stats: GlobalStats;
+    stats: SavingsStats;
     error: undefined;
 };
 export declare const useStakerInfo: (refresh: QueryParams["refresh"], account: string) => {
