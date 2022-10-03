@@ -1,6 +1,6 @@
 {
   "name": "@gooddollar/web3sdk",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "description": "GoodDollar SDK package",
   "author": "LewisB <lewis@gooddollar.org>",
   "license": "GPL-3.0",
@@ -12,7 +12,7 @@
     "test": "craco test --env=jsdom",
     "dev": "rollup -c -w",
     "build:dev": "rm -fr dist types && ctix r && ctix c && rollup -c",
-    "build": "rollup -c rollup-prod.config.js"
+    "build": "rm -fr dist types && rollup -c rollup-prod.config.js"
   },
   "files": [
     "dist",
@@ -69,7 +69,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.2.0",
-    "@gooddollar/goodprotocol": "1.0.29-beta.2",
+    "@gooddollar/goodprotocol": "1.0.29-beta.4",
     "@sushiswap/default-token-list": "^27.1.0",
     "@sushiswap/sdk": "5.0.0-canary.7",
     "@uniswap/sdk": "^3.0.3",

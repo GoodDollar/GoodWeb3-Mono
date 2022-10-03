@@ -1,18 +1,17 @@
 import { FACTORY_ADDRESS as V2_FACTORY_ADDRESS, INIT_CODE_HASH } from "@uniswap/v2-sdk";
 import contractsAddresses from "@gooddollar/goodprotocol/releases/deployment.json";
 
-import { constructSameAddressMap } from '../utils/constructSameAddressMap'
-import { SupportedChainId } from './chains'
+import { constructSameAddressMap } from "../utils/constructSameAddressMap";
+import { SupportedChainId } from "./chains";
 
 type ObjectLike = { [key: string]: string | ObjectLike | Array<string[]> | string[] };
 
 export const getNetworkEnv = (network?: string): string => {
-  const localNetwork = localStorage.getItem('GD_NETWORK');
-  const parsed = localNetwork ? JSON.parse(localNetwork) : null;
-  return parsed || network || process.env.REACT_APP_NETWORK || 'staging';
-}
+  const localNetwork = localStorage.getItem("GD_NETWORK");
+  return localNetwork || network || process.env.REACT_APP_NETWORK || "staging";
+};
 
-type AddressMap = { [chainId: number]: string }
+type AddressMap = { [chainId: number]: string };
 
 /**
  * Fetch contract address from @gooddollar/goodprotocol npm package.

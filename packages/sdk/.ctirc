@@ -17,7 +17,7 @@
   // add ctix comment at first line of creted index.ts file, that remark created from ctix
   "useComment": false,
 
-  // quote mark " or '
+  // quote mark \" or '\
   "quote": "'",
   // overwrite index.ts file also index.ts file already exist that create backup file
   "overwrite": true,

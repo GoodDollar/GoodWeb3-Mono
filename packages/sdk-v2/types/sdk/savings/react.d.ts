@@ -1,6 +1,5 @@
-import { QueryParams, CurrencyValue } from '@usedapp/core';
-import { ethers } from 'ethers';
-import { EnvKey } from '../base';
+import { QueryParams, CurrencyValue } from "@usedapp/core";
+import { ethers } from "ethers";
 export interface StakerInfo {
     claimable: {
         g$Reward: CurrencyValue | any;
@@ -16,14 +15,14 @@ export interface StakerInfo {
     shares?: number | any;
     lastSharePrice?: number | any;
 }
-export interface GlobalStats {
+export interface SavingsStats {
     totalStaked: CurrencyValue | undefined;
     totalRewardsPaid: CurrencyValue | undefined;
     apy: number | undefined;
     lastUpdateBlock?: number;
     savings?: number;
 }
-export declare function useSavingsBalance(refresh?: QueryParams["refresh"], env?: EnvKey): {
+export declare function useSavingsBalance(refresh: number | "never" | "everyBlock" | undefined, requestedChainId: number): {
     g$Balance: {
         value: undefined;
         error: Error;
@@ -39,7 +38,7 @@ export declare function useSavingsBalance(refresh?: QueryParams["refresh"], env?
         error: undefined;
     };
 };
-export declare const useSavingsFunctions: (chainId: number, env?: EnvKey) => {
+export declare const useSavingsFunctions: () => {
     transfer: (amount: string) => Promise<ethers.providers.TransactionReceipt | undefined>;
     withdraw: (amount: string, address?: string) => Promise<ethers.providers.TransactionReceipt | undefined>;
     claim: () => Promise<ethers.providers.TransactionReceipt | undefined>;
@@ -47,14 +46,14 @@ export declare const useSavingsFunctions: (chainId: number, env?: EnvKey) => {
     withdrawState: import("@usedapp/core").TransactionStatus;
     claimState: import("@usedapp/core").TransactionStatus;
 };
-export declare const useGlobalStats: (refresh: QueryParams["refresh"], chainId: number, env: EnvKey) => {
+export declare const useSavingsStats: (refresh: QueryParams["refresh"], requestedChainId: number) => {
     stats: undefined;
     error: any[];
 } | {
-    stats: GlobalStats;
+    stats: SavingsStats;
     error: undefined;
 };
-export declare const useStakerInfo: (refresh: QueryParams["refresh"], account: string, chainId: number, env: EnvKey) => {
+export declare const useStakerInfo: (refresh: QueryParams["refresh"], account: string, requestedChainId: number) => {
     stats: undefined;
     error: any[];
 } | {

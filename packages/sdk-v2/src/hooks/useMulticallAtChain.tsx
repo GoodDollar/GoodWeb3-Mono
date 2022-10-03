@@ -1,14 +1,12 @@
-import React, { useCallback, useEffect, useRef, useState, useMemo } from "react";
-import { useConfig, Call, RawCall, useEthers } from "@usedapp/core";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
+import { useConfig, Call, RawCall } from "@usedapp/core";
 import { encodeCallData } from "@usedapp/core/dist/cjs/src/helpers";
-import { type BaseProviderFactory } from "@usedapp/core/src/constants/type/Config";
 
 import { JsonRpcProvider, BaseProvider } from "@ethersproject/providers";
 import { BigNumber } from "@ethersproject/bignumber";
 import { Contract } from "ethers";
 import { Result } from "@ethersproject/abi";
 import { Provider } from "@ethersproject/providers";
-import { NodeUrls } from "@usedapp/core/dist/cjs/src";
 
 const ABI = [
   "function aggregate(tuple(address target, bytes callData)[] calls) view returns (uint256 blockNumber, bytes[] returnData)"
@@ -71,27 +69,23 @@ export async function multicall(
   return state;
 }
 
-// todo-fix: useEffect not being triggered 
 export const useReadOnlyProvider = (chainId: number) => {
   const { readOnlyUrls, pollingInterval } = useConfig();
-  const [provider, setProvider] = useState<JsonRpcProvider>();
-  useEffect(() => {
+  const provider = useMemo<JsonRpcProvider | undefined>(() => {
     if (readOnlyUrls && readOnlyUrls[chainId]) {
       switch (true) {
         case readOnlyUrls[chainId] instanceof BaseProvider:
-          setProvider(readOnlyUrls[chainId] as JsonRpcProvider);
-          break;
+          return readOnlyUrls[chainId] as JsonRpcProvider;
         case typeof readOnlyUrls[chainId] === "function":
-          setProvider((readOnlyUrls[chainId] as any)() as JsonRpcProvider);
-          break;
+          return (readOnlyUrls[chainId] as any)() as JsonRpcProvider;
         default:
         case typeof readOnlyUrls[chainId] === "string":
           const provider = new JsonRpcProvider(readOnlyUrls[chainId] as any);
           provider.pollingInterval = pollingInterval;
-          setProvider(provider);
+          return provider;
       }
     }
-  }, []);
+  }, [readOnlyUrls, pollingInterval, chainId]);
 
   return provider;
 };

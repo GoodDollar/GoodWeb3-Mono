@@ -7,7 +7,7 @@ export declare const useFVLink: () => {
     getLink: (firstName: string, callbackUrl?: string | undefined, popupMode?: boolean) => string;
 };
 export declare const useIsAddressVerified: (address: string, env?: EnvKey) => [undefined, undefined, "pending"] | [undefined, Error, "rejected"] | [boolean | undefined, undefined, "resolved"];
-export declare const useClaim: (refresh?: QueryParams["refresh"], env?: EnvKey) => {
+export declare const useClaim: (refresh?: QueryParams["refresh"]) => {
     isWhitelisted: boolean;
     claimAmount: BigNumber;
     claimTime: Date;
