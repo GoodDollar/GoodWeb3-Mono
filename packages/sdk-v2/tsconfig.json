@@ -9,7 +9,7 @@
     "strict": true,
     "skipLibCheck": true,
     // Added
-    "jsx": "react",
+    "jsx": "react-jsx",
     "declarationDir": "types",
     "sourceMap": true,
     "outDir": "dist",
@@ -25,7 +25,7 @@
     "emitDeclarationOnly": false,
     "declarationMap": true,
     "noImplicitAny": false,
-    "composite": true,
+    "composite": true
   },
   "include": ["src/**/*", "src"],
   "exclude": ["node_modules", "src/stories", "**/*.stories.tsx", "src/types", "**/*.test.*", "__tests__"]
