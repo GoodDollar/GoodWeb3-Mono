@@ -1,5 +1,4 @@
 import { Signer } from "ethers";
-import { EnvKey } from "./sdk";
 import { ClaimSDK } from "../claim/sdk";
 import { SavingsSDK } from "../savings/sdk";
 export declare const NAME_TO_SDK: {
@@ -10,14 +9,15 @@ declare type RequestedSdk = {
     readOnly: boolean;
 };
 export declare type SdkTypes = "claim" | "savings";
-export declare const useReadOnlySDK: (type: SdkTypes, env?: EnvKey) => RequestedSdk["sdk"];
-export declare const useGetEnvChainId: (env?: EnvKey) => {
+export declare const useReadOnlySDK: (type: SdkTypes, requestedChainId?: number) => RequestedSdk["sdk"];
+export declare const useGetEnvChainId: (requestedChainId?: number) => {
     chainId: number;
     defaultEnv: string;
+    connectedEnv: string;
     switchNetworkRequest: import("../../contexts").SwitchCallback | undefined;
 };
-export declare const useGetContract: (contractName: string, readOnly?: boolean, type?: SdkTypes, env?: EnvKey) => import("ethers").Contract | undefined;
+export declare const useGetContract: (contractName: string, readOnly?: boolean, type?: SdkTypes, requestedChainId?: number) => import("ethers").Contract | undefined;
 export declare const getSigner: (signer: void | Signer, account: string) => Promise<Error | Signer>;
-export declare const useSDK: (readOnly?: boolean, type?: string, env?: EnvKey) => RequestedSdk["sdk"];
+export declare const useSDK: (readOnly?: boolean, type?: string, requestedChainId?: number) => RequestedSdk["sdk"];
 export {};
 //# sourceMappingURL=react.d.ts.map

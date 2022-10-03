@@ -22,7 +22,7 @@ export const useFVLink = () => {
 };
 
 export const useIsAddressVerified = (address: string, env?: EnvKey) => {
-  const sdk = useReadOnlySDK("claim", env) as ClaimSDK;
+  const sdk = useReadOnlySDK("claim") as ClaimSDK;
 
   const result = usePromise(() => {
     if (address && sdk) return sdk.isAddressVerified(address);
@@ -31,14 +31,14 @@ export const useIsAddressVerified = (address: string, env?: EnvKey) => {
   return result;
 };
 
-export const useClaim = (refresh: QueryParams["refresh"] = "never", env?: EnvKey) => {
+export const useClaim = (refresh: QueryParams["refresh"] = "never") => {
   const refreshOrNever = useRefreshOrNever(refresh);
   const DAY = 1000 * 60 * 60 * 24;
   const { account } = useEthers();
-  const { chainId } = useGetEnvChainId(env);
+  const { chainId } = useGetEnvChainId();
 
-  const ubi = useGetContract("UBIScheme", true, "claim", env) as UBIScheme;
-  const identity = useGetContract("Identity", true, "claim", env) as IIdentity;
+  const ubi = useGetContract("UBIScheme", true, "claim") as UBIScheme;
+  const identity = useGetContract("Identity", true, "claim") as IIdentity;
   const claimCall = useContractFunction(ubi, "claim");
 
   // const [entitlement] = usePromise(ubi["checkEntitlement()"]());
