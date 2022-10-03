@@ -2,7 +2,7 @@ dist
 node_modules
 .vscode
 .yalc
-type
+types
 tsconfig.tsbuildinfo
 yalc.lock
 storybook-static

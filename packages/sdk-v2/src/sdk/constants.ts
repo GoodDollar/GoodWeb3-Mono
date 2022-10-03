@@ -48,13 +48,13 @@ export function GOOD(chainId: number, env: EnvKey): Token {
 }
 
 export function G$ContractAddresses<T = ObjectLike>(name: string, env: EnvKey): T {
-  if (!contractsAddresses[env]) {
+  if (!(contractsAddresses as any)[env]) {
     console.warn(`tokens: Unsupported chain ID ${env}`, env);
     env = env.includes("mainnet") ? env + "-mainnet" : env;
   }
-  if (!contractsAddresses[env][name]) {
+  if (!(contractsAddresses as any)[env][name]) {
     throw new Error(`Inappropriate contract name ${name} in ${env}`);
   }
 
-  return contractsAddresses[env][name] as unknown as T;
+  return (contractsAddresses as any)[env][name] as unknown as T;
 }

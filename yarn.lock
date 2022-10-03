@@ -2249,7 +2249,7 @@ __metadata:
     "@babel/preset-flow": ^7.18.6
     "@babel/runtime": ^7.18.9
     "@gooddollar/goodprotocol": 1.0.29-beta.2
-    "@gooddollar/web3sdk-v2": "file:.yalc/@gooddollar/web3sdk-v2"
+    "@gooddollar/web3sdk-v2": ^0.1.16
     "@storybook/addon-actions": ^6.5.12
     "@storybook/addon-essentials": ^6.5.12
     "@storybook/addon-links": ^6.5.12
@@ -2367,7 +2367,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/goodprotocol@npm:1.0.29-beta.4, @gooddollar/goodprotocol@npm:^1.0.29-beta.2, @gooddollar/goodprotocol@npm:^1.0.29-beta.4":
+"@gooddollar/goodprotocol@npm:1.0.29-beta.4, @gooddollar/goodprotocol@npm:^1.0.29-beta.4":
   version: 1.0.29-beta.4
   resolution: "@gooddollar/goodprotocol@npm:1.0.29-beta.4"
   dependencies:
@@ -2387,24 +2387,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2::locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design":
-  version: 0.1.21
-  resolution: "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2#.yalc/@gooddollar/web3sdk-v2::hash=a37934&locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design"
-  dependencies:
-    "@gooddollar/goodprotocol": ^1.0.29-beta.2
-    "@usedapp/core": ^1.0.9
-    eventemitter3: ^4.0.7
-    react-use-promise: ^0.5.0
-  peerDependencies:
-    ethers: 5.*
-    react: ^18.2.0
-    react-dom: ^18.2.0
-    react-native-web: ^0.18.1
-  checksum: d9d929aba59b8c9e084b2f21358257c39f667408a63562f75ae22c6fcccd98c85f60c9d64277f653fb3666d2513aa50b3bd39ba785d8d56e16ba2a7771698c35
-  languageName: node
-  linkType: hard
-
-"@gooddollar/web3sdk-v2@workspace:packages/sdk-v2":
+"@gooddollar/web3sdk-v2@^0.1.16, @gooddollar/web3sdk-v2@workspace:packages/sdk-v2":
   version: 0.0.0-use.local
   resolution: "@gooddollar/web3sdk-v2@workspace:packages/sdk-v2"
   dependencies:
