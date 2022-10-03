@@ -1,20 +1,50 @@
-import React, { useCallback, useEffect } from "react";
-import { QueryParams, useCalls, useEtherBalance, useEthers, useGasPrice } from "@usedapp/core";
+import React, { useCallback, useEffect, useRef } from "react";
+import { QueryParams, useCalls, useEtherBalance, useEthers, useGasPrice, useNotifications } from "@usedapp/core";
 import { BigNumber, ethers } from "ethers";
 import { Faucet } from "@gooddollar/goodprotocol/types";
-import { first } from "lodash";
+import { first, maxBy } from "lodash";
 import { useGetContract, useGetEnvChainId } from "../base/react";
-import { Envs } from "../constants";
+import { Envs, SupportedChains } from "../constants";
+import useRefreshOrNever from "../../hooks/useRefreshOrNever";
 
-//default wait roughly 10 minutes
-export const useFaucet = async (refresh: QueryParams["refresh"] = 100) => {
+//default wait roughly 1 minute
+export const useFaucet = async (refresh: QueryParams["refresh"] = 12) => {
+  let refreshOrNever = useRefreshOrNever(refresh);
+  const { notifications } = useNotifications();
+  const latest = maxBy(notifications, _ => _.submittedAt);
+  const lastNotification = useRef(latest?.submittedAt || 0);
+
+  //if we connected wallet or did a tx then force a refresh
+  if (latest && latest.type !== "transactionStarted" && latest?.submittedAt > lastNotification.current) {
+    lastNotification.current = latest?.submittedAt;
+    refreshOrNever = 1;
+  }
+
   const gasPrice = useGasPrice({ refresh: "never" }) || BigNumber.from("1000000000");
   const minBalance = BigNumber.from("110000").mul(gasPrice);
   const { account, chainId } = useEthers();
-  const balance = useEtherBalance(account, { refresh }); //refresh roughly once in 10 minutes
+  const balance = useEtherBalance(account, { refresh: refreshOrNever }); //refresh roughly once in 10 minutes
   const { connectedEnv, baseEnv } = useGetEnvChainId(); //get the env the user is connected to
-  const faucet = useGetContract("Faucet", true, "base", connectedEnv) as Faucet;
-  console.log("useFaucet", { account, connectedEnv, chainId, balance, minBalance, gasPrice, faucet: faucet?.address });
+  const faucet = useGetContract(
+    chainId === SupportedChains.FUSE ? "FuseFaucet" : "Faucet",
+    true,
+    "base",
+    connectedEnv
+  ) as Faucet;
+
+  console.log("useFaucet", {
+    lastNotification,
+    latest,
+    account,
+    connectedEnv,
+    chainId,
+    balance,
+    minBalance,
+    gasPrice,
+    faucet: faucet?.address,
+    refreshOrNever
+  });
+
   const result = first(
     useCalls(
       [

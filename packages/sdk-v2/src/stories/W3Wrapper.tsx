@@ -25,7 +25,7 @@ export const W3Wrapper = ({ children, withMetaMask }: PageProps) => {
       ethereum.request({ method: "eth_requestAccounts" }).then(async (r: Array<string>) => {
         console.log("setting metamask provider", r);
         if (r.length > 0) {
-          setProvider(ethereum);
+          setProvider(new ethers.providers.Web3Provider(ethereum, "any"));
         }
       });
     }

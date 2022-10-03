@@ -21,7 +21,8 @@ export const CONTRACT_TO_ABI: { [key: string]: any } = {
   UBIScheme: UBISchemeABI,
   GoodDollarStaking: GoodDollarStakingABI,
   GoodDollar: GoodDollarABI,
-  Faucet: FaucetABI
+  Faucet: FaucetABI,
+  FuseFaucet: FaucetABI
 };
 
 // export type EnvKey = keyof typeof Contracts;
@@ -43,8 +44,8 @@ export class BaseSDK {
     console.log("initializing sdk", { envKey, env: this.env, contracts: this.contracts });
     provider.getNetwork().then(network => {
       if (network.chainId != this.contracts.networkId)
-        throw new Error(
-          `BaseSDK: provider chainId doesn't much env (${envKey as string}) chainId. provider:${network.chainId} env:${
+        console.error(
+          `BaseSDK: provider chainId doesn't match env (${envKey as string}) chainId. provider:${network.chainId} env:${
             this.contracts.networkId
           }`
         );

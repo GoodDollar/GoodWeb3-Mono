@@ -10,6 +10,7 @@ import { ClaimSDK } from "./sdk";
 import { IIdentity } from "@gooddollar/goodprotocol/types";
 
 import { useSDK, useReadOnlySDK, useGetContract, useGetEnvChainId } from "../base/react";
+import useRefreshOrNever from "../../hooks/useRefreshOrNever";
 
 type Ethers = typeof ethers;
 
@@ -30,6 +31,7 @@ export const useIsAddressVerified = (address: string, env?: EnvKey) => {
 };
 
 export const useClaim = (refresh: QueryParams["refresh"] = "never", env?: EnvKey) => {
+  const refreshOrNever = useRefreshOrNever(refresh);
   const DAY = 1000 * 60 * 60 * 24;
   const { account } = useEthers();
   const { chainId } = useGetEnvChainId(env);
@@ -62,7 +64,7 @@ export const useClaim = (refresh: QueryParams["refresh"] = "never", env?: EnvKey
         args: [account]
       } //this reverts in some cases, bug in contract
     ],
-    { refresh, chainId }
+    { refresh: refreshOrNever, chainId }
   );
 
   const periodStart = (first(results[2]?.value) || BigNumber.from("0")) as BigNumber;

@@ -5,6 +5,7 @@ import { ethers } from "ethers";
 import { EnvKey } from "../base/sdk";
 import { GoodDollarStaking, IGoodDollar } from "@gooddollar/goodprotocol/types";
 import { G$, GOOD } from "../constants";
+import useRefreshOrNever from "../../hooks/useRefreshOrNever";
 
 export interface StakerInfo {
   claimable:
@@ -33,6 +34,7 @@ export interface SavingsStats {
 }
 
 export function useSavingsBalance(refresh: QueryParams["refresh"] = "never", env?: EnvKey) {
+  const refreshOrNever = useRefreshOrNever(refresh);
   const { account } = useEthers();
   const { chainId } = useGetEnvChainId(env);
 
@@ -53,7 +55,7 @@ export function useSavingsBalance(refresh: QueryParams["refresh"] = "never", env
       }
     ],
     {
-      refresh,
+      refresh: refreshOrNever,
       chainId
     }
   );
@@ -99,6 +101,8 @@ export const useSavingsFunctions = () => {
 };
 
 export const useSavingsStats = (refresh: QueryParams["refresh"] = "never", env?: EnvKey) => {
+  const refreshOrNever = useRefreshOrNever(refresh);
+
   const { chainId, defaultEnv } = useGetEnvChainId(env);
   const gdStaking = useGetContract("GoodDollarStaking", true, "savings", defaultEnv) as GoodDollarStaking;
 
@@ -120,7 +124,7 @@ export const useSavingsStats = (refresh: QueryParams["refresh"] = "never", env?:
         args: []
       }
     ],
-    { refresh, chainId }
+    { refresh: refreshOrNever, chainId }
   );
 
   let globalStats: SavingsStats = {
@@ -165,6 +169,8 @@ export const useSavingsStats = (refresh: QueryParams["refresh"] = "never", env?:
 };
 
 export const useStakerInfo = (refresh: QueryParams["refresh"] = "never", account: string) => {
+  const refreshOrNever = useRefreshOrNever(refresh);
+
   const { chainId, defaultEnv } = useGetEnvChainId();
   const contract = useGetContract("GoodDollarStaking", true, "savings") as GoodDollarStaking;
   const results = useCalls(
@@ -180,7 +186,7 @@ export const useStakerInfo = (refresh: QueryParams["refresh"] = "never", account
         args: [account]
       }
     ],
-    { refresh, chainId }
+    { refresh: refreshOrNever, chainId }
   );
 
   let stakerInfo: StakerInfo = {
