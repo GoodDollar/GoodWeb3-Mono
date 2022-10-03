@@ -94,7 +94,7 @@ export const useClaim = (refresh: QueryParams["refresh"] = "never") => {
 };
 
 //if user is verified on fuse and not on current network then send backend request to whitelist
-const useVerifyWhitelisted = () => {
+export const useWhitelistSync = () => {
   const [syncStatus, setSyncStatus] = useState<Promise<boolean> | undefined>();
   const { baseEnv } = useGetEnvChainId();
   const { account, chainId } = useEthers();
