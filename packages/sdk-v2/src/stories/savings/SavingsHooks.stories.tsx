@@ -3,6 +3,7 @@ import { W3Wrapper } from "../W3Wrapper";
 import { ComponentStory, ComponentMeta } from "@storybook/react";
 import { useSavingsStats } from "../../sdk/savings/react";
 import { useNetwork } from "@usedapp/core";
+import { SupportedV2Networks } from "../../sdk/constants";
 
 export interface PageProps {
   address?: string;
@@ -10,8 +11,8 @@ export interface PageProps {
 }
 
 const Web3Component = (params: PageProps) => {
-  const [fvVerificatoinLink, setLink] = useState<string>();
-  const stats = useSavingsStats(1);
+  const [fvVerificationLink, setLink] = useState<string>();
+  const stats = useSavingsStats(1, SupportedV2Networks.FUSE);
   const { network } = useNetwork();
   console.log({ network });
   return (

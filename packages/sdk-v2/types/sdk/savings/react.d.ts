@@ -22,10 +22,6 @@ export interface SavingsStats {
     lastUpdateBlock?: number;
     savings?: number;
 }
-export declare enum SupportedSavingsNetworks {
-    FUSE = 122,
-    CELO = 42220
-}
 export declare function useSavingsBalance(refresh: number | "never" | "everyBlock" | undefined, requestedChainId: number): {
     g$Balance: {
         value: undefined;
@@ -42,7 +38,7 @@ export declare function useSavingsBalance(refresh: number | "never" | "everyBloc
         error: undefined;
     };
 };
-export declare const useSavingsFunctions: (requestedChainId: number) => {
+export declare const useSavingsFunctions: () => {
     transfer: (amount: string) => Promise<ethers.providers.TransactionReceipt | undefined>;
     withdraw: (amount: string, address?: string) => Promise<ethers.providers.TransactionReceipt | undefined>;
     claim: () => Promise<ethers.providers.TransactionReceipt | undefined>;

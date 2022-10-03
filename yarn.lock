@@ -2236,7 +2236,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/goodprotocol@npm:^1.0.29-beta.2":
+"@gooddollar/goodprotocol@npm:^1.0.29-beta.3":
   version: 1.0.29-beta.3
   resolution: "@gooddollar/goodprotocol@npm:1.0.29-beta.3"
   dependencies:
@@ -2265,7 +2265,7 @@ __metadata:
     "@babel/preset-env": ^7.16.4
     "@babel/preset-react": ^7.16.0
     "@babel/preset-typescript": ^7.16.0
-    "@gooddollar/goodprotocol": ^1.0.29-beta.2
+    "@gooddollar/goodprotocol": ^1.0.29-beta.3
     "@storybook/addon-actions": ^6.5.12
     "@storybook/addon-essentials": ^6.5.12
     "@storybook/addon-links": ^6.5.12

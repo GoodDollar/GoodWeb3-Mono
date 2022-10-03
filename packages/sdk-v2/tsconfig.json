@@ -9,7 +9,7 @@
     "strict": true,
     "skipLibCheck": true,
     // Added
-    "jsx": "react",
+    "jsx": "react-jsx",
     "declarationDir": "types",
     "sourceMap": true,
     "outDir": "dist",

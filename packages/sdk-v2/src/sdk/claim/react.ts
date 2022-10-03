@@ -11,8 +11,6 @@ import { IIdentity } from "@gooddollar/goodprotocol/types";
 
 import { useSDK, useReadOnlySDK, useGetContract, useGetEnvChainId } from "../base/react";
 
-type Ethers = typeof ethers;
-
 export const useFVLink = () => {
   const sdk = useSDK(true, "claim") as ClaimSDK;
 
@@ -29,7 +27,7 @@ export const useIsAddressVerified = (address: string, env?: EnvKey) => {
   return result;
 };
 
-export const useClaim = (refresh: QueryParams["refresh"] = "never", env?: EnvKey) => {
+export const useClaim = (refresh: QueryParams["refresh"] = "never") => {
   const DAY = 1000 * 60 * 60 * 24;
   const { account } = useEthers();
   const { chainId } = useGetEnvChainId();

@@ -71,7 +71,7 @@ export const getSigner = async (signer: void | Signer, account: string) => {
 export const useSDK = (
   readOnly: boolean = false,
   type: string = "base",
-  requestedChainId?: number
+  requestedChainId: number = 42220
 ): RequestedSdk["sdk"] => {
   const { library } = useEthers();
   const { chainId, defaultEnv } = useGetEnvChainId(requestedChainId); //when not readonly we ignore env and get the env user is connected to

@@ -32,11 +32,6 @@ export interface SavingsStats {
   savings?: number;
 }
 
-export enum SupportedSavingsNetworks {
-  FUSE = 122,
-  CELO = 42220
-}
-
 export function useSavingsBalance(refresh: QueryParams["refresh"] = "never", requestedChainId: number) {
   const { account } = useEthers();
   const { chainId } = useGetEnvChainId();
@@ -67,9 +62,9 @@ export function useSavingsBalance(refresh: QueryParams["refresh"] = "never", req
   return { g$Balance: balance, savingsBalance: sBalance };
 }
 
-export const useSavingsFunctions = (requestedChainId: number) => {
-  const gooddollar = useGetContract("GoodDollar", false, "savings", requestedChainId) as IGoodDollar;
-  const gdStaking = useGetContract("GoodDollarStaking", false, "savings", requestedChainId) as GoodDollarStaking;
+export const useSavingsFunctions = () => {
+  const gooddollar = useGetContract("GoodDollar", false, "savings") as IGoodDollar;
+  const gdStaking = useGetContract("GoodDollarStaking", false, "savings") as GoodDollarStaking;
 
   const { state: transferState, send: sendTransfer } = useContractFunction(gooddollar, "transferAndCall", {
     transactionName: "Transfer to savings"
