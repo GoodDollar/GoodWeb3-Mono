@@ -32,12 +32,16 @@ export interface SavingsStats {
   savings?: number;
 }
 
-export function useSavingsBalance(refresh: QueryParams["refresh"] = "never", env?: EnvKey) {
-  const { account } = useEthers();
-  const { chainId } = useGetEnvChainId(env);
+export enum SupportedSavingsNetworks {
+  FUSE = 122,
+  CELO = 42220
+}
 
-  const gooddollar = useGetContract("GoodDollar", true, "savings", env) as IGoodDollar;
-  const gdStaking = useGetContract("GoodDollarStaking", true, "savings", env) as GoodDollarStaking;
+export function useSavingsBalance(refresh: QueryParams["refresh"] = "never", requestedChainId: number) {
+  const { account } = useEthers();
+  const { chainId } = useGetEnvChainId();
+  const gooddollar = useGetContract("GoodDollar", true, "savings", requestedChainId) as IGoodDollar;
+  const gdStaking = useGetContract("GoodDollarStaking", true, "savings", requestedChainId) as GoodDollarStaking;
 
   const results = useCalls(
     [
@@ -63,9 +67,9 @@ export function useSavingsBalance(refresh: QueryParams["refresh"] = "never", env
   return { g$Balance: balance, savingsBalance: sBalance };
 }
 
-export const useSavingsFunctions = () => {
-  const gooddollar = useGetContract("GoodDollar", false, "savings") as IGoodDollar;
-  const gdStaking = useGetContract("GoodDollarStaking", false, "savings") as GoodDollarStaking;
+export const useSavingsFunctions = (requestedChainId: number) => {
+  const gooddollar = useGetContract("GoodDollar", false, "savings", requestedChainId) as IGoodDollar;
+  const gdStaking = useGetContract("GoodDollarStaking", false, "savings", requestedChainId) as GoodDollarStaking;
 
   const { state: transferState, send: sendTransfer } = useContractFunction(gooddollar, "transferAndCall", {
     transactionName: "Transfer to savings"
@@ -98,9 +102,9 @@ export const useSavingsFunctions = () => {
   return { transfer, withdraw, claim, transferState, withdrawState, claimState };
 };
 
-export const useSavingsStats = (refresh: QueryParams["refresh"] = "never", env?: EnvKey) => {
-  const { chainId, defaultEnv } = useGetEnvChainId(env);
-  const gdStaking = useGetContract("GoodDollarStaking", true, "savings", defaultEnv) as GoodDollarStaking;
+export const useSavingsStats = (refresh: QueryParams["refresh"] = "never", requestedChainId: number) => {
+  const { chainId, defaultEnv } = useGetEnvChainId();
+  const gdStaking = useGetContract("GoodDollarStaking", true, "savings", requestedChainId) as GoodDollarStaking;
 
   const results = useCalls(
     [
@@ -120,7 +124,7 @@ export const useSavingsStats = (refresh: QueryParams["refresh"] = "never", env?:
         args: []
       }
     ],
-    { refresh, chainId }
+    { refresh, chainId: requestedChainId }
   );
 
   let globalStats: SavingsStats = {
@@ -164,9 +168,9 @@ export const useSavingsStats = (refresh: QueryParams["refresh"] = "never", env?:
   };
 };
 
-export const useStakerInfo = (refresh: QueryParams["refresh"] = "never", account: string) => {
+export const useStakerInfo = (refresh: QueryParams["refresh"] = "never", account: string, requestedChainId: number) => {
   const { chainId, defaultEnv } = useGetEnvChainId();
-  const contract = useGetContract("GoodDollarStaking", true, "savings") as GoodDollarStaking;
+  const contract = useGetContract("GoodDollarStaking", true, "savings", requestedChainId) as GoodDollarStaking;
   const results = useCalls(
     [
       {
@@ -180,7 +184,7 @@ export const useStakerInfo = (refresh: QueryParams["refresh"] = "never", account
         args: [account]
       }
     ],
-    { refresh, chainId }
+    { refresh, chainId: requestedChainId }
   );
 
   let stakerInfo: StakerInfo = {

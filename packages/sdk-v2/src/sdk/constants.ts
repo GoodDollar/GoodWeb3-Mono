@@ -43,31 +43,13 @@ export function GOOD(chainId: number, env: EnvKey): Token {
 }
 
 export function G$ContractAddresses<T = ObjectLike>(chainId: number, name: string, env: EnvKey): T {
-  let deploymentName = env;
-
-  switch (chainId) {
-    case SupportedChains.KOVAN:
-      deploymentName = "kovan-mainnet";
-      break;
-    case SupportedChains.MAINNET:
-    case SupportedChains.ROPSTEN:
-      deploymentName = env + "-mainnet";
-      break;
-    case SupportedChains.FUSE:
-      deploymentName = env;
-      break;
-    case SupportedChains.CELO:
-      deploymentName = (env === "fuse" ? "development" : env) + "-celo";
-      break;
+  if (!contractsAddresses[env]) {
+    console.warn(`tokens: Unsupported chain ID ${env}`, env);
+    env = env.includes("mainnet") ? env + "-mainnet" : env;
+  }
+  if (!contractsAddresses[env][name]) {
+    throw new Error(`Inappropriate contract name ${name} in ${env} ${chainId}`);
   }
 
-  if (!contractsAddresses[deploymentName]) {
-    console.warn(`tokens: Unsupported chain ID ${deploymentName}`, env);
-    deploymentName = deploymentName.includes("mainnet") ? env + "-mainnet" : env;
-  }
-  if (!contractsAddresses[deploymentName][name]) {
-    throw new Error(`Inappropriate contract name ${name} in ${deploymentName} ${chainId}`);
-  }
-
-  return contractsAddresses[deploymentName][name] as unknown as T;
+  return contractsAddresses[env][name] as unknown as T;
 }

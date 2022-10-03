@@ -1,6 +1,5 @@
 import { QueryParams, CurrencyValue } from "@usedapp/core";
 import { ethers } from "ethers";
-import { EnvKey } from "../base";
 export interface StakerInfo {
     claimable: {
         g$Reward: CurrencyValue | any;
@@ -23,7 +22,11 @@ export interface SavingsStats {
     lastUpdateBlock?: number;
     savings?: number;
 }
-export declare function useSavingsBalance(refresh?: QueryParams["refresh"], env?: EnvKey): {
+export declare enum SupportedSavingsNetworks {
+    FUSE = 122,
+    CELO = 42220
+}
+export declare function useSavingsBalance(refresh: number | "never" | "everyBlock" | undefined, requestedChainId: number): {
     g$Balance: {
         value: undefined;
         error: Error;
@@ -39,7 +42,7 @@ export declare function useSavingsBalance(refresh?: QueryParams["refresh"], env?
         error: undefined;
     };
 };
-export declare const useSavingsFunctions: () => {
+export declare const useSavingsFunctions: (requestedChainId: number) => {
     transfer: (amount: string) => Promise<ethers.providers.TransactionReceipt | undefined>;
     withdraw: (amount: string, address?: string) => Promise<ethers.providers.TransactionReceipt | undefined>;
     claim: () => Promise<ethers.providers.TransactionReceipt | undefined>;
@@ -47,14 +50,14 @@ export declare const useSavingsFunctions: () => {
     withdrawState: import("@usedapp/core").TransactionStatus;
     claimState: import("@usedapp/core").TransactionStatus;
 };
-export declare const useSavingsStats: (refresh?: QueryParams["refresh"], env?: EnvKey) => {
+export declare const useSavingsStats: (refresh: QueryParams["refresh"], requestedChainId: number) => {
     stats: undefined;
     error: any[];
 } | {
     stats: SavingsStats;
     error: undefined;
 };
-export declare const useStakerInfo: (refresh: QueryParams["refresh"], account: string) => {
+export declare const useStakerInfo: (refresh: QueryParams["refresh"], account: string, requestedChainId: number) => {
     stats: undefined;
     error: any[];
 } | {
