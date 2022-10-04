@@ -7,11 +7,8 @@ export default () => {
   const active = useMemo(() => appState === "active", [appState]);
 
   useEffect(() => {
-    const handleAppStateChange = nextAppState => {
-      setAppState(nextAppState);
-    };
-
-    const subscription = AppState.addEventListener("change", handleAppStateChange);
+    const onChanged = state => void setAppState(state);
+    const subscription = AppState.addEventListener("change", onChanged);
 
     return () => {
       subscription.remove();

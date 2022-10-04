@@ -4,5 +4,6 @@ import useAppState from "./useAppState";
 
 export default (refresh: QueryParams["refresh"]) => {
   const { active } = useAppState();
+
   return active ? refresh : "never";
 };

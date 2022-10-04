@@ -11,3 +11,4 @@ packages/**/node_modules
 packages/**/tsconfig.tsbuildinfo
 packages/**/index.ts.bak
 .vscode
+.DS_Store

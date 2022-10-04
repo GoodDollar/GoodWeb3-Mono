@@ -100,66 +100,62 @@ export const useWhitelistSync = () => {
   const { account, chainId } = useEthers();
   const identity = useGetContract("Identity", true, "claim", SupportedChains.FUSE) as IIdentity;
   const identity2 = useGetContract("Identity", true, "claim", chainId) as IIdentity;
-  const fuseResult = first(
-    useCalls(
-      [
-        {
-          contract: identity,
-          method: "isWhitelisted",
-          args: [account]
-        }
-      ],
-      { refresh: "never", chainId: SupportedChains.FUSE as unknown as ChainId }
-    )
+
+  const [fuseResult] = useCalls(
+    [
+      {
+        contract: identity,
+        method: "isWhitelisted",
+        args: [account]
+      }
+    ],
+    { refresh: "never", chainId: SupportedChains.FUSE as unknown as ChainId }
   );
 
-  const otherResult = first(
-    useCalls(
-      [
-        {
-          contract: identity2,
-          method: "isWhitelisted",
-          args: [account]
-        }
-      ].filter(_ => _.contract && chainId != SupportedChains.FUSE),
-      { refresh: "never", chainId }
-    )
+  const [otherResult] = useCalls(
+    [
+      {
+        contract: identity2,
+        method: "isWhitelisted",
+        args: [account]
+      }
+    ].filter(_ => _.contract && chainId != SupportedChains.FUSE),
+    { refresh: "never", chainId }
   );
-
-  const whitelistSync = useCallback(async () => {
-    const isSynced = await AsyncStorage.getItem(`${account}-whitelistedSync`);
-
-    console.log("syncWhitelist", { account, baseEnv, isSynced, fuseResult, otherResult });
-
-    if (isSynced !== "true" && fuseResult?.value && otherResult?.value === false) {
-      const { backend } = Envs[baseEnv];
-
-      console.log("syncWhitelist", { account, backend, baseEnv });
-
-      const status = fetch(backend + `/syncWhitelist/${account}`)
-        .then(async r => {
-          console.log("syncWhitelist result:", r);
-          if (r.status === 200) {
-            const res = await r.json();
-            console.log("syncWhitelist json result:", res);
-
-            AsyncStorage.setItem(`${account}-whitelistedSync`, "true");
-            return true;
-          } else {
-            return false;
-          }
-        })
-        .catch(e => {
-          console.log("syncWhitelistfailed:", e.message, e);
-          return false;
-        });
-      setSyncStatus(status);
-    }
-  }, [fuseResult, otherResult, account, setSyncStatus]);
 
   useEffect(() => {
+    const whitelistSync = async () => {
+      const isSynced = await AsyncStorage.getItem(`${account}-whitelistedSync`);
+
+      console.log("syncWhitelist", { account, baseEnv, isSynced, fuseResult, otherResult });
+
+      if (isSynced !== "true" && fuseResult?.value && otherResult?.value === false) {
+        const { backend } = Envs[baseEnv];
+
+        console.log("syncWhitelist", { account, backend, baseEnv });
+
+        setSyncStatus(fetch(backend + `/syncWhitelist/${account}`)
+          .then(async r => {
+            console.log("syncWhitelist result:", r);
+            if (r.status === 200) {
+              const res = await r.json();
+              console.log("syncWhitelist json result:", res);
+
+              AsyncStorage.setItem(`${account}-whitelistedSync`, "true");
+              return true;
+            } else {
+              return false;
+            }
+          })
+          .catch(e => {
+            console.log("syncWhitelistfailed:", e.message, e);
+            return false;
+          }));
+      }
+    };
+
     whitelistSync();
-  }, [whitelistSync]);
+  }, [fuseResult, otherResult, account, setSyncStatus]);
 
   return {
     fuseWhitelisted: fuseResult?.value as boolean,
