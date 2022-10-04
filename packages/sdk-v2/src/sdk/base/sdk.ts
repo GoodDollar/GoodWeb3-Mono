@@ -41,7 +41,7 @@ export class BaseSDK {
     this.env = Envs[envKey];
 
     this.contracts = Contracts[envKey as keyof typeof Contracts] as EnvValue;
-    console.log("initializing sdk", { envKey, env: this.env, contracts: this.contracts });
+    // console.log("initializing sdk", { envKey, env: this.env, contracts: this.contracts });
     provider.getNetwork().then(network => {
       if (network.chainId != this.contracts.networkId)
         console.error(

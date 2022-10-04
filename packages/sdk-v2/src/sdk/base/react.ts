@@ -21,11 +21,11 @@ type RequestedSdk = {
 
 export type SdkTypes = "claim" | "savings" | "base";
 
-export const useReadOnlySDK = (type: SdkTypes, requestedChainId?: number): RequestedSdk["sdk"] => {
-  return useSDK(true, type, requestedChainId);
+export const useReadOnlySDK = (type: SdkTypes, requiredChainId?: number): RequestedSdk["sdk"] => {
+  return useSDK(true, type, requiredChainId);
 };
 
-export const useGetEnvChainId = (requestedChainId?: number) => {
+export const useGetEnvChainId = (requiredChainId?: number) => {
   const { chainId } = useEthers();
   const web3Context = useContext(Web3Context);
   let baseEnv = web3Context.env || "";
@@ -60,9 +60,9 @@ export const useGetContract = (
   contractName: string,
   readOnly: boolean = false,
   type?: SdkTypes,
-  requestedChainId?: number
+  requiredChainId?: number
 ) => {
-  const sdk = useSDK(readOnly, "base", requestedChainId);
+  const sdk = useSDK(readOnly, type, requiredChainId);
   return useMemo(() => sdk?.getContract(contractName), [contractName, , sdk]);
 };
 
@@ -75,14 +75,14 @@ export const getSigner = async (signer: void | Signer, account: string) => {
 export const useSDK = (
   readOnly: boolean = false,
   type: string = "base",
-  requestedChainId: number = 42220
+  requiredChainId?: number | undefined
 ): RequestedSdk["sdk"] => {
   const { library } = useEthers();
-  const { chainId, defaultEnv } = useGetEnvChainId(requestedChainId); //when not readonly we ignore env and get the env user is connected to
+  const { chainId, defaultEnv } = useGetEnvChainId(requiredChainId);
   const rolibrary = useReadOnlyProvider(chainId) ?? library;
 
   const sdk = useMemo<ClaimSDK | SavingsSDK | undefined>(() => {
-    console.log("useSDK", { type, readOnly, chainId, defaultEnv, rolibrary: !!rolibrary });
+    // console.log("useSDK", { type, readOnly, chainId, defaultEnv, rolibrary: !!rolibrary });
     const reqSdk = NAME_TO_SDK[type];
     if (readOnly && rolibrary) {
       return new reqSdk(rolibrary, defaultEnv);
