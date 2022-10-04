@@ -1,18 +1,58 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
+import { StyleSheet } from "react-native";
 import { useClaim, useFVLink } from "@gooddollar/web3sdk-v2/src";
+import { noop } from 'lodash'
 import { View, Text, Modal, IModalProps } from "native-base";
-import { BaseButton } from "./BaseButton";
-import { Linking, StyleSheet } from "react-native";
 
-export interface PageProps {
+import { BaseButton, BaseButtonProps } from "./BaseButton";
+import { openLink } from "../utils/linking";
+
+interface FVFlowProps {
   firstName: string;
+  method: "popup" | "redirect";
 }
 
-const FVModal = (params: IModalProps & { firstName: string }) => {
+type FVModalProps = IModalProps & FVFlowProps;
+
+export type ClaimButtonProps = BaseButtonProps & FVFlowProps;
+
+function FVModal({ firstName, method, onClose = noop, ...props }: FVModalProps) {
   const fvlink = useFVLink();
-  const method = "popup";
+
+  const login = useCallback(async () => {
+    await fvlink?.getLoginSig();
+  }, [fvlink]);
+
+  const sign = useCallback(async () => {
+    await fvlink?.getFvSig();
+  }, [fvlink]);
+
+  const verify = useCallback(async () => {
+    switch (method) {
+      case 'redirect': {
+        const link = fvlink?.getLink(firstName, document.location.href, false);
+
+        if (link) {
+          openLink(link);
+        }
+        break;
+      }
+      case 'popup':
+      default: {
+        const link = await fvlink?.getLink(firstName, undefined, true);
+
+        if (link) {
+          openLink(link, '_blank', { width: '800px', height: 'auto' })
+        }
+        break;
+      }
+    }
+
+    onClose()
+  }, [fvlink, method, firstName, onClose])
+
   return (
-    <Modal {...params} animationPreset="slide">
+    <Modal {...props} animationPreset="slide" onClose={onClose}>
       <View style={styles.containeralt}>
         <View>
           <Text>To verify your identity you need to sign TWICE with your wallet.</Text>
@@ -22,72 +62,53 @@ const FVModal = (params: IModalProps & { firstName: string }) => {
             your address.
           </Text>
         </View>
-        <BaseButton
-          onPress={async () => {
-            await fvlink?.getLoginSig();
-          }}
-          text={"Step 1 - Login"}
-        />
-        <BaseButton
-          onPress={async () => {
-            await fvlink?.getFvSig();
-          }}
-          text={"Step 2 - Sign unique identifier"}
-        />
-        <BaseButton
-          onPress={async () => {
-            let link;
-            if (method === "popup") {
-              link = await fvlink?.getLink(params.firstName, undefined, true);
-              const popup = window.open(link, "_blank", "width: '800px', height: 'auto'");
-            } else {
-              link = fvlink?.getLink(params.firstName, document.location.href, false);
-              link && Linking.openURL(link);
-            }
-            // console.log({ link });
-            params.onClose?.();
-            // params.onRequestClose?.(noop);
-          }}
-          text={"Step 3 - Verify"}
-        />
-        <BaseButton color="red" onPress={() => params.onClose?.()} text={"Close"} />
+        <BaseButton onPress={login} text={"Step 1 - Login"} />
+        <BaseButton onPress={sign} text={"Step 2 - Sign unique identifier"} />
+        <BaseButton onPress={verify} text={"Step 3 - Verify"} />
+        <BaseButton color="red" onPress={onClose()} text={"Close"} />
       </View>
     </Modal>
   );
 };
 
-export const ClaimButton = ({ firstName }: PageProps) => {
+export function ClaimButton({ firstName }: ClaimButtonProps) {
   const [showModal, setShowModal] = useState(false);
   const [refresh, setRefresh] = useState(false);
   const { isWhitelisted, claimAmount, claimTime, claimCall } = useClaim(refresh ? "everyBlock" : "never");
+  const { status: claimStatus } = claimCall?.state || {}
 
-  const handleClaim = async () => {
-    if (isWhitelisted) {
-      await claimCall.send();
-    } else {
-      setShowModal(true);
+  const handleClose = useCallback(() => setShowModal(false), [setShowModal]);
+
+  const handleClaim = useCallback(async () => {
+    if (!isWhitelisted) {
+      return setShowModal(true);
     }
-  };
+
+    await claimCall.send();
+  }, [isWhitelisted, setShowModal, claimCall]);
+
+  const buttonTitle = useMemo(() => {
+    if (!isWhitelisted) {
+      return "Verify Uniqueness";
+    }
+
+    if (claimAmount.toNumber() > 0) {
+      return `Claim ${claimAmount}`;
+    }
+
+    return `Claim at: ${claimTime}`;
+  }, [isWhitelisted, claimAmount, claimTime]);
 
   useEffect(() => {
-    if (!isWhitelisted || claimCall.state.status === "Mining" || claimCall.state.status === "PendingSignature") {
-      setRefresh(true);
-    } else setRefresh(false);
-  }, [isWhitelisted, claimCall.state]);
-
-  const buttonTitle = () => {
-    if (isWhitelisted) {
-      if (claimAmount.toNumber() > 0) return `Claim ${claimAmount}`;
-      else return `Claim at: ${claimTime}`;
-    } else return "Verify Uniqueness";
-  };
+    setRefresh(!isWhitelisted || ["Mining", "PendingSignature"].includes(claimStatus));
+  }, [isWhitelisted, claimStatus]);
 
   return (
     <View>
       <View flex={1} alignItems="center" justifyContent="center">
-        <FVModal isOpen={showModal} onClose={() => setShowModal(false)} firstName={firstName}></FVModal>
+        <FVModal isOpen={showModal} onClose={handleClose} firstName={firstName}></FVModal>
       </View>
-      <BaseButton text={buttonTitle()} onPress={handleClaim} />
+      <BaseButton text={buttonTitle} onPress={handleClaim} />
     </View>
   );
 };
