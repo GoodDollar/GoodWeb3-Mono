@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react'
 import {Web3ActionButton} from '../advanced/web3action';
-import { Mainnet, DAppProvider, useEtherBalance, useEthers, Config, Goerli } from '@usedapp/core'
-import { useClaim, Web3Provider, Fuse, Celo } from '@gooddollar/web3sdk-v2'
+import { Mainnet, DAppProvider, Config, Goerli } from '@usedapp/core'
+import { useClaim, Fuse, Celo } from '@gooddollar/web3sdk-v2'
 import { getDefaultProvider } from 'ethers'
 
 const exampleAction = () => {
-  const { isWhitelisted, claimAmount, claimTime, claimCall } = useClaim(10, 'fuse');
+  const { isWhitelisted, claimAmount, claimTime, claimCall } = useClaim(10);
 
   const handleClaim = async () => {
     if (isWhitelisted) {
@@ -64,8 +64,6 @@ export default {
     },
   },
 };
-
-
 
 export const WebActionButton = {
   args: {
