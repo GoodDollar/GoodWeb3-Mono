@@ -9,15 +9,15 @@ declare type RequestedSdk = {
     readOnly: boolean;
 };
 export declare type SdkTypes = "claim" | "savings";
-export declare const useReadOnlySDK: (type: SdkTypes, requestedChainId?: number) => RequestedSdk["sdk"];
-export declare const useGetEnvChainId: (requestedChainId?: number) => {
+export declare const useReadOnlySDK: (type: SdkTypes, requiredChainId?: number) => RequestedSdk["sdk"];
+export declare const useGetEnvChainId: (requiredChainId?: number) => {
     chainId: number;
     defaultEnv: string;
     connectedEnv: string;
     switchNetworkRequest: import("../../contexts").SwitchCallback | undefined;
 };
-export declare const useGetContract: (contractName: string, readOnly?: boolean, type?: SdkTypes, requestedChainId?: number) => import("ethers").Contract | undefined;
+export declare const useGetContract: (contractName: string, readOnly?: boolean, type?: SdkTypes, requiredChainId?: number) => import("ethers").Contract | undefined;
 export declare const getSigner: (signer: void | Signer, account: string) => Promise<Error | Signer>;
-export declare const useSDK: (readOnly?: boolean, type?: string, requestedChainId?: number) => RequestedSdk["sdk"];
+export declare const useSDK: (readOnly?: boolean, type?: string, requiredChainId?: number | undefined) => RequestedSdk["sdk"];
 export {};
 //# sourceMappingURL=react.d.ts.map
