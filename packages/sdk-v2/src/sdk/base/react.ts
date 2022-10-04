@@ -30,6 +30,7 @@ export const useGetEnvChainId = (requestedChainId?: number) => {
   const web3Context = useContext(Web3Context);
   let baseEnv = web3Context.env || "";
   let connectedEnv = baseEnv;
+
   switch (requestedChainId ?? chainId) {
     case 1:
     case 3:
