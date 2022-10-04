@@ -18,13 +18,13 @@ const Web3Component = (params: PageProps) => {
   return (
     <div>
       <div>Fuse Whitelisted:</div>
-      <div>{fuseWhitelisted}</div>
+      <div>{String(fuseWhitelisted)}</div>
       <div>Connected Chain Whitelisted:</div>
-      <div>{currentWhitelisted}</div>
+      <div>{String(currentWhitelisted)}</div>
       <div>sync status promise</div>
-      <div>{syncStatus.toString()}</div>
+      <div>{String(syncStatus)}</div>
       <div>sync promise result</div>
-      <div>{syncResult}</div>
+      <div>{String(syncResult)}</div>
     </div>
   );
 };
@@ -40,7 +40,7 @@ export default {
 } as ComponentMeta<typeof Page>;
 
 const Template: ComponentStory<typeof Page> = args => (
-  <W3Wrapper>
+  <W3Wrapper withMetaMask>
     <Web3Component {...args} />
   </W3Wrapper>
 );
