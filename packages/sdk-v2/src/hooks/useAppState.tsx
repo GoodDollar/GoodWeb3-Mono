@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AppState } from "react-native";
 import { noop as _ } from "lodash";
 
 export default () => {
   const [appState, setAppState] = useState(AppState.currentState);
+  const active = useMemo(() => appState === "active", [appState]);
 
   useEffect(() => {
     const handleAppStateChange = nextAppState => {
@@ -15,7 +16,7 @@ export default () => {
     return () => {
       subscription.remove();
     };
-  }, [appState]);
+  }, [setAppState]);
 
-  return { appState };
+  return { appState, active };
 };

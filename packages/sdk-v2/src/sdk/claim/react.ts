@@ -63,7 +63,7 @@ export const useClaim = (refresh: QueryParams["refresh"] = "never") => {
         contract: ubi,
         method: "checkEntitlement(address)",
         args: [account]
-      } //this reverts in some cases, bug in contract
+      }
     ],
     { refresh: refreshOrNever, chainId }
   );
@@ -93,7 +93,7 @@ export const useClaim = (refresh: QueryParams["refresh"] = "never") => {
   };
 };
 
-//if user is verified on fuse and not on current network then send backend request to whitelist
+// if user is verified on fuse and not on current network then send backend request to whitelist
 export const useWhitelistSync = () => {
   const [syncStatus, setSyncStatus] = useState<Promise<boolean> | undefined>();
   const { baseEnv } = useGetEnvChainId();
@@ -128,10 +128,12 @@ export const useWhitelistSync = () => {
 
   const whitelistSync = useCallback(async () => {
     const isSynced = await AsyncStorage.getItem(`${account}-whitelistedSync`);
+
     console.log("syncWhitelist", { account, baseEnv, isSynced, fuseResult, otherResult });
 
     if (isSynced !== "true" && fuseResult?.value && otherResult?.value === false) {
       const { backend } = Envs[baseEnv];
+
       console.log("syncWhitelist", { account, backend, baseEnv });
 
       const status = fetch(backend + `/syncWhitelist/${account}`)
