@@ -4,7 +4,6 @@ import { noop as _ } from "lodash";
 
 export default () => {
   const [appState, setAppState] = useState(AppState.currentState);
-  const active = useMemo(() => appState === "active", [appState]);
 
   useEffect(() => {
     const onChanged = state => void setAppState(state);
@@ -15,5 +14,5 @@ export default () => {
     };
   }, [setAppState]);
 
-  return { appState, active };
+  return { appState, active: appState === "active" };
 };
