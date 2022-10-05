@@ -71,7 +71,7 @@ function FVModal({ firstName, method, onClose = noop, ...props }: FVModalProps) 
   );
 };
 
-export function ClaimButton({ firstName }: ClaimButtonProps) {
+export function ClaimButton({ firstName, method }: ClaimButtonProps) {
   const [showModal, setShowModal] = useState(false);
   const [refresh, setRefresh] = useState(false);
   const { isWhitelisted, claimAmount, claimTime, claimCall } = useClaim(refresh ? "everyBlock" : "never");
@@ -106,7 +106,7 @@ export function ClaimButton({ firstName }: ClaimButtonProps) {
   return (
     <View>
       <View flex={1} alignItems="center" justifyContent="center">
-        <FVModal isOpen={showModal} onClose={handleClose} firstName={firstName}></FVModal>
+        <FVModal method={method} isOpen={showModal} onClose={handleClose} firstName={firstName}></FVModal>
       </View>
       <BaseButton text={buttonTitle} onPress={handleClaim} />
     </View>

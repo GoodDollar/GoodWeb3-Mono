@@ -11,7 +11,7 @@ export interface Web3ActionProps {
   text: string,
   requiredChain: number,
   doAction: () => Promise<TransactionReceipt | undefined>,
-  handleConnect?: ((requiredChain: number) => Promise<any>) | undefined
+  handleConnect?: ((requiredChain: number) => Promise<any> | void)
 };
 
 

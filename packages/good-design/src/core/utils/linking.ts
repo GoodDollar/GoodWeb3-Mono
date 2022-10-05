@@ -15,7 +15,7 @@ export async function openLink(uri: string, target: '_blank' | '_self' = '_blank
     const { noopener = false, ...opts } = options || {};
 
     if (!isEmpty(options)) {
-      const optsList: string[] = toPairs(opts).map((key: string, value: string) => `${key}: '${value}'`);
+      const optsList: string[] = toPairs(opts).map(([key, value]) => `${key}: '${value}'`);
 
       if (noopener) {
         optsList.push('noopener')
