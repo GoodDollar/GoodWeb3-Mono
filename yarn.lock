@@ -2268,6 +2268,7 @@ __metadata:
     "@storybook/preset-scss": ^1.0.3
     "@storybook/react": ^6.5.12
     "@storybook/theming": ^6.5.12
+    "@types/lodash": ^4.14.186
     "@types/react": ^18.0.17
     "@types/react-native": ^0.69.5
     "@usedapp/core": ^1.1.5
@@ -2279,6 +2280,7 @@ __metadata:
     buffer: ^6.0.3
     css-loader: ^6.7.1
     ctix: ^1.4.0
+    lodash: ^4.17.21
     metro-react-native-babel-preset: ^0.72.0
     native-base: 3.4.11
     prop-types: ^15.8.1
@@ -6303,7 +6305,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash@npm:*, @types/lodash@npm:^4.14.167":
+"@types/lodash@npm:*, @types/lodash@npm:^4.14.167, @types/lodash@npm:^4.14.186":
   version: 4.14.186
   resolution: "@types/lodash@npm:4.14.186"
   checksum: ee0c1368a8100bb6efb88335107473a41928fc307ff1ef4ff1278868ccddba9c04c68c36d1ffe3a0392ef4a956e1955f7de3203ec09df4f1655dd1b88485c549
