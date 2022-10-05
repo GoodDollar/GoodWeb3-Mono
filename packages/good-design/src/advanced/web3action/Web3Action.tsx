@@ -4,6 +4,9 @@ import { BaseButton } from '../../core/buttons';
 import { useEthers } from '@usedapp/core';
 import { TransactionReceipt } from '@ethersproject/providers'
 
+
+//This is just a draft
+
 export interface Web3ActionProps {
   /**
    * a text to be rendered in the component.
