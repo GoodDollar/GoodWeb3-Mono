@@ -60,7 +60,8 @@ jobs:
           USER_INPUT=${{ github.event.inputs.bumpversion }}          
           VERSION=${USER_INPUT:-"patch"}          
           export MSG=`npm version ${VERSION}`
-          git add package.json 
+          git pull
+          git add . 
           git commit -m "${MSG}"
           if [ "${{ env.push_version_commit }}" = "true" ]; then
             git push --follow-tags
