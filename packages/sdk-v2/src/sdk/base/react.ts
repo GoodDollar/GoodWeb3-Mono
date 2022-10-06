@@ -1,24 +1,26 @@
-import React, { useMemo, useContext } from "react";
-import { Signer } from "ethers";
-import { EnvValue } from "./sdk";
+import { useContext, useState } from "react";
+import { Signer, providers } from "ethers";
+import { BaseSDK, EnvKey, EnvValue } from "./sdk";
 import { Web3Context } from "../../contexts";
 import { useEthers } from "@usedapp/core";
 import { ClaimSDK } from "../claim/sdk";
 import { SavingsSDK } from "../savings/sdk";
 import Contracts from "@gooddollar/goodprotocol/releases/deployment.json";
 import { useReadOnlyProvider } from "../../hooks/useMulticallAtChain";
+import useUpdateEffect from "src/hooks/useUpdateEffect";
 
-export const NAME_TO_SDK: { [key: string]: typeof ClaimSDK | typeof SavingsSDK } = {
+export const NAME_TO_SDK: { [key: string]: typeof ClaimSDK | typeof SavingsSDK | typeof BaseSDK } = {
   claim: ClaimSDK,
-  savings: SavingsSDK
+  savings: SavingsSDK,
+  base: BaseSDK
 };
 
 type RequestedSdk = {
-  sdk: ClaimSDK | SavingsSDK | undefined;
+  sdk: ClaimSDK | SavingsSDK | BaseSDK | undefined;
   readOnly: boolean;
 };
 
-export type SdkTypes = "claim" | "savings";
+export type SdkTypes = "claim" | "savings" | "base";
 
 export const useReadOnlySDK = (type: SdkTypes, requiredChainId?: number): RequestedSdk["sdk"] => {
   return useSDK(true, type, requiredChainId);
@@ -27,9 +29,10 @@ export const useReadOnlySDK = (type: SdkTypes, requiredChainId?: number): Reques
 export const useGetEnvChainId = (requiredChainId?: number) => {
   const { chainId } = useEthers();
   const web3Context = useContext(Web3Context);
-  let connectedEnv = web3Context.env || "";
+  let baseEnv = web3Context.env || "";
+  let connectedEnv = baseEnv;
 
-  switch (requiredChainId ?? chainId) {
+  switch (requestedChainId ?? chainId) {
     case 1:
     case 3:
     case 42:
@@ -48,6 +51,7 @@ export const useGetEnvChainId = (requiredChainId?: number) => {
   return {
     chainId: Number((Contracts[defaultEnv as keyof typeof Contracts] as EnvValue).networkId),
     defaultEnv,
+    baseEnv,
     connectedEnv,
     switchNetworkRequest: web3Context.switchNetwork
   };
@@ -56,38 +60,62 @@ export const useGetEnvChainId = (requiredChainId?: number) => {
 export const useGetContract = (
   contractName: string,
   readOnly: boolean = false,
-  type?: SdkTypes,
+  type: SdkTypes = "base",
   requiredChainId?: number
 ) => {
   const sdk = useSDK(readOnly, type, requiredChainId);
-  return useMemo(() => sdk?.getContract(contractName), [contractName, , sdk]);
+  const [contract, setContract] = useState(() => sdk?.getContract(contractName));
+
+  // skip first render as contract already initialized by useState()
+  useUpdateEffect(() => {
+    setContract(sdk?.getContract(contractName))
+  }, [contractName, sdk])
+
+  return contract;
 };
 
 export const getSigner = async (signer: void | Signer, account: string) => {
-  const isSigner = Signer.isSigner(signer) && (await signer.getAddress()) === account && signer;
-  if (!isSigner) return new Error("no signer or wrong signer");
-  return signer;
+  if (Signer.isSigner(signer)) {
+    const address = await signer.getAddress();
+
+    if (address === account) {
+      return signer;
+    }
+  }
+
+  return new Error("no signer or wrong signer");
 };
+
+function sdkFactory(type: SdkTypes, defaultEnv: EnvKey, readOnly: boolean, library: providers.JsonRpcProvider, roLibrary: providers.JsonRpcProvider): ClaimSDK | SavingsSDK | undefined {
+  let provider = library;
+  const reqSdk = NAME_TO_SDK[type];
+
+  if (readOnly && roLibrary) {
+    provider = roLibrary;
+  }
+
+  if (!provider) {
+    console.error("Error detecting readonly urls from config");
+    return
+  }
+
+  return new reqSdk(provider, defaultEnv) as ClaimSDK | SavingsSDK;
+}
 
 export const useSDK = (
   readOnly: boolean = false,
-  type: string = "base",
+  type: SdkTypes = "base",
   requiredChainId?: number | undefined
 ): RequestedSdk["sdk"] => {
   const { library } = useEthers();
   const { chainId, defaultEnv } = useGetEnvChainId(requiredChainId);
-  const rolibrary = useReadOnlyProvider(chainId) ?? library;
+  const rolibrary = useReadOnlyProvider(chainId);
+  const [sdk, setSdk] = useState<ClaimSDK | SavingsSDK | undefined>(() => sdkFactory(type, defaultEnv, readOnly, library, rolibrary))
 
-  const sdk = useMemo<ClaimSDK | SavingsSDK | undefined>(() => {
-    // console.log("useSDK", { type, readOnly, chainId, defaultEnv, rolibrary: !!rolibrary });
-    const reqSdk = NAME_TO_SDK[type];
-    if (readOnly && rolibrary) {
-      return new reqSdk(rolibrary, defaultEnv);
-    } else if (!readOnly && library) {
-      return new reqSdk(library, defaultEnv);
-    } else {
-      console.error("Error detecting readonly urls from config");
-    }
+  // skip first render as sdk already initialized by useState()
+  useUpdateEffect(() => {
+    setSdk(sdkFactory(type, defaultEnv, readOnly, library, rolibrary))
   }, [library, rolibrary, readOnly, defaultEnv, type]);
+
   return sdk;
 };

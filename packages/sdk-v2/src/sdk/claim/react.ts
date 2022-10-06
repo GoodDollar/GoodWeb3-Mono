@@ -1,15 +1,19 @@
-import { useCallback, useContext, useMemo } from "react";
-import { BigNumber, Contract, ethers } from "ethers";
-import { useCall, useCalls, useContractFunction, useEthers } from "@usedapp/core";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { BigNumber, ethers } from "ethers";
+import { ChainId, useCalls, useContractFunction, useEthers } from "@usedapp/core";
 import { QueryParams } from "@usedapp/core";
 import { first } from "lodash";
 import usePromise from "react-use-promise";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { UBIScheme } from "@gooddollar/goodprotocol/types/UBIScheme";
-import { EnvKey } from "../base/sdk";
-import { ClaimSDK } from "./sdk";
 import { IIdentity } from "@gooddollar/goodprotocol/types";
 
+import { EnvKey } from "../base/sdk";
+import { ClaimSDK } from "./sdk";
+
 import { useSDK, useReadOnlySDK, useGetContract, useGetEnvChainId } from "../base/react";
+import useRefreshOrNever from "../../hooks/useRefreshOrNever";
+import { Envs, SupportedChains } from "../constants";
 
 export const useFVLink = () => {
   const sdk = useSDK(true, "claim") as ClaimSDK;
@@ -28,6 +32,7 @@ export const useIsAddressVerified = (address: string, env?: EnvKey) => {
 };
 
 export const useClaim = (refresh: QueryParams["refresh"] = "never") => {
+  const refreshOrNever = useRefreshOrNever(refresh);
   const DAY = 1000 * 60 * 60 * 24;
   const { account } = useEthers();
   const { chainId } = useGetEnvChainId();
@@ -58,9 +63,9 @@ export const useClaim = (refresh: QueryParams["refresh"] = "never") => {
         contract: ubi,
         method: "checkEntitlement(address)",
         args: [account]
-      } //this reverts in some cases, bug in contract
+      }
     ],
-    { refresh, chainId }
+    { refresh: refreshOrNever, chainId }
   );
 
   const periodStart = (first(results[2]?.value) || BigNumber.from("0")) as BigNumber;
@@ -85,5 +90,76 @@ export const useClaim = (refresh: QueryParams["refresh"] = "never") => {
     claimAmount: (first(results[3]?.value) as BigNumber) || BigNumber.from("0"),
     claimTime: startRef,
     claimCall
+  };
+};
+
+// if user is verified on fuse and not on current network then send backend request to whitelist
+export const useWhitelistSync = () => {
+  const [syncStatus, setSyncStatus] = useState<Promise<boolean> | undefined>();
+  const { baseEnv } = useGetEnvChainId();
+  const { account, chainId } = useEthers();
+  const identity = useGetContract("Identity", true, "claim", SupportedChains.FUSE) as IIdentity;
+  const identity2 = useGetContract("Identity", true, "claim", chainId) as IIdentity;
+
+  const [fuseResult] = useCalls(
+    [
+      {
+        contract: identity,
+        method: "isWhitelisted",
+        args: [account]
+      }
+    ],
+    { refresh: "never", chainId: SupportedChains.FUSE as unknown as ChainId }
+  );
+
+  const [otherResult] = useCalls(
+    [
+      {
+        contract: identity2,
+        method: "isWhitelisted",
+        args: [account]
+      }
+    ].filter(_ => _.contract && chainId != SupportedChains.FUSE),
+    { refresh: "never", chainId }
+  );
+
+  useEffect(() => {
+    const whitelistSync = async () => {
+      const isSynced = await AsyncStorage.getItem(`${account}-whitelistedSync`);
+
+      console.log("syncWhitelist", { account, baseEnv, isSynced, fuseResult, otherResult });
+
+      if (isSynced !== "true" && fuseResult?.value && otherResult?.value === false) {
+        const { backend } = Envs[baseEnv];
+
+        console.log("syncWhitelist", { account, backend, baseEnv });
+
+        setSyncStatus(fetch(backend + `/syncWhitelist/${account}`)
+          .then(async r => {
+            console.log("syncWhitelist result:", r);
+            if (r.status === 200) {
+              const res = await r.json();
+              console.log("syncWhitelist json result:", res);
+
+              AsyncStorage.setItem(`${account}-whitelistedSync`, "true");
+              return true;
+            } else {
+              return false;
+            }
+          })
+          .catch(e => {
+            console.log("syncWhitelistfailed:", e.message, e);
+            return false;
+          }));
+      }
+    };
+
+    whitelistSync();
+  }, [fuseResult, otherResult, account, setSyncStatus]);
+
+  return {
+    fuseWhitelisted: fuseResult?.value as boolean,
+    currentWhitelisted: otherResult?.value as boolean,
+    syncStatus
   };
 };

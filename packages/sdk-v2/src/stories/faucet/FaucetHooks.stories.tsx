@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { W3Wrapper } from "../W3Wrapper";
 import { ComponentStory, ComponentMeta } from "@storybook/react";
-import { useSavingsStats } from "../../sdk/savings/react";
+import { useFaucet } from "../../sdk/faucet/react";
 import { useNetwork } from "@usedapp/core";
-import { SupportedV2Networks } from "../../sdk/constants";
 
 export interface PageProps {
   address?: string;
@@ -11,31 +10,24 @@ export interface PageProps {
 }
 
 const Web3Component = (params: PageProps) => {
-  const [fvVerificationLink, setLink] = useState<string>();
-  const stats = useSavingsStats(1, SupportedV2Networks.FUSE);
-  const { network } = useNetwork();
-  console.log({ network });
-  return (
-    <div>
-      <div>{JSON.stringify(stats.stats)}</div>
-    </div>
-  );
+  useFaucet();
+  return <div></div>;
 };
 const Page = (params: PageProps) => (
-  <W3Wrapper>
+  <W3Wrapper withMetaMask>
     <Web3Component {...params} />
   </W3Wrapper>
 );
 
 export default {
-  title: "Savings SDK hooks example",
+  title: "Faucet SDK hooks example",
   component: Page
 } as ComponentMeta<typeof Page>;
 
 const Template: ComponentStory<typeof Page> = args => (
-  <W3Wrapper>
+  <W3Wrapper withMetaMask>
     <Web3Component {...args} />
   </W3Wrapper>
 );
 
-export const SavingsSDKExample = Template.bind({});
+export const FaucetSDKExample = Template.bind({});
