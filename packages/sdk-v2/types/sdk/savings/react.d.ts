@@ -38,7 +38,7 @@ export declare function useSavingsBalance(refresh: number | "never" | "everyBloc
         error: undefined;
     };
 };
-export declare const useSavingsFunctions: (requiredChainId?: number) => {
+export declare const useSavingsFunctions: () => {
     transfer: (amount: string) => Promise<ethers.providers.TransactionReceipt | undefined>;
     withdraw: (amount: string, address?: string) => Promise<ethers.providers.TransactionReceipt | undefined>;
     claim: () => Promise<ethers.providers.TransactionReceipt | undefined>;
@@ -46,14 +46,14 @@ export declare const useSavingsFunctions: (requiredChainId?: number) => {
     withdrawState: import("@usedapp/core").TransactionStatus;
     claimState: import("@usedapp/core").TransactionStatus;
 };
-export declare const useSavingsStats: (refresh: QueryParams["refresh"], requiredChainId: number) => {
+export declare const useSavingsStats: (refresh?: QueryParams["refresh"]) => {
     stats: undefined;
     error: any[];
 } | {
     stats: SavingsStats;
     error: undefined;
 };
-export declare const useStakerInfo: (refresh: QueryParams["refresh"], account: string, requiredChainId: number) => {
+export declare const useStakerInfo: (refresh: QueryParams["refresh"], account: string) => {
     stats: undefined;
     error: any[];
 } | {

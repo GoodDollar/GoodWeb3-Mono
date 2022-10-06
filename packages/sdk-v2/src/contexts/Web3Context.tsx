@@ -113,10 +113,8 @@ export const Web3Provider = ({ children, config, web3Provider, switchNetworkRequ
     122: "https://rpc.fuse.io",
     42220: "https://forno.celo.org",
     1: "https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
-    3: "https://ropsten.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
     5: "https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
-    42: "https://kovan.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
-    ...config.readOnlyUrls,
+    ...config.readOnlyUrls
   };
   const defaultAddresses =
     config.multicallVersion === 1 ? getMulticallAddresses(config.networks) : getMulticall2Addresses(config.networks);

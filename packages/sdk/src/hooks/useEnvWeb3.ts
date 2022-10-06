@@ -6,15 +6,11 @@ import GdSdkContext from "./useGdSdkContext";
 
 export interface RPC {
   MAINNET_RPC: string | undefined;
-  ROPSTEN_RPC: string | undefined;
-  KOVAN_RPC: string | undefined;
   FUSE_RPC: string | undefined;
 }
 
 export const defaultRPC = {
   [SupportedChainId.MAINNET]: (ethers.getDefaultProvider("mainnet") as any).providerConfigs[0].provider.connection.url,
-  [SupportedChainId.ROPSTEN]: (ethers.getDefaultProvider("ropsten") as any).providerConfigs[0].provider.connection.url,
-  [SupportedChainId.KOVAN]: (ethers.getDefaultProvider("kovan") as any).providerConfigs[0].provider.connection.url,
   [SupportedChainId.FUSE]: "https://rpc.fuse.io"
 };
 
@@ -29,12 +25,8 @@ export const getRpc = (chainId: number): string => {
       return rpcUrls.FUSE_RPC || defaultRPC[chainId];
     case 1:
       return rpcUrls.MAINNET_RPC || defaultRPC[chainId];
-    case 42:
-      return rpcUrls.KOVAN_RPC || defaultRPC[chainId];
-    case 3:
-      return rpcUrls.ROPSTEN_RPC || defaultRPC[chainId];
     default:
-      return "https://rpc.fuse.io";
+      return "https://eth-mainnet.alchemyapi.io/v2/2kSbx330Sc8S3QRwD9nutr9XST_DfeJh";
   }
 };
 
@@ -68,22 +60,9 @@ export const useEnvWeb3 = (
             provider = new Web3.providers.HttpProvider(getRpc(SupportedChainId.MAINNET));
             selectedChainId = SupportedChainId.MAINNET;
             break;
-          case "staging":
-            // console.log('useEnvWeb3: staging', activeChainId)
-            if (
-              activeWeb3 &&
-              activeChainId &&
-              [SupportedChainId.KOVAN, SupportedChainId.ROPSTEN].includes(activeChainId as number)
-            ) {
-              return setWeb3([activeWeb3, activeChainId as number]);
-            }
-            provider = new Web3.providers.HttpProvider(getRpc(SupportedChainId.KOVAN));
-            selectedChainId = SupportedChainId.KOVAN;
-
-            break;
           default:
-            provider = new Web3.providers.HttpProvider(getRpc(SupportedChainId.ROPSTEN));
-            selectedChainId = SupportedChainId.ROPSTEN;
+            provider = new Web3.providers.HttpProvider(getRpc(SupportedChainId.MAINNET));
+            selectedChainId = SupportedChainId.MAINNET;
             break;
         }
       }

@@ -7,7 +7,7 @@ import { ClaimSDK } from "../claim/sdk";
 import { SavingsSDK } from "../savings/sdk";
 import Contracts from "@gooddollar/goodprotocol/releases/deployment.json";
 import { useReadOnlyProvider } from "../../hooks/useMulticallAtChain";
-import useUpdateEffect from "src/hooks/useUpdateEffect";
+import useUpdateEffect from "../../hooks/useUpdateEffect";
 
 export const NAME_TO_SDK: { [key: string]: typeof ClaimSDK | typeof SavingsSDK | typeof BaseSDK } = {
   claim: ClaimSDK,
@@ -32,10 +32,8 @@ export const useGetEnvChainId = (requiredChainId?: number) => {
   let baseEnv = web3Context.env || "";
   let connectedEnv = baseEnv;
 
-  switch (requestedChainId ?? chainId) {
+  switch (requiredChainId ?? chainId) {
     case 1:
-    case 3:
-    case 42:
       connectedEnv += "-mainnet";
       break;
     case 122:
@@ -61,6 +59,7 @@ export const useGetContract = (
   contractName: string,
   readOnly: boolean = false,
   type: SdkTypes = "base",
+  env?: EnvKey,
   requiredChainId?: number
 ) => {
   const sdk = useSDK(readOnly, type, requiredChainId);
@@ -68,8 +67,8 @@ export const useGetContract = (
 
   // skip first render as contract already initialized by useState()
   useUpdateEffect(() => {
-    setContract(sdk?.getContract(contractName))
-  }, [contractName, sdk])
+    setContract(sdk?.getContract(contractName));
+  }, [contractName, sdk]);
 
   return contract;
 };
@@ -86,7 +85,13 @@ export const getSigner = async (signer: void | Signer, account: string) => {
   return new Error("no signer or wrong signer");
 };
 
-function sdkFactory(type: SdkTypes, defaultEnv: EnvKey, readOnly: boolean, library: providers.JsonRpcProvider, roLibrary: providers.JsonRpcProvider): ClaimSDK | SavingsSDK | undefined {
+function sdkFactory(
+  type: SdkTypes,
+  defaultEnv: EnvKey,
+  readOnly: boolean,
+  library: providers.JsonRpcProvider | undefined,
+  roLibrary: providers.JsonRpcProvider | undefined
+): ClaimSDK | SavingsSDK | undefined {
   let provider = library;
   const reqSdk = NAME_TO_SDK[type];
 
@@ -96,7 +101,7 @@ function sdkFactory(type: SdkTypes, defaultEnv: EnvKey, readOnly: boolean, libra
 
   if (!provider) {
     console.error("Error detecting readonly urls from config");
-    return
+    return;
   }
 
   return new reqSdk(provider, defaultEnv) as ClaimSDK | SavingsSDK;
@@ -110,11 +115,13 @@ export const useSDK = (
   const { library } = useEthers();
   const { chainId, defaultEnv } = useGetEnvChainId(requiredChainId);
   const rolibrary = useReadOnlyProvider(chainId);
-  const [sdk, setSdk] = useState<ClaimSDK | SavingsSDK | undefined>(() => sdkFactory(type, defaultEnv, readOnly, library, rolibrary))
+  const [sdk, setSdk] = useState<ClaimSDK | SavingsSDK | undefined>(() =>
+    sdkFactory(type, defaultEnv, readOnly, library, rolibrary)
+  );
 
   // skip first render as sdk already initialized by useState()
   useUpdateEffect(() => {
-    setSdk(sdkFactory(type, defaultEnv, readOnly, library, rolibrary))
+    setSdk(sdkFactory(type, defaultEnv, readOnly, library, rolibrary));
   }, [library, rolibrary, readOnly, defaultEnv, type]);
 
   return sdk;

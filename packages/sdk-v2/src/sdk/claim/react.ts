@@ -7,6 +7,7 @@ import usePromise from "react-use-promise";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { UBIScheme } from "@gooddollar/goodprotocol/types/UBIScheme";
 import { IIdentity } from "@gooddollar/goodprotocol/types";
+import { Web3Context } from "../../contexts";
 
 import { EnvKey } from "../base/sdk";
 import { ClaimSDK } from "./sdk";
@@ -96,10 +97,10 @@ export const useClaim = (refresh: QueryParams["refresh"] = "never") => {
 // if user is verified on fuse and not on current network then send backend request to whitelist
 export const useWhitelistSync = () => {
   const [syncStatus, setSyncStatus] = useState<Promise<boolean> | undefined>();
-  const { baseEnv } = useGetEnvChainId();
+  const { baseEnv, defaultEnv } = useGetEnvChainId();
   const { account, chainId } = useEthers();
-  const identity = useGetContract("Identity", true, "claim", SupportedChains.FUSE) as IIdentity;
-  const identity2 = useGetContract("Identity", true, "claim", chainId) as IIdentity;
+  const identity = useGetContract("Identity", true, "claim", defaultEnv, SupportedChains.FUSE) as IIdentity;
+  const identity2 = useGetContract("Identity", true, "claim", defaultEnv, chainId) as IIdentity;
 
   const [fuseResult] = useCalls(
     [
@@ -134,23 +135,25 @@ export const useWhitelistSync = () => {
 
         console.log("syncWhitelist", { account, backend, baseEnv });
 
-        setSyncStatus(fetch(backend + `/syncWhitelist/${account}`)
-          .then(async r => {
-            console.log("syncWhitelist result:", r);
-            if (r.status === 200) {
-              const res = await r.json();
-              console.log("syncWhitelist json result:", res);
+        setSyncStatus(
+          fetch(backend + `/syncWhitelist/${account}`)
+            .then(async r => {
+              console.log("syncWhitelist result:", r);
+              if (r.status === 200) {
+                const res = await r.json();
+                console.log("syncWhitelist json result:", res);
 
-              AsyncStorage.setItem(`${account}-whitelistedSync`, "true");
-              return true;
-            } else {
+                AsyncStorage.setItem(`${account}-whitelistedSync`, "true");
+                return true;
+              } else {
+                return false;
+              }
+            })
+            .catch(e => {
+              console.log("syncWhitelistfailed:", e.message, e);
               return false;
-            }
-          })
-          .catch(e => {
-            console.log("syncWhitelistfailed:", e.message, e);
-            return false;
-          }));
+            })
+        );
       }
     };
 
