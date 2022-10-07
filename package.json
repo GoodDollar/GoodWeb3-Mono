@@ -20,6 +20,7 @@
     "react-native": "^0.70.2"
   },
   "resolutions": {
-    "web3-core-method@1.7.5": "patch:web3-core-method@npm:1.7.5#.yarn/patches/web3-core-method-npm-1.7.5-919ae06220.patch"
+    "web3-core-method@1.7.5": "patch:web3-core-method@npm:1.7.5#.yarn/patches/web3-core-method-npm-1.7.5-919ae06220.patch",
+    "ctix@1.4.0": "patch:ctix@npm:1.4.0#.yarn/patches/ctix-npm-1.4.0-031fc5027b.patch"
   }
 }
