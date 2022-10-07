@@ -1,5 +1,5 @@
 import { BigNumber, ethers } from "ethers";
-import { BaseSDK } from '../base/sdk';
+import { BaseSDK } from "../base/sdk";
 export declare class ClaimSDK extends BaseSDK {
     generateFVLink(firstName: string, callbackUrl?: string, popupMode?: boolean): Promise<string>;
     getFVLink(): {

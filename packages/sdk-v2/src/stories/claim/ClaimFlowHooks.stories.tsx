@@ -4,7 +4,6 @@ import { W3Wrapper } from "../W3Wrapper";
 import { ComponentStory, ComponentMeta } from "@storybook/react";
 import { useClaim, useFVLink } from "../../sdk/claim/react";
 import { noop } from "lodash";
-import { useEthers } from "@usedapp/core";
 
 export interface PageProps {
   address?: string;
@@ -13,6 +12,7 @@ export interface PageProps {
 
 const FVModal = (params: ModalProps & { firstName: string }) => {
   const fvlink = useFVLink();
+  console.log({ fvlink });
   const method = "popup";
   return (
     <Modal {...params} animationType={"slide"}>
@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
 });
 
 const ClaimButton = ({ address, firstName }: PageProps) => {
-  const { library } = useEthers();
+  // const library = useSDK(true, "claim");
   const [showModal, setShowModal] = useState(false);
   const [refresh, setRefresh] = useState(false);
   const { isWhitelisted, claimAmount, claimTime, claimCall } = useClaim(refresh ? "everyBlock" : "never");
@@ -121,7 +121,7 @@ const Web3Component = (params: PageProps) => {
   return <ClaimButton {...params} />;
 };
 const Page = (params: PageProps) => (
-  <W3Wrapper>
+  <W3Wrapper withMetaMask={true}>
     <Web3Component {...params} />
   </W3Wrapper>
 );
@@ -132,7 +132,7 @@ export default {
 } as ComponentMeta<typeof Page>;
 
 const Template: ComponentStory<typeof Page> = args => (
-  <W3Wrapper>
+  <W3Wrapper withMetaMask={true}>
     <Web3Component {...args} />
   </W3Wrapper>
 );
