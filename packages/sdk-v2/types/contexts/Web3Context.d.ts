@@ -2,6 +2,10 @@ import React from "react";
 import { JsonRpcProvider, Web3Provider as W3Provider } from "@ethersproject/providers";
 import { Config, Chain } from "@usedapp/core";
 import { EnvKey } from "../sdk/base/sdk";
+/**
+ * request to switch to network id
+ * returns void if no result yet true/false if success
+ */
 export declare type SwitchCallback = (id: number) => Promise<void>;
 export declare type TxDetails = {
     txhash: string;
