@@ -10,7 +10,9 @@ import UBISchemeABI from "@gooddollar/goodprotocol/artifacts/abis/UBIScheme.min.
 import GoodDollarStakingABI from "@gooddollar/goodprotocol/artifacts/abis/GoodDollarStaking.min.json";
 //@ts-ignore
 import GoodDollarABI from "@gooddollar/goodprotocol/artifacts/abis/IGoodDollar.min.json";
-import { IIdentity, UBIScheme, GoodDollarStaking, IGoodDollar } from "@gooddollar/goodprotocol/types";
+import FaucetABI from "@gooddollar/goodprotocol/artifacts/abis/Faucet.min.json";
+
+import { IIdentity, UBIScheme, GoodDollarStaking, IGoodDollar, Faucet } from "@gooddollar/goodprotocol/types";
 //@ts-ignore
 import Contracts from "@gooddollar/goodprotocol/releases/deployment.json";
 
@@ -18,7 +20,9 @@ export const CONTRACT_TO_ABI: { [key: string]: any } = {
   Identity: IdentityABI,
   UBIScheme: UBISchemeABI,
   GoodDollarStaking: GoodDollarStakingABI,
-  GoodDollar: GoodDollarABI
+  GoodDollar: GoodDollarABI,
+  Faucet: FaucetABI,
+  FuseFaucet: FaucetABI
 };
 
 // export type EnvKey = keyof typeof Contracts;
@@ -40,8 +44,8 @@ export class BaseSDK {
     // console.log("initializing sdk", { envKey, env: this.env, contracts: this.contracts });
     provider.getNetwork().then(network => {
       if (network.chainId != this.contracts.networkId)
-        throw new Error(
-          `BaseSDK: provider chainId doesn't much env (${envKey as string}) chainId. provider:${network.chainId} env:${
+        console.error(
+          `BaseSDK: provider chainId doesn't match env (${envKey as string}) chainId. provider:${network.chainId} env:${
             this.contracts.networkId
           }`
         );
@@ -66,8 +70,11 @@ export class BaseSDK {
   getContract(contractName: "Identity"): IIdentity;
   getContract(contractName: "GoodDollarStaking"): GoodDollarStaking;
   getContract(contractName: "GoodDollar"): IGoodDollar;
+  getContract(contractName: "Faucet"): Faucet;
   getContract(contractName: string): Contract;
   getContract(contractName: string) {
+    if (!this.contracts[contractName]) return;
+
     switch (contractName) {
       case "UBIScheme":
         return new Contract(
@@ -91,6 +98,12 @@ export class BaseSDK {
         return new Contract(
           this.contracts["GoodDollar"],
           CONTRACT_TO_ABI["GoodDollar"].abi,
+          this.signer || this.provider
+        ) as any;
+      case "Faucet":
+        return new Contract(
+          this.contracts["Faucet"],
+          CONTRACT_TO_ABI["Faucet"].abi,
           this.signer || this.provider
         ) as any;
       default:

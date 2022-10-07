@@ -44,7 +44,7 @@ jobs:
         id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('./packages/login-sdk/yarn.lock') }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('./yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-login-sdk
       - name: "build"
@@ -60,7 +60,8 @@ jobs:
           USER_INPUT=${{ github.event.inputs.bumpversion }}          
           VERSION=${USER_INPUT:-"patch"}          
           export MSG=`npm version ${VERSION}`
-          git add package.json 
+          git pull
+          git add . 
           git commit -m "${MSG}"
           if [ "${{ env.push_version_commit }}" = "true" ]; then
             git push --follow-tags

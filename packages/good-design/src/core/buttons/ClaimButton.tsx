@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { StyleSheet } from "react-native";
-import { useClaim, useFVLink } from "@gooddollar/web3sdk-v2/src";
-import { noop } from 'lodash'
+import { useClaim, useFVLink } from "@gooddollar/web3sdk-v2";
+import { noop } from "lodash";
 import { View, Text, Modal, IModalProps } from "native-base";
 
 import { BaseButton, BaseButtonProps } from "./BaseButton";
@@ -29,7 +29,7 @@ function FVModal({ firstName, method, onClose = noop, ...props }: FVModalProps) 
 
   const verify = useCallback(async () => {
     switch (method) {
-      case 'redirect': {
+      case "redirect": {
         const link = fvlink?.getLink(firstName, document.location.href, false);
 
         if (link) {
@@ -37,19 +37,19 @@ function FVModal({ firstName, method, onClose = noop, ...props }: FVModalProps) 
         }
         break;
       }
-      case 'popup':
+      case "popup":
       default: {
         const link = await fvlink?.getLink(firstName, undefined, true);
 
         if (link) {
-          openLink(link, '_blank', { width: '800px', height: 'auto' })
+          openLink(link, "_blank", { width: "800px", height: "auto" });
         }
         break;
       }
     }
 
-    onClose()
-  }, [fvlink, method, firstName, onClose])
+    onClose();
+  }, [fvlink, method, firstName, onClose]);
 
   return (
     <Modal {...props} animationPreset="slide" onClose={onClose}>
@@ -69,13 +69,13 @@ function FVModal({ firstName, method, onClose = noop, ...props }: FVModalProps) 
       </View>
     </Modal>
   );
-};
+}
 
 export function ClaimButton({ firstName, method }: ClaimButtonProps) {
   const [showModal, setShowModal] = useState(false);
   const [refresh, setRefresh] = useState(false);
   const { isWhitelisted, claimAmount, claimTime, claimCall } = useClaim(refresh ? "everyBlock" : "never");
-  const { status: claimStatus } = claimCall?.state || {}
+  const { status: claimStatus } = claimCall?.state || {};
 
   const handleClose = useCallback(() => setShowModal(false), [setShowModal]);
 
@@ -111,7 +111,7 @@ export function ClaimButton({ firstName, method }: ClaimButtonProps) {
       <BaseButton text={buttonTitle} onPress={handleClaim} />
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   containeralt: {

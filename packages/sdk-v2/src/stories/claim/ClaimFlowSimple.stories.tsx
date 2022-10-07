@@ -43,6 +43,7 @@ const FVModal = (params: ModalProps & { firstName: string; sdk: ClaimSDK }) => {
           onPress={async () => {
             if (method === "popup") {
               const link = await fvlink?.getLink(params.firstName, undefined, true);
+              console.log("link -->", { link });
               const popup = window.open(link, "_blank", "width: '800px', height: 'auto'");
             } else {
               const link = fvlink?.getLink(params.firstName, document.location.href, false);
@@ -154,7 +155,7 @@ const Web3Component = (params: PageProps) => {
   return <ClaimButton {...params} />;
 };
 const Page = (params: PageProps) => (
-  <W3Wrapper>
+  <W3Wrapper withMetaMask={true}>
     <Web3Component {...params} />
   </W3Wrapper>
 );
@@ -165,7 +166,7 @@ export default {
 } as ComponentMeta<typeof Page>;
 
 const Template: ComponentStory<typeof Page> = args => (
-  <W3Wrapper>
+  <W3Wrapper withMetaMask={true}>
     <Web3Component {...args} />
   </W3Wrapper>
 );

@@ -52,6 +52,7 @@
     "webpack": "^5.74.0"
   },
   "peerDependencies": {
+    "react-native": "0.67.2",
     "react-native-web": "^0.18.1"
   },
   "packageManager": "yarn@3.2.1",
@@ -59,7 +60,6 @@
     "@babel/core": "^7.18.10",
     "@babel/runtime": "^7.18.9",
     "@gooddollar/goodprotocol": "1.0.29-beta.4",
-    "@gooddollar/web3sdk-v2": "workspace:^",
     "@types/react": "^18.0.17",
     "@types/react-native": "^0.69.5",
     "@usedapp/core": "^1.1.5",

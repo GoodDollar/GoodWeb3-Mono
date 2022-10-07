@@ -38,8 +38,4 @@ const Template: ComponentStory<typeof Page> = args => (
   </W3Wrapper>
 );
 
-export const IdentitySDKExample = Template.bind({});
-IdentitySDKExample.args = {
-  address: "",
-  firstName: "Hadar"
-};
+export const SavingsSDKExample = Template.bind({});
