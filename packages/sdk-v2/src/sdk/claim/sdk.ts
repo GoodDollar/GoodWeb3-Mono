@@ -25,7 +25,6 @@ export class ClaimSDK extends BaseSDK {
     let loginSig: string, fvSig: string, nonce: string, account: string;
     const getLoginSig = async () => {
       nonce = (Date.now() / 1000).toFixed(0);
-      console.log({ provider: this.provider });
       return (loginSig = await this.provider.getSigner().signMessage(FV_LOGIN_MSG + nonce));
     };
     const getFvSig = async () => {

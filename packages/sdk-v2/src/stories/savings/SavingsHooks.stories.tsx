@@ -12,7 +12,7 @@ export interface PageProps {
 
 const Web3Component = (params: PageProps) => {
   const [fvVerificationLink, setLink] = useState<string>();
-  const stats = useSavingsStats(1, SupportedV2Networks.FUSE);
+  const stats = useSavingsStats(1);
   const { network } = useNetwork();
   console.log({ network });
   return (
@@ -22,7 +22,7 @@ const Web3Component = (params: PageProps) => {
   );
 };
 const Page = (params: PageProps) => (
-  <W3Wrapper>
+  <W3Wrapper withMetaMask={true}>
     <Web3Component {...params} />
   </W3Wrapper>
 );
@@ -33,7 +33,7 @@ export default {
 } as ComponentMeta<typeof Page>;
 
 const Template: ComponentStory<typeof Page> = args => (
-  <W3Wrapper>
+  <W3Wrapper withMetaMask={true}>
     <Web3Component {...args} />
   </W3Wrapper>
 );

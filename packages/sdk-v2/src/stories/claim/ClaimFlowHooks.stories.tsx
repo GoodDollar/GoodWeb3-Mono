@@ -12,7 +12,6 @@ export interface PageProps {
 
 const FVModal = (params: ModalProps & { firstName: string }) => {
   const fvlink = useFVLink();
-  console.log({ fvlink });
   const method = "popup";
   return (
     <Modal {...params} animationType={"slide"}>

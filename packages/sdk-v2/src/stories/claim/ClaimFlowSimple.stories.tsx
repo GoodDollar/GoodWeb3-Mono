@@ -43,7 +43,6 @@ const FVModal = (params: ModalProps & { firstName: string; sdk: ClaimSDK }) => {
           onPress={async () => {
             if (method === "popup") {
               const link = await fvlink?.getLink(params.firstName, undefined, true);
-              console.log("link -->", { link });
               const popup = window.open(link, "_blank", "width: '800px', height: 'auto'");
             } else {
               const link = fvlink?.getLink(params.firstName, document.location.href, false);
