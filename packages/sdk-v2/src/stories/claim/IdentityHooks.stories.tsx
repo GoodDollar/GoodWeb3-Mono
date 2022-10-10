@@ -49,7 +49,7 @@ export default {
 } as ComponentMeta<typeof Page>;
 
 const Template: ComponentStory<typeof Page> = args => (
-  <W3Wrapper withMetaMask={true}>
+  <W3Wrapper withMetaMask={false}>
     <Web3Component {...args} />
   </W3Wrapper>
 );

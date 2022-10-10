@@ -1,5 +1,5 @@
 import { BigNumber, Contract, ethers } from "ethers";
-import { BaseSDK } from '../base/sdk'
+import { BaseSDK } from "../base/sdk";
 
 const FV_LOGIN_MSG = `Sign this message to login into GoodDollar Unique Identity service.
 WARNING: do not sign this message unless you trust the website/application requesting this signature.
@@ -14,7 +14,6 @@ You can use this identifier in the future to delete this anonymized record.
 WARNING: do not sign this message unless you trust the website/application requesting this signature.`;
 
 export class ClaimSDK extends BaseSDK {
-
   async generateFVLink(firstName: string, callbackUrl?: string, popupMode: boolean = false) {
     const steps = this.getFVLink();
     await steps.getLoginSig();
