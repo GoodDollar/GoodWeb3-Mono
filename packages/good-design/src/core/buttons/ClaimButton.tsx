@@ -2,10 +2,9 @@ import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { StyleSheet } from "react-native";
 import { useClaim, useFVLink } from "@gooddollar/web3sdk-v2";
 import { noop } from "lodash";
-import { View, Text, Modal, IModalProps } from "native-base";
-
-import { BaseButton, BaseButtonProps } from "./BaseButton";
-import { openLink } from "../utils/linking";
+import { View, Text, Modal, IModalProps, Spinner } from "native-base";
+import { BaseButton } from "./BaseButton";
+import { openLink } from "../utils";
 
 interface FVFlowProps {
   firstName: string;
@@ -14,20 +13,16 @@ interface FVFlowProps {
 
 type FVModalProps = IModalProps & FVFlowProps;
 
-export type ClaimButtonProps = BaseButtonProps & FVFlowProps;
-
 function FVModal({ firstName, method, onClose = noop, ...props }: FVModalProps) {
+  const [loading, setLoading] = useState(false)
   const fvlink = useFVLink();
 
-  const login = useCallback(async () => {
-    await fvlink?.getLoginSig();
-  }, [fvlink]);
-
-  const sign = useCallback(async () => {
-    await fvlink?.getFvSig();
-  }, [fvlink]);
-
   const verify = useCallback(async () => {
+    setLoading(true)
+    await fvlink?.getLoginSig();
+    await fvlink?.getFvSig();
+    setLoading(false)
+
     switch (method) {
       case "redirect": {
         const link = fvlink?.getLink(firstName, document.location.href, false);
@@ -52,7 +47,7 @@ function FVModal({ firstName, method, onClose = noop, ...props }: FVModalProps) 
   }, [fvlink, method, firstName, onClose]);
 
   return (
-    <Modal {...props} animationPreset="slide" onClose={onClose}>
+    loading ? <Spinner/> : <Modal {...props} animationPreset="slide" onClose={onClose}>
       <View style={styles.containeralt}>
         <View>
           <Text>To verify your identity you need to sign TWICE with your wallet.</Text>
@@ -62,16 +57,14 @@ function FVModal({ firstName, method, onClose = noop, ...props }: FVModalProps) 
             your address.
           </Text>
         </View>
-        <BaseButton onPress={login} text={"Step 1 - Login"} />
-        <BaseButton onPress={sign} text={"Step 2 - Sign unique identifier"} />
-        <BaseButton onPress={verify} text={"Step 3 - Verify"} />
-        <BaseButton color="red" onPress={onClose()} text={"Close"} />
+        <BaseButton onPress={verify} text={"Verify Uniqueness"} />
+        <BaseButton color="red" onPress={onClose} text={"Close"} />
       </View>
     </Modal>
   );
 }
 
-export function ClaimButton({ firstName, method }: ClaimButtonProps) {
+export function ClaimButton({ firstName, method }: FVFlowProps) {
   const [showModal, setShowModal] = useState(false);
   const [refresh, setRefresh] = useState(false);
   const { isWhitelisted, claimAmount, claimTime, claimCall } = useClaim(refresh ? "everyBlock" : "never");
