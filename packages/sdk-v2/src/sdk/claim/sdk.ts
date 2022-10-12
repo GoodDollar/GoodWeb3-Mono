@@ -1,5 +1,5 @@
 import { BigNumber, Contract, ethers } from "ethers";
-import { BaseSDK } from '../base/sdk'
+import { BaseSDK } from "../base/sdk";
 
 const FV_LOGIN_MSG = `Sign this message to login into GoodDollar Unique Identity service.
 WARNING: do not sign this message unless you trust the website/application requesting this signature.
@@ -14,7 +14,6 @@ You can use this identifier in the future to delete this anonymized record.
 WARNING: do not sign this message unless you trust the website/application requesting this signature.`;
 
 export class ClaimSDK extends BaseSDK {
-
   async generateFVLink(firstName: string, callbackUrl?: string, popupMode: boolean = false) {
     const steps = this.getFVLink();
     await steps.getLoginSig();
@@ -29,15 +28,15 @@ export class ClaimSDK extends BaseSDK {
       return (loginSig = await this.provider.getSigner().signMessage(FV_LOGIN_MSG + nonce));
     };
     const getFvSig = async () => {
-      const account = await this.provider.getSigner().getAddress();
+      account = await this.provider.getSigner().getAddress();
       return (fvSig = await this.provider.getSigner().signMessage(FV_IDENTIFIER_MSG2.replace("<account>", account)));
     };
     const getLink = (firstName: string, callbackUrl?: string, popupMode: boolean = false) => {
       if (!fvSig) throw new Error("missing login or identifier signature");
       const params = new URLSearchParams();
-      params.append("nonce", nonce);
-      params.append("firstname", firstName);
-      params.append("sig", loginSig);
+      nonce && params.append("nonce", nonce);
+      firstName && params.append("firstname", firstName);
+      loginSig && params.append("sig", loginSig);
       params.append("fvsig", fvSig);
       params.append("account", account);
       let url = this.env.identityUrl;

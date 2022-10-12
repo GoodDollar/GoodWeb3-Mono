@@ -17,7 +17,8 @@ import useRefreshOrNever from "../../hooks/useRefreshOrNever";
 import { Envs, SupportedChains } from "../constants";
 
 export const useFVLink = () => {
-  const sdk = useSDK(true, "claim") as ClaimSDK;
+  const { chainId, defaultEnv } = useGetEnvChainId();
+  const sdk = useSDK(false, "claim", chainId) as ClaimSDK;
 
   return useMemo(() => sdk.getFVLink(), [sdk]);
 };
@@ -36,10 +37,10 @@ export const useClaim = (refresh: QueryParams["refresh"] = "never") => {
   const refreshOrNever = useRefreshOrNever(refresh);
   const DAY = 1000 * 60 * 60 * 24;
   const { account } = useEthers();
-  const { chainId } = useGetEnvChainId();
+  const { chainId, defaultEnv } = useGetEnvChainId();
 
-  const ubi = useGetContract("UBIScheme", true, "claim") as UBIScheme;
-  const identity = useGetContract("Identity", true, "claim") as IIdentity;
+  const ubi = useGetContract("UBIScheme", true, "claim", defaultEnv, 122) as UBIScheme;
+  const identity = useGetContract("Identity", true, "claim", defaultEnv, 122) as IIdentity;
   const claimCall = useContractFunction(ubi, "claim");
 
   // const [entitlement] = usePromise(ubi["checkEntitlement()"]());
