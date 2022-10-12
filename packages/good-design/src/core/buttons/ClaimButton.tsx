@@ -1,10 +1,25 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, TouchableOpacity } from "react-native";
 import { useClaim, useFVLink } from "@gooddollar/web3sdk-v2";
 import { noop } from "lodash";
 import { View, Text, Modal, IModalProps, Spinner } from "native-base";
-import { BaseButton } from "./BaseButton";
+import { ButtonAction } from "./ActionButton";
 import { openLink } from "../utils";
+
+// const cross = require("../../assets/svg/cross.svg") as string;
+const cross = <svg
+  width="18"
+  height="18"
+  viewBox="0 0 18 18"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <path
+    d="M8.62728 10.9236L5.30765 14.2432L3.48842 12.424L6.80805 9.10434L3.31963 5.61592L5.21388 3.72167L8.7023 7.21009L12.0219 3.89046L13.8412 5.70969L10.5215 9.02932L14.01 12.5177L12.1157 14.412L8.62728 10.9236Z"
+    fill="#696D73"
+  />
+</svg>
+
 
 interface FVFlowProps {
   firstName: string;
@@ -49,16 +64,20 @@ function FVModal({ firstName, method, onClose = noop, ...props }: FVModalProps) 
   return (
     loading ? <Spinner/> : <Modal {...props} animationPreset="slide" onClose={onClose}>
       <View style={styles.containeralt}>
+        <TouchableOpacity style={styles.close} onPress={onClose}>
+          {cross}
+        </TouchableOpacity>
         <View>
-          <Text>To verify your identity you need to sign TWICE with your wallet.</Text>
-          <Text>First sign your address to be whitelisted</Text>
-          <Text>
+          <Text color={'#0D182D'}>To verify your identity you need to sign TWICE with your wallet.</Text>
+          <Text color={'#0D182D'}>First sign your address to be whitelisted</Text>
+          <Text color={'#0D182D'}>
             Second sign your self sovereign anonymized identifier, so no link is kept between your identity record and
             your address.
           </Text>
         </View>
-        <BaseButton onPress={verify} text={"Verify Uniqueness"} />
-        <BaseButton color="red" onPress={onClose} text={"Close"} />
+        <View style={styles.btnsWrap}>
+          <ButtonAction text={"Verify Uniqueness"} onPress={verify} />
+        </View>
       </View>
     </Modal>
   );
@@ -97,11 +116,11 @@ export function ClaimButton({ firstName, method }: FVFlowProps) {
   }, [isWhitelisted, claimStatus]);
 
   return (
-    <View>
+    <View style={styles.wrapper}>
       <View flex={1} alignItems="center" justifyContent="center">
         <FVModal method={method} isOpen={showModal} onClose={handleClose} firstName={firstName}></FVModal>
       </View>
-      <BaseButton text={buttonTitle} onPress={handleClaim} />
+      <ButtonAction text={buttonTitle} onPress={handleClaim} />
     </View>
   );
 }
@@ -109,7 +128,7 @@ export function ClaimButton({ firstName, method }: FVFlowProps) {
 const styles = StyleSheet.create({
   containeralt: {
     alignItems: "center",
-    backgroundColor: "white",
+    backgroundColor: "#fff",
     borderColor: "#eee",
     borderRadius: 10,
     borderWidth: 1,
@@ -118,5 +137,22 @@ const styles = StyleSheet.create({
     margin: "auto",
     padding: 30,
     width: 600
+  },
+  btnsWrap: {
+    justifyContent: "space-between",
+    width: '100%',
+    flexDirection: 'row',
+    marginTop: 20
+  },
+  wrapper: {
+    width: '100%',
+  },
+  close: {
+    position: "absolute",
+    top: 12,
+    right: 12,
+    fontSize: 11,
+    fontWeight: 'bold',
+    backgroundColor: '#fff',
   }
 });
