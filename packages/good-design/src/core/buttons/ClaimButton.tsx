@@ -5,6 +5,8 @@ import { noop } from "lodash";
 import { View, Text, Modal, IModalProps, Spinner } from "native-base";
 import { ButtonAction } from "./ActionButton";
 import { openLink } from "../utils";
+import { useIsAddressVerified, useSDK } from "@gooddollar/web3sdk-v2";
+import { colors } from "../../constants";
 
 // const cross = require("../../assets/svg/cross.svg") as string;
 const cross = <svg
@@ -23,14 +25,17 @@ const cross = <svg
 
 interface FVFlowProps {
   firstName: string;
+  address: string;
   method: "popup" | "redirect";
 }
 
 type FVModalProps = IModalProps & FVFlowProps;
 
-function FVModal({ firstName, method, onClose = noop, ...props }: FVModalProps) {
-  const [loading, setLoading] = useState(false)
+function FVModal({ firstName, method, address, onClose = noop, ...props }: FVModalProps) {
+  const library = useSDK(true, "claim");
+  const isVerified = useIsAddressVerified(address || "");
   const fvlink = useFVLink();
+  const [loading, setLoading] = useState(false)
 
   const verify = useCallback(async () => {
     setLoading(true)
@@ -57,6 +62,7 @@ function FVModal({ firstName, method, onClose = noop, ...props }: FVModalProps) 
         break;
       }
     }
+    setLoading(false)
 
     onClose();
   }, [fvlink, method, firstName, onClose]);
@@ -68,9 +74,9 @@ function FVModal({ firstName, method, onClose = noop, ...props }: FVModalProps) 
           {cross}
         </TouchableOpacity>
         <View>
-          <Text color={'#0D182D'}>To verify your identity you need to sign TWICE with your wallet.</Text>
-          <Text color={'#0D182D'}>First sign your address to be whitelisted</Text>
-          <Text color={'#0D182D'}>
+          <Text color={colors.text1}>To verify your identity you need to sign TWICE with your wallet.</Text>
+          <Text color={colors.text1}>First sign your address to be whitelisted</Text>
+          <Text color={colors.text1}>
             Second sign your self sovereign anonymized identifier, so no link is kept between your identity record and
             your address.
           </Text>
@@ -83,7 +89,7 @@ function FVModal({ firstName, method, onClose = noop, ...props }: FVModalProps) 
   );
 }
 
-export function ClaimButton({ firstName, method }: FVFlowProps) {
+export function ClaimButton({ firstName, method, address }: FVFlowProps) {
   const [showModal, setShowModal] = useState(false);
   const [refresh, setRefresh] = useState(false);
   const { isWhitelisted, claimAmount, claimTime, claimCall } = useClaim(refresh ? "everyBlock" : "never");
@@ -118,7 +124,7 @@ export function ClaimButton({ firstName, method }: FVFlowProps) {
   return (
     <View style={styles.wrapper}>
       <View flex={1} alignItems="center" justifyContent="center">
-        <FVModal method={method} isOpen={showModal} onClose={handleClose} firstName={firstName}></FVModal>
+        <FVModal method={method} isOpen={showModal} onClose={handleClose} firstName={firstName} address={address} />
       </View>
       <ButtonAction text={buttonTitle} onPress={handleClaim} />
     </View>
