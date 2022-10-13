@@ -8,7 +8,7 @@ export interface BaseButtonProps extends IButtonProps {
    * a text to be rendered in the component.
    */
   text: string
-};
+}
 
 
 export function BaseButton({ text, onPress }: BaseButtonProps) {
@@ -17,7 +17,6 @@ export function BaseButton({ text, onPress }: BaseButtonProps) {
 
   return (
     <Button
-      width={'100px'}
       onPress={onPress}
       bg={bgColor}
       _hover={{
