@@ -8,6 +8,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { UBIScheme } from "@gooddollar/goodprotocol/types/UBIScheme";
 import { IIdentity } from "@gooddollar/goodprotocol/types";
 import { Web3Context } from "../../contexts";
+import { Web3Provider } from "@ethersproject/providers";
 
 import { EnvKey } from "../base/sdk";
 import { ClaimSDK } from "./sdk";
@@ -36,12 +37,22 @@ export const useIsAddressVerified = (address: string, env?: EnvKey) => {
 export const useClaim = (refresh: QueryParams["refresh"] = "never") => {
   const refreshOrNever = useRefreshOrNever(refresh);
   const DAY = 1000 * 60 * 60 * 24;
-  const { account } = useEthers();
+  const { account, library } = useEthers();
+  const [connectedAccount, setConnectedAccount] = useState<string | undefined>(undefined);
   const { chainId, defaultEnv } = useGetEnvChainId();
 
   const ubi = useGetContract("UBIScheme", true, "claim", defaultEnv, 122) as UBIScheme;
   const identity = useGetContract("Identity", true, "claim", defaultEnv, 122) as IIdentity;
   const claimCall = useContractFunction(ubi, "claim");
+
+  useEffect(() => {
+    // web3provider indicates connected account
+    // JsonRpcProvider is the read-only provider, which also has an address eligible as signer
+    // make sure the account to check against is actually the connected wallet
+    if (library instanceof Web3Provider) {
+      setConnectedAccount(account);
+    }
+  }, [account, library]);
 
   // const [entitlement] = usePromise(ubi["checkEntitlement()"]());
   const results = useCalls(
@@ -49,7 +60,7 @@ export const useClaim = (refresh: QueryParams["refresh"] = "never") => {
       {
         contract: identity,
         method: "isWhitelisted",
-        args: [account]
+        args: [connectedAccount]
       },
       {
         contract: ubi,
@@ -64,7 +75,7 @@ export const useClaim = (refresh: QueryParams["refresh"] = "never") => {
       {
         contract: ubi,
         method: "checkEntitlement(address)",
-        args: [account]
+        args: [connectedAccount]
       }
     ],
     { refresh: refreshOrNever, chainId }
