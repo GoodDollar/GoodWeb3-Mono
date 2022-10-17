@@ -18,7 +18,7 @@ const config: Config = {
 
 export const W3Wrapper = () => {
   const ethereum = (window as any).ethereum;
-  const { account } = useEthers();
+  const { account, library } = useEthers();
   const [provider, setProvider] = useState(new ethers.providers.JsonRpcProvider("https://rpc.fuse.io", "any"));
   const [accountFound, setAccountFound] = useState(false);
 
@@ -31,10 +31,10 @@ export const W3Wrapper = () => {
         }
       });
     }
-  });
+  }, [library]);
 
   //todo: should not need two providers, current bug with only web3provider and not able to find connected account
-
+  // probably causing the claimCall bug where it doesn't update to web3provider
   return (
     <DAppProvider config={config}>
       <Web3Provider env={"fuse"} web3Provider={provider} config={config}>
@@ -45,22 +45,20 @@ export const W3Wrapper = () => {
 };
 
 const Web3Action = () => {
-  const { account, chainId } = useEthers();
-  //TODO: useClaim is run with RO provider address / probably cause of the two DappProviders used
+  const { account, chainId, library } = useEthers();
   const { isWhitelisted, claimAmount, claimTime, claimCall } = useClaim("everyBlock");
   const [claimText, setClaimText] = useState<string>("Claim UBI");
 
-  useEffect(() => {
-    // console.log("web3action -- account -->", { account, isWhitelisted });
-  }, [account, chainId]);
-
   const handleClaim = useCallback(async () => {
-    // console.log("HC isWhitelisted -->", { isWhitelisted });
+    console.log("HC isWhitelisted -->", { isWhitelisted });
+    console.log("HC -- account / library", { account, library });
     if (isWhitelisted) {
-      // console.log("isWhitelisted");
+      console.log("isWhitelisted");
+      //todo-fix: this tries to send call from readonly provider, where library already should be Web3Provider
+      // see note above in W3 Wrapper
       await claimCall.send();
     }
-  }, [account, chainId, isWhitelisted, claimCall]);
+  }, [library, claimCall, isWhitelisted]);
 
   useEffect(() => {
     if (claimAmount) {

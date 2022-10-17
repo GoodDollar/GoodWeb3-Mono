@@ -1,7 +1,7 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useReducer } from "react";
 import { noop } from "lodash";
 import { BaseButton, BaseButtonProps } from "../../core/buttons";
-import { useEthers, useNetwork } from "@usedapp/core";
+import { useEthers } from "@usedapp/core";
 import { HStack, Spinner, Heading } from "native-base";
 
 export interface Web3ActionProps extends BaseButtonProps {
@@ -11,7 +11,7 @@ export interface Web3ActionProps extends BaseButtonProps {
   text: string;
   requiredChain: number;
   web3Action: () => Promise<void> | void;
-  switchChain?: () => Promise<any>;
+  switchChain?: (requiredChain: number) => Promise<any>;
   handleConnect?: (requiredChain: number) => Promise<any> | void;
 }
 
@@ -26,6 +26,49 @@ const StepIndicator = ({ text }: { text?: string | undefined }) => {
   );
 };
 
+const reducer = (state: any, action: any) => {
+  switch (action.type) {
+    case "init":
+      return {
+        ...initialButtonState,
+        ...action.payload
+      };
+    case "isPressed":
+      return {
+        ...state,
+        isPressed: true,
+        isLoading: true,
+        baseText: ""
+      };
+    case "reset": // reset used while isPressed is within its 1 minute polling window
+      return {
+        ...state,
+        ...action.payload,
+        isLoading: !state.isLoading
+      };
+    default:
+      return {
+        ...state,
+        ...action.payload,
+        action: action.type
+      };
+  }
+};
+
+const ButtonCopy = {
+  connect: "Connecting wallet...",
+  switch: "Switching network...",
+  action: "Awaiting confirmation..."
+};
+
+const initialButtonState = {
+  action: "connect",
+  actionText: ButtonCopy.connect,
+  isPressed: false,
+  isLoading: false,
+  baseText: ""
+};
+
 export const Web3ActionButton = ({
   text,
   requiredChain,
@@ -33,157 +76,94 @@ export const Web3ActionButton = ({
   web3Action,
   handleConnect = noop
 }: Web3ActionProps): JSX.Element => {
-  const _ = require("lodash");
-  // todo: add check on account between RO provider address / actual connected account
-  const { account, switchNetwork, chainId, library, activateBrowserWallet } = useEthers();
-  const { network } = useNetwork();
-  const [isPressed, setIsPressed] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [actionText, setActionText] = useState<string | undefined>();
-  const [baseText, setBaseText] = useState<string | undefined>(text);
-
-  const buttonSequence = [0, 1, 2];
-  const [steps, setSteps] = useState(_(buttonSequence));
+  const { account, switchNetwork, chainId, activateBrowserWallet, library } = useEthers();
+  const [state, dispatch] = useReducer(reducer, { ...initialButtonState, baseText: text });
 
   useEffect(() => {
-    setBaseText(text);
-  }, [text]);
-
-  useEffect(() => {
-    if (isPressed) {
-      // todo: clear timeout function
-      setTimeout(() => {
-        setIsPressed(false);
-        setBaseText(text);
-        setSteps(_(buttonSequence));
-      }, 60000);
+    console.log("prov changed");
+    if (account) {
+      const isRequiredChain = requiredChain === chainId;
+      dispatch({
+        type: isRequiredChain ? "action" : "switch",
+        payload: { actionText: isRequiredChain ? ButtonCopy.action : ButtonCopy.switch, isLoading: true }
+      });
+    } else {
+      dispatch({ type: "init", payload: { baseText: text, isLoading: true } });
     }
-  }, [account, chainId, library, isPressed, network]);
-
-  const onPress = useCallback(async () => {
-    setIsPressed(true);
-    setBaseText(undefined);
-    continueSequence();
-  }, [account, chainId, library, steps]);
-
-  const resetButton = () => {
-    setIsLoading(false);
-    setBaseText(text);
-  };
+  }, [account, chainId]);
 
   const handleDefaultConnect = useCallback(async () => {
     if (!account && handleConnect === noop) {
       try {
         await activateBrowserWallet();
-        steps.next();
-        setIsLoading(false);
       } catch (e: any) {
         if (e.code === 4001) {
           // rejected
-          resetButton();
+          dispatch({ type: "reset", payload: { baseText: text } });
         }
         return e;
       }
     } else if (!account) {
       // dapp provided connect
+      // note: not tested yet
       const dappConnected = await handleConnect(requiredChain);
-    } else {
-      steps.next();
-      setIsLoading(false);
     }
   }, [account, chainId, library]);
 
   const handleSwitch = useCallback(async () => {
-    if (requiredChain === chainId) {
-      steps.next();
-      setIsLoading(false);
-    } else {
-      try {
-        // todo: add dapp provided switch
+    try {
+      if (switchChain) {
+        // note: not working properly yet
+        // dispatch({ type: "reset", payload: { baseText: text } }); // reset isLoading here to prevent infinite rerender
+        // const switched = await switchChain(requiredChain);
+        // if (switched) {
+        //   dispatch({ type: "reset", payload: { baseText: text } });
+        // } else {
+        //   console.log("(sdk) not switched");
+        // }
+      } else {
         await switchNetwork(requiredChain);
-        steps.next();
-        setIsLoading(false);
-      } catch (e: any) {
-        console.log("e -->", { e });
-        if (e.code === 4001) {
-          resetButton();
-        }
-        return e;
       }
+      // dispatch({ type: "switched" });
+    } catch (e: any) {
+      console.log("e -->", { e });
+      if (e.code === 4001) {
+        dispatch({ type: "reset", payload: { baseText: text } });
+      }
+      return e;
     }
-  }, [chainId, library]);
+  }, [account, chainId, library]);
 
   const handleAction = useCallback(async () => {
     try {
       await web3Action();
+      dispatch({ type: "reset", payload: { baseText: text } });
     } catch (e: any) {
+      // doesn't catch rpc error
       console.log("action failed -- e -->", { e });
+      dispatch({ type: "reset", payload: { baseText: text } });
     }
-  }, [account, chainId, library]);
+  }, [account, chainId, library, web3Action]);
 
   useEffect(() => {
-    if (!isLoading) {
-      setIsLoading(true);
-      if (!account) {
-        setSteps(_(buttonSequence));
-      } else if (steps.__index__ || steps.__index__ === 0) {
-        switch (steps.__index__) {
-          case 0:
-            steps.next();
-            if (requiredChain === chainId) {
-              steps.next();
-            }
-            break;
-          case 1:
-            if (requiredChain === chainId) {
-              steps.next();
-            }
-            break;
-        }
-      }
-      setIsLoading(false);
-    }
-
-    if (isPressed && !isLoading) {
-      continueSequence();
-    }
-  }, [account, chainId, library, handleAction]);
-
-  const continueSequence = useCallback(async () => {
-    setIsLoading(true);
-    const currentStep = steps.__index__;
-    switch (currentStep) {
-      case 0:
-        if (!account) {
-          setActionText("Connecting wallet...");
-        } else {
-          steps.next();
+    //todo: add isPressed interval/timeout for 1 minute
+    if (state.isPressed && state.isLoading) {
+      switch (state.action) {
+        case "connect":
+          handleDefaultConnect();
           break;
-        }
-        const isNotConnected = await handleDefaultConnect();
-        if (isNotConnected) {
-          setSteps(_(buttonSequence));
-        }
-        break;
-      case 1:
-        setActionText("Switching network...");
-        await handleSwitch();
-        break;
-      case 2:
-        setActionText("awaiting confirmation");
-        await handleAction();
-        resetButton();
-        setSteps(_(buttonSequence));
-        break;
-      default:
-        setSteps(_(buttonSequence));
-        break;
+        case "switch":
+          handleSwitch();
+          break;
+        case "action":
+          handleAction();
+      }
     }
-  }, [account, chainId, steps]);
+  }, [state, handleDefaultConnect, handleSwitch, handleAction]);
 
   return (
-    <BaseButton text={baseText} onPress={onPress}>
-      {isPressed && isLoading && !baseText && <StepIndicator text={actionText} />}
+    <BaseButton text={state.baseText} onPress={() => dispatch({ type: "isPressed", payload: state })}>
+      {state.isPressed && state.isLoading && !state.baseText && <StepIndicator text={state.actionText} />}
     </BaseButton>
   );
 };
