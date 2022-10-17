@@ -63,8 +63,10 @@ function FVModal({ firstName, method, onClose = noop, ...props }: FVModalProps) 
     onClose();
   }, [fvlink, method, firstName, onClose]);
 
+  if  (loading) return <Spinner/>
+
   return (
-    loading ? <Spinner/> : <Modal {...props} animationPreset="slide" onClose={onClose}>
+    <Modal {...props} animationPreset="slide" onClose={onClose}>
       <View style={styles.containeralt}>
         <TouchableOpacity style={styles.close} onPress={onClose}>
           {cross}
