@@ -20,4 +20,9 @@ export declare const useClaim: (refresh?: QueryParams["refresh"]) => {
         resetState: () => void;
     };
 };
+export declare const useWhitelistSync: () => {
+    fuseWhitelisted: boolean;
+    currentWhitelisted: boolean;
+    syncStatus: Promise<boolean> | undefined;
+};
 //# sourceMappingURL=react.d.ts.map

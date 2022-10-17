@@ -23,12 +23,8 @@ export function G$ContractAddresses<T = ObjectLike>(chainId: SupportedChainId, n
   let deploymentName: string;
   const CURRENT_NETWORK = getNetworkEnv();
   switch (chainId) {
-    case SupportedChainId.KOVAN:
-      deploymentName = "kovan-mainnet";
-      break;
     case SupportedChainId.MAINNET:
-    case SupportedChainId.ROPSTEN:
-      deploymentName = CURRENT_NETWORK + "-mainnet";
+      deploymentName = "production-mainnet";
       break;
     case SupportedChainId.FUSE:
       deploymentName = CURRENT_NETWORK;

@@ -1,7 +1,7 @@
-import { Linking, Platform } from 'react-native'
-import { isEmpty, toPairs } from 'lodash'
+import { Linking, Platform } from "react-native";
+import { isEmpty, toPairs } from "lodash";
 
-const schemeRe = /(.+?:)\/\//
+const schemeRe = /(.+?:)\/\//;
 
 interface IWindowOptions {
   noopener?: boolean;
@@ -9,8 +9,8 @@ interface IWindowOptions {
   height?: string;
 }
 
-export async function openLink(uri: string, target: '_blank' | '_self' = '_blank', options: IWindowOptions = {}) {
-  if (Platform.OS === 'web') {
+export async function openLink(uri: string, target: "_blank" | "_self" = "_blank", options: IWindowOptions = {}) {
+  if (Platform.OS === "web") {
     const args = [new URL(uri, window.location.href).toString(), target];
     const { noopener = false, ...opts } = options || {};
 
@@ -18,35 +18,35 @@ export async function openLink(uri: string, target: '_blank' | '_self' = '_blank
       const optsList: string[] = toPairs(opts).map(([key, value]) => `${key}: '${value}'`);
 
       if (noopener) {
-        optsList.push('noopener')
+        optsList.push("noopener");
       }
 
-      args.push(optsList.join(', '));
+      args.push(optsList.join(", "));
     }
 
-    window.open(...args)
-    return
+    window.open(...args);
+    return;
   }
 
   // need to return original promise for compatibility
-  let result
+  let result;
 
   try {
-    result = await Linking.openURL(uri)
+    result = await Linking.openURL(uri);
   } catch (exception) {
-    let error = exception
+    let error = exception;
 
     // check does sheme supported to make sure the exception is about this case
-    const isSchemeSupported = await Linking.canOpenURL(uri).catch(() => false)
+    const isSchemeSupported = await Linking.canOpenURL(uri).catch(() => false);
 
     if (!isSchemeSupported) {
       const [, scheme] = schemeRe.exec(uri) as string[];
 
-      error = new Error(`There aren't apps installed can handle '${scheme}' scheme`)
+      error = new Error(`There aren't apps installed can handle '${scheme}' scheme`);
     }
 
-    throw error
+    throw error;
   }
 
-  return result
+  return result;
 }

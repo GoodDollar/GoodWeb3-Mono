@@ -71,6 +71,7 @@ export async function multicall(
 
 export const useReadOnlyProvider = (chainId: number) => {
   const { readOnlyUrls, pollingInterval } = useConfig();
+
   const provider = useMemo<JsonRpcProvider | undefined>(() => {
     if (readOnlyUrls && readOnlyUrls[chainId]) {
       switch (true) {

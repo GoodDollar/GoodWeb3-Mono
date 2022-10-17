@@ -3,7 +3,9 @@ import { useContractFunction, useCalls, QueryParams, useEthers, CurrencyValue } 
 import { useGetContract, useGetEnvChainId } from "../base/react";
 import { ethers } from "ethers";
 import { GoodDollarStaking, IGoodDollar } from "@gooddollar/goodprotocol/types";
-import { G$, GOOD } from "../constants";
+import { G$, GOOD, SupportedChains } from "../constants";
+import useRefreshOrNever from "../../hooks/useRefreshOrNever";
+import { ChainId } from "@usedapp/core/dist/cjs/src";
 
 export interface StakerInfo {
   claimable:
@@ -32,9 +34,11 @@ export interface SavingsStats {
 }
 
 export function useSavingsBalance(refresh: QueryParams["refresh"] = "never", requiredChainId: number) {
+  const refreshOrNever = useRefreshOrNever(refresh);
   const { account } = useEthers();
-  const gooddollar = useGetContract("GoodDollar", true, "savings", requiredChainId) as IGoodDollar;
-  const gdStaking = useGetContract("GoodDollarStaking", true, "savings", requiredChainId) as GoodDollarStaking;
+
+  const gooddollar = useGetContract("GoodDollar", true, "savings") as IGoodDollar;
+  const gdStaking = useGetContract("GoodDollarStaking", true, "savings") as GoodDollarStaking;
 
   const results = useCalls(
     [
@@ -50,7 +54,7 @@ export function useSavingsBalance(refresh: QueryParams["refresh"] = "never", req
       }
     ],
     {
-      refresh,
+      refresh: refreshOrNever,
       chainId: requiredChainId
     }
   );
@@ -61,9 +65,9 @@ export function useSavingsBalance(refresh: QueryParams["refresh"] = "never", req
 }
 
 // requiredChainId here to fix handling switch of network properly
-export const useSavingsFunctions = (requiredChainId?: number) => {
-  const gooddollar = useGetContract("GoodDollar", false, "savings", requiredChainId) as IGoodDollar;
-  const gdStaking = useGetContract("GoodDollarStaking", false, "savings", requiredChainId) as GoodDollarStaking;
+export const useSavingsFunctions = () => {
+  const gooddollar = useGetContract("GoodDollar", false, "savings") as IGoodDollar;
+  const gdStaking = useGetContract("GoodDollarStaking", false, "savings") as GoodDollarStaking;
 
   const { state: transferState, send: sendTransfer } = useContractFunction(gooddollar, "transferAndCall", {
     transactionName: "Transfer to savings"
@@ -96,9 +100,18 @@ export const useSavingsFunctions = (requiredChainId?: number) => {
   return { transfer, withdraw, claim, transferState, withdrawState, claimState };
 };
 
-export const useSavingsStats = (refresh: QueryParams["refresh"] = "never", requiredChainId: number) => {
+export const useSavingsStats = (refresh: QueryParams["refresh"] = "never") => {
+  const refreshOrNever = useRefreshOrNever(refresh);
+
   const { chainId, defaultEnv } = useGetEnvChainId();
-  const gdStaking = useGetContract("GoodDollarStaking", true, "savings", requiredChainId) as GoodDollarStaking;
+
+  const gdStaking = useGetContract(
+    "GoodDollarStaking",
+    true,
+    "savings",
+    defaultEnv,
+    SupportedChains.FUSE
+  ) as GoodDollarStaking;
 
   const results = useCalls(
     [
@@ -118,7 +131,7 @@ export const useSavingsStats = (refresh: QueryParams["refresh"] = "never", requi
         args: []
       }
     ],
-    { refresh, chainId: requiredChainId }
+    { refresh: refreshOrNever, chainId: SupportedChains.FUSE as unknown as ChainId }
   );
 
   let globalStats: SavingsStats = {
@@ -162,9 +175,17 @@ export const useSavingsStats = (refresh: QueryParams["refresh"] = "never", requi
   };
 };
 
-export const useStakerInfo = (refresh: QueryParams["refresh"] = "never", account: string, requiredChainId: number) => {
+export const useStakerInfo = (refresh: QueryParams["refresh"] = "never", account: string) => {
+  const refreshOrNever = useRefreshOrNever(refresh);
+
   const { chainId, defaultEnv } = useGetEnvChainId();
-  const contract = useGetContract("GoodDollarStaking", true, "savings", requiredChainId) as GoodDollarStaking;
+  const contract = useGetContract(
+    "GoodDollarStaking",
+    true,
+    "savings",
+    defaultEnv,
+    SupportedChains.FUSE
+  ) as GoodDollarStaking;
   const results = useCalls(
     [
       {
@@ -178,7 +199,7 @@ export const useStakerInfo = (refresh: QueryParams["refresh"] = "never", account
         args: [account]
       }
     ],
-    { refresh, chainId: requiredChainId }
+    { refresh: refreshOrNever, chainId: SupportedChains.FUSE as unknown as ChainId }
   );
 
   let stakerInfo: StakerInfo = {

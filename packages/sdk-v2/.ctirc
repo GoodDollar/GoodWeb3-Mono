@@ -27,7 +27,7 @@
   
   // only create command configuration
   // If set true this option, skip empty directory
-  "skipEmptyDir": true
+  "skipEmptyDir": true,
 
 
   // only single command configuration
@@ -35,7 +35,7 @@
   "output": "./",
   // Use rootDir or rootDirs configuration in tsconfig.json.
   "useRootDir": true,
-  "startAt": "./src/"
+  "startAt": "./src/",
 
   // only remove command configuration
   // remove with backup file
