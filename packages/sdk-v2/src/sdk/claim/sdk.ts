@@ -47,7 +47,7 @@ export class ClaimSDK extends BaseSDK {
         params.append(popupMode ? "cbu" : "rdu", callbackUrl);
       }
       url += "?" + params.toString();
-      return url;
+      return decodeURIComponent(url);
     };
     return { getLoginSig, getFvSig, getLink };
   }

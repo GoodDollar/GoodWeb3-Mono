@@ -5,7 +5,6 @@ import { noop } from "lodash";
 import { View, Text, Modal, IModalProps, Spinner } from "native-base";
 import { ButtonAction } from "./ActionButton";
 import { openLink } from "../utils";
-import { useIsAddressVerified, useSDK } from "@gooddollar/web3sdk-v2";
 import { colors } from "../../constants";
 
 // const cross = require("../../assets/svg/cross.svg") as string;
@@ -25,15 +24,12 @@ const cross = <svg
 
 interface FVFlowProps {
   firstName: string;
-  address: string;
   method: "popup" | "redirect";
 }
 
 type FVModalProps = IModalProps & FVFlowProps;
 
-function FVModal({ firstName, method, address, onClose = noop, ...props }: FVModalProps) {
-  const library = useSDK(true, "claim");
-  const isVerified = useIsAddressVerified(address || "");
+function FVModal({ firstName, method, onClose = noop, ...props }: FVModalProps) {
   const fvlink = useFVLink();
   const [loading, setLoading] = useState(false)
 
@@ -89,7 +85,7 @@ function FVModal({ firstName, method, address, onClose = noop, ...props }: FVMod
   );
 }
 
-export function ClaimButton({ firstName, method, address }: FVFlowProps) {
+export function ClaimButton({ firstName, method }: FVFlowProps) {
   const [showModal, setShowModal] = useState(false);
   const [refresh, setRefresh] = useState(false);
   const { isWhitelisted, claimAmount, claimTime, claimCall } = useClaim(refresh ? "everyBlock" : "never");
@@ -124,7 +120,7 @@ export function ClaimButton({ firstName, method, address }: FVFlowProps) {
   return (
     <View style={styles.wrapper}>
       <View flex={1} alignItems="center" justifyContent="center">
-        <FVModal method={method} isOpen={showModal} onClose={handleClose} firstName={firstName} address={address} />
+        <FVModal method={method} isOpen={showModal} onClose={handleClose} firstName={firstName} />
       </View>
       <ButtonAction text={buttonTitle} onPress={handleClaim} />
     </View>
