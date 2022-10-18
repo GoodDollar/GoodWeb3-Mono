@@ -1,8 +1,8 @@
-import React, { useCallback, useEffect, useReducer } from "react";
-import { noop } from "lodash";
-import { BaseButton, BaseButtonProps } from "../../core/buttons";
-import { useEthers } from "@usedapp/core";
+import React, { useCallback, useEffect } from "react";
 import { HStack, Spinner, Heading } from "native-base";
+import { useEthers } from "@gooddollar/web3sdk-v2";
+import { isBoolean } from 'lodash'
+import { BaseButton, BaseButtonProps } from "../../core/buttons";
 
 export interface Web3ActionProps extends BaseButtonProps {
   /**
@@ -13,6 +13,26 @@ export interface Web3ActionProps extends BaseButtonProps {
   web3Action: () => Promise<void> | void;
   switchChain?: (requiredChain: number) => Promise<any>;
   handleConnect?: (requiredChain: number) => Promise<any> | void;
+}
+
+const ButtonSteps = {
+  connect: "Connecting wallet...",
+  switch: "Switching network...",
+  action: "Awaiting confirmation..."
+};
+
+const wrapChainCall =async asyncFn => {
+  try {
+    const result = await asyncFn()
+
+    return isBoolean(result) ? result : true
+  } catch (e) {
+    if (e.code === 4001) {
+      return false
+    }
+
+    throw e
+  }
 }
 
 const StepIndicator = ({ text }: { text?: string | undefined }) => {
@@ -26,144 +46,88 @@ const StepIndicator = ({ text }: { text?: string | undefined }) => {
   );
 };
 
-const reducer = (state: any, action: any) => {
-  switch (action.type) {
-    case "init":
-      return {
-        ...initialButtonState,
-        ...action.payload
-      };
-    case "isPressed":
-      return {
-        ...state,
-        isPressed: true,
-        isLoading: true,
-        baseText: ""
-      };
-    case "reset": // reset used while isPressed is within its 1 minute polling window
-      return {
-        ...state,
-        ...action.payload,
-        isLoading: !state.isLoading
-      };
-    default:
-      return {
-        ...state,
-        ...action.payload,
-        action: action.type
-      };
-  }
-};
-
-const ButtonCopy = {
-  connect: "Connecting wallet...",
-  switch: "Switching network...",
-  action: "Awaiting confirmation..."
-};
-
-const initialButtonState = {
-  action: "connect",
-  actionText: ButtonCopy.connect,
-  isPressed: false,
-  isLoading: false,
-  baseText: ""
-};
-
 export const Web3ActionButton = ({
   text,
   requiredChain,
   switchChain,
   web3Action,
-  handleConnect = noop
+  handleConnect,
 }: Web3ActionProps): JSX.Element => {
-  const { account, switchNetwork, chainId, activateBrowserWallet, library } = useEthers();
-  const [state, dispatch] = useReducer(reducer, { ...initialButtonState, baseText: text });
+  const { isWeb3, account, switchNetwork, chainId, activateBrowserWallet } = useEthers();
+  const [loading, setLoading] = useState(false)
+  const [actionText, setActionText] = useState("")
 
-  useEffect(() => {
-    console.log("prov changed");
-    if (account) {
-      const isRequiredChain = requiredChain === chainId;
-      dispatch({
-        type: isRequiredChain ? "action" : "switch",
-        payload: { actionText: isRequiredChain ? ButtonCopy.action : ButtonCopy.switch, isLoading: true }
-      });
-    } else {
-      dispatch({ type: "init", payload: { baseText: text, isLoading: true } });
+  const connectToChain = useCallback(chain => wrapChainCall(async () => {
+    if (handleConnect) {
+      await handleConnect(chain)
+      return
     }
-  }, [account, chainId]);
 
-  const handleDefaultConnect = useCallback(async () => {
-    if (!account && handleConnect === noop) {
-      try {
-        await activateBrowserWallet();
-      } catch (e: any) {
-        if (e.code === 4001) {
-          // rejected
-          dispatch({ type: "reset", payload: { baseText: text } });
-        }
-        return e;
-      }
-    } else if (!account) {
-      // dapp provided connect
-      // note: not tested yet
-      const dappConnected = await handleConnect(requiredChain);
-    }
-  }, [account, chainId, library]);
+    await activateBrowserWallet()
+  }), [handleConnect, activateBrowserWallet])
 
-  const handleSwitch = useCallback(async () => {
-    try {
-      if (switchChain) {
-        // note: not working properly yet
-        // dispatch({ type: "reset", payload: { baseText: text } }); // reset isLoading here to prevent infinite rerender
-        // const switched = await switchChain(requiredChain);
-        // if (switched) {
-        //   dispatch({ type: "reset", payload: { baseText: text } });
-        // } else {
-        //   console.log("(sdk) not switched");
-        // }
-      } else {
-        await switchNetwork(requiredChain);
+  const switchToChain = useCallback(async chain => {
+    const switchFn = switchChain || switchNetwork
+    const isDefaultFn = !switchChain
+
+    return wrapChainCall(async () => {
+      const result = await switchFn(chain)
+
+      if (!isDefaultFn && !result) {
+        return false
       }
-      // dispatch({ type: "switched" });
-    } catch (e: any) {
-      console.log("e -->", { e });
-      if (e.code === 4001) {
-        dispatch({ type: "reset", payload: { baseText: text } });
-      }
-      return e;
-    }
-  }, [account, chainId, library]);
+    })
+  }, [switchNetwork, switchChain])
 
   const handleAction = useCallback(async () => {
-    try {
-      await web3Action();
-      dispatch({ type: "reset", payload: { baseText: text } });
-    } catch (e: any) {
-      // doesn't catch rpc error
-      console.log("action failed -- e -->", { e });
-      dispatch({ type: "reset", payload: { baseText: text } });
-    }
-  }, [account, chainId, library, web3Action]);
+    let cancelled = false
 
-  useEffect(() => {
-    //todo: add isPressed interval/timeout for 1 minute
-    if (state.isPressed && state.isLoading) {
-      switch (state.action) {
-        case "connect":
-          handleDefaultConnect();
-          break;
-        case "switch":
-          handleSwitch();
-          break;
-        case "action":
-          handleAction();
+    const reset = () => {
+      setActionText("")
+      setLoading(false)
+    }
+
+    setLoading(true)
+    setTimeout(() => cancelled = true, 60000)
+
+    if (!account) {
+      setActionText(ButtonSteps.connect)
+
+      const connected = await connectToChain(requiredChain)
+
+      if (!connected || cancelled) {
+        reset()
+        return
       }
     }
-  }, [state, handleDefaultConnect, handleSwitch, handleAction]);
+
+    if (chainId !== requiredChain) {
+      setActionText(ButtonSteps.switch)
+
+      const switched = await switchNetwork(requiredChain)
+
+      if (!switched || cancelled) {
+        reset()
+        return
+      }
+    }
+
+    setActionText(ButtonSteps.action)
+
+    try {
+      await web3Action()
+    } finally {
+      reset()
+    }
+  }, [chainId, account, requiredChain, connectToChain, switchChain, web3Action])
+
+  if (!isWeb3) {
+    return null
+  }
 
   return (
-    <BaseButton text={state.baseText} onPress={() => dispatch({ type: "isPressed", payload: state })}>
-      {state.isPressed && state.isLoading && !state.baseText && <StepIndicator text={state.actionText} />}
+    <BaseButton text={loading ? "" : text} onPress={handleAction}>
+      {loading && <StepIndicator text={actionText} />}
     </BaseButton>
   );
 };
