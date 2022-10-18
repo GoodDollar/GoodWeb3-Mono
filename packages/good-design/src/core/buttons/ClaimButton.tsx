@@ -6,6 +6,7 @@ import { View, Text, Modal, IModalProps, Spinner } from "native-base";
 import { ButtonAction } from "./ActionButton";
 import { openLink } from "../utils";
 import { colors } from "../../constants";
+import { useQueryParam } from "../../hooks";
 
 // const cross = require("../../assets/svg/cross.svg") as string;
 const cross = <svg
@@ -63,8 +64,6 @@ function FVModal({ firstName, method, onClose = noop, ...props }: FVModalProps) 
     onClose();
   }, [fvlink, method, firstName, onClose]);
 
-  if  (loading) return <Spinner/>
-
   return (
     <Modal {...props} animationPreset="slide" onClose={onClose}>
       <View style={styles.containeralt}>
@@ -79,9 +78,9 @@ function FVModal({ firstName, method, onClose = noop, ...props }: FVModalProps) 
             your address.
           </Text>
         </View>
-        <View style={styles.btnsWrap}>
-          <ButtonAction text={"Verify Uniqueness"} onPress={verify} />
-        </View>
+        {loading ? <Spinner/> : <View style={styles.btnsWrap}>
+          <ButtonAction text={"Verify Uniqueness"} onPress={verify}/>
+        </View>}
       </View>
     </Modal>
   );
@@ -92,15 +91,15 @@ export function ClaimButton({ firstName, method }: FVFlowProps) {
   const [refresh, setRefresh] = useState(false);
   const { isWhitelisted, claimAmount, claimTime, claimCall } = useClaim(refresh ? "everyBlock" : "never");
   const { status: claimStatus } = claimCall?.state || {};
-
+  const isVerified = useQueryParam('verified')
   const handleClose = useCallback(() => setShowModal(false), [setShowModal]);
 
   const handleClaim = useCallback(async () => {
-    if (!isWhitelisted) {
-      return setShowModal(true);
+    if (isWhitelisted || isVerified) {
+      return await claimCall.send();
     }
 
-    await claimCall.send();
+    setShowModal(true);
   }, [isWhitelisted, setShowModal, claimCall]);
 
   const buttonTitle = useMemo(() => {
@@ -119,6 +118,10 @@ export function ClaimButton({ firstName, method }: FVFlowProps) {
     setRefresh(!isWhitelisted || ["Mining", "PendingSignature"].includes(claimStatus));
   }, [isWhitelisted, claimStatus]);
 
+  useEffect(() => {
+    console.log('isVerified :', isVerified)
+  }, [isVerified])
+
   return (
     <View style={styles.wrapper}>
       <View flex={1} alignItems="center" justifyContent="center">
@@ -136,7 +139,7 @@ const styles = StyleSheet.create({
     borderColor: "#eee",
     borderRadius: 10,
     borderWidth: 1,
-    justifyContent: "center",
+    justifyContent: "space-around",
     height: 300,
     margin: "auto",
     padding: 30,
