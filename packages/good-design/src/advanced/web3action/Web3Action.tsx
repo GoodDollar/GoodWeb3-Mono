@@ -84,12 +84,24 @@ export const Web3ActionButton = ({
     let cancelled = false
 
     const reset = () => {
-      cancelled = true
       setActionText("")
       setLoading(false)
     }
 
-    const timeout = setTimeout(reset, 60000)
+    const timeout = setTimeout(() => {
+      cancelled = true
+      reset()
+    }, 60000)
+
+    const cancelTimer = () => {
+      if (cancelled) {
+        return
+
+      }
+
+      reset()
+      cancelTimer()
+    }
 
     setLoading(true)
 
@@ -99,6 +111,7 @@ export const Web3ActionButton = ({
       const connected = await connectToChain(requiredChain)
 
       if (!connected || cancelled) {
+        cancelTimer()
         return
       }
     }
@@ -112,6 +125,7 @@ export const Web3ActionButton = ({
       const switched = await switchNetwork(requiredChain)
 
       if (!switched || cancelled) {
+        cancelTimer()
         return
       }
     }
@@ -121,8 +135,7 @@ export const Web3ActionButton = ({
     try {
       await web3Action()
     } finally {
-      clearTimeout(timeout)
-      reset()
+      cancelTimer()
     }
   }, [account, requiredChain, connectToChain, switchChain, web3Action])
 
