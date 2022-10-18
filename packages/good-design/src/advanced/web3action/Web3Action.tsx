@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { HStack, Spinner, Heading } from "native-base";
 import { useEthers } from "@gooddollar/web3sdk-v2";
 import { isBoolean } from 'lodash'
@@ -56,6 +56,7 @@ export const Web3ActionButton = ({
   const { isWeb3, account, switchNetwork, chainId, activateBrowserWallet } = useEthers();
   const [loading, setLoading] = useState(false)
   const [actionText, setActionText] = useState("")
+  const chainRef = useRef(chainId)
 
   const connectToChain = useCallback(chain => wrapChainCall(async () => {
     if (handleConnect) {
@@ -102,7 +103,10 @@ export const Web3ActionButton = ({
       }
     }
 
-    if (chainId !== requiredChain) {
+    // handleConnect accepts chain id so it could connect to the target chain
+    // for this case we need to handle chainId changes in the separate effect
+    // then read latest value from the ref here once we've awaited for connected
+    if (chainRef.current !== requiredChain) {
       setActionText(ButtonSteps.switch)
 
       const switched = await switchNetwork(requiredChain)
@@ -120,7 +124,11 @@ export const Web3ActionButton = ({
       clearTimeout(timeout)
       reset()
     }
-  }, [chainId, account, requiredChain, connectToChain, switchChain, web3Action])
+  }, [account, requiredChain, connectToChain, switchChain, web3Action])
+
+  useEffect(() => {
+    chainRef.current = chainId
+  }, [chainId])
 
   if (!isWeb3) {
     return null
