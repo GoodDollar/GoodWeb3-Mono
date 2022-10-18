@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useReducer } from "react";
+import React, { useCallback, useEffect, useReducer, useState } from "react";
 import { noop } from "lodash";
 import { BaseButton, BaseButtonProps } from "../../core/buttons";
 import { useEthers } from "@usedapp/core";
@@ -80,10 +80,22 @@ export const Web3ActionButton = ({
   const { account, switchNetwork, chainId, activateBrowserWallet, library } = useEthers();
   const initialButtonState = { ...buttonState, baseText: text };
   const [state, dispatch] = useReducer(reducer, { ...initialButtonState });
-  const reset = (isLoading = false, baseText = text) => ({
+  const reset = (isLoading = false, baseText = text, isPressed = true) => ({
     type: "reset",
-    payload: { isLoading: isLoading, baseText: baseText }
+    payload: { isLoading: isLoading, baseText: baseText, isPressed: isPressed }
   });
+  const [activeTimer, setActiveTimer] = useState<any>();
+
+  useEffect(() => {
+    if (!activeTimer && state.isPressed) {
+      const timer = setTimeout(() => {
+        dispatch({ type: "init", payload: { baseText: text } });
+        setActiveTimer(undefined);
+      }, 60000);
+      setActiveTimer(timer);
+      return () => clearTimeout(timer);
+    }
+  }, [state.isPressed]);
 
   useEffect(() => {
     const isWeb3 = library instanceof ethers.providers.Web3Provider;
