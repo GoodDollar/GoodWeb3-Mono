@@ -27,7 +27,6 @@ const wrapChainCall = async (asyncFn: any) => {
 
     return isBoolean(result) ? result : true;
   } catch (e: any) {
-    console.log("wrap chain call cancelled?");
     if (e.code === 4001) {
       return false;
     }
@@ -60,11 +59,8 @@ export const Web3ActionButton = ({
   const [activeTimer, setActiveTimer] = useState<any>(undefined);
 
   useEffect(() => {
-    console.log("loading changed -->", { activeTimer, loading });
     if (!activeTimer && loading) {
-      console.log("timer setting . .. ");
       const timer = setTimeout(() => {
-        console.log("(sdk) clear timeout");
         setActiveTimer(undefined);
         reset();
       }, 60000);
