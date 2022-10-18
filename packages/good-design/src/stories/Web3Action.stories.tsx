@@ -45,20 +45,19 @@ export const W3Wrapper = () => {
 };
 
 const Web3Action = () => {
-  const { account, chainId, library } = useEthers();
   const { isWhitelisted, claimAmount, claimTime, claimCall } = useClaim("everyBlock");
   const [claimText, setClaimText] = useState<string>("Claim UBI");
 
   const handleClaim = useCallback(async () => {
-    console.log("HC isWhitelisted -->", { isWhitelisted });
-    console.log("HC -- account / library", { account, library });
+    // console.log("HC isWhitelisted -->", { isWhitelisted });
+    // console.log("HC -- account / library", { account, library });
     if (isWhitelisted) {
       console.log("isWhitelisted");
       //todo-fix: this tries to send call from readonly provider, where library already should be Web3Provider
       // see note above in W3 Wrapper
       await claimCall.send();
     }
-  }, [library, claimCall, isWhitelisted]);
+  }, [claimCall, isWhitelisted]);
 
   useEffect(() => {
     if (claimAmount) {

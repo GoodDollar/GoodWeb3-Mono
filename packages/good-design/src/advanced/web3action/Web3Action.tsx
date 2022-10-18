@@ -3,6 +3,7 @@ import { noop } from "lodash";
 import { BaseButton, BaseButtonProps } from "../../core/buttons";
 import { useEthers } from "@usedapp/core";
 import { HStack, Spinner, Heading } from "native-base";
+import { ethers } from "ethers";
 
 export interface Web3ActionProps extends BaseButtonProps {
   /**
@@ -30,7 +31,7 @@ const reducer = (state: any, action: any) => {
   switch (action.type) {
     case "init":
       return {
-        ...initialButtonState,
+        ...buttonState,
         ...action.payload
       };
     case "isPressed":
@@ -61,7 +62,7 @@ const ButtonCopy = {
   action: "Awaiting confirmation..."
 };
 
-const initialButtonState = {
+const buttonState = {
   action: "connect",
   actionText: ButtonCopy.connect,
   isPressed: false,
@@ -77,11 +78,16 @@ export const Web3ActionButton = ({
   handleConnect = noop
 }: Web3ActionProps): JSX.Element => {
   const { account, switchNetwork, chainId, activateBrowserWallet, library } = useEthers();
-  const [state, dispatch] = useReducer(reducer, { ...initialButtonState, baseText: text });
+  const initialButtonState = { ...buttonState, baseText: text };
+  const [state, dispatch] = useReducer(reducer, { ...initialButtonState });
+  const reset = (isLoading = false, baseText = text) => ({
+    type: "reset",
+    payload: { isLoading: isLoading, baseText: baseText }
+  });
 
   useEffect(() => {
-    console.log("prov changed");
-    if (account) {
+    const isWeb3 = library instanceof ethers.providers.Web3Provider;
+    if (account && isWeb3) {
       const isRequiredChain = requiredChain === chainId;
       dispatch({
         type: isRequiredChain ? "action" : "switch",
@@ -93,42 +99,35 @@ export const Web3ActionButton = ({
   }, [account, chainId]);
 
   const handleDefaultConnect = useCallback(async () => {
-    if (!account && handleConnect === noop) {
-      try {
+    try {
+      if (!account && handleConnect === noop) {
         await activateBrowserWallet();
-      } catch (e: any) {
-        if (e.code === 4001) {
-          // rejected
-          dispatch({ type: "reset", payload: { baseText: text } });
-        }
-        return e;
+      } else {
+        await handleConnect(requiredChain);
       }
-    } else if (!account) {
-      // dapp provided connect
-      // note: not tested yet
-      const dappConnected = await handleConnect(requiredChain);
+    } catch (e: any) {
+      if (e.code === 4001) {
+        // rejected
+        dispatch(reset());
+      }
+      return e;
     }
   }, [account, chainId, library]);
 
   const handleSwitch = useCallback(async () => {
     try {
       if (switchChain) {
-        // note: not working properly yet
-        // dispatch({ type: "reset", payload: { baseText: text } }); // reset isLoading here to prevent infinite rerender
-        // const switched = await switchChain(requiredChain);
-        // if (switched) {
-        //   dispatch({ type: "reset", payload: { baseText: text } });
-        // } else {
-        //   console.log("(sdk) not switched");
-        // }
+        const switched = await switchChain(requiredChain);
+        if (!switched) {
+          dispatch(reset());
+        }
       } else {
         await switchNetwork(requiredChain);
       }
-      // dispatch({ type: "switched" });
     } catch (e: any) {
       console.log("e -->", { e });
       if (e.code === 4001) {
-        dispatch({ type: "reset", payload: { baseText: text } });
+        dispatch(reset());
       }
       return e;
     }
@@ -137,11 +136,11 @@ export const Web3ActionButton = ({
   const handleAction = useCallback(async () => {
     try {
       await web3Action();
-      dispatch({ type: "reset", payload: { baseText: text } });
     } catch (e: any) {
       // doesn't catch rpc error
       console.log("action failed -- e -->", { e });
-      dispatch({ type: "reset", payload: { baseText: text } });
+    } finally {
+      dispatch(reset());
     }
   }, [account, chainId, library, web3Action]);
 
@@ -157,9 +156,10 @@ export const Web3ActionButton = ({
           break;
         case "action":
           handleAction();
+          break;
       }
     }
-  }, [state, handleDefaultConnect, handleSwitch, handleAction]);
+  }, [state]);
 
   return (
     <BaseButton text={state.baseText} onPress={() => dispatch({ type: "isPressed", payload: state })}>
