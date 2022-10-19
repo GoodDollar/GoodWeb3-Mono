@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { HStack, Spinner, Heading } from "native-base";
 import { useEthers } from "@gooddollar/web3sdk-v2";
-import { isBoolean } from "lodash";
 import { BaseButton, BaseButtonProps } from "../../core/buttons";
 
 export interface Web3ActionProps extends BaseButtonProps {
@@ -23,9 +22,9 @@ const ButtonSteps = {
 
 const throwCancelled = (e: any) => {
   if (e.code === 4001) {
-    throw e
+    throw e;
   }
-}
+};
 
 const StepIndicator = ({ text }: { text?: string | undefined }) => {
   return (
@@ -48,9 +47,9 @@ export const Web3ActionButton = ({
   const { isWeb3, account, switchNetwork, chainId, activateBrowserWallet } = useEthers();
   const [runningFlow, setRunningFlow] = useState(false);
   const [actionText, setActionText] = useState("");
-  const timerRef = useRef()
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const resetText = useCallback(() => setActionText(""), [])
+  const resetText = useCallback(() => setActionText(""), []);
 
   const finishFlow = useCallback(() => {
     resetText();
@@ -58,31 +57,34 @@ export const Web3ActionButton = ({
 
     if (timerRef.current) {
       clearTimeout(timerRef.current);
-      timerRef.current = null
+      timerRef.current = null;
     }
   }, []);
 
   const startFlow = useCallback(() => {
-    setRunningFlow(true)
-    timerRef.current = setTimeout(finishFlow, 60000)
-  }, [])
+    setRunningFlow(true);
+    timerRef.current = setTimeout(finishFlow, 60000);
+  }, []);
 
-  const connectWallet = useCallback(
-    async () => {
-      const connectFn = handleConnect || activateBrowserWallet;
-
-      return connectFn().catch(throwCancelled)
-    },
-    [handleConnect, activateBrowserWallet]
-  );
+  const connectWallet = useCallback(async () => {
+    try {
+      if (handleConnect) {
+        await handleConnect();
+      } else {
+        activateBrowserWallet();
+      }
+    } catch (e: any) {
+      throwCancelled(e);
+    }
+  }, [handleConnect, activateBrowserWallet]);
 
   const switchToChain = useCallback(
     async (chain: number) => {
       const switchFn = switchChain || switchNetwork;
-      const result = switchFn(chain).catch(throwCancelled)
+      const result = switchFn(chain).catch(throwCancelled);
 
       if (switchChain && !result) {
-        throw new Error('User cancelled')
+        throw new Error("User cancelled");
       }
     },
     [switchNetwork, switchChain]
@@ -93,26 +95,26 @@ export const Web3ActionButton = ({
   useEffect(() => {
     const continueSteps = async () => {
       if (!account || !isWeb3) {
-        setActionText(ButtonSteps.connect)
+        setActionText(ButtonSteps.connect);
         await connectWallet();
         resetText();
-        return
+        return;
       }
 
       if (requiredChain !== chainId) {
-        setActionText(ButtonSteps.switch)
-        await switchToChain(requiredChain)
+        setActionText(ButtonSteps.switch);
+        await switchToChain(requiredChain);
         resetText();
-        return
+        return;
       }
 
-      setActionText(ButtonSteps.action)
+      setActionText(ButtonSteps.action);
       await web3Action();
       finishFlow();
-    }
+    };
 
     if (runningFlow) {
-      continueSteps().catch(finishFlow)
+      continueSteps().catch(finishFlow);
     }
   }, [runningFlow, account, isWeb3, chainId]);
 
