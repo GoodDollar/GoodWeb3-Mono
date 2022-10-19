@@ -21,6 +21,16 @@ const ButtonSteps = {
   action: "Awaiting confirmation..."
 };
 
+const wrapCancelled = async asyncFn => {
+  try {
+    await asyncFn();
+  } catch (e) {
+    if (e.code !== 4001) {
+      throw e
+    }
+  }
+}
+
 const StepIndicator = ({ text }: { text?: string | undefined }) => {
   return (
     <HStack space={2} alignItems="center" flexDirection={"row"}>
@@ -42,22 +52,32 @@ export const Web3ActionButton = ({
   const { isWeb3, account, switchNetwork, chainId, activateBrowserWallet } = useEthers();
   const [loading, setLoading] = useState(false);
   const [actionText, setActionText] = useState("");
-
-  const startFlow = useCallback(() => setLoading(true), [])
+  const timerRef = useRef()
 
   const resetFlow = useCallback(() => {
     setLoading(false);
     setActionText("");
+
+    if (timerRef.current) {
+      clearTimeout(timerRef.current)
+      timerRef.current = null
+    }
   }, []);
+
+  const startFlow = useCallback(() => {
+    if (loading) {
+      return
+    }
+
+    setLoading(true)
+    timerRef.current = setTimeout(resetFlow, 60000)
+  }, [loading])
 
   const connectWallet = useCallback(
     async () => {
-      if (handleConnect) {
-        await handleConnect();
-        return;
-      }
+      const connectFn = handleConnect || activateBrowserWallet;
 
-      await activateBrowserWallet();
+      return wrapCancelled(connectFn)
     },
     [handleConnect, activateBrowserWallet]
   );
@@ -65,29 +85,11 @@ export const Web3ActionButton = ({
   const switchToChain = useCallback(
     async (chain: number) => {
       const switchFn = switchChain || switchNetwork;
-      const isDefaultFn = !switchChain;
-      const result = await switchFn(chain);
 
-      if (!isDefaultFn && !result) {
-        throw new Error('Rejected by user')
-      }
+      return wrapCancelled(() => switchFn(chain))
     },
     [switchNetwork, switchChain]
   );
-
-  useEffect(() => {
-    let activeTimer: number
-
-    if (loading) {
-      activeTimer = setTimeout(resetFlow, 60000);
-    }
-
-    return () => {
-      if (activeTimer) {
-        clearTimeout(activeTimer);
-      }
-    }
-  }, [loading]);
 
   // while button is in loading state (1 min), be reactive to external/manual
   // account/chainId changes and re-try to perform current step action
@@ -110,13 +112,10 @@ export const Web3ActionButton = ({
       resetFlow();
     }
 
-    if (!loading) {
-      return
+    if (loading) {
+      continueSteps().catch(resetFlow)
     }
-
-    continueSteps().catch(resetFlow)
   }, [loading, account, isWeb3, chainId]);
-
 
   return (
     <BaseButton text={loading ? "" : text} onPress={startFlow}>
