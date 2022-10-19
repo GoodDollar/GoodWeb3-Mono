@@ -25,7 +25,7 @@ const wrapCancelled = async asyncFn => {
   try {
     await asyncFn();
   } catch (e) {
-    if (e.code !== 4001) {
+    if (e.code === 4001) {
       throw e
     }
   }
