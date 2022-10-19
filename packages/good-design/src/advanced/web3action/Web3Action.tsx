@@ -94,15 +94,18 @@ export const Web3ActionButton = ({
   useEffect(() => {
     const continueSteps = async () => {
       if (!account || !isWeb3) {
+        setActionText(ButtonSteps.connect)
         await connectWallet();
         return
       }
 
       if (requiredChain !== chainId) {
+        setActionText(ButtonSteps.switch)
         await switchToChain(requiredChain)
         return
       }
 
+      setActionText(ButtonSteps.action)
       await web3Action();
       resetFlow();
     }
