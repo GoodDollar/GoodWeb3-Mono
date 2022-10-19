@@ -1,8 +1,8 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { noop } from "lodash";
-import { BaseButton, BaseButtonProps } from "../../core/buttons";
-import { useEthers, useNetwork } from "@usedapp/core";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { HStack, Spinner, Heading } from "native-base";
+import { useEthers } from "@gooddollar/web3sdk-v2";
+import { isBoolean } from "lodash";
+import { BaseButton, BaseButtonProps } from "../../core/buttons";
 
 export interface Web3ActionProps extends BaseButtonProps {
   /**
@@ -11,9 +11,15 @@ export interface Web3ActionProps extends BaseButtonProps {
   text: string;
   requiredChain: number;
   web3Action: () => Promise<void> | void;
-  switchChain?: () => Promise<any>;
-  handleConnect?: (requiredChain: number) => Promise<any> | void;
+  switchChain?: (requiredChain: number) => Promise<any>;
+  handleConnect?: () => Promise<any> | void;
 }
+
+const ButtonSteps = {
+  connect: "Connecting wallet...",
+  switch: "Switching network...",
+  action: "Awaiting confirmation..."
+};
 
 const StepIndicator = ({ text }: { text?: string | undefined }) => {
   return (
@@ -31,159 +37,90 @@ export const Web3ActionButton = ({
   requiredChain,
   switchChain,
   web3Action,
-  handleConnect = noop
+  handleConnect
 }: Web3ActionProps): JSX.Element => {
-  const _ = require("lodash");
-  // todo: add check on account between RO provider address / actual connected account
-  const { account, switchNetwork, chainId, library, activateBrowserWallet } = useEthers();
-  const { network } = useNetwork();
-  const [isPressed, setIsPressed] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [actionText, setActionText] = useState<string | undefined>();
-  const [baseText, setBaseText] = useState<string | undefined>(text);
+  const { isWeb3, account, switchNetwork, chainId, activateBrowserWallet } = useEthers();
+  const [loading, setLoading] = useState(false);
+  const [actionText, setActionText] = useState("");
 
-  const buttonSequence = [0, 1, 2];
-  const [steps, setSteps] = useState(_(buttonSequence));
+  const startFlow = useCallback(() => setLoading(true), [])
+
+  const resetFlow = useCallback(() => {
+    setLoading(false);
+    setActionText("");
+  }, []);
+
+  const connectWallet = useCallback(
+    async () => {
+      if (handleConnect) {
+        await handleConnect();
+        return;
+      }
+
+      await activateBrowserWallet();
+    },
+    [handleConnect, activateBrowserWallet]
+  );
+
+  const switchToChain = useCallback(
+    async (chain: number) => {
+      const switchFn = switchChain || switchNetwork;
+      const isDefaultFn = !switchChain;
+      const result = await switchFn(chain);
+
+      if (!isDefaultFn && !result) {
+        throw new Error('Rejected by user')
+      }
+    },
+    [switchNetwork, switchChain]
+  );
 
   useEffect(() => {
-    setBaseText(text);
-  }, [text]);
+    let activeTimer: number
 
+    if (loading) {
+      activeTimer = setTimeout(resetFlow, 60000);
+    }
+
+    return () => {
+      if (activeTimer) {
+        clearTimeout(activeTimer);
+      }
+    }
+  }, [loading]);
+
+  // while button is in loading state (1 min), be reactive to external/manual
+  // account/chainId changes and re-try to perform current step action
   useEffect(() => {
-    if (isPressed) {
-      // todo: clear timeout function
-      setTimeout(() => {
-        setIsPressed(false);
-        setBaseText(text);
-        setSteps(_(buttonSequence));
-      }, 60000);
-    }
-  }, [account, chainId, library, isPressed, network]);
-
-  const onPress = useCallback(async () => {
-    setIsPressed(true);
-    setBaseText(undefined);
-    continueSequence();
-  }, [account, chainId, library, steps]);
-
-  const resetButton = () => {
-    setIsLoading(false);
-    setBaseText(text);
-  };
-
-  const handleDefaultConnect = useCallback(async () => {
-    if (!account && handleConnect === noop) {
-      try {
-        await activateBrowserWallet();
-        steps.next();
-        setIsLoading(false);
-      } catch (e: any) {
-        if (e.code === 4001) {
-          // rejected
-          resetButton();
-        }
-        return e;
+    const continueSteps = async () => {
+      if (!account || !isWeb3) {
+        setActionText(ButtonSteps.connect)
+        await connectWallet();
+        return
       }
-    } else if (!account) {
-      // dapp provided connect
-      const dappConnected = await handleConnect(requiredChain);
-    } else {
-      steps.next();
-      setIsLoading(false);
-    }
-  }, [account, chainId, library]);
 
-  const handleSwitch = useCallback(async () => {
-    if (requiredChain === chainId) {
-      steps.next();
-      setIsLoading(false);
-    } else {
-      try {
-        // todo: add dapp provided switch
-        await switchNetwork(requiredChain);
-        steps.next();
-        setIsLoading(false);
-      } catch (e: any) {
-        console.log("e -->", { e });
-        if (e.code === 4001) {
-          resetButton();
-        }
-        return e;
+      if (requiredChain !== chainId) {
+        setActionText(ButtonSteps.switch)
+        await switchToChain(requiredChain)
+        return
       }
-    }
-  }, [chainId, library]);
 
-  const handleAction = useCallback(async () => {
-    try {
+      setActionText(ButtonSteps.action)
       await web3Action();
-    } catch (e: any) {
-      console.log("action failed -- e -->", { e });
-    }
-  }, [account, chainId, library]);
-
-  useEffect(() => {
-    if (!isLoading) {
-      setIsLoading(true);
-      if (!account) {
-        setSteps(_(buttonSequence));
-      } else if (steps.__index__ || steps.__index__ === 0) {
-        switch (steps.__index__) {
-          case 0:
-            steps.next();
-            if (requiredChain === chainId) {
-              steps.next();
-            }
-            break;
-          case 1:
-            if (requiredChain === chainId) {
-              steps.next();
-            }
-            break;
-        }
-      }
-      setIsLoading(false);
+      resetFlow();
     }
 
-    if (isPressed && !isLoading) {
-      continueSequence();
+    if (!loading) {
+      return
     }
-  }, [account, chainId, library, handleAction]);
 
-  const continueSequence = useCallback(async () => {
-    setIsLoading(true);
-    const currentStep = steps.__index__;
-    switch (currentStep) {
-      case 0:
-        if (!account) {
-          setActionText("Connecting wallet...");
-        } else {
-          steps.next();
-          break;
-        }
-        const isNotConnected = await handleDefaultConnect();
-        if (isNotConnected) {
-          setSteps(_(buttonSequence));
-        }
-        break;
-      case 1:
-        setActionText("Switching network...");
-        await handleSwitch();
-        break;
-      case 2:
-        setActionText("awaiting confirmation");
-        await handleAction();
-        resetButton();
-        setSteps(_(buttonSequence));
-        break;
-      default:
-        setSteps(_(buttonSequence));
-        break;
-    }
-  }, [account, chainId, steps]);
+    continueSteps().catch(resetFlow)
+  }, [loading, account, isWeb3, chainId]);
+
 
   return (
-    <BaseButton text={baseText} onPress={onPress}>
-      {isPressed && isLoading && !baseText && <StepIndicator text={actionText} />}
+    <BaseButton text={loading ? "" : text} onPress={startFlow}>
+      {loading && <StepIndicator text={actionText} />}
     </BaseButton>
   );
 };
