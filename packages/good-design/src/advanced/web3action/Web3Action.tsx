@@ -51,7 +51,7 @@ export const Web3ActionButton = ({
   }, []);
 
   const connectWallet = useCallback(
-    () => async () => {
+    async () => {
       if (handleConnect) {
         await handleConnect();
         return;
