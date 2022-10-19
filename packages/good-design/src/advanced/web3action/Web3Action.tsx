@@ -21,13 +21,9 @@ const ButtonSteps = {
   action: "Awaiting confirmation..."
 };
 
-const wrapCancelled = async asyncFn => {
-  try {
-    await asyncFn();
-  } catch (e) {
-    if (e.code === 4001) {
-      throw e
-    }
+const throwCancelled = (e: any) => {
+  if (e.code === 4001) {
+    throw e
   }
 }
 
@@ -50,34 +46,32 @@ export const Web3ActionButton = ({
   handleConnect
 }: Web3ActionProps): JSX.Element => {
   const { isWeb3, account, switchNetwork, chainId, activateBrowserWallet } = useEthers();
-  const [loading, setLoading] = useState(false);
+  const [runningFlow, setRunningFlow] = useState(false);
   const [actionText, setActionText] = useState("");
   const timerRef = useRef()
 
-  const resetFlow = useCallback(() => {
-    setLoading(false);
-    setActionText("");
+  const resetText = useCallback(() => setActionText(""), [])
+
+  const finishFlow = useCallback(() => {
+    resetText();
+    setRunningFlow(false);
 
     if (timerRef.current) {
-      clearTimeout(timerRef.current)
+      clearTimeout(timerRef.current);
       timerRef.current = null
     }
   }, []);
 
   const startFlow = useCallback(() => {
-    if (loading) {
-      return
-    }
-
-    setLoading(true)
-    timerRef.current = setTimeout(resetFlow, 60000)
-  }, [loading])
+    setRunningFlow(true)
+    timerRef.current = setTimeout(finishFlow, 60000)
+  }, [])
 
   const connectWallet = useCallback(
     async () => {
       const connectFn = handleConnect || activateBrowserWallet;
 
-      return wrapCancelled(connectFn)
+      return connectFn().catch(throwCancelled)
     },
     [handleConnect, activateBrowserWallet]
   );
@@ -85,8 +79,11 @@ export const Web3ActionButton = ({
   const switchToChain = useCallback(
     async (chain: number) => {
       const switchFn = switchChain || switchNetwork;
+      const result = switchFn(chain).catch(throwCancelled)
 
-      return wrapCancelled(() => switchFn(chain))
+      if (switchChain && !result) {
+        throw new Error('User cancelled')
+      }
     },
     [switchNetwork, switchChain]
   );
@@ -98,28 +95,30 @@ export const Web3ActionButton = ({
       if (!account || !isWeb3) {
         setActionText(ButtonSteps.connect)
         await connectWallet();
+        resetText();
         return
       }
 
       if (requiredChain !== chainId) {
         setActionText(ButtonSteps.switch)
         await switchToChain(requiredChain)
+        resetText();
         return
       }
 
       setActionText(ButtonSteps.action)
       await web3Action();
-      resetFlow();
+      finishFlow();
     }
 
-    if (loading) {
-      continueSteps().catch(resetFlow)
+    if (runningFlow) {
+      continueSteps().catch(finishFlow)
     }
-  }, [loading, account, isWeb3, chainId]);
+  }, [runningFlow, account, isWeb3, chainId]);
 
   return (
-    <BaseButton text={loading ? "" : text} onPress={startFlow}>
-      {loading && <StepIndicator text={actionText} />}
+    <BaseButton text={actionText ? "" : text} onPress={startFlow}>
+      {actionText && <StepIndicator text={actionText} />}
     </BaseButton>
   );
 };
