@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { HStack, Spinner, Heading } from "native-base";
 import { useEthers } from "@gooddollar/web3sdk-v2";
-import { isBoolean } from "lodash";
 import { BaseButton, BaseButtonProps } from "../../core/buttons";
 
 export interface Web3ActionProps extends BaseButtonProps {
@@ -19,6 +18,12 @@ const ButtonSteps = {
   connect: "Connecting wallet...",
   switch: "Switching network...",
   action: "Awaiting confirmation..."
+};
+
+const throwCancelled = (e: any) => {
+  if (e.code === 4001) {
+    throw e;
+  }
 };
 
 const StepIndicator = ({ text }: { text?: string | undefined }) => {
@@ -40,87 +45,82 @@ export const Web3ActionButton = ({
   handleConnect
 }: Web3ActionProps): JSX.Element => {
   const { isWeb3, account, switchNetwork, chainId, activateBrowserWallet } = useEthers();
-  const [loading, setLoading] = useState(false);
+  const [runningFlow, setRunningFlow] = useState(false);
   const [actionText, setActionText] = useState("");
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const startFlow = useCallback(() => setLoading(true), [])
+  const resetText = useCallback(() => setActionText(""), []);
 
-  const resetFlow = useCallback(() => {
-    setLoading(false);
-    setActionText("");
+  const finishFlow = useCallback(() => {
+    resetText();
+    setRunningFlow(false);
+
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
   }, []);
 
-  const connectWallet = useCallback(
-    async () => {
+  const startFlow = useCallback(() => {
+    setRunningFlow(true);
+    timerRef.current = setTimeout(finishFlow, 60000);
+  }, []);
+
+  const connectWallet = useCallback(async () => {
+    try {
       if (handleConnect) {
         await handleConnect();
-        return;
+      } else {
+        activateBrowserWallet();
       }
-
-      await activateBrowserWallet();
-    },
-    [handleConnect, activateBrowserWallet]
-  );
+    } catch (e: any) {
+      throwCancelled(e);
+    }
+  }, [handleConnect, activateBrowserWallet]);
 
   const switchToChain = useCallback(
     async (chain: number) => {
       const switchFn = switchChain || switchNetwork;
-      const isDefaultFn = !switchChain;
-      const result = await switchFn(chain);
+      const result = switchFn(chain).catch(throwCancelled);
 
-      if (!isDefaultFn && !result) {
-        throw new Error('Rejected by user')
+      if (switchChain && !result) {
+        throw new Error("User cancelled");
       }
     },
     [switchNetwork, switchChain]
   );
-
-  useEffect(() => {
-    let activeTimer: number
-
-    if (loading) {
-      activeTimer = setTimeout(resetFlow, 60000);
-    }
-
-    return () => {
-      if (activeTimer) {
-        clearTimeout(activeTimer);
-      }
-    }
-  }, [loading]);
 
   // while button is in loading state (1 min), be reactive to external/manual
   // account/chainId changes and re-try to perform current step action
   useEffect(() => {
     const continueSteps = async () => {
       if (!account || !isWeb3) {
-        setActionText(ButtonSteps.connect)
+        setActionText(ButtonSteps.connect);
         await connectWallet();
-        return
+        resetText();
+        return;
       }
 
       if (requiredChain !== chainId) {
-        setActionText(ButtonSteps.switch)
-        await switchToChain(requiredChain)
-        return
+        setActionText(ButtonSteps.switch);
+        await switchToChain(requiredChain);
+        resetText();
+        return;
       }
 
-      setActionText(ButtonSteps.action)
+      setActionText(ButtonSteps.action);
       await web3Action();
-      resetFlow();
+      finishFlow();
+    };
+
+    if (runningFlow) {
+      continueSteps().catch(finishFlow);
     }
-
-    if (!loading) {
-      return
-    }
-
-    continueSteps().catch(resetFlow)
-  }, [loading, account, isWeb3, chainId]);
-
+  }, [runningFlow, account, isWeb3, chainId]);
 
   return (
-    <BaseButton text={loading ? "" : text} onPress={startFlow}>
-      {loading && <StepIndicator text={actionText} />}
+    <BaseButton text={actionText ? "" : text} onPress={startFlow}>
+      {actionText && <StepIndicator text={actionText} />}
     </BaseButton>
   );
 };
