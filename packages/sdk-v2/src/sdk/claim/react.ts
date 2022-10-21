@@ -141,7 +141,7 @@ export const useWhitelistSync = () => {
 
       console.log("syncWhitelist", { account, baseEnv, isSynced, fuseResult, otherResult });
 
-      if (isSynced !== "true" && fuseResult?.value && otherResult?.value[0] === false) {
+      if (isSynced !== "true" && fuseResult?.value[0] && otherResult?.value[0] === false) {
         const { backend } = Envs[baseEnv];
 
         console.log("syncingWhitelist", { account, backend, baseEnv });
