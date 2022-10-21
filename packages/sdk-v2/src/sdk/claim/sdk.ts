@@ -1,4 +1,5 @@
-import { BigNumber, Contract, ethers } from "ethers";
+import { BigNumber } from "ethers";
+import { invokeMap, pickBy } from "lodash";
 import { BaseSDK } from "../base/sdk";
 
 const FV_LOGIN_MSG = `Sign this message to login into GoodDollar Unique Identity service.
@@ -23,32 +24,53 @@ export class ClaimSDK extends BaseSDK {
 
   getFVLink() {
     let loginSig: string, fvSig: string, nonce: string, account: string;
+    const { env, provider } = this;
+    const signer = provider.getSigner();
+    const { identityUrl } = env;
+
     const getLoginSig = async () => {
       nonce = (Date.now() / 1000).toFixed(0);
-      return (loginSig = await this.provider.getSigner().signMessage(FV_LOGIN_MSG + nonce));
+      loginSig = await signer.signMessage(FV_LOGIN_MSG + nonce);
+
+      return loginSig;
     };
+
     const getFvSig = async () => {
-      account = await this.provider.getSigner().getAddress();
-      return (fvSig = await this.provider.getSigner().signMessage(FV_IDENTIFIER_MSG2.replace("<account>", account)));
+      account = await signer.getAddress();
+      fvSig = await signer.signMessage(FV_IDENTIFIER_MSG2.replace("<account>", account));
+
+      return fvSig;
     };
+
     const getLink = (firstName: string, callbackUrl?: string, popupMode: boolean = false) => {
-      if (!fvSig) throw new Error("missing login or identifier signature");
-      const params = new URLSearchParams();
-      nonce && params.append("nonce", nonce);
-      firstName && params.append("firstname", firstName);
-      loginSig && params.append("sig", loginSig);
-      params.append("fvsig", fvSig);
-      params.append("account", account);
-      let url = this.env.identityUrl;
+      if (!fvSig) {
+        throw new Error("missing login or identifier signature");
+      }
+
+      const params = new URLSearchParams(
+        pickBy({
+          account,
+          nonce,
+          fvsig: fvSig,
+          firstname: firstName,
+          sg: loginSig
+        })
+      );
+
       if (popupMode === false && !callbackUrl) {
         throw new Error("redirect url is missing for redirect mode");
       }
+
       if (callbackUrl) {
         params.append(popupMode ? "cbu" : "rdu", callbackUrl);
       }
-      url += "?" + params.toString();
-      return url;
+
+      const url = new URL(identityUrl);
+
+      url.search = params.toString();
+      return url.href;
     };
+
     return { getLoginSig, getFvSig, getLink };
   }
 
@@ -59,17 +81,27 @@ export class ClaimSDK extends BaseSDK {
 
   async checkEntitlement(address?: string): Promise<BigNumber> {
     const ubi = this.getContract("UBIScheme");
-    const result = await (address ? ubi["checkEntitlement(address)"](address) : ubi["checkEntitlement()"]()).catch(e =>
-      BigNumber.from("0")
-    );
-    return result;
+
+    try {
+      if (address) {
+        return await ubi["checkEntitlement(address)"](address);
+      }
+
+      return await ubi["checkEntitlement()"]();
+    } catch {
+      return BigNumber.from("0");
+    }
   }
 
   async getNextClaimTime() {
     const DAY = 1000 * 60 * 60 * 24;
     const ubi = this.getContract("UBIScheme");
-    const [periodStart, currentDay] = await Promise.all([ubi.periodStart(), ubi.currentDay()]);
-    let startRef = new Date(periodStart.toNumber() * 1000 + currentDay.toNumber() * DAY);
+    const [periodStart, currentDay] = await Promise.all([ubi.periodStart(), ubi.currentDay()]).then(values =>
+      invokeMap(values, "toNumber")
+    );
+
+    let startRef = new Date(periodStart * 1000 + currentDay * DAY);
+
     if (startRef < new Date()) {
       startRef = new Date(periodStart.toNumber() * 1000 + (currentDay.toNumber() + 1) * DAY);
     }

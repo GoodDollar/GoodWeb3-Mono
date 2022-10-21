@@ -1,13 +1,11 @@
-import { Web3Provider } from "@ethersproject/providers";
 import { IIdentity } from "@gooddollar/goodprotocol/types";
 import { UBIScheme } from "@gooddollar/goodprotocol/types/UBIScheme";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { ChainId, QueryParams, useCalls, useContractFunction } from "@usedapp/core";
+import { ChainId, QueryParams, useCalls, useContractFunction, useEthers } from "@usedapp/core";
 import { BigNumber } from "ethers";
 import { first } from "lodash";
 import { useEffect, useMemo, useState } from "react";
 import usePromise from "react-use-promise";
-import useEthers from "../../hooks/useEthers";
 
 import { EnvKey } from "../base/sdk";
 import { ClaimSDK } from "./sdk";
@@ -17,7 +15,7 @@ import { useGetContract, useGetEnvChainId, useReadOnlySDK, useSDK } from "../bas
 import { Envs, SupportedChains } from "../constants";
 
 export const useFVLink = () => {
-  const { chainId, defaultEnv } = useGetEnvChainId();
+  const { chainId } = useGetEnvChainId();
   const sdk = useSDK(false, "claim", chainId) as ClaimSDK;
 
   return useMemo(() => sdk.getFVLink(), [sdk]);
@@ -36,30 +34,19 @@ export const useIsAddressVerified = (address: string, env?: EnvKey) => {
 export const useClaim = (refresh: QueryParams["refresh"] = "never") => {
   const refreshOrNever = useRefreshOrNever(refresh);
   const DAY = 1000 * 60 * 60 * 24;
-  const { account, library } = useEthers();
-  const [connectedAccount, setConnectedAccount] = useState<string | undefined>(undefined);
+  const { account } = useEthers();
   const { chainId, defaultEnv } = useGetEnvChainId();
 
   const ubi = useGetContract("UBIScheme", true, "claim", defaultEnv, chainId) as UBIScheme;
   const identity = useGetContract("Identity", true, "claim", defaultEnv, chainId) as IIdentity;
   const claimCall = useContractFunction(ubi, "claim");
 
-  useEffect(() => {
-    // web3provider indicates connected account
-    // JsonRpcProvider is the read-only provider, which also has an address eligible as signer
-    // make sure the account to check against is actually the connected wallet
-    if (library instanceof Web3Provider) {
-      setConnectedAccount(account);
-    }
-  }, [account, library]);
-
-  // const [entitlement] = usePromise(ubi["checkEntitlement()"]());
   const results = useCalls(
     [
       {
         contract: identity,
         method: "isWhitelisted",
-        args: [connectedAccount]
+        args: [account]
       },
       {
         contract: ubi,
@@ -74,7 +61,7 @@ export const useClaim = (refresh: QueryParams["refresh"] = "never") => {
       {
         contract: ubi,
         method: "checkEntitlement(address)",
-        args: [connectedAccount]
+        args: [account]
       }
     ],
     { refresh: refreshOrNever, chainId }
