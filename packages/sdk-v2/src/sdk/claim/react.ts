@@ -20,8 +20,6 @@ export const useFVLink = () => {
   const { chainId, defaultEnv } = useGetEnvChainId();
   const sdk = useSDK(false, "claim", chainId) as ClaimSDK;
 
-  console.log("useFvLink", { chainId, defaultEnv, sdk });
-
   return useMemo(() => sdk.getFVLink(), [sdk]);
 };
 
