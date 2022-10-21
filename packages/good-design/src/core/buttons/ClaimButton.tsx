@@ -3,25 +3,24 @@ import { useClaim } from "@gooddollar/web3sdk-v2";
 import { View, IModalProps } from "native-base";
 import { ButtonAction } from "./ActionButton";
 import { useQueryParam } from "../../hooks";
-import { styles } from "./ClaimButton.theme";
+import { ClaimButtonStyles } from "./ClaimButton.theme";
 import { withTheme } from "../../theme/hoc/withTheme";
-import { FVModal } from "../modals/FVModal";
-
+import FvModalWithTheme from "../modals/FVModal";
 
 interface FVFlowProps {
   firstName: string;
   method: "popup" | "redirect";
   styles?: any;
+  refresh?: "everyBlock" | "never" | number | undefined;
 }
 
 export type FVModalProps = IModalProps & FVFlowProps;
 
-export function ClaimButton({ firstName, method, styles }: FVFlowProps) {
+export function ClaimButton({ firstName, method, styles, refresh }: FVFlowProps) {
   const [showModal, setShowModal] = useState(false);
-  const [refresh, setRefresh] = useState(false);
-  const { isWhitelisted, claimAmount, claimTime, claimCall } = useClaim(refresh ? "everyBlock" : "never");
+  const { isWhitelisted, claimAmount, claimTime, claimCall } = useClaim(refresh);
   const { status: claimStatus } = claimCall?.state || {};
-  const isVerified = useQueryParam('verified')
+  const isVerified = useQueryParam("verified");
   const handleClose = useCallback(() => setShowModal(false), [setShowModal]);
 
   const handleClaim = useCallback(async () => {
@@ -44,22 +43,24 @@ export function ClaimButton({ firstName, method, styles }: FVFlowProps) {
     return `Claim at: ${claimTime}`;
   }, [isWhitelisted, claimAmount, claimTime]);
 
-  useEffect(() => {
-    setRefresh(!isWhitelisted || ["Mining", "PendingSignature"].includes(claimStatus));
-  }, [isWhitelisted, claimStatus]);
+  // this useEffect doesn't make sense. If is whiteListed is undefined on initial load it will never refresh the useCall in useClaim
+  // useEffect(() => {
+  //   setRefresh(!isWhitelisted || ["Mining", "PendingSignature"].includes(claimStatus));
+  // }, [isWhitelisted, claimStatus]);
 
   useEffect(() => {
-    console.log('isVerified :', isVerified)
-  }, [isVerified])
+    console.log("isVerified :", isVerified);
+  }, [isVerified]);
 
   return (
     <View style={styles.wrapper}>
       <View flex={1} alignItems="center" justifyContent="center">
-        <FVModal method={method} isOpen={showModal} onClose={handleClose} firstName={firstName} />
+        <FvModalWithTheme method={method} isOpen={showModal} onClose={handleClose} firstName={firstName} />
       </View>
       <ButtonAction text={buttonTitle} onPress={handleClaim} />
     </View>
   );
 }
 
-export default withTheme(styles)(ClaimButton);
+const ClaimButtonWithTheme = withTheme(ClaimButtonStyles)(ClaimButton);
+export default ClaimButtonWithTheme;

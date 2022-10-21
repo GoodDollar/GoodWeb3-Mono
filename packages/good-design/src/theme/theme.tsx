@@ -1,13 +1,15 @@
-import { extendTheme } from 'native-base'
+import { extendTheme } from "native-base";
 
-import { theme as ClaimButton } from '../core/buttons/ClaimButton.theme';
+import { ClaimButtonTheme as ClaimButton } from "../core/buttons/ClaimButton.theme";
+import { BaseButtonTheme as BaseButton } from "../core/buttons/BaseButton";
 
 export const theme = extendTheme({
   config: {
-    initialColorMode: "dark",
+    initialColorMode: "dark"
   },
   components: {
     ClaimButton,
+    BaseButton
   }
 });
 

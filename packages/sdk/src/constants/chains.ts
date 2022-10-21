@@ -1,7 +1,8 @@
 /* List of supported chains for this application. */
 export enum SupportedChainId {
   MAINNET = 1,
-  FUSE = 122
+  FUSE = 122,
+  CELO = 42220
 }
 
 export enum DAO_NETWORK {
