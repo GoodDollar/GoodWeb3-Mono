@@ -1,7 +1,7 @@
 import { Amplitude, Identify } from '@amplitude/react-native'
 import { isFunction, noop } from 'lodash'
 
-class AmplitudeWrapper {
+class Wrapper {
   constructor(instance, identityClass) {
     const initialize = (apiKey, _, options, onReady) => {
       const { onError = noop } = options || {}
@@ -45,4 +45,4 @@ class AmplitudeWrapper {
   }
 }
 
-export default new AmplitudeWrapper(Amplitude.getInstance(), Identify)
+export default new Wrapper(Amplitude.getInstance(), Identify)

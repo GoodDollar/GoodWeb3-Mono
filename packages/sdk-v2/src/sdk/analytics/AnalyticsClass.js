@@ -237,14 +237,7 @@ export class AnalyticsClass {
     }
 
     return new Promise(resolve => {
-      const onError = err => {
-        this.logger.warn('Amplitude init error', err)
-        resolve(false)
-      }
-      const onSuccess = () => {
-        this.logger.debug('Amplitude init success')
-        resolve(true)
-      }
+      const [onError, onSuccess] = [false, true].map(state => () => resolve(state))
 
       amplitude.init(key, null, { includeUtm: true, onError }, onSuccess)
     })
