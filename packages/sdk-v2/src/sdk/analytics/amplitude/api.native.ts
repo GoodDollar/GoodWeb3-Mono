@@ -1,24 +1,9 @@
-// @flow
-import * as sentry from '@sentry/react-native'
 import { Amplitude, Identify } from '@amplitude/react-native'
-import analytics from '@react-native-firebase/analytics'
-import { assign, isFunction, noop } from 'lodash'
-
-class GoogleWrapper {
-  constructor(analytics) {
-    assign(this, { analytics })
-  }
-
-  logEvent(event: string, data: any = {}) {
-    const { analytics } = this
-
-    analytics.logEvent(event, data)
-  }
-}
+import { isFunction, noop } from 'lodash'
 
 class AmplitudeWrapper {
   constructor(instance, identityClass) {
-    const initialize = (apiKey, userId, options, onReady) => {
+    const initialize = (apiKey, _, options, onReady) => {
       const { onError = noop } = options || {}
       const onSuccess = onReady || noop
 
@@ -36,8 +21,8 @@ class AmplitudeWrapper {
     }
 
     return new Proxy(this, {
-      get: (target, property) => {
-        let propertyValue
+      get: (_, property) => {
+        let propertyValue: any
 
         switch (property) {
           case 'Identify':
@@ -60,9 +45,4 @@ class AmplitudeWrapper {
   }
 }
 
-export default () => {
-  const amplitude = new AmplitudeWrapper(Amplitude.getInstance(), Identify)
-  const googleAnalytics = new GoogleWrapper(analytics())
-
-  return { sentry, amplitude, googleAnalytics }
-}
+export default new AmplitudeWrapper(Amplitude.getInstance(), Identify)
