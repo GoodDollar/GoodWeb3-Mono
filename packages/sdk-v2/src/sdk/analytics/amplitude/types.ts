@@ -1,6 +1,6 @@
 import { IAbstractConfig } from "../types";
 
 export interface IAmplitudeConfig extends IAbstractConfig {
-  apiKey: string;
+  apiKey?: string;
   errorEvent?: string;
 }

@@ -37,11 +37,12 @@ export class Amplitude implements IAbstractProvider, IAnalyticsProvider, IMonito
     return initialized
   }
 
-  identify(email: string, identifier?: string | number): void {
+  identify(email: string, identifier?: string | number, props?: object): void {
     const id: string = String(identifier || email)
+    const extra = props || {}
 
     api.setUserId(id)
-    api.setUserProperties({ email })
+    api.setUserProperties({ email, ...extra })
   }
 
   send(event: string, data?: object): void {

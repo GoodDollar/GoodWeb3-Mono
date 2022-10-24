@@ -31,13 +31,14 @@ export class Sentry implements IAbstractProvider, IMonitoringProvider {
     return true;
   }
 
-  identify(email: string, identifier?: string | number): void {
+  identify(email: string, identifier?: string | number, props?: object): void {
     const id: string = String(identifier || email)
+    const extra = props || {}
 
     api.configureScope((scope: any) => {
       const user = get(scope, '_user', {})
 
-      scope.setUser({ ...user, id, email })
+      scope.setUser({ ...user, id, email, ...extra })
     })
   }
 

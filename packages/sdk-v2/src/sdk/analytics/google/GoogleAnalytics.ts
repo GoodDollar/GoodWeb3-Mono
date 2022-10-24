@@ -1,6 +1,6 @@
 import { isNumber, isString, isUndefined, negate, pickBy, remove, values } from 'lodash'
 
-import { IAbstractProvider, IAnalyticsProvider } from '../types';
+import { IAbstractProvider, IAnalyticsProvider, IAppProps } from '../types';
 import api from './api'
 import { IGoogleConfig } from './types';
 
@@ -13,7 +13,7 @@ export class GoogleAnalytics implements IAbstractProvider, IAnalyticsProvider {
     return !!api
   }
 
-  identify(email: string, identifier?: string | number): void {}
+  identify(email: string, identifier?: string | number, props?: object): void {}
 
   send(event: string, data?: object): void {
     const _values = values(data || {});

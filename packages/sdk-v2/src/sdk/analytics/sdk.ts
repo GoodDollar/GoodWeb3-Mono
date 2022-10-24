@@ -1,0 +1,90 @@
+import { IAbstractConfig, IAbstractProvider, IAnalyticsProvider, IAppProps, IMonitoringProvider, IProvider, ProviderType, supportsAnalytics, supportsMonitoring } from './types'
+import { Amplitude, IAmplitudeConfig } from './amplitude';
+import { GoogleAnalytics, IGoogleConfig } from './google';
+import { Sentry, ISentryConfig } from './sentry';
+
+export interface IAnalyticsConfig {
+  [ProviderType.Amplitude]?: IAmplitudeConfig;
+  [ProviderType.GoogleAnalytics]?: IGoogleConfig;
+  [ProviderType.Sentry]?: ISentryConfig;
+}
+
+type ProviderFactories = { 
+  [key in ProviderType]: new (config: IAbstractConfig) => IProvider 
+}
+
+export class Analytics implements IAbstractProvider, IAnalyticsProvider, IMonitoringProvider {
+  static readonly factories: ProviderFactories = {
+    [ProviderType.Amplitude]: Amplitude,
+    [ProviderType.GoogleAnalytics]: GoogleAnalytics,
+    [ProviderType.Sentry]: Sentry
+  }
+
+  private providers: IProvider[] = [];
+  private initialized = false;
+
+  constructor(
+    private config: IAnalyticsConfig
+  ) {}
+
+  async initialize(appProps: IAppProps): Promise<boolean> {
+    const factories = Object.entries(Analytics.factories);
+
+    if (this.initialized) {
+      return true
+    }
+
+    await Promise.all(factories.map(async ([providerType, ProviderClass]) => {
+      const config = this.config[providerType];
+      const provider = new ProviderClass(config);
+      const initialized = await provider.initialize!(appProps);
+
+      if (!initialized) {
+        return
+      }
+
+      this.providers.push(provider);
+    }))
+
+    this.initialized = true
+    return true
+  }
+
+  identify(email: string, identifier: string | number, props?: object): void {
+    if (!this.initialized) {
+      return
+    }
+
+    for (const provider of this.providers) {
+      provider.identify!(email, identifier, props);
+    }
+  }
+
+  send(event: string, data?: object): void {
+    if (!this.initialized) {
+      return
+    }
+
+    for (const provider of this.providers) {
+      if (!supportsAnalytics(provider)) {
+        return
+      }
+
+      provider.send(event, data);
+    }
+  }
+
+  capture(exception: Error, fingerprint?: string[], tags?: object, extra?: object): void {
+    if (!this.initialized) {
+      return
+    }
+
+    for (const provider of this.providers) {
+      if (!supportsMonitoring(provider)) {
+        return
+      }
+
+      provider.capture(exception, fingerprint, tags, extra);
+    }
+  }
+}
