@@ -7,7 +7,7 @@ import { TouchableOpacity } from "react-native";
 import { colors } from "../../constants";
 import { ButtonAction, FVModalProps } from "../buttons";
 import { withTheme } from "../../theme/hoc/withTheme";
-import { ClaimButtonStyles } from "../buttons/ClaimButton.theme";
+// import { ClaimButtonStyles } from "../buttons/ClaimButton.theme"; // use props
 
 // const cross = require("../../assets/svg/cross.svg") as string;
 const cross = (
@@ -79,5 +79,6 @@ export function FVModal({ firstName, method, styles, onClose = noop, ...props }:
   );
 }
 
-const FvModalWithTheme = withTheme(ClaimButtonStyles)(FVModal);
+//
+const FvModalWithTheme = withTheme()(FVModal);
 export default FvModalWithTheme;

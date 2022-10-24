@@ -3,7 +3,7 @@ import { useClaim } from "@gooddollar/web3sdk-v2";
 import { View, IModalProps } from "native-base";
 import { ButtonAction } from "./ActionButton";
 import { useQueryParam } from "../../hooks";
-import { ClaimButtonStyles } from "./ClaimButton.theme";
+// import { ClaimButtonStyles } from "./ClaimButton.theme";
 import { withTheme } from "../../theme/hoc/withTheme";
 import FvModalWithTheme from "../modals/FVModal";
 
@@ -62,5 +62,5 @@ export function ClaimButton({ firstName, method, styles, refresh }: FVFlowProps)
   );
 }
 
-const ClaimButtonWithTheme = withTheme(ClaimButtonStyles)(ClaimButton);
+const ClaimButtonWithTheme = withTheme()(ClaimButton);
 export default ClaimButtonWithTheme;
