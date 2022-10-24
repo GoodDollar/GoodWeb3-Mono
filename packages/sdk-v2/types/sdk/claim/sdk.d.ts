@@ -1,4 +1,4 @@
-import { BigNumber, ethers } from "ethers";
+import { BigNumber } from "ethers";
 import { BaseSDK } from "../base/sdk";
 export declare class ClaimSDK extends BaseSDK {
     generateFVLink(firstName: string, callbackUrl?: string, popupMode?: boolean): Promise<string>;
@@ -10,6 +10,6 @@ export declare class ClaimSDK extends BaseSDK {
     isAddressVerified(address: string): Promise<boolean>;
     checkEntitlement(address?: string): Promise<BigNumber>;
     getNextClaimTime(): Promise<Date>;
-    claim(): Promise<ethers.ContractTransaction>;
+    claim(): Promise<import("ethers").ContractTransaction>;
 }
 //# sourceMappingURL=sdk.d.ts.map
