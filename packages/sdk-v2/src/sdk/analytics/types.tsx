@@ -1,9 +1,10 @@
 import { isFunction } from 'lodash'
 
-export interface IAppProps {
+export type IAppProps = Record<string, string> & {
   env: string;
   version: string;
   osVersion: string;
+  $once?: Record<string, string>
 }
 
 export interface IAbstractConfig {
@@ -11,7 +12,7 @@ export interface IAbstractConfig {
 }
 
 export interface IAbstractProvider {
-  initialize(): Promise<boolean>;
+  initialize(appProps: IAppProps): Promise<boolean>;
   identify(email: string, identifier: string | number): void;
 }
 
@@ -23,19 +24,12 @@ export interface IMonitoringProvider {
   capture(exception: Error, fingerprint?: string[], tags?: object, extra?: object): void;
 }
 
-export abstract class AbstractProvider implements IAbstractProvider {
-  constructor(
-    protected appProps: IAppProps
-  ) {}
+export interface IProvider extends Partial<IAnalyticsProvider>, Partial<IMonitoringProvider> {};
 
-  abstract initialize(): Promise<boolean>;
-  abstract identify(email: string, identifier: string | number): void;
-}
-
-export function supportsAnalytics(provider: IAnalyticsProvider | IMonitoringProvider): provider is IAnalyticsProvider {
+export function supportsAnalytics(provider: IProvider): provider is IAnalyticsProvider {
   return 'send' in provider && isFunction(provider['send']);
 }
 
-export function supportsMonitoring(provider: IAnalyticsProvider | IMonitoringProvider): provider is IMonitoringProvider {
+export function supportsMonitoring(provider: IProvider): provider is IMonitoringProvider {
   return 'capture' in provider && isFunction(provider['capture']);
 }
