@@ -1,5 +1,5 @@
-import { BigNumber, ethers } from "ethers";
 import { QueryParams } from "@usedapp/core";
+import { BigNumber } from "ethers";
 import { EnvKey } from "../base/sdk";
 export declare const useFVLink: () => {
     getLoginSig: () => Promise<string>;
@@ -12,11 +12,11 @@ export declare const useClaim: (refresh?: QueryParams["refresh"]) => {
     claimAmount: BigNumber;
     claimTime: Date;
     claimCall: {
-        send: (overrides?: (ethers.Overrides & {
+        send: (overrides?: (import("ethers").Overrides & {
             from?: string | Promise<string> | undefined;
-        }) | undefined) => Promise<ethers.providers.TransactionReceipt | undefined>;
+        }) | undefined) => Promise<import("@ethersproject/abstract-provider").TransactionReceipt | undefined>;
         state: import("@usedapp/core").TransactionStatus;
-        events: ethers.utils.LogDescription[] | undefined;
+        events: import("@ethersproject/abi").LogDescription[] | undefined;
         resetState: () => void;
     };
 };
