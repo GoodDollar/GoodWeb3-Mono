@@ -1,18 +1,17 @@
-
-import { StyleSheet } from "react-native";
-import { Button, IButtonProps } from "native-base";
 import React from "react";
+import { Button, IButtonProps } from "native-base";
+import { withTheme } from "../../theme";
 
 interface IBasicButtonProps extends IButtonProps {
 	text: string
 }
 
-export const ButtonAction = ({ text, ...props }: IBasicButtonProps) => {
-	return <Button { ...props } style={styles.buttonAction}>{text}</Button>
-}
+const ButtonAction = ({ text, ...props }: IBasicButtonProps) => (
+	<Button {...props}>{text}</Button>
+)
 
-const styles = StyleSheet.create({
-	buttonAction: {
+export const theme = {
+	baseStyle: {
 		alignItems: "center",
 		justifyContent: "center",
 		minWidth: "100%",
@@ -32,4 +31,6 @@ const styles = StyleSheet.create({
 		fontWeight: 900,
 		fontSize: 20,
 	}
-})
+}
+
+export default withTheme()(ButtonAction)

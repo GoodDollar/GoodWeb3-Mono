@@ -1,6 +1,3 @@
-export { default as BaseButtonWithTheme } from './BaseButton';
-export { default as ClaimButtonWithTheme } from './ClaimButton';
-export * from './ActionButton';
-export * from './BaseButton';
-export * from './ClaimButton.theme';
-export * from './ClaimButton';
+export { default as ActionButton } from './ActionButton';
+export { default as BaseButton } from './BaseButton';
+export { default as ClaimButton } from './ClaimButton';
