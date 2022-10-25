@@ -3,9 +3,10 @@ import React, { useCallback, useState } from "react";
 import { Modal, Spinner, Text, View, Pressable } from "native-base";
 import { useFVLink } from "@gooddollar/web3sdk-v2";
 
-import CrossIcon from "./cross";
-import { openLink } from "../utils";
-import { ButtonAction, FVModalProps } from "../buttons";
+import CrossIcon from "./cross.web";
+import { openLink } from "../utils/linking";
+import ButtonAction from "../buttons/ActionButton";
+import { FVModalProps } from "../buttons/ClaimButton";
 
 function FVModal({ firstName, method, onClose = noop, ...props }: FVModalProps) {
   const fvlink = useFVLink();
@@ -77,12 +78,7 @@ function FVModal({ firstName, method, onClose = noop, ...props }: FVModalProps) 
         {loading ? (
           <Spinner />
         ) : (
-          <View
-            justifyContent="space-between"
-            width="100%"
-            flexDirection="row"
-            marginTop={20}
-          >
+          <View justifyContent="space-between" width="100%" flexDirection="row" marginTop={20}>
             <ButtonAction text={"Verify Uniqueness"} onPress={verify} />
           </View>
         )}

@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { useClaim } from "@gooddollar/web3sdk-v2";
-import { View } from "native-base";
+import { View, IModalProps } from "native-base";
 
-import { useQueryParam } from "../../hooks";
+import { useQueryParam } from "../../hooks/useQueryParam";
 import FvModal from "../modals/FVModal";
 import { withTheme } from "../../theme/hoc/withTheme";
+import { withThemingTools } from "../../theme/utils/themingTools";
 import ActionButton from "./ActionButton";
 
 interface FVFlowProps {
@@ -13,6 +14,8 @@ interface FVFlowProps {
   styles?: any;
   refresh?: "everyBlock" | "never" | number | undefined;
 }
+
+export type FVModalProps = IModalProps & FVFlowProps;
 
 function ClaimButton({ firstName, method, refresh, ...props }: FVFlowProps) {
   const [showModal, setShowModal] = useState(false);
@@ -55,9 +58,12 @@ function ClaimButton({ firstName, method, refresh, ...props }: FVFlowProps) {
 }
 
 export const theme = {
-  baseStyle: {
-    width: "100%"
-  }
-}
+  baseStyle: withThemingTools(({ colorModeValue }: { colorModeValue: any }) => ({
+    bg: colorModeValue("coolGray.50", "coolGray.900"),
+    minHeight: "100vh",
+    justifyContent: "center",
+    px: 4
+  }))
+};
 
 export default withTheme()(ClaimButton);

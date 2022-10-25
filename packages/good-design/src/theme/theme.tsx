@@ -8,12 +8,26 @@ export const theme = extendTheme({
     initialColorMode: "dark"
   },
   colors: {
-    text1: '#0D182D',
-    heading: '#42454A'
+    text1: "#0D182D",
+    heading: "#42454A",
+    gdBlueExample: {
+      50: "#00b0ff",
+      100: "#0387C3"
+    }
+  },
+  fontConfig: {
+    GDFontExample: {
+      100: {
+        cursive: "'Brush Script MT', cursive"
+      }
+    }
+  },
+  fonts: {
+    buttonText: "GDFontExample" // to be used as ie. fontFamily={buttonText} weight={100} fontStyle="cursive"
   },
   components: {
     ...layout,
-    ...buttons,
+    ...buttons
   }
 });
 
