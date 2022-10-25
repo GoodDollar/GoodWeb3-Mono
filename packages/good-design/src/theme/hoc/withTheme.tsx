@@ -1,5 +1,5 @@
 import React from "react";
-import { useThemeProps, useTheme, useColorMode } from "native-base";
+import { useThemeProps } from "native-base";
 
 export const withTheme = () => (Component: Function): Function => {
   const { name } = Component
