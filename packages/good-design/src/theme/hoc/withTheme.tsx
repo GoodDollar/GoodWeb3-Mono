@@ -5,8 +5,6 @@ export const withTheme = () => (Component: Function): Function => {
   const { name } = Component
 
   const Wrapped = function({ children, ...props }: any) {
-    const theme = useTheme()
-    const { colorMode } = useColorMode()
     const themeProps = useThemeProps(name, props)
 
     return <Component {...themeProps}>{children}</Component>
