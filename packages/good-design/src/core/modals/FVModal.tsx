@@ -3,7 +3,7 @@ import React, { useCallback, useState } from "react";
 import { Modal, Spinner, Text, View, Pressable } from "native-base";
 import { useFVLink } from "@gooddollar/web3sdk-v2";
 
-import CrossIcon from "./cross.web";
+import CrossIcon from "./cross";
 import { openLink } from "../utils/linking";
 import ButtonAction from "../buttons/ActionButton";
 import { FVModalProps } from "../buttons/ClaimButton";

@@ -67,7 +67,7 @@ export const Web3ActionButton = ({
   }, []);
 
   const connectWallet = useCallback(async () => {
-    const connectFn = handleConnect || activateBrowserWallet;
+    const connectFn = handleConnect || (activateBrowserWallet as any);
 
     return await connectFn().catch(throwCancelled);
   }, [handleConnect, activateBrowserWallet]);
