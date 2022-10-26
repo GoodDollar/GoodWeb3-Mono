@@ -1,29 +1,17 @@
-import React, { useMemo } from "react";
-import { useThemeProps, useTheme, useColorMode } from "native-base";
+import React from "react";
+import { useThemeProps } from "native-base";
 
-import { createColorModeValueTool } from '../utils/themingTools'
+export const withTheme =
+  () =>
+  (Component: Function): Function => {
+    const { name } = Component;
 
-export const withTheme = (stylesFactory?: Function) => (Component: Function): Function => {
-  const { name } = Component
+    const Wrapped = function ({ children, ...props }: JSX.Element & { children: any }) {
+      const themeProps = useThemeProps(name, props);
 
-  const Wrapped = function({ children, ...props }: any) {
-    const theme = useTheme()
-    const { colorMode } = useColorMode()
-    const newProps = useThemeProps(name, props)
+      return <Component {...themeProps}>{children}</Component>;
+    };
 
-    const styles = useMemo(() => {
-      if (!stylesFactory) {
-        return {};
-      }
-
-      const colorModeValue = createColorModeValueTool(colorMode as string)
-
-      return stylesFactory({ theme, colorMode, colorModeValue, props: newProps })
-    }, [theme, colorMode, newProps])
-
-    return <Component {...newProps} styles={styles}>{children}</Component>
-  }
-
-  Wrapped.displayName = `withTheme(${name})`
-  return Wrapped
-}
+    Wrapped.displayName = `withTheme(${name})`;
+    return Wrapped;
+  };

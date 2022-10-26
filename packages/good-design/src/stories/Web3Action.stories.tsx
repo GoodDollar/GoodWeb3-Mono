@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback, useState } from "react";
-import { Web3ActionButton } from "../advanced/web3action";
+import { Web3ActionButton } from "../advanced/web3action/Web3Action";
 import { Mainnet, DAppProvider, Config, Goerli, useEthers } from "@usedapp/core";
 import { useClaim, Fuse, Celo, Web3Provider } from "@gooddollar/web3sdk-v2";
 import { getDefaultProvider, ethers } from "ethers";
@@ -66,7 +66,7 @@ const Web3Action = () => {
     }
   }, [claimAmount]);
 
-  return <Web3ActionButton text={claimText} requiredChain={122} web3Action={handleClaim} />;
+  return <Web3ActionButton onPress={() => {}} text={claimText} requiredChain={122} web3Action={handleClaim} />;
 };
 
 export default {

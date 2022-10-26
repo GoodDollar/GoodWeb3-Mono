@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { HStack, Spinner, Heading } from "native-base";
 import { useEthers } from "@gooddollar/web3sdk-v2";
-import { BaseButton, BaseButtonProps } from "../../core/buttons";
+import BaseButton, { BaseButtonProps } from "../../core/buttons/BaseButton";
 
 export interface Web3ActionProps extends BaseButtonProps {
   /**
@@ -67,21 +67,15 @@ export const Web3ActionButton = ({
   }, []);
 
   const connectWallet = useCallback(async () => {
-    try {
-      if (handleConnect) {
-        await handleConnect();
-      } else {
-        activateBrowserWallet();
-      }
-    } catch (e: any) {
-      throwCancelled(e);
-    }
+    const connectFn = handleConnect || activateBrowserWallet;
+
+    return await connectFn().catch(throwCancelled);
   }, [handleConnect, activateBrowserWallet]);
 
   const switchToChain = useCallback(
     async (chain: number) => {
       const switchFn = switchChain || switchNetwork;
-      const result = switchFn(chain).catch(throwCancelled);
+      const result = await switchFn(chain).catch(throwCancelled);
 
       if (switchChain && !result) {
         throw new Error("User cancelled");
@@ -97,14 +91,12 @@ export const Web3ActionButton = ({
       if (!account || !isWeb3) {
         setActionText(ButtonSteps.connect);
         await connectWallet();
-        resetText();
         return;
       }
 
       if (requiredChain !== chainId) {
         setActionText(ButtonSteps.switch);
         await switchToChain(requiredChain);
-        resetText();
         return;
       }
 

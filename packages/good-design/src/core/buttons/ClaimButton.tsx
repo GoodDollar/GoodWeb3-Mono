@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { useClaim } from "@gooddollar/web3sdk-v2";
 import { View, IModalProps } from "native-base";
-import { ButtonAction } from "./ActionButton";
-import { useQueryParam } from "../../hooks";
-import { ClaimButtonStyles } from "./ClaimButton.theme";
+
+import { useQueryParam } from "../../hooks/useQueryParam";
+import FvModal from "../modals/FVModal";
 import { withTheme } from "../../theme/hoc/withTheme";
-import FvModalWithTheme from "../modals/FVModal";
+import { withThemingTools } from "../../theme/utils/themingTools";
+import ActionButton from "./ActionButton";
 
 interface FVFlowProps {
   firstName: string;
@@ -16,10 +17,9 @@ interface FVFlowProps {
 
 export type FVModalProps = IModalProps & FVFlowProps;
 
-export function ClaimButton({ firstName, method, styles, refresh }: FVFlowProps) {
+function ClaimButton({ firstName, method, refresh, ...props }: FVFlowProps) {
   const [showModal, setShowModal] = useState(false);
   const { isWhitelisted, claimAmount, claimTime, claimCall } = useClaim(refresh);
-  const { status: claimStatus } = claimCall?.state || {};
   const isVerified = useQueryParam("verified");
   const handleClose = useCallback(() => setShowModal(false), [setShowModal]);
 
@@ -43,24 +43,27 @@ export function ClaimButton({ firstName, method, styles, refresh }: FVFlowProps)
     return `Claim at: ${claimTime}`;
   }, [isWhitelisted, claimAmount, claimTime]);
 
-  // this useEffect doesn't make sense. If is whiteListed is undefined on initial load it will never refresh the useCall in useClaim
-  // useEffect(() => {
-  //   setRefresh(!isWhitelisted || ["Mining", "PendingSignature"].includes(claimStatus));
-  // }, [isWhitelisted, claimStatus]);
-
   useEffect(() => {
     console.log("isVerified :", isVerified);
   }, [isVerified]);
 
   return (
-    <View style={styles.wrapper}>
+    <View {...props}>
       <View flex={1} alignItems="center" justifyContent="center">
-        <FvModalWithTheme method={method} isOpen={showModal} onClose={handleClose} firstName={firstName} />
+        <FvModal method={method} isOpen={showModal} onClose={handleClose} firstName={firstName} />
       </View>
-      <ButtonAction text={buttonTitle} onPress={handleClaim} />
+      <ActionButton text={buttonTitle} onPress={handleClaim} />
     </View>
   );
 }
 
-const ClaimButtonWithTheme = withTheme(ClaimButtonStyles)(ClaimButton);
-export default ClaimButtonWithTheme;
+export const theme = {
+  baseStyle: withThemingTools(({ colorModeValue }: { colorModeValue: any }) => ({
+    bg: colorModeValue("coolGray.50", "coolGray.900"),
+    minHeight: "100vh",
+    justifyContent: "center",
+    px: 4
+  }))
+};
+
+export default withTheme()(ClaimButton);

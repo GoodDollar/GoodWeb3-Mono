@@ -34,8 +34,7 @@ export const useIsAddressVerified = (address: string, env?: EnvKey) => {
 export const useClaim = (refresh: QueryParams["refresh"] = "never") => {
   const refreshOrNever = useRefreshOrNever(refresh);
   const DAY = 1000 * 60 * 60 * 24;
-  const { account, library } = useEthers();
-  const [connectedAccount, setConnectedAccount] = useState<string | undefined>(undefined);
+  const { account } = useEthers();
   const { chainId, defaultEnv } = useGetEnvChainId();
 
   const ubi = useGetContract("UBIScheme", true, "claim", defaultEnv, chainId) as UBIScheme;
@@ -47,7 +46,7 @@ export const useClaim = (refresh: QueryParams["refresh"] = "never") => {
       {
         contract: identity,
         method: "isWhitelisted",
-        args: [connectedAccount]
+        args: [account]
       },
       {
         contract: ubi,
@@ -62,7 +61,7 @@ export const useClaim = (refresh: QueryParams["refresh"] = "never") => {
       {
         contract: ubi,
         method: "checkEntitlement(address)",
-        args: [connectedAccount]
+        args: [account]
       }
     ],
     { refresh: refreshOrNever, chainId }
