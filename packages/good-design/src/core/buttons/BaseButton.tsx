@@ -17,9 +17,9 @@ export const theme = {
   defaultProps: {},
   baseStyle: withThemingTools(({ colorModeValue }: { colorModeValue: any }) => {
     return {
-      bg: colorModeValue("gdBlueExample.50", "gdBlueExample.100"),
+      bg: colorModeValue("lightBlue.50", "darkBlue.100"),
       _hover: {
-        bg: colorModeValue("gdBlueExample.100", "gdBlueExample.50")
+        bg: colorModeValue("darkBlue.100", "lightBlue.50")
       },
       maxWidth: "750px",
       marginLeft: "100px"
@@ -30,7 +30,7 @@ export const theme = {
 function BaseButton({ text, onPress, children, ...props }: BaseButtonProps) {
   return (
     <Button onPress={onPress} {...props}>
-      <Text fontFamily="buttonText" fontWeight="100" fontStyle="cursive" color={"teal.500"}>
+      <Text fontFamily="normal" fontWeight="100" color={"teal.500"}>
         {text}
       </Text>
       {children}
