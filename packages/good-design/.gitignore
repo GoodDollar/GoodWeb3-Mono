@@ -1,8 +1,6 @@
 dist
 node_modules
 .vscode
-.yalc
 types
-tsconfig.tsbuildinfo
-yalc.lock
+.yalc
 storybook-static

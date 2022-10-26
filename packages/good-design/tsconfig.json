@@ -2,19 +2,18 @@
   "compilerOptions": {
     // Default
     "target": "es2019",
-    "lib": ["es2019", "dom", "dom.iterable"],
+    "lib": ["es2019", "dom"],
     "module": "commonjs",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "skipLibCheck": true,
     // Added
-    "jsx": "react-jsx",
+    "jsx": "react",
     "declarationDir": "types",
     "sourceMap": true,
     "outDir": "dist",
     "rootDir": "src",
-    "baseUrl": ".",
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
@@ -23,10 +22,8 @@
     "isolatedModules": true,
     "declaration": true,
     "emitDeclarationOnly": false,
-    "declarationMap": true,
-    "noImplicitAny": false,
-    "composite": true
+    "declarationMap": true
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "../../node_modules", "src/stories", "**/*.stories.tsx", "src/types", "**/*.test.*", "__tests__"]
+  "exclude": ["node_modules", "../../node_modules", "src/stories", "**/*.stories.tsx"]
 }

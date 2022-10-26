@@ -2,6 +2,8 @@ import { BigNumber } from "ethers";
 import { invokeMap, pickBy } from "lodash";
 import { BaseSDK } from "../base/sdk";
 
+const DAY = 1000 * 60 * 60 * 24;
+
 const FV_LOGIN_MSG = `Sign this message to login into GoodDollar Unique Identity service.
 WARNING: do not sign this message unless you trust the website/application requesting this signature.
 nonce:`;
@@ -17,6 +19,7 @@ WARNING: do not sign this message unless you trust the website/application reque
 export class ClaimSDK extends BaseSDK {
   async generateFVLink(firstName: string, callbackUrl?: string, popupMode: boolean = false) {
     const steps = this.getFVLink();
+
     await steps.getLoginSig();
     await steps.getFvSig();
     return steps.getLink(firstName, callbackUrl, popupMode);
@@ -76,6 +79,7 @@ export class ClaimSDK extends BaseSDK {
 
   async isAddressVerified(address: string): Promise<boolean> {
     const identity = this.getContract("Identity");
+    
     return identity.isWhitelisted(address);
   }
 
@@ -94,7 +98,6 @@ export class ClaimSDK extends BaseSDK {
   }
 
   async getNextClaimTime() {
-    const DAY = 1000 * 60 * 60 * 24;
     const ubi = this.getContract("UBIScheme");
     const [periodStart, currentDay] = await Promise.all([ubi.periodStart(), ubi.currentDay()]).then(values =>
       invokeMap(values, "toNumber")
@@ -103,13 +106,15 @@ export class ClaimSDK extends BaseSDK {
     let startRef = new Date(periodStart * 1000 + currentDay * DAY);
 
     if (startRef < new Date()) {
-      startRef = new Date(periodStart.toNumber() * 1000 + (currentDay.toNumber() + 1) * DAY);
+      startRef = new Date(startRef.getTime() + DAY);
     }
+    
     return startRef;
   }
 
   async claim() {
     const ubi = this.getContract("UBIScheme");
+    
     return ubi.claim();
   }
 }
