@@ -15,16 +15,14 @@ export interface BaseButtonProps extends IButtonProps {
 
 export const theme = {
   defaultProps: {},
-  baseStyle: withThemingTools(({ colorModeValue }: { colorModeValue: any }) => {
-    return {
-      bg: colorModeValue("lightBlue.50", "darkBlue.100"),
-      _hover: {
-        bg: colorModeValue("darkBlue.100", "lightBlue.50")
-      },
-      maxWidth: "750px",
-      marginLeft: "100px"
-    };
-  })
+  baseStyle: withThemingTools(({ colorModeValue }: { colorModeValue: any }) => ({
+    bg: colorModeValue("lightBlue.400", "lightBlue.700"),
+    _hover: {
+      bg: colorModeValue("lightBlue.700", "lightBlue.400")
+    },
+    maxWidth: "750px",
+    marginLeft: "100px"
+  }))
 };
 
 function BaseButton({ text, onPress, children, ...props }: BaseButtonProps) {
