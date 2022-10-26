@@ -9,22 +9,10 @@ export const theme = extendTheme({
   },
   colors: {
     text1: "#0D182D",
-    heading: "#42454A",
-    gdBlueExample: {
-      50: "#00b0ff",
-      100: "#0387C3"
-    }
+    heading: "#42454A"
   },
-  fontConfig: {
-    GDFontExample: {
-      100: {
-        cursive: "'Brush Script MT', cursive"
-      }
-    }
-  },
-  fonts: {
-    buttonText: "GDFontExample" // to be used as ie. fontFamily={buttonText} weight={100} fontStyle="cursive"
-  },
+  fontConfig: {},
+  fonts: {},
   components: {
     ...layout,
     ...buttons
