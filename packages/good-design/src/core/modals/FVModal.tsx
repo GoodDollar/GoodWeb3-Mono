@@ -7,6 +7,7 @@ import CrossIcon from "./cross";
 import { openLink } from "../utils/linking";
 import ButtonAction from "../buttons/ActionButton";
 import { FVModalProps } from "../buttons/ClaimButton";
+import { withTheme, withThemingTools } from "../../theme";
 
 function FVModal({ firstName, method, onClose = noop, ...props }: FVModalProps) {
   const fvlink = useFVLink();
@@ -50,20 +51,22 @@ function FVModal({ firstName, method, onClose = noop, ...props }: FVModalProps) 
         borderColor="#eee"
         borderRadius={10}
         borderWidth={1}
-        justifyContent="space-around"
-        height={300}
+        justifyContent="space-between"
+        height={270}
         margin="auto"
-        padding={30}
+        py={30}
+        px={35}
         width={600}
       >
         <Pressable
           position="absolute"
-          top={12}
-          right={12}
+          top={6}
+          right={6}
           fontSize={11}
           fontWeight="bold"
           backgroundColor="#fff"
           onPress={onClose}
+          zIndex={10}
         >
           <CrossIcon />
         </Pressable>
@@ -78,7 +81,7 @@ function FVModal({ firstName, method, onClose = noop, ...props }: FVModalProps) 
         {loading ? (
           <Spinner />
         ) : (
-          <View justifyContent="space-between" width="100%" flexDirection="row" marginTop={20}>
+          <View justifyContent="space-between" width="100%" flexDirection="row">
             <ButtonAction text={"Verify Uniqueness"} onPress={verify} />
           </View>
         )}
@@ -87,4 +90,13 @@ function FVModal({ firstName, method, onClose = noop, ...props }: FVModalProps) 
   );
 }
 
-export default FVModal;
+export const theme = {
+  baseStyle: withThemingTools(({ colorModeValue }: { colorModeValue: any }) => ({
+    justifyContent: "center",
+    px: 4,
+    minWidth: "100%",
+  }))
+};
+
+export default withTheme()(FVModal);
+

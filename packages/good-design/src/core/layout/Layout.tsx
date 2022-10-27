@@ -15,10 +15,15 @@ export const theme = {
     borderColor: "rgba(208, 217, 228, 0.483146)",
     width: "100%",
     borderRadius: 20,
-    paddingVertical: 20,
-    paddingHorizontal: 17,
+    padding: 17,
     backgroundColor: "#fff",
-    boxShadow: "3px 3px 10px -1px rgba(11, 27, 102, 0.304824)"
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 12,
+      height: 8,
+    },
+    shadowOpacity: 0.07,
+    shadowRadius: 34,
   }
 };
 

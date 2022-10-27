@@ -49,7 +49,7 @@ function ClaimButton({ firstName, method, refresh, ...props }: FVFlowProps) {
 
   return (
     <View {...props}>
-      <View flex={1} alignItems="center" justifyContent="center">
+      <View flex={1} alignItems="center" justifyContent="center" width='100%'>
         <FvModal method={method} isOpen={showModal} onClose={handleClose} firstName={firstName} />
       </View>
       <ActionButton text={buttonTitle} onPress={handleClaim} />
@@ -59,10 +59,10 @@ function ClaimButton({ firstName, method, refresh, ...props }: FVFlowProps) {
 
 export const theme = {
   baseStyle: withThemingTools(({ colorModeValue }: { colorModeValue: any }) => ({
-    bg: colorModeValue("coolGray.50", "coolGray.900"),
-    minHeight: "100vh",
     justifyContent: "center",
-    px: 4
+    px: 4,
+    minWidth: "100%",
+    width: "100%",
   }))
 };
 

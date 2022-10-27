@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, IButtonProps } from "native-base";
+import { Button as NBButton, Factory, IButtonProps } from "native-base";
 import { withTheme } from "../../theme/hoc/withTheme";
 
 interface IBasicButtonProps extends IButtonProps {
@@ -7,9 +7,13 @@ interface IBasicButtonProps extends IButtonProps {
   onPress: () => {};
 }
 
-const ButtonAction = ({ text, ...props }: IBasicButtonProps) => <Button {...props}>{text}</Button>;
+const ButtonAction = ({ text, ...props }: IBasicButtonProps) => {
+  const Button = Factory(NBButton, theme)
+  return <Button {...props}>{text}</Button>
+};
 
 export const theme = {
+  defaultProps: {},
   baseStyle: {
     alignItems: "center",
     justifyContent: "center",
@@ -20,8 +24,6 @@ export const theme = {
     cursor: "pointer",
     fontStyle: "normal",
     lineHeight: "16px",
-    textAlign: "center",
-    textTransform: "capitalize",
     userSelect: "none",
     transition: "background 0.25s",
     backgroundColor: "#00B0FF",
@@ -33,4 +35,3 @@ export const theme = {
 };
 
 export default withTheme()(ButtonAction);
-// export default withTheme()(ButtonAction);
