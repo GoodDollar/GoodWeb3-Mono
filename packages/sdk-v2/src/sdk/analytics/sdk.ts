@@ -9,8 +9,8 @@ export interface IAnalyticsConfig {
   [ProviderType.Sentry]?: ISentryConfig;
 }
 
-type ProviderFactories = { 
-  [key in ProviderType]: new (config: IAbstractConfig) => IProvider 
+type ProviderFactories = {
+  [key in ProviderType]: new (config: IAbstractConfig) => IProvider
 }
 
 export class Analytics implements IAbstractProvider, IAnalyticsProvider, IMonitoringProvider {
@@ -36,6 +36,11 @@ export class Analytics implements IAbstractProvider, IAnalyticsProvider, IMonito
 
     await Promise.all(factories.map(async ([providerType, ProviderClass]) => {
       const config = this.config[providerType];
+
+      if (!config || !config.enabled) {
+        return
+      }
+
       const provider = new ProviderClass(config);
       const initialized = await provider.initialize!(appProps);
 
