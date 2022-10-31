@@ -5,17 +5,19 @@ import contractsAddresses from "@gooddollar/goodprotocol/releases/deployment.jso
 /* List of supported chains for this sdk. */
 export enum SupportedChains {
   MAINNET = 1,
-  ROPSTEN = 3,
-  KOVAN = 42,
   FUSE = 122,
   CELO = 42220
 }
 
-export type SUPPORTED_NETWORKS = "FUSE" | "CELO" | "MAINNET" | "KOVAN" | "ROPSTEN";
+export type SUPPORTED_NETWORKS = "FUSE" | "CELO" | "MAINNET";
 
 export enum SupportedV2Networks {
   FUSE = 122,
   CELO = 42220
+}
+export interface G$Balances {
+  G$: any;
+  GOOD: any;
 }
 
 // export const SUPPORTED_NETWORKS: Readonly<string[]> = ["CELO", "FUSE"]

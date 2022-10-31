@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { HStack, Spinner, Heading } from "native-base";
-import { useEthers } from "@gooddollar/web3sdk-v2";
+import { useEthers } from "@usedapp/core";
 import BaseButton, { BaseButtonProps } from "../../core/buttons/BaseButton";
 
 export interface Web3ActionProps extends BaseButtonProps {
@@ -44,7 +44,7 @@ export const Web3ActionButton = ({
   web3Action,
   handleConnect
 }: Web3ActionProps): JSX.Element => {
-  const { isWeb3, account, switchNetwork, chainId, activateBrowserWallet } = useEthers();
+  const { account, switchNetwork, chainId, activateBrowserWallet } = useEthers();
   const [runningFlow, setRunningFlow] = useState(false);
   const [actionText, setActionText] = useState("");
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -88,7 +88,7 @@ export const Web3ActionButton = ({
   // account/chainId changes and re-try to perform current step action
   useEffect(() => {
     const continueSteps = async () => {
-      if (!account || !isWeb3) {
+      if (!account) {
         setActionText(ButtonSteps.connect);
         await connectWallet();
         return;
@@ -108,7 +108,7 @@ export const Web3ActionButton = ({
     if (runningFlow) {
       continueSteps().catch(finishFlow);
     }
-  }, [runningFlow, account, isWeb3, chainId]);
+  }, [runningFlow, account, chainId]);
 
   return (
     <BaseButton text={actionText ? "" : text} onPress={startFlow}>

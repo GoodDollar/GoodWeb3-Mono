@@ -46,14 +46,14 @@ export declare const useSavingsFunctions: () => {
     withdrawState: import("@usedapp/core").TransactionStatus;
     claimState: import("@usedapp/core").TransactionStatus;
 };
-export declare const useSavingsStats: (refresh?: QueryParams["refresh"]) => {
+export declare const useSavingsStats: (requiredChainId: number, refresh?: QueryParams["refresh"]) => {
     stats: undefined;
     error: any[];
 } | {
     stats: SavingsStats;
     error: undefined;
 };
-export declare const useStakerInfo: (refresh: QueryParams["refresh"], account: string) => {
+export declare const useStakerInfo: (requiredChainId: number, refresh: QueryParams["refresh"], account: string) => {
     stats: undefined;
     error: any[];
 } | {

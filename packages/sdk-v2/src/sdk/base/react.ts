@@ -9,7 +9,7 @@ import Contracts from "@gooddollar/goodprotocol/releases/deployment.json";
 import { useReadOnlyProvider } from "../../hooks/useMulticallAtChain";
 import useUpdateEffect from "../../hooks/useUpdateEffect";
 import { useRefreshOrNever } from "../../hooks";
-import { SupportedChains, G$ContractAddresses, SupportedV2Networks } from "../constants";
+import { SupportedChains, G$ContractAddresses } from "../constants";
 import { GoodDollarStaking, GoodReserveCDai, GReputation, IGoodDollar } from "@gooddollar/goodprotocol/types";
 
 export const NAME_TO_SDK: { [key: string]: typeof ClaimSDK | typeof SavingsSDK | typeof BaseSDK } = {
@@ -29,14 +29,13 @@ export const useReadOnlySDK = (type: SdkTypes, requiredChainId?: number): Reques
   return useSDK(true, type, requiredChainId);
 };
 
-export const useGetEnvChainId = (requiredChainId?: number, v2Supported?: (string | SupportedV2Networks)[]) => {
+export const useGetEnvChainId = (requiredChainId?: number) => {
   const { chainId } = useEthers();
   const web3Context = useContext(Web3Context);
   let baseEnv = web3Context.env || "";
   let connectedEnv = baseEnv;
-  const v2ChainId = v2Supported?.includes(chainId as SupportedV2Networks) ? chainId : SupportedChains.CELO;
 
-  switch (v2Supported ? v2ChainId : requiredChainId ?? chainId) {
+  switch (requiredChainId ?? chainId) {
     case 1:
       "production-mainnet"; // temp untill dev contracts are released to goerli
       break;
@@ -176,6 +175,8 @@ export function useG$Balance(refresh: QueryParams["refresh"] = "never") {
       chainId
     }
   );
+
+  //todo: add filter
 
   // const [mainnetGdx] = useCalls(
   //   [

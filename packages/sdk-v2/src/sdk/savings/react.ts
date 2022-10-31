@@ -3,7 +3,7 @@ import { useContractFunction, useCalls, QueryParams, useEthers, CurrencyValue } 
 import { useGetContract, useGetEnvChainId } from "../base/react";
 import { ethers } from "ethers";
 import { GoodDollarStaking, IGoodDollar } from "@gooddollar/goodprotocol/types";
-import { G$, GOOD, SupportedV2Networks } from "../constants";
+import { G$, GOOD } from "../constants";
 import useRefreshOrNever from "../../hooks/useRefreshOrNever";
 import { ChainId } from "@usedapp/core/dist/cjs/src";
 
@@ -99,9 +99,9 @@ export const useSavingsFunctions = () => {
   return { transfer, withdraw, claim, transferState, withdrawState, claimState };
 };
 
-export const useSavingsStats = (refresh: QueryParams["refresh"] = "never") => {
+export const useSavingsStats = (requiredChainId: number, refresh: QueryParams["refresh"] = "never") => {
   const refreshOrNever = useRefreshOrNever(refresh);
-  const { chainId, defaultEnv } = useGetEnvChainId(undefined, Object.values(SupportedV2Networks));
+  const { chainId, defaultEnv } = useGetEnvChainId(requiredChainId);
 
   const gdStaking = useGetContract("GoodDollarStaking", true, "savings", chainId) as GoodDollarStaking;
 
@@ -176,9 +176,9 @@ export const useSavingsStats = (refresh: QueryParams["refresh"] = "never") => {
   };
 };
 
-export const useStakerInfo = (refresh: QueryParams["refresh"] = "never", account: string) => {
+export const useStakerInfo = (requiredChainId: number, refresh: QueryParams["refresh"] = "never", account: string) => {
   const refreshOrNever = useRefreshOrNever(refresh);
-  const { chainId, defaultEnv } = useGetEnvChainId(undefined, Object.values(SupportedV2Networks));
+  const { chainId, defaultEnv } = useGetEnvChainId(requiredChainId);
   const contract = useGetContract("GoodDollarStaking", true, "savings", chainId) as GoodDollarStaking;
 
   const results = useCalls(

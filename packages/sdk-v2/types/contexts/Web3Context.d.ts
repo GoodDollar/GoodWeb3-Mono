@@ -39,7 +39,7 @@ export declare const Fuse: Chain;
 export declare const Celo: Chain;
 export declare const Web3Provider: ({ children, config, web3Provider, switchNetworkRequest, env }: Props) => JSX.Element;
 export declare const useSwitchNetwork: () => {
-    switchNetwork: (chainId: number) => Promise<void>;
+    switchNetwork: SwitchCallback;
     setSwitchNetwork: (cb: SwitchCallback) => void;
 };
 export {};

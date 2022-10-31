@@ -5,7 +5,6 @@ export const useNativeBalance = () => {
   const { account } = useEthers();
   const nativeBalance = useEtherBalance(account);
   if (nativeBalance) {
-    const formattedBalance = formatEther(nativeBalance);
-    return parseFloat(formattedBalance).toFixed(6);
+    return formatEther(nativeBalance);
   }
 };
