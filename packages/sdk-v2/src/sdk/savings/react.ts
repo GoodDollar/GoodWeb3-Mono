@@ -105,13 +105,6 @@ export const useSavingsStats = (requiredChainId: number, refresh: QueryParams["r
 
   const gdStaking = useGetContract("GoodDollarStaking", true, "savings", chainId) as GoodDollarStaking;
 
-  // const stats = gdStaking.stats(); // todo-fix: weird behaviour on staging env and connected to fuse network.
-  // above works, below useCall returns undefined (fuse env works as expected, celo on staging works as well)
-
-  // console.log({ stats });
-
-  // console.log({ chainId, defaultEnv, gdStaking });
-
   const results = useCalls(
     [
       {
@@ -132,8 +125,6 @@ export const useSavingsStats = (requiredChainId: number, refresh: QueryParams["r
     ],
     { refresh: refreshOrNever, chainId: chainId as unknown as ChainId }
   );
-
-  // console.log({ results });
 
   let globalStats: SavingsStats = {
     totalStaked: undefined,

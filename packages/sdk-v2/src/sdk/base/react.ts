@@ -9,8 +9,8 @@ import Contracts from "@gooddollar/goodprotocol/releases/deployment.json";
 import { useReadOnlyProvider } from "../../hooks/useMulticallAtChain";
 import useUpdateEffect from "../../hooks/useUpdateEffect";
 import { useRefreshOrNever } from "../../hooks";
-import { SupportedChains, G$ContractAddresses } from "../constants";
-import { GoodDollarStaking, GoodReserveCDai, GReputation, IGoodDollar } from "@gooddollar/goodprotocol/types";
+import { SupportedChains, G$ContractAddresses, G$Balances } from "../constants";
+import { GoodReserveCDai, GReputation, IGoodDollar } from "@gooddollar/goodprotocol/types";
 
 export const NAME_TO_SDK: { [key: string]: typeof ClaimSDK | typeof SavingsSDK | typeof BaseSDK } = {
   claim: ClaimSDK,
@@ -37,7 +37,7 @@ export const useGetEnvChainId = (requiredChainId?: number) => {
 
   switch (requiredChainId ?? chainId) {
     case 1:
-      "production-mainnet"; // temp untill dev contracts are released to goerli
+      connectedEnv = "production-mainnet"; // temp untill dev contracts are released to goerli
       break;
     case 122:
       connectedEnv = connectedEnv;
@@ -147,15 +147,13 @@ export function useG$Tokens() {
 export function useG$Balance(refresh: QueryParams["refresh"] = "never") {
   const refreshOrNever = useRefreshOrNever(refresh);
   const { account } = useEthers();
-  const address = G$ContractAddresses("GoodReserveCDai", "production-mainnet") as string;
 
   const { chainId, defaultEnv, baseEnv } = useGetEnvChainId();
   const { g$, good, gdx } = useG$Tokens();
 
   const g$Contract = useGetContract("GoodDollar", true, "base") as IGoodDollar;
   const goodContract = useGetContract("GReputation", true, "base") as GReputation;
-  // const gdxContract = useGetContract("GoodReserveCDai", true, "base", 1, "gdxBalance") as GoodReserveCDai; // temporary only getting production, no dev contracts released on goerli yet
-  // console.log({ gdxContract });
+  const gdxContract = useGetContract("GoodReserveCDai", true, "base", 1) as GoodReserveCDai;
 
   const results = useCalls(
     [
@@ -176,24 +174,25 @@ export function useG$Balance(refresh: QueryParams["refresh"] = "never") {
     }
   );
 
-  //todo: add filter
+  const [mainnetGdx] = useCalls(
+    [
+      {
+        contract: gdxContract,
+        method: "balanceOf",
+        args: [account]
+      }
+    ].filter(_ => _.contract && chainId == SupportedChains.MAINNET),
+    { refresh: refreshOrNever, chainId: SupportedChains.MAINNET as unknown as ChainId }
+  );
 
-  // const [mainnetGdx] = useCalls(
-  //   [
-  //     {
-  //       contract: gdxContract,
-  //       method: "balanceOf",
-  //       args: [account]
-  //     }
-  //   ],
-  //   { refresh: refreshOrNever, chainId: SupportedChains.MAINNET as unknown as ChainId }
-  // );
+  let balances: G$Balances = {
+    G$: undefined,
+    GOOD: undefined,
+    GDX: undefined
+  };
 
-  // console.log({ mainnetGdx });
-
-  // console.log("useG$Balance", { results });
   if (!results.includes(undefined) && !results[0]?.error) {
-    const g$balance = {
+    const g$Balance = {
       amount: CurrencyValue.fromString(g$, results[0]?.value[0].toString()),
       token: new Currency("GoodDollar", "G$", 2)
     };
@@ -202,14 +201,18 @@ export function useG$Balance(refresh: QueryParams["refresh"] = "never") {
       amount: CurrencyValue.fromString(good, results[1]?.value[0].toString()),
       token: new Currency("GDAO", "GOOD", 18)
     };
-
-    // const gdxBalance = {
-    //   amount: CurrencyValue.fromString(gdx, results[2]?.value[0].toString()),
-    //   token: new Currency("G$X", "GDX", 2)
-    // };
-
-    return { g$balance, goodBalance, gdxBalance: undefined };
-  } else {
-    return { g$Balance: undefined, goodBalance: undefined, gdxBalance: undefined };
+    balances.G$ = g$Balance;
+    balances.GOOD = goodBalance;
   }
+
+  if (mainnetGdx) {
+    const gdxBalance = {
+      amount: CurrencyValue.fromString(gdx, mainnetGdx.value[0].toString()),
+      token: new Currency("G$X", "GDX", 2)
+    };
+
+    balances.GDX = gdxBalance;
+  }
+
+  return balances;
 }

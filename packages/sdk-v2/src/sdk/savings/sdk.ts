@@ -7,9 +7,8 @@ export class SavingsSDK extends BaseSDK {
   async hasBalance(account: string): Promise<boolean | undefined> {
     const contract = this.getContract("GoodDollarStaking");
     if (contract && account) {
-      const balance = (await contract.balanceOf(account)).toString(); // todo: Work with BN
-      const hasBalance = balance !== "0";
-      return hasBalance;
+      const balance = await contract.balanceOf(account);
+      return !balance.isZero();
     }
   }
 

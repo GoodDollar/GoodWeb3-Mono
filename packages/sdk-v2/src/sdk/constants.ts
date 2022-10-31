@@ -1,5 +1,5 @@
 import { EnvKey } from "./base/sdk";
-import { Token } from "@usedapp/core";
+import { Currency, CurrencyValue, Token } from "@usedapp/core";
 import contractsAddresses from "@gooddollar/goodprotocol/releases/deployment.json";
 
 /* List of supported chains for this sdk. */
@@ -15,12 +15,18 @@ export enum SupportedV2Networks {
   FUSE = 122,
   CELO = 42220
 }
-export interface G$Balances {
-  G$: any;
-  GOOD: any;
-}
 
-// export const SUPPORTED_NETWORKS: Readonly<string[]> = ["CELO", "FUSE"]
+export type SupportedChain = keyof typeof SupportedV2Networks;
+
+type G$Tokens = {
+  amount: CurrencyValue;
+  token: Currency;
+};
+export interface G$Balances {
+  G$: G$Tokens | undefined;
+  GOOD: G$Tokens | undefined;
+  GDX: G$Tokens | undefined;
+}
 
 export const Envs: { [key: EnvKey]: { [key: string]: string } } = {
   production: {
