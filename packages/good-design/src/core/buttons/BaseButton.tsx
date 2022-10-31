@@ -17,24 +17,14 @@ export const theme = {
   defaultProps: {},
   baseStyle: withThemingTools(({ colorModeValue }: { colorModeValue: any }) => {
     const colors = ["lightBlue.400", "lightBlue.700"];
-    const [bg, color] = colorModeValue(colors, [...colors].reverse());
+    const [bg, bgHover] = colorModeValue(colors, [...colors].reverse());
 
     return {
       bg,
-      color,
       maxWidth: "750px",
       marginLeft: "100px",
-      _text: {
-        color,
-        fontFamily: "normal",
-        fontWeight: "100"
-      },
       _hover: {
-        bg: color,
-        color: bg,
-        _text: {
-          color: bg
-        }
+        bg: bgHover
       }
     };
   })
