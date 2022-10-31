@@ -3,7 +3,7 @@ import { useContractFunction, useCalls, QueryParams, useEthers, CurrencyValue } 
 import { useGetContract, useGetEnvChainId } from "../base/react";
 import { ethers } from "ethers";
 import { GoodDollarStaking, IGoodDollar } from "@gooddollar/goodprotocol/types";
-import { G$, GOOD, SupportedChains } from "../constants";
+import { G$, GOOD, SupportedV2Networks } from "../constants";
 import useRefreshOrNever from "../../hooks/useRefreshOrNever";
 import { ChainId } from "@usedapp/core/dist/cjs/src";
 
@@ -64,7 +64,6 @@ export function useSavingsBalance(refresh: QueryParams["refresh"] = "never", req
   return { g$Balance: balance, savingsBalance: sBalance };
 }
 
-// requiredChainId here to fix handling switch of network properly
 export const useSavingsFunctions = () => {
   const gooddollar = useGetContract("GoodDollar", false, "savings") as IGoodDollar;
   const gdStaking = useGetContract("GoodDollarStaking", false, "savings") as GoodDollarStaking;
@@ -102,16 +101,16 @@ export const useSavingsFunctions = () => {
 
 export const useSavingsStats = (refresh: QueryParams["refresh"] = "never") => {
   const refreshOrNever = useRefreshOrNever(refresh);
+  const { chainId, defaultEnv } = useGetEnvChainId(undefined, Object.values(SupportedV2Networks));
 
-  const { chainId, defaultEnv } = useGetEnvChainId();
+  const gdStaking = useGetContract("GoodDollarStaking", true, "savings", chainId) as GoodDollarStaking;
 
-  const gdStaking = useGetContract(
-    "GoodDollarStaking",
-    true,
-    "savings",
-    defaultEnv,
-    SupportedChains.FUSE
-  ) as GoodDollarStaking;
+  // const stats = gdStaking.stats(); // todo-fix: weird behaviour on staging env and connected to fuse network.
+  // above works, below useCall returns undefined (fuse env works as expected, celo on staging works as well)
+
+  // console.log({ stats });
+
+  // console.log({ chainId, defaultEnv, gdStaking });
 
   const results = useCalls(
     [
@@ -131,8 +130,10 @@ export const useSavingsStats = (refresh: QueryParams["refresh"] = "never") => {
         args: []
       }
     ],
-    { refresh: refreshOrNever, chainId: SupportedChains.FUSE as unknown as ChainId }
+    { refresh: refreshOrNever, chainId: chainId as unknown as ChainId }
   );
+
+  // console.log({ results });
 
   let globalStats: SavingsStats = {
     totalStaked: undefined,
@@ -177,15 +178,9 @@ export const useSavingsStats = (refresh: QueryParams["refresh"] = "never") => {
 
 export const useStakerInfo = (refresh: QueryParams["refresh"] = "never", account: string) => {
   const refreshOrNever = useRefreshOrNever(refresh);
+  const { chainId, defaultEnv } = useGetEnvChainId(undefined, Object.values(SupportedV2Networks));
+  const contract = useGetContract("GoodDollarStaking", true, "savings", chainId) as GoodDollarStaking;
 
-  const { chainId, defaultEnv } = useGetEnvChainId();
-  const contract = useGetContract(
-    "GoodDollarStaking",
-    true,
-    "savings",
-    defaultEnv,
-    SupportedChains.FUSE
-  ) as GoodDollarStaking;
   const results = useCalls(
     [
       {
@@ -199,7 +194,7 @@ export const useStakerInfo = (refresh: QueryParams["refresh"] = "never", account
         args: [account]
       }
     ],
-    { refresh: refreshOrNever, chainId: SupportedChains.FUSE as unknown as ChainId }
+    { refresh: refreshOrNever, chainId: chainId as unknown as ChainId }
   );
 
   let stakerInfo: StakerInfo = {
@@ -229,7 +224,7 @@ export const useStakerInfo = (refresh: QueryParams["refresh"] = "never", account
   }
 
   if (results[1]) {
-    const [principle] = results[1]?.value; //note: original deposit
+    const [principle] = results[1]?.value;
     const deposit = CurrencyValue.fromString(G$(chainId, defaultEnv), principle.toString());
     stakerInfo.principle = deposit;
   }

@@ -50,13 +50,13 @@ export const Envs: { [key: EnvKey]: { [key: string]: string } } = {
 
 type ObjectLike = { [key: string]: string | ObjectLike | Array<string[]> | string[] | number };
 
-export function G$(chainId: number, env: EnvKey): Token {
-  const address = G$ContractAddresses("GoodDollar", env) as string;
+export function G$(chainId: number, env?: string): Token {
+  const address = G$ContractAddresses("GoodDollar", env ?? "") as string;
   return new Token("GoodDollar", "G$", chainId, address, 2);
 }
 
-export function GOOD(chainId: number, env: EnvKey): Token {
-  const address = G$ContractAddresses("GReputation", env) as string;
+export function GOOD(chainId: number, env?: string): Token {
+  const address = G$ContractAddresses("GReputation", env ?? "") as string;
   return new Token("GDAO", "GOOD", chainId, address, 18);
 }
 

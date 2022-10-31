@@ -25,12 +25,7 @@ export const useFaucet = async (refresh: QueryParams["refresh"] = 12) => {
   const { account, chainId } = useEthers();
   const balance = useEtherBalance(account, { refresh: refreshOrNever }); // refresh roughly once in 10 minutes
   const { connectedEnv, baseEnv } = useGetEnvChainId(); // get the env the user is connected to
-  const faucet = useGetContract(
-    chainId === SupportedChains.FUSE ? "FuseFaucet" : "Faucet",
-    true,
-    "base",
-    connectedEnv
-  ) as Faucet;
+  const faucet = useGetContract(chainId === SupportedChains.FUSE ? "FuseFaucet" : "Faucet", true, "base") as Faucet;
 
   // console.log("useFaucet", {
   //   lastNotification,

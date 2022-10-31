@@ -37,8 +37,8 @@ export const useClaim = (refresh: QueryParams["refresh"] = "never") => {
   const { account } = useEthers();
   const { chainId, defaultEnv } = useGetEnvChainId();
 
-  const ubi = useGetContract("UBIScheme", true, "claim", defaultEnv, chainId) as UBIScheme;
-  const identity = useGetContract("Identity", true, "claim", defaultEnv, chainId) as IIdentity;
+  const ubi = useGetContract("UBIScheme", true, "claim", chainId) as UBIScheme;
+  const identity = useGetContract("Identity", true, "claim", chainId) as IIdentity;
   const claimCall = useContractFunction(ubi, "claim");
 
   const results = useCalls(
@@ -95,10 +95,10 @@ export const useClaim = (refresh: QueryParams["refresh"] = "never") => {
 // if user is verified on fuse and not on current network then send backend request to whitelist
 export const useWhitelistSync = () => {
   const [syncStatus, setSyncStatus] = useState<Promise<boolean> | undefined>();
-  const { baseEnv, defaultEnv } = useGetEnvChainId();
+  const { baseEnv } = useGetEnvChainId();
   const { account, chainId } = useEthers();
-  const identity = useGetContract("Identity", true, "claim", baseEnv, SupportedChains.FUSE) as IIdentity;
-  const identity2 = useGetContract("Identity", true, "claim", defaultEnv, chainId) as IIdentity;
+  const identity = useGetContract("Identity", true, "claim", SupportedChains.FUSE) as IIdentity;
+  const identity2 = useGetContract("Identity", true, "claim", chainId) as IIdentity;
 
   const [fuseResult] = useCalls(
     [

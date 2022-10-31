@@ -20,8 +20,8 @@ export declare const Envs: {
 declare type ObjectLike = {
     [key: string]: string | ObjectLike | Array<string[]> | string[] | number;
 };
-export declare function G$(chainId: number, env: EnvKey): Token;
-export declare function GOOD(chainId: number, env: EnvKey): Token;
+export declare function G$(chainId: number, env?: string): Token;
+export declare function GOOD(chainId: number, env?: string): Token;
 export declare function G$ContractAddresses<T = ObjectLike>(name: string, env: EnvKey): T;
 export {};
 //# sourceMappingURL=constants.d.ts.map

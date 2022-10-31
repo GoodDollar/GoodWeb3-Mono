@@ -2,12 +2,15 @@ import { useContext, useState } from "react";
 import { Signer, providers } from "ethers";
 import { BaseSDK, EnvKey, EnvValue } from "./sdk";
 import { Web3Context } from "../../contexts";
-import { useEthers } from "@usedapp/core";
+import { QueryParams, useCalls, useEthers, CurrencyValue, Currency, Token, ChainId } from "@usedapp/core";
 import { ClaimSDK } from "../claim/sdk";
 import { SavingsSDK } from "../savings/sdk";
 import Contracts from "@gooddollar/goodprotocol/releases/deployment.json";
 import { useReadOnlyProvider } from "../../hooks/useMulticallAtChain";
 import useUpdateEffect from "../../hooks/useUpdateEffect";
+import { useRefreshOrNever } from "../../hooks";
+import { SupportedChains, G$ContractAddresses, SupportedV2Networks } from "../constants";
+import { GoodDollarStaking, GoodReserveCDai, GReputation, IGoodDollar } from "@gooddollar/goodprotocol/types";
 
 export const NAME_TO_SDK: { [key: string]: typeof ClaimSDK | typeof SavingsSDK | typeof BaseSDK } = {
   claim: ClaimSDK,
@@ -26,15 +29,16 @@ export const useReadOnlySDK = (type: SdkTypes, requiredChainId?: number): Reques
   return useSDK(true, type, requiredChainId);
 };
 
-export const useGetEnvChainId = (requiredChainId?: number) => {
+export const useGetEnvChainId = (requiredChainId?: number, v2Supported?: (string | SupportedV2Networks)[]) => {
   const { chainId } = useEthers();
   const web3Context = useContext(Web3Context);
   let baseEnv = web3Context.env || "";
   let connectedEnv = baseEnv;
+  const v2ChainId = v2Supported?.includes(chainId as SupportedV2Networks) ? chainId : SupportedChains.CELO;
 
-  switch (requiredChainId ?? chainId) {
+  switch (v2Supported ? v2ChainId : requiredChainId ?? chainId) {
     case 1:
-      connectedEnv += "-mainnet";
+      "production-mainnet"; // temp untill dev contracts are released to goerli
       break;
     case 122:
       connectedEnv = connectedEnv;
@@ -59,7 +63,6 @@ export const useGetContract = (
   contractName: string,
   readOnly: boolean = false,
   type: SdkTypes = "base",
-  env?: EnvKey,
   requiredChainId?: number
 ) => {
   const sdk = useSDK(readOnly, type, requiredChainId);
@@ -91,7 +94,7 @@ function sdkFactory(
   readOnly: boolean,
   library: providers.JsonRpcProvider | undefined,
   roLibrary: providers.JsonRpcProvider | undefined
-): ClaimSDK | SavingsSDK | undefined {
+): ClaimSDK | SavingsSDK | BaseSDK | undefined {
   let provider = library;
   const reqSdk = NAME_TO_SDK[type];
 
@@ -104,7 +107,7 @@ function sdkFactory(
     return;
   }
 
-  return new reqSdk(provider, defaultEnv) as ClaimSDK | SavingsSDK;
+  return new reqSdk(provider, defaultEnv) as ClaimSDK | SavingsSDK | BaseSDK;
 }
 
 export const useSDK = (
@@ -115,7 +118,7 @@ export const useSDK = (
   const { library } = useEthers();
   const { chainId, defaultEnv } = useGetEnvChainId(requiredChainId);
   const rolibrary = useReadOnlyProvider(chainId);
-  const [sdk, setSdk] = useState<ClaimSDK | SavingsSDK | undefined>(() =>
+  const [sdk, setSdk] = useState<ClaimSDK | SavingsSDK | BaseSDK | undefined>(() =>
     sdkFactory(type, defaultEnv, readOnly, library, rolibrary)
   );
 
@@ -126,3 +129,86 @@ export const useSDK = (
 
   return sdk;
 };
+
+/* Not sure about placement of this hook, use base for now */
+
+export function useG$Tokens() {
+  const { chainId, defaultEnv, baseEnv } = useGetEnvChainId();
+  const g$ = G$ContractAddresses("GoodDollar", defaultEnv) as string;
+  const good = G$ContractAddresses("GReputation", defaultEnv) as string;
+  const gdx = G$ContractAddresses("GoodReserveCDai", baseEnv + "-mainnet") as string;
+
+  return {
+    g$: new Token("GoodDollar", "G$", chainId, g$, 2),
+    good: new Token("GDAO", "GOOD", chainId, good, 18),
+    gdx: new Token("GoodDollar X", "G$X", SupportedChains.MAINNET, gdx, 2)
+  };
+}
+
+export function useG$Balance(refresh: QueryParams["refresh"] = "never") {
+  const refreshOrNever = useRefreshOrNever(refresh);
+  const { account } = useEthers();
+  const address = G$ContractAddresses("GoodReserveCDai", "production-mainnet") as string;
+
+  const { chainId, defaultEnv, baseEnv } = useGetEnvChainId();
+  const { g$, good, gdx } = useG$Tokens();
+
+  const g$Contract = useGetContract("GoodDollar", true, "base") as IGoodDollar;
+  const goodContract = useGetContract("GReputation", true, "base") as GReputation;
+  // const gdxContract = useGetContract("GoodReserveCDai", true, "base", 1, "gdxBalance") as GoodReserveCDai; // temporary only getting production, no dev contracts released on goerli yet
+  // console.log({ gdxContract });
+
+  const results = useCalls(
+    [
+      {
+        contract: g$Contract,
+        method: "balanceOf",
+        args: [account]
+      },
+      {
+        contract: goodContract,
+        method: "balanceOf",
+        args: [account]
+      }
+    ],
+    {
+      refresh: refreshOrNever,
+      chainId
+    }
+  );
+
+  // const [mainnetGdx] = useCalls(
+  //   [
+  //     {
+  //       contract: gdxContract,
+  //       method: "balanceOf",
+  //       args: [account]
+  //     }
+  //   ],
+  //   { refresh: refreshOrNever, chainId: SupportedChains.MAINNET as unknown as ChainId }
+  // );
+
+  // console.log({ mainnetGdx });
+
+  // console.log("useG$Balance", { results });
+  if (!results.includes(undefined) && !results[0]?.error) {
+    const g$balance = {
+      amount: CurrencyValue.fromString(g$, results[0]?.value[0].toString()),
+      token: new Currency("GoodDollar", "G$", 2)
+    };
+
+    const goodBalance = {
+      amount: CurrencyValue.fromString(good, results[1]?.value[0].toString()),
+      token: new Currency("GDAO", "GOOD", 18)
+    };
+
+    // const gdxBalance = {
+    //   amount: CurrencyValue.fromString(gdx, results[2]?.value[0].toString()),
+    //   token: new Currency("G$X", "GDX", 2)
+    // };
+
+    return { g$balance, goodBalance, gdxBalance: undefined };
+  } else {
+    return { g$Balance: undefined, goodBalance: undefined, gdxBalance: undefined };
+  }
+}
