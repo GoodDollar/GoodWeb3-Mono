@@ -1,6 +1,6 @@
 import { IIdentity } from "@gooddollar/goodprotocol/types";
 import { UBIScheme } from "@gooddollar/goodprotocol/types/UBIScheme";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { AsyncStorage } from "../storage";
 import { ChainId, QueryParams, useCalls, useContractFunction, useEthers } from "@usedapp/core";
 import { BigNumber } from "ethers";
 import { first } from "lodash";
@@ -128,7 +128,7 @@ export const useWhitelistSync = () => {
 
       console.log("syncWhitelist", { account, baseEnv, isSynced, fuseResult, otherResult });
 
-      if (isSynced !== "true" && fuseResult?.value[0] && otherResult?.value[0] === false) {
+      if (!isSynced && fuseResult?.value[0] && otherResult?.value[0] === false) {
         const { backend } = Envs[baseEnv];
 
         console.log("syncingWhitelist", { account, backend, baseEnv });
@@ -141,7 +141,7 @@ export const useWhitelistSync = () => {
                 const res = await r.json();
                 console.log("syncWhitelist json result:", res);
 
-                AsyncStorage.setItem(`${account}-whitelistedSync`, "true");
+                AsyncStorage.setItem(`${account}-whitelistedSync`, true);
                 return true;
               } else {
                 return false;
