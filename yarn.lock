@@ -2420,6 +2420,7 @@ __metadata:
     react: 17.0.2
     react-dom: 17.0.2
     react-native: ^0.70.2
+    react-native-restart: ^0.0.24
     react-native-web: 0.17
     react-use-promise: ^0.5.0
     sass: ^1.43.5
@@ -21403,6 +21404,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-native-restart@npm:^0.0.24":
+  version: 0.0.24
+  resolution: "react-native-restart@npm:0.0.24"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 2ea5f1e9c31d3d705ad2061966a240db32131ad11fd227f244919f2882a1ed7a6d48aed6b7bcab59a989fb58f59ca7e1d6d5316089d011a6955975f1148160f0
+  languageName: node
+  linkType: hard
+
 "react-native-safe-area-context@npm:^3.3.2":
   version: 3.4.1
   resolution: "react-native-safe-area-context@npm:3.4.1"
@@ -24839,7 +24850,7 @@ __metadata:
 
 "typescript@patch:typescript@4.7.4#~builtin<compat/typescript>":
   version: 4.7.4
-  resolution: "typescript@patch:typescript@npm%3A4.7.4#~builtin<compat/typescript>::version=4.7.4&hash=7ad353"
+  resolution: "typescript@patch:typescript@npm%3A4.7.4#~builtin<compat/typescript>::version=4.7.4&hash=f456af"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
@@ -24849,7 +24860,7 @@ __metadata:
 
 "typescript@patch:typescript@^4.6.2#~builtin<compat/typescript>, typescript@patch:typescript@^4.6.3#~builtin<compat/typescript>, typescript@patch:typescript@^4.8.2#~builtin<compat/typescript>":
   version: 4.8.4
-  resolution: "typescript@patch:typescript@npm%3A4.8.4#~builtin<compat/typescript>::version=4.8.4&hash=7ad353"
+  resolution: "typescript@patch:typescript@npm%3A4.8.4#~builtin<compat/typescript>::version=4.8.4&hash=f456af"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
