@@ -37,6 +37,10 @@ export class StorageSDK {
     this.setItem(key, value).catch(onError || noop)
   }
 
+  safeRemove(key: string, onError?: (e: Error) => void): void {
+    this.api.removeItem(key).catch(onError || noop)
+  }
+
   async setItem<T = any>(key: string, value: T): Promise<void> {
     const stringified = JSON.stringify(value)
 
