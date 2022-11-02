@@ -18,6 +18,8 @@ export enum SupportedV2Networks {
   CELO = 42220
 }
 
+export type SupportedV2Network = keyof typeof SupportedV2Networks
+
 // export const SUPPORTED_NETWORKS: Readonly<string[]> = ["CELO", "FUSE"]
 
 export const Envs: { [key: EnvKey]: { [key: string]: string } } = {
