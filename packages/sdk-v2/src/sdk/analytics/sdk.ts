@@ -3,10 +3,12 @@ import { supportsAnalytics, supportsMonitoring } from './utils'
 import { Amplitude, IAmplitudeConfig } from './amplitude';
 import { GoogleAnalytics, IGoogleConfig } from './google';
 import { Sentry, ISentryConfig } from './sentry';
+import { IIndicativeConfig, Indicative } from './indicative';
 
 export interface IAnalyticsConfig {
   [ProviderType.Amplitude]?: IAmplitudeConfig;
   [ProviderType.GoogleAnalytics]?: IGoogleConfig;
+  [ProviderType.Indicative]?: IIndicativeConfig;
   [ProviderType.Sentry]?: ISentryConfig;
 }
 
@@ -18,6 +20,7 @@ export class Analytics implements IAbstractProvider, IAnalyticsProvider, IMonito
   static readonly factories: ProviderFactories = {
     [ProviderType.Amplitude]: Amplitude,
     [ProviderType.GoogleAnalytics]: GoogleAnalytics,
+    [ProviderType.Indicative]: Indicative,
     [ProviderType.Sentry]: Sentry
   }
 

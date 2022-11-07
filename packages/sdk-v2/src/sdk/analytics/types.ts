@@ -1,6 +1,7 @@
 export enum ProviderType {
   Amplitude = "amplitude",
   GoogleAnalytics = "google",
+  Indicative = "indicative",
   Sentry = "sentry"
 }
 

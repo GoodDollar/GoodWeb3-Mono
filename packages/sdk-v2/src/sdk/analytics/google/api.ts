@@ -1,4 +1,4 @@
-import { forOwn } from 'lodash'
+import { IGoogleAPI, IGoogleConfig } from "./types";
 
 const { dataLayer } = <any>window
 
@@ -8,30 +8,44 @@ interface IAbstractDataModel {
   reset(): void;
 }
 
-class DataLayer {
-  setDefaultEventParams(params: object = {}) {
-    // set vars by one according data layer docs
-    forOwn(params, (value, key) => dataLayer.push({ [key]: value }))
+class DataLayer implements IGoogleAPI {
+  constructor(
+    private userProperty: string
+  ) {}
+
+  setDefaultEventParams(params: object = {}): void {
+    if ('event' in params) {
+      throw new Error('Attempt to send event through setDefaultEventParams(). Use logEvent() instead');
+    }
+
+    this.push(params)
   }
 
-  setUserId(id: string): any {
+  setUserId(id: string): void {
     this.setUserProperties({ id })
   }
 
   // merges user data between calls
-  setUserProperties(props: Record<string, any> = {}) {
+  setUserProperties(props: Record<string, any> = {}): void {
+    const self = this
+    const { userProperty } = self
+
     dataLayer.push(function(this: IAbstractDataModel) {
-      const user = this.get('user') || {}
+      const user = this.get(userProperty) || {}
       const newProps = { ...user, ...props }
 
-      this.set('user', newProps)
-      dataLayer.push({ user: newProps })
+      this.set(userProperty, newProps)
+      self.push({ [userProperty]: newProps })
     });
   }
 
-  logEvent(event: string, data: any = {}) {
-    dataLayer.push({ event, ...data })
+  logEvent(event: string, data: any = {}): void {
+    this.push({ event, ...data })
+  }
+
+  private push(params: object): void {
+    dataLayer.push(params)
   }
 }
 
-export default !dataLayer ? null : new DataLayer()
+export default (config: IGoogleConfig) => !dataLayer ? null : new DataLayer(config.userProperty!)
