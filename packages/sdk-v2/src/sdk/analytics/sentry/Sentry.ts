@@ -1,6 +1,7 @@
 import { get, omit, forOwn } from 'lodash'
 
-import { IAbstractProvider, IMonitoringProvider } from '../types'
+import { IAbstractProvider, IAppProps, IMonitoringProvider } from '../types'
+import { getUserProps } from '../utils';
 import api from './api'
 import { ISentryConfig } from './types'
 
@@ -31,9 +32,8 @@ export class Sentry implements IAbstractProvider, IMonitoringProvider {
     return true;
   }
 
-  identify(email: string, identifier?: string | number, props?: object): void {
-    const id: string = String(identifier || email)
-    const extra = props || {}
+  identify(identifier: string | number, email?: string, props?: object): void {
+    const { id, extra } = getUserProps(identifier, email, props);
 
     api.configureScope((scope: any) => {
       const user = get(scope, '_user', {})

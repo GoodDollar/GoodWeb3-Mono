@@ -1,4 +1,5 @@
-import { IAbstractConfig, IAbstractProvider, IAnalyticsProvider, IAppProps, IMonitoringProvider, IProvider, ProviderType, supportsAnalytics, supportsMonitoring } from './types'
+import { IAbstractConfig, IAbstractProvider, IAnalyticsProvider, IAppProps, IMonitoringProvider, IProvider, ProviderType } from './types'
+import { supportsAnalytics, supportsMonitoring } from './utils'
 import { Amplitude, IAmplitudeConfig } from './amplitude';
 import { GoogleAnalytics, IGoogleConfig } from './google';
 import { Sentry, ISentryConfig } from './sentry';
@@ -55,13 +56,13 @@ export class Analytics implements IAbstractProvider, IAnalyticsProvider, IMonito
     return true
   }
 
-  identify(email: string, identifier: string | number, props?: object): void {
+  identify(identifier: string | number, email?: string, props?: object): void {
     if (!this.initialized) {
       return
     }
 
     for (const provider of this.providers) {
-      provider.identify!(email, identifier, props);
+      provider.identify!(identifier, email, props);
     }
   }
 

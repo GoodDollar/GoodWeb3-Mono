@@ -1,5 +1,3 @@
-import { isFunction } from 'lodash'
-
 export enum ProviderType {
   Amplitude = "amplitude",
   GoogleAnalytics = "google",
@@ -13,13 +11,18 @@ export type IAppProps = Record<string, string> & {
   $once?: Record<string, string>
 }
 
+export interface IUserProps {
+  id: string;
+  extra: Record<string, any>;
+}
+
 export interface IAbstractConfig {
   enabled: boolean;
 }
 
 export interface IAbstractProvider {
   initialize(appProps: IAppProps): Promise<boolean>;
-  identify(email: string, identifier: string | number, props?: object): void;
+  identify(identifier: string | number, email?: string, props?: object): void;
 }
 
 export interface IAnalyticsProvider {
@@ -31,11 +34,3 @@ export interface IMonitoringProvider {
 }
 
 export interface IProvider extends Partial<IAbstractProvider>, Partial<IAnalyticsProvider>, Partial<IMonitoringProvider> {};
-
-export function supportsAnalytics(provider: IProvider): provider is IAnalyticsProvider {
-  return 'send' in provider && isFunction(provider['send']);
-}
-
-export function supportsMonitoring(provider: IProvider): provider is IMonitoringProvider {
-  return 'capture' in provider && isFunction(provider['capture']);
-}

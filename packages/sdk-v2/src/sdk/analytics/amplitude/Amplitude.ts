@@ -3,6 +3,7 @@ import { IAbstractProvider, IAnalyticsProvider, IAppProps, IMonitoringProvider }
 import { IAmplitudeConfig } from "./types";
 
 import api from './api'
+import { getUserProps } from '../utils';
 
 export class Amplitude implements IAbstractProvider, IAnalyticsProvider, IMonitoringProvider {
   constructor(
@@ -37,12 +38,11 @@ export class Amplitude implements IAbstractProvider, IAnalyticsProvider, IMonito
     return initialized
   }
 
-  identify(email: string, identifier?: string | number, props?: object): void {
-    const id: string = String(identifier || email)
-    const extra = props || {}
+  identify(identifier: string | number, email?: string, props?: object): void {
+    const { id, extra } = getUserProps(identifier, email, props);
 
     api.setUserId(id)
-    api.setUserProperties({ email, ...extra })
+    api.setUserProperties(extra)
   }
 
   send(event: string, data?: object): void {

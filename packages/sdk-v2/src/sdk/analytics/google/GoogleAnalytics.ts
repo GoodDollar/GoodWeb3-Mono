@@ -1,6 +1,7 @@
-import { isNumber, isString, isUndefined, negate, pickBy, remove, values } from 'lodash'
+import { omit } from 'lodash'
 
 import { IAbstractProvider, IAnalyticsProvider, IAppProps } from '../types';
+import { getUserProps } from '../utils';
 import api from './api'
 import { IGoogleConfig } from './types';
 
@@ -10,23 +11,23 @@ export class GoogleAnalytics implements IAbstractProvider, IAnalyticsProvider {
   ) {}
 
   async initialize(appProps: IAppProps): Promise<boolean> {
-    return !!api
-  }
+    const initialized = !!api;
 
-  identify(email: string, identifier?: string | number, props?: object): void {}
-
-  send(event: string, data?: object): void {
-    const _values = values(data || {});
-    const { analyticsEvent } = this.config;
-    const eventValues = remove(_values, isNumber)
-    const eventStrings = remove(_values, isString)
-
-    const eventData = {
-      eventAction: event,
-      eventValue: eventValues.shift(),
-      eventLabel: eventStrings.shift() || eventValues.shift() || JSON.stringify(_values.shift()),
+    if (initialized) {
+      api!.setDefaultEventParams(omit(appProps, '$once'))
     }
 
-    api.logEvent(analyticsEvent, pickBy(eventData, negate(isUndefined)));
+    return initialized
+  }
+
+  identify(identifier: string | number, email?: string, props?: object): void {
+    const { id, extra } = getUserProps(identifier, email, props);
+
+    api!.setUserId(id);
+    api!.setUserProperties(extra);
+  }
+
+  send(event: string, data?: object): void {
+    api!.logEvent(event, data);
   }
 }
