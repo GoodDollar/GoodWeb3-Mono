@@ -1,4 +1,4 @@
-import React, { Children, createContext, ReactNode, useCallback, useContext, useEffect, useRef, useState } from 'react'
+import React, { createContext, ReactNode, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { Analytics, IAnalyticsConfig } from './sdk'
 import { IAbstractProvider, IAnalyticsProvider, IAppProps, IMonitoringProvider, IProvider } from './types'
 
@@ -16,7 +16,7 @@ export const AnalyticsContext = createContext<IAnalyticsContext>({
   capture: (exception: Error, fingerprint?: string[], tags?: object, extra?: object): void => {},
 })
 
-export function AnalyticsProvider({ config, appProps }: IAnaliticsProviderProps): ReactNode | null {
+export function AnalyticsProvider({ config, appProps, children }: IAnaliticsProviderProps): ReactNode | null {
   const [sdk, setSDK] = useState<IProvider | null>(null)
   const configRef = useRef(config);
   const appPropsRef = useRef(appProps);
