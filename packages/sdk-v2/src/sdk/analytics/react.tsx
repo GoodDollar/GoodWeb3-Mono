@@ -41,7 +41,7 @@ export function AnalyticsProvider({ config, appProps, children }: IAnaliticsProv
 
   return !sdk ? null : (
     <AnalyticsContext.Provider value={{ send, capture, identify }}>
-      {Children}
+      {children}
     </AnalyticsContext.Provider>
   )
 }
