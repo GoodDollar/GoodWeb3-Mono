@@ -1,5 +1,5 @@
-import { isFunction } from 'lodash'
-import { IIndicativeApi } from '.';
+import { isFunction } from "lodash";
+import { IIndicativeApi } from "./types";
 
 // EXAMPLE OF INDICATIVE.COM SNIPPET TO USE WITH THIS LIBRARY
 // DO NOT INITIALIZE IT BY API KEY JUST ADD ASYNC SCRIPT
@@ -17,9 +17,7 @@ import { IIndicativeApi } from '.';
 // </script>
 
 function hasIndicativeSnippet(): boolean {
-  return document
-    .querySelectorAll('script[src*="//cdn.indicative.com"]')
-    .length > 0
+  return document.querySelectorAll('script[src*="//cdn.indicative.com"]').length > 0;
 }
 
 async function isIndicativeLoaded(): Promise<boolean> {
@@ -28,21 +26,21 @@ async function isIndicativeLoaded(): Promise<boolean> {
 
   return new Promise<boolean>(resolve => {
     const check = () => {
-      if ('Indicative' in window) {
-        resolve(true)
-        return
+      if ("Indicative" in window) {
+        resolve(true);
+        return;
       }
 
-      if ((Date.now() - ts) >= timeout) {
-        resolve(false)
-        return
+      if (Date.now() - ts >= timeout) {
+        resolve(false);
+        return;
       }
 
-      requestIdleCallback(check)
-    }
+      requestIdleCallback(check);
+    };
 
-    check()
-  })
+    check();
+  });
 }
 
 class IndicativeAPIWeb implements IIndicativeApi {
@@ -51,43 +49,43 @@ class IndicativeAPIWeb implements IIndicativeApi {
   constructor() {
     return new Proxy(this, {
       get: (target, property) => {
-        const { api } = target
-        const propName: string = String(property || '')
-        let propertyTarget = api
-        let propertyValue: any
+        const { api } = target;
+        const propName: string = String(property || "");
+        let propertyTarget = api;
+        let propertyValue: any;
 
         // override initialize()
         if (propName === "initialize") {
-          propertyTarget = this
+          propertyTarget = this;
         }
 
-        propertyValue = propertyTarget[property]
+        propertyValue = propertyTarget[property];
 
         if (isFunction(propertyValue)) {
-          propertyValue = propertyValue.bind(propertyTarget)
+          propertyValue = propertyValue.bind(propertyTarget);
         }
 
-        return propertyValue
+        return propertyValue;
       }
-    })
+    });
   }
 
   async initialize(apiKey: string): Promise<boolean> {
-    const isLoaded = await isIndicativeLoaded()
+    const isLoaded = await isIndicativeLoaded();
 
     if (!isLoaded) {
-      throw new Error('Error loading indicative.com snippet')
+      throw new Error("Error loading indicative.com snippet");
     }
 
     const api = (<any>window).Indicative;
     const { initialized, apiKey: initializedWithKey } = api;
 
     if (initialized && initializedWithKey !== apiKey) {
-      throw new Error('indicative.com already initialized with the different API key')
+      throw new Error("indicative.com already initialized with the different API key");
     }
 
     if (!initialized) {
-      api.initialize(apiKey)
+      api.initialize(apiKey);
     }
 
     return api.initialized;
@@ -100,4 +98,6 @@ class IndicativeAPIWeb implements IIndicativeApi {
   buildEvent(eventName: string, props?: object) {}
 }
 
-export default hasIndicativeSnippet() ? new IndicativeAPIWeb() : null
+const indicativeAPIWeb: IndicativeAPIWeb | null = hasIndicativeSnippet() ? new IndicativeAPIWeb() : null;
+
+export default indicativeAPIWeb;

@@ -1,19 +1,19 @@
-import { omit, clone, defaults } from 'lodash'
+import { omit, clone, defaults } from "lodash";
 
-import { IAbstractProvider, IAnalyticsProvider, IAppProps } from '../types';
-import { getUserProps } from '../utils';
-import api from './api'
-import { IIndicativeConfig, defaultConfig } from './types';
+import { IAbstractProvider, IAnalyticsProvider, IAppProps } from "../types";
+import { getUserProps } from "../utils";
+import api from "./api";
+import { IIndicativeConfig, defaultIndicativeConfig } from "./types";
 
 export class Indicative implements IAbstractProvider, IAnalyticsProvider {
   private config: IIndicativeConfig;
 
   constructor(config: IIndicativeConfig) {
-    this.config = defaults(clone(config), defaultConfig)
+    this.config = defaults(clone(config), defaultIndicativeConfig);
   }
 
   async initialize(appProps: IAppProps): Promise<boolean> {
-    const { apiKey } = this.config
+    const { apiKey } = this.config;
 
     if (!api) {
       return false;
@@ -22,10 +22,10 @@ export class Indicative implements IAbstractProvider, IAnalyticsProvider {
     const initialized = await api.initialize(apiKey!);
 
     if (initialized) {
-      api!.addProperties(omit(appProps, '$once'))
+      api!.addProperties(omit(appProps, "$once"));
     }
 
-    return initialized
+    return initialized;
   }
 
   identify(identifier: string | number, email?: string, props?: object): void {

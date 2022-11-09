@@ -1,2 +1,2 @@
-export * from './types'
-export * from './Sentry'
+export * from './Sentry';
+export * from './types';

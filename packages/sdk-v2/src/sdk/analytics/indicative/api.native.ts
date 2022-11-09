@@ -1,5 +1,5 @@
-import Indicative from 'react-native-indicative'
-import { IIndicativeApi } from './types';
+import Indicative from "react-native-indicative";
+import { IIndicativeApi } from "./types";
 
 class IndicativeAPINative implements IIndicativeApi {
   async initialize(apiKey: string): Promise<boolean> {
@@ -25,4 +25,6 @@ class IndicativeAPINative implements IIndicativeApi {
   }
 }
 
-export default new IndicativeAPINative();
+const indicativeAPINative: IndicativeAPINative = new IndicativeAPINative();
+
+export default indicativeAPINative;

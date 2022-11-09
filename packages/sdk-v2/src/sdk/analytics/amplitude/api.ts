@@ -1,3 +1,5 @@
-import amplitude from 'amplitude-js'
+import amplitude from "amplitude-js";
 
-export default amplitude.getInstance()
+const amplitudeInstance: amplitude.AmplitudeClient = amplitude.getInstance();
+
+export default amplitudeInstance;

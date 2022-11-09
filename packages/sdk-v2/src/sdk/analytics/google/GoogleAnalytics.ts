@@ -1,32 +1,32 @@
-import { omit, clone, defaults } from 'lodash'
+import { omit, clone, defaults } from "lodash";
 
-import { IAbstractProvider, IAnalyticsProvider, IAppProps } from '../types';
-import { getUserProps } from '../utils';
-import apiFactory from './api'
-import { IGoogleConfig, defaultConfig, IGoogleAPI } from './types';
+import { IAbstractProvider, IAnalyticsProvider, IAppProps } from "../types";
+import { getUserProps } from "../utils";
+import apiFactory from "./api";
+import { IGoogleConfig, defaultGoogleConfig, IGoogleAPI } from "./types";
 
 export class GoogleAnalytics implements IAbstractProvider, IAnalyticsProvider {
-  private api: IGoogleAPI | null
+  private api: IGoogleAPI | null;
 
   constructor(config: IGoogleConfig) {
-    const mergedCfg = defaults(clone(config), defaultConfig);
+    const mergedCfg = defaults(clone(config), defaultGoogleConfig);
 
-    this.api = apiFactory(mergedCfg)
+    this.api = apiFactory(mergedCfg);
   }
 
   async initialize(appProps: IAppProps): Promise<boolean> {
-    const { api } = this
+    const { api } = this;
     const initialized = !!api;
 
     if (initialized) {
-      api!.setDefaultEventParams(omit(appProps, '$once'))
+      api!.setDefaultEventParams(omit(appProps, "$once"));
     }
 
-    return initialized
+    return initialized;
   }
 
   identify(identifier: string | number, email?: string, props?: object): void {
-    const { api } = this
+    const { api } = this;
     const { id, extra } = getUserProps(identifier, email, props);
 
     api!.setUserId(id);
@@ -34,7 +34,7 @@ export class GoogleAnalytics implements IAbstractProvider, IAnalyticsProvider {
   }
 
   send(event: string, data?: object): void {
-    const { api } = this
+    const { api } = this;
 
     api!.logEvent(event, data);
   }
