@@ -98,6 +98,4 @@ class IndicativeAPIWeb implements IIndicativeApi {
   buildEvent(eventName: string, props?: object) {}
 }
 
-const indicativeAPIWeb: IndicativeAPIWeb | null = hasIndicativeSnippet() ? new IndicativeAPIWeb() : null;
-
-export default indicativeAPIWeb;
+export default hasIndicativeSnippet() ? new IndicativeAPIWeb() : null;

@@ -3,13 +3,13 @@ import { omit, clone, defaults } from "lodash";
 import { IAbstractProvider, IAnalyticsProvider, IAppProps } from "../types";
 import { getUserProps } from "../utils";
 import apiFactory from "./api";
-import { IGoogleConfig, defaultGoogleConfig, IGoogleAPI } from "./types";
+import { IGoogleConfig, defaultConfig, IGoogleAPI } from "./types";
 
 export class GoogleAnalytics implements IAbstractProvider, IAnalyticsProvider {
   private api: IGoogleAPI | null;
 
   constructor(config: IGoogleConfig) {
-    const mergedCfg = defaults(clone(config), defaultGoogleConfig);
+    const mergedCfg = defaults(clone(config), defaultConfig);
 
     this.api = apiFactory(mergedCfg);
   }

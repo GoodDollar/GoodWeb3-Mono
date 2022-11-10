@@ -12,6 +12,6 @@ export interface IIndicativeApi {
   buildEvent(eventName: string, props?: object);
 }
 
-export const defaultIndicativeConfig: Partial<IIndicativeConfig> = {
+export const defaultConfig: Partial<IIndicativeConfig> = {
   userProperty: "user"
 };

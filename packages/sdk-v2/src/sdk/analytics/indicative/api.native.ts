@@ -25,6 +25,4 @@ class IndicativeAPINative implements IIndicativeApi {
   }
 }
 
-const indicativeAPINative: IndicativeAPINative = new IndicativeAPINative();
-
-export default indicativeAPINative;
+export default new IndicativeAPINative();

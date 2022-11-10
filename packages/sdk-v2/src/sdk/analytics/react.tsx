@@ -1,4 +1,4 @@
-import { createContext, FC, ReactNode, useCallback, useContext, useEffect, useRef, useState } from "react";
+import { createContext, FC, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { Analytics, IAnalyticsConfig } from "./sdk";
 import { IAbstractProvider, IAnalyticsProvider, IAppProps, IMonitoringProvider, IProvider } from "./types";
 

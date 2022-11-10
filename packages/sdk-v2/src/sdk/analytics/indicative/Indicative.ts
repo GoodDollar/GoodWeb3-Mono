@@ -3,13 +3,13 @@ import { omit, clone, defaults } from "lodash";
 import { IAbstractProvider, IAnalyticsProvider, IAppProps } from "../types";
 import { getUserProps } from "../utils";
 import api from "./api";
-import { IIndicativeConfig, defaultIndicativeConfig } from "./types";
+import { IIndicativeConfig, defaultConfig } from "./types";
 
 export class Indicative implements IAbstractProvider, IAnalyticsProvider {
   private config: IIndicativeConfig;
 
   constructor(config: IIndicativeConfig) {
-    this.config = defaults(clone(config), defaultIndicativeConfig);
+    this.config = defaults(clone(config), defaultConfig);
   }
 
   async initialize(appProps: IAppProps): Promise<boolean> {

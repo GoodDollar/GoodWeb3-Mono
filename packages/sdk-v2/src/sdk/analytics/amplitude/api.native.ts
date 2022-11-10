@@ -45,6 +45,4 @@ class Wrapper {
   }
 }
 
-const wrapper: Wrapper = new Wrapper(Amplitude.getInstance(), Identify);
-
-export default wrapper;
+export default new Wrapper(Amplitude.getInstance(), Identify);

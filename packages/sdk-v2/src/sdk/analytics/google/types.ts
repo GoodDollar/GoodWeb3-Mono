@@ -11,6 +11,6 @@ export interface IGoogleAPI {
   logEvent(event: string, data?: any): void;
 }
 
-export const defaultGoogleConfig: Partial<IGoogleConfig> = {
+export const defaultConfig: Partial<IGoogleConfig> = {
   userProperty: "user"
 };

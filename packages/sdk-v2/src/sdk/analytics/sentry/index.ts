@@ -1,2 +1,2 @@
-export * from './Sentry';
-export * from './types';
+export * from "./Sentry";
+export type { ISentryConfig } from "./types";
