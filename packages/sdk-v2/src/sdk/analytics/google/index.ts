@@ -1,2 +1,2 @@
 export * from "./GoogleAnalytics";
-export type { IGoogleConfig, IGoogleAPI } from "./types";
+export type { IGoogleConfig } from "./types";
