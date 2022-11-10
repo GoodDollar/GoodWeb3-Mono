@@ -24,7 +24,7 @@ function FVModal({ firstName, method, onClose = noop, ...props }: FVModalProps) 
         const link = fvlink?.getLink(firstName, document.location.href, false);
 
         if (link) {
-          openLink(link);
+          openLink(link, "_self");
         }
         break;
       }
