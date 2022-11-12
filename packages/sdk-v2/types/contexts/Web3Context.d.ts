@@ -2,11 +2,8 @@ import React from "react";
 import { JsonRpcProvider, Web3Provider as W3Provider } from "@ethersproject/providers";
 import { Config, Chain } from "@usedapp/core";
 import { EnvKey } from "../sdk/base/sdk";
-/**
- * request to switch to network id
- * returns void if no result yet true/false if success
- */
-export declare type SwitchCallback = (id: number) => Promise<void>;
+export declare type SwitchNetwork = (id: number) => Promise<void>;
+export declare type SwitchCallback = (id: number, switchResult: any) => Promise<void>;
 export declare type TxDetails = {
     txhash: string;
     title: string;
@@ -21,8 +18,11 @@ export declare type TxEmitter = {
     emit: (tx: TxDetails) => boolean;
 };
 declare type IWeb3Context = {
-    setSwitchNetwork: (cb: SwitchCallback) => void;
-    switchNetwork?: SwitchCallback;
+    setSwitchNetwork: (cb: SwitchNetwork) => void;
+    switchNetwork?: SwitchNetwork;
+    setOnSwitchNetwork?: (cb: () => SwitchCallback) => void;
+    onSwitchNetwork?: SwitchCallback;
+    connectWallet?: () => void;
     txEmitter: TxEmitter;
     env: EnvKey;
 };
@@ -33,14 +33,15 @@ declare type Props = {
     config: Config;
     web3Provider?: JsonRpcProvider | W3Provider;
     env?: EnvKey;
-    switchNetworkRequest?: SwitchCallback;
+    switchNetworkRequest?: SwitchNetwork;
 };
 export declare const Fuse: Chain;
 export declare const Celo: Chain;
 export declare const Web3Provider: ({ children, config, web3Provider, switchNetworkRequest, env }: Props) => JSX.Element;
 export declare const useSwitchNetwork: () => {
-    switchNetwork: SwitchCallback;
-    setSwitchNetwork: (cb: SwitchCallback) => void;
+    switchNetwork: (chainId: number) => Promise<void>;
+    setSwitchNetwork: (cb: SwitchNetwork) => void;
+    setOnSwitchNetwork: ((cb: () => SwitchCallback) => void) | undefined;
 };
 export {};
 //# sourceMappingURL=Web3Context.d.ts.map

@@ -24,18 +24,12 @@ export interface SavingsStats {
 }
 export declare function useSavingsBalance(refresh: number | "never" | "everyBlock" | undefined, requiredChainId: number): {
     g$Balance: {
-        value: undefined;
-        error: Error;
-    } | {
         value: any;
-        error: undefined;
+        error: Error | undefined;
     };
     savingsBalance: {
-        value: undefined;
-        error: Error;
-    } | {
         value: any;
-        error: undefined;
+        error: Error | undefined;
     };
 };
 export declare const useSavingsFunctions: () => {

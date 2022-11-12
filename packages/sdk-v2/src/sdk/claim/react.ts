@@ -126,20 +126,14 @@ export const useWhitelistSync = () => {
     const whitelistSync = async () => {
       const isSynced = await AsyncStorage.getItem(`${account}-whitelistedSync`);
 
-      console.log("syncWhitelist", { account, baseEnv, isSynced, fuseResult, otherResult });
-
       if (isSynced !== "true" && fuseResult?.value[0] && otherResult?.value[0] === false) {
         const { backend } = Envs[baseEnv];
-
-        console.log("syncingWhitelist", { account, backend, baseEnv });
 
         setSyncStatus(
           fetch(backend + `/syncWhitelist/${account}`)
             .then(async r => {
-              console.log("syncWhitelist result:", r);
               if (r.status === 200) {
                 const res = await r.json();
-                console.log("syncWhitelist json result:", res);
 
                 AsyncStorage.setItem(`${account}-whitelistedSync`, "true");
                 return true;
@@ -148,7 +142,6 @@ export const useWhitelistSync = () => {
               }
             })
             .catch(e => {
-              console.log("syncWhitelistfailed:", e.message, e);
               return false;
             })
         );

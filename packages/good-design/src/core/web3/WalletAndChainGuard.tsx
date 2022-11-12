@@ -1,0 +1,48 @@
+import { Text } from "native-base";
+import React, { useEffect } from "react";
+import { useEthers, useConfig } from "@usedapp/core";
+import { useModal } from "../modals/BasicModal";
+import { SupportedChains } from "@gooddollar/web3sdk-v2";
+import { filter } from "lodash";
+
+export const WalletAndChainGuard = ({
+  validChains = [SupportedChains.FUSE, SupportedChains.CELO, SupportedChains.MAINNET],
+  children
+}: {
+  connectWallet?: () => void;
+  switchChain?: () => void;
+  validChains?: Array<number>;
+  children: any;
+}) => {
+  const { account, chainId, library } = useEthers();
+  const isValid = account && validChains.includes(chainId || -1);
+  const config = useConfig();
+  const networkNames = filter(config.networks, _ => validChains.includes(_.chainId)).map(_ => _.chainName);
+
+  const { Modal, showModal, hideModal } = useModal();
+
+  useEffect(() => {
+    if (isValid) hideModal();
+    else showModal();
+  }, [isValid]);
+
+  return (
+    <React.Fragment>
+      <Modal
+        body={
+          <Text>
+            {account || (library && !chainId)
+              ? `Connect to supported chain: ${networkNames.join(", ")} (${validChains.join(", ")})`
+              : "Connect Wallet"}
+          </Text>
+        }
+        closeText=""
+        _modal={{
+          isKeyboardDismissable: false,
+          closeOnOverlayClick: false
+        }}
+      />
+      {isValid && children}
+    </React.Fragment>
+  );
+};

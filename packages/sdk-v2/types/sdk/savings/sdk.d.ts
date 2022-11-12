@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import { BaseSDK } from '../base/sdk';
+import { BaseSDK } from "../base/sdk";
 export declare class SavingsSDK extends BaseSDK {
     hasBalance(account: string): Promise<boolean | undefined>;
     onTokenTransfer(amount: string, onSent?: (transactionHash: string) => void): Promise<ethers.ContractTransaction | Error>;

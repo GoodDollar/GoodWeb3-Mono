@@ -16,7 +16,7 @@ export declare const useGetEnvChainId: (requiredChainId?: number) => {
     defaultEnv: string;
     baseEnv: string;
     connectedEnv: string;
-    switchNetworkRequest: import("../../contexts").SwitchCallback | undefined;
+    switchNetworkRequest: import("../../contexts").SwitchNetwork | undefined;
 };
 export declare const useGetContract: (contractName: string, readOnly?: boolean, type?: SdkTypes, env?: EnvKey, requiredChainId?: number) => import("ethers").Contract | undefined;
 export declare const getSigner: (signer: void | Signer, account: string) => Promise<Error | Signer>;
