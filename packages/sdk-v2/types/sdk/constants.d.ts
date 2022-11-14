@@ -12,6 +12,7 @@ export declare enum SupportedV2Networks {
     FUSE = 122,
     CELO = 42220
 }
+export declare type SupportedV2Network = keyof typeof SupportedV2Networks;
 export declare const Envs: {
     [key: EnvKey]: {
         [key: string]: string;

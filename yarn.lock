@@ -2315,6 +2315,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@gooddollar/goodcontracts@npm:^2.6.6":
+  version: 2.6.6
+  resolution: "@gooddollar/goodcontracts@npm:2.6.6"
+  dependencies:
+    truffle-flattener: ^1.4.4
+    truffle-safe-hdwallet-provider: 0.0.7
+  checksum: a916701c3c4c21d7516689db859315271f0cff71770c4fb379c55d066b74f0cbe046c651a0b7afcfd60f8ec1368d69a3333e309a6d3dafea348c8ba39812294d
+  languageName: node
+  linkType: hard
+
 "@gooddollar/goodlogin-sdk@workspace:packages/login-sdk":
   version: 0.0.0-use.local
   resolution: "@gooddollar/goodlogin-sdk@workspace:packages/login-sdk"
@@ -2361,7 +2371,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/goodprotocol@npm:1.0.29-beta.4, @gooddollar/goodprotocol@npm:^1.0.29-beta.4":
+"@gooddollar/goodprotocol@npm:1.0.29-beta.4":
   version: 1.0.29-beta.4
   resolution: "@gooddollar/goodprotocol@npm:1.0.29-beta.4"
   dependencies:
@@ -2381,6 +2391,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@gooddollar/goodprotocol@npm:1.0.29-beta.5":
+  version: 1.0.29-beta.5
+  resolution: "@gooddollar/goodprotocol@npm:1.0.29-beta.5"
+  dependencies:
+    "@gooddollar/goodcontracts": ^2.6.6
+    "@jsier/retrier": ^1.2.4
+    "@openzeppelin/contracts": ^4.5.0
+    "@openzeppelin/contracts-upgradeable": ^4.3.2
+    "@typechain/hardhat": ^6.1.2
+    async-promise-pool: ^1.0.4
+    ethers-multicall: ^0.2.1
+    openzeppelin-solidity: ^4.3.2
+    patch-package: latest
+    press-any-key: ^0.1.1
+    truffle-plugin-verify: ^0.5.11
+    truffle-source-verify: ^0.0.6
+  checksum: 8334b72beb081625b524cb88018c5d88df657d117504baf5be9cb2a53a6acd8ee8ffdf3c23473fc8f727075c9f14d1dc83f01c526341b9c304c883844f3ba669
+  languageName: node
+  linkType: hard
+
 "@gooddollar/web3sdk-v2@workspace:packages/sdk-v2":
   version: 0.0.0-use.local
   resolution: "@gooddollar/web3sdk-v2@workspace:packages/sdk-v2"
@@ -2390,8 +2420,8 @@ __metadata:
     "@babel/preset-env": ^7.16.4
     "@babel/preset-react": ^7.16.0
     "@babel/preset-typescript": ^7.16.0
-    "@gooddollar/goodprotocol": ^1.0.29-beta.4
-    "@react-native-async-storage/async-storage": ^1.17.10
+    "@gooddollar/goodprotocol": 1.0.29-beta.5
+    "@react-native-async-storage/async-storage": 1.17.10
     "@storybook/addon-actions": ^6.5.12
     "@storybook/addon-essentials": ^6.5.12
     "@storybook/addon-links": ^6.5.12
@@ -2427,7 +2457,7 @@ __metadata:
     sass-loader: ^12.3.0
     style-loader: ^3.3.1
   peerDependencies:
-    "@react-native-async-storage/async-storage": "*"
+    "@react-native-async-storage/async-storage": 1.17.10
     ethers: 5.*
     react-native: 0.67.4
     react-native-web: ^0.18.1
@@ -3710,7 +3740,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-async-storage/async-storage@npm:^1.17.10":
+"@react-native-async-storage/async-storage@npm:1.17.10":
   version: 1.17.10
   resolution: "@react-native-async-storage/async-storage@npm:1.17.10"
   dependencies:
@@ -24850,7 +24880,7 @@ __metadata:
 
 "typescript@patch:typescript@4.7.4#~builtin<compat/typescript>":
   version: 4.7.4
-  resolution: "typescript@patch:typescript@npm%3A4.7.4#~builtin<compat/typescript>::version=4.7.4&hash=f456af"
+  resolution: "typescript@patch:typescript@npm%3A4.7.4#~builtin<compat/typescript>::version=4.7.4&hash=7ad353"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
@@ -24860,7 +24890,7 @@ __metadata:
 
 "typescript@patch:typescript@^4.6.2#~builtin<compat/typescript>, typescript@patch:typescript@^4.6.3#~builtin<compat/typescript>, typescript@patch:typescript@^4.8.2#~builtin<compat/typescript>":
   version: 4.8.4
-  resolution: "typescript@patch:typescript@npm%3A4.8.4#~builtin<compat/typescript>::version=4.8.4&hash=f456af"
+  resolution: "typescript@patch:typescript@npm%3A4.8.4#~builtin<compat/typescript>::version=4.8.4&hash=7ad353"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
