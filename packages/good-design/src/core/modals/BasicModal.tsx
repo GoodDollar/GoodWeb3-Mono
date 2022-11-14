@@ -5,6 +5,7 @@ export const useModal = () => {
   const [modalVisible, setModalVisible] = useState(false);
 
   return {
+    modalVisible,
     showModal: useCallback(() => setModalVisible(true), []),
     hideModal: useCallback(() => setModalVisible(false), []),
     Modal: ({

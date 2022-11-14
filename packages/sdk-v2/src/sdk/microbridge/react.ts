@@ -123,10 +123,13 @@ export const useBridge = () => {
     }
   );
 
-  const relayStatus = relayEvent && {
-    status: relayEvent?.value?.length ? "Success" : "Mining",
-    transaction: { hash: relayEvent?.value?.[0]?.transactionHash }
-  };
+  const relayStatus: Partial<TransactionStatus> | undefined =
+    relayEvent &&
+    ({
+      chainId: bridgeRequest?.targetChainId,
+      status: relayEvent?.value?.length ? "Success" : "Mining",
+      transaction: { hash: relayEvent?.value?.[0]?.transactionHash }
+    } as TransactionStatus);
 
   const sendBridgeRequest = useCallback(
     async (amount: string, sourceChain: string, target = account) => {
@@ -154,24 +157,37 @@ export const useBridge = () => {
       );
       transferAndCall.send(bridgeContract.address, bridgeRequest.amount, encoded).then(async sendTx => {
         if (sendTx) {
+          let relayTxHash: string = "";
           try {
             setSelfRelay({
               status: "None",
               transaction: {}
             } as TransactionStatus);
-            const { relayTxHash = "", relayPromise } = await relayTx(
+            const { relayTxHash: txHash = "", relayPromise } = await relayTx(
               chainId || 0,
               bridgeRequest.targetChainId,
               sendTx.transactionHash
             );
+            relayTxHash = txHash;
             setSelfRelay({
+              chainId: chainId,
               status: relayTxHash ? "Mining" : "Fail",
               transaction: { hash: relayTxHash }
             } as TransactionStatus);
             await relayPromise;
-            setSelfRelay({ status: "Success", transaction: { hash: relayTxHash } } as TransactionStatus);
+            setSelfRelay({
+              status: "Success",
+              chainId: chainId,
+              transaction: { hash: relayTxHash }
+            } as TransactionStatus);
           } catch (e: any) {
-            setSelfRelay({ ...selfRelayStatus, status: "Exception", errorMessage: e.message });
+            setSelfRelay({
+              ...selfRelayStatus,
+              status: "Exception",
+              chainId: chainId,
+              errorMessage: e.message,
+              transaction: { hash: relayTxHash }
+            } as TransactionStatus);
           }
         }
       });

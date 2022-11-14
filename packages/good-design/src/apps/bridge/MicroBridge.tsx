@@ -21,6 +21,7 @@ import { TransactionStatus, CurrencyValue, FiatCurrency } from "@usedapp/core";
 import { TokenInput } from "../../core";
 import { AddressInput, isAddressValid } from "../../core/inputs/AddressInput";
 import { BigNumber } from "ethers";
+import { ExplorerLink } from "../../core/web3/ExplorerLink";
 
 const explorers = { fuse: "https://explorer.fuse.io/transaction", celo: "https://celoscan.xyz/transaction" };
 
@@ -52,12 +53,16 @@ const StatusBox = ({
   infoText?: string;
   sourceChain: "fuse" | "celo";
 }) => (
-  <HStack mt="2">
+  <HStack mt="2" alignItems={"center"}>
     <HStack alignItems={"center"} flex="2 0">
-      <Status result={txStatus?.status} />
-      <Text color="emerald.500" fontSize="md" ml="2">
-        {text}
-      </Text>
+      <Box>
+        <Status result={txStatus?.status} />
+      </Box>
+      <Box flex={"1 1"}>
+        <Text color="emerald.500" fontSize="md" ml="2">
+          {text}
+        </Text>
+      </Box>
       {infoText && (
         <Popover
           trigger={triggerProps => {
@@ -71,17 +76,9 @@ const StatusBox = ({
         </Popover>
       )}
     </HStack>
-    {txStatus?.transaction && (
-      <Box flex={"1 1"}>
-        <Link
-          _text={{ fontSize: "md", isTruncated: true }}
-          href={`${explorers[sourceChain]}/${txStatus?.transaction.hash}`}
-          isExternal
-        >
-          {txStatus?.transaction.hash}
-        </Link>
-      </Box>
-    )}
+    <Flex flex={"1 1"} alignItems={"center"}>
+      {txStatus && <ExplorerLink chainId={txStatus.chainId} addressOrTx={txStatus.transaction?.hash} />}
+    </Flex>
   </HStack>
 );
 
@@ -214,7 +211,7 @@ export const MicroBridge = ({
         <Box borderWidth="1" mt="10" padding="5" rounded="lg">
           <StatusBox text="Sending funds to bridge" txStatus={bridgeStatus} sourceChain={sourceChain} />
 
-          {selfRelayStatus?.transaction && (
+          {bridgeStatus?.status === "Success" && selfRelayStatus && (
             <StatusBox
               text="Self relaying to target chain... (Can take a few minutes)"
               infoText="If you have enough native tokens on the target chain, you will execute the transfer on the target chain yourself and save some bridge fees"
@@ -222,9 +219,9 @@ export const MicroBridge = ({
               sourceChain={sourceChain}
             />
           )}
-          {["Fail", "Exception"].includes(selfRelayStatus?.status || "") && (
+          {bridgeStatus?.status === "Success" && (
             <StatusBox
-              text="Waiting for bridge relayers to relay to target chain... (This can take a few minutes)"
+              text="Waiting for bridge relayers to relay to target chain... (Can take a few minutes)"
               infoText="If you don't have enough native tokens on the target chain, a bridge relay service will execute the transfer for a small G$ fee"
               txStatus={relayStatus}
               sourceChain={sourceChain}

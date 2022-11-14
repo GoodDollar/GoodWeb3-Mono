@@ -1,9 +1,8 @@
-import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { JsonRpcProvider, Web3Provider as W3Provider } from "@ethersproject/providers";
-import { DAppProvider, Config, Chain, Mainnet, Ropsten, Kovan, useEthers, Goerli } from "@usedapp/core";
+import { DAppProvider, Config, Chain, Mainnet, useEthers, Goerli } from "@usedapp/core";
 import EventEmitter from "eventemitter3";
 import { EnvKey } from "../sdk/base/sdk";
-import { Switch } from "react-native";
 /**
  * request to switch to network id
  * returns void if no result yet true/false if success
@@ -116,7 +115,7 @@ export const Web3Provider = ({ children, config, web3Provider, switchNetworkRequ
 
   const setSwitcNetworkCallback = useCallback((cb: SwitchNetwork) => setSwitchNetwork(() => cb), [setSwitchNetwork]);
   //make sure we have Fuse and mainnet by default and the relevant multicall available from useConfig for useMulticallAtChain hook
-  config.networks = [Fuse, Mainnet, Goerli, Celo, ...(config.networks || [])];
+  config.networks = config.networks || [Fuse, Mainnet, Goerli, Celo];
   config.multicallVersion = config.multicallVersion ? config.multicallVersion : 1;
   config.gasLimitBufferPercentage = 10;
   config.readOnlyUrls = {

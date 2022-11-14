@@ -15,16 +15,17 @@ export const WalletAndChainGuard = ({
   children: any;
 }) => {
   const { account, chainId, library } = useEthers();
-  const isValid = account && validChains.includes(chainId || -1);
   const config = useConfig();
   const networkNames = filter(config.networks, _ => validChains.includes(_.chainId)).map(_ => _.chainName);
 
-  const { Modal, showModal, hideModal } = useModal();
+  const { Modal, showModal, hideModal, modalVisible } = useModal();
 
   useEffect(() => {
+    const isValid = account && chainId && validChains.includes(chainId);
+
     if (isValid) hideModal();
     else showModal();
-  }, [isValid]);
+  }, [account, chainId]);
 
   return (
     <React.Fragment>
@@ -42,7 +43,7 @@ export const WalletAndChainGuard = ({
           closeOnOverlayClick: false
         }}
       />
-      {isValid && children}
+      {modalVisible === false && children}
     </React.Fragment>
   );
 };

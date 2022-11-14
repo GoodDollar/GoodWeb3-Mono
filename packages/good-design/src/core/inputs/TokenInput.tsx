@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { Box, Button, Input, Text, View } from "native-base";
-import { NumericFormat } from "react-number-format";
+import { NumericFormat, numericFormatter } from "react-number-format";
 // converts the value using the mask parameters
 // const mask = (value: string = "", onChange: any, type: string, options?: ) => ({
 //   // the value is converted to a mask so it is displayed properly with the <Input /> component
@@ -13,18 +13,18 @@ export const TokenInput = ({
   decimals,
   balanceWei,
   onChange,
-  nfProps,
-  buttonProps,
-  textProps,
+  _numericformat,
+  _button,
+  _text,
   minAmountWei = "0",
   ...props
 }: {
   decimals: number;
   balanceWei: string;
   onChange: (v: string) => void;
-  nfProps?: any;
-  buttonProps?: any;
-  textProps?: any;
+  _numericformat?: any;
+  _button?: any;
+  _text?: any;
   minAmountWei?: string;
 }) => {
   const [input, setInput] = useState<number>(0);
@@ -38,15 +38,6 @@ export const TokenInput = ({
     },
     [setInput, onChange]
   );
-  // const maskedInputProps = useMaskedInputProps({
-  //   value: input,
-  //   onChangeText: setInput,
-  //   mask: createNumberMask({
-  //     delimiter: ",",
-  //     separator: ".",
-  //     precision: decimals
-  //   })
-  // });
 
   return (
     <Box w="container" {...props}>
@@ -54,7 +45,7 @@ export const TokenInput = ({
         isInvalid={Number(input) > balance || Number(input) < minAmount}
         onChangeText={handleChange}
         InputLeftElement={
-          <Button rounded="xl" variant="outline" h="0.5" ml="1" onPress={setMax} {...buttonProps}>
+          <Button rounded="xl" variant="outline" h="0.5" ml="1" onPress={setMax} {..._button}>
             Max
           </Button>
         }
@@ -63,9 +54,9 @@ export const TokenInput = ({
         customInput={Input}
         decimalSeparator={"."}
         decimalScale={decimals}
-        {...nfProps}
+        {..._numericformat}
       />
-      <Text alignSelf={"flex-end"} {...textProps}>
+      <Text alignSelf={"flex-end"} {..._text}>
         Balance: {balance}
       </Text>
     </Box>

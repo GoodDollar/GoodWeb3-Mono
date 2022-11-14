@@ -13,8 +13,9 @@ import {
 } from "@gooddollar/web3sdk-v2";
 import { MicroBridge } from "./MicroBridge";
 import { sortBy } from "lodash";
-import { Box, Button, Flex, Heading, HStack, Text } from "native-base";
+import { Box, Button, Flex, Heading, HStack, Text, ArrowForwardIcon, Stack } from "native-base";
 import { useSignWalletModal } from "../../hooks/useSignWalletModal";
+import { ExplorerLink } from "../../core/web3/ExplorerLink";
 
 const useBalanceHook = (chain: string) => {
   const env = useGetEnvChainId(chain === "fuse" ? SupportedChains.FUSE : SupportedChains.CELO);
@@ -67,7 +68,14 @@ const MicroBridgeHistory = () => {
   return (
     <Box borderRadius={"md"} mt="4" borderWidth={"1"} padding="5">
       <Heading size="sm">Transactions History</Heading>
-      <HStack alignContent={"center"} alignItems="center" justifyContent={"center"} mt="5">
+      <Stack
+        direction={["column", "column", "row"]}
+        alignContent={"center"}
+        alignItems="center"
+        justifyContent={"center"}
+        mt="5"
+      >
+        <Flex flex="1 1"></Flex>
         <Flex flex="2 1">
           <Heading size="xs">Transaction Hash</Heading>
         </Flex>
@@ -83,36 +91,59 @@ const MicroBridgeHistory = () => {
         <Flex flex="1 0">
           <Heading size="xs">Status</Heading>
         </Flex>
-      </HStack>
+      </Stack>
 
       {historySorted.map(i => (
-        <HStack alignContent={"center"} alignItems="center" mt={2} key={i.transactionHash}>
-          <Flex flex="2 1">
-            <Text isTruncated>{i.transactionHash}</Text>
+        <Stack
+          direction={["column", "column", "row"]}
+          alignContent={"center"}
+          alignItems={["flex-start", "flex-start", "center"]}
+          mt={2}
+          key={i.transactionHash}
+          space={"2"}
+          borderWidth={["1", "1", "0"]}
+          padding={["2", "2", "0"]}
+          borderRadius={["md", "md", "none"]}
+        >
+          <HStack flex="1 1" alignItems={"center"}>
+            <Text flex="1 0">{i.data.targetChainId.toNumber() === 122 ? "Celo" : "Fuse"}</Text>
+            <ArrowForwardIcon size="3" color="black" ml="1" mr="1" flex="auto 0" />
+            <Text flex="1 0">{i.data.targetChainId.toNumber() === 122 ? "Fuse" : "Celo"}</Text>
+          </HStack>
+          <Flex flex={["1 1", "1 1", "2 0"]} maxWidth="100%">
+            <ExplorerLink
+              chainId={i.data.targetChainId.toNumber() === 122 ? 42220 : 122}
+              addressOrTx={i.transactionHash}
+            />
           </Flex>
-          <Flex flex="2 0">
-            <Text isTruncated>{i.data.from}</Text>
+          <Flex flex={["1 1", "1 1", "2 0"]} maxWidth="100%">
+            <ExplorerLink chainId={i.data.targetChainId.toNumber() === 122 ? 42220 : 122} addressOrTx={i.data.from} />
           </Flex>
-          <Flex flex="2 0">
-            <Text isTruncated>{i.data.to}</Text>
+          <Flex flex={["1 1", "1 1", "2 0"]} maxWidth="100%">
+            <ExplorerLink chainId={i.data.targetChainId.toNumber() === 122 ? 42220 : 122} addressOrTx={i.data.to} />
           </Flex>
-          <Flex flex="1 0">
-            <Text>{i.data.amount.toNumber() / 100}</Text>
+          <Flex flex={["1 1", "1 1", "1 0"]} maxWidth="100%">
+            <Text>{i.data.amount.toNumber() / 100} G$</Text>
           </Flex>
-          <Flex flex="1 0">
+          <Flex flex={["1 1", "1 1", "1 0"]} maxWidth="100%">
             {(i as any).relayEvent ? (
-              <Text>Completed</Text>
+              <ExplorerLink
+                chainId={i.data.targetChainId.toNumber()}
+                addressOrTx={(i as any).relayEvent.transactionHash}
+                text={"Completed"}
+              />
             ) : (
               <Button isLoading={relaying[i.transactionHash]} onPress={() => triggerRelay(i)}>
                 Relay
               </Button>
             )}
           </Flex>
-        </HStack>
+        </Stack>
       ))}
     </Box>
   );
 };
+
 export const MicroBridgeController = ({}) => {
   const { sendBridgeRequest, bridgeRequestStatus, relayStatus, selfRelayStatus } = useBridge();
   const { bridgeFees: fuseBridgeFees, bridgeLimits: fuseBridgeLimits } = useGetBridgeData(SupportedChains.FUSE, "");
@@ -126,7 +157,7 @@ export const MicroBridgeController = ({}) => {
         useBalanceHook={useBalanceHook}
         useCanBridge={useCanBridge}
         bridgeStatus={bridgeRequestStatus}
-        relayStatus={relayStatus as TransactionStatus}
+        relayStatus={relayStatus}
         selfRelayStatus={selfRelayStatus}
         limits={{ fuse: fuseBridgeLimits, celo: celoBridgeLimits }}
         fees={{ fuse: fuseBridgeFees, celo: celoBridgeFees }}
