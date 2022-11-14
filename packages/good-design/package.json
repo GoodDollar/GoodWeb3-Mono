@@ -46,7 +46,6 @@
     "babel-plugin-transform-class-properties": "^6.24.1",
     "ctix": "^1.4.0",
     "lodash": "^4.17.21",
-    "native-base": "3.4.11",
     "react-docgen-typescript-plugin": "^1.0.1",
     "react-native-web": "0.17",
     "webpack": "^5.74.0"
@@ -66,6 +65,7 @@
     "buffer": "^6.0.3",
     "css-loader": "^6.7.1",
     "metro-react-native-babel-preset": "^0.72.0",
+    "native-base": "^3.4.21",
     "prop-types": "^15.8.1",
     "react": "17.0.2",
     "react-dom": "17.0.2",

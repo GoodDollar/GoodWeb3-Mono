@@ -2281,7 +2281,7 @@ __metadata:
     ctix: ^1.4.0
     lodash: ^4.17.21
     metro-react-native-babel-preset: ^0.72.0
-    native-base: 3.4.11
+    native-base: ^3.4.21
     prop-types: ^15.8.1
     react: 17.0.2
     react-docgen-typescript-plugin: ^1.0.1
@@ -2406,7 +2406,7 @@ __metadata:
     "@types/node": 18.0.0
     "@types/react": 17.0.2
     "@types/react-native": ^0.70.4
-    "@usedapp/core": ^1.0.9
+    "@usedapp/core": ^1.2.2
     babel-jest: ^27.3.1
     babel-loader: ^8.2.3
     babel-plugin-module-resolver: ^4.1.0
@@ -6784,6 +6784,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/use-subscription@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@types/use-subscription@npm:1.0.0"
+  checksum: 47fff868682692ecda7110bd04ba4c5b1324854c0bcccc765606a42d4bd9be475207413c8829a883b98e7edd801100df53876da0ff89ac21a8f964e440636ef2
+  languageName: node
+  linkType: hard
+
 "@types/webpack-env@npm:^1.16.0":
   version: 1.18.0
   resolution: "@types/webpack-env@npm:1.18.0"
@@ -7073,7 +7080,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@usedapp/core@npm:^1.0.9, @usedapp/core@npm:^1.1.5":
+"@usedapp/core@npm:^1.1.5":
   version: 1.1.5
   resolution: "@usedapp/core@npm:1.1.5"
   dependencies:
@@ -7089,6 +7096,25 @@ __metadata:
   bin:
     usedapp-generate-hooks: bin/usedapp-generate-hooks.js
   checksum: 5db2ca8f132780b935c6c0138bf821728e73c5f3ebad4ac765411dd47b0abff29100e4a3d8798f0fdca1effc49d8fcb3c1344e53659050afdb344072ab1531a8
+  languageName: node
+  linkType: hard
+
+"@usedapp/core@npm:^1.2.2":
+  version: 1.2.2
+  resolution: "@usedapp/core@npm:1.2.2"
+  dependencies:
+    "@metamask/detect-provider": ^1.2.0
+    "@uniswap/token-lists": ^1.0.0-beta.27
+    fetch-mock: ^9.11.0
+    lodash.merge: ^4.6.2
+    lodash.pickby: ^4.6.0
+    nanoid: 3.3.4
+  peerDependencies:
+    ethers: "*"
+    react: "*"
+  bin:
+    usedapp-generate-hooks: bin/usedapp-generate-hooks.js
+  checksum: 656df73e33b96d2d414bd9b84fbff529aae6c454a2978b0e4a84b092254a1440bd63ed1db4566656374febdf4bf028b1425e3c2932a5737d878b21d03b8d6208
   languageName: node
   linkType: hard
 
@@ -15057,7 +15083,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"inline-style-prefixer@npm:^6.0.0":
+"inline-style-prefixer@npm:^6.0.0, inline-style-prefixer@npm:^6.0.1":
   version: 6.0.1
   resolution: "inline-style-prefixer@npm:6.0.1"
   dependencies:
@@ -19078,9 +19104,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"native-base@npm:3.4.11":
-  version: 3.4.11
-  resolution: "native-base@npm:3.4.11"
+"native-base@npm:^3.4.21":
+  version: 3.4.21
+  resolution: "native-base@npm:3.4.21"
   dependencies:
     "@react-aria/focus": 3.2.3
     "@react-aria/utils": ^3.6.0
@@ -19104,6 +19130,8 @@ __metadata:
     "@react-stately/tabs": 3.0.0-alpha.1
     "@react-stately/toggle": 3.2.1
     "@types/lodash.has": ^4.5.6
+    "@types/use-subscription": ^1.0.0
+    inline-style-prefixer: ^6.0.1
     lodash.clonedeep: ^4.5.0
     lodash.get: ^4.4.2
     lodash.has: ^4.5.2
@@ -19118,6 +19146,7 @@ __metadata:
     react-native-keyboard-aware-scroll-view: ^0.9.5
     stable-hash: ^0.0.2
     tinycolor2: ^1.4.2
+    use-subscription: ^1.8.0
   peerDependencies:
     "@types/react": "*"
     "@types/react-native": "*"
@@ -19126,7 +19155,7 @@ __metadata:
     react-native: "*"
     react-native-safe-area-context: "*"
     react-native-svg: "*"
-  checksum: 8c4c0390919bee9d64ab5e1a7115966fa7751ce02a6886228c8956c036197c676b33685393c96cb60f171704751bf2d8e8a4fcbf0d664b75d57ee2381427b0ec
+  checksum: c179283b8512665bb6ee70e5e8bc1a79fb123754f24299bdbc5b88fea5f80c36e42bb3d54c7dbfdb74c3d57f0701a36d97ee5934ec464038960c0e46524dd19d
   languageName: node
   linkType: hard
 
@@ -25272,7 +25301,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"use-subscription@npm:^1.0.0":
+"use-subscription@npm:^1.0.0, use-subscription@npm:^1.8.0":
   version: 1.8.0
   resolution: "use-subscription@npm:1.8.0"
   dependencies:

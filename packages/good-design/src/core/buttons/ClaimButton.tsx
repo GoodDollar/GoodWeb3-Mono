@@ -7,6 +7,8 @@ import FvModal from "../modals/FVModal";
 import { withTheme } from "../../theme/hoc/withTheme";
 import { withThemingTools } from "../../theme/utils/themingTools";
 import ActionButton from "./ActionButton";
+import FirstClaimModal from "../modals/FirstClaimModal";
+import { useModalState } from "../../hooks/useModalState";
 
 interface FVFlowProps {
   firstName: string;
@@ -18,18 +20,18 @@ interface FVFlowProps {
 export type FVModalProps = IModalProps & FVFlowProps;
 
 function ClaimButton({ firstName, method, refresh, ...props }: FVFlowProps) {
-  const [showModal, setShowModal] = useState(false);
+  const [showFVModal, openFVModal, closeFVModal] = useModalState();
+  const [showClaimModal, openClaimModal, closeClaimModal] = useModalState();
   const { isWhitelisted, claimAmount, claimTime, claimCall } = useClaim(refresh);
   const isVerified = useQueryParam("verified");
-  const handleClose = useCallback(() => setShowModal(false), [setShowModal]);
 
   const handleClaim = useCallback(async () => {
     if (isWhitelisted || isVerified) {
       return await claimCall.send();
     }
 
-    setShowModal(true);
-  }, [isWhitelisted, setShowModal, claimCall]);
+    openFVModal();
+  }, [isWhitelisted, openFVModal, claimCall]);
 
   const buttonTitle = useMemo(() => {
     if (!isWhitelisted) {
@@ -44,15 +46,18 @@ function ClaimButton({ firstName, method, refresh, ...props }: FVFlowProps) {
   }, [isWhitelisted, claimAmount, claimTime]);
 
   useEffect(() => {
-    console.log("isVerified :", isVerified);
-  }, [isVerified]);
+    if (!isVerified || claimAmount.toNumber() <= 0) return;
+
+    claimCall.send();
+    openClaimModal();
+  }, [isVerified, claimAmount, openClaimModal]);
 
   return (
     <View {...props}>
-      <View flex={1} alignItems="center" justifyContent="center" width='100%'>
-        <FvModal method={method} isOpen={showModal} onClose={handleClose} firstName={firstName} />
-      </View>
       <ActionButton text={buttonTitle} onPress={handleClaim} />
+
+      <FvModal method={method} isOpen={showFVModal} onClose={closeFVModal} firstName={firstName} />
+      <FirstClaimModal isOpen={showClaimModal} onClose={closeClaimModal} />
     </View>
   );
 }
@@ -62,7 +67,7 @@ export const theme = {
     justifyContent: "center",
     px: 4,
     minWidth: "100%",
-    width: "100%",
+    width: "100%"
   }))
 };
 
