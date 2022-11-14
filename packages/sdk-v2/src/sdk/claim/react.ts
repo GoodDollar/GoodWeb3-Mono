@@ -18,7 +18,7 @@ export const useFVLink = () => {
   const { chainId } = useGetEnvChainId();
   const sdk = useSDK(false, "claim", chainId) as ClaimSDK;
 
-  return useMemo(() => sdk.getFVLink(), [sdk]);
+  return useMemo(() => sdk?.getFVLink(), [sdk]);
 };
 
 export const useIsAddressVerified = (address: string, env?: EnvKey) => {
