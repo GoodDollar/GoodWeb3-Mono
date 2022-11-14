@@ -16,8 +16,6 @@ export enum SupportedV2Networks {
   CELO = 42220
 }
 
-export type SupportedChain = keyof typeof SupportedV2Networks;
-
 type G$Tokens = {
   amount: CurrencyValue;
   token: Currency;
@@ -27,6 +25,9 @@ export interface G$Balances {
   GOOD: G$Tokens | undefined;
   GDX: G$Tokens | undefined;
 }
+export type SupportedV2Network = keyof typeof SupportedV2Networks;
+
+// export const SUPPORTED_NETWORKS: Readonly<string[]> = ["CELO", "FUSE"]
 
 export const Envs: { [key: EnvKey]: { [key: string]: string } } = {
   production: {

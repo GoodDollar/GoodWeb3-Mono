@@ -1,3 +1,4 @@
+export { default as useAppRestart } from './useAppRestart';
 export { default as useAppState } from './useAppState';
 export { default as useRefreshOrNever } from './useRefreshOrNever';
 export { default as useUpdateEffect } from './useUpdateEffect';

@@ -26,7 +26,7 @@
     "@babel/preset-env": "^7.16.4",
     "@babel/preset-react": "^7.16.0",
     "@babel/preset-typescript": "^7.16.0",
-    "@react-native-async-storage/async-storage": "^1.17.10",
+    "@react-native-async-storage/async-storage": "1.17.10",
     "@storybook/addon-actions": "^6.5.12",
     "@storybook/addon-essentials": "^6.5.12",
     "@storybook/addon-links": "^6.5.12",
@@ -57,15 +57,16 @@
     "style-loader": "^3.3.1"
   },
   "dependencies": {
-    "@gooddollar/goodprotocol": "^1.0.29-beta.4",
+    "@gooddollar/goodprotocol": "1.0.29-beta.5",
     "@types/react-native": "^0.70.4",
     "@usedapp/core": "^1.0.9",
     "eventemitter3": "^4.0.7",
     "react-native": "^0.70.2",
+    "react-native-restart": "^0.0.24",
     "react-use-promise": "^0.5.0"
   },
   "peerDependencies": {
-    "@react-native-async-storage/async-storage": "*",
+    "@react-native-async-storage/async-storage": "1.17.10",
     "ethers": "5.*",
     "react-native": "0.67.4",
     "react-native-web": "^0.18.1"
