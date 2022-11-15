@@ -53,9 +53,7 @@ const MicroBridgeHistory = () => {
           i.data.targetChainId.toNumber(),
           i.transactionHash
         );
-        if (relayResult.relayPromise) {
-          relayResult.relayPromise.finally(() => setRelaying({ ...relaying, [i.transactionHash]: false }));
-        } else {
+        if (!relayResult.relayPromise) {
           setRelaying({ ...relaying, [i.transactionHash]: false });
         }
       } catch (e) {
