@@ -37,7 +37,7 @@ export const W3Wrapper = () => {
   // probably causing the claimCall bug where it doesn't update to web3provider
   return (
     <DAppProvider config={config}>
-      <Web3Provider env={"fuse"} web3Provider={provider} config={config}>
+      <Web3Provider env="fuse" web3Provider={provider} config={config}>
         <Web3Action />
       </Web3Provider>
     </DAppProvider>

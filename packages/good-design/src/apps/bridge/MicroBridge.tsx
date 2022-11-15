@@ -51,8 +51,8 @@ const StatusBox = ({
   infoText?: string;
   sourceChain: "fuse" | "celo";
 }) => (
-  <Stack mt="2" alignItems={"center"} direction={["column", "column", "row"]}>
-    <HStack alignItems={"center"} flex="2 0">
+  <Stack mt="2" alignItems="center" direction={["column", "column", "row"]}>
+    <HStack alignItems="center" flex="2 0">
       <Box>
         <Status result={txStatus?.status} />
       </Box>
@@ -74,7 +74,7 @@ const StatusBox = ({
         </Popover>
       )}
     </HStack>
-    <Flex flex={"1 1"} alignItems={"center"} maxWidth="100%">
+    <Flex flex="1 1" alignItems="center" maxWidth="100%">
       {txStatus && <ExplorerLink chainId={txStatus.chainId} addressOrTx={txStatus.transaction?.hash} />}
     </Flex>
   </Stack>
