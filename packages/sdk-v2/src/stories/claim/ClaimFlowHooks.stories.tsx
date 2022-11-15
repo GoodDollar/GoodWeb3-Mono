@@ -14,7 +14,7 @@ const FVModal = (params: ModalProps & { firstName: string }) => {
   const fvlink = useFVLink();
   const method = "popup";
   return (
-    <Modal {...params} animationType={"slide"}>
+    <Modal {...params} animationType="slide">
       <View style={styles.containeralt}>
         <View>
           <Text>To verify your identity you need to sign TWICE with your wallet.</Text>
@@ -51,7 +51,7 @@ const FVModal = (params: ModalProps & { firstName: string }) => {
           }}
           title={"Step 3 - Verify"}
         />
-        <Button color="red" onPress={() => params.onRequestClose?.(noop as any)} title={"Close"} />
+        <Button color="red" onPress={() => params.onRequestClose?.(noop as any)} title="Close" />
       </View>
     </Modal>
   );

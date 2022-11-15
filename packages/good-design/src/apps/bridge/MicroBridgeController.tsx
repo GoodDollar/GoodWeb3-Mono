@@ -66,13 +66,13 @@ const MicroBridgeHistory = () => {
   );
 
   return (
-    <Box borderRadius={"md"} mt="4" borderWidth={"1"} padding="5">
+    <Box borderRadius="md" mt="4" borderWidth="1" padding="5">
       <Heading size="sm">Transactions History</Heading>
       <Stack
         direction={["column", "column", "row"]}
-        alignContent={"center"}
+        alignContent="center"
         alignItems="center"
-        justifyContent={"center"}
+        justifyContent="center"
         mt="5"
       >
         <Flex flex="1 1"></Flex>
@@ -96,16 +96,16 @@ const MicroBridgeHistory = () => {
       {historySorted.map(i => (
         <Stack
           direction={["column", "column", "row"]}
-          alignContent={"center"}
+          alignContent="center"
           alignItems={["flex-start", "flex-start", "center"]}
           mt={2}
           key={i.transactionHash}
-          space={"2"}
+          space="2"
           borderWidth={["1", "1", "0"]}
           padding={["2", "2", "0"]}
           borderRadius={["md", "md", "none"]}
         >
-          <HStack flex="1 1" alignItems={"center"}>
+          <HStack flex="1 1" alignItems="center">
             <Text flex="1 0">{i.data.targetChainId.toNumber() === 122 ? "Celo" : "Fuse"}</Text>
             <ArrowForwardIcon size="3" color="black" ml="1" mr="1" flex="auto 0" />
             <Text flex="1 0">{i.data.targetChainId.toNumber() === 122 ? "Fuse" : "Celo"}</Text>
@@ -130,7 +130,7 @@ const MicroBridgeHistory = () => {
               <ExplorerLink
                 chainId={i.data.targetChainId.toNumber()}
                 addressOrTx={(i as any).relayEvent.transactionHash}
-                text={"Completed"}
+                text="Completed"
               />
             ) : (
               <Button isLoading={relaying[i.transactionHash]} onPress={() => triggerRelay(i)}>
