@@ -60,9 +60,9 @@
     "typescript": "^4.8.4"
   },
   "dependencies": {
-    "@gooddollar/bridge-app": "^1.0.6",
-    "@gooddollar/bridge-contracts": "^1.0.5",
-    "@gooddollar/goodprotocol": "^1.0.29-beta.4",
+    "@gooddollar/bridge-app": "^1.1.4",
+    "@gooddollar/bridge-contracts": "^1.0.6",
+    "@gooddollar/goodprotocol": "beta",
     "@types/react-native": "^0.70.4",
     "@usedapp/core": "1.*",
     "eventemitter3": "^4.0.7",

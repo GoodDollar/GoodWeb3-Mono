@@ -19,7 +19,7 @@ export declare const useGetEnvChainId: (requiredChainId?: number) => {
     switchNetworkRequest: import("../../contexts").SwitchNetwork | undefined;
 };
 export declare const useGetContract: (contractName: string, readOnly?: boolean, type?: SdkTypes, env?: EnvKey, requiredChainId?: number) => import("ethers").Contract | undefined;
-export declare const getSigner: (signer: void | Signer, account: string) => Promise<Error | Signer>;
+export declare const getSigner: (signer: void | Signer, account: string) => Promise<Signer | Error>;
 export declare const useSDK: (readOnly?: boolean, type?: SdkTypes, requiredChainId?: number | undefined) => RequestedSdk["sdk"];
 export {};
 //# sourceMappingURL=react.d.ts.map

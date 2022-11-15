@@ -28,7 +28,7 @@ export const ExplorerLink = ({
       ? network?.getExplorerAddressLink(addressOrTx)
       : network?.getExplorerTransactionLink(addressOrTx));
   return link ? (
-    <HStack flex="2 0" alignItems={"center"} space="1">
+    <HStack flex="2 0" alignItems={"center"} space="1" maxWidth={"100%"}>
       <Link
         _text={{ fontSize: "sm", isTruncated: true }}
         href={link}

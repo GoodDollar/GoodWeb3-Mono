@@ -9,6 +9,7 @@ export const SwitchChainModal = (props: any) => {
   const config = useConfig();
   const [requestedChain, setRequestedChain] = useState(0);
   const { setOnSwitchNetwork } = useSwitchNetwork();
+
   const { Modal, showModal, hideModal } = useModal();
 
   useEffect(() => {

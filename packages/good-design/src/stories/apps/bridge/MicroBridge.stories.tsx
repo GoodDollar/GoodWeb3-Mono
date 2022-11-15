@@ -82,7 +82,11 @@ export const MicroBridgeWaitingRelay = {
     useBalanceHook: chain => (chain === "fuse" ? 100 : 200),
     useCanBridge: (chain: string, amountWei: string) => ({ isValid: true, reason: "" }),
     onBridge: async () => ({ success: true, relayPromise: new Promise(() => {}) }),
-    bridgeStatus: { status: "Success", transaction: { hash: "0xbridge" } },
+    bridgeStatus: {
+      status: "Success",
+      transaction: { hash: "0xbridge353255353253253253253532535353532532535" },
+      chainId: 122
+    },
     relayStatus: { status: "Mining" }
   }
 };

@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Clipboard } from "react-native";
 import { Input, StyledProps, Icon, createIcon, IconButton } from "native-base";
 import { useMaskedInputProps } from "react-native-mask-input";
 import * as ethers from "ethers";

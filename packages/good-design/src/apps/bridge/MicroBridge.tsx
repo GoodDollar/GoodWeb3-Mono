@@ -10,20 +10,18 @@ import {
   HStack,
   IconButton,
   InfoOutlineIcon,
-  Link,
   Popover,
   Spinner,
+  Stack,
   Switch,
   Text,
   WarningOutlineIcon
 } from "native-base";
-import { TransactionStatus, CurrencyValue, FiatCurrency } from "@usedapp/core";
+import { TransactionStatus } from "@usedapp/core";
 import { TokenInput } from "../../core";
 import { AddressInput, isAddressValid } from "../../core/inputs/AddressInput";
 import { BigNumber } from "ethers";
 import { ExplorerLink } from "../../core/web3/ExplorerLink";
-
-const explorers = { fuse: "https://explorer.fuse.io/transaction", celo: "https://celoscan.xyz/transaction" };
 
 type OnBridge = (amount: string, sourceChain: string, target?: string) => Promise<void>;
 
@@ -53,7 +51,7 @@ const StatusBox = ({
   infoText?: string;
   sourceChain: "fuse" | "celo";
 }) => (
-  <HStack mt="2" alignItems={"center"}>
+  <Stack mt="2" alignItems={"center"} direction={["column", "column", "row"]}>
     <HStack alignItems={"center"} flex="2 0">
       <Box>
         <Status result={txStatus?.status} />
@@ -76,10 +74,10 @@ const StatusBox = ({
         </Popover>
       )}
     </HStack>
-    <Flex flex={"1 1"} alignItems={"center"}>
+    <Flex flex={"1 1"} alignItems={"center"} maxWidth="100%">
       {txStatus && <ExplorerLink chainId={txStatus.chainId} addressOrTx={txStatus.transaction?.hash} />}
     </Flex>
-  </HStack>
+  </Stack>
 );
 
 export const MicroBridge = ({
