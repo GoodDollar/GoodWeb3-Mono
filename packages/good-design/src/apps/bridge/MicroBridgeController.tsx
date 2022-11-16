@@ -25,6 +25,7 @@ const useBalanceHook = (chain: string) => {
     refresh,
     chainId: env.chainId
   });
+
   return gdBalance?.toString() || "0";
 };
 
@@ -32,15 +33,18 @@ const useCanBridge = (chain: string, amountWei: string) => {
   const { chainId } = useGetEnvChainId(chain === "fuse" ? SupportedChains.FUSE : SupportedChains.CELO);
   const { account } = useEthers();
   const canBridge = useWithinBridgeLimits(chainId, account || "", amountWei);
+
   return canBridge;
 };
 
 const MicroBridgeHistory = () => {
   const { fuseHistory, celoHistory } = useBridgeHistory();
+
   const historySorted = sortBy(
     (fuseHistory?.value || []).concat(celoHistory?.value || []),
     _ => _.data.from === "account"
   );
+
   const relayTx = useRelayTx();
   const [relaying, setRelaying] = useState<{ [key: string]: boolean }>({});
 
