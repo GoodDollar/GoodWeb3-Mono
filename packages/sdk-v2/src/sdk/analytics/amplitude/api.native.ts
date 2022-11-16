@@ -1,48 +1,40 @@
 import { Amplitude, Identify } from "@amplitude/react-native";
-import { isFunction, noop } from "lodash";
+import { noop } from "lodash";
 
 class Wrapper {
-  constructor(instance, identityClass) {
-    const initialize = (apiKey, _, options, onReady) => {
-      const { onError = noop } = options || {};
-      const onSuccess = onReady || noop;
+  private api = Amplitude.getInstance()
+  readonly Identify = Identify
 
-      instance
-        .init(apiKey)
-        // eslint-disable-next-line require-await
-        .then(async initialized => {
-          if (!initialized) {
-            throw new Error("Amplitude not initialized !");
-          }
+  // there's no setVersionName() on the native SDK
+  setVersionName() {}
 
-          onSuccess();
-        })
-        .catch(onError);
-    };
+  initialize(apiKey: string, _: any, options?: Record<string, any>, onReady?: Function) {
+    const { onError = noop } = options || {};
+    const onSuccess = onReady || noop;
 
-    return new Proxy(this, {
-      get: (_, property) => {
-        let propertyValue: any;
-
-        switch (property) {
-          case "Identify":
-            return identityClass;
-          case "init":
-            return initialize;
-          case "setVersionName":
-            return noop; // there's no setVersionName() on the native SDK
-          default:
-            propertyValue = instance[property];
-
-            if (isFunction(propertyValue)) {
-              propertyValue = propertyValue.bind(instance);
-            }
-
-            return propertyValue;
+    this.api
+      .init(apiKey)
+      .then(async (initialized: boolean) => {
+        if (!initialized) {
+          throw new Error("Amplitude not initialized !");
         }
-      }
-    });
+
+        onSuccess();
+      })
+      .catch(onError);
+  }
+
+  setUserId(id: string): void {
+    this.api.setUserId(id);
+  }
+
+  setUserProperties(props: object) {
+    this.api.setUserProperties(props);
+  }
+
+  logEvent(event: string, data: object) {
+    this.api.logEvent(event, data);
   }
 }
 
-export default new Wrapper(Amplitude.getInstance(), Identify);
+export default new Wrapper();

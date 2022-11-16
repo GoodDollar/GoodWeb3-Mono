@@ -1,4 +1,3 @@
-import { isFunction } from "lodash";
 import { IIndicativeApi } from "./types";
 
 // EXAMPLE OF INDICATIVE.COM SNIPPET TO USE WITH THIS LIBRARY
@@ -46,30 +45,6 @@ async function isIndicativeLoaded(): Promise<boolean> {
 class IndicativeAPIWeb implements IIndicativeApi {
   private api: any;
 
-  constructor() {
-    return new Proxy(this, {
-      get: (target, property) => {
-        const { api } = target;
-        const propName: string = String(property || "");
-        let propertyTarget = api;
-        let propertyValue: any;
-
-        // override initialize()
-        if (propName === "initialize") {
-          propertyTarget = this;
-        }
-
-        propertyValue = propertyTarget[property];
-
-        if (isFunction(propertyValue)) {
-          propertyValue = propertyValue.bind(propertyTarget);
-        }
-
-        return propertyValue;
-      }
-    });
-  }
-
   async initialize(apiKey: string): Promise<boolean> {
     const isLoaded = await isIndicativeLoaded();
 
@@ -88,14 +63,21 @@ class IndicativeAPIWeb implements IIndicativeApi {
       api.initialize(apiKey);
     }
 
+    this.api = api;
     return api.initialized;
   }
 
-  // just for typings compatibility, those methods will be
-  // called never, proxied to window.Indicative instead
-  addProperties(props: object): void {}
-  setUniqueID(id: string): void {}
-  buildEvent(eventName: string, props?: object) {}
+  addProperties(props: object): void {
+    this.api.addProperties(props);
+  }
+
+  setUniqueID(id: string): void {
+    this.api.setUniqueID(id);
+  }
+
+  buildEvent(eventName: string, props?: object) {
+    this.api.buildEvent(eventName, props);
+  }
 }
 
 export default hasIndicativeSnippet() ? new IndicativeAPIWeb() : null;
