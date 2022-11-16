@@ -45,7 +45,7 @@ export const useModal = () => {
         <React.Fragment />
       );
       return (
-        <Modal isOpen={modalVisible} onClose={setModalVisible} {..._modal} height="100vh">
+        <Modal isOpen={modalVisible} onClose={setModalVisible} {..._modal}>
           <Modal.Content>
             {closeText && <Modal.CloseButton />}
             <Modal.Header {..._header}>{header}</Modal.Header>

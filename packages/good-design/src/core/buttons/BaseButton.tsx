@@ -36,7 +36,7 @@ export const theme = {
 
 function BaseButton({ text, innerText, onPress, children, ...props }: BaseButtonProps) {
   return (
-    <Button onPress={onPress} maxWidth="750px" marginLeft="100px" {...props}>
+    <Button onPress={onPress} maxWidth="750px" px={100} {...props}>
       <Text {...innerText}>{text}</Text>
       {children}
     </Button>

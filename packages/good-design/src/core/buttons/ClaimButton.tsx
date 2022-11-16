@@ -48,7 +48,7 @@ function ClaimButton({ firstName, method, refresh, ...props }: FVFlowProps) {
   }, [isVerified]);
 
   return (
-    <View minHeight="100vh" justifyContent="center" px={4} {...props}>
+    <View justifyContent="center" px={4} {...props}>
       <View flex={1} alignItems="center" justifyContent="center">
         <FvModal method={method} isOpen={showModal} onClose={handleClose} firstName={firstName} />
       </View>
