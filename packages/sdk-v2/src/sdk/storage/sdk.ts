@@ -1,45 +1,44 @@
 import { default as AsyncStorageRN } from "@react-native-async-storage/async-storage";
-import { isArray, isEmpty, isFunction, noop } from "lodash";
+import { isArray, isEmpty, noop } from "lodash";
 
-import { tryJson } from "./utils";
+import { stringifyPairs, tryJson } from "./utils";
 
 export class StorageSDK {
-  private readonly accessorRe: RegExp = /(get|set)/i;
-  private readonly nonAccessorRe: RegExp = /allkeys/i;
   private readonly api: typeof AsyncStorageRN = AsyncStorageRN;
 
-  constructor() {
-    return new Proxy(this, {
-      get: (target, property) => {
-        const { api, accessorRe, nonAccessorRe } = target;
-        const propName: string = String(property || "");
-        let propertyTarget = api;
-        let propertyValue: any;
-
-        // override methods getItem, setItem, multiGet, multiSet
-        // do not override getAllKeys
-        if (accessorRe.test(propName) && !nonAccessorRe.test(propName)) {
-          propertyTarget = this;
-        }
-
-        propertyValue = propertyTarget[property];
-
-        if (isFunction(propertyValue)) {
-          propertyValue = propertyValue.bind(propertyTarget);
-        }
-
-        return propertyValue;
-      }
-    });
+  async getAllKeys(): Promise<readonly string[]> {
+    return this.api.getAllKeys();
   }
 
-  getAllKeys = this.api.getAllKeys;
-  removeItem = this.api.removeItem;
-  mergeItem = this.api.mergeItem;
-  multiRemove = this.api.multiRemove;
-  multiMerge = this.api.multiMerge;
-  clear = this.api.clear;
-  flushGetRequests = this.api.flushGetRequests;
+  async removeItem(key: string): Promise<void> {
+    await this.api.removeItem(key);
+  }
+
+  async mergeItem<T = any>(key: string, value: T): Promise<void> {
+    const stringified = JSON.stringify(value);
+
+    await this.api.mergeItem(key, stringified);
+  }
+
+  async multiRemove(keys: string[]): Promise<void> {
+    await this.api.multiRemove(keys);
+  }
+
+  async multiMerge<T = any>(keyValuePairs: [string, T][]): Promise<void> {
+    const stringifiedPairs = stringifyPairs(keyValuePairs);
+
+    if (stringifiedPairs) {
+      await this.api.multiMerge(stringifiedPairs);
+    }
+  }
+
+  async clear(): Promise<void> {
+    await this.api.clear();
+  }
+
+  flushGetRequests(): void {
+    this.api.flushGetRequests();
+  }
 
   safeSet<T = any>(key: string, value: T, onError?: (e: Error) => void): void {
     this.setItem(key, value).catch(onError || noop);
@@ -62,13 +61,11 @@ export class StorageSDK {
   }
 
   async multiSet<T = any>(keyValuePairs: [string, T][]): Promise<void> {
-    if (!isArray(keyValuePairs) || isEmpty(keyValuePairs)) {
-      return;
+    const stringifiedPairs = stringifyPairs(keyValuePairs);
+
+    if (stringifiedPairs) {
+      await this.api.multiSet(stringifiedPairs);
     }
-
-    const stringifiedPairs: [string, string][] = keyValuePairs.map(([key, value]) => [key, JSON.stringify(value)]);
-
-    await this.api.multiSet(stringifiedPairs);
   }
 
   async multiGet<T = any>(keys: readonly string[]): Promise<T> {
