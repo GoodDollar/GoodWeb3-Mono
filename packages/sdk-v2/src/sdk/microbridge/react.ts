@@ -14,8 +14,8 @@ import { useSwitchNetwork } from "../../contexts";
 
 export const useGetBridgeContracts = () => {
   const { baseEnv } = useGetEnvChainId();
-
   const { fuseBridge, celoBridge } = bridgeContracts[baseEnv] || {};
+  
   if (fuseBridge && celoBridge) {
     return {
       [SupportedChains.FUSE]: new Contract(fuseBridge, TokenBridgeABI.abi) as TokenBridge,
