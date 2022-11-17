@@ -116,12 +116,26 @@ export const useSDK = (
   const { chainId, defaultEnv } = useGetEnvChainId(requiredChainId);
   const rolibrary = useReadOnlyProvider(chainId);
   const [sdk, setSdk] = useState<ClaimSDK | SavingsSDK | undefined>(() =>
-    sdkFactory(type, defaultEnv, readOnly, library, rolibrary)
+    sdkFactory(
+      type,
+      defaultEnv,
+      readOnly,
+      library instanceof providers.JsonRpcProvider ? library : undefined,
+      rolibrary
+    )
   );
 
   // skip first render as sdk already initialized by useState()
   useUpdateEffect(() => {
-    setSdk(sdkFactory(type, defaultEnv, readOnly, library, rolibrary));
+    setSdk(
+      sdkFactory(
+        type,
+        defaultEnv,
+        readOnly,
+        library instanceof providers.JsonRpcProvider ? library : undefined,
+        rolibrary
+      )
+    );
   }, [library, rolibrary, readOnly, defaultEnv, type]);
 
   return sdk;
