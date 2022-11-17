@@ -12,6 +12,14 @@ const ClipboardButton = (props: any) => (
   <IconButton icon={<ClipBoardIcon size="md" />} borderRadius="full" {...props} />
 );
 
+const addressMask = (() => {
+  const buf = ["0", "x"]
+  const len = 42
+  
+  buf.length = len
+  return buf.fill(/[a-f0-9]/i, 2, len)
+})()
+
 export const isAddressValid = (v: string) => ethers.utils.isAddress(v);
 export const AddressInput = ({
   address,
