@@ -27,6 +27,7 @@ export const ExplorerLink = ({
     (addressOrTx.length === 42
       ? network?.getExplorerAddressLink(addressOrTx)
       : network?.getExplorerTransactionLink(addressOrTx));
+
   return link ? (
     <HStack flex="2 0" alignItems="center" space="1" maxWidth={"100%"}>
       <Link
