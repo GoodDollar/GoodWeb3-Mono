@@ -22,8 +22,12 @@ export const WalletAndChainGuard = ({
 
   useEffect(() => {
     const isValid = account && chainId && validChains.includes(chainId);
-    if (isValid) hideModal();
-    else showModal();
+
+    if (isValid) {
+      hideModal();
+    } else {  
+      showModal();
+    }
   }, [account, chainId, showModal, hideModal, validChains]);
 
   return (
