@@ -39,7 +39,9 @@ export const useWithinBridgeLimits = (requestChainId: number, account: string, a
       chainId: requestChainId
     }
   );
+
   const [isValid = false, reason = ""]: [boolean, string] = canBridge?.[0]?.value || [];
+  
   return { isValid, reason };
 };
 
