@@ -40,6 +40,8 @@ const Status = ({ result, ...props }: { result?: string }) => {
   }
 };
 
+const TriggerButton = props => <IconButton {...props} icon={<InfoOutlineIcon />} />
+
 const StatusBox = ({
   txStatus,
   text,
