@@ -93,7 +93,7 @@ function sdkFactory(
   readOnly: boolean,
   library: providers.JsonRpcProvider | undefined,
   roLibrary: providers.JsonRpcProvider | undefined
-): ClaimSDK | SavingsSDK | BaseSDK | undefined {
+): ClaimSDK | SavingsSDK | undefined {
   let provider = library;
   const reqSdk = NAME_TO_SDK[type];
 
@@ -106,7 +106,7 @@ function sdkFactory(
     return;
   }
 
-  return new reqSdk(provider, defaultEnv) as ClaimSDK | SavingsSDK | BaseSDK;
+  return new reqSdk(provider, defaultEnv) as ClaimSDK | SavingsSDK;
 }
 
 export const useSDK = (
@@ -117,13 +117,27 @@ export const useSDK = (
   const { library } = useEthers();
   const { chainId, defaultEnv } = useGetEnvChainId(requiredChainId);
   const rolibrary = useReadOnlyProvider(chainId);
-  const [sdk, setSdk] = useState<ClaimSDK | SavingsSDK | BaseSDK | undefined>(() =>
-    sdkFactory(type, defaultEnv, readOnly, library, rolibrary)
+  const [sdk, setSdk] = useState<ClaimSDK | SavingsSDK | undefined>(() =>
+    sdkFactory(
+      type,
+      defaultEnv,
+      readOnly,
+      library instanceof providers.JsonRpcProvider ? library : undefined,
+      rolibrary
+    )
   );
 
   // skip first render as sdk already initialized by useState()
   useUpdateEffect(() => {
-    setSdk(sdkFactory(type, defaultEnv, readOnly, library, rolibrary));
+    setSdk(
+      sdkFactory(
+        type,
+        defaultEnv,
+        readOnly,
+        library instanceof providers.JsonRpcProvider ? library : undefined,
+        rolibrary
+      )
+    );
   }, [library, rolibrary, readOnly, defaultEnv, type]);
 
   return sdk;
