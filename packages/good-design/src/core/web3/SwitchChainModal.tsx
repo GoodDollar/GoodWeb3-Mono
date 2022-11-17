@@ -25,6 +25,7 @@ export const SwitchChainModal = (props: any) => {
   }, [setOnSwitchNetwork]);
 
   const networkName = find(config.networks, _ => _.chainId === requestedChain)?.chainName;
+
   return (
     <React.Fragment>
       <Modal
