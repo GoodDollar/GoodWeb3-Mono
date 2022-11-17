@@ -33,7 +33,7 @@ export const AddressInput = ({
       setInput(masked);
       onChange(masked);
     },
-    mask
+    addressMask
   });
 
   return <Input isInvalid={isAddressValid(input) === false} {...maskedInputProps} {...props} />;
