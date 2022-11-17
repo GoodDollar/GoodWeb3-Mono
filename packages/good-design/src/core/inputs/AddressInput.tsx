@@ -27,10 +27,6 @@ export const AddressInput = ({
   ...props
 }: { address?: string; onChange: (v: string) => void } & StyledProps) => {
   const [input, setInput] = useState<string>(address || "");
-  const mask = new Array(42);
-  mask[0] = "0";
-  mask[1] = "x";
-  mask.fill(/[A-Fa-f0-9]/ as any, 2, 42);
   const maskedInputProps = useMaskedInputProps({
     value: input,
     onChangeText: (masked: string) => {
