@@ -31,6 +31,7 @@ export const TokenInput = ({
   const balance = Number(balanceWei) / 10 ** decimals;
   const minAmount = Number(minAmountWei) / 10 ** decimals;
   const setMax = () => setInput(balance);
+
   const handleChange = useCallback(
     (v: string) => {
       setInput(Number(v));
