@@ -65,9 +65,7 @@ const StatusBox = ({
       </Box>
       {infoText && (
         <Popover
-          trigger={triggerProps => {
-            return <IconButton {...triggerProps} icon={<InfoOutlineIcon />} />;
-          }}
+          trigger={TriggerButton}
         >
           <Popover.Content accessibilityLabel={infoText} w="md">
             <Popover.CloseButton />
