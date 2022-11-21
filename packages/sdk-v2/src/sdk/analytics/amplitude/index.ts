@@ -1,2 +1,2 @@
 export * from "./Amplitude";
-export { IAmplitudeConfig } from "./types";
+export type { IAmplitudeConfig } from "./types";

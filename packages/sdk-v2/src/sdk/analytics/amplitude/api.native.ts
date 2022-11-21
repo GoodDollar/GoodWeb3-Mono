@@ -28,11 +28,11 @@ class Wrapper {
     this.api.setUserId(id);
   }
 
-  setUserProperties(props: object) {
+  setUserProperties(props: any) {
     this.api.setUserProperties(props);
   }
 
-  logEvent(event: string, data: object) {
+  logEvent(event: string, data: any) {
     this.api.logEvent(event, data);
   }
 }

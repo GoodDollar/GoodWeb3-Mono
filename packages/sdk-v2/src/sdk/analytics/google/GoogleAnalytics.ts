@@ -35,7 +35,6 @@ export class GoogleAnalytics implements IAbstractProvider, IAnalyticsProvider {
 
   send(event: string, data?: object): void {
     const { api } = this;
-
     api!.logEvent(event, data);
   }
 }

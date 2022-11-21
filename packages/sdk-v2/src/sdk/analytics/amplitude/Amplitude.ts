@@ -9,6 +9,7 @@ export class Amplitude implements IAbstractProvider, IAnalyticsProvider, IMonito
   constructor(private config: IAmplitudeConfig) {}
 
   async initialize(appProps: IAppProps): Promise<boolean> {
+
     const initialized = await new Promise<boolean>(resolve => {
       const { apiKey } = this.config;
       const [onError, onSuccess] = [false, true].map(state => () => resolve(state));
