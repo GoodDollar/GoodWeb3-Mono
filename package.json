@@ -15,9 +15,15 @@
   },
   "packageManager": "yarn@3.2.1",
   "dependencies": {
+    "@amplitude/react-native": "^2.16.2",
+    "@react-native-firebase/analytics": "^16.4.5",
+    "@sentry/browser": "^7.20.0",
+    "@sentry/react-native": "^4.8.0",
     "@types/react-native": "^0.70.4",
+    "amplitude-js": "^8.21.2",
     "prettier": "^2.7.1",
-    "react-native": "^0.70.2"
+    "react-native": "^0.70.2",
+    "react-native-indicative": "^0.2.1"
   },
   "resolutions": {
     "web3-core-method@1.7.5": "patch:web3-core-method@npm:1.7.5#.yarn/patches/web3-core-method-npm-1.7.5-919ae06220.patch",
