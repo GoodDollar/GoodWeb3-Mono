@@ -9,8 +9,8 @@ export interface BaseButtonProps extends IButtonProps {
    * a text to be rendered in the component.
    */
   text: string;
-  innerText: ITextProps;
   onPress: () => void;
+  innerText?: ITextProps;
   children?: ReactNode;
 }
 
@@ -28,7 +28,7 @@ export const theme = {
       innerText: {
         fontFamily: "normal",
         fontWeight: "100",
-        color: "teal.500"
+        color: "white"
       }
     };
   })

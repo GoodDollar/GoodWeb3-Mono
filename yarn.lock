@@ -2281,9 +2281,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/bridge-app@npm:^1.0.6":
-  version: 1.0.6
-  resolution: "@gooddollar/bridge-app@npm:1.0.6"
+"@gooddollar/bridge-app@file:.yalc/@gooddollar/bridge-app::locator=%40gooddollar%2Fweb3sdk-v2%40workspace%3Apackages%2Fsdk-v2":
+  version: 1.1.4
+  resolution: "@gooddollar/bridge-app@file:.yalc/@gooddollar/bridge-app#.yalc/@gooddollar/bridge-app::hash=7658cd&locator=%40gooddollar%2Fweb3sdk-v2%40workspace%3Apackages%2Fsdk-v2"
   dependencies:
     dotenv: ^16.0.3
     eth-proof: ^2.1.6
@@ -2291,13 +2291,13 @@ __metadata:
     js-logger: ^1.6.1
     lodash: ^4.17.21
     p-all: 3.0.0
-  checksum: a7d502b6a0bb90ccf63ea117923872633ca78c9df1e6d9fdc7449061f305ee0785e9f9d6cd2eb9400394858dc5ec31db54805c348beb0bf997a373b2018a78ae
+  checksum: ad25c8daae660a0cb00f1f4c0e3b6dc6d368d6ac9deeda957d453199199c3f5b4299ab4d1252eedece9bad7a7afc2b39e8a97dee7cee6ddb20b868f3ae32ff64
   languageName: node
   linkType: hard
 
-"@gooddollar/bridge-contracts@npm:^1.0.5":
-  version: 1.0.5
-  resolution: "@gooddollar/bridge-contracts@npm:1.0.5"
+"@gooddollar/bridge-contracts@npm:^1.0.6":
+  version: 1.0.6
+  resolution: "@gooddollar/bridge-contracts@npm:1.0.6"
   dependencies:
     "@gooddollar/goodprotocol": ^1.0.29
     "@openzeppelin/contracts": ^4.4.1
@@ -2305,7 +2305,7 @@ __metadata:
     merkle-patricia-tree: ^2.*
     prompt: ^1.3.0
     solidity-rlp: ^2.0.5
-  checksum: 9081740e270cc89314e27ee8acdad51fa0df9bf5b96dcaabe0a7f460eb9b76cea1d74b03a6a15d73d351cb307450af3609d33139dfd1456233be7910edd0d9d9
+  checksum: f2de6a582dec41901f129c0e37d9fccc643900ba4db1808ad7f16ef056a47d360fd38a148215407d71d8943673d44f9ad5b06da7822277fe0ffde833051f88f9
   languageName: node
   linkType: hard
 
@@ -2321,7 +2321,6 @@ __metadata:
     "@babel/preset-typescript": ^7.16.0
     "@babel/runtime": ^7.18.9
     "@gooddollar/goodprotocol": 1.0.29-beta.4
-    "@gooddollar/web3sdk-v2": "workspace:^"
     "@lingui/macro": ^3.14.0
     "@lingui/react": ^3.14.0
     "@storybook/addon-actions": ^6.5.12
@@ -2349,7 +2348,7 @@ __metadata:
     babel-plugin-transform-class-properties: ^6.24.1
     buffer: ^6.0.3
     css-loader: ^6.7.1
-    ctix: ^1.4.0
+    ctix: ^1.7.0
     lodash: ^4.17.21
     metro-react-native-babel-preset: ^0.72.0
     native-base: 3.4.11
@@ -2384,6 +2383,16 @@ __metadata:
     truffle-plugin-verify: ^0.3.11
     truffle-safe-hdwallet-provider: 0.0.7
   checksum: b754248bb33758a0977148436e12652e7347974226184264b18019a843100082126ceae07a73ba25438fb46201ee4a8b93cf31090987624578d5e89a4ef0ada5
+  languageName: node
+  linkType: hard
+
+"@gooddollar/goodcontracts@npm:^2.6.6":
+  version: 2.6.6
+  resolution: "@gooddollar/goodcontracts@npm:2.6.6"
+  dependencies:
+    truffle-flattener: ^1.4.4
+    truffle-safe-hdwallet-provider: 0.0.7
+  checksum: a916701c3c4c21d7516689db859315271f0cff71770c4fb379c55d066b74f0cbe046c651a0b7afcfd60f8ec1368d69a3333e309a6d3dafea348c8ba39812294d
   languageName: node
   linkType: hard
 
@@ -2433,7 +2442,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/goodprotocol@npm:1.0.29-beta.4, @gooddollar/goodprotocol@npm:^1.0.29-beta.4":
+"@gooddollar/goodprotocol@npm:1.0.29-beta.4":
   version: 1.0.29-beta.4
   resolution: "@gooddollar/goodprotocol@npm:1.0.29-beta.4"
   dependencies:
@@ -2473,7 +2482,27 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/web3sdk-v2@workspace:^, @gooddollar/web3sdk-v2@workspace:packages/sdk-v2":
+"@gooddollar/goodprotocol@npm:beta":
+  version: 1.0.29-beta.5
+  resolution: "@gooddollar/goodprotocol@npm:1.0.29-beta.5"
+  dependencies:
+    "@gooddollar/goodcontracts": ^2.6.6
+    "@jsier/retrier": ^1.2.4
+    "@openzeppelin/contracts": ^4.5.0
+    "@openzeppelin/contracts-upgradeable": ^4.3.2
+    "@typechain/hardhat": ^6.1.2
+    async-promise-pool: ^1.0.4
+    ethers-multicall: ^0.2.1
+    openzeppelin-solidity: ^4.3.2
+    patch-package: latest
+    press-any-key: ^0.1.1
+    truffle-plugin-verify: ^0.5.11
+    truffle-source-verify: ^0.0.6
+  checksum: 8334b72beb081625b524cb88018c5d88df657d117504baf5be9cb2a53a6acd8ee8ffdf3c23473fc8f727075c9f14d1dc83f01c526341b9c304c883844f3ba669
+  languageName: node
+  linkType: hard
+
+"@gooddollar/web3sdk-v2@workspace:packages/sdk-v2":
   version: 0.0.0-use.local
   resolution: "@gooddollar/web3sdk-v2@workspace:packages/sdk-v2"
   dependencies:
@@ -2482,9 +2511,9 @@ __metadata:
     "@babel/preset-env": ^7.16.4
     "@babel/preset-react": ^7.16.0
     "@babel/preset-typescript": ^7.16.0
-    "@gooddollar/bridge-app": ^1.0.6
-    "@gooddollar/bridge-contracts": ^1.0.5
-    "@gooddollar/goodprotocol": ^1.0.29-beta.4
+    "@gooddollar/bridge-app": "file:.yalc/@gooddollar/bridge-app"
+    "@gooddollar/bridge-contracts": ^1.0.6
+    "@gooddollar/goodprotocol": beta
     "@react-native-async-storage/async-storage": ^1.17.10
     "@storybook/addon-actions": ^6.5.12
     "@storybook/addon-essentials": ^6.5.12
@@ -2522,6 +2551,7 @@ __metadata:
     style-loader: ^3.3.1
     typescript: ^4.8.4
   peerDependencies:
+    "@gooddollar/bridge-app": ^1.1.4
     "@react-native-async-storage/async-storage": "*"
     ethers: 5.*
     react: "*"
@@ -6417,6 +6447,18 @@ __metadata:
     mkdirp: ^1.0.4
     path-browserify: ^1.0.1
   checksum: 0ef97330a164a42b81b0499b042e91db8e39d705bb983ef83cbc80cc32ab36123e26baefb78203953d1a0c6e3b92cad9bc7a5e0ea409623a5e7db90cb3742112
+  languageName: node
+  linkType: hard
+
+"@ts-morph/common@npm:~0.17.0":
+  version: 0.17.0
+  resolution: "@ts-morph/common@npm:0.17.0"
+  dependencies:
+    fast-glob: ^3.2.11
+    minimatch: ^5.1.0
+    mkdirp: ^1.0.4
+    path-browserify: ^1.0.1
+  checksum: f588c0acabcc6ca9463ac09b343d67a73f6e7bf47f674aaff11542b95b58342556b05241610b9e6dffc2966db529e7261b6860577786f919a835c22488ec9260
   languageName: node
   linkType: hard
 
@@ -10333,7 +10375,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"code-block-writer@npm:^11.0.0":
+"code-block-writer@npm:^11.0.0, code-block-writer@npm:^11.0.3":
   version: 11.0.3
   resolution: "code-block-writer@npm:11.0.3"
   checksum: f0a2605f19963d7087267c9b0fd0b05a6638a50e7b29b70f97aa01a514f59475b0626f8aa092188df853ee6d96745426dfa132d6a677795df462c6ce32c21639
@@ -11120,6 +11162,44 @@ __metadata:
   bin:
     ctix: dist/cli.js
   checksum: f35863655da3b25c19219192c08367c9afbbdcc4ffa76a267730b61ebab281abe4efb43890170bca57ea5433dd8f78fa122265be8572fea232de70a8475157ec
+  languageName: node
+  linkType: hard
+
+"ctix@npm:^1.7.0":
+  version: 1.7.0
+  resolution: "ctix@npm:1.7.0"
+  dependencies:
+    chalk: ^4.1.2
+    change-case: ^4.1.2
+    cli-progress: ^3.11.2
+    dayjs: ^1.11.5
+    fast-glob: ^3.2.12
+    fast-safe-stringify: ^2.1.1
+    find-up: ^5.0.0
+    ignore: ^5.2.0
+    is-relative: ^1.0.0
+    json5: ^2.2.1
+    jsonc-parser: ^3.2.0
+    minimatch: ^5.1.0
+    minimist: ^1.2.7
+    my-easy-fp: ^0.15.0
+    my-node-fp: ^0.8.1
+    my-only-either: ^1.3.0
+    ora: ^5.4.1
+    parse-gitignore: ^2.0.0
+    pino: ^8.6.1
+    pino-pretty: ^9.1.1
+    prettier: ^2.7.1
+    source-map-support: ^0.5.21
+    ts-morph: ^16.0.0
+    tslib: ^2.4.0
+    type-fest: ^2.19.0
+    typescript: ^4.8.4
+    upper-case-first: ^2.0.2
+    yargs: ^17.6.0
+  bin:
+    ctix: dist/cli.js
+  checksum: bd2ddf095a5743ef2bcd2f80098fceb690a7e11ecbcb946fdfaa1d297247ebf3ed6646736ba84986da45d8079edb0d4a87758f00b75fa1ba77d9fbaa6dabf128
   languageName: node
   linkType: hard
 
@@ -13377,7 +13457,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-glob@npm:^3.0.0, fast-glob@npm:^3.2.11, fast-glob@npm:^3.2.9":
+"fast-glob@npm:^3.0.0, fast-glob@npm:^3.2.11, fast-glob@npm:^3.2.12, fast-glob@npm:^3.2.9":
   version: 3.2.12
   resolution: "fast-glob@npm:3.2.12"
   dependencies:
@@ -15921,6 +16001,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"is-relative@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "is-relative@npm:1.0.0"
+  dependencies:
+    is-unc-path: ^1.0.0
+  checksum: 3271a0df109302ef5e14a29dcd5d23d9788e15ade91a40b942b035827ffbb59f7ce9ff82d036ea798541a52913cbf9d2d0b66456340887b51f3542d57b5a4c05
+  languageName: node
+  linkType: hard
+
 "is-set@npm:^2.0.2":
   version: 2.0.2
   resolution: "is-set@npm:2.0.2"
@@ -15993,6 +16082,15 @@ __metadata:
   version: 1.0.0
   resolution: "is-typedarray@npm:1.0.0"
   checksum: 3508c6cd0a9ee2e0df2fa2e9baabcdc89e911c7bd5cf64604586697212feec525aa21050e48affb5ffc3df20f0f5d2e2cf79b08caa64e1ccc9578e251763aef7
+  languageName: node
+  linkType: hard
+
+"is-unc-path@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "is-unc-path@npm:1.0.0"
+  dependencies:
+    unc-path-regex: ^0.1.2
+  checksum: e8abfde203f7409f5b03a5f1f8636e3a41e78b983702ef49d9343eb608cdfe691429398e8815157519b987b739bcfbc73ae7cf4c8582b0ab66add5171088eab6
   languageName: node
   linkType: hard
 
@@ -17192,7 +17290,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsonc-parser@npm:^3.1.0":
+"jsonc-parser@npm:^3.1.0, jsonc-parser@npm:^3.2.0":
   version: 3.2.0
   resolution: "jsonc-parser@npm:3.2.0"
   checksum: 946dd9a5f326b745aa326d48a7257e3f4a4b62c5e98ec8e49fa2bdd8d96cef7e6febf1399f5c7016114fd1f68a1c62c6138826d5d90bc650448e3cf0951c53c7
@@ -18832,6 +18930,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"minimist@npm:^1.2.7":
+  version: 1.2.7
+  resolution: "minimist@npm:1.2.7"
+  checksum: 7346574a1038ca23c32e02252f603801f09384dd1d78b69a943a4e8c2c28730b80e96193882d3d3b22a063445f460e48316b29b8a25addca2d7e5e8f75478bec
+  languageName: node
+  linkType: hard
+
 "minipass-collect@npm:^1.0.2":
   version: 1.0.2
   resolution: "minipass-collect@npm:1.0.2"
@@ -19124,7 +19229,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"my-only-either@npm:^1.2.0":
+"my-only-either@npm:^1.2.0, my-only-either@npm:^1.3.0":
   version: 1.3.0
   resolution: "my-only-either@npm:1.3.0"
   checksum: e9f70969e023aaa17560f695b1744418388cb5c42a7fe7f661675df5d5c51ca404c8f8cb623362bfbfad6fe9d44a040facfc5172f9d77fbe2bdebb39be3ea327
@@ -20486,7 +20591,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pino-pretty@npm:^9.1.0":
+"pino-pretty@npm:^9.1.0, pino-pretty@npm:^9.1.1":
   version: 9.1.1
   resolution: "pino-pretty@npm:9.1.1"
   dependencies:
@@ -20535,6 +20640,27 @@ __metadata:
   bin:
     pino: bin.js
   checksum: 1201cf2b47c8860b8e5811c20ddf6db000158d98dd04da2f09d59e797c3d7c391819d6279a526699b3fd8c13c357e86e0bb32ded15d2815ca8d97a407de47c9f
+  languageName: node
+  linkType: hard
+
+"pino@npm:^8.6.1":
+  version: 8.7.0
+  resolution: "pino@npm:8.7.0"
+  dependencies:
+    atomic-sleep: ^1.0.0
+    fast-redact: ^3.1.1
+    on-exit-leak-free: ^2.1.0
+    pino-abstract-transport: v1.0.0
+    pino-std-serializers: ^6.0.0
+    process-warning: ^2.0.0
+    quick-format-unescaped: ^4.0.3
+    real-require: ^0.2.0
+    safe-stable-stringify: ^2.3.1
+    sonic-boom: ^3.1.0
+    thread-stream: ^2.0.0
+  bin:
+    pino: bin.js
+  checksum: 4aa2e320aa88f4a90fd25884ee4e3b9ef7963b3c59c514f3693b5a5c987b112cf3ab4e39a8c51efe32c861f5c058d7cfa7fcda59d964ed878f842fdbc6ab2876
   languageName: node
   linkType: hard
 
@@ -24684,6 +24810,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ts-morph@npm:^16.0.0":
+  version: 16.0.0
+  resolution: "ts-morph@npm:16.0.0"
+  dependencies:
+    "@ts-morph/common": ~0.17.0
+    code-block-writer: ^11.0.3
+  checksum: a45ee1a2da09b06ac45a468c1cb9b00cc1b335224afddb22c30e4ad8a747b71c8a7c6cea29a6309ebf68d69f5dc8d3650d381891b77da5e2ad3e301dc3de40d5
+  languageName: node
+  linkType: hard
+
 "ts-node@npm:^10.7.0":
   version: 10.9.1
   resolution: "ts-node@npm:10.9.1"
@@ -25028,6 +25164,13 @@ __metadata:
     buffer: ^5.2.1
     through: ^2.3.8
   checksum: 0e67c4a91f4fa0fc7b4045f8b914d3498c2fc2e8c39c359977708ec85ac6d6029840e97f508675fdbdf21fcb8d276ca502043406f3682b70f075e69aae626d1d
+  languageName: node
+  linkType: hard
+
+"unc-path-regex@npm:^0.1.2":
+  version: 0.1.2
+  resolution: "unc-path-regex@npm:0.1.2"
+  checksum: a05fa2006bf4606051c10fc7968f08ce7b28fa646befafa282813aeb1ac1a56f65cb1b577ca7851af2726198d59475bb49b11776036257b843eaacee2860a4ec
   languageName: node
   linkType: hard
 
@@ -26848,7 +26991,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yargs-parser@npm:^21.0.0":
+"yargs-parser@npm:^21.0.0, yargs-parser@npm:^21.1.1":
   version: 21.1.1
   resolution: "yargs-parser@npm:21.1.1"
   checksum: ed2d96a616a9e3e1cc7d204c62ecc61f7aaab633dcbfab2c6df50f7f87b393993fe6640d017759fe112d0cb1e0119f2b4150a87305cc873fd90831c6a58ccf1c
@@ -26901,6 +27044,21 @@ __metadata:
     y18n: ^5.0.5
     yargs-parser: ^21.0.0
   checksum: 604bdb4a6395a870540d2f3fea083c8e28441f12da8fd05b172b1e68480f00ed73d76be4a05fac19de9bf55ec7729b41e81cf555cccaed700aa192e4fff64872
+  languageName: node
+  linkType: hard
+
+"yargs@npm:^17.6.0":
+  version: 17.6.2
+  resolution: "yargs@npm:17.6.2"
+  dependencies:
+    cliui: ^8.0.1
+    escalade: ^3.1.1
+    get-caller-file: ^2.0.5
+    require-directory: ^2.1.1
+    string-width: ^4.2.3
+    y18n: ^5.0.5
+    yargs-parser: ^21.1.1
+  checksum: 47da1b0d854fa16d45a3ded57b716b013b2179022352a5f7467409da5a04a1eef5b3b3d97a2dfc13e8bbe5f2ffc0afe3bc6a4a72f8254e60f5a4bd7947138643
   languageName: node
   linkType: hard
 
