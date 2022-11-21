@@ -40,7 +40,7 @@ const Status = ({ result, ...props }: { result?: string }) => {
   }
 };
 
-const TriggerButton = props => <IconButton {...props} icon={<InfoOutlineIcon />} />
+const TriggerButton = (props: any) => <IconButton {...props} icon={<InfoOutlineIcon />} />;
 
 const StatusBox = ({
   txStatus,
@@ -64,9 +64,7 @@ const StatusBox = ({
         </Text>
       </Box>
       {infoText && (
-        <Popover
-          trigger={TriggerButton}
-        >
+        <Popover trigger={TriggerButton}>
           <Popover.Content accessibilityLabel={infoText} w="md">
             <Popover.CloseButton />
             <Popover.Body>{infoText}</Popover.Body>

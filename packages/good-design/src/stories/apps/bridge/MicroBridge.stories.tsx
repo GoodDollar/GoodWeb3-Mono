@@ -21,7 +21,7 @@ export default {
 
 export const MicroBridgeStart = {
   args: {
-    useBalanceHook: chain => (chain === "fuse" ? 100 : 200),
+    useBalanceHook: (chain: string) => (chain === "fuse" ? 100 : 200),
     useCanBridge: (chain: string, amountWei: string) => ({ isValid: true, reason: "" }),
     onBridge: async () => ({
       success: true,
@@ -35,7 +35,7 @@ export const MicroBridgeStart = {
 
 export const MicroBridgeSuccess = {
   args: {
-    useBalanceHook: chain => (chain === "fuse" ? 100 : 200),
+    useBalanceHook: (chain: string) => (chain === "fuse" ? 100 : 200),
     useCanBridge: (chain: string, amountWei: string) => ({ isValid: true, reason: "" }),
     onBridge: async () => ({
       success: true,
@@ -49,7 +49,7 @@ export const MicroBridgeSuccess = {
 };
 export const MicroBridgeError = {
   args: {
-    useBalanceHook: chain => (chain === "fuse" ? 100 : 200),
+    useBalanceHook: (chain: string) => (chain === "fuse" ? 100 : 200),
     useCanBridge: (chain: string, amountWei: string) => ({ isValid: true, reason: "" }),
     onBridge: async () => ({ success: false, txHash: "0xbridgeerror" }),
     selfRelayStatus: { status: "None" },
@@ -58,7 +58,7 @@ export const MicroBridgeError = {
 };
 export const MicroRelayError = {
   args: {
-    useBalanceHook: chain => (chain === "fuse" ? 100 : 200),
+    useBalanceHook: (chain: string) => (chain === "fuse" ? 100 : 200),
     useCanBridge: (chain: string, amountWei: string) => ({ isValid: true, reason: "" }),
     onBridge: async () => ({
       success: true,
@@ -71,7 +71,7 @@ export const MicroRelayError = {
 };
 export const MicroBridgeWaiting = {
   args: {
-    useBalanceHook: chain => (chain === "fuse" ? 100 : 200),
+    useBalanceHook: (chain: string) => (chain === "fuse" ? 100 : 200),
     useCanBridge: (chain: string, amountWei: string) => ({ isValid: true, reason: "" }),
     onBridge: async () => new Promise(() => {}),
     bridgeStatus: { status: "Mining" }
@@ -79,7 +79,7 @@ export const MicroBridgeWaiting = {
 };
 export const MicroBridgeWaitingRelay = {
   args: {
-    useBalanceHook: chain => (chain === "fuse" ? 100 : 200),
+    useBalanceHook: (chain: string) => (chain === "fuse" ? 100 : 200),
     useCanBridge: (chain: string, amountWei: string) => ({ isValid: true, reason: "" }),
     onBridge: async () => ({ success: true, relayPromise: new Promise(() => {}) }),
     bridgeStatus: {

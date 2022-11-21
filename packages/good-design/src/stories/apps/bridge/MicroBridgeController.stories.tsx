@@ -17,12 +17,12 @@ export default {
         </SwitchChainModal>
       </W3Wrapper>
     )
-  ],
-  argTypes: {
-    useBalanceHook: {
-      description: "G$ Bridge"
-    }
-  }
+  ]
+  // argTypes: {
+  //   useBalanceHook: {
+  //     description: "G$ Bridge"
+  //   }
+  // }
 };
 
 export const MicroBridgeControllerStart = {

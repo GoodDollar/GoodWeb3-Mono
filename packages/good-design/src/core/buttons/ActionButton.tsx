@@ -13,17 +13,15 @@ const ButtonAction = ({ text, ...props }: IBasicButtonProps) => (
     justifyContent="center"
     minWidth="100%"
     height={71}
-    paddingVertical={5}
-    paddingHorizontal={5}
+    paddingX={5}
+    paddingY={5}
     borderRadius={20}
-    cursor="pointer"
     textAlign="center"
-    userSelect="none"
     {...props}
   >
     {text}
   </Button>
-)
+);
 
 export const theme = {
   baseStyle: {
@@ -35,6 +33,7 @@ export const theme = {
     boxShadow: "3px 3px 10px -1px rgba(11, 27, 102, 0.304824)",
     backgroundColor: "#00B0FF",
     transition: "background 0.25s",
+    userSelect: "none"
   }
 };
 
