@@ -110,6 +110,8 @@ export const MicroBridge = ({
 
   const [sourceChain, setSourceChain] = useState<"fuse" | "celo">("fuse");
 
+  const toggleEnableTarget = useCallback(() => setEnableTarget(value => !value), [setEnableTarget]);
+
   const targetChain = sourceChain === "fuse" ? "celo" : "fuse";
   const balanceWei = useBalanceHook(sourceChain);
 
@@ -168,7 +170,7 @@ export const MicroBridge = ({
         </FormControl.ErrorMessage>
       </FormControl>
       <Box mt="5">
-        <Checkbox isChecked={enableTarget} value="" onChange={() => setEnableTarget(!enableTarget)}>
+        <Checkbox isChecked={enableTarget} value="" onChange={toggleEnableTarget}>
           Send to a different address
         </Checkbox>
         <AddressInput mt="2" onChange={setTarget} display={enableTarget ? "inherit" : "none"} />
