@@ -5,7 +5,6 @@ import { ethers } from "ethers";
 import { GoodDollarStaking, IGoodDollar } from "@gooddollar/goodprotocol/types";
 import { G$, GOOD, SupportedChains } from "../constants";
 import useRefreshOrNever from "../../hooks/useRefreshOrNever";
-import { ChainId } from "@usedapp/core/dist/cjs/src";
 
 export interface StakerInfo {
   claimable:
@@ -131,7 +130,7 @@ export const useSavingsStats = (refresh: QueryParams["refresh"] = "never") => {
         args: []
       }
     ],
-    { refresh: refreshOrNever, chainId: SupportedChains.FUSE as unknown as ChainId }
+    { refresh: refreshOrNever, chainId: SupportedChains.FUSE as number }
   );
 
   let globalStats: SavingsStats = {
@@ -199,7 +198,7 @@ export const useStakerInfo = (refresh: QueryParams["refresh"] = "never", account
         args: [account]
       }
     ],
-    { refresh: refreshOrNever, chainId: SupportedChains.FUSE as unknown as ChainId }
+    { refresh: refreshOrNever, chainId: SupportedChains.FUSE as number }
   );
 
   let stakerInfo: StakerInfo = {

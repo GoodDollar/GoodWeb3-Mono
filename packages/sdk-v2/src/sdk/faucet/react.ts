@@ -11,7 +11,7 @@ import useRefreshOrNever from "../../hooks/useRefreshOrNever";
 export const useFaucet = async (refresh: QueryParams["refresh"] = 12) => {
   let refreshOrNever = useRefreshOrNever(refresh);
   const { notifications } = useNotifications();
-  const latest = useMemo(() => maxBy(notifications, 'submittedAt'), [notifications]);
+  const latest = useMemo(() => maxBy(notifications, "submittedAt"), [notifications]);
   const lastNotification = useRef(latest?.submittedAt || 0);
 
   // if we connected wallet or did a tx then force a refresh
@@ -32,19 +32,6 @@ export const useFaucet = async (refresh: QueryParams["refresh"] = 12) => {
     connectedEnv
   ) as Faucet;
 
-  console.log("useFaucet", {
-    lastNotification,
-    latest,
-    account,
-    connectedEnv,
-    chainId,
-    balance,
-    minBalance,
-    gasPrice,
-    faucet: faucet?.address,
-    refreshOrNever
-  });
-
   const [result] = useCalls(
     [
       {
@@ -60,19 +47,13 @@ export const useFaucet = async (refresh: QueryParams["refresh"] = 12) => {
     if (result?.value && account && balance && balance.lt(minBalance)) {
       const { backend } = Envs[baseEnv];
 
-      console.log("topping wallet", { account, connectedEnv, balance, backend, baseEnv });
-
       fetch(backend + "/verify/topWallet", {
         method: "POST",
         body: JSON.stringify({ chainId, account }),
         headers: { "content-type": "application/json" }
-      })
-        .then(r => {
-          console.log("topwallet result:", r);
-        })
-        .catch(e => {
-          console.log("topping wallet failed:", e.message, e);
-        });
+      }).catch(e => {
+        console.error("topping wallet failed:", e.message, e);
+      });
     }
   }, [result, account, balance, baseEnv]);
 };

@@ -4,9 +4,9 @@
   "version": "0.1.36",
   "description": "ethers and react hooks based on usedapp sdk for GoodDollar protocol",
   "scripts": {
-    "build": "yarn dev:clean && ctix c && tsc",
-    "build:release": "yarn dev:clean && ctix c && tsc -p tsconfig.release.json",
-    "dev:clean": "rm -fr dist types tsconfig.tsbuildinfo && ctix r",
+    "build": "ctix r && ctix c && tsc",
+    "build:release": "yarn clean && ctix c && tsc -p tsconfig.release.json",
+    "clean": "rm -fr dist types tsconfig.tsbuildinfo && ctix r",
     "test": "jest",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook"
@@ -44,6 +44,7 @@
     "babel-loader": "^8.2.3",
     "babel-plugin-module-resolver": "^4.1.0",
     "babel-plugin-react-native-web": "^0.18.1",
+    "buffer": "^6.0.3",
     "css-loader": "^6.5.1",
     "ctix": "^1.4.0",
     "html-webpack-plugin": "^5.5.0",
@@ -51,23 +52,27 @@
     "jest": "^27.3.1",
     "react": "17.0.2",
     "react-dom": "17.0.2",
+    "react-native": "0.70.*",
     "react-native-web": "0.17",
     "sass": "^1.43.5",
     "sass-loader": "^12.3.0",
-    "style-loader": "^3.3.1"
+    "style-loader": "^3.3.1",
+    "typescript": "^4.8.4"
   },
   "dependencies": {
-    "@gooddollar/goodprotocol": "^1.0.29-beta.4",
+    "@gooddollar/bridge-app": "^1.1.4",
+    "@gooddollar/bridge-contracts": "^1.0.6",
+    "@gooddollar/goodprotocol": "beta",
     "@types/react-native": "^0.70.4",
-    "@usedapp/core": "^1.0.9",
+    "@usedapp/core": "1.*",
     "eventemitter3": "^4.0.7",
-    "react-native": "^0.70.2",
     "react-use-promise": "^0.5.0"
   },
   "peerDependencies": {
     "@react-native-async-storage/async-storage": "*",
     "ethers": "5.*",
-    "react-native": "0.67.4",
-    "react-native-web": "^0.18.1"
+    "react": "*",
+    "react-native": "*",
+    "react-native-web": "*"
   }
 }
