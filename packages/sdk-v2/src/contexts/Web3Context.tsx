@@ -1,13 +1,15 @@
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { JsonRpcProvider, Web3Provider as W3Provider } from "@ethersproject/providers";
-import { DAppProvider, Config, Chain, Mainnet, Ropsten, Kovan, useEthers, Goerli } from "@usedapp/core";
+import { DAppProvider, Config, Chain, Mainnet, useEthers, Goerli } from "@usedapp/core";
 import EventEmitter from "eventemitter3";
 import { EnvKey } from "../sdk/base/sdk";
 /**
  * request to switch to network id
  * returns void if no result yet true/false if success
  */
-export type SwitchCallback = (id: number) => Promise<void>;
+export type SwitchNetwork = (id: number) => Promise<void>;
+export type SwitchCallback = (id: number, switchResult: any) => Promise<void>;
+
 export type TxDetails = {
   txhash: string;
   title: string;
@@ -23,8 +25,11 @@ export type TxEmitter = {
 };
 
 type IWeb3Context = {
-  setSwitchNetwork: (cb: SwitchCallback) => void;
-  switchNetwork?: SwitchCallback;
+  setSwitchNetwork: (cb: SwitchNetwork) => void;
+  switchNetwork?: SwitchNetwork;
+  setOnSwitchNetwork?: (cb: () => SwitchCallback) => void;
+  onSwitchNetwork?: SwitchCallback;
+  connectWallet?: () => void;
   txEmitter: TxEmitter;
   env: EnvKey;
 };
@@ -37,7 +42,8 @@ export const txEmitter = {
 
 export const Web3Context = React.createContext<IWeb3Context>({
   switchNetwork: undefined,
-  setSwitchNetwork: (cb: SwitchCallback) => undefined,
+  setSwitchNetwork: (cb: SwitchNetwork) => undefined,
+  connectWallet: () => undefined,
   txEmitter,
   env: "production"
 });
@@ -47,7 +53,7 @@ type Props = {
   config: Config;
   web3Provider?: JsonRpcProvider | W3Provider;
   env?: EnvKey;
-  switchNetworkRequest?: SwitchCallback;
+  switchNetworkRequest?: SwitchNetwork;
 };
 
 export const Fuse: Chain = {
@@ -97,16 +103,19 @@ const Web3Connector = ({ web3Provider }: { web3Provider: JsonRpcProvider | void 
     if (web3Provider) {
       activate(web3Provider);
     }
+    return () => deactivate();
   }, [web3Provider]);
 
   return null;
 };
-export const Web3Provider = ({ children, config, web3Provider, switchNetworkRequest, env = "production" }: Props) => {
-  const [switchNetwork, setSwitchNetwork] = useState<SwitchCallback>();
 
-  const setSwitcNetworkCallback = (cb: SwitchCallback) => setSwitchNetwork(() => cb);
+export const Web3Provider = ({ children, config, web3Provider, switchNetworkRequest, env = "production" }: Props) => {
+  const [switchNetwork, setSwitchNetwork] = useState<SwitchNetwork>();
+  const [onSwitchNetwork, setOnSwitchNetwork] = useState<SwitchCallback>();
+
+  const setSwitcNetworkCallback = useCallback((cb: SwitchNetwork) => setSwitchNetwork(() => cb), [setSwitchNetwork]);
   //make sure we have Fuse and mainnet by default and the relevant multicall available from useConfig for useMulticallAtChain hook
-  config.networks = [Fuse, Mainnet, Goerli, Celo, ...(config.networks || [])];
+  config.networks = config.networks || [Fuse, Mainnet, Goerli, Celo];
   config.multicallVersion = config.multicallVersion ? config.multicallVersion : 1;
   config.gasLimitBufferPercentage = 10;
   config.readOnlyUrls = {
@@ -123,7 +132,16 @@ export const Web3Provider = ({ children, config, web3Provider, switchNetworkRequ
   return (
     <DAppProvider config={config}>
       <Web3Connector web3Provider={web3Provider} />
-      <Web3Context.Provider value={{ setSwitchNetwork: setSwitcNetworkCallback, switchNetwork, txEmitter, env }}>
+      <Web3Context.Provider
+        value={{
+          setSwitchNetwork: setSwitcNetworkCallback,
+          switchNetwork,
+          onSwitchNetwork,
+          setOnSwitchNetwork,
+          txEmitter,
+          env
+        }}
+      >
         {children}
       </Web3Context.Provider>
     </DAppProvider>
@@ -132,6 +150,19 @@ export const Web3Provider = ({ children, config, web3Provider, switchNetworkRequ
 
 export const useSwitchNetwork = () => {
   const { switchNetwork: ethersSwitchNetwork } = useEthers();
-  const { switchNetwork, setSwitchNetwork } = useContext(Web3Context);
-  return { switchNetwork: switchNetwork || ethersSwitchNetwork, setSwitchNetwork };
+  const { switchNetwork, setSwitchNetwork, onSwitchNetwork, setOnSwitchNetwork } = useContext(Web3Context);
+  const switchCallback = useCallback(
+    async (chainId: number) => {
+      onSwitchNetwork && onSwitchNetwork(chainId, undefined);
+      try {
+        await (switchNetwork || ethersSwitchNetwork)(chainId);
+        onSwitchNetwork && onSwitchNetwork(chainId, true);
+      } catch (e) {
+        onSwitchNetwork && onSwitchNetwork(chainId, false);
+        throw e;
+      }
+    },
+    [onSwitchNetwork, switchNetwork, ethersSwitchNetwork]
+  );
+  return { switchNetwork: switchCallback, setSwitchNetwork, setOnSwitchNetwork };
 };

@@ -6,24 +6,17 @@ interface ILayoutProps {
   children: ReactNode;
 }
 
-const Layout = ({ children, ...props }: ILayoutProps) => <View {...props}>{children}</View>;
+const Layout = ({ children, ...props }: ILayoutProps) => (
+  <View width="100%" maxWidth={712} borderWidth={1} borderRadius={20} paddingY={20} paddingX={17} {...props}>
+    {children}
+  </View>
+);
 
 export const theme = {
   baseStyle: {
-    maxWidth: 712,
-    borderWidth: 1,
-    borderColor: "rgba(208, 217, 228, 0.483146)",
-    width: "100%",
-    borderRadius: 20,
-    padding: 17,
     backgroundColor: "#fff",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 12,
-      height: 8,
-    },
-    shadowOpacity: 0.07,
-    shadowRadius: 34,
+    borderColor: "rgba(208, 217, 228, 0.483146)",
+    boxShadow: "3px 3px 10px -1px rgba(11, 27, 102, 0.304824)"
   }
 };
 
