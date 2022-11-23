@@ -2516,7 +2516,7 @@ __metadata:
     "@gooddollar/bridge-app": ^1.1.4
     "@gooddollar/bridge-contracts": ^1.0.6
     "@gooddollar/goodprotocol": beta
-    "@react-native-async-storage/async-storage": ^1.17.10
+    "@react-native-async-storage/async-storage": 1.17.10
     "@storybook/addon-actions": ^6.5.12
     "@storybook/addon-essentials": ^6.5.12
     "@storybook/addon-links": ^6.5.12
@@ -2546,6 +2546,7 @@ __metadata:
     react: 17.0.2
     react-dom: 17.0.2
     react-native: 0.70.*
+    react-native-restart: ^0.0.24
     react-native-web: 0.17
     react-use-promise: ^0.5.0
     sass: ^1.43.5
@@ -2553,7 +2554,7 @@ __metadata:
     style-loader: ^3.3.1
     typescript: ^4.8.4
   peerDependencies:
-    "@react-native-async-storage/async-storage": "*"
+    "@react-native-async-storage/async-storage": 1.17.10
     ethers: 5.*
     react: "*"
     react-native: "*"
@@ -3921,7 +3922,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-async-storage/async-storage@npm:^1.17.10":
+"@react-native-async-storage/async-storage@npm:1.17.10":
   version: 1.17.10
   resolution: "@react-native-async-storage/async-storage@npm:1.17.10"
   dependencies:
@@ -21511,6 +21512,16 @@ __metadata:
     react: "*"
     react-native: "*"
   checksum: c75b5fc1248ba9ac678025ddee50575d5191c648e996bb7fb7ba67b358ef102391ce5e1d2e0fdc1c59bd131befa12e7714b633ed98a01001f2718ce08d070c6e
+  languageName: node
+  linkType: hard
+
+"react-native-restart@npm:^0.0.24":
+  version: 0.0.24
+  resolution: "react-native-restart@npm:0.0.24"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 2ea5f1e9c31d3d705ad2061966a240db32131ad11fd227f244919f2882a1ed7a6d48aed6b7bcab59a989fb58f59ca7e1d6d5316089d011a6955975f1148160f0
   languageName: node
   linkType: hard
 

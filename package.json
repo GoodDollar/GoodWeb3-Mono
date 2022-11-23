@@ -10,7 +10,7 @@
   "license": "GPL-3.0",
   "homepage": "",
   "scripts": {
-    "build": "yarn workspaces foreach -ptRv --from '{@gooddollar/sdk-v2,@gooddollar/**}' run build" ,
+    "build": "yarn workspaces foreach -ptRv --from '{@gooddollar/sdk-v2,@gooddollar/**}' run build",
     "compile": "tsc -p tsconfig.build.json"
   },
   "packageManager": "yarn@3.2.1",

@@ -7,16 +7,15 @@ export class SavingsSDK extends BaseSDK {
   async hasBalance(account: string): Promise<boolean | undefined> {
     const contract = this.getContract("GoodDollarStaking");
     if (contract && account) {
-      const balance = (await contract.balanceOf(account)).toString();
-      const hasBalance = balance !== "0";
-      return hasBalance;
+      const balance = await contract.balanceOf(account);
+      return !balance.isZero();
     }
   }
 
   async onTokenTransfer(
     amount: string,
     onSent?: (transactionHash: string) => void
-  ): Promise<ethers.ContractTransaction | Error> {
+  ): Promise<ethers.ContractTransaction | undefined> {
     const contract = this.getContract("GoodDollar");
     const stakeContract = this.getContract("GoodDollarStaking");
 
@@ -25,8 +24,12 @@ export class SavingsSDK extends BaseSDK {
 
       const transfer = contract.transferAndCall(stakeContract.address, amount, callData);
       return transfer;
-    } catch (e) {
-      return new Error(e as any);
+    } catch (e: any) {
+      if (e.code === 4001) {
+        throw new Error("User cancelled transaction confirmation");
+      } else {
+        /// log error to sentry
+      }
     }
   }
 
@@ -34,7 +37,7 @@ export class SavingsSDK extends BaseSDK {
     amount: string,
     isFullWithdraw: boolean,
     onSent?: (transactionHash: string) => void
-  ): Promise<ethers.ContractTransaction | Error> {
+  ): Promise<ethers.ContractTransaction | undefined> {
     const contract = this.getContract("GoodDollarStaking");
     try {
       //note: if tx fails on limit, up the gasLimitBufferPercentage (see context config))
@@ -43,9 +46,12 @@ export class SavingsSDK extends BaseSDK {
         : await contract.amountToShares(amount);
       const withdraw = contract.withdrawStake(shares);
       return withdraw;
-    } catch (e) {
-      console.log("withdraw savings failed -->", e);
-      return new Error(e as any);
+    } catch (e: any) {
+      if (e.code === 4001) {
+        throw new Error("User cancelled transaction confirmation");
+      } else {
+        /// log error to sentry
+      }
     }
   }
 
@@ -57,8 +63,12 @@ export class SavingsSDK extends BaseSDK {
         return res;
       });
       return req;
-    } catch (e) {
-      console.log("get staker info failed", { e });
+    } catch (e: any) {
+      if (e.code === 4001) {
+        throw new Error("User cancelled transaction confirmation");
+      } else {
+        /// log error to sentry
+      }
     }
   }
 }
