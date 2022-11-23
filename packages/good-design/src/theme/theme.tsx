@@ -4,9 +4,7 @@ import * as layout from "../core/layout/theme";
 import * as buttons from "../core/buttons/theme";
 
 export const theme = extendTheme({
-  config: {
-    initialColorMode: "dark"
-  },
+  config: {},
   colors: {
     text1: "#0D182D",
     heading: "#42454A"

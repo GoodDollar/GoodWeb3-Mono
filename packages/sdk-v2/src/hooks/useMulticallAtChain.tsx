@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef } from "react";
-import { useConfig, Call, RawCall } from "@usedapp/core";
-import { encodeCallData } from "@usedapp/core/dist/cjs/src/helpers";
+import { useConfig, Call, RawCall, Falsy, QueryParams } from "@usedapp/core";
 
 import { JsonRpcProvider, BaseProvider } from "@ethersproject/providers";
 import { BigNumber } from "@ethersproject/bignumber";
@@ -90,6 +89,52 @@ export const useReadOnlyProvider = (chainId: number) => {
 
   return provider;
 };
+
+/**
+ * @internal Intended for internal use - use it on your own risk
+ */
+export function validateCall(call: Call): Call {
+  const { contract, method, args } = call;
+  if (!contract.address || !method) {
+    throw new Error("Missing contract address or method name");
+  }
+
+  try {
+    contract.interface.encodeFunctionData(method, args);
+    return call;
+  } catch (err: any) {
+    throw new Error(`Invalid contract call for method="${method}" on contract="${contract.address}": ${err.message}`);
+  }
+}
+
+/* @internal Intended for internal use - use it on your own risk
+ * @returns
+ * One of these:
+ * - a RawCall, if encoding is successful.
+ * - Falsy, if there is no call to encode.
+ * - an Error, if encoding fails (e.g. because of mismatched arguments).
+ */
+function encodeCallData(call: Call | Falsy, chainId: number, queryParams: QueryParams = {}): RawCall | Falsy | Error {
+  if (!call) {
+    return undefined;
+  }
+  try {
+    validateCall(call);
+  } catch (e: any) {
+    return e;
+  }
+  const { contract, method, args } = call;
+  const isStatic = queryParams.isStatic ?? queryParams.refresh === "never";
+  const refreshPerBlocks = typeof queryParams.refresh === "number" ? queryParams.refresh : undefined;
+
+  return {
+    address: contract.address,
+    data: contract.interface.encodeFunctionData(method, args),
+    chainId,
+    isStatic,
+    refreshPerBlocks
+  };
+}
 
 /**
  * perform multicall requests to a specific chain using readonly rpcs from usedapp

@@ -48,9 +48,8 @@ export const useGetEnvChainId = (requiredChainId?: number) => {
   }
 
   const defaultEnv = connectedEnv;
-
   return {
-    chainId: Number((Contracts[defaultEnv as keyof typeof Contracts] as EnvValue).networkId),
+    chainId: Number((Contracts[defaultEnv as keyof typeof Contracts] as EnvValue)?.networkId),
     defaultEnv,
     baseEnv,
     connectedEnv,
@@ -91,7 +90,7 @@ function sdkFactory(
   type: SdkTypes,
   defaultEnv: EnvKey,
   readOnly: boolean,
-  library: providers.JsonRpcProvider | undefined,
+  library: providers.JsonRpcProvider | providers.FallbackProvider | undefined,
   roLibrary: providers.JsonRpcProvider | undefined
 ): ClaimSDK | SavingsSDK | undefined {
   let provider = library;
@@ -106,7 +105,7 @@ function sdkFactory(
     return;
   }
 
-  return new reqSdk(provider, defaultEnv) as ClaimSDK | SavingsSDK;
+  return new reqSdk(provider as providers.JsonRpcProvider, defaultEnv) as ClaimSDK | SavingsSDK;
 }
 
 export const useSDK = (

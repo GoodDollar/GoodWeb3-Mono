@@ -1,11 +1,10 @@
 import React, { useCallback } from "react";
-import { useContractFunction, useCalls, QueryParams, useEthers, CurrencyValue } from "@usedapp/core";
+import { useContractFunction, useCalls, QueryParams, useEthers, CurrencyValue, ChainId } from "@usedapp/core";
 import { useGetContract, useGetEnvChainId } from "../base/react";
 import { ethers } from "ethers";
 import { GoodDollarStaking, IGoodDollar } from "@gooddollar/goodprotocol/types";
 import { G$, GOOD } from "../constants";
 import useRefreshOrNever from "../../hooks/useRefreshOrNever";
-import { ChainId } from "@usedapp/core/dist/cjs/src";
 
 export interface StakerInfo {
   claimable:

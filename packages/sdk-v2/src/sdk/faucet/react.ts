@@ -27,19 +27,6 @@ export const useFaucet = async (refresh: QueryParams["refresh"] = 12) => {
   const { connectedEnv, baseEnv } = useGetEnvChainId(); // get the env the user is connected to
   const faucet = useGetContract(chainId === SupportedChains.FUSE ? "FuseFaucet" : "Faucet", true, "base") as Faucet;
 
-  // console.log("useFaucet", {
-  //   lastNotification,
-  //   latest,
-  //   account,
-  //   connectedEnv,
-  //   chainId,
-  //   balance,
-  //   minBalance,
-  //   gasPrice,
-  //   faucet: faucet?.address,
-  //   refreshOrNever
-  // });
-
   const [result] = useCalls(
     [
       {
@@ -55,19 +42,13 @@ export const useFaucet = async (refresh: QueryParams["refresh"] = 12) => {
     if (result?.value && account && balance && balance.lt(minBalance)) {
       const { backend } = Envs[baseEnv];
 
-      console.log("topping wallet", { account, connectedEnv, balance, backend, baseEnv });
-
       fetch(backend + "/verify/topWallet", {
         method: "POST",
         body: JSON.stringify({ chainId, account }),
         headers: { "content-type": "application/json" }
-      })
-        .then(r => {
-          console.log("topwallet result:", r);
-        })
-        .catch(e => {
-          console.log("topping wallet failed:", e.message, e);
-        });
+      }).catch(e => {
+        console.error("topping wallet failed:", e.message, e);
+      });
     }
   }, [result, account, balance, baseEnv]);
 };

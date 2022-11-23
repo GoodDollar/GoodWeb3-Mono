@@ -28,7 +28,7 @@ const throwCancelled = (e: any) => {
 
 const StepIndicator = ({ text }: { text?: string | undefined }) => {
   return (
-    <HStack space={2} alignItems="center" flexDirection={"row"}>
+    <HStack space={2} alignItems="center" flexDirection="row">
       <Spinner accessibilityLabel="Waiting on wallet confirmation" />
       <Heading color="primary.500" fontSize="md">
         {text}

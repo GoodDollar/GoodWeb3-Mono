@@ -7,28 +7,33 @@ interface IBasicButtonProps extends IButtonProps {
   onPress: () => {};
 }
 
-const ButtonAction = ({ text, ...props }: IBasicButtonProps) => <Button {...props}>{text}</Button>;
+const ButtonAction = ({ text, ...props }: IBasicButtonProps) => (
+  <Button
+    alignItems="center"
+    justifyContent="center"
+    minWidth="100%"
+    height={71}
+    paddingX={5}
+    paddingY={5}
+    borderRadius={20}
+    textAlign="center"
+    {...props}
+  >
+    {text}
+  </Button>
+);
 
 export const theme = {
   baseStyle: {
-    alignItems: "center",
-    justifyContent: "center",
-    minWidth: "100%",
-    paddingVertical: 5,
-    paddingHorizontal: 5,
-    borderRadius: 20,
-    cursor: "pointer",
     fontStyle: "normal",
+    fontSize: 20,
     lineHeight: "16px",
-    textAlign: "center",
-    textTransform: "capitalize",
-    userSelect: "none",
-    transition: "background 0.25s",
-    backgroundColor: "#00B0FF",
-    height: 71,
-    boxShadow: "3px 3px 10px -1px rgba(11, 27, 102, 0.304824)",
     fontWeight: 900,
-    fontSize: 20
+    textTransform: "capitalize",
+    boxShadow: "3px 3px 10px -1px rgba(11, 27, 102, 0.304824)",
+    backgroundColor: "#00B0FF",
+    transition: "background 0.25s",
+    userSelect: "none"
   }
 };
 
