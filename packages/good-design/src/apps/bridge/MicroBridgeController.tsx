@@ -146,7 +146,7 @@ const MicroBridgeHistory = () => {
   );
 };
 
-export const MicroBridgeController = ({}) => {
+export const MicroBridgeController = ({ withRelay = false }) => {
   const { sendBridgeRequest, bridgeRequestStatus, relayStatus, selfRelayStatus } = useBridge();
   const { bridgeFees: fuseBridgeFees, bridgeLimits: fuseBridgeLimits } = useGetBridgeData(SupportedChains.FUSE, "");
   const { bridgeFees: celoBridgeFees, bridgeLimits: celoBridgeLimits } = useGetBridgeData(SupportedChains.CELO, "");
@@ -164,7 +164,7 @@ export const MicroBridgeController = ({}) => {
         limits={{ fuse: fuseBridgeLimits, celo: celoBridgeLimits }}
         fees={{ fuse: fuseBridgeFees, celo: celoBridgeFees }}
       />
-      <MicroBridgeHistory />
+      {withRelay && <MicroBridgeHistory />}
       <SignWalletModal txStatus={bridgeRequestStatus.status} />
       <SignWalletModal txStatus={selfRelayStatus?.status} />
     </>

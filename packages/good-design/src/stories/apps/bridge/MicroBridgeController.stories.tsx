@@ -25,6 +25,9 @@ export default {
   // }
 };
 
-export const MicroBridgeControllerStart = {
-  args: {}
+export const MicroBridgeControllerWithoutRelay = {
+  args: { withRelay: false }
+};
+export const MicroBridgeControllerWithRelay = {
+  args: { withRelay: true }
 };

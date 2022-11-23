@@ -15,7 +15,7 @@ import { useSwitchNetwork } from "../../contexts";
 export const useGetBridgeContracts = () => {
   const { baseEnv } = useGetEnvChainId();
   const { fuseBridge, celoBridge } = bridgeContracts[baseEnv] || {};
-  
+
   if (fuseBridge && celoBridge) {
     return {
       [SupportedChains.FUSE]: new Contract(fuseBridge, TokenBridgeABI.abi) as TokenBridge,
@@ -41,7 +41,7 @@ export const useWithinBridgeLimits = (requestChainId: number, account: string, a
   );
 
   const [isValid = false, reason = ""]: [boolean, string] = canBridge?.[0]?.value || [];
-  
+
   return { isValid, reason };
 };
 
@@ -91,7 +91,7 @@ export const useGetBridgeData = (requestChainId: number, account: string): Bridg
   };
 };
 
-export const useBridge = () => {
+export const useBridge = (withRelay = false) => {
   const lock = useRef(false);
   const { switchNetwork } = useSwitchNetwork();
   const { account, chainId } = useEthers();
@@ -158,7 +158,7 @@ export const useBridge = () => {
         [bridgeRequest.targetChainId, bridgeRequest.target || account]
       );
       transferAndCall.send(bridgeContract.address, bridgeRequest.amount, encoded).then(async sendTx => {
-        if (sendTx) {
+        if (sendTx && withRelay) {
           let relayTxHash: string = "";
           try {
             setSelfRelay({
