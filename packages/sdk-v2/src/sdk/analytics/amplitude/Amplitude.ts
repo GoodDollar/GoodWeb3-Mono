@@ -9,7 +9,7 @@ export class Amplitude implements IAbstractProvider, IAnalyticsProvider, IMonito
   constructor(private config: IAmplitudeConfig) {}
 
   async initialize(appProps: IAppProps): Promise<boolean> {
-    const initialized = await api.init(apiKey);
+    const initialized = await api.initialize(apiKey);
 
     if (initialized) {
       const identity = new api.Identify();
@@ -26,9 +26,10 @@ export class Amplitude implements IAbstractProvider, IAnalyticsProvider, IMonito
   }
 
   identify(identifier: string | number, email?: string, props?: object): void {
-    const { id } = getUserProps(identifier, email, props);
+    const { id, extra } = getUserProps(identifier, email, props);
 
     api.setUserId(id);
+    api.setUserProperties(extra);
   }
 
   send(event: string, data?: object): void {
