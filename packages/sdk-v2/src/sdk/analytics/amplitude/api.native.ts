@@ -5,13 +5,7 @@ class Wrapper {
   private api = Amplitude.getInstance()
   readonly Identify = Identify
 
-  // there's no setVersionName() on the native SDK
-  setVersionName() {}
-
   async initialize(apiKey: string) {
-    const { onError = noop } = options || {};
-    const onSuccess = onReady || noop;
-
     return this.api.init(apiKey);
   }
 
