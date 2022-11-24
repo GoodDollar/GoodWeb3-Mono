@@ -9,18 +9,7 @@ export class Amplitude implements IAbstractProvider, IAnalyticsProvider, IMonito
   constructor(private config: IAmplitudeConfig) {}
 
   async initialize(appProps: IAppProps): Promise<boolean> {
-
-    const initialized = await new Promise<boolean>(resolve => {
-      const { apiKey } = this.config;
-      const [onError] = [false, true].map(state => () => resolve(state));
-
-      if (!apiKey) {
-        onError();
-        return;
-      }
-
-      api.init(apiKey);
-    });
+    const initialized = await api.init(apiKey);
 
     if (initialized) {
       const identity = new api.Identify();
@@ -32,6 +21,7 @@ export class Amplitude implements IAbstractProvider, IAnalyticsProvider, IMonito
 
       api.identify(identity);
     }
+    
     return initialized;
   }
 
@@ -55,6 +45,7 @@ export class Amplitude implements IAbstractProvider, IAnalyticsProvider, IMonito
     if (!errorEvent) {
       return;
     }
+    
     if (fingerprint) {
       data.unique = fingerprint.join(" ");
     }
