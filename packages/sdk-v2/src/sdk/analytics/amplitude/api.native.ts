@@ -8,20 +8,11 @@ class Wrapper {
   // there's no setVersionName() on the native SDK
   setVersionName() {}
 
-  initialize(apiKey: string, _: any, options?: Record<string, any>, onReady?: Function) {
+  async initialize(apiKey: string) {
     const { onError = noop } = options || {};
     const onSuccess = onReady || noop;
 
-    this.api
-      .init(apiKey)
-      .then(async (initialized: boolean) => {
-        if (!initialized) {
-          throw new Error("Amplitude not initialized !");
-        }
-
-        onSuccess();
-      })
-      .catch(onError);
+    return this.api.init(apiKey);
   }
 
   setUserId(id: string): void {
