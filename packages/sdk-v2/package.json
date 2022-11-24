@@ -57,6 +57,7 @@
     "style-loader": "^3.3.1"
   },
   "dependencies": {
+    "@amplitude/analytics-browser": "^1.6.3",
     "@amplitude/react-native": "^2.16.2",
     "@gooddollar/goodprotocol": "^1.0.29-beta.4",
     "@react-native-firebase/analytics": "^16.4.6",

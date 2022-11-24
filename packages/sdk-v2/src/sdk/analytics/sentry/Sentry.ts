@@ -11,7 +11,6 @@ export class Sentry implements IAbstractProvider, IMonitoringProvider {
   ) {}
 
   async initialize(appProps: IAppProps): Promise<boolean> {
-
     const { sentryDSN } = this.config;
     const { env, version, ...tags } = omit(appProps, 'osVersion', '$once')
     const sentryScope = { appVersion: version, ...tags }

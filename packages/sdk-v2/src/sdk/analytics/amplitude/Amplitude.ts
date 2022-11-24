@@ -12,14 +12,14 @@ export class Amplitude implements IAbstractProvider, IAnalyticsProvider, IMonito
 
     const initialized = await new Promise<boolean>(resolve => {
       const { apiKey } = this.config;
-      const [onError, onSuccess] = [false, true].map(state => () => resolve(state));
+      const [onError] = [false, true].map(state => () => resolve(state));
 
       if (!apiKey) {
         onError();
         return;
       }
 
-      api.init(apiKey, undefined, { includeUtm: true, onError }, onSuccess);
+      api.init(apiKey);
     });
 
     if (initialized) {
@@ -30,18 +30,15 @@ export class Amplitude implements IAbstractProvider, IAnalyticsProvider, IMonito
       forOwn(allTags, (value: string, key: string) => identity.append(key, value));
       forOwn($once, (value: string, key: string) => identity.setOnce(key, value));
 
-      api.setVersionName(version);
       api.identify(identity);
     }
-
     return initialized;
   }
 
   identify(identifier: string | number, email?: string, props?: object): void {
-    const { id, extra } = getUserProps(identifier, email, props);
+    const { id } = getUserProps(identifier, email, props);
 
     api.setUserId(id);
-    api.setUserProperties(extra);
   }
 
   send(event: string, data?: object): void {
