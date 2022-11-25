@@ -1,16 +1,16 @@
-import React, { useEffect, useState, useCallback, useMemo } from "react";
-import { useClaim } from "@gooddollar/web3sdk-v2";
-import { View, IModalProps } from "native-base";
+import React, { useEffect, useCallback, useMemo } from "react";
+import { SupportedChains, useClaim } from "@gooddollar/web3sdk-v2";
+import { Text, View, IModalProps, Spinner } from "native-base";
 
 import { useQueryParam } from "../../hooks/useQueryParam";
-import FvModal from "../modals/FVModal";
 import { withTheme } from "../../theme/hoc/withTheme";
 import { withThemingTools } from "../../theme/utils/themingTools";
+import { Web3ActionButton } from "../../advanced";
+import { useModal } from "../modals/BasicModal";
+import { useFVModalAction } from "../../hooks/useFVModalAction";
 import ActionButton from "./ActionButton";
-import FirstClaimModal from "../modals/FirstClaimModal";
-import { useModalState } from "../../hooks/useModalState";
 
-interface FVFlowProps {
+export interface FVFlowProps {
   firstName: string;
   method: "popup" | "redirect";
   styles?: any;
@@ -20,18 +20,20 @@ interface FVFlowProps {
 export type FVModalProps = IModalProps & FVFlowProps;
 
 function ClaimButton({ firstName, method, refresh, ...props }: FVFlowProps) {
-  const [showFVModal, openFVModal, closeFVModal] = useModalState();
-  const [showClaimModal, openClaimModal, closeClaimModal] = useModalState();
+  const { Modal: FirstClaimModal, showModal: showFirstClaimModal } = useModal();
+  const { Modal: FVModal, showModal: showFVModal, hideModal: hideFVModal } = useModal();
+  const { loading, verify } = useFVModalAction({ firstName, method, onClose: hideFVModal });
   const { isWhitelisted, claimAmount, claimTime, claimCall } = useClaim(refresh);
   const isVerified = useQueryParam("verified");
 
   const handleClaim = useCallback(async () => {
     if (isWhitelisted || isVerified) {
-      return await claimCall.send();
+      await claimCall.send();
+      return;
     }
 
-    openFVModal();
-  }, [isWhitelisted, openFVModal, claimCall]);
+    showFVModal();
+  }, [isWhitelisted, showFVModal, claimCall]);
 
   const buttonTitle = useMemo(() => {
     if (!isWhitelisted) {
@@ -49,14 +51,41 @@ function ClaimButton({ firstName, method, refresh, ...props }: FVFlowProps) {
     if (!isVerified || claimAmount.toNumber() <= 0) return;
 
     claimCall.send();
-    openClaimModal();
-  }, [isVerified, claimAmount, openClaimModal]);
+    showFirstClaimModal();
+  }, [isVerified, claimAmount, showFirstClaimModal]);
 
   return (
     <View justifyContent="center" px={4} {...props}>
-      <ActionButton text={buttonTitle} onPress={handleClaim} />
-      <FvModal method={method} isOpen={showFVModal} onClose={closeFVModal} firstName={firstName} />
-      <FirstClaimModal isOpen={showClaimModal} onClose={closeClaimModal} />
+      <Web3ActionButton text={buttonTitle} requiredChain={SupportedChains.FUSE} web3Action={handleClaim} />
+      <FVModal
+        body={
+          <>
+            <Text color="text1">To verify your identity you need to sign TWICE with your wallet.</Text>
+            <Text color="text1">First sign your address to be whitelisted</Text>
+            <Text color="text1">
+              Second sign your self sovereign anonymized identifier, so no link is kept between your identity record and
+              your address.
+            </Text>
+          </>
+        }
+        footer={
+          loading ? (
+            <Spinner />
+          ) : (
+            <View justifyContent="space-between" width="100%" flexDirection="row">
+              <ActionButton text={"Verify Uniqueness"} onPress={verify} />
+            </View>
+          )
+        }
+      />
+      <FirstClaimModal
+        header={
+          <Text color="text1" fontWeight="bold">
+            Your first claim is ready!
+          </Text>
+        }
+        body={<Text color="text1">To complete it, sign in your wallet</Text>}
+      />
     </View>
   );
 }

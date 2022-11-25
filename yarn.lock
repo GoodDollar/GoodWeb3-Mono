@@ -2353,7 +2353,7 @@ __metadata:
     ctix: ^1.4.0
     lodash: ^4.17.21
     metro-react-native-babel-preset: ^0.72.0
-    native-base: ^3.4.21
+    native-base: 3.4.11
     prop-types: ^15.8.1
     react: 17.0.2
     react-docgen-typescript-plugin: ^1.0.1
@@ -7043,13 +7043,6 @@ __metadata:
   version: 2.0.6
   resolution: "@types/unist@npm:2.0.6"
   checksum: 25cb860ff10dde48b54622d58b23e66214211a61c84c0f15f88d38b61aa1b53d4d46e42b557924a93178c501c166aa37e28d7f6d994aba13d24685326272d5db
-  languageName: node
-  linkType: hard
-
-"@types/use-subscription@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "@types/use-subscription@npm:1.0.0"
-  checksum: 47fff868682692ecda7110bd04ba4c5b1324854c0bcccc765606a42d4bd9be475207413c8829a883b98e7edd801100df53876da0ff89ac21a8f964e440636ef2
   languageName: node
   linkType: hard
 
@@ -15425,7 +15418,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"inline-style-prefixer@npm:^6.0.0, inline-style-prefixer@npm:^6.0.1":
+"inline-style-prefixer@npm:^6.0.0":
   version: 6.0.1
   resolution: "inline-style-prefixer@npm:6.0.1"
   dependencies:
@@ -19214,9 +19207,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"native-base@npm:^3.4.21":
-  version: 3.4.21
-  resolution: "native-base@npm:3.4.21"
+"native-base@npm:3.4.11":
+  version: 3.4.11
+  resolution: "native-base@npm:3.4.11"
   dependencies:
     "@react-aria/focus": 3.2.3
     "@react-aria/utils": ^3.6.0
@@ -19240,8 +19233,6 @@ __metadata:
     "@react-stately/tabs": 3.0.0-alpha.1
     "@react-stately/toggle": 3.2.1
     "@types/lodash.has": ^4.5.6
-    "@types/use-subscription": ^1.0.0
-    inline-style-prefixer: ^6.0.1
     lodash.clonedeep: ^4.5.0
     lodash.get: ^4.4.2
     lodash.has: ^4.5.2
@@ -19256,7 +19247,6 @@ __metadata:
     react-native-keyboard-aware-scroll-view: ^0.9.5
     stable-hash: ^0.0.2
     tinycolor2: ^1.4.2
-    use-subscription: ^1.8.0
   peerDependencies:
     "@types/react": "*"
     "@types/react-native": "*"
@@ -19265,7 +19255,7 @@ __metadata:
     react-native: "*"
     react-native-safe-area-context: "*"
     react-native-svg: "*"
-  checksum: c179283b8512665bb6ee70e5e8bc1a79fb123754f24299bdbc5b88fea5f80c36e42bb3d54c7dbfdb74c3d57f0701a36d97ee5934ec464038960c0e46524dd19d
+  checksum: 8c4c0390919bee9d64ab5e1a7115966fa7751ce02a6886228c8956c036197c676b33685393c96cb60f171704751bf2d8e8a4fcbf0d664b75d57ee2381427b0ec
   languageName: node
   linkType: hard
 
@@ -25434,18 +25424,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"use-subscription@npm:^1.8.0":
-  version: 1.8.0
-  resolution: "use-subscription@npm:1.8.0"
-  dependencies:
-    use-sync-external-store: ^1.2.0
-  peerDependencies:
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0
-  checksum: beac1f0ff14fe23fd6ae9c34681258936729f343bf6532bbce36caa8f4c1019ff380783e35b4aeb7f3faaec1a83af242d7833bf7e660816d24555dbdd2c934da
-  languageName: node
-  linkType: hard
-
-"use-sync-external-store@npm:^1.0.0, use-sync-external-store@npm:^1.2.0":
+"use-sync-external-store@npm:^1.0.0":
   version: 1.2.0
   resolution: "use-sync-external-store@npm:1.2.0"
   peerDependencies:
