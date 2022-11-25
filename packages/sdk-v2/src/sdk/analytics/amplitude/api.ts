@@ -1,1 +1,1 @@
-export { init, identify, setUserId, logEvent, Identify } from "@amplitude/analytics-react-native";
+export { createInstance, init, logEvent, setUserId, identify, Identify } from '@amplitude/analytics-browser';
