@@ -66,7 +66,7 @@ const Web3Action = () => {
     }
   }, [claimAmount]);
 
-  return <Web3ActionButton onPress={() => {}} text={claimText} requiredChain={122} web3Action={handleClaim} />;
+  return <Web3ActionButton text={claimText} requiredChain={122} web3Action={handleClaim} />;
 };
 
 export default {

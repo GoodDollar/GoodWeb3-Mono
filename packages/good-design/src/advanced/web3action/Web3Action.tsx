@@ -3,11 +3,10 @@ import { HStack, Spinner, Heading } from "native-base";
 import { useEthers } from "@usedapp/core";
 import BaseButton, { BaseButtonProps } from "../../core/buttons/BaseButton";
 
-export interface Web3ActionProps extends BaseButtonProps {
+export interface Web3ActionProps extends Omit<BaseButtonProps, "onPress"> {
   /**
    * a text to be rendered in the component.
    */
-  text: string;
   requiredChain: number;
   web3Action: () => Promise<void> | void;
   switchChain?: (requiredChain: number) => Promise<any>;
