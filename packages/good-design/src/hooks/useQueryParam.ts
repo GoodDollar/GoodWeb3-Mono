@@ -9,5 +9,5 @@ export const useQueryParam = (param: string): string | null => {
     const params = new URLSearchParams(queryString);
 
     return params.get(param);
-  }, [search, hash, param]);
+  }, [param]);
 };
