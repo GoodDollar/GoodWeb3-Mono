@@ -46,7 +46,7 @@ export const W3Wrapper = ({ children, withMetaMask }: PageProps) => {
   const provider = newProvider ?? new ethers.providers.Web3Provider(ethereum as ExternalProvider, "any");
 
   return (
-    <Web3Provider env={"fuse"} web3Provider={provider} config={config}>
+    <Web3Provider env="fuse" web3Provider={provider} config={config}>
       <article>
         <section>{children}</section>
       </article>

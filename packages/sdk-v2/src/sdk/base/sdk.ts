@@ -11,8 +11,18 @@ import GoodDollarStakingABI from "@gooddollar/goodprotocol/artifacts/abis/GoodDo
 //@ts-ignore
 import GoodDollarABI from "@gooddollar/goodprotocol/artifacts/abis/IGoodDollar.min.json";
 import FaucetABI from "@gooddollar/goodprotocol/artifacts/abis/Faucet.min.json";
+import GReputationABI from "@gooddollar/goodprotocol/artifacts/abis/GReputation.min.json";
+import GoodReserveCDaiABI from "@gooddollar/goodprotocol/artifacts/abis/GoodReserveCDai.min.json";
 
-import { IIdentity, UBIScheme, GoodDollarStaking, IGoodDollar, Faucet } from "@gooddollar/goodprotocol/types";
+import {
+  IIdentity,
+  UBIScheme,
+  GoodDollarStaking,
+  IGoodDollar,
+  Faucet,
+  GReputation,
+  GoodReserveCDai
+} from "@gooddollar/goodprotocol/types";
 //@ts-ignore
 import Contracts from "@gooddollar/goodprotocol/releases/deployment.json";
 
@@ -22,7 +32,9 @@ export const CONTRACT_TO_ABI: { [key: string]: any } = {
   GoodDollarStaking: GoodDollarStakingABI,
   GoodDollar: GoodDollarABI,
   Faucet: FaucetABI,
-  FuseFaucet: FaucetABI
+  FuseFaucet: FaucetABI,
+  GReputation: GReputationABI,
+  GoodReserveCDai: GoodReserveCDaiABI
 };
 
 // export type EnvKey = keyof typeof Contracts;
@@ -71,6 +83,8 @@ export class BaseSDK {
   getContract(contractName: "GoodDollarStaking"): GoodDollarStaking;
   getContract(contractName: "GoodDollar"): IGoodDollar;
   getContract(contractName: "Faucet"): Faucet;
+  getContract(contractName: "GReputation"): GReputation;
+  getContract(contractName: "GoodReserveCDai"): GoodReserveCDai;
   getContract(contractName: string): Contract;
   getContract(contractName: string) {
     if (!this.contracts[contractName]) return;
@@ -104,6 +118,18 @@ export class BaseSDK {
         return new Contract(
           this.contracts["Faucet"],
           CONTRACT_TO_ABI["Faucet"].abi,
+          this.signer || this.provider
+        ) as any;
+      case "GReputation":
+        return new Contract(
+          this.contracts["GReputation"],
+          CONTRACT_TO_ABI["GReputation"].abi,
+          this.signer || this.provider
+        ) as any;
+      case "GoodReserveCDai":
+        return new Contract(
+          this.contracts["GoodReserveCDai"],
+          CONTRACT_TO_ABI["GoodReserveCDai"].abi,
           this.signer || this.provider
         ) as any;
       default:

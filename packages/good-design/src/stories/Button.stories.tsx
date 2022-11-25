@@ -10,8 +10,8 @@ import ClaimButton from "../core/buttons/ClaimButton";
 export const BaseButtonWithThemeExample = () => {
   return (
     <>
-      <BaseButton width={"250px"} onPress={() => {}} text="RegularBB with default NB Theming" />
-      {/* <BaseButtonWithTheme width={"250px"} onPress={() => {}} text="Button with applied basebutton theme" /> */}
+      <BaseButton width="250px" onPress={() => {}} text="RegularBB with default NB Theming" />
+      {/* <BaseButtonWithTheme width="250px" onPress={() => {}} text="Button with applied basebutton theme" /> */}
     </>
   );
 };
@@ -47,8 +47,8 @@ export const ClaimButtonWithThemeExample = () => {
   // probably causing the claimCall bug where it doesn't update to web3provider
   return (
     <DAppProvider config={config}>
-      <Web3Provider env={"fuse"} web3Provider={provider} config={config}>
-        <ClaimButton firstName={"Test2"} method={"popup"} />
+      <Web3Provider env="fuse" web3Provider={provider} config={config}>
+        <ClaimButton firstName="Test2" method="popup" />
       </Web3Provider>
     </DAppProvider>
   );

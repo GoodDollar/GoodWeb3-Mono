@@ -79,7 +79,7 @@ export class ClaimSDK extends BaseSDK {
 
   async isAddressVerified(address: string): Promise<boolean> {
     const identity = this.getContract("Identity");
-    
+
     return identity.isWhitelisted(address);
   }
 
@@ -108,13 +108,13 @@ export class ClaimSDK extends BaseSDK {
     if (startRef < new Date()) {
       startRef = new Date(startRef.getTime() + DAY);
     }
-    
+
     return startRef;
   }
 
   async claim() {
     const ubi = this.getContract("UBIScheme");
-    
+
     return ubi.claim();
   }
 }

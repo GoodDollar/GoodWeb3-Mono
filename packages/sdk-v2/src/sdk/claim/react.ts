@@ -1,6 +1,6 @@
 import { IIdentity } from "@gooddollar/goodprotocol/types";
 import { UBIScheme } from "@gooddollar/goodprotocol/types/UBIScheme";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { AsyncStorage } from "../storage";
 import { ChainId, QueryParams, useCalls, useContractFunction, useEthers } from "@usedapp/core";
 import { BigNumber } from "ethers";
 import { first } from "lodash";
@@ -37,8 +37,8 @@ export const useClaim = (refresh: QueryParams["refresh"] = "never") => {
   const { account } = useEthers();
   const { chainId, defaultEnv } = useGetEnvChainId();
 
-  const ubi = useGetContract("UBIScheme", true, "claim", defaultEnv, chainId) as UBIScheme;
-  const identity = useGetContract("Identity", true, "claim", defaultEnv, chainId) as IIdentity;
+  const ubi = useGetContract("UBIScheme", true, "claim", chainId) as UBIScheme;
+  const identity = useGetContract("Identity", true, "claim", chainId) as IIdentity;
   const claimCall = useContractFunction(ubi, "claim");
 
   const results = useCalls(
@@ -95,10 +95,10 @@ export const useClaim = (refresh: QueryParams["refresh"] = "never") => {
 // if user is verified on fuse and not on current network then send backend request to whitelist
 export const useWhitelistSync = () => {
   const [syncStatus, setSyncStatus] = useState<Promise<boolean> | undefined>();
-  const { baseEnv, defaultEnv } = useGetEnvChainId();
+  const { baseEnv } = useGetEnvChainId();
   const { account, chainId } = useEthers();
-  const identity = useGetContract("Identity", true, "claim", baseEnv, SupportedChains.FUSE) as IIdentity;
-  const identity2 = useGetContract("Identity", true, "claim", defaultEnv, chainId) as IIdentity;
+  const identity = useGetContract("Identity", true, "claim", SupportedChains.FUSE) as IIdentity;
+  const identity2 = useGetContract("Identity", true, "claim", chainId) as IIdentity;
 
   const [fuseResult] = useCalls(
     [
@@ -128,27 +128,22 @@ export const useWhitelistSync = () => {
 
       console.log("syncWhitelist", { account, baseEnv, isSynced, fuseResult, otherResult });
 
-      if (isSynced !== "true" && fuseResult?.value[0] && otherResult?.value[0] === false) {
+      if (!isSynced && fuseResult?.value[0] && otherResult?.value[0] === false) {
         const { backend } = Envs[baseEnv];
-
-        console.log("syncingWhitelist", { account, backend, baseEnv });
 
         setSyncStatus(
           fetch(backend + `/syncWhitelist/${account}`)
             .then(async r => {
-              console.log("syncWhitelist result:", r);
               if (r.status === 200) {
                 const res = await r.json();
-                console.log("syncWhitelist json result:", res);
 
-                AsyncStorage.setItem(`${account}-whitelistedSync`, "true");
+                AsyncStorage.setItem(`${account}-whitelistedSync`, true);
                 return true;
               } else {
                 return false;
               }
             })
             .catch(e => {
-              console.log("syncWhitelistfailed:", e.message, e);
               return false;
             })
         );

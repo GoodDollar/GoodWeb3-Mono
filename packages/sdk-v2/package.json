@@ -1,12 +1,12 @@
 {
   "name": "@gooddollar/web3sdk-v2",
   "repository": "https://github.com/GoodDollar/GoodWeb3-mono/packages/sdk-v2",
-  "version": "0.1.35",
+  "version": "0.1.40",
   "description": "ethers and react hooks based on usedapp sdk for GoodDollar protocol",
   "scripts": {
-    "build": "yarn dev:clean && tsc",
-    "build:release": "yarn dev:clean && tsc -p tsconfig.release.json",
-    "dev:clean": "rm -fr dist types tsconfig.tsbuildinfo",
+    "build": "ctix r && ctix c && tsc",
+    "build:release": "yarn dev:clean && ctix c && tsc -p tsconfig.release.json",
+    "dev:clean": "rm -fr dist types tsconfig.tsbuildinfo && ctix r",
     "test": "jest",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook"
@@ -26,7 +26,7 @@
     "@babel/preset-env": "^7.16.4",
     "@babel/preset-react": "^7.16.0",
     "@babel/preset-typescript": "^7.16.0",
-    "@react-native-async-storage/async-storage": "^1.17.10",
+    "@react-native-async-storage/async-storage": "1.17.10",
     "@storybook/addon-actions": "^6.5.12",
     "@storybook/addon-essentials": "^6.5.12",
     "@storybook/addon-links": "^6.5.12",
@@ -40,10 +40,12 @@
     "@types/jest": "^28.1.3",
     "@types/node": "18.0.0",
     "@types/react": "17.0.2",
+    "@types/react-native": "^0.70.4",    
     "babel-jest": "^27.3.1",
     "babel-loader": "^8.2.3",
     "babel-plugin-module-resolver": "^4.1.0",
     "babel-plugin-react-native-web": "^0.18.1",
+    "buffer": "^6.0.3",
     "css-loader": "^6.5.1",
     "ctix": "^1.4.0",
     "html-webpack-plugin": "^5.5.0",
@@ -51,30 +53,34 @@
     "jest": "^27.3.1",
     "react": "17.0.2",
     "react-dom": "17.0.2",
+    "react-native": "0.70.*",
     "react-native-web": "0.17",
     "sass": "^1.43.5",
     "sass-loader": "^12.3.0",
-    "style-loader": "^3.3.1"
+    "style-loader": "^3.3.1",
+    "typescript": "^4.8.4"
   },
   "dependencies": {
     "@amplitude/analytics-browser": "^1.6.3",
     "@amplitude/analytics-react-native": "^0.6.1",
-    "@gooddollar/goodprotocol": "^1.0.29-beta.4",
     "@react-native-firebase/analytics": "^16.4.6",
     "@sentry/browser": "^7.20.0",
     "@sentry/react-native": "^4.8.0",
-    "@types/react-native": "^0.70.4",
-    "@usedapp/core": "^1.0.9",
-    "amplitude-js": "^8.21.2",
+    "react-native-indicative": "^0.2.1",
+    "@gooddollar/bridge-app": "^1.1.4",
+    "@gooddollar/bridge-contracts": "^1.0.6",
+    "@gooddollar/goodprotocol": "beta",
+    "@usedapp/core": "1.*",
     "eventemitter3": "^4.0.7",
     "react-native": "^0.70.2",
-    "react-native-indicative": "^0.2.1",
+    "react-native-restart": "^0.0.24",
     "react-use-promise": "^0.5.0"
   },
   "peerDependencies": {
-    "@react-native-async-storage/async-storage": "*",
+    "@react-native-async-storage/async-storage": "1.17.10",
     "ethers": "5.*",
-    "react-native": "0.67.4",
-    "react-native-web": "^0.18.1"
+    "react": "*",
+    "react-native": "*",
+    "react-native-web": "*"
   }
 }
