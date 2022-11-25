@@ -58,7 +58,7 @@
   },
   "dependencies": {
     "@amplitude/analytics-browser": "^1.6.3",
-    "@amplitude/react-native": "^2.16.2",
+    "@amplitude/analytics-react-native": "^0.6.1",
     "@gooddollar/goodprotocol": "^1.0.29-beta.4",
     "@react-native-firebase/analytics": "^16.4.6",
     "@sentry/browser": "^7.20.0",

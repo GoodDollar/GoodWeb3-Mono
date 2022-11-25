@@ -1,1 +1,1 @@
-export { init, identify, setUserId, logEvent, Identify, IIDentify } from "@amplitude/analytics-react-native";
+export { init, identify, setUserId, logEvent, Identify } from "@amplitude/analytics-react-native";

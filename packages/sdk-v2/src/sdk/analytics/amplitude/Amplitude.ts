@@ -2,7 +2,7 @@ import { forOwn, filter, assign } from "lodash";
 import { IAbstractProvider, IAnalyticsProvider, IAppProps, IMonitoringProvider } from "../types";
 import { IAmplitudeConfig } from "./types";
 
-import { init, identify, setUserId, logEvent, Identify, IIDentify } from "./api";
+import { init, identify, setUserId, logEvent, Identify } from "./api";
 import { getUserProps } from "../utils";
 
 export class Amplitude implements IAbstractProvider, IAnalyticsProvider, IMonitoringProvider {
@@ -10,18 +10,18 @@ export class Amplitude implements IAbstractProvider, IAnalyticsProvider, IMonito
 
   async initialize(appProps: IAppProps): Promise<boolean> {
     const { apiKey } = this.config;
-    const initialized = await init(apiKey);
+    const initialized = await init(apiKey!);
 
     if (initialized) {
       const { env, version, osVersion, $once = {}, ...tags } = appProps;
       const allTags = { env, version, os_version: osVersion, ...tags };
-      const identity = this.identifyFromProps(allTags);
+      const identity = <Identify>this.identifyFromProps(allTags);
 
       forOwn($once, (value: string, key: string) => identity.setOnce(key, value));
-      identify(identity);
+      identify(<Identify>identity);
     }
-    
-    return initialized;
+
+    return !!initialized;
   }
 
   identify(identifier: string | number, email?: string, props?: object): void {
@@ -29,7 +29,7 @@ export class Amplitude implements IAbstractProvider, IAnalyticsProvider, IMonito
     const identity = this.identifyFromProps(extra);
 
     setUserId(id);
-    identify(identity);
+    identify(<Identify>identity);
   }
 
   send(event: string, data?: object): void {
@@ -46,7 +46,7 @@ export class Amplitude implements IAbstractProvider, IAnalyticsProvider, IMonito
     if (!errorEvent) {
       return;
     }
-    
+
     if (fingerprint) {
       data.unique = fingerprint.join(" ");
     }
@@ -55,7 +55,7 @@ export class Amplitude implements IAbstractProvider, IAnalyticsProvider, IMonito
     this.send(errorEvent, data);
   }
 
-  private identifyFromProps(props: object): IIDentify {
+  private identifyFromProps(props: object): object {
     const identity = new Identify();
 
     forOwn(props, (value: string, key: string) => identity.append(key, value));
