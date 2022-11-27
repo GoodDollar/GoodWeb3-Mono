@@ -2404,7 +2404,6 @@ __metadata:
     typescript: 4.7.4
     webpack: ^5.74.0
   peerDependencies:
-    "@gooddollar/web3sdk-v2": "*"
     "@usedapp/core": 1.*
   languageName: unknown
   linkType: soft
