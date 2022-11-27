@@ -80,4 +80,4 @@ class IndicativeAPIWeb implements IIndicativeApi {
   }
 }
 
-export default hasIndicativeSnippet() ? new IndicativeAPIWeb() : null;
+export const IndicativeAPIWebSdk = hasIndicativeSnippet() ? IndicativeAPIWeb : null;

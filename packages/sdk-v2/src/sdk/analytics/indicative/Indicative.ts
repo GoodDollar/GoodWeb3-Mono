@@ -2,8 +2,10 @@ import { omit, clone, defaults } from "lodash";
 
 import { IAbstractProvider, IAnalyticsProvider, IAppProps } from "../types";
 import { getUserProps } from "../utils";
-import api from "./api";
+import { IndicativeAPIWebSdk as apiSdk } from "./api";
 import { IIndicativeConfig, defaultConfig } from "./types";
+
+const api = apiSdk && new apiSdk();
 
 export class Indicative implements IAbstractProvider, IAnalyticsProvider {
   private config: IIndicativeConfig;

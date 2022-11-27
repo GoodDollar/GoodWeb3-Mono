@@ -2448,6 +2448,7 @@ __metadata:
     typescript: 4.7.4
     webpack: ^5.74.0
   peerDependencies:
+    "@gooddollar/web3sdk-v2": "*"
     "@usedapp/core": 1.*
   languageName: unknown
   linkType: soft
@@ -2595,7 +2596,7 @@ __metadata:
     "@gooddollar/goodprotocol": beta
     "@react-native-async-storage/async-storage": 1.17.10
     "@react-native-firebase/analytics": ^16.4.6
-    "@sentry/browser": ^7.20.0
+    "@sentry/browser": 7.16.0
     "@sentry/react-native": ^4.8.0
     "@storybook/addon-actions": ^6.5.12
     "@storybook/addon-essentials": ^6.5.12
@@ -5125,18 +5126,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/browser@npm:^7.20.0":
-  version: 7.20.0
-  resolution: "@sentry/browser@npm:7.20.0"
-  dependencies:
-    "@sentry/core": 7.20.0
-    "@sentry/types": 7.20.0
-    "@sentry/utils": 7.20.0
-    tslib: ^1.9.3
-  checksum: 740903325b83d6e1776040424eec2223a32a1fe2e785b9c3903ae985096f2ce0cc3bc8da0868b05fbac36e5d41518b997948df6a6135454809b9f2a673f6ca6f
-  languageName: node
-  linkType: hard
-
 "@sentry/cli@npm:1.74.4":
   version: 1.74.4
   resolution: "@sentry/cli@npm:1.74.4"
@@ -5179,17 +5168,6 @@ __metadata:
     "@sentry/utils": 7.16.0
     tslib: ^1.9.3
   checksum: 033c775f9e4411dc4506617cea3d780b0696367ded01052d398e4a2e4752bb29de3ad15731cde07115995ed8c3ded2fea1b65231502eba87703cdfb35699d8b0
-  languageName: node
-  linkType: hard
-
-"@sentry/core@npm:7.20.0":
-  version: 7.20.0
-  resolution: "@sentry/core@npm:7.20.0"
-  dependencies:
-    "@sentry/types": 7.20.0
-    "@sentry/utils": 7.20.0
-    tslib: ^1.9.3
-  checksum: 3998605dff85a56f83efaae747567b76941d4b6de9a30202f280d50ad38fb176ed8560067f122238fb1170c133dfc9a063ae71ee66b6ebd639977b44f3f8311c
   languageName: node
   linkType: hard
 
@@ -5272,13 +5250,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/types@npm:7.20.0":
-  version: 7.20.0
-  resolution: "@sentry/types@npm:7.20.0"
-  checksum: eb012cb9cd83b2747ffb256e9d1f783c5508b54f78e45a2714090bd6d44e472b5f8655c4614e9cf4da042b0ec277675cf9dd2ab7d864e04e58d1b67c43289ff9
-  languageName: node
-  linkType: hard
-
 "@sentry/utils@npm:7.16.0":
   version: 7.16.0
   resolution: "@sentry/utils@npm:7.16.0"
@@ -5286,16 +5257,6 @@ __metadata:
     "@sentry/types": 7.16.0
     tslib: ^1.9.3
   checksum: decff9f82e7b6b431b1d226f6567762bd2189357ceacb304be20413fcb07be62fad17433979f750e717a07e92625b250bf7493591550f6e146d8adc8d06d6721
-  languageName: node
-  linkType: hard
-
-"@sentry/utils@npm:7.20.0":
-  version: 7.20.0
-  resolution: "@sentry/utils@npm:7.20.0"
-  dependencies:
-    "@sentry/types": 7.20.0
-    tslib: ^1.9.3
-  checksum: 510753d5afce22a521f5780ab87767ed1496eb24bad6adda14848abef69dac8aa3d3168d8bc861ddf7d7af4f7476b70e1d84405991ec5b000008743d63ad3820
   languageName: node
   linkType: hard
 

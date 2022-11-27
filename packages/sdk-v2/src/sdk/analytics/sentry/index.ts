@@ -1,2 +1,4 @@
+export * from "./api.native";
+export * from "./api";
 export * from "./Sentry";
-export type { ISentryConfig } from "./types";
+export * from "./types";

@@ -4,3 +4,4 @@ node_modules
 types
 .yalc
 storybook-static
+yalc.lock

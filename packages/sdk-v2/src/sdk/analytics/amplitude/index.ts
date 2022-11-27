@@ -1,2 +1,4 @@
 export * from "./Amplitude";
-export type { IAmplitudeConfig } from "./types";
+export * from "./api";
+// export * from './api.native';
+export * from "./types";

@@ -1,7 +1,7 @@
 import Indicative from "react-native-indicative";
 import { IIndicativeApi } from "./types";
 
-class IndicativeAPINative implements IIndicativeApi {
+export default class IndicativeAPINative implements IIndicativeApi {
   async initialize(apiKey: string): Promise<boolean> {
     Indicative.launch(apiKey);
     return true;
@@ -24,5 +24,3 @@ class IndicativeAPINative implements IIndicativeApi {
     Indicative.recordWithProperties(eventName, props);
   }
 }
-
-export default new IndicativeAPINative();

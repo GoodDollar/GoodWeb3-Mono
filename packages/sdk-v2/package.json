@@ -4,9 +4,9 @@
   "version": "0.1.40",
   "description": "ethers and react hooks based on usedapp sdk for GoodDollar protocol",
   "scripts": {
-    "build": "ctix r && ctix c && tsc",
+    "build": "ctix c && tsc",
     "build:release": "yarn dev:clean && ctix c && tsc -p tsconfig.release.json",
-    "dev:clean": "rm -fr dist types tsconfig.tsbuildinfo && ctix r",
+    "dev:clean": "rm -fr dist types tsconfig.tsbuildinfo",
     "test": "jest",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook"
@@ -67,7 +67,7 @@
     "@gooddollar/bridge-contracts": "^1.0.9",
     "@gooddollar/goodprotocol": "beta",
     "@react-native-firebase/analytics": "^16.4.6",
-    "@sentry/browser": "^7.20.0",
+    "@sentry/browser": "7.16.0",
     "@sentry/react-native": "^4.8.0",
     "@usedapp/core": "1.*",
     "eventemitter3": "^4.0.7",

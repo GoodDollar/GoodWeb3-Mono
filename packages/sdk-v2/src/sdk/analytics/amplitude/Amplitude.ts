@@ -11,11 +11,12 @@ export class Amplitude implements IAbstractProvider, IAnalyticsProvider, IMonito
   async initialize(appProps: IAppProps): Promise<boolean> {
     const { apiKey } = this.config;
     let initialized = false;
-    
+
     if (apiKey) {
-      initialized = await init(apiKey!).then(Boolean);
+      // not a promise, but might be just typing issue
+      // initialized = await init(apiKey!).then(Boolean);
     }
-    
+
     if (initialized) {
       const { env, version, osVersion, $once = {}, ...tags } = appProps;
       const allTags = { env, version, os_version: osVersion, ...tags };
@@ -59,7 +60,8 @@ export class Amplitude implements IAbstractProvider, IAnalyticsProvider, IMonito
     this.send(errorEvent, data);
   }
 
-  private identifyFromProps(props: object): Identify {
+  // todo-fix: add proper-typing
+  private identifyFromProps(props: object): any {
     const identity = new Identify();
 
     forOwn(props, (value: string, key: string) => identity.append(key, value));
