@@ -24,6 +24,7 @@ const ButtonAction = ({ text, ...props }: IBasicButtonProps) => (
 );
 
 export const theme = {
+  defaultProps: {},
   baseStyle: {
     fontStyle: "normal",
     fontSize: 20,
@@ -38,4 +39,3 @@ export const theme = {
 };
 
 export default withTheme()(ButtonAction);
-// export default withTheme()(ButtonAction);

@@ -195,7 +195,7 @@ export function useG$Balance(refresh: QueryParams["refresh"] = "never") {
         args: [account]
       }
     ].filter(_ => _.contract && chainId == SupportedChains.MAINNET),
-    { refresh: refreshOrNever, chainId: SupportedChains.MAINNET as unknown as ChainId }
+    { refresh: refreshOrNever, chainId: (SupportedChains.MAINNET as unknown) as ChainId }
   );
 
   let balances: G$Balances = {

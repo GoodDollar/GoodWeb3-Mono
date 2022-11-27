@@ -108,7 +108,7 @@ export const useWhitelistSync = () => {
         args: [account]
       }
     ],
-    { refresh: "never", chainId: SupportedChains.FUSE as unknown as ChainId }
+    { refresh: "never", chainId: (SupportedChains.FUSE as unknown) as ChainId }
   );
 
   const [otherResult] = useCalls(

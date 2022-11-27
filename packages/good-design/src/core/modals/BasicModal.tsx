@@ -1,13 +1,16 @@
 import { Button, Modal } from "native-base";
-import React, { useCallback, useState } from "react";
+import React, { ReactNode, useCallback, useState } from "react";
 
 export const useModal = () => {
   const [modalVisible, setModalVisible] = useState(false);
 
+  const showModal = useCallback(() => setModalVisible(true), [setModalVisible]);
+  const hideModal = useCallback(() => setModalVisible(false), [setModalVisible]);
+
   return {
     modalVisible,
-    showModal: useCallback(() => setModalVisible(true), []),
-    hideModal: useCallback(() => setModalVisible(false), []),
+    showModal,
+    hideModal,
     Modal: ({
       header,
       body,
@@ -21,11 +24,11 @@ export const useModal = () => {
       _body,
       _footer
     }: {
-      header?: any;
-      body: any;
-      footer?: any;
+      header?: ReactNode;
+      body: ReactNode;
+      footer?: ReactNode;
       actionText?: string;
-      closeText: string;
+      closeText?: string;
       onClose?: () => void;
       onAction?: () => void;
       _modal?: any;
@@ -33,33 +36,33 @@ export const useModal = () => {
       _footer?: any;
       _header?: any;
     }) => {
+      const onActionButtonPress = useCallback(() => {
+        onAction?.();
+        hideModal();
+      }, [hideModal]);
+
+      const _onClose = useCallback(() => {
+        onClose?.();
+        hideModal();
+      }, [hideModal]);
+
       const actionButton = actionText ? (
-        <Button
-          onPress={() => {
-            setModalVisible(false);
-          }}
-        >
-          {actionText}
-        </Button>
+        <Button onPress={onActionButtonPress}>{actionText}</Button>
       ) : (
         <React.Fragment />
       );
+
       return (
-        <Modal isOpen={modalVisible} onClose={setModalVisible} {..._modal}>
+        <Modal isOpen={modalVisible} onClose={_onClose} {..._modal}>
           <Modal.Content>
             {closeText && <Modal.CloseButton />}
             <Modal.Header {..._header}>{header}</Modal.Header>
             <Modal.Body {..._body}>{body}</Modal.Body>
             <Modal.Footer {..._footer}>
+              {footer}
               <Button.Group space={2}>
                 {closeText ? (
-                  <Button
-                    variant="ghost"
-                    colorScheme="blueGray"
-                    onPress={() => {
-                      setModalVisible(false);
-                    }}
-                  >
+                  <Button variant="ghost" colorScheme="blueGray" onPress={_onClose}>
                     {closeText}
                   </Button>
                 ) : (
