@@ -63,7 +63,7 @@
   "dependencies": {
     "@amplitude/analytics-browser": "^1.6.3",
     "@amplitude/analytics-react-native": "^0.6.1",
-    "@gooddollar/bridge-app": "^1.2.1",
+    "@gooddollar/bridge-app": "^1.2.2",
     "@gooddollar/bridge-contracts": "^1.0.9",
     "@gooddollar/goodprotocol": "beta",
     "@react-native-firebase/analytics": "^16.4.6",

@@ -2356,9 +2356,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/bridge-app@npm:^1.2.1":
-  version: 1.2.1
-  resolution: "@gooddollar/bridge-app@npm:1.2.1"
+"@gooddollar/bridge-app@npm:^1.2.2":
+  version: 1.2.2
+  resolution: "@gooddollar/bridge-app@npm:1.2.2"
   dependencies:
     dotenv: ^16.0.3
     eth-proof: ^2.1.6
@@ -2367,7 +2367,7 @@ __metadata:
     js-logger: ^1.6.1
     lodash: ^4.17.21
     p-all: 3.0.0
-  checksum: e83db12194fea3d732a78e8005f93886fa882f1de03d9dcf6afb6fabf35c2c0dece0556130440aa866d25c2312589146d4e49cc72e5fb8f9af390bead8545020
+  checksum: 150ef740b4b644b3f7188de0a5d5fe9de20c1eb07d21b8dded4aa2ebc26fb57c281b4661c938437a723d1130dd55a82f95442f6428367661f9ac33e9cebe8fec
   languageName: node
   linkType: hard
 
@@ -2590,7 +2590,7 @@ __metadata:
     "@babel/preset-env": ^7.16.4
     "@babel/preset-react": ^7.16.0
     "@babel/preset-typescript": ^7.16.0
-    "@gooddollar/bridge-app": ^1.2.1
+    "@gooddollar/bridge-app": ^1.2.2
     "@gooddollar/bridge-contracts": ^1.0.9
     "@gooddollar/goodprotocol": beta
     "@react-native-async-storage/async-storage": 1.17.10
