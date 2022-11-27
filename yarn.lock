@@ -2356,9 +2356,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/bridge-app@npm:^1.1.4":
-  version: 1.2.0
-  resolution: "@gooddollar/bridge-app@npm:1.2.0"
+"@gooddollar/bridge-app@npm:^1.2.1":
+  version: 1.2.1
+  resolution: "@gooddollar/bridge-app@npm:1.2.1"
   dependencies:
     dotenv: ^16.0.3
     eth-proof: ^2.1.6
@@ -2367,13 +2367,13 @@ __metadata:
     js-logger: ^1.6.1
     lodash: ^4.17.21
     p-all: 3.0.0
-  checksum: 3f4fa40b88548ee44b0e1bb97c5a25b2d7ee4ca5cefe2f9cc4339a443e02f43f019667776c64a47a0fefd08c8f832d793630b083a58893ea82937399e22c2618
+  checksum: e83db12194fea3d732a78e8005f93886fa882f1de03d9dcf6afb6fabf35c2c0dece0556130440aa866d25c2312589146d4e49cc72e5fb8f9af390bead8545020
   languageName: node
   linkType: hard
 
-"@gooddollar/bridge-contracts@npm:^1.0.6":
-  version: 1.0.6
-  resolution: "@gooddollar/bridge-contracts@npm:1.0.6"
+"@gooddollar/bridge-contracts@npm:^1.0.9":
+  version: 1.0.9
+  resolution: "@gooddollar/bridge-contracts@npm:1.0.9"
   dependencies:
     "@gooddollar/goodprotocol": ^1.0.29
     "@openzeppelin/contracts": ^4.4.1
@@ -2381,7 +2381,7 @@ __metadata:
     merkle-patricia-tree: ^2.*
     prompt: ^1.3.0
     solidity-rlp: ^2.0.5
-  checksum: f2de6a582dec41901f129c0e37d9fccc643900ba4db1808ad7f16ef056a47d360fd38a148215407d71d8943673d44f9ad5b06da7822277fe0ffde833051f88f9
+  checksum: ea02c6c129fc28b41cc32144c2af6e4a1209f971e34dbcb0bda9eb53f5963d50fab08bb92f0d0f130914f2657408b51ab204db8902bf71368851e9e61cd59b14
   languageName: node
   linkType: hard
 
@@ -2590,8 +2590,8 @@ __metadata:
     "@babel/preset-env": ^7.16.4
     "@babel/preset-react": ^7.16.0
     "@babel/preset-typescript": ^7.16.0
-    "@gooddollar/bridge-app": ^1.1.4
-    "@gooddollar/bridge-contracts": ^1.0.6
+    "@gooddollar/bridge-app": ^1.2.1
+    "@gooddollar/bridge-contracts": ^1.0.9
     "@gooddollar/goodprotocol": beta
     "@react-native-async-storage/async-storage": 1.17.10
     "@react-native-firebase/analytics": ^16.4.6

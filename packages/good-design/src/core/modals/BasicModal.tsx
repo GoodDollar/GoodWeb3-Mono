@@ -53,7 +53,8 @@ export const useModal = () => {
       );
 
       return (
-        <Modal isOpen={modalVisible} onClose={_onClose} {..._modal}>
+        /* height 100vh is required so modal always shows in the middle */
+        <Modal isOpen={modalVisible} onClose={_onClose} {..._modal} minH="100vh">
           <Modal.Content>
             {closeText && <Modal.CloseButton />}
             <Modal.Header {..._header}>{header}</Modal.Header>
