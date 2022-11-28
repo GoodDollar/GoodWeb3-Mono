@@ -84,7 +84,7 @@ export class Analytics implements IAbstractProvider, IAnalyticsProvider, IMonito
 
     for (const provider of this.providers) {
       if (!supportsAnalytics(provider)) {
-        return;
+        continue;
       }
 
       provider.send(event, data);
@@ -98,7 +98,7 @@ export class Analytics implements IAbstractProvider, IAnalyticsProvider, IMonito
 
     for (const provider of this.providers) {
       if (!supportsMonitoring(provider)) {
-        return;
+        continue;
       }
 
       provider.capture(exception, fingerprint, tags, extra);
