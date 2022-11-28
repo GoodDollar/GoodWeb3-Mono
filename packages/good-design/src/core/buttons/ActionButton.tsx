@@ -7,7 +7,7 @@ interface IBasicButtonProps extends IButtonProps {
   onPress: () => {};
 }
 
-const ButtonAction = ({ text, ...props }: IBasicButtonProps) => (
+const ActionButton = withTheme()(({ text, ...props }: IBasicButtonProps) => (
   <Button
     alignItems="center"
     justifyContent="center"
@@ -21,7 +21,7 @@ const ButtonAction = ({ text, ...props }: IBasicButtonProps) => (
   >
     {text}
   </Button>
-);
+));
 
 export const theme = {
   defaultProps: {},
@@ -38,4 +38,4 @@ export const theme = {
   }
 };
 
-export default withTheme()(ButtonAction);
+export default ActionButton;

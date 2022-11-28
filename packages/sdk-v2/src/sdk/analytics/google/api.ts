@@ -48,4 +48,6 @@ class DataLayer implements IGoogleAPI {
   }
 }
 
-export default (config: IGoogleConfig) => !dataLayer ? null : new DataLayer(config.userProperty!)
+const GoogleAPIFactory = (config: IGoogleConfig) => !dataLayer ? null : new DataLayer(config.userProperty!);
+
+export default GoogleAPIFactory;
