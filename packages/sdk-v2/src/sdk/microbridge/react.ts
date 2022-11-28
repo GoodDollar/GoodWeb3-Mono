@@ -96,7 +96,9 @@ export const useBridge = (withRelay = false) => {
   const { switchNetwork } = useSwitchNetwork();
   const { account, chainId } = useEthers();
   const g$Contract = useGetContract("GoodDollar") as IGoodDollar;
-  const bridgeContract = useGetBridgeContracts()[chainId || 122] as TokenBridge;
+  const bridgeContracts = useGetBridgeContracts();
+  const bridgeContract = bridgeContracts[chainId || 122] as TokenBridge;
+
   const relayTx = useRelayTx();
 
   const [bridgeRequest, setBridgeRequest] = useState<
@@ -113,15 +115,16 @@ export const useBridge = (withRelay = false) => {
 
   //poll target chain for transfer if bridgeRequestEvent was found
   const relayEvent = useLogs(
-    bridgeRequest && {
-      contract: bridgeContract ?? { address: ethers.constants.AddressZero },
-      event: "ExecutedTransfer",
-      args: [account, bridgeRequest?.target, bridgeRequestId]
-    },
+    bridgeRequest &&
+      bridgeRequestId && {
+        contract: bridgeContracts[bridgeRequest.targetChainId] ?? { address: ethers.constants.AddressZero },
+        event: "ExecutedTransfer",
+        args: [null, null, null, null, null, null, null, bridgeRequestId]
+      },
     {
       refresh: useRefreshOrNever(bridgeRequestId ? 5 : "never"),
       chainId: bridgeRequest?.targetChainId,
-      fromBlock: 1e4
+      fromBlock: -1000
     }
   );
 

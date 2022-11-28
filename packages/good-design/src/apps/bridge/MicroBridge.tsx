@@ -176,9 +176,9 @@ export const MicroBridge = ({
 
   useEffect(() => {
     if (
-      ["Mining", "PendingSignature", "Success"].includes(bridgeStatus?.status || "") &&
-      (["None", "Fail", "Exception", "Success"].includes(selfRelayStatus?.status || "") &&
-        ["None", "Fail", "Exception", "Success"].includes(relayStatus?.status || "")) === false
+      ["Fail", "Exception", "Success"].includes(relayStatus?.status || "") === false && //if bridge relayer failed or succeeded then we are done
+      ["Success"].includes(selfRelayStatus?.status || "") === false && //if self relay succeeded then we are done, other wise we need to wait for relayStatus
+      ["Mining", "PendingSignature", "Success"].includes(bridgeStatus?.status || "")
     ) {
       setBridging(true);
     } else {
