@@ -13,8 +13,8 @@ export class Amplitude implements IAbstractProvider, IAnalyticsProvider, IMonito
     let initialized = false;
 
     if (apiKey) {
-      // not a promise, but might be just typing issue
-      // initialized = await init(apiKey!).then(Boolean);
+      //@ts-ignore
+      initialized = await init(apiKey!).then(Boolean);
     }
 
     if (initialized) {

@@ -160,6 +160,7 @@ export const useBridge = (withRelay = false) => {
       transferAndCall.send(bridgeContract.address, bridgeRequest.amount, encoded).then(async sendTx => {
         if (sendTx && withRelay) {
           let relayTxHash: string = "";
+
           try {
             setSelfRelay({
               status: "None",
@@ -183,6 +184,7 @@ export const useBridge = (withRelay = false) => {
               transaction: { hash: relayTxHash }
             } as TransactionStatus);
           } catch (e: any) {
+            console.log("transferAndCall catch:", { e });
             setSelfRelay({
               ...selfRelayStatus,
               status: "Exception",
@@ -230,12 +232,17 @@ export const useRelayTx = () => {
             await switchNetwork(targetChain);
           }
           const targetBalance = await signer.getBalance();
+          // console.log("useRelayTX:", { targetBalance });
           if (targetBalance.lt(ethers.utils.parseEther("0.01"))) {
             throw new Error(`not enough balance for self relay: ${targetBalance.toNumber() / 1e18}`);
           }
+          const signerAddress = signer.getAddress();
+          // todo-fix: library connected to different signer, signer is connected wallet here
+          // console.log("useRelayTX:", { library, signer, signerAddress });
           relayResult = await sdk.relayTx(sourceChain, targetChain, txHash, signer);
           return relayResult;
         } catch (e: any) {
+          // console.log("useRelayTX:", { error: e });
           //retry if checkpoint still missing or txhash not found yet
           if (!e.message.includes("does not exists yet") && !e.message.includes("txhash/targetReceipt not found")) {
             throw e;

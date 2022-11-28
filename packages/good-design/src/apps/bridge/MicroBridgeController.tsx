@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useTokenBalance, TransactionStatus, useEthers } from "@usedapp/core";
 import {
   G$,
@@ -17,8 +17,9 @@ import { Box, Button, Flex, Heading, HStack, Text, ArrowForwardIcon, Stack } fro
 import { useSignWalletModal } from "../../hooks/useSignWalletModal";
 import { ExplorerLink } from "../../core/web3/ExplorerLink";
 
-const useBalanceHook = (chain: string) => {
+export const useBalanceHook = (chain: string) => {
   const env = useGetEnvChainId(chain === "fuse" ? SupportedChains.FUSE : SupportedChains.CELO);
+
   const refresh = useRefreshOrNever(12);
   const { account } = useEthers();
   const gdBalance = useTokenBalance(G$(env.chainId, env.defaultEnv).address, account, {

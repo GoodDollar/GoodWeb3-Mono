@@ -25,7 +25,10 @@ import { ExplorerLink } from "../../core/web3/ExplorerLink";
 
 type OnBridge = (amount: string, sourceChain: string, target?: string) => Promise<void>;
 
-type ILimits = Record<string, { dailyLimit: BigNumber; txLimit: BigNumber; accountDailyLimit: BigNumber; minAmount: BigNumber }>;
+type ILimits = Record<
+  string,
+  { dailyLimit: BigNumber; txLimit: BigNumber; accountDailyLimit: BigNumber; minAmount: BigNumber }
+>;
 
 type IFees = Record<string, { minFee: BigNumber; maxFee: BigNumber; fee: BigNumber }>;
 
@@ -82,16 +85,16 @@ const StatusBox = ({
   </Stack>
 );
 
-const useBridgeEstimate = ({ 
-  limits, 
+const useBridgeEstimate = ({
+  limits,
   fees,
-  sourceChain, 
-  inputWei 
-}: { 
-  limits?: ILimits; 
-  fees?: IFees; 
-  sourceChain: string; 
-  inputWei: string; 
+  sourceChain,
+  inputWei
+}: {
+  limits?: ILimits;
+  fees?: IFees;
+  sourceChain: string;
+  inputWei: string;
 }): {
   expectedFee?: string;
   expectedToReceive?: string;
@@ -101,18 +104,19 @@ const useBridgeEstimate = ({
   minFee?: number;
   maxFee?: number;
   minAmountWei?: string;
-} => useMemo(() => {
-  const expectedFee = Number((Number(inputWei) * 0.001) / 100).toFixed(2);
-  const expectedToReceive = (Number(inputWei) / 100 - Number(expectedFee)).toFixed(2);
-  const minimumAmount = limits?.[sourceChain]?.minAmount?.toNumber() || 0 / 100;
-  const maximumAmount = limits?.[sourceChain]?.txLimit?.toNumber() || 0 / 100;
-  const bridgeFee = fees?.[sourceChain]?.fee?.toNumber() || 0 / 100;
-  const minFee = fees?.[sourceChain]?.minFee?.toNumber() || 0 / 100;
-  const maxFee = fees?.[sourceChain]?.maxFee?.toNumber() || 0 / 100;
-  const minAmountWei = limits?.[sourceChain]?.minAmount?.toString();
+} =>
+  useMemo(() => {
+    const expectedFee = Number((Number(inputWei) * 0.001) / 100).toFixed(2);
+    const expectedToReceive = (Number(inputWei) / 100 - Number(expectedFee)).toFixed(2);
+    const minimumAmount = limits?.[sourceChain]?.minAmount?.toNumber() || 0 / 100;
+    const maximumAmount = limits?.[sourceChain]?.txLimit?.toNumber() || 0 / 100;
+    const bridgeFee = fees?.[sourceChain]?.fee?.toNumber() || 0 / 100;
+    const minFee = fees?.[sourceChain]?.minFee?.toNumber() || 0 / 100;
+    const maxFee = fees?.[sourceChain]?.maxFee?.toNumber() || 0 / 100;
+    const minAmountWei = limits?.[sourceChain]?.minAmount?.toString();
 
-  return { expectedFee, expectedToReceive, minimumAmount, maximumAmount, bridgeFee, minFee, maxFee, minAmountWei };
-}, [limits, fees, sourceChain, inputWei]);
+    return { expectedFee, expectedToReceive, minimumAmount, maximumAmount, bridgeFee, minFee, maxFee, minAmountWei };
+  }, [limits, fees, sourceChain, inputWei]);
 
 export const MicroBridge = ({
   useBalanceHook,
@@ -155,6 +159,8 @@ export const MicroBridge = ({
   reason = reason || (!hasBalance && "balance") || (!isTargetValid && "target") || "";
 
   const toggleChains = useCallback(() => {
+    // todo-fix: toggling not working from protocolUI
+    console.log("toggling chains .. . ");
     setSourceChain(targetChain);
     onSetChain && onSetChain(targetChain);
   }, [setSourceChain, onSetChain, targetChain]);
@@ -180,11 +186,12 @@ export const MicroBridge = ({
     }
   }, [relayStatus, bridgeStatus, selfRelayStatus]);
 
-  const { expectedFee, expectedToReceive, minimumAmount, maximumAmount, bridgeFee, minFee, maxFee, minAmountWei } = useBridgeEstimate({ limits, fees, inputWei, sourceChain })
+  const { expectedFee, expectedToReceive, minimumAmount, maximumAmount, bridgeFee, minFee, maxFee, minAmountWei } =
+    useBridgeEstimate({ limits, fees, inputWei, sourceChain });
 
   return (
     <Box>
-      <Flex direction="row" justifyContent={"space-between"}>
+      <Flex direction="row" justifyContent={"space-between"} mb={"40px"}>
         <Box>
           <Text textTransform="capitalize">{sourceChain}</Text>
         </Box>
@@ -193,12 +200,7 @@ export const MicroBridge = ({
           <Text textTransform="capitalize">{sourceChain === "fuse" ? "Celo" : "Fuse"}</Text>
         </Box>
       </Flex>
-      <TokenInput
-        balanceWei={balanceWei}
-        decimals={2}
-        onChange={setInput}
-        minAmountWei={minAmountWei}
-      />
+      <TokenInput balanceWei={balanceWei} decimals={2} onChange={setInput} minAmountWei={minAmountWei} />
       <FormControl isInvalid={!!reason}>
         <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon variant="outline" />}>
           {reason}
