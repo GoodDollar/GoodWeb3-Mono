@@ -3,7 +3,7 @@ import { restart } from './useAppRestart.api'
 
 let isRestarting: boolean = false
 
-export default function (): typeof restart {
+export default function useAppRestart(): typeof restart {
   const restartingRef = useRef(isRestarting)
 
   return useCallback((path?: string): void => {

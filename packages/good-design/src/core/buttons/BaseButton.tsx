@@ -14,6 +14,13 @@ export interface BaseButtonProps extends IButtonProps {
   children?: ReactNode;
 }
 
+const BaseButton = withTheme()(({ text, innerText, onPress, children, ...props }: BaseButtonProps) => (
+  <Button onPress={onPress} maxWidth="750px" px={100} {...props}>
+    <Text {...innerText}>{text}</Text>
+    {children}
+  </Button>
+));
+
 export const theme = {
   defaultProps: {},
   baseStyle: withThemingTools(({ colorModeValue }: { colorModeValue: any }) => {
@@ -34,13 +41,4 @@ export const theme = {
   })
 };
 
-function BaseButton({ text, innerText, onPress, children, ...props }: BaseButtonProps) {
-  return (
-    <Button onPress={onPress} maxWidth="750px" px={100} {...props}>
-      <Text {...innerText}>{text}</Text>
-      {children}
-    </Button>
-  );
-}
-
-export default withTheme()(BaseButton);
+export default BaseButton;
