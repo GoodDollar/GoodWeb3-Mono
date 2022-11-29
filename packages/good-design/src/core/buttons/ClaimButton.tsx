@@ -6,9 +6,9 @@ import { useQueryParam } from "../../hooks/useQueryParam";
 import { withTheme } from "../../theme/hoc/withTheme";
 import { withThemingTools } from "../../theme/utils/themingTools";
 import { Web3ActionButton } from "../../advanced";
-import { useModal } from "../modals/BasicModal";
 import { useFVModalAction } from "../../hooks/useFVModalAction";
 import ActionButton from "./ActionButton";
+import { useModal } from "../../hooks/useModal";
 
 export interface FVFlowProps {
   firstName: string;

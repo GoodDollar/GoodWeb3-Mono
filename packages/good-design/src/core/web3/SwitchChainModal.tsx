@@ -1,9 +1,9 @@
 import { Text } from "native-base";
 import React, { useEffect, useState } from "react";
 import { useConfig } from "@usedapp/core";
-import { useModal } from "../modals/BasicModal";
 import { useSwitchNetwork } from "@gooddollar/web3sdk-v2";
 import { find } from "lodash";
+import { useModal } from "../../hooks/useModal";
 
 export const SwitchChainModal = (props: any) => {
   const config = useConfig();

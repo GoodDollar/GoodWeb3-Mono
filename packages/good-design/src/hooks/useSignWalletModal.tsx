@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
-import { useModal } from "../core/modals/BasicModal";
 import { TransactionState } from "@usedapp/core";
+import { useModal } from "./useModal";
+
 export const useSignWalletModal = () => {
   const { Modal, showModal, hideModal } = useModal();
   const SignWalletModal = ({ txStatus, ...props }: { txStatus?: TransactionState }) => {

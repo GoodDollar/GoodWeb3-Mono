@@ -1,9 +1,9 @@
 import { Text } from "native-base";
 import React, { useEffect } from "react";
 import { useEthers, useConfig } from "@usedapp/core";
-import { useModal } from "../modals/BasicModal";
 import { SupportedChains } from "@gooddollar/web3sdk-v2";
 import { filter } from "lodash";
+import { useModal } from "../../hooks/useModal";
 
 export const WalletAndChainGuard = ({
   validChains = [SupportedChains.FUSE, SupportedChains.CELO, SupportedChains.MAINNET],
@@ -25,7 +25,7 @@ export const WalletAndChainGuard = ({
 
     if (isValid) {
       hideModal();
-    } else {  
+    } else {
       showModal();
     }
   }, [account, chainId, showModal, hideModal, validChains]);

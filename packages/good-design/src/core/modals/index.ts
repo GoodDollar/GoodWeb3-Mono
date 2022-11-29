@@ -1,2 +1,2 @@
 export { default as cross } from "./cross";
-export { useModal } from "./BasicModal";
+export * from "./BasicModal";
