@@ -159,8 +159,6 @@ export const MicroBridge = ({
   reason = reason || (!hasBalance && "balance") || (!isTargetValid && "target") || "";
 
   const toggleChains = useCallback(() => {
-    // todo-fix: toggling not working from protocolUI
-    console.log("toggling chains .. . ");
     setSourceChain(targetChain);
     onSetChain && onSetChain(targetChain);
   }, [setSourceChain, onSetChain, targetChain]);
