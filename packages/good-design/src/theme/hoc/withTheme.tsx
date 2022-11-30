@@ -1,18 +1,26 @@
 import React from "react";
 import { useThemeProps } from "native-base";
+import { string } from "prop-types";
 
-export const withTheme =
-  () =>
+export const withTheme = (options?: { name?: string }) =>
   (Component: Function): Function => {
-    const { name } = Component;
-    if (!name) throw new Error("Theming can not be applied on anonymous function");
+    const { name: defaultName } = Component;
+    const id = options?.name ?? defaultName;
+
+    if (!id) {
+      throw new Error(
+        "Theming can not be applied on anonymous function without " +
+        "setting component name explicitly in the HoC options: " +
+        "useTheme({ name: \"MyComponent\" })(props => <some jsx>)"
+      );
+    }
 
     const Wrapped = function ({ children, ...props }: JSX.Element & { children: any }) {
-      const themeProps = useThemeProps(name, props);
+      const themeProps = useThemeProps(id, props);
 
       return <Component {...themeProps}>{children}</Component>;
     };
 
-    Wrapped.displayName = `withTheme(${name})`;
+    Wrapped.displayName = `withTheme(${id})`;
     return Wrapped;
   };
