@@ -19,7 +19,7 @@ export interface FVFlowProps {
 
 export type FVModalProps = IModalProps & FVFlowProps;
 
-function ClaimButton({ firstName, method, refresh, ...props }: FVFlowProps) {
+const ClaimButton = ({ firstName, method, refresh, ...props }: FVFlowProps) => {
   const { Modal: FirstClaimModal, showModal: showFirstClaimModal } = useModal();
   const { Modal: FVModal, showModal: showFVModal, hideModal: hideFVModal } = useModal();
   const { loading, verify } = useFVModalAction({ firstName, method, onClose: hideFVModal });
@@ -88,7 +88,7 @@ function ClaimButton({ firstName, method, refresh, ...props }: FVFlowProps) {
       />
     </View>
   );
-}
+};
 
 export const theme = {
   baseStyle: withThemingTools(({ colorModeValue }: { colorModeValue: any }) => ({

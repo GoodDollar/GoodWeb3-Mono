@@ -6,11 +6,11 @@ interface ITitleProps {
   children: ReactNode;
 }
 
-function Title({ children, ...props }: ITitleProps) {
+const Title = ({ children, ...props }: ITitleProps) => (
   <Text color="heading" {...props}>
     {children}
-  </Text>;
-}
+  </Text>
+);
 
 export const theme = {
   baseStyle: {

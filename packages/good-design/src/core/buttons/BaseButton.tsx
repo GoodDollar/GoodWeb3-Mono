@@ -15,14 +15,12 @@ export interface BaseButtonProps extends IButtonProps {
   name?: string;
 }
 
-function BaseButton({ text, innerText, onPress, children, name = "BaseButton", ...props }: BaseButtonProps) {
-  return (
-    <Button onPress={onPress} maxWidth="750px" px={100} {...props}>
-      <Text {...innerText}>{text}</Text>
-      {children}
-    </Button>
-  );
-}
+const BaseButton = ({ text, innerText, onPress, children, name = "BaseButton", ...props }: BaseButtonProps) => (
+  <Button onPress={onPress} maxWidth="750px" px={100} {...props}>
+    <Text {...innerText}>{text}</Text>
+    {children}
+  </Button>
+);
 
 export const theme = {
   defaultProps: {},
