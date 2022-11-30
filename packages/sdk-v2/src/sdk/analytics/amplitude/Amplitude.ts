@@ -10,19 +10,23 @@ export class Amplitude implements IAbstractProvider, IAnalyticsProvider, IMonito
 
   async initialize(appProps: IAppProps): Promise<boolean> {
     const { apiKey } = this.config;
-    const initialized = !!apiKey;
 
     if (!apiKey) {
       return false;
     }
-    
+
     await init(apiKey!)
 
     const { env, version, osVersion, $once = {}, ...tags } = appProps;
     const allTags = { env, version, os_version: osVersion, ...tags };
-    const identity = this.identifyFromProps(allTags);
+    const identity = new Identify();
 
+    // append all tags values to Identity
+    forOwn(allTags, (value: string, key: string) => identity.append(key, value));
+
+    // set values that defined once
     forOwn($once, (value: string, key: string) => identity.setOnce(key, value));
+
     identify(identity);
 
     return true;
