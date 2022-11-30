@@ -6,11 +6,11 @@ interface ILayoutProps {
   children: ReactNode;
 }
 
-const Layout = withTheme()(({ children, ...props }: ILayoutProps) => (
+function Layout({ children, ...props }: ILayoutProps) {
   <View width="100%" maxWidth={712} borderWidth={1} borderRadius={20} paddingY={20} paddingX={17} {...props}>
     {children}
-  </View>
-));
+  </View>;
+}
 
 export const theme = {
   baseStyle: {
@@ -20,4 +20,6 @@ export const theme = {
   }
 };
 
-export default Layout;
+const LayoutThemed = withTheme()(Layout);
+
+export default LayoutThemed;

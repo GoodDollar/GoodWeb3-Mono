@@ -5,6 +5,7 @@ export const withTheme =
   () =>
   (Component: Function): Function => {
     const { name } = Component;
+    if (!name) throw new Error("Theming can not be applied on anonymous function");
 
     const Wrapped = function ({ children, ...props }: JSX.Element & { children: any }) {
       const themeProps = useThemeProps(name, props);
