@@ -1,8 +1,8 @@
 import React from "react";
 import { useThemeProps } from "native-base";
-import { string } from "prop-types";
 
-export const withTheme = (options?: { name?: string }) =>
+export const withTheme =
+  (options?: { name?: string }) =>
   (Component: Function): Function => {
     const { name: defaultName } = Component;
     const id = options?.name ?? defaultName;
@@ -10,8 +10,8 @@ export const withTheme = (options?: { name?: string }) =>
     if (!id) {
       throw new Error(
         "Theming can not be applied on anonymous function without " +
-        "setting component name explicitly in the HoC options: " +
-        "useTheme({ name: \"MyComponent\" })(props => <some jsx>)"
+          "setting component name explicitly in the HoC options: " +
+          'useTheme({ name: "MyComponent" })(props => <some jsx>)'
       );
     }
 

@@ -11,7 +11,6 @@ export const BaseButtonWithThemeExample = () => {
   return (
     <>
       <BaseButton width="250px" onPress={() => {}} text="RegularBB with default NB Theming" />
-      {/* <BaseButtonWithTheme width="250px" onPress={() => {}} text="Button with applied basebutton theme" /> */}
     </>
   );
 };
