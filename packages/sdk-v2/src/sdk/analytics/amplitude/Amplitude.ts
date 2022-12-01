@@ -10,7 +10,6 @@ export class Amplitude implements IAbstractProvider, IAnalyticsProvider, IMonito
 
   async initialize(appProps: IAppProps): Promise<boolean> {
     const { apiKey } = this.config;
-    const initialized = !!apiKey;
 
     if (!apiKey) {
       return false;
