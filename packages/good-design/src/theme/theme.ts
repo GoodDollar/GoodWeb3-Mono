@@ -7,7 +7,9 @@ export const theme = extendTheme({
   config: {},
   colors: {
     text1: "#0D182D",
-    heading: "#42454A"
+    heading: "#42454A",
+    main: "#00AEFF",
+    buttonBackground: "#40C4FFCC"
   },
   fontConfig: {},
   fonts: {},

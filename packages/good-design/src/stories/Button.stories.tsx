@@ -10,7 +10,13 @@ import ClaimButton from "../core/buttons/ClaimButton";
 export const BaseButtonWithThemeExample = () => {
   return (
     <>
-      <BaseButton width="250px" onPress={() => {}} text="RegularBB with default NB Theming" />
+      <BaseButton
+        width="xl"
+        height="xl"
+        borderRadius="50%"
+        onPress={() => {}}
+        text="RegularBB with default NB Theming"
+      />
       {/* <BaseButtonWithTheme width="250px" onPress={() => {}} text="Button with applied basebutton theme" /> */}
     </>
   );

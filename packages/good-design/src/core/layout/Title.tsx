@@ -1,13 +1,14 @@
 import { Text } from "native-base";
-import React, { ReactNode } from "react";
+import { ColorType } from "native-base/lib/typescript/components/types";
+import React, { FC } from "react";
 import { withTheme } from "../../theme/hoc/withTheme";
 
 interface ITitleProps {
-  children: ReactNode;
+  color?: ColorType;
 }
 
-const Title = withTheme()(({ children, ...props }: ITitleProps) => (
-  <Text color="heading" {...props}>
+const Title: FC<ITitleProps> = withTheme()(({ children, color = "main", ...props }) => (
+  <Text color={color} fontWeight="700" fontStyle="normal" fontSize="34px" lineHeight="40px" {...props}>
     {children}
   </Text>
 ));

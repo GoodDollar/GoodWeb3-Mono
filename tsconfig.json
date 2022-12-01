@@ -6,7 +6,9 @@
     "sourceMap": true,
     "paths": {
       "@gooddollar/web3sdk": ["./packages/sdk"],
-      "@gooddollar/web3sdk-v2": ["./packages/sdk-v2"]
+      "@gooddollar/web3sdk-v2": ["./packages/sdk-v2"],
+      "@gooddollar/goodlogin-sdk": ["./packages/login-sdk"],
+      "@gooddollar/good-design": ["./packages/good-design"]
     }
   }
 }

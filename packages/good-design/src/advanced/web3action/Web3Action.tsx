@@ -41,7 +41,8 @@ export const Web3ActionButton = ({
   requiredChain,
   switchChain,
   web3Action,
-  handleConnect
+  handleConnect,
+  ...buttonProps
 }: Web3ActionProps): JSX.Element => {
   const { account, switchNetwork, chainId, activateBrowserWallet } = useEthers();
   const [runningFlow, setRunningFlow] = useState(false);
@@ -110,7 +111,7 @@ export const Web3ActionButton = ({
   }, [runningFlow, account, chainId]);
 
   return (
-    <BaseButton text={actionText ? "" : text} onPress={startFlow}>
+    <BaseButton text={actionText ? "" : text} onPress={startFlow} {...buttonProps}>
       {actionText && <StepIndicator text={actionText} />}
     </BaseButton>
   );
