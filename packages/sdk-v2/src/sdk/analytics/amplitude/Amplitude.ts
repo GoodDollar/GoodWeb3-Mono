@@ -63,6 +63,6 @@ export class Amplitude implements IAbstractProvider, IAnalyticsProvider, IMonito
     const identity = new Identify();
 
     forOwn(props, (value: string, key: string) => identity.append(key, value));
-    return identify;
+    return identity;
   }
 }
