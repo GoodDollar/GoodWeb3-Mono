@@ -53,7 +53,11 @@ class IndicativeAPIWeb implements IIndicativeApi {
     }
 
     const api = (<any>window).Indicative;
-    const { initialized, apiKey: initializedWithKey } = api;
+    const { apiKey: initializedWithKey } = api;
+    
+    // workaround for typo in indicative library currently existing
+    const initKey = 'initalized' in api ? 'initalized' : 'initialized';
+    const initialized = api[initKey];
 
     if (initialized && initializedWithKey !== apiKey) {
       throw new Error("indicative.com already initialized with the different API key");
@@ -64,7 +68,7 @@ class IndicativeAPIWeb implements IIndicativeApi {
     }
 
     this.api = api;
-    return api.initialized;
+    return api[initKey];
   }
 
   addProperties(props: object): void {

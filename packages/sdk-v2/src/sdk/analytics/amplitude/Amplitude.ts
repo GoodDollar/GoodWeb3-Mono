@@ -14,7 +14,7 @@ export class Amplitude implements IAbstractProvider, IAnalyticsProvider, IMonito
     if (!apiKey) {
       return false;
     }
-    
+
     await init(apiKey!)
 
     const { env, version, osVersion, $once = {}, ...tags } = appProps;
@@ -22,6 +22,7 @@ export class Amplitude implements IAbstractProvider, IAnalyticsProvider, IMonito
     const identity = this.identifyFromProps(allTags);
 
     forOwn($once, (value: string, key: string) => identity.setOnce(key, value));
+
     identify(identity);
 
     return true;
