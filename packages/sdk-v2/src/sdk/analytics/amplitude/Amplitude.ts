@@ -19,12 +19,8 @@ export class Amplitude implements IAbstractProvider, IAnalyticsProvider, IMonito
 
     const { env, version, osVersion, $once = {}, ...tags } = appProps;
     const allTags = { env, version, os_version: osVersion, ...tags };
-    const identity = new Identify();
+    const identity = this.identifyFromProps(allTags);
 
-    // append all tags values to Identity
-    forOwn(allTags, (value: string, key: string) => identity.append(key, value));
-
-    // set values that defined once
     forOwn($once, (value: string, key: string) => identity.setOnce(key, value));
 
     identify(identity);
@@ -68,6 +64,6 @@ export class Amplitude implements IAbstractProvider, IAnalyticsProvider, IMonito
     const identity = new Identify();
 
     forOwn(props, (value: string, key: string) => identity.append(key, value));
-    return identify;
+    return identity;
   }
 }
