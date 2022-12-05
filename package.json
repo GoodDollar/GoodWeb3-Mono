@@ -32,6 +32,19 @@
     "eslint": "^8.28.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
+    "husky": "^8.0.2",
+    "lint-staged": "^13.1.0",
     "typescript": "^4.9.3"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "packages/*/src/**/*.[jt]s*": [
+      "eslint --fix --max-warnings=0",
+      "git add"
+    ]
   }
 }
