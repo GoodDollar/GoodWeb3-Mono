@@ -13,7 +13,10 @@
     "build": "yarn workspaces foreach -ptRv --from '{@gooddollar/sdk-v2,@gooddollar/**}' run build",
     "compile": "tsc -p tsconfig.build.json",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "postinstall": "husky install",
+    "prepack": "pinst --disable",
+    "postpack": "pinst --enable"
   },
   "packageManager": "yarn@3.2.1",
   "dependencies": {
@@ -34,12 +37,8 @@
     "eslint-plugin-prettier": "^4.2.1",
     "husky": "^8.0.2",
     "lint-staged": "^13.1.0",
+    "pinst": "^3.0.0",
     "typescript": "^4.9.3"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
   },
   "lint-staged": {
     "packages/*/src/**/*.[jt]s*": [

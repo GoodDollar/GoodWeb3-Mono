@@ -14752,6 +14752,7 @@ __metadata:
     eslint-plugin-prettier: ^4.2.1
     husky: ^8.0.2
     lint-staged: ^13.1.0
+    pinst: ^3.0.0
     prettier: ^2.7.1
     react-native: ^0.70.2
     typescript: ^4.9.3
@@ -21078,6 +21079,15 @@ __metadata:
   bin:
     pino: bin.js
   checksum: 4aa2e320aa88f4a90fd25884ee4e3b9ef7963b3c59c514f3693b5a5c987b112cf3ab4e39a8c51efe32c861f5c058d7cfa7fcda59d964ed878f842fdbc6ab2876
+  languageName: node
+  linkType: hard
+
+"pinst@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "pinst@npm:3.0.0"
+  bin:
+    pinst: bin.js
+  checksum: 4ae48a6a60f79c37071233af51b4d91bfc85cfa3c12b66ccda60cdb642b4d14a4ab0cb3587afc55b1f6192cea1772a5e4822026a0d0d3528296edef00cc2d61f
   languageName: node
   linkType: hard
 
