@@ -1,7 +1,6 @@
 import { useFVLink } from "@gooddollar/web3sdk-v2";
 import { useCallback, useState } from "react";
-import { openLink } from "../core";
-import { FVFlowProps } from "../core/buttons/ClaimButton";
+import { FVFlowProps, openLink } from "../core";
 
 interface FVModalActionProps extends Pick<FVFlowProps, "method" | "firstName"> {
   onClose: () => void;

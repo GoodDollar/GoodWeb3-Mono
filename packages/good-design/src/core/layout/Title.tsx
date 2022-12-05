@@ -1,9 +1,9 @@
-import { Text } from "native-base";
+import { ITextProps, Text } from "native-base";
 import { ColorType } from "native-base/lib/typescript/components/types";
 import React, { FC } from "react";
 import { withTheme } from "../../theme/hoc/withTheme";
 
-interface ITitleProps {
+interface ITitleProps extends ITextProps {
   color?: ColorType;
 }
 

@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { HStack, Spinner, Heading } from "native-base";
+import React, { FC, useCallback, useEffect, useRef, useState } from "react";
+import { HStack, Spinner, Heading, ITextProps } from "native-base";
 import { useEthers } from "@usedapp/core";
 import BaseButton, { BaseButtonProps } from "../../core/buttons/BaseButton";
 
@@ -8,6 +8,7 @@ export interface Web3ActionProps extends Omit<BaseButtonProps, "onPress"> {
    * a text to be rendered in the component.
    */
   requiredChain: number;
+  innerIndicatorText?: ITextProps;
   web3Action: () => Promise<void> | void;
   switchChain?: (requiredChain: number) => Promise<any>;
   handleConnect?: () => Promise<any> | void;
@@ -25,11 +26,11 @@ const throwCancelled = (e: any) => {
   }
 };
 
-const StepIndicator = ({ text }: { text?: string | undefined }) => {
+const StepIndicator: FC<{ text?: string } & ITextProps> = ({ text, color = "primary.500", fontSize = "md" }) => {
   return (
     <HStack space={2} alignItems="center" flexDirection="row">
       <Spinner accessibilityLabel="Waiting on wallet confirmation" />
-      <Heading color="primary.500" fontSize="md">
+      <Heading color={color} fontSize={fontSize}>
         {text}
       </Heading>
     </HStack>
@@ -42,6 +43,7 @@ export const Web3ActionButton = ({
   switchChain,
   web3Action,
   handleConnect,
+  innerIndicatorText = {},
   ...buttonProps
 }: Web3ActionProps): JSX.Element => {
   const { account, switchNetwork, chainId, activateBrowserWallet } = useEthers();
@@ -112,7 +114,7 @@ export const Web3ActionButton = ({
 
   return (
     <BaseButton text={actionText ? "" : text} onPress={startFlow} {...buttonProps}>
-      {actionText && <StepIndicator text={actionText} />}
+      {!!actionText && <StepIndicator text={actionText} {...innerIndicatorText} />}
     </BaseButton>
   );
 };

@@ -9,6 +9,7 @@ export interface BasicModalProps {
   footer?: ReactNode;
   actionText?: string;
   closeText?: string;
+  hasCloseButton?: boolean;
   onClose?: () => void;
   onAction?: () => void;
   _modal?: any;
@@ -24,6 +25,7 @@ export const BasicModal: FC<BasicModalProps> = ({
   footer,
   actionText,
   closeText = "Cancel",
+  hasCloseButton = !!closeText,
   onClose = noop,
   onAction = noop,
   _modal,
@@ -42,7 +44,7 @@ export const BasicModal: FC<BasicModalProps> = ({
     /* height 100vh is required so modal always shows in the middle */
     <NBModal isOpen={modalVisible} onClose={onClose} {..._modal} minH="100vh">
       <NBModal.Content>
-        {closeText && <NBModal.CloseButton />}
+        {hasCloseButton && <NBModal.CloseButton />}
         <NBModal.Header {..._header}>{header}</NBModal.Header>
         <NBModal.Body {..._body}>{body}</NBModal.Body>
         <NBModal.Footer {..._footer}>
