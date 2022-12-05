@@ -45,7 +45,7 @@ export const W3Wrapper = () => {
 };
 
 const Web3Action = () => {
-  const { isWhitelisted, claimAmount, claimTime, claimCall } = useClaim("everyBlock");
+  const { isWhitelisted, claimAmount, claimCall } = useClaim("everyBlock");
   const [claimText, setClaimText] = useState<string>("Claim UBI");
 
   const handleClaim = useCallback(async () => {

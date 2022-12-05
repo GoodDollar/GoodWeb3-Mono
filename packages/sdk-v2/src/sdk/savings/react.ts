@@ -1,10 +1,10 @@
-import React, { useCallback } from "react";
-import { useContractFunction, useCalls, QueryParams, useEthers, CurrencyValue, ChainId } from "@usedapp/core";
-import { useGetContract, useGetEnvChainId } from "../base/react";
-import { ethers } from "ethers";
 import { GoodDollarStaking, IGoodDollar } from "@gooddollar/goodprotocol/types";
-import { G$, GOOD } from "../constants";
+import { ChainId, CurrencyValue, QueryParams, useCalls, useContractFunction, useEthers } from "@usedapp/core";
+import { ethers } from "ethers";
+import { useCallback } from "react";
 import useRefreshOrNever from "../../hooks/useRefreshOrNever";
+import { useGetContract, useGetEnvChainId } from "../base/react";
+import { G$, GOOD } from "../constants";
 
 export interface StakerInfo {
   claimable:
@@ -125,7 +125,7 @@ export const useSavingsStats = (requiredChainId: number, refresh: QueryParams["r
     { refresh: refreshOrNever, chainId: chainId as unknown as ChainId }
   );
 
-  let globalStats: SavingsStats = {
+  const globalStats: SavingsStats = {
     totalStaked: undefined,
     totalRewardsPaid: undefined,
     apy: undefined
@@ -133,7 +133,7 @@ export const useSavingsStats = (requiredChainId: number, refresh: QueryParams["r
 
   if (results[0]?.error) {
     // one fails, all fails
-    let errMessages: Array<any> = [];
+    const errMessages: Array<any> = [];
     for (let i = 0; i < results.length; i++) {
       errMessages.push(results[i]?.error);
     }
@@ -145,15 +145,16 @@ export const useSavingsStats = (requiredChainId: number, refresh: QueryParams["r
   }
 
   if (results[0]) {
-    const [lastUpdateBlock, totalStaked, totalRewardsPaid, savings] = results[0]?.value;
+    const [, totalStaked, totalRewardsPaid] = results[0]?.value; // eslint-disable-line no-unsafe-optional-chaining
     const staked = CurrencyValue.fromString(G$(chainId, defaultEnv), totalStaked.toString());
     const rewardsPaid = CurrencyValue.fromString(G$(chainId, defaultEnv), totalRewardsPaid.toString());
+
     globalStats.totalStaked = staked;
     globalStats.totalRewardsPaid = rewardsPaid;
   }
 
-  if (results[1] && results[2]) {
-    const { _goodRewardPerBlock: grpb, _gdInterestRatePerBlock: gdIrpb } = results[1]?.value;
+  if (results[1] && results[2]) { // eslint-disable-line no-unsafe-optional-chaining
+    const { _gdInterestRatePerBlock: gdIrpb } = results[1]?.value; // eslint-disable-line no-unsafe-optional-chaining
     const numberOfBlocksPerYear = results[2]?.value;
     const apy = (Math.pow(gdIrpb / 1e18, numberOfBlocksPerYear) - 1) * 100;
 
@@ -187,13 +188,13 @@ export const useStakerInfo = (requiredChainId: number, refresh: QueryParams["ref
     { refresh: refreshOrNever, chainId: chainId as unknown as ChainId }
   );
 
-  let stakerInfo: StakerInfo = {
+  const stakerInfo: StakerInfo = {
     claimable: undefined,
     principle: undefined
   };
 
   if (results[0]?.error) {
-    let errMessages: Array<any> = [];
+    const errMessages: Array<any> = [];
     for (let i = 0; i < results.length; i++) {
       errMessages.push(results[i]?.error);
     }
@@ -204,8 +205,8 @@ export const useStakerInfo = (requiredChainId: number, refresh: QueryParams["ref
     };
   }
 
-  if (results[0]) {
-    const [goodReward, g$Reward] = results[0]?.value;
+  if (results[0]) { // eslint-disable-line no-unsafe-optional-chaining
+    const [goodReward, g$Reward] = results[0]?.value; // eslint-disable-line no-unsafe-optional-chaining
     const claimableRewards = {
       g$Reward: CurrencyValue.fromString(G$(chainId, defaultEnv), g$Reward.toString()),
       goodReward: CurrencyValue.fromString(GOOD(chainId, defaultEnv), goodReward.toString())
@@ -214,7 +215,7 @@ export const useStakerInfo = (requiredChainId: number, refresh: QueryParams["ref
   }
 
   if (results[1]) {
-    const [principle] = results[1]?.value;
+    const [principle] = results[1]?.value; // eslint-disable-line no-unsafe-optional-chaining
     const deposit = CurrencyValue.fromString(G$(chainId, defaultEnv), principle.toString());
     stakerInfo.principle = deposit;
   }

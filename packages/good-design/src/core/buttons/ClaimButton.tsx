@@ -9,6 +9,7 @@ import { Web3ActionButton } from "../../advanced";
 import { useFVModalAction } from "../../hooks/useFVModalAction";
 import ActionButton from "./ActionButton";
 import { useModal } from "../../hooks/useModal";
+import { noop } from "lodash";
 
 export interface FVFlowProps {
   firstName: string;
@@ -50,7 +51,7 @@ const ClaimButton = withTheme({ name: "ClaimButton" })(({ firstName, method, ref
   useEffect(() => {
     if (!isVerified || claimAmount.toNumber() <= 0) return;
 
-    claimCall.send();
+    claimCall.send().catch(noop);
     showFirstClaimModal();
   }, [isVerified, claimAmount, showFirstClaimModal]);
 

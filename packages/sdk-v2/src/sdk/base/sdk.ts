@@ -1,5 +1,6 @@
 import { Contract } from "ethers";
 import { providers, Signer } from "ethers";
+import { noop } from "lodash";
 import { Envs } from "../constants";
 
 //@ts-ignore
@@ -54,22 +55,24 @@ export class BaseSDK {
 
     this.contracts = Contracts[envKey as keyof typeof Contracts] as EnvValue;
 
-    provider.getNetwork().then(network => {
-      if (network.chainId != this.contracts.networkId)
-        console.error(
-          `BaseSDK: provider chainId doesn't match env (${envKey as string}) chainId. provider:${network.chainId} env:${
-            this.contracts.networkId
-          }`
-        );
-    });
+    provider
+      .getNetwork()
+      .then(network => {
+        if (network.chainId != this.contracts.networkId)
+          console.error(
+            `BaseSDK: provider chainId doesn't match env (${envKey as string}) chainId. provider:${network.chainId} env:${
+              this.contracts.networkId
+            }`
+          );
+      })
+      .catch(noop);
 
     try {
       const signer = provider.getSigner();
+
       signer
         .getAddress()
-        .then(async addr => {
-          this.signer = signer;
-        })
+        .then(async () => void (this.signer = signer))
         .catch(e => {
           console.warn("BaseSDK: provider has no signer", { signer, provider, e });
         });

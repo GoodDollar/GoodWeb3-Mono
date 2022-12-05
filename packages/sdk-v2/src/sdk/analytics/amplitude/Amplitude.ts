@@ -15,7 +15,8 @@ export class Amplitude implements IAbstractProvider, IAnalyticsProvider, IMonito
       return false;
     }
 
-    await init(apiKey!)
+    // eslint-disable-next-line @typescript-eslint/await-thenable
+    await init(apiKey)
 
     const { env, version, osVersion, $once = {}, ...tags } = appProps;
     const allTags = { env, version, os_version: osVersion, ...tags };

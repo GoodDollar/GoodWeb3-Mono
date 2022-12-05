@@ -1,13 +1,11 @@
-import React, { useState } from "react";
-import { View } from "native-base";
-import { JsonRpcProvider } from "@ethersproject/providers";
+import { ExternalProvider, JsonRpcProvider } from "@ethersproject/providers";
 import { Web3Provider } from "@gooddollar/web3sdk-v2";
 import * as ethers from "ethers";
-import { ExternalProvider } from "@ethersproject/providers";
+import { View } from "native-base";
+import React, { useState } from "react";
 
-import { Config, Mainnet, Goerli, useEthers } from "@usedapp/core";
-import { Fuse, Celo } from "@gooddollar/web3sdk-v2";
-import { getDefaultProvider } from "ethers";
+import { Celo, Fuse } from "@gooddollar/web3sdk-v2";
+import { Config, Goerli, Mainnet, useEthers } from "@usedapp/core";
 
 interface PageProps {
   children: any;
@@ -29,11 +27,11 @@ export const W3Wrapper = ({ children, withMetaMask, env = "fuse" }: PageProps) =
   const { account } = useEthers();
   const w: ethers.Wallet = ethers.Wallet.createRandom();
   const [newProvider, setProvider] = useState<JsonRpcProvider | undefined>();
+
   if (!withMetaMask) {
     const rpc = new ethers.providers.JsonRpcProvider("https://rpc.fuse.io");
-    rpc.getSigner = idx => {
-      return w as any;
-    };
+    
+    rpc.getSigner = () => w as any;
     setProvider(rpc);
   }
 
@@ -44,8 +42,6 @@ export const W3Wrapper = ({ children, withMetaMask, env = "fuse" }: PageProps) =
       }
     });
   }
-
-  // const provider = newProvider ?? new ethers.providers.Web3Provider(ethereum as ExternalProvider, "any");
 
   return (
     <Web3Provider env={env} web3Provider={newProvider} config={config}>

@@ -20,7 +20,7 @@ function hasIndicativeSnippet(): boolean {
 }
 
 async function isIndicativeLoaded(): Promise<boolean> {
-  let ts = Date.now();
+  const ts = Date.now();
   const timeout = 5 * 1000;
 
   return new Promise<boolean>(resolve => {

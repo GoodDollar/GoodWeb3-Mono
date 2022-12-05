@@ -21,5 +21,5 @@ export const theme = extendTheme({
 export type MyThemeType = typeof theme;
 
 declare module "native-base" {
-  interface ICustomTheme extends MyThemeType {}
+  type ICustomTheme = MyThemeType
 }

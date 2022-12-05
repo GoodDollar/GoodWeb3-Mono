@@ -1,4 +1,5 @@
 import { useFVLink } from "@gooddollar/web3sdk-v2";
+import { noop } from "lodash";
 import { useCallback, useState } from "react";
 import { openLink } from "../core";
 import { FVFlowProps } from "../core/buttons/ClaimButton";
@@ -22,7 +23,7 @@ export const useFVModalAction = ({ firstName, method, onClose }: FVModalActionPr
         const link = fvlink?.getLink(firstName, document.location.href, false);
 
         if (link) {
-          openLink(link, "_self");
+          openLink(link, "_self").catch(noop);
         }
         break;
       }
@@ -31,7 +32,7 @@ export const useFVModalAction = ({ firstName, method, onClose }: FVModalActionPr
         const link = fvlink?.getLink(firstName, undefined, true);
 
         if (link) {
-          openLink(link, "_blank", { width: "800px", height: "auto" });
+          openLink(link, "_blank", { width: "800px", height: "auto" }).catch(noop);
         }
         break;
       }

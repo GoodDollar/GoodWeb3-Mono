@@ -1,13 +1,6 @@
+import { Box, Button, Input, Text } from "native-base";
 import React, { useCallback, useState } from "react";
-import { Box, Button, Input, Text, View } from "native-base";
-import { NumericFormat, numericFormatter } from "react-number-format";
-// converts the value using the mask parameters
-// const mask = (value: string = "", onChange: any, type: string, options?: ) => ({
-//   // the value is converted to a mask so it is displayed properly with the <Input /> component
-//   value: MaskService.toMask(type, value, options),
-//   // when the value is modified, it is converted back to its raw value
-//   onChangeText: (newValue: string) => onChange(MaskService.toMask(type, newValue, options))
-// });
+import { NumericFormat } from "react-number-format";
 
 export const TokenInput = ({
   decimals,

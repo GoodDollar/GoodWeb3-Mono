@@ -53,7 +53,6 @@ const StatusBox = ({
   txStatus,
   text,
   infoText,
-  sourceChain
 }: {
   txStatus?: Partial<TransactionStatus>;
   text: string;
@@ -152,11 +151,11 @@ export const MicroBridge = ({
   const targetChain = sourceChain === "fuse" ? "celo" : "fuse";
   const balanceWei = useBalanceHook(sourceChain);
 
-  let { isValid, reason } = useCanBridge(sourceChain, inputWei);
+  const { isValid, reason } = useCanBridge(sourceChain, inputWei);
   const hasBalance = Number(inputWei) <= Number(balanceWei);
   const isTargetValid = !enableTarget || isAddressValid(target || "");
   const isValidInput = isValid && hasBalance && isTargetValid;
-  reason = reason || (!hasBalance && "balance") || (!isTargetValid && "target") || "";
+  const reasonOf = reason || (!hasBalance && "balance") || (!isTargetValid && "target") || "";
 
   const toggleChains = useCallback(() => {
     setSourceChain(targetChain);
@@ -165,9 +164,10 @@ export const MicroBridge = ({
 
   const triggerBridge = useCallback(async () => {
     setBridging(true);
+
     try {
       await onBridge(inputWei, sourceChain, enableTarget ? target : undefined);
-    } catch (e) {
+    } finally {
       setBridging(false);
     }
   }, [setBridging, onBridge, inputWei, sourceChain, enableTarget, target]);
@@ -199,9 +199,9 @@ export const MicroBridge = ({
         </Box>
       </Flex>
       <TokenInput balanceWei={balanceWei} decimals={2} onChange={setInput} minAmountWei={minAmountWei} />
-      <FormControl isInvalid={!!reason}>
+      <FormControl isInvalid={!!reasonOf}>
         <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon variant="outline" />}>
-          {reason}
+          {reasonOf}
         </FormControl.ErrorMessage>
       </FormControl>
       <Box mt="5">

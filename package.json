@@ -11,7 +11,9 @@
   "homepage": "",
   "scripts": {
     "build": "yarn workspaces foreach -ptRv --from '{@gooddollar/sdk-v2,@gooddollar/**}' run build",
-    "compile": "tsc -p tsconfig.build.json"
+    "compile": "tsc -p tsconfig.build.json",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "packageManager": "yarn@3.2.1",
   "dependencies": {
@@ -23,5 +25,13 @@
     "@react-native-async-storage/async-storage": "1.17.10",
     "web3-core-method@1.7.5": "patch:web3-core-method@npm:1.7.5#.yarn/patches/web3-core-method-npm-1.7.5-919ae06220.patch",
     "ctix@1.4.0": "patch:ctix@npm:1.4.0#.yarn/patches/ctix-npm-1.4.0-031fc5027b.patch"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.45.0",
+    "@typescript-eslint/parser": "^5.45.0",
+    "eslint": "^8.28.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "typescript": "^4.9.3"
   }
 }

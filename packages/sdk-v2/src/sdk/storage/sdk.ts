@@ -1,5 +1,5 @@
 import { default as AsyncStorageRN } from "@react-native-async-storage/async-storage";
-import { isArray, isEmpty, noop } from "lodash";
+import { noop } from "lodash";
 
 import { stringifyPairs, tryJson } from "./utils";
 

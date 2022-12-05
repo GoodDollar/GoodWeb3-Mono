@@ -1,9 +1,9 @@
-import React from "react";
+import React, { FC } from "react";
 import { useThemeProps } from "native-base";
 
 export const withTheme =
   (options?: { name?: string }) =>
-  (Component: Function): Function => {
+  (Component: FC<any>): FC<any> => {
     const { name: defaultName } = Component;
     const id = options?.name ?? defaultName;
 

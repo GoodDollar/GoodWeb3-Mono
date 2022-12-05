@@ -1,6 +1,6 @@
-import React from "react";
 import { useConfig } from "@usedapp/core";
-import { Box, createIcon, HStack, Link, ShareIcon } from "native-base";
+import { createIcon, HStack, Link } from "native-base";
+import React from "react";
 
 const LinkIcon = createIcon({
   viewBox: "0 0 448 512",
@@ -11,7 +11,6 @@ export const ExplorerLink = ({
   chainId,
   addressOrTx,
   text,
-  _icon,
   ...props
 }: {
   _icon?: any;
