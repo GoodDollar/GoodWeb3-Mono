@@ -42,8 +42,7 @@
   },
   "lint-staged": {
     "packages/*/src/**/*.[jt]s*": [
-      "eslint --fix --max-warnings=0",
-      "git add"
+      "eslint . --fix --max-warnings=0"
     ]
   }
 }
