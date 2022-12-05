@@ -6,7 +6,7 @@ interface ILayoutProps {
   children: ReactNode;
 }
 
-const Layout = withTheme()(({ children, ...props }: ILayoutProps) => (
+const Layout = withTheme({ name: "Layout" })(({ children, ...props }: ILayoutProps) => (
   <View width="100%" maxWidth={712} borderWidth={1} borderRadius={20} paddingY={20} paddingX={17} {...props}>
     {children}
   </View>

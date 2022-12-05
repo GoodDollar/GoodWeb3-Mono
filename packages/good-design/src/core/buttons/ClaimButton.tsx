@@ -12,7 +12,7 @@ import { useModal } from "../../hooks/useModal";
 import { Title } from "../layout";
 import { FVFlowProps } from "./types";
 
-const ClaimButton = withTheme()(({ firstName, method, refresh, claim, ...props }: FVFlowProps) => {
+const ClaimButton = withTheme({ name: "ClaimButton" })(({ firstName, method, refresh, claim, ...props }: FVFlowProps) => {
   const { Modal: FirstClaimModal, showModal: showFirstClaimModal } = useModal();
   const { Modal: FVModal, showModal: showFVModal, hideModal: hideFVModal } = useModal();
   const { loading, verify } = useFVModalAction({ firstName, method, onClose: hideFVModal });

@@ -3,21 +3,13 @@ import { Celo, Fuse, Web3Provider } from "@gooddollar/web3sdk-v2";
 import { Config, DAppProvider, Goerli, Mainnet, useEthers } from "@usedapp/core";
 import { ethers, getDefaultProvider } from "ethers";
 import React, { useEffect, useState } from "react";
-// import BaseButtonWithTheme, { BaseButton } from "../core/buttons/BaseButton";
 import BaseButton from "../core/buttons/BaseButton";
 import ClaimButton from "../core/buttons/ClaimButton";
 
 export const BaseButtonWithThemeExample = () => {
   return (
     <>
-      <BaseButton
-        width="xl"
-        height="xl"
-        borderRadius="50%"
-        onPress={() => {}}
-        text="RegularBB with default NB Theming"
-      />
-      {/* <BaseButtonWithTheme width="250px" onPress={() => {}} text="Button with applied basebutton theme" /> */}
+      <BaseButton width="250px" onPress={() => {}} text="RegularBB with default NB Theming" />
     </>
   );
 };

@@ -7,7 +7,7 @@ interface IBasicButtonProps extends IButtonProps {
   onPress: () => {};
 }
 
-const ActionButton = withTheme()(({ text, ...props }: IBasicButtonProps) => (
+const ActionButton = withTheme({ name: "ActionButton" })(({ text, ...props }: IBasicButtonProps) => (
   <Button
     alignItems="center"
     justifyContent="center"

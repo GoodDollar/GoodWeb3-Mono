@@ -7,7 +7,7 @@ interface ITitleProps extends ITextProps {
   color?: ColorType;
 }
 
-const Title: FC<ITitleProps> = withTheme()(({ children, color = "main", ...props }) => (
+const Title: FC<ITitleProps> = withTheme({ name: "Title" })(({ children, color = "main", ...props }) => (
   <Text color={color} fontWeight="700" fontStyle="normal" fontSize="34px" lineHeight="40px" {...props}>
     {children}
   </Text>
