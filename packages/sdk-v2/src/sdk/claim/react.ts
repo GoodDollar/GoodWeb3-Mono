@@ -43,27 +43,29 @@ export const useClaim = (refresh: QueryParams["refresh"] = "never") => {
 
   const results = useCalls(
     [
-      {
-        contract: identity,
-        method: "isWhitelisted",
-        args: [account]
-      },
-      {
+      identity &&
+        account && {
+          contract: identity,
+          method: "isWhitelisted",
+          args: [account]
+        },
+      ubi && {
         contract: ubi,
         method: "currentDay",
         args: []
       },
-      {
+      ubi && {
         contract: ubi,
         method: "periodStart",
         args: []
       },
-      {
-        contract: ubi,
-        method: "checkEntitlement(address)",
-        args: [account]
-      }
-    ],
+      ubi &&
+        account && {
+          contract: ubi,
+          method: "checkEntitlement(address)",
+          args: [account]
+        }
+    ].filter(_ => _),
     { refresh: refreshOrNever, chainId }
   );
 
@@ -108,7 +110,7 @@ export const useWhitelistSync = () => {
         args: [account]
       }
     ],
-    { refresh: "never", chainId: (SupportedChains.FUSE as unknown) as ChainId }
+    { refresh: "never", chainId: SupportedChains.FUSE as unknown as ChainId }
   );
 
   const [otherResult] = useCalls(

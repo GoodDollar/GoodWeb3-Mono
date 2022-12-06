@@ -48,18 +48,19 @@ export class BaseSDK {
   env: typeof Envs[EnvKey];
   contracts: EnvValue;
   signer: Signer | void = undefined;
-  constructor(provider: providers.JsonRpcProvider, envKey: EnvKey = "production") {
+  constructor(provider: providers.JsonRpcProvider, contractsEnv: EnvKey = "production") {
     this.provider = provider;
-    this.env = Envs[envKey];
-
-    this.contracts = Contracts[envKey as keyof typeof Contracts] as EnvValue;
+    let devEnv = contractsEnv.split("-")[0];
+    devEnv = devEnv === "fuse" ? "development" : devEnv;
+    this.env = Envs[devEnv];
+    this.contracts = Contracts[contractsEnv as keyof typeof Contracts] as EnvValue;
 
     provider.getNetwork().then(network => {
       if (network.chainId != this.contracts.networkId)
         console.error(
-          `BaseSDK: provider chainId doesn't match env (${envKey as string}) chainId. provider:${network.chainId} env:${
-            this.contracts.networkId
-          }`
+          `BaseSDK: provider chainId doesn't match env (${contractsEnv as string}) chainId. provider:${
+            network.chainId
+          } env:${this.contracts.networkId}`
         );
     });
 
