@@ -46,6 +46,7 @@ export const AnalyticsProvider: FC<IAnaliticsProviderProps> = ({ config, appProp
 
   useEffect(() => {
     const sdk = new Analytics(configRef.current);
+    
     sdk.initialize(appPropsRef.current).then(() => setSDK(sdk));
   }, [setSDK]);
 
