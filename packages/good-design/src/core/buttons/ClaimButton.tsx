@@ -28,6 +28,8 @@ const ClaimButton = withTheme({ name: "ClaimButton" })(({ firstName, method, ref
   const isVerified = useQueryParam("verified");
   const [claimInProcess, setClaimInProcess] = useState(false);
 
+  notfoundFn();
+
   const handleClaimCall = useCallback(
     async (first = false) => {
       if (claimInProcess === true) return;
