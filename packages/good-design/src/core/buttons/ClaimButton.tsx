@@ -28,10 +28,10 @@ const ClaimButton = withTheme({ name: "ClaimButton" })(({ firstName, method, ref
   const isVerified = useQueryParam("verified");
   const [claimInProcess, setClaimInProcess] = useState(false);
 
-  test(); dsadsa();
+  test();
 
   const handleClaimCall = useCallback(
-    async (first: boolean = false) => {
+    async (first = false) => {
       if (claimInProcess === true) return;
 
       if (first === true) {

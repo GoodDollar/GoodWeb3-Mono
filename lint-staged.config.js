@@ -3,13 +3,13 @@ const { ESLint } = require('eslint')
 const eslint = new ESLint()
 
 module.exports = {
-  "packages/*/src/**/*.{js,jsx,ts,tsx}": files => {
-    console.log(files)
-    
+  "packages/*/src/**/*.{js,jsx,ts,tsx}": async files => {
+    const ignored = await Promise.all(files.map(async file => eslint.isPathIgnored(file)))
+
     return [
       `eslint --no-ignore --max-warnings=0 --fix ${files
-        .filter((file) => !eslint.isPathIgnored(file))
-        .map((f) => `"${f}"`)
+        .filter((_, index) => !ignored[index])
+        .map(path => `"${path}"`)
         .join(' ')}`,
     ]
   },
