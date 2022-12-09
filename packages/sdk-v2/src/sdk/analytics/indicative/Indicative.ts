@@ -17,14 +17,14 @@ export class Indicative implements IAbstractProvider, IAnalyticsProvider {
   async initialize(appProps: IAppProps): Promise<boolean> {
     const { apiKey } = this.config;
 
-    if (!api) {
+    if (!api || !apiKey) {
       return false;
     }
 
-    const initialized = await api.initialize(apiKey!);
+    const initialized = await api.initialize(apiKey);
 
     if (initialized) {
-      api!.addProperties(omit(appProps, "$once"));
+      api.addProperties(omit(appProps, "$once"));
     }
 
     return initialized;
@@ -34,11 +34,19 @@ export class Indicative implements IAbstractProvider, IAnalyticsProvider {
     const { id, extra } = getUserProps(identifier, email, props);
     const { userProperty } = this.config;
 
-    api!.setUniqueID(id);
-    api!.addProperties({ [userProperty!]: extra });
+    if (!api) {
+      throw new Error('Indicative analytics not initialized!');
+    }
+
+    api.setUniqueID(id);
+    api.addProperties({ [userProperty!]: extra }); // eslint-disable-line @typescript-eslint/no-non-null-assertion
   }
 
   send(event: string, data?: object): void {
-    api!.buildEvent(event, data);
+    if (!api) {
+      throw new Error('Indicative analytics not initialized!');
+    }
+
+    api.buildEvent(event, data);
   }
 }

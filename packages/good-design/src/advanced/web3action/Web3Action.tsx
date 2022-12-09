@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState, ReactElement } from "react";
 import { HStack, Spinner, Heading } from "native-base";
 import { useEthers } from "@usedapp/core";
 import BaseButton, { BaseButtonProps } from "../../core/buttons/BaseButton";
@@ -42,11 +42,11 @@ export const Web3ActionButton = ({
   switchChain,
   web3Action,
   handleConnect
-}: Web3ActionProps): JSX.Element => {
+}: Web3ActionProps): ReactElement => {
   const { account, switchNetwork, chainId, activateBrowserWallet } = useEthers();
   const [runningFlow, setRunningFlow] = useState(false);
   const [actionText, setActionText] = useState("");
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const timerRef = useRef<any>(null);
 
   const resetText = useCallback(() => setActionText(""), []);
 

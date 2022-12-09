@@ -1,4 +1,3 @@
-import { noop as _ } from "lodash";
 import { QueryParams } from "@usedapp/core";
 import useAppState from "./useAppState";
 

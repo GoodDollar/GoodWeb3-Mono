@@ -1,10 +1,10 @@
-import React from "react";
 import { Button, IButtonProps } from "native-base";
+import React from "react";
 import { withTheme } from "../../theme/hoc/withTheme";
 
 interface IBasicButtonProps extends IButtonProps {
   text: string;
-  onPress: () => {};
+  onPress: () => void;
 }
 
 const ActionButton = withTheme({ name: "ActionButton" })(({ text, ...props }: IBasicButtonProps) => (

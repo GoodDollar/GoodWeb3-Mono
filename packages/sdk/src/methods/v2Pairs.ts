@@ -45,20 +45,17 @@ export async function v2Pairs(chainId: SupportedChainId, currencies: Array<[Curr
   }, new Map() as Map<string, [Token, Token]>)
 
   const promises = []
+
   for (const address of pairAddresses.keys()) {
-    promises.push(new Promise(async (resolve, reject) => {
-      try {
-        const data = await PairContract(chainId, address).getReserves()
-        const [tokenA, tokenB] = pairAddresses.get(address)!
-        resolve({ ...data, tokenA, tokenB })
-        resolve({tokenA, tokenB})
-      } catch (e) {
-        reject(e)
-      }
+    promises.push(PairContract(chainId, address).getReserves().then((data: any) => {
+      const [tokenA, tokenB] = pairAddresses.get(address)!
+
+      return { ...data, tokenA, tokenB }
     }))
   }
 
   const result = await Promise.allSettled(promises)
+  
   const pairs = result.filter((pair): pair is PromiseFulfilledResult<Response> => pair.status === 'fulfilled').map(pair => pair.value)
 
   return pairs.map((pair) => {

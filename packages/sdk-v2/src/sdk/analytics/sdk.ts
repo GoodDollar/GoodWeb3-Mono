@@ -52,8 +52,8 @@ export class Analytics implements IAbstractProvider, IAnalyticsProvider, IMonito
           return;
         }
 
-        const provider = new ProviderClass(config);
-        const initialized = await provider.initialize!(appProps);
+        const provider = new ProviderClass(config);        
+        const initialized = await provider.initialize!(appProps); // eslint-disable-line @typescript-eslint/no-non-null-assertion 
 
         if (!initialized) {
           return;
@@ -73,6 +73,7 @@ export class Analytics implements IAbstractProvider, IAnalyticsProvider, IMonito
     }
 
     for (const provider of this.providers) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       provider.identify!(identifier, email, props);
     }
   }

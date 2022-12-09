@@ -9,6 +9,7 @@ import { LIQUIDITY_PROTOCOL } from 'constants/protocols'
 import { CurrencyAmount, Fraction } from '@uniswap/sdk-core'
 import { useEnvWeb3 } from '../useEnvWeb3'
 import { getNetworkEnv } from 'constants/addresses'
+import { noop } from 'lodash'
 
 export const useGovernanceStaking = (activeWeb3?: any, chainId?: number): Array<Stake> => {
     const [mainnetWeb3, mainnetChainId] = useEnvWeb3(DAO_NETWORK.MAINNET, activeWeb3, chainId)
@@ -54,36 +55,9 @@ export const useGovernanceStaking = (activeWeb3?: any, chainId?: number): Array<
                 setStakes([stakeData])
             }
         }
-        readData()
+        
+        readData().catch(noop)
     }, [stakingContract, setStakes, mainnetWeb3, mainnetChainId])
-    // const [balance, setBalance] = useState<string>('0')
+    
     return stakes
-    // const masterChefV2Contract = useMasterChefV2Contract()
-    // const currentBlockNumber = useBlockNumber()
-
-    // const fetchPending = useCallback(async () => {
-    //     const rewarderAddress = await masterChefV2Contract?.rewarder('0')
-    //     const rewarderContract = await getContract(
-    //         rewarderAddress ? rewarderAddress : undefined,
-    //         ALCX_REWARDER_ABI,
-    //         library!,
-    //         undefined
-    //     )
-    //     const pending = await rewarderContract?.pendingTokens(pid, account, '0')
-    //     // todo: do not assume [0] or that rewardToken has 18 decimals
-    //     const formatted = Fraction.from(BigNumber.from(pending?.rewardAmounts[0]), BigNumber.from(10).pow(18)).toString(
-    //         18
-    //     )
-    //     //console.log('pending:', pending)
-    //     setBalance(formatted)
-    // }, [masterChefV2Contract, library, pid, account])
-
-    // useEffect(() => {
-    //     if (account && masterChefV2Contract && String(pid) && library) {
-    //         // pid = 0 is evaluated as false
-    //         fetchPending()
-    //     }
-    // }, [account, currentBlockNumber, fetchPending, masterChefV2Contract, pid, library])
-
-    // return balance
 }

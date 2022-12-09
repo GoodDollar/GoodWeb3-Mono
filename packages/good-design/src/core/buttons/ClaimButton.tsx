@@ -9,6 +9,7 @@ import { Web3ActionButton } from "../../advanced";
 import { useFVModalAction } from "../../hooks/useFVModalAction";
 import ActionButton from "./ActionButton";
 import { useModal } from "../../hooks/useModal";
+import { noop } from "lodash";
 
 export interface FVFlowProps {
   firstName: string;
@@ -28,7 +29,7 @@ const ClaimButton = withTheme({ name: "ClaimButton" })(({ firstName, method, ref
   const [claimInProcess, setClaimInProcess] = useState(false);
 
   const handleClaimCall = useCallback(
-    async (first: boolean = false) => {
+    async (first = false) => {
       if (claimInProcess === true) return;
 
       if (first === true) {
@@ -46,7 +47,7 @@ const ClaimButton = withTheme({ name: "ClaimButton" })(({ firstName, method, ref
 
   const handleClaim = useCallback(async () => {
     if (isWhitelisted || isVerified) {
-      handleClaimCall();
+      handleClaimCall().catch(noop);
       return;
     }
 
@@ -81,7 +82,7 @@ const ClaimButton = withTheme({ name: "ClaimButton" })(({ firstName, method, ref
 
     if (!isVerified || claimAmount.toNumber() <= 0) return;
 
-    onFirstClaim();
+    onFirstClaim().catch(noop);
   }, [isVerified, claimAmount, handleClaimCall]);
 
   return (

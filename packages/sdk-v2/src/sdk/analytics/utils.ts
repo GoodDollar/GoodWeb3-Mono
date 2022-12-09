@@ -11,7 +11,7 @@ export function supportsMonitoring(provider: IProvider): provider is IMonitoring
 }
 
 export function getUserProps(identifier: string | number, email?: string, props?: object): IUserProps {
-  const id: string = String(identifier || email)
+  const id = String(identifier || email)
   const extra = assign(pickBy({ email }), props || {})
 
   return { id, extra }

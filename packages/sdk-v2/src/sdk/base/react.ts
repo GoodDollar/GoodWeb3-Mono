@@ -32,15 +32,12 @@ export const useReadOnlySDK = (type: SdkTypes, requiredChainId?: number): Reques
 export const useGetEnvChainId = (requiredChainId?: number) => {
   const { chainId } = useEthers();
   const web3Context = useContext(Web3Context);
-  let baseEnv = web3Context.env || "";
+  const baseEnv = web3Context.env || "";
   let connectedEnv = baseEnv;
 
   switch (requiredChainId ?? chainId) {
     case 1:
       connectedEnv = "production-mainnet"; // temp untill dev contracts are released to goerli
-      break;
-    case 122:
-      connectedEnv = connectedEnv;
       break;
     case 42220:
       connectedEnv = connectedEnv === "fuse" ? "development-celo" : connectedEnv + "-celo";
@@ -48,6 +45,7 @@ export const useGetEnvChainId = (requiredChainId?: number) => {
   }
 
   const defaultEnv = connectedEnv;
+  
   return {
     chainId: Number((Contracts[defaultEnv as keyof typeof Contracts] as EnvValue)?.networkId),
     defaultEnv,
@@ -59,7 +57,7 @@ export const useGetEnvChainId = (requiredChainId?: number) => {
 
 export const useGetContract = (
   contractName: string,
-  readOnly: boolean = false,
+  readOnly = false,
   type: SdkTypes = "base",
   requiredChainId?: number
 ) => {
@@ -109,7 +107,7 @@ function sdkFactory(
 }
 
 export const useSDK = (
-  readOnly: boolean = false,
+  readOnly = false,
   type: SdkTypes = "base",
   requiredChainId?: number | undefined
 ): RequestedSdk["sdk"] => {
@@ -161,7 +159,7 @@ export function useG$Balance(refresh: QueryParams["refresh"] = "never") {
   const refreshOrNever = useRefreshOrNever(refresh);
   const { account } = useEthers();
 
-  const { chainId, defaultEnv, baseEnv } = useGetEnvChainId();
+  const { chainId } = useGetEnvChainId();
   const { g$, good, gdx } = useG$Tokens();
 
   const g$Contract = useGetContract("GoodDollar", true, "base") as IGoodDollar;
@@ -198,7 +196,7 @@ export function useG$Balance(refresh: QueryParams["refresh"] = "never") {
     { refresh: refreshOrNever, chainId: SupportedChains.MAINNET as unknown as ChainId }
   );
 
-  let balances: G$Balances = {
+  const balances: G$Balances = {
     G$: undefined,
     GOOD: undefined,
     GDX: undefined
