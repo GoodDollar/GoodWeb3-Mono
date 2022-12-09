@@ -1,5 +1,5 @@
-import React, { useEffect, useCallback, useMemo } from "react";
-import { SupportedChains, useClaim } from "@gooddollar/web3sdk-v2";
+import React, { useEffect, useCallback, useMemo, useState } from "react";
+import { AsyncStorage, SupportedChains, useClaim } from "@gooddollar/web3sdk-v2";
 import { Text, View, IModalProps, Spinner } from "native-base";
 
 import { useQueryParam } from "../../hooks/useQueryParam";
@@ -21,20 +21,38 @@ export interface FVFlowProps {
 export type FVModalProps = IModalProps & FVFlowProps;
 
 const ClaimButton = withTheme({ name: "ClaimButton" })(({ firstName, method, refresh, ...props }: FVFlowProps) => {
-  const { Modal: FirstClaimModal, showModal: showFirstClaimModal } = useModal();
+  const { Modal: FirstClaimModal, showModal: showFirstClaimModal, hideModal: hideFirstClaimModal } = useModal();
   const { Modal: FVModal, showModal: showFVModal, hideModal: hideFVModal } = useModal();
   const { loading, verify } = useFVModalAction({ firstName, method, onClose: hideFVModal });
   const { isWhitelisted, claimAmount, claimTime, claimCall } = useClaim(refresh);
   const isVerified = useQueryParam("verified");
+  const [claimInProcess, setClaimInProcess] = useState(false);
+
+  const handleClaimCall = useCallback(
+    async (first: boolean = false) => {
+      if (claimInProcess === true) return;
+
+      if (first === true) {
+        showFirstClaimModal();
+      }
+
+      setClaimInProcess(true);
+      await claimCall.send().finally(() => {
+        setClaimInProcess(false);
+        hideFirstClaimModal();
+      });
+    },
+    [claimCall, showFirstClaimModal, hideFirstClaimModal, setClaimInProcess]
+  );
 
   const handleClaim = useCallback(async () => {
     if (isWhitelisted || isVerified) {
-      await claimCall.send();
+      handleClaimCall().catch(noop);
       return;
     }
 
     showFVModal();
-  }, [isWhitelisted, showFVModal, claimCall]);
+  }, [isWhitelisted, handleClaimCall, showFVModal]);
 
   const buttonTitle = useMemo(() => {
     if (!isWhitelisted) {
@@ -48,16 +66,33 @@ const ClaimButton = withTheme({ name: "ClaimButton" })(({ firstName, method, ref
     return `Claim at: ${claimTime}`;
   }, [isWhitelisted, claimAmount, claimTime]);
 
+  const claimButtonDisabled = useMemo(
+    () => claimAmount.toNumber() <= 0 || claimInProcess === true,
+    [claimAmount, claimInProcess]
+  );
+
   useEffect(() => {
+    const onFirstClaim = async () => {
+      const claimedBefore = await AsyncStorage.getItem("claimed_gd");
+      if (claimedBefore === true) return;
+
+      await AsyncStorage.setItem("claimed_gd", true);
+      await handleClaimCall(true);
+    };
+
     if (!isVerified || claimAmount.toNumber() <= 0) return;
 
-    claimCall.send().catch(noop);
-    showFirstClaimModal();
-  }, [isVerified, claimAmount, showFirstClaimModal]);
+    onFirstClaim().catch(noop);
+  }, [isVerified, claimAmount, handleClaimCall]);
 
   return (
     <View justifyContent="center" px={4} {...props}>
-      <Web3ActionButton text={buttonTitle} requiredChain={SupportedChains.FUSE} web3Action={handleClaim} />
+      <Web3ActionButton
+        text={buttonTitle}
+        requiredChain={SupportedChains.FUSE}
+        web3Action={handleClaim}
+        disabled={claimButtonDisabled}
+      />
       <FVModal
         body={
           <>

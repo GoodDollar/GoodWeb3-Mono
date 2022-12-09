@@ -43,7 +43,7 @@ module.exports = {
     "/packages/*/types/**/*.d.ts",
     "/packages/*/src/types/**/*.d.ts",
     "/packages/*/src/stories/**/*.*",
-    "/packages/*/src/**/*.test.[jt]s*",    
+    "/packages/*/src/**/*.test.{js,jsx,ts,tsx}",    
     "/packages/*/*.config.js",
   ],
 };
