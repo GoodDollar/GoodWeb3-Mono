@@ -40,20 +40,10 @@ export const Envs: { [key: EnvKey]: { [key: string]: string } } = {
     identityUrl: "https://goodid-qa.vercel.app",
     backend: "https://goodserver-qa.herokuapp.com"
   },
-  fuse: {
+  development: {
     dappUrl: "https://gooddev.netlify.app",
     identityUrl: "https://goodid-dev.vercel.app",
     backend: "https://good-server.herokuapp.com"
-  },
-  "development-celo": {
-    dappUrl: "https://gooddev.netlify.app",
-    identityUrl: "https://goodid-dev.vercel.app",
-    backend: "https://good-server.herokuapp.com"
-  },
-  "staging-celo": {
-    dappUrl: "https://goodqa.netlify.app",
-    identityUrl: "https://goodid-qa.vercel.app",
-    backend: "https://goodserver-qa.herokuapp.com"
   }
 };
 

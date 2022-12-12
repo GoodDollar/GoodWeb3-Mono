@@ -1,21 +1,17 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { useTokenBalance, TransactionStatus, useEthers } from "@usedapp/core";
 import {
   G$,
-  SupportedChains,
-  useGetEnvChainId,
-  useRefreshOrNever,
-  useBridge,
-  useBridgeHistory,
-  useRelayTx,
-  useWithinBridgeLimits,
-  useGetBridgeData
+  SupportedChains, useBridge,
+  useBridgeHistory, useGetBridgeData, useGetEnvChainId,
+  useRefreshOrNever, useRelayTx,
+  useWithinBridgeLimits
 } from "@gooddollar/web3sdk-v2";
-import { MicroBridge } from "./MicroBridge";
+import { useEthers, useTokenBalance } from "@usedapp/core";
 import { sortBy } from "lodash";
-import { Box, Button, Flex, Heading, HStack, Text, ArrowForwardIcon, Stack } from "native-base";
-import { useSignWalletModal } from "../../hooks/useSignWalletModal";
+import { ArrowForwardIcon, Box, Button, Flex, Heading, HStack, Stack, Text } from "native-base";
+import React, { useCallback, useState } from "react";
 import { ExplorerLink } from "../../core/web3/ExplorerLink";
+import { useSignWalletModal } from "../../hooks/useSignWalletModal";
+import { MicroBridge } from "./MicroBridge";
 
 export const useBalanceHook = (chain: string) => {
   const env = useGetEnvChainId(chain === "fuse" ? SupportedChains.FUSE : SupportedChains.CELO);

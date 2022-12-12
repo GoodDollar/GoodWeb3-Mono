@@ -1,8 +1,10 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
 import { JsonRpcProvider, Web3Provider as W3Provider } from "@ethersproject/providers";
-import { DAppProvider, Config, Chain, Mainnet, useEthers, Goerli } from "@usedapp/core";
+import { Chain, Config, DAppProvider, Goerli, Mainnet, useEthers } from "@usedapp/core";
 import EventEmitter from "eventemitter3";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { EnvKey } from "../sdk/base/sdk";
+import { noop } from 'lodash';
+
 /**
  * request to switch to network id
  * returns void if no result yet true/false if success
@@ -42,7 +44,7 @@ export const txEmitter = {
 
 export const Web3Context = React.createContext<IWeb3Context>({
   switchNetwork: undefined,
-  setSwitchNetwork: (cb: SwitchNetwork) => undefined,
+  setSwitchNetwork: (cb: SwitchNetwork) => undefined, // eslint-disable-line @typescript-eslint/no-unused-vars
   connectWallet: () => undefined,
   txEmitter,
   env: "production"
@@ -98,18 +100,20 @@ const getMulticall2Addresses = (networks: Chain[] | undefined) => {
 };
 
 const Web3Connector = ({ web3Provider }: { web3Provider: JsonRpcProvider | void }) => {
-  const { activate, deactivate, activateBrowserWallet, switchNetwork } = useEthers();
+  const { activate, deactivate } = useEthers();
+
   useEffect(() => {
     if (web3Provider) {
-      activate(web3Provider);
+      activate(web3Provider).catch(noop);
     }
-    return () => deactivate();
+    
+    return deactivate;
   }, [web3Provider]);
 
   return null;
 };
 
-export const Web3Provider = ({ children, config, web3Provider, switchNetworkRequest, env = "production" }: Props) => {
+export const Web3Provider = ({ children, config, web3Provider, env = "production" }: Props) => {
   const [switchNetwork, setSwitchNetwork] = useState<SwitchNetwork>();
   const [onSwitchNetwork, setOnSwitchNetwork] = useState<SwitchCallback>();
 
