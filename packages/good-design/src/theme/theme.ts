@@ -11,6 +11,9 @@ export const theme = extendTheme({
     main: "#00AEFF",
     buttonBackground: "#40C4FFCC"
   },
+  sizes: {
+    md: '200px'
+  },
   fontConfig: {},
   fonts: {},
   components: {
