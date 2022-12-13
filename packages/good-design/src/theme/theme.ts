@@ -19,6 +19,9 @@ export const theme = extendTheme({
     "grey-card": "#F6F8FA",
     "grey-section": "#F5F5F5"
   },
+  sizes: {
+    md: '200px'
+  },
   fontConfig: {},
   fonts: {},
   components: {

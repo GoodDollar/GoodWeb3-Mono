@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback, useMemo, useState } from "react";
 import { AsyncStorage, SupportedChains, useClaim } from "@gooddollar/web3sdk-v2";
-import { Text, View, Spinner } from "native-base";
+import { Text, View, Spinner, useColorModeValue } from "native-base";
 import { noop } from "lodash";
 
 import { useQueryParam } from "../../hooks/useQueryParam";
@@ -18,8 +18,9 @@ const ClaimButton = withTheme({ name: "ClaimButton" })(({ firstName, method, ref
   const { Modal: FVModal, showModal: showFVModal, hideModal: hideFVModal } = useModal();
   const { loading, verify } = useFVModalAction({ firstName, method, onClose: hideFVModal });
   const { isWhitelisted, claimAmount, claimTime, claimCall } = useClaim(refresh);
-  const isVerified = useQueryParam("verified");
   const [claimInProcess, setClaimInProcess] = useState(false);
+  const isVerified = useQueryParam("verified");
+  const textColor = useColorModeValue("paragraph", "white");
 
   const handleClaimCall = useCallback(
     async (first = false) => {
@@ -81,25 +82,25 @@ const ClaimButton = withTheme({ name: "ClaimButton" })(({ firstName, method, ref
 
   return (
     <View flex={1} w="full" {...props}>
-      <View w="full" alignItems="center" pt="46px" pb="90px">
+      <View w="full" alignItems="center" pt="11.5" pb="22.5">
         <Web3ActionButton
           text={buttonTitle}
           requiredChain={SupportedChains.FUSE}
           web3Action={handleClaim}
           disabled={claimButtonDisabled}
-          w="200px"
-          h="200px"
-          px="10px"
+          w="md"
+          h="md"
+          px="2.5"
           borderRadius="50%"
           bg="buttonBackground"
           innerText={{
-            fontSize: "20px",
-            fontWeight: "700",
+            fontSize: "xl",
+            fontWeight: "bold",
             color: "white"
           }}
           innerIndicatorText={{
             color: "white",
-            fontSize: "14px"
+            fontSize: "sm"
           }}
         />
       </View>
@@ -108,13 +109,13 @@ const ClaimButton = withTheme({ name: "ClaimButton" })(({ firstName, method, ref
         header={<Title>Verify Uniqueness</Title>}
         body={
           <>
-            <Text color={"paragraph"} mb="8px">
+            <Text color={textColor} mb="2">
               To verify your identity you need to sign TWICE with your wallet.
             </Text>
-            <Text color={"paragraph"} mb="8px">
+            <Text color={textColor} mb="2">
               First sign your address to be whitelisted
             </Text>
-            <Text color={"paragraph"} mb="8px">
+            <Text color={textColor} mb="2">
               Second sign your self sovereign anonymized identifier, so no link is kept between your identity record and
               your address.
             </Text>
