@@ -91,10 +91,9 @@ module.exports = {
     const filtered = files.filter((_, index) => !ignored[index]);
     const tscCommands = prepareTscCommands(files)
 
-    console.log(tscCommands)
-
     return [
       `eslint --no-ignore --max-warnings=0 --fix ${filtered.map(path => `"${path}"`).join(' ')}`,
+      ...tscCommands,
     ]
   },
 }
