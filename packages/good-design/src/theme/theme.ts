@@ -14,13 +14,15 @@ export const theme = extendTheme({
     "heading-grey": "999",
     //default colors
     main: "#00AEFF",
+    "main-dark": "#151a30",
+    "main-dark-contrast": "#1a1f38",
     buttonBackground: "#40C4FFCC",
     // cards
     "grey-card": "#F6F8FA",
     "grey-section": "#F5F5F5"
   },
   sizes: {
-    md: '200px'
+    md: "200px"
   },
   fontConfig: {},
   fonts: {},

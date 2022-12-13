@@ -1,5 +1,5 @@
 import { noop } from "lodash";
-import { Button, Modal as NBModal } from "native-base";
+import { Button, Modal as NBModal, useColorModeValue } from "native-base";
 import React, { FC, ReactNode, useCallback } from "react";
 
 export interface BasicModalProps {
@@ -39,10 +39,10 @@ export const BasicModal: FC<BasicModalProps> = ({
   }, [onAction, onClose]);
 
   const actionButton = actionText ? <Button onPress={onActionButtonPress}>{actionText}</Button> : <React.Fragment />;
-
+  const backgroundColor = useColorModeValue("white", "main-dark-contrast");
   return (
     /* height 100vh is required so modal always shows in the middle */
-    <NBModal isOpen={modalVisible} onClose={onClose} {..._modal} minH="100vh">
+    <NBModal isOpen={modalVisible} onClose={onClose} {..._modal} minH="100vh" bgColor={backgroundColor}>
       <NBModal.Content>
         {hasCloseButton && <NBModal.CloseButton />}
         <NBModal.Header {..._header}>{header}</NBModal.Header>
