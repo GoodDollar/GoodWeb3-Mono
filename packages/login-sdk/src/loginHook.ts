@@ -47,7 +47,5 @@ export const useLogin = (props: LoginProps): (() => void) => {
     }
   }, []);
 
-  test();
-
   return onClick;
 };

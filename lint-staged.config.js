@@ -56,6 +56,31 @@ function loadTsOpts() {
   return tsOpts
 }
 
+function prepareTscCommands(files) {
+  const toCompile = {}
+
+  for (const file of files) {
+    const [, package] = packageRe.exec(file)
+
+    if (!(package in tsOpts)) {
+      continue
+    }
+
+    if (!(package in toCompile)) {
+      toCompile[package] = []
+    }
+
+    toCompile[package].push(file)
+  }
+
+  return Object.keys(toCompile).map(package => {
+    const files = toCompile[package]
+    const opts = tsOpts[package]
+
+    return `tsc ${opts} ${files.join(' ')}`
+  })
+}
+
 const packageRe = /packages\/(.+?)\//i
 const eslint = new ESLint()
 const tsOpts = loadTsOpts()
@@ -64,9 +89,9 @@ module.exports = {
   "packages/*/src/**/*.{js,jsx,ts,tsx}": async files => {
     const ignored = await Promise.all(files.map(async file => eslint.isPathIgnored(file)))
     const filtered = files.filter((_, index) => !ignored[index]);
-    //const [, package] = packageRe.exec()
+    const tscCommands = prepareTscCommands(files)
 
-    console.log(files)
+    console.log(tscCommands)
 
     return [
       `eslint --no-ignore --max-warnings=0 --fix ${filtered.map(path => `"${path}"`).join(' ')}`,
