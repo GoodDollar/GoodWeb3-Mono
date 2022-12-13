@@ -1,7 +1,7 @@
 import { useCallback, useRef } from 'react'
 import { restart } from './useAppRestart.api'
 
-let isRestarting: boolean = false
+let isRestarting = false
 
 export default function useAppRestart(): typeof restart {
   const restartingRef = useRef(isRestarting)

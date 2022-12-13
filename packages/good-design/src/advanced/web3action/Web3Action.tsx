@@ -49,7 +49,7 @@ export const Web3ActionButton = ({
   const { account, switchNetwork, chainId, activateBrowserWallet } = useEthers();
   const [runningFlow, setRunningFlow] = useState(false);
   const [actionText, setActionText] = useState("");
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const timerRef = useRef<any>(null);
 
   const resetText = useCallback(() => setActionText(""), []);
 

@@ -1,11 +1,11 @@
-import React, { useCallback, useEffect, useMemo, useRef } from "react";
-import { useConfig, Call, RawCall, Falsy, QueryParams } from "@usedapp/core";
+import { Call, Falsy, QueryParams, RawCall, useConfig } from "@usedapp/core";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 
-import { JsonRpcProvider, BaseProvider } from "@ethersproject/providers";
-import { BigNumber } from "@ethersproject/bignumber";
-import { Contract } from "ethers";
 import { Result } from "@ethersproject/abi";
-import { Provider } from "@ethersproject/providers";
+import { BigNumber } from "@ethersproject/bignumber";
+import { BaseProvider, JsonRpcProvider, Provider } from "@ethersproject/providers";
+import { Contract } from "ethers";
+import { noop } from "lodash";
 
 const ABI = [
   "function aggregate(tuple(address target, bytes callData)[] calls) view returns (uint256 blockNumber, bytes[] returnData)"
@@ -16,7 +16,7 @@ const ABI2 = [
 
 export type CallsResult = Array<
   RawCall & {
-    success: Boolean;
+    success: boolean;
     value: string;
     decoded?: Result;
   }
@@ -72,19 +72,24 @@ export const useReadOnlyProvider = (chainId: number) => {
   const { readOnlyUrls, pollingInterval } = useConfig();
 
   const provider = useMemo<JsonRpcProvider | undefined>(() => {
-    if (readOnlyUrls && readOnlyUrls[chainId]) {
-      switch (true) {
-        case readOnlyUrls[chainId] instanceof BaseProvider:
-          return readOnlyUrls[chainId] as JsonRpcProvider;
-        case typeof readOnlyUrls[chainId] === "function":
-          return (readOnlyUrls[chainId] as any)() as JsonRpcProvider;
-        default:
-        case typeof readOnlyUrls[chainId] === "string":
-          const provider = new JsonRpcProvider(readOnlyUrls[chainId] as any);
-          provider.pollingInterval = pollingInterval;
-          return provider;
-      }
+    if (!readOnlyUrls || !readOnlyUrls[chainId]) {
+      return;
     }
+
+    const factory = readOnlyUrls[chainId];
+
+    if (factory instanceof BaseProvider) {
+      return factory as JsonRpcProvider;
+    }
+
+    if (typeof factory === "function") {
+      return (factory as any)() as JsonRpcProvider;
+    }
+
+    const provider = new JsonRpcProvider(factory as any);
+
+    provider.pollingInterval = pollingInterval;
+    return provider;
   }, [readOnlyUrls, pollingInterval, chainId]);
 
   return provider;
@@ -147,9 +152,10 @@ export const useMulticallAtChain = (chainId: number) => {
   const _resolve = useCallback(
     async (calls: Call[], blockNumber?: number) => {
       const multiAddr =
-        multicallAddresses && Object.entries(multicallAddresses).find(([k, v]) => k === String(chainId));
+        multicallAddresses && Object.entries(multicallAddresses).find(([k]) => k === String(chainId));
+
       if (provider && multiAddr) {
-        // console.log({ provider, multiAddr, calls })
+        
         const method = multicallVersion === 1 ? multicall : multicall2;
         const address = multiAddr[1];
         const rawcalls = calls.map(call => encodeCallData(call, chainId)).filter(Boolean) as RawCall[];
@@ -168,13 +174,15 @@ export const useMulticallAtChain = (chainId: number) => {
   const callMulti = useCallback(
     async (calls: Call[], blockNumber?: number) => {
       if (!provider) {
-        const p = new Promise<CallsResult | undefined>((res, rej) => {
+        const p = new Promise<CallsResult | undefined>(res => {
           pendingCalls.current.calls = pendingCalls.current.calls.concat(calls);
           pendingCalls.current.resolve = res;
           pendingCalls.current.blockNumber = blockNumber;
         });
+
         return p;
       }
+      
       return _resolve(calls, blockNumber);
     },
     [provider]
@@ -188,8 +196,9 @@ export const useMulticallAtChain = (chainId: number) => {
       const calls = pendingCalls.current.calls;
       const resolve = pendingCalls.current.resolve;
       const bn = pendingCalls.current.blockNumber;
+
       pendingCalls.current = { calls: [] };
-      _resolve(calls, bn).then(r => resolve(r));
+      _resolve(calls, bn).then(resolve).catch(noop);
     }
   }, [provider]);
 

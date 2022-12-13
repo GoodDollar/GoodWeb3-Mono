@@ -48,6 +48,7 @@ class DataLayer implements IGoogleAPI {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 const GoogleAPIFactory = (config: IGoogleConfig) => !dataLayer ? null : new DataLayer(config.userProperty!);
 
 export default GoogleAPIFactory;

@@ -110,6 +110,9 @@ const ClaimButton = ({ address, firstName }: PageProps) => {
   return (
     <View>
       <View style={styles.container}>
+        <Text>isWhitelisted: {String(isWhitelisted)}</Text>
+        <Text>Claim time: {claimTime.toString()}</Text>
+        <Text>Claim amount: {claimAmount.toString()}</Text>
         <FVModal visible={showModal} onRequestClose={() => setShowModal(false)} firstName={firstName}></FVModal>
       </View>
       <Button title={buttonTitle()} onPress={handleClaim}></Button>

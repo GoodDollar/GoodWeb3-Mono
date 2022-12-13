@@ -1,8 +1,8 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useEthers } from "@usedapp/core";
-import { useSwitchNetwork, Web3Context } from "../contexts/Web3Context";
+import { useCallback, useEffect, useState } from "react";
+import { useSwitchNetwork } from "../contexts/Web3Context";
 
-type Props = { chainId: number; onPress: Function };
+type Props = { chainId: number; onPress: () => void; };
 
 export const usePressOrSwitchChain = (props: Props) => {
   const [trigger, setTrigger] = useState(false);

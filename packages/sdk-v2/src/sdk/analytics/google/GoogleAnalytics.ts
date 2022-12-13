@@ -19,7 +19,7 @@ export class GoogleAnalytics implements IAbstractProvider, IAnalyticsProvider {
     const initialized = !!api;
 
     if (initialized) {
-      api!.setDefaultEventParams(omit(appProps, "$once"));
+      api.setDefaultEventParams(omit(appProps, "$once"));
     }
 
     return initialized;
@@ -29,12 +29,21 @@ export class GoogleAnalytics implements IAbstractProvider, IAnalyticsProvider {
     const { api } = this;
     const { id, extra } = getUserProps(identifier, email, props);
 
-    api!.setUserId(id);
-    api!.setUserProperties(extra);
+    if (!api) {
+      throw new Error('GoogleAnalytics not initialized!');
+    }
+
+    api.setUserId(id);
+    api.setUserProperties(extra);
   }
 
   send(event: string, data?: object): void {
     const { api } = this;
-    api!.logEvent(event, data);
+
+    if (!api) {
+      throw new Error('GoogleAnalytics not initialized!');
+    }
+    
+    api.logEvent(event, data);
   }
 }
