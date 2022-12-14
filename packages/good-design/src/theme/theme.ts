@@ -2,6 +2,7 @@ import { extendTheme } from "native-base";
 
 import * as layout from "../core/layout/theme";
 import * as buttons from "../core/buttons/theme";
+import * as modals from "../core/modals/theme";
 
 export const theme = extendTheme({
   config: {},
@@ -24,15 +25,14 @@ export const theme = extendTheme({
     "light-grey": "#636363",
   },
   sizes: {
-    "19": "76px",
-    "50": "200px",
-    "67": "268px"
+    "md": "200px",
   },
   fontConfig: {},
   fonts: {},
   components: {
     ...layout,
-    ...buttons
+    ...buttons,
+    ...modals
   }
 });
 
