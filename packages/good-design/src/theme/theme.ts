@@ -19,7 +19,9 @@ export const theme = extendTheme({
     buttonBackground: "#40C4FFCC",
     // cards
     "grey-card": "#F6F8FA",
-    "grey-section": "#F5F5F5"
+    "smoke-white": "#F5F5F5",
+    "grey": "#FFFFFF20",
+    "light-grey": "#636363",
   },
   sizes: {
     md: "200px"

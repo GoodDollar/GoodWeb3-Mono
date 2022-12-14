@@ -44,14 +44,19 @@ const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards }) => {
         horizontal
         onScroll={onScroll}
         scrollEventThrottle={16}
+        mt={8}
+        contentContainerStyle={{
+          flex: 1,
+          justifyContent: 'space-between',
+        }}
         showsHorizontalScrollIndicator={false}
         onLayout={onFlatListLayoutChange}
         getItemLayout={(_, index) => ({ index, length: 275, offset: (275 + 16) * index })}
         renderItem={({ item, index }) => {
           const isOdd = index % 2 === 0;
-          const backgroundColor = isOdd ? "#F6F8FA" : "main";
+          const backgroundColor = isOdd ? "grey-card" : "main";
           const titleColor = isOdd ? "main" : "white";
-          const descriptionColor = isOdd ? "#636363" : "white";
+          const descriptionColor = isOdd ? "light-grey" : "white";
           return (
             <ClaimCard
               key={index}
@@ -62,21 +67,26 @@ const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards }) => {
             />
           );
         }}
-        ItemSeparatorComponent={() => <View w="16px" />}
+        ItemSeparatorComponent={() => <View w="4" />}
         pagingEnabled
       />
 
-      <View flexDirection="row" w="full" pt="20px" justifyContent="center">
+      <View
+        flexDirection="row"
+        w="full"
+        pt="5"
+        justifyContent="space-between"
+      >
         {Array(slidesNumber)
           .fill(0)
           .map((_, index, arr) => (
             <View
               key={index}
-              h="4px"
-              w="20px"
-              bg={index === activeSlide ? "main" : "#FFFFFF20"}
-              mr={index === arr.length - 1 ? "0" : "8px"}
-              borderRadius="2px"
+              h="1"
+              w="5"
+              bg={index === activeSlide ? "main" : "grey"}
+              mr={index === arr.length - 1 ? "0" : "2"}
+              borderRadius="0.5"
             />
           ))}
       </View>
