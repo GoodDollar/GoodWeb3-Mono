@@ -1,26 +1,20 @@
 module.exports = {
   root: true,
-  parser: '@typescript-eslint/parser',
+  parser: "@typescript-eslint/parser",
   env: {
-    "browser": true,
-    "node": true
+    browser: true,
+    node: true
   },
   extends: [
-    'eslint:recommended', 
-    'plugin:@typescript-eslint/recommended',
-    'plugin:@typescript-eslint/recommended-requiring-type-checking',
-    'prettier',
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/recommended-requiring-type-checking",
+    "prettier"
   ],
-  plugins: [
-    '@typescript-eslint', 
-    'prettier'
-  ],
+  plugins: ["@typescript-eslint", "prettier"],
   parserOptions: {
     tsconfigRootDir: __dirname,
-    project: [
-      './tsconfig.json',
-      './packages/*/tsconfig.json'
-    ],
+    project: ["./tsconfig.json", "./packages/*/tsconfig.json"]
   },
   rules: {
     "no-undef": "error",
@@ -37,15 +31,18 @@ module.exports = {
     "@typescript-eslint/require-await": "off",
     "@typescript-eslint/no-unnecessary-type-assertion": "off",
     "@typescript-eslint/ban-ts-comment": "off",
-    "@typescript-eslint/no-misused-promises": "off",
-  },  
+    "@typescript-eslint/no-misused-promises": "off"
+  },
+  globals: {
+    JSX: true
+  },
   ignorePatterns: [
     "/packages/*/dist/**/*.js",
     "/packages/*/types/**/*.d.ts",
     "/packages/*/src/types/**/*.d.ts",
     "/packages/*/src/stories/**/*.*",
-    "/packages/*/src/**/*.test.[jt]s*",    
+    "/packages/*/src/**/*.test.[jt]s*",
     "/packages/*/*.config.js",
-    "/*.config.js",
-  ],
+    "/*.config.js"
+  ]
 };

@@ -71,6 +71,7 @@ const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards }) => {
           const descriptionColor = isOdd ? "#636363" : "white";
           return (
             <ClaimCard
+              key={index}
               titleColor={titleColor}
               descriptionColor={descriptionColor}
               backgroundColor={backgroundColor}

@@ -40,7 +40,8 @@ export const useFaucet = async (refresh: QueryParams["refresh"] = 12) => {
 
   useEffect(() => {
     if (result?.value && account && balance && balance.lt(minBalance)) {
-      const { backend } = Envs[baseEnv];
+      const devEnv = baseEnv === "fuse" ? "development" : baseEnv;
+      const { backend } = Envs[devEnv];
 
       fetch(backend + "/verify/topWallet", {
         method: "POST",

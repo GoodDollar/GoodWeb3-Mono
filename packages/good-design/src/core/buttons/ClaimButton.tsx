@@ -22,7 +22,7 @@ const ClaimButton = ({ firstName, method, refresh, claimed, claim, ...props }: F
   const { isWhitelisted, claimAmount } = useClaim(refresh);
   const [firstClaim, setFirstClaim] = useState(false);
   const isVerified = useQueryParam("verified", true);
-  const textColor = useColorModeValue("text1", "white");
+  const textColor = useColorModeValue("paragraph", "white");
 
   const claimModalProps: Omit<BasicModalProps, "modalVisible"> = useMemo(
     () =>
@@ -95,8 +95,8 @@ const ClaimButton = ({ firstName, method, refresh, claimed, claim, ...props }: F
       return "Verify Uniqueness";
     }
 
-    return `CLAIM NOW`;
-  }, [isWhitelisted]);
+    return "Claim";
+  }, [isWhitelisted, claimAmount]);
 
   useEffect(() => {
     if (isVerified !== true || claimed || isWhitelisted === false || claimAmount.toNumber() <= 0) return;

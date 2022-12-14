@@ -63,7 +63,7 @@
   "dependencies": {
     "@babel/core": "^7.18.10",
     "@babel/runtime": "^7.18.9",
-    "@gooddollar/goodprotocol": "1.0.29-beta.4",
+    "@gooddollar/goodprotocol": "1.0.29-beta.5",
     "@lingui/macro": "^3.14.0",
     "@lingui/react": "^3.14.0",
     "@uniswap/sdk-core": "^3.1.0",
