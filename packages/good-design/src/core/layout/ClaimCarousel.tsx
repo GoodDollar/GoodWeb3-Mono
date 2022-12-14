@@ -1,5 +1,5 @@
 import { FlatList, View } from "native-base";
-import React, { FC, useCallback, useState } from "react";
+import React, { FC, useCallback, useMemo, useState } from "react";
 import { LayoutChangeEvent, NativeScrollEvent, NativeSyntheticEvent } from "react-native";
 import { IClaimCard } from "../buttons";
 import ClaimCard from "./ClaimCard";
@@ -37,6 +37,23 @@ const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards }) => {
     [activeSlide, setActiveSlide]
   );
 
+  const slidesComponent = useMemo(
+    () =>
+      Array(slidesNumber)
+        .fill(0)
+        .map((_, index, arr) => (
+          <View
+            key={index}
+            h="1"
+            w="5"
+            bg={index === activeSlide ? "main" : "#FFFFFF20"}
+            mr={index === arr.length - 1 ? "0" : "2"}
+            borderRadius={2}
+          />
+        )),
+    [slidesNumber, activeSlide]
+  );
+
   return (
     <>
       <FlatList
@@ -61,23 +78,12 @@ const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards }) => {
             />
           );
         }}
-        ItemSeparatorComponent={() => <View w="16px" />}
+        ItemSeparatorComponent={() => <View w="4" />}
         pagingEnabled
       />
 
-      <View flexDirection="row" w="full" pt="20px" justifyContent="center">
-        {Array(slidesNumber)
-          .fill(0)
-          .map((_, index, arr) => (
-            <View
-              key={index}
-              h="4px"
-              w="20px"
-              bg={index === activeSlide ? "main" : "#FFFFFF20"}
-              mr={index === arr.length - 1 ? "0" : "8px"}
-              borderRadius="2px"
-            />
-          ))}
+      <View flexDirection="row" w="full" pt="5" justifyContent="center">
+        {slidesComponent}
       </View>
     </>
   );

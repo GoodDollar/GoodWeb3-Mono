@@ -46,7 +46,7 @@ export const ClaimButtonWithThemeExample = () => {
   return (
     <DAppProvider config={config}>
       <Web3Provider env="fuse" web3Provider={provider} config={config}>
-        <ClaimButton firstName="Test2" method="popup" />
+        <ClaimButton firstName="Test2" method="popup" claim={async () => false} />
       </Web3Provider>
     </DAppProvider>
   );

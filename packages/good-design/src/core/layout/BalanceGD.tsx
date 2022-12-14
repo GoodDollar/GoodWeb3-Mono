@@ -1,23 +1,29 @@
 import React, { FC } from "react";
 import { Text, View } from "native-base";
+import { useG$Balance } from "@gooddollar/web3sdk-v2";
+import { Fraction } from "@uniswap/sdk-core";
 
 interface BalanceGDProps {
-  goodDollarBalance?: string;
-  dollarBalance?: string;
+  gdPrice?: Fraction;
 }
 
-const BalanceGD: FC<BalanceGDProps> = ({ goodDollarBalance, dollarBalance }) => {
+const BalanceGD: FC<BalanceGDProps> = ({ gdPrice }) => {
+  const { G$ } = useG$Balance("everyBlock");
+  const { amount } = G$ || {};
+
+  if (!amount || !gdPrice) return null;
+
   return (
-    <View w="full" flexDirection="column" alignItems="center" mb="80px" mt="45px">
-      <Text fontSize="16px" fontWeight="500" opacity={0.7} mb="2px">
+    <View w="full" flexDirection="column" alignItems="center" mb="20" mt="45">
+      <Text fontSize="md" fontWeight="medium" opacity={0.7} mb="0.5">
         YOUR BALANCE
       </Text>
-      <Text fontSize="32px" fontWeight="700">
-        {goodDollarBalance}
+      <Text fontSize="3xl" fontWeight="bold">
+        {amount.format({ suffix: "", prefix: amount.currency.ticker + " " })}
       </Text>
-      <Text fontSize="16px" fontWeight="500" opacity={0.7}>
+      <Text fontSize="md" fontWeight="medium" opacity={0.7}>
         {"("}
-        USD {dollarBalance}
+        USD {gdPrice.multiply(amount.format({ suffix: "", thousandSeparator: "" })).toFixed(2)}
         {")"}
       </Text>
     </View>

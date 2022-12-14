@@ -11,6 +11,11 @@ export const theme = extendTheme({
     main: "#00AEFF",
     buttonBackground: "#40C4FFCC"
   },
+  sizes: {
+    "19": "76px",
+    "50": "200px",
+    "67": "268px"
+  },
   fontConfig: {},
   fonts: {},
   components: {
@@ -23,5 +28,5 @@ export const theme = extendTheme({
 export type MyThemeType = typeof theme;
 
 declare module "native-base" {
-  type ICustomTheme = MyThemeType
+  type ICustomTheme = MyThemeType;
 }

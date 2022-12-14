@@ -4,8 +4,9 @@ export interface FVFlowProps {
   firstName: string;
   method: "popup" | "redirect";
   styles?: any;
+  claimed?: boolean;
   refresh?: "everyBlock" | "never" | number | undefined;
-  claim: () => Promise<void>;
+  claim: () => Promise<boolean>;
 }
 
 export type FVModalProps = IModalProps & FVFlowProps;

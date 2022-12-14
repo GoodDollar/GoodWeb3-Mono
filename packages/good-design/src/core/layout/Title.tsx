@@ -1,25 +1,21 @@
 import { ITextProps, Text } from "native-base";
-import { ColorType } from "native-base/lib/typescript/components/types";
 import React, { FC } from "react";
 import { withTheme } from "../../theme/hoc/withTheme";
 
-interface ITitleProps extends ITextProps {
-  color?: ColorType;
-}
-
-const Title: FC<ITitleProps> = withTheme({ name: "Title" })(({ children, color = "main", ...props }) => (
-  <Text color={color} fontWeight="700" fontStyle="normal" fontSize="34px" lineHeight="40px" {...props}>
-    {children}
-  </Text>
+const Title: FC<ITextProps> = withTheme({ name: "Title" })(({ children, ...props }) => (
+  <Text {...props}>{children}</Text>
 ));
 
 export const theme = {
+  defaultProps: {
+    color: "main"
+  },
   baseStyle: {
     fontStyle: "normal",
     fontWeight: "bold",
-    fontSize: 34,
-    lineHeight: 40,
-    letterSpacing: -0.02
+    fontSize: "4xl",
+    lineHeight: "xs",
+    letterSpacing: "sm"
   }
 };
 
