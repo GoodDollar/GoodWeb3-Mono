@@ -26,10 +26,9 @@ const ActionButton = withTheme({ name: "ActionButton" })(({ text, ...props }: IB
 export const theme = {
   defaultProps: {},
   baseStyle: {
-    fontStyle: "normal",
-    fontSize: 20,
-    lineHeight: "16px",
-    fontWeight: 900,
+    fontSize: "xl",
+    lineHeight: "2xs",
+    fontWeight: "black",
     textTransform: "capitalize",
     boxShadow: "3px 3px 10px -1px rgba(11, 27, 102, 0.304824)",
     backgroundColor: "#00B0FF",

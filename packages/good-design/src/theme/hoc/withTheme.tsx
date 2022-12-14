@@ -1,9 +1,9 @@
-import React, { FC, ReactElement } from "react";
+import React from "react";
 import { useThemeProps } from "native-base";
 
 export const withTheme =
   (options?: { name?: string }) =>
-  (Component: FC<any>): FC<any> => {
+  <T,>(Component: React.ComponentType<T>) => {
     const { name: defaultName } = Component;
     const id = options?.name ?? defaultName;
 
@@ -15,7 +15,7 @@ export const withTheme =
       );
     }
 
-    const Wrapped = function ({ children, ...props }: ReactElement & { children: any }) {
+    const Wrapped: React.ComponentType<T> = ({ children, ...props }) => {
       const themeProps = useThemeProps(id, props);
 
       // @ts-ignore

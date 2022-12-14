@@ -40,8 +40,7 @@ export const theme = {
         bg: bgHover
       },
       innerText: {
-        fontFamily: "normal",
-        fontWeight: "100",
+        fontWeight: "hairline",
         color: "white"
       }
     };

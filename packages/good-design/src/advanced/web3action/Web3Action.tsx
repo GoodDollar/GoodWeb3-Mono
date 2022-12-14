@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect, useRef, useState } from "react";
+import React, { FC, useCallback, useEffect, useRef, useState, ReactElement } from "react";
 import { HStack, Spinner, Heading, ITextProps } from "native-base";
 import { useEthers } from "@usedapp/core";
 import BaseButton, { BaseButtonProps } from "../../core/buttons/BaseButton";
@@ -45,7 +45,7 @@ export const Web3ActionButton = ({
   handleConnect,
   innerIndicatorText = {},
   ...buttonProps
-}: Web3ActionProps): JSX.Element => {
+}: Web3ActionProps): ReactElement => {
   const { account, switchNetwork, chainId, activateBrowserWallet } = useEthers();
   const [runningFlow, setRunningFlow] = useState(false);
   const [actionText, setActionText] = useState("");

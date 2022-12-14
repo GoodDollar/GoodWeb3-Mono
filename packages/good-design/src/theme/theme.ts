@@ -24,7 +24,9 @@ export const theme = extendTheme({
     "light-grey": "#636363",
   },
   sizes: {
-    md: "200px"
+    "19": "76px",
+    "50": "200px",
+    "67": "268px"
   },
   fontConfig: {},
   fonts: {},

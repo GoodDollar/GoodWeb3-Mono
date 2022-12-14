@@ -10,6 +10,8 @@ export interface BasicModalProps {
   actionText?: string;
   closeText?: string;
   hasCloseButton?: boolean;
+  hasTopBorder?: boolean;
+  hasBottomBorder?: boolean;
   onClose?: () => void;
   onAction?: () => void;
   _modal?: any;
@@ -26,6 +28,8 @@ export const BasicModal: FC<BasicModalProps> = ({
   actionText,
   closeText = "Cancel",
   hasCloseButton = !!closeText,
+  hasTopBorder = true,
+  hasBottomBorder = true,
   onClose = noop,
   onAction = noop,
   _modal,
@@ -45,21 +49,27 @@ export const BasicModal: FC<BasicModalProps> = ({
     <NBModal isOpen={modalVisible} onClose={onClose} {..._modal} minH="100vh" bgColor={backgroundColor}>
       <NBModal.Content>
         {hasCloseButton && <NBModal.CloseButton />}
-        <NBModal.Header {..._header}>{header}</NBModal.Header>
+        {header && (
+          <NBModal.Header borderBottomWidth={hasTopBorder ? "px" : "0"} {..._header}>
+            {header}
+          </NBModal.Header>
+        )}
         <NBModal.Body {..._body}>{body}</NBModal.Body>
-        <NBModal.Footer {..._footer}>
-          {footer}
-          <Button.Group space={2}>
-            {closeText ? (
-              <Button variant="ghost" colorScheme="blueGray" onPress={onClose}>
-                {closeText}
-              </Button>
-            ) : (
-              <></>
-            )}
-            {actionButton}
-          </Button.Group>
-        </NBModal.Footer>
+        {(footer || closeText || actionText) && (
+          <NBModal.Footer borderTopWidth={hasBottomBorder ? "px" : "0"} {..._footer}>
+            {footer}
+            <Button.Group space={2}>
+              {closeText ? (
+                <Button variant="ghost" colorScheme="blueGray" onPress={onClose}>
+                  {closeText}
+                </Button>
+              ) : (
+                <></>
+              )}
+              {actionButton}
+            </Button.Group>
+          </NBModal.Footer>
+        )}
       </NBModal.Content>
     </NBModal>
   );

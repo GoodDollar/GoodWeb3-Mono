@@ -1,47 +1,89 @@
 import React, { useEffect, useCallback, useMemo, useState } from "react";
-import { AsyncStorage, SupportedChains, useClaim } from "@gooddollar/web3sdk-v2";
+import { SupportedChains, useClaim } from "@gooddollar/web3sdk-v2";
 import { Text, View, Spinner, useColorModeValue } from "native-base";
-import { noop } from "lodash";
 
 import { useQueryParam } from "../../hooks/useQueryParam";
-import { withTheme } from "../../theme/hoc/withTheme";
-import { withThemingTools } from "../../theme/utils/themingTools";
 import { Web3ActionButton } from "../../advanced";
 import { useFVModalAction } from "../../hooks/useFVModalAction";
 import ActionButton from "./ActionButton";
 import { useModal } from "../../hooks/useModal";
 import { Title } from "../layout";
 import { FVFlowProps } from "./types";
+import { noop } from "lodash";
+import { Image } from "../images";
+import ClaimImage from "../../assets/images/claim.png";
+import { BasicModalProps } from "../modals";
 
-const ClaimButton = withTheme({ name: "ClaimButton" })(({ firstName, method, refresh, ...props }: FVFlowProps) => {
-  const { Modal: FirstClaimModal, showModal: showFirstClaimModal, hideModal: hideFirstClaimModal } = useModal();
+const ClaimButton = ({ firstName, method, refresh, claimed, claim, ...props }: FVFlowProps) => {
+  const { Modal: FirstClaimModal, showModal: showFirstClaimModal } = useModal();
+  const { Modal: ActionModal, showModal: showActionModal, hideModal: hideActionModal } = useModal();
   const { Modal: FVModal, showModal: showFVModal, hideModal: hideFVModal } = useModal();
   const { loading, verify } = useFVModalAction({ firstName, method, onClose: hideFVModal });
-  const { isWhitelisted, claimAmount, claimTime, claimCall } = useClaim(refresh);
-  const [claimInProcess, setClaimInProcess] = useState(false);
-  const isVerified = useQueryParam("verified");
+  const { isWhitelisted, claimAmount } = useClaim(refresh);
+  const [firstClaim, setFirstClaim] = useState(false);
+  const isVerified = useQueryParam("verified", true);
   const textColor = useColorModeValue("paragraph", "white");
+
+  const claimModalProps: Omit<BasicModalProps, "modalVisible"> = useMemo(
+    () =>
+      firstClaim
+        ? {
+            header: (
+              <>
+                <Title mb="2">Your first claim is ready!</Title>
+                <Text color={textColor} fontSize="md">
+                  To complete it, sign in your wallet
+                </Text>
+              </>
+            ),
+            body: <Image source={ClaimImage} w="full" h="auto" />,
+            closeText: "",
+            hasTopBorder: false,
+            hasBottomBorder: false
+          }
+        : {
+            header: (
+              <>
+                <Title mb="2">Action Required</Title>
+                <Text color={textColor} fontSize="md">
+                  To complete this action, sign in your wallet.
+                </Text>
+              </>
+            ),
+            body: (
+              <>
+                <Text color={textColor} fontSize="sm" fontWeight="medium">
+                  Watch this video to learn more about signing transactions.
+                </Text>
+                <Image source={ClaimImage} w="full" h="auto" />
+              </>
+            ),
+            closeText: "",
+            hasBottomBorder: false
+          },
+    [firstClaim, textColor]
+  );
 
   const handleClaimCall = useCallback(
     async (first = false) => {
-      if (claimInProcess === true) return;
+      setFirstClaim(first);
+      showActionModal();
 
-      if (first === true) {
+      try {
+        const success = await claim();
+        if (success !== true || first === false) return;
+
         showFirstClaimModal();
+      } finally {
+        hideActionModal();
       }
-
-      setClaimInProcess(true);
-      await claimCall.send().finally(() => {
-        setClaimInProcess(false);
-        hideFirstClaimModal();
-      });
     },
-    [claimCall, showFirstClaimModal, hideFirstClaimModal, setClaimInProcess]
+    [claim, hideActionModal, showFirstClaimModal]
   );
 
   const handleClaim = useCallback(async () => {
-    if (isWhitelisted || isVerified) {
-      await handleClaimCall();
+    if (isWhitelisted) {
+      await handleClaimCall().catch(noop);
       return;
     }
 
@@ -53,43 +95,41 @@ const ClaimButton = withTheme({ name: "ClaimButton" })(({ firstName, method, ref
       return "Verify Uniqueness";
     }
 
-    if (claimAmount.toNumber() > 0) {
-      return `Claim ${claimAmount}`;
-    }
-
-    return `Claim at: ${claimTime}`;
-  }, [isWhitelisted, claimAmount, claimTime]);
-
-  const claimButtonDisabled = useMemo(
-    () => claimAmount.toNumber() <= 0 || claimInProcess === true,
-    [claimAmount, claimInProcess]
-  );
+    return "Claim";
+  }, [isWhitelisted, claimAmount]);
 
   useEffect(() => {
-    const onFirstClaim = async () => {
-      const claimedBefore = await AsyncStorage.getItem("claimed_gd");
-      if (claimedBefore === true) return;
+    if (isVerified !== true || claimed || isWhitelisted === false || claimAmount.toNumber() <= 0) return;
 
-      // what if users cancels claim?
-      await AsyncStorage.setItem("claimed_gd", true);
-      await handleClaimCall(true);
-    };
+    handleClaimCall(true).catch(noop);
+  }, [isVerified, claimed, isWhitelisted, claimAmount, handleClaimCall]);
 
-    if (!isVerified || claimAmount.toNumber() <= 0) return;
-
-    onFirstClaim().catch(noop);
-  }, [isVerified, claimAmount, handleClaimCall]);
+  if (isWhitelisted && claimed) {
+    return (
+      <FirstClaimModal
+        header={
+          <>
+            <Title mb="2">Yay! You've made your first claim.</Title>
+            <Text color={textColor}>Check out how you can use your GoodDollars:</Text>
+          </>
+        }
+        body={<Image source={ClaimImage} w="full" h="auto" />}
+        closeText=""
+        hasTopBorder={false}
+        hasBottomBorder={false}
+      />
+    );
+  }
 
   return (
     <View flex={1} w="full" {...props}>
-      <View w="full" alignItems="center" pt="11.5" pb="22.5">
+      <View w="full" alignItems="center" pt="12" pb="24">
         <Web3ActionButton
           text={buttonTitle}
           requiredChain={SupportedChains.FUSE}
           web3Action={handleClaim}
-          disabled={claimButtonDisabled}
-          w="md"
-          h="md"
+          w="50"
+          h="50"
           px="2.5"
           borderRadius="50%"
           bg="buttonBackground"
@@ -102,6 +142,7 @@ const ClaimButton = withTheme({ name: "ClaimButton" })(({ firstName, method, ref
             color: "white",
             fontSize: "sm"
           }}
+          disabled={claimed}
         />
       </View>
 
@@ -125,25 +166,18 @@ const ClaimButton = withTheme({ name: "ClaimButton" })(({ firstName, method, ref
           loading ? (
             <Spinner />
           ) : (
-            <View justifyContent="space-between" width="100%" flexDirection="row">
+            <View justifyContent="space-between" width="full" flexDirection="row">
               <ActionButton text={"Verify Uniqueness"} onPress={verify} bg="main" />
             </View>
           )
         }
         closeText=""
+        hasTopBorder={false}
+        hasBottomBorder={false}
       />
-      <FirstClaimModal
-        header={<Title>Your first claim is ready!</Title>}
-        body={<Text color={"paragraph"}>To complete it, sign in your wallet</Text>}
-      />
+      <ActionModal {...claimModalProps} />
     </View>
   );
-});
-
-export const theme = {
-  baseStyle: withThemingTools(({ colorModeValue }: { colorModeValue: any }) => ({
-    bg: colorModeValue("coolGray.50", "coolGray.900")
-  }))
 };
 
 export default ClaimButton;
