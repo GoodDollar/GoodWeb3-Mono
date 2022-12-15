@@ -2,15 +2,37 @@ import { extendTheme } from "native-base";
 
 import * as layout from "../core/layout/theme";
 import * as buttons from "../core/buttons/theme";
+import { fontConfig } from "./config";
 
 export const theme = extendTheme({
   config: {},
   colors: {
+    // text
     text1: "#0D182D",
-    heading: "#42454A"
+    paragraph: "#0005376",
+    heading: "#42454A",
+    "heading-black": "#303030",
+    "heading-grey": "999",
+    //default colors
+    main: "#00AEFF",
+    "main-dark": "#151a30",
+    "main-dark-contrast": "#1a1f38",
+    buttonBackground: "#40C4FFCC",
+    // cards
+    "grey-card": "#F6F8FA",
+    "smoke-white": "#F5F5F5",
+    "grey": "#FFFFFF20",
+    "light-grey": "#636363",
   },
-  fontConfig: {},
-  fonts: {},
+  sizes: {
+    "md": "200px",
+  },
+  fontConfig,
+  fonts: {
+    heading: "Graphie",
+    body: "Graphie",
+    mono: "Graphie",
+  },
   components: {
     ...layout,
     ...buttons
