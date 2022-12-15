@@ -9,7 +9,7 @@ export const NativeBaseProvider = ({ children, ...props }: NativeBaseProviderPro
   <BaseProvider {...props}>
     <Helmet>
       <link rel="preconnect" href="//fonts.googleapis.com" />
-      <link rel="preconnect" href="//fonts.gstatic.com" crossOrigin="crossOrigin" />
+      <link rel="preconnect" href="//fonts.gstatic.com" crossOrigin="crossorigin" />
       <link href={ROBOTO_FAMILIES} rel="stylesheet" />
     </Helmet>
     {children}
