@@ -73,4 +73,4 @@ export const nativeBaseFonts = {
 	}
 }
 
-export default {...customFonts, ...nativeBaseFonts}
+export default { ...customFonts, ...nativeBaseFonts }
