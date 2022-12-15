@@ -2,36 +2,105 @@ import { extendTheme } from "native-base";
 
 import * as layout from "../core/layout/theme";
 import * as buttons from "../core/buttons/theme";
-import { fontConfig } from "./config";
 
 export const theme = extendTheme({
-  config: {},
-  colors: {
-    // text
-    text1: "#0D182D",
+  colors: {    
+    // default colors
+    grey: "#FFFFFF20",
+    greyCard: "#F6F8FA",
+    lightGrey: "#636363",
+    smokeWhite: "#F5F5F5",
+    
+    // typo
+    main: "#00AEFF",
+    mainDark: "#151a30",
+    mainDarkContrast: "#1a1f38",
+    text: "#0D182D",
     paragraph: "#0005376",
     heading: "#42454A",
-    "heading-black": "#303030",
-    "heading-grey": "999",
-    //default colors
-    main: "#00AEFF",
-    "main-dark": "#151a30",
-    "main-dark-contrast": "#1a1f38",
-    buttonBackground: "#40C4FFCC",
-    // cards
-    "grey-card": "#F6F8FA",
-    "smoke-white": "#F5F5F5",
-    "grey": "#FFFFFF20",
-    "light-grey": "#636363",
+    headingBlack: "#303030",
+    headingGrey: "999",
+    
+    // UI
+    buttonBackground: "#40C4FFCC",    
   },
   sizes: {
     "md": "200px",
   },
-  fontConfig,
   fonts: {
     heading: "Graphie",
     body: "Graphie",
     mono: "Graphie",
+  },
+  fontConfig: {
+    Graphie: {
+      100: {
+        normal: "Graphie-ExtraLight",
+        italic: "Graphie-ExtraLightItalic",
+      },
+      200: {
+        normal: "Graphie-ExtraLight",
+        italic: "Graphie-ExtraLightItalic",
+      },
+      300: {
+        normal: "Graphie-Light",
+        italic: "Graphie-LightItalic",
+      },
+      400: {
+        normal: "Graphie-Thin",
+        italic: "Graphie-ThinItalic",
+      },
+      500: {
+        normal: "Graphie-Regular",
+        italic: "Graphie-RegularItalic",
+      },
+      600: {
+        normal: "Graphie-Regular",
+        italic: "Graphie-RegularItalic",
+      },
+      700: {
+        normal: 'Graphie-Bold',
+        italic: 'Graphie-BoldItalic',
+      },
+    },
+    Roboto: {
+      100: {
+        normal: 'Roboto-Light',
+        italic: 'Roboto-LightItalic',
+      },
+      200: {
+        normal: 'Roboto-Light',
+        italic: 'Roboto-LightItalic',
+      },
+      300: {
+        normal: 'Roboto-Light',
+        italic: 'Roboto-LightItalic',
+      },
+      400: {
+        normal: 'Roboto-Regular',
+        italic: 'Roboto-Italic',
+      },
+      500: {
+        normal: 'Roboto-Medium',
+        italic: 'Roboto-MediumItalic',
+      },
+      600: {
+        normal: 'Roboto-Medium',
+        italic: 'Roboto-MediumItalic',
+      },
+      700: {
+        normal: 'Roboto-Bold',
+        italic: 'Roboto-BoldItalic',
+      },
+      800: {
+        normal: 'Roboto-Bold',
+        italic: 'Roboto-BoldItalic',
+      },
+      900: {
+        normal: 'Roboto-Bold',
+        italic: 'Roboto-BoldItalic',
+      }
+    }
   },
   components: {
     ...layout,
