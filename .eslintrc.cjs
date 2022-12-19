@@ -34,7 +34,8 @@ module.exports = {
     "@typescript-eslint/no-misused-promises": "off"
   },
   globals: {
-    JSX: true
+    JSX: true,
+    NodeJS: true
   },
   ignorePatterns: [
     "/packages/*/dist/**/*.js",

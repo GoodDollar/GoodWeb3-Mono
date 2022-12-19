@@ -12,7 +12,7 @@ import { FVFlowProps } from "./types";
 import { noop } from "lodash";
 import { Image } from "../images";
 import ClaimImage from "../../assets/images/claim.png";
-import { BasicModalProps } from "../modals";
+import { BasicModalProps } from "../modals/BasicModal";
 
 const ClaimButton = ({ firstName, method, refresh, claimed, claim, ...props }: FVFlowProps) => {
   const { Modal: FirstClaimModal, showModal: showFirstClaimModal } = useModal();
@@ -36,7 +36,8 @@ const ClaimButton = ({ firstName, method, refresh, claimed, claim, ...props }: F
                 </Text>
               </>
             ),
-            body: <Image source={ClaimImage} w="full" h="auto" />,
+            // body: <Image source={ClaimImage} w="full" h="auto" />,
+            body: <></>,
             closeText: "",
             hasTopBorder: false,
             hasBottomBorder: false
@@ -83,7 +84,7 @@ const ClaimButton = ({ firstName, method, refresh, claimed, claim, ...props }: F
 
   const handleClaim = useCallback(async () => {
     if (isWhitelisted) {
-      await handleClaimCall().catch(noop);
+      await handleClaimCall();
       return;
     }
 
@@ -92,14 +93,16 @@ const ClaimButton = ({ firstName, method, refresh, claimed, claim, ...props }: F
 
   const buttonTitle = useMemo(() => {
     if (!isWhitelisted) {
-      return "Verify Uniqueness";
+      return "VERIFY UNIQUENESS";
     }
 
-    return "Claim";
-  }, [isWhitelisted, claimAmount]);
+    return "CLAIM NOW";
+  }, [isWhitelisted]);
 
   useEffect(() => {
-    if (isVerified !== true || claimed || isWhitelisted === false || claimAmount.toNumber() <= 0) return;
+    if (isVerified !== true || claimed || isWhitelisted === false || claimAmount.toNumber() <= 0) {
+      return;
+    }
 
     handleClaimCall(true).catch(noop);
   }, [isVerified, claimed, isWhitelisted, claimAmount, handleClaimCall]);
@@ -128,20 +131,11 @@ const ClaimButton = ({ firstName, method, refresh, claimed, claim, ...props }: F
           text={buttonTitle}
           requiredChain={SupportedChains.FUSE}
           web3Action={handleClaim}
-          w="50"
-          h="50"
+          w="56"
+          h="56"
           px="2.5"
           borderRadius="50%"
           bg="buttonBackground"
-          innerText={{
-            fontSize: "xl",
-            fontWeight: "bold",
-            color: "white"
-          }}
-          innerIndicatorText={{
-            color: "white",
-            fontSize: "sm"
-          }}
           disabled={claimed}
         />
       </View>

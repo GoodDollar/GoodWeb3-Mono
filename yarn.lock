@@ -2371,6 +2371,7 @@ __metadata:
     "@storybook/react": ^6.5.12
     "@storybook/theming": ^6.5.12
     "@types/lodash": ^4.14.186
+    "@types/moment-duration-format": ^2.2.3
     "@types/react": 17.*
     "@types/react-native": 0.70.*
     "@uniswap/sdk-core": ^3.1.0
@@ -2386,6 +2387,8 @@ __metadata:
     ctix: ^1.4.0
     lodash: ^4.17.21
     metro-react-native-babel-preset: ^0.72.0
+    moment: ^2.29.4
+    moment-duration-format: ^2.3.2
     native-base: 3.4.11
     prop-types: ^15.8.1
     react: 17.0.2
@@ -6841,6 +6844,15 @@ __metadata:
   version: 5.1.2
   resolution: "@types/minimatch@npm:5.1.2"
   checksum: 0391a282860c7cb6fe262c12b99564732401bdaa5e395bee9ca323c312c1a0f45efbf34dce974682036e857db59a5c9b1da522f3d6055aeead7097264c8705a8
+  languageName: node
+  linkType: hard
+
+"@types/moment-duration-format@npm:^2.2.3":
+  version: 2.2.3
+  resolution: "@types/moment-duration-format@npm:2.2.3"
+  dependencies:
+    moment: ">=2.14.0"
+  checksum: 84fe8cf1582fb51f588ce46edaf876bbe92523062bb2750d7b8a60a853a5fd59cc8edcd6b2ca7db6c91e3d0479e36e86b52997adc472e3156ca51011be46a260
   languageName: node
   linkType: hard
 
@@ -19697,6 +19709,20 @@ __metadata:
   version: 4.14.0
   resolution: "mock-fs@npm:4.14.0"
   checksum: dccd976a8d753e19d3c7602ea422d1f7137def3c1128c177e1f5500fe8c50ec15fe0937cfc3a15c4577fe7adb9a37628b92da9294d13d90f08be4b669b0fca76
+  languageName: node
+  linkType: hard
+
+"moment-duration-format@npm:^2.3.2":
+  version: 2.3.2
+  resolution: "moment-duration-format@npm:2.3.2"
+  checksum: 84bdb479b2d0d6fd4684ea4a5a8e3955024afa7a0df2369cd327fe35af020aa613283f71c7002d2c4af68015860137801e7d5cc8a6997289d005d697f2b88943
+  languageName: node
+  linkType: hard
+
+"moment@npm:>=2.14.0, moment@npm:^2.29.4":
+  version: 2.29.4
+  resolution: "moment@npm:2.29.4"
+  checksum: 0ec3f9c2bcba38dc2451b1daed5daded747f17610b92427bebe1d08d48d8b7bdd8d9197500b072d14e326dd0ccf3e326b9e3d07c5895d3d49e39b6803b76e80e
   languageName: node
   linkType: hard
 

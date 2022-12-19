@@ -1,5 +1,5 @@
 import { FlatList, View } from "native-base";
-import React, { FC, useCallback, useMemo, useState } from "react";
+import React, { FC, memo, useCallback, useMemo, useState } from "react";
 import { LayoutChangeEvent, NativeScrollEvent, NativeSyntheticEvent } from "react-native";
 import { IClaimCard } from "../buttons";
 import ClaimCard from "./ClaimCard";
@@ -7,6 +7,39 @@ import ClaimCard from "./ClaimCard";
 interface ClaimCarouselProps {
   cards: Array<IClaimCard>;
 }
+
+interface SlideMarkProps {
+  isActive: boolean;
+  isLast: boolean;
+}
+
+const SlideMark: FC<SlideMarkProps> = memo(({ isActive, isLast }) => (
+  <View h="1" w="5" bg={isActive ? "main" : "#FFFFFF20"} mr={isLast ? "0" : "2"} borderRadius={2} />
+));
+
+const ClaimCardItem: FC<{ item: IClaimCard; index: number }> = ({ item, index }) => {
+  const isOdd = index % 2 === 0;
+  const backgroundColor = isOdd ? "grey-card" : "main";
+  const titleColor = isOdd ? "main" : "white";
+  const descriptionColor = isOdd ? "light-grey" : "white";
+  return (
+    <ClaimCard
+      key={index}
+      titleColor={titleColor}
+      descriptionColor={descriptionColor}
+      backgroundColor={backgroundColor}
+      {...item}
+    />
+  );
+};
+
+const getItemLayout = (_: IClaimCard[] | null | undefined, index: number) => ({
+  index,
+  length: 275,
+  offset: (275 + 16) * index
+});
+
+const Separator = () => <View w="4" />;
 
 const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards }) => {
   const [slidesNumber, setSlidesNumber] = useState(0);
@@ -42,14 +75,7 @@ const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards }) => {
       Array(slidesNumber)
         .fill(0)
         .map((_, index, arr) => (
-          <View
-            key={index}
-            h="1"
-            w="5"
-            bg={index === activeSlide ? "main" : "#FFFFFF20"}
-            mr={index === arr.length - 1 ? "0" : "2"}
-            borderRadius={2}
-          />
+          <SlideMark key={index} isActive={index === activeSlide} isLast={index === arr.length - 1} />
         )),
     [slidesNumber, activeSlide]
   );
@@ -61,30 +87,12 @@ const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards }) => {
         horizontal
         onScroll={onScroll}
         scrollEventThrottle={16}
-        mt={8}
-        contentContainerStyle={{
-          flex: 1,
-          justifyContent: 'space-between',
-        }}
+        mt="8"
         showsHorizontalScrollIndicator={false}
         onLayout={onFlatListLayoutChange}
-        getItemLayout={(_, index) => ({ index, length: 275, offset: (275 + 16) * index })}
-        renderItem={({ item, index }) => {
-          const isOdd = index % 2 === 0;
-          const backgroundColor = isOdd ? "grey-card" : "main";
-          const titleColor = isOdd ? "main" : "white";
-          const descriptionColor = isOdd ? "light-grey" : "white";
-          return (
-            <ClaimCard
-              key={index}
-              titleColor={titleColor}
-              descriptionColor={descriptionColor}
-              backgroundColor={backgroundColor}
-              {...item}
-            />
-          );
-        }}
-        ItemSeparatorComponent={() => <View w="4" />}
+        getItemLayout={getItemLayout}
+        renderItem={ClaimCardItem}
+        ItemSeparatorComponent={Separator}
         pagingEnabled
       />
 

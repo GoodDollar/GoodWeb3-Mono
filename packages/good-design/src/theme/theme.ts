@@ -2,7 +2,7 @@ import { extendTheme } from "native-base";
 
 import * as layout from "../core/layout/theme";
 import * as buttons from "../core/buttons/theme";
-import * as modals from "../core/modals/theme";
+import * as advanced from "../advanced/theme";
 
 export const theme = extendTheme({
   config: {},
@@ -21,18 +21,15 @@ export const theme = extendTheme({
     // cards
     "grey-card": "#F6F8FA",
     "smoke-white": "#F5F5F5",
-    "grey": "#FFFFFF20",
-    "light-grey": "#636363",
-  },
-  sizes: {
-    "md": "200px",
+    grey: "#FFFFFF20",
+    "light-grey": "#636363"
   },
   fontConfig: {},
   fonts: {},
   components: {
     ...layout,
     ...buttons,
-    ...modals
+    ...advanced
   }
 });
 
