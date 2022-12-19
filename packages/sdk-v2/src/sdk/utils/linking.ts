@@ -1,6 +1,6 @@
 import { Linking, Platform } from "react-native";
-import { isEmpty, toPairs } from "lodash";
-import { tryJson } from "@gooddollar/web3sdk-v2";
+import { isEmpty, isString, toPairs } from "lodash";
+import { tryJson } from "./json";
 
 const schemeRe = /(.+?:)\/\//;
 
@@ -51,5 +51,7 @@ export async function openLink(uri: string, target: "_blank" | "_self" = "_blank
 
   return result;
 }
+
+export const encodeBase64Params = (value: any) => encodeURIComponent(btoa(isString(value) ? value : JSON.stringify(value)))
 
 export const decodeBase64Params = (value: string) => tryJson(atob(decodeURIComponent(value)));
