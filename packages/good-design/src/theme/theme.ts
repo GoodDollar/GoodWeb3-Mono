@@ -4,13 +4,13 @@ import * as layout from "../core/layout/theme";
 import * as buttons from "../core/buttons/theme";
 
 export const theme = extendTheme({
-  colors: {    
+  colors: {
     // default colors
     grey: "#FFFFFF20",
     greyCard: "#F6F8FA",
     lightGrey: "#636363",
     smokeWhite: "#F5F5F5",
-    
+
     // typo
     main: "#00AEFF",
     mainDark: "#151a30",
@@ -19,48 +19,48 @@ export const theme = extendTheme({
     paragraph: "#0005376",
     heading: "#42454A",
     headingBlack: "#303030",
-    headingGrey: "999",
-    
+    headingGrey: "#999",
+
     // UI
-    buttonBackground: "#40C4FFCC",    
+    buttonBackground: "#40C4FFCC",
   },
   sizes: {
     "md": "200px",
   },
   fonts: {
-    heading: "Graphie",
-    body: "Graphie",
-    mono: "Graphie",
+    heading: "Montserrat",
+    body: "Montserrat",
+    mono: "Montserrat",
   },
   fontConfig: {
-    Graphie: {
+    Montserrat: {
       100: {
-        normal: "Graphie-ExtraLight",
-        italic: "Graphie-ExtraLightItalic",
+        normal: "Montserrat-ExtraLight",
+        italic: "Montserrat-ExtraLightItalic",
       },
       200: {
-        normal: "Graphie-ExtraLight",
-        italic: "Graphie-ExtraLightItalic",
+        normal: "Montserrat-ExtraLight",
+        italic: "Montserrat-ExtraLightItalic",
       },
       300: {
-        normal: "Graphie-Light",
-        italic: "Graphie-LightItalic",
+        normal: "Montserrat-Light",
+        italic: "Montserrat-LightItalic",
       },
       400: {
-        normal: "Graphie-Thin",
-        italic: "Graphie-ThinItalic",
+        normal: "Montserrat-Thin",
+        italic: "Montserrat-ThinItalic",
       },
       500: {
-        normal: "Graphie-Regular",
-        italic: "Graphie-RegularItalic",
+        normal: "Montserrat-Regular",
+        italic: "Montserrat-RegularItalic",
       },
       600: {
-        normal: "Graphie-Regular",
-        italic: "Graphie-RegularItalic",
+        normal: "Montserrat-Regular",
+        italic: "Montserrat-RegularItalic",
       },
       700: {
-        normal: 'Graphie-Bold',
-        italic: 'Graphie-BoldItalic',
+        normal: 'Montserrat-Bold',
+        italic: 'Montserrat-BoldItalic',
       },
     },
     Roboto: {
