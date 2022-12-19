@@ -96,9 +96,9 @@ const ClaimButton = withTheme({ name: "ClaimButton" })(({ firstName, method, ref
       <FVModal
         body={
           <>
-            <Text color="text1">To verify your identity you need to sign TWICE with your wallet.</Text>
-            <Text color="text1">First sign your address to be whitelisted</Text>
-            <Text color="text1">
+            <Text color="text">To verify your identity you need to sign TWICE with your wallet.</Text>
+            <Text color="text">First sign your address to be whitelisted</Text>
+            <Text color="text">
               Second sign your self sovereign anonymized identifier, so no link is kept between your identity record and
               your address.
             </Text>
@@ -116,11 +116,11 @@ const ClaimButton = withTheme({ name: "ClaimButton" })(({ firstName, method, ref
       />
       <FirstClaimModal
         header={
-          <Text color="text1" fontWeight="bold">
+          <Text color="text" fontWeight="bold">
             Your first claim is ready!
           </Text>
         }
-        body={<Text color="text1">To complete it, sign in your wallet</Text>}
+        body={<Text color="text">To complete it, sign in your wallet</Text>}
       />
     </View>
   );
