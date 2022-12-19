@@ -33,6 +33,15 @@ const ClaimCardItem: FC<{ item: IClaimCard; index: number }> = ({ item, index })
   );
 };
 
+const SlidesComponent = memo(({ activeSlide, slidesNumber }) =>
+  Array(slidesNumber)
+    .fill(0)
+    .map((_, index, arr) => (
+      <SlideMark key={index} isActive={index === activeSlide} isLast={index === arr.length - 1} />
+    ))
+);
+
+
 const getItemLayout = (_: IClaimCard[] | null | undefined, index: number) => ({
   index,
   length: 275,
@@ -70,16 +79,6 @@ const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards }) => {
     [activeSlide, setActiveSlide]
   );
 
-  const slidesComponent = useMemo(
-    () =>
-      Array(slidesNumber)
-        .fill(0)
-        .map((_, index, arr) => (
-          <SlideMark key={index} isActive={index === activeSlide} isLast={index === arr.length - 1} />
-        )),
-    [slidesNumber, activeSlide]
-  );
-
   return (
     <>
       <FlatList
@@ -97,7 +96,7 @@ const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards }) => {
       />
 
       <View flexDirection="row" w="full" pt="5" justifyContent="center">
-        {slidesComponent}
+        <SlidesComponent activeSlide={activeSlide} slidesNumber={slidesNumber} />
       </View>
     </>
   );
