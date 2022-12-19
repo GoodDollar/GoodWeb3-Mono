@@ -1,5 +1,5 @@
 import { extendTheme } from "native-base";
-
+import { fontConfig } from "./fonts";
 import * as layout from "../core/layout/theme";
 import * as buttons from "../core/buttons/theme";
 
@@ -32,6 +32,7 @@ export const theme = extendTheme({
     body: "Montserrat",
     mono: "Montserrat",
   },
+  fontConfig,
   components: {
     ...layout,
     ...buttons

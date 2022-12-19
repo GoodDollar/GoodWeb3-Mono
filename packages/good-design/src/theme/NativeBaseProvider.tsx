@@ -1,26 +1,39 @@
+import { NativeBaseProvider as BaseProvider, NativeBaseProviderProps } from 'native-base';
 import React, { ReactElement } from 'react';
 import { Helmet } from "react-helmet";
-import { NativeBaseProvider as BaseProvider, NativeBaseProviderProps } from 'native-base';
 
-interface IExtraProps {
-  roboto?: boolean;
-  montserrat?: boolean;
-}
+import { chain, keys, mapValues, omit, pick, toLower } from 'lodash';
+import { fontConfig, FontID, getFamiliesUrl } from './fonts';
 
-const ROBOTO_FAMILIES = "https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
-const MONTSERRAT_FAMILIES = "https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+type ILoadFonts = {
+  [fontId in FontID]?: boolean;
+}; 
 
-export const NativeBaseProvider = ({ children, roboto = true, montserrat = true, ...props }: NativeBaseProviderProps & IExtraProps): ReactElement => {
-  const withGoogleFonts = roboto || montserrat
-  const googleLinks = withGoogleFonts && [
-    <link rel="preconnect" href="//fonts.googleapis.com"/>,
-    <link rel="preconnect" href="//fonts.gstatic.com" crossOrigin="crossorigin"/>]
+const FAMILIES = chain(fontConfig)
+  .mapValues(getFamiliesUrl)
+  .mapKeys((_, key) => toLower(key) as FontID)
+  .value();
 
-  return <BaseProvider {...props}>
+const FAMILIES_AVAILABLE = keys(FAMILIES);  
+const DEFAULT_FAMILIES = mapValues(FAMILIES, () => true);
+
+export const NativeBaseProvider = ({ children, ...props }: NativeBaseProviderProps & ILoadFonts): ReactElement => {
+  const rest = omit(props, FAMILIES_AVAILABLE);
+  
+  const loadFonts = chain(DEFAULT_FAMILIES)
+    .clone()
+    .assign(pick(props, FAMILIES_AVAILABLE))
+    .pickBy()
+    .keys()
+    .value();
+  
+  return <BaseProvider {...rest}>
     <Helmet>
-      {googleLinks}
-      {roboto && <link href={ROBOTO_FAMILIES} rel="stylesheet"/>}
-      {montserrat && <link href={MONTSERRAT_FAMILIES} rel="stylesheet"/>}
+      {loadFonts.length && ([
+        <link rel="preconnect" href="//fonts.googleapis.com"/>,
+        <link rel="preconnect" href="//fonts.gstatic.com" crossOrigin="crossorigin"/>
+      ])}
+      {loadFonts.map(fontID => <link href={FAMILIES[fontID]} rel="stylesheet"/>)}
     </Helmet>
     {children}
   </BaseProvider>
