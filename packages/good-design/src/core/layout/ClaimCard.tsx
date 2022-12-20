@@ -3,7 +3,7 @@ import { ColorType } from "native-base/lib/typescript/components/types";
 import React, { FC } from "react";
 import { BaseButton, ClaimCardContent } from "../buttons";
 import { Image } from "../images";
-import { openLink } from "../utils";
+import { openLink } from "@gooddollar/web3sdk-v2";
 import Title from "./Title";
 
 interface ClaimCardProps {

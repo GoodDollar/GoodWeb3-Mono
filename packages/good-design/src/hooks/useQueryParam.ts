@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { decodeBase64Params } from "../core";
+import { decodeBase64Params } from "@gooddollar/web3sdk-v2";
 
 export const useQueryParam = (param: string, decode = false) => {
   const { search, hash } = window.location;
@@ -10,7 +10,7 @@ export const useQueryParam = (param: string, decode = false) => {
     const params = new URLSearchParams(queryString);
     const result = params.get(param);
 
-    if (result === null || decode === false) {
+    if (result === null || !decode) {
       return result;
     }
 

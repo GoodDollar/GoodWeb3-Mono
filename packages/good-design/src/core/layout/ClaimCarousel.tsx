@@ -1,5 +1,5 @@
 import { FlatList, View } from "native-base";
-import React, { FC, memo, useCallback, useMemo, useState } from "react";
+import React, { FC, memo, useCallback, useState } from "react";
 import { LayoutChangeEvent, NativeScrollEvent, NativeSyntheticEvent } from "react-native";
 import { IClaimCard } from "../buttons";
 import ClaimCard from "./ClaimCard";
@@ -33,12 +33,13 @@ const ClaimCardItem: FC<{ item: IClaimCard; index: number }> = ({ item, index })
   );
 };
 
-const SlidesComponent = memo(({ activeSlide, slidesNumber }) =>
-  Array(slidesNumber)
+const SlidesComponent = memo(({ activeSlide, slidesNumber }: { activeSlide: number, slidesNumber: number }) => <>
+  {Array(slidesNumber)
     .fill(0)
     .map((_, index, arr) => (
       <SlideMark key={index} isActive={index === activeSlide} isLast={index === arr.length - 1} />
-    ))
+    ))}
+  </>
 );
 
 
