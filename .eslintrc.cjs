@@ -17,7 +17,6 @@ module.exports = {
     project: ["./tsconfig.json", "./packages/*/tsconfig.json"]
   },
   rules: {
-    "no-undef": "error",
     "@typescript-eslint/no-unsafe-call": "off",
     "@typescript-eslint/no-unsafe-assignment": "off",
     "@typescript-eslint/no-unsafe-member-access": "off",
@@ -26,7 +25,6 @@ module.exports = {
     "@typescript-eslint/no-this-alias": "off",
     "@typescript-eslint/restrict-template-expressions": "off",
     "@typescript-eslint/restrict-plus-operands": "off",
-    "@typescript-eslint/no-this-alias": "off",
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/require-await": "off",
     "@typescript-eslint/no-unnecessary-type-assertion": "off",

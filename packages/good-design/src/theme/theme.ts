@@ -1,31 +1,39 @@
 import { extendTheme } from "native-base";
-
+import { fontConfig } from "./fonts";
 import * as layout from "../core/layout/theme";
 import * as buttons from "../core/buttons/theme";
 import * as advanced from "../advanced/theme";
 
 export const theme = extendTheme({
-  config: {},
   colors: {
-    // text
-    text1: "#0D182D",
+    // default colors
+    grey: "#FFFFFF20",
+    greyCard: "#F6F8FA",
+    lightGrey: "#636363",
+    smokeWhite: "#F5F5F5",
+
+    // typo
+    main: "#00AEFF",
+    mainDark: "#151a30",
+    mainDarkContrast: "#1a1f38",
+    text: "#0D182D",
     paragraph: "#0005376",
     heading: "#42454A",
-    "heading-black": "#303030",
-    "heading-grey": "999",
-    //default colors
-    main: "#00AEFF",
-    "main-dark": "#151a30",
-    "main-dark-contrast": "#1a1f38",
+    headingBlack: "#303030",
+    headingGrey: "#999",
+
+    // UI
     buttonBackground: "#40C4FFCC",
-    // cards
-    "grey-card": "#F6F8FA",
-    "smoke-white": "#F5F5F5",
-    grey: "#FFFFFF20",
-    "light-grey": "#636363"
   },
-  fontConfig: {},
-  fonts: {},
+  sizes: {
+    "md": "200px",
+  },
+  fonts: {
+    heading: "Montserrat",
+    body: "Montserrat",
+    mono: "Montserrat",
+  },
+  fontConfig,
   components: {
     ...layout,
     ...buttons,

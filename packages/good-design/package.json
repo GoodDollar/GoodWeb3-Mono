@@ -1,7 +1,7 @@
 {
   "name": "@gooddollar/good-design",
   "repository": "https://github.com/GoodDollar/GoodWeb3-mono/packages/good-design",
-  "version": "0.0.16",
+  "version": "0.0.19",
   "scripts": {
     "build": "yarn dev:clean && tsc && yarn copy:assets",
     "dev:clean": "rm -fr dist types",
@@ -42,6 +42,7 @@
     "@storybook/theming": "^6.5.12",
     "@types/lodash": "^4.14.186",
     "@types/react": "17.*",
+    "@types/react-helmet": "^6.1.6",
     "@types/react-native": "0.70.*",
     "@usedapp/core": "1.*",
     "babel-jest": "^27.3.1",
@@ -76,6 +77,7 @@
     "prop-types": "^15.8.1",
     "react": "17.0.2",
     "react-dom": "17.0.2",
+    "react-helmet": "^6.1.0",
     "react-native": "^0.70.4",
     "react-native-mask-input": "^1.2.2",
     "react-native-safe-area-context": "^3.3.2",

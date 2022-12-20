@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    // Default
     "target": "ESNext",
     "types": ["jest", "node"],
     "module": "commonjs",
@@ -9,7 +8,6 @@
     "strict": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    // Added
     "jsx": "react",
     "declaration": true,
     "declarationDir": "types",

@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    // Default
     "target": "es2019",
     "lib": ["es2019", "dom", "dom.iterable"],
     "module": "commonjs",
@@ -8,7 +7,6 @@
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "skipLibCheck": true,
-    // Added
     "jsx": "react-jsx",
     "declarationDir": "types",
     "sourceMap": true,
