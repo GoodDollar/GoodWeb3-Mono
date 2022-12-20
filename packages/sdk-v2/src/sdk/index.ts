@@ -5,4 +5,3 @@ export * from './faucet';
 export * from './microbridge';
 export * from './savings';
 export * from './storage';
-export * from './utils';

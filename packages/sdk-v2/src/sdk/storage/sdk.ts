@@ -2,7 +2,7 @@ import { default as AsyncStorageRN } from "@react-native-async-storage/async-sto
 import { noop } from "lodash";
 
 import { stringifyPairs } from "./utils";
-import { tryJson } from "../utils";
+import { tryJson } from "../base/utils";
 
 export class StorageSDK {
   private readonly api: typeof AsyncStorageRN = AsyncStorageRN;
