@@ -88,9 +88,8 @@ export const pickWeight = (list: any[], style: 'normal' | 'italic') => chain(lis
   .value();
 
 export const getFamiliesUrl = (families: Record<string, any>, fontName: string) => {
-  const list = toPairs(families)
-    .map((weight, props: any) => ({ weight, ...props }));
-  
+  const list = toPairs(families).map(([weight, props]: [string, any]) => ({ weight, ...props }));
+
   const [normalWeights, italicWeights] = ["normal", "italic"]
     .map(style => pickWeight(list, style as 'normal' | 'italic'))
     .map((weights, index) => weights.map(value => `${index},${value}`).join(";"));
