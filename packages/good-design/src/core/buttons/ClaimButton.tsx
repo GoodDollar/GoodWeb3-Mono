@@ -30,8 +30,8 @@ const ClaimButton = ({ firstName, method, refresh, claimed, claim, ...props }: F
         ? {
             header: (
               <>
-                <Title mb="2">Your first claim is ready!</Title>
-                <Text color={textColor} fontSize="md">
+                <Title fontFamily="Montserrat" mb="2">Your first claim is ready!</Title>
+                <Text color={textColor} fontFamily="Montserrat" fontSize="md">
                   To complete it, sign in your wallet
                 </Text>
               </>
@@ -45,15 +45,15 @@ const ClaimButton = ({ firstName, method, refresh, claimed, claim, ...props }: F
         : {
             header: (
               <>
-                <Title mb="2">Action Required</Title>
-                <Text color={textColor} fontSize="md">
+                <Title fontFamily="Montserrat" mb="2">Action Required</Title>
+                <Text color={textColor} fontFamily="Montserrat" fontSize="md">
                   To complete this action, sign in your wallet.
                 </Text>
               </>
             ),
             body: (
               <>
-                <Text color={textColor} fontSize="sm" fontWeight="medium">
+                <Text color={textColor} fontSize="sm" fontFamily="Montserrat" fontWeight="medium">
                   Watch this video to learn more about signing transactions.
                 </Text>
                 <Image source={ClaimImage} w="full" h="auto" />
@@ -112,8 +112,8 @@ const ClaimButton = ({ firstName, method, refresh, claimed, claim, ...props }: F
       <FirstClaimModal
         header={
           <>
-            <Title mb="2">Yay! You've made your first claim.</Title>
-            <Text color={textColor}>Check out how you can use your GoodDollars:</Text>
+            <Title mb="2" fontFamily="Montserrat">Yay! You've made your first claim.</Title>
+            <Text color={textColor} fontFamily="Montserrat">Check out how you can use your GoodDollars:</Text>
           </>
         }
         body={<Image source={ClaimImage} w="full" h="auto" />}
@@ -141,16 +141,16 @@ const ClaimButton = ({ firstName, method, refresh, claimed, claim, ...props }: F
       </View>
 
       <FVModal
-        header={<Title>Verify Uniqueness</Title>}
+        header={<Title fontFamily="Montserrat">Verify Uniqueness</Title>}
         body={
           <>
-            <Text color={textColor} mb="2">
+            <Text color={textColor} fontFamily="Montserrat" mb="2">
               To verify your identity you need to sign TWICE with your wallet.
             </Text>
-            <Text color={textColor} mb="2">
+            <Text color={textColor} fontFamily="Montserrat" mb="2">
               First sign your address to be whitelisted
             </Text>
-            <Text color={textColor} mb="2">
+            <Text color={textColor} fontFamily="Montserrat" mb="2">
               Second sign your self sovereign anonymized identifier, so no link is kept between your identity record and
               your address.
             </Text>

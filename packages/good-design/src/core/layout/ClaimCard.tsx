@@ -28,12 +28,12 @@ const ClaimCard: FC<ClaimCardProps> = ({ backgroundColor, titleColor, descriptio
       px="17"
       py="6"
     >
-      <Title color={titleColor}>{title}</Title>
+      <Title fontFamily='Montserrat' color={titleColor}>{title}</Title>
 
       {content?.map(contentItem => (
         <>
           {!!contentItem.description && (
-            <Text color={descriptionColor} fontSize="md" fontWeight="medium" pt="4" pb="30">
+            <Text color={descriptionColor} fontSize="md" fontFamily="Roboto" fontWeight="medium" pt="4" pb="30">
               {contentItem.description}
             </Text>
           )}
@@ -47,7 +47,7 @@ const ClaimCard: FC<ClaimCardProps> = ({ backgroundColor, titleColor, descriptio
               text={contentItem.link.linkText}
               onPress={() => contentItem.link && openLink(contentItem.link.linkUrl)}
               bg="white"
-              innerText={{ fontSize: "md", fontWeight: "semibold", color: "main" }}
+              innerText={{ fontSize: "md", fontWeight: "semibold", fontFamily: "Montserrat", color: "main" }}
               px="0"
               pl="4"
               pr="1.5"
@@ -68,7 +68,7 @@ const ClaimCard: FC<ClaimCardProps> = ({ backgroundColor, titleColor, descriptio
           {!!contentItem.list && (
             <View pt="30">
               {contentItem.list?.map((item, index, list) => (
-                <Text color="#696969" fontSize="15" fontWeight="semibold" pb={index === list.length - 1 ? "0" : "5"}>
+                <Text color="dimgray" fontSize="15" fontWeight="semibold" fontFamily='Montserrat' pb={index === list.length - 1 ? "0" : "5"}>
                   {item.key} <Text color="main">{item.value}</Text>
                 </Text>
               ))}

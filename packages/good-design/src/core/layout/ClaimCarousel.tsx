@@ -14,14 +14,14 @@ interface SlideMarkProps {
 }
 
 const SlideMark: FC<SlideMarkProps> = memo(({ isActive, isLast }) => (
-  <View h="1" w="5" bg={isActive ? "main" : "#FFFFFF20"} mr={isLast ? "0" : "2"} borderRadius={2} />
+  <View h="1" w="5" bg={isActive ? "main" : "grey"} mr={isLast ? "0" : "2"} borderRadius={2} />
 ));
 
 const ClaimCardItem: FC<{ item: IClaimCard; index: number }> = ({ item, index }) => {
   const isOdd = index % 2 === 0;
-  const backgroundColor = isOdd ? "grey-card" : "main";
+  const backgroundColor = isOdd ? "greyCard" : "main";
   const titleColor = isOdd ? "main" : "white";
-  const descriptionColor = isOdd ? "light-grey" : "white";
+  const descriptionColor = isOdd ? "lightGrey" : "white";
   return (
     <ClaimCard
       key={index}

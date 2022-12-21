@@ -11,6 +11,7 @@ export const theme = extendTheme({
     greyCard: "#F6F8FA",
     lightGrey: "#636363",
     smokeWhite: "#F5F5F5",
+    dimgray: "#696969",
 
     // typo
     main: "#00AEFF",

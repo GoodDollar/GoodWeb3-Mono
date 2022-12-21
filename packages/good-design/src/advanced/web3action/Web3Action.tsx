@@ -31,7 +31,7 @@ const StepIndicator: FC<{ text?: string } & ITextProps> = withTheme({ name: "Ste
   ({ text, color, fontSize }) => (
     <HStack space={2} alignItems="center" flexDirection="row">
       <Spinner accessibilityLabel="Waiting on wallet confirmation" />
-      <Heading color={color} fontSize={fontSize}>
+      <Heading color={color} fontSize={fontSize} fontFamily='Montserrat'>
         {text}
       </Heading>
     </HStack>
