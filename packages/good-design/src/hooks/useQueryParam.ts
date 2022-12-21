@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+// @ts-ignore
 import { decodeBase64Params } from "@gooddollar/web3sdk-v2";
 
 export const useQueryParam = (param: string, decode = false) => {
