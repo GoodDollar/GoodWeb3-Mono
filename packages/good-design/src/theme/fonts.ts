@@ -75,6 +75,9 @@ export const fontConfig = {
     900: {
       normal: 'Roboto-Black',
       italic: 'Roboto-BlackItalic',
+    },
+    1000: {
+      normal: 'Roboto',
     }
   }
 };

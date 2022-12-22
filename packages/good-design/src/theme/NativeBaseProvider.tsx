@@ -33,7 +33,7 @@ export const NativeBaseProvider = ({ children, ...props }: NativeBaseProviderPro
         <link rel="preconnect" href="//fonts.googleapis.com"/>,
         <link rel="preconnect" href="//fonts.gstatic.com" crossOrigin="crossorigin"/>
       ])}
-      {loadFonts.map(fontID => <link href={FAMILIES[fontID]} rel="stylesheet"/>)}
+      {loadFonts.map((fontID, index) => <link key={index} href={FAMILIES[fontID]} rel="stylesheet"/>)}
     </Helmet>
     {children}
   </BaseProvider>

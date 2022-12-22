@@ -137,6 +137,7 @@ const ClaimButton = ({ firstName, method, refresh, claimed, claim, ...props }: F
           borderRadius="50%"
           bg="buttonBackground"
           disabled={claimed}
+          innerText={{style: {fontWeight: "bold"}, fontFamily: "body"}}
         />
       </View>
 
