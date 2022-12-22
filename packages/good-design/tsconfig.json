@@ -22,6 +22,6 @@
     "emitDeclarationOnly": false,
     "declarationMap": true
   },
-  "include": ["src/**/*", "custom.d.ts"],
+  "include": ["src/**/*", "src/custom.d.ts"],
   "exclude": ["node_modules", "../../node_modules", "src/stories", "**/*.stories.tsx"]
 }

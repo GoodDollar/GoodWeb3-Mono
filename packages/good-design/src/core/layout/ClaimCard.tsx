@@ -28,12 +28,12 @@ const ClaimCard: FC<ClaimCardProps> = ({ backgroundColor, titleColor, descriptio
       px="17"
       py="6"
     >
-      <Title fontFamily='Montserrat' color={titleColor}>{title}</Title>
+      <Title color={titleColor}>{title}</Title>
 
       {content?.map(contentItem => (
         <>
           {!!contentItem.description && (
-            <Text color={descriptionColor} fontSize="md" fontFamily="Roboto" fontWeight="medium" pt="4" pb="30">
+            <Text color={descriptionColor} fontSize="md" fontFamily="subheading" fontWeight="medium" pt="4" pb="30">
               {contentItem.description}
             </Text>
           )}
@@ -68,7 +68,7 @@ const ClaimCard: FC<ClaimCardProps> = ({ backgroundColor, titleColor, descriptio
           {!!contentItem.list && (
             <View pt="30">
               {contentItem.list?.map((item, index, list) => (
-                <Text color="dimgray" fontSize="15" fontWeight="semibold" fontFamily='Montserrat' pb={index === list.length - 1 ? "0" : "5"}>
+                <Text color="dimgray" fontSize="15" fontWeight="600" pb={index === list.length - 1 ? "0" : "5"}>
                   {item.key} <Text color="main">{item.value}</Text>
                 </Text>
               ))}

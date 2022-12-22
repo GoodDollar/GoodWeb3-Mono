@@ -33,12 +33,25 @@ export const theme = extendTheme({
     heading: "Montserrat",
     body: "Montserrat",
     mono: "Montserrat",
+    subheading: "Roboto"
   },
   fontConfig,
   components: {
     ...layout,
     ...buttons,
-    ...advanced
+    ...advanced,
+    Text: {
+      defaultProps: {
+        fontFamily: 'body',
+        fontWeight: '400'
+      }
+    },
+    Title: {
+      defaultProps: {
+        fontFamily: 'heading',
+        fontWeight: '700'
+      }
+    }
   }
 });
 
