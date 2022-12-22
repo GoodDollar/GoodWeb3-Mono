@@ -41,17 +41,11 @@ export const theme = extendTheme({
     ...buttons,
     ...advanced,
     Text: {
-      defaultProps: {
+      baseStyle: {
         fontFamily: 'body',
         fontWeight: '400'
       }
     },
-    Title: {
-      defaultProps: {
-        fontFamily: 'heading',
-        fontWeight: '700'
-      }
-    }
   }
 });
 

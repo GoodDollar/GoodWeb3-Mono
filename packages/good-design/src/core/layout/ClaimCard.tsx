@@ -1,4 +1,4 @@
-import { ArrowForwardIcon, Text, View } from "native-base";
+import { ArrowForwardIcon, Text, View, Box } from "native-base";
 import { ColorType } from "native-base/lib/typescript/components/types";
 import React, { FC } from "react";
 import { BaseButton, ClaimCardContent } from "../buttons";
@@ -28,10 +28,12 @@ const ClaimCard: FC<ClaimCardProps> = ({ backgroundColor, titleColor, descriptio
       px="17"
       py="6"
     >
-      <Title color={titleColor}>{title}</Title>
+        {/* //todo-fix: bold prop is not being applied, IE. underline works..
+      //ref: https://docs.nativebase.io/text */}
+      <Title bold style={{fontWeight: "bold"}} color={titleColor}>{title}</Title>
 
-      {content?.map(contentItem => (
-        <>
+      {content?.map((contentItem, index) => (
+        <Box key={index}>
           {!!contentItem.description && (
             <Text color={descriptionColor} fontSize="md" fontFamily="subheading" fontWeight="medium" pt="4" pb="30">
               {contentItem.description}
@@ -43,7 +45,7 @@ const ClaimCard: FC<ClaimCardProps> = ({ backgroundColor, titleColor, descriptio
           )}
 
           {!!contentItem.link && (
-            <BaseButton
+            <BaseButton 
               text={contentItem.link.linkText}
               onPress={() => contentItem.link && openLink(contentItem.link.linkUrl)}
               bg="white"
@@ -68,13 +70,13 @@ const ClaimCard: FC<ClaimCardProps> = ({ backgroundColor, titleColor, descriptio
           {!!contentItem.list && (
             <View pt="30">
               {contentItem.list?.map((item, index, list) => (
-                <Text color="dimgray" fontSize="15" fontWeight="600" pb={index === list.length - 1 ? "0" : "5"}>
+                <Text key={index} color="dimgray" fontSize="15" fontWeight="600" pb={index === list.length - 1 ? "0" : "5"}>
                   {item.key} <Text color="main">{item.value}</Text>
                 </Text>
               ))}
             </View>
           )}
-        </>
+        </Box>
       ))}
     </View>
   );

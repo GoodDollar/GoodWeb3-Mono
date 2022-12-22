@@ -3,19 +3,22 @@ import React, { FC } from "react";
 import { withTheme } from "../../theme/hoc/withTheme";
 
 const Title: FC<ITextProps> = withTheme({ name: "Title" })(({ children, ...props }) => (
-  <Text {...props}>{children}</Text>
+  <Text {...props}>{children}</Text> 
 ));
 
 export const theme = {
   defaultProps: {
-    color: "main"
+    color: "main",
+    size: "lg",
   },
   baseStyle: {
-    fontStyle: "normal",
-    fontWeight: "bold",
-    fontSize: "4xl",
-    lineHeight: "xs",
-    letterSpacing: "sm"
+    fontFamily: "heading",
+    fontWeight: "700",
+  },
+  sizes: {
+    lg: {
+      fontSize: "32px"
+    }
   }
 };
 
