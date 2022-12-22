@@ -38,9 +38,6 @@ export const fontConfig = {
       normal: 'Montserrat-Black',
       italic: 'Montserrat-BlackItalic',
     },
-    1000: {
-      normal: 'Montserrat'
-    }
   },
   Roboto: {
     100: {
