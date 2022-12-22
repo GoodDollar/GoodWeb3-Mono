@@ -1,7 +1,7 @@
 import { IButtonProps, ITextProps, View } from "native-base";
 import { Button, Text } from "native-base";
 import { IViewProps } from "native-base/lib/typescript/components/basic/View/types";
-import React, { ReactNode } from "react";
+import React from "react";
 import { withTheme } from "../../theme/hoc/withTheme";
 import { withThemingTools } from "../../theme/utils/themingTools";
 
@@ -13,7 +13,7 @@ export interface BaseButtonProps extends IButtonProps {
   onPress: () => void;
   innerText?: ITextProps;
   innerView?: IViewProps;
-  children?: ReactNode;
+  children?: any;
   name?: string;
 }
 

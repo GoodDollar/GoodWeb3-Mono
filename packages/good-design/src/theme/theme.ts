@@ -2,9 +2,10 @@ import { extendTheme } from "native-base";
 import * as layout from "../core/layout/theme";
 import * as buttons from "../core/buttons/theme";
 import * as advanced from "../advanced/theme";
-import { fontConfig } from "./fonts";
+import { fontConfig, getPlatformFamilies } from "./fonts";
 
 export const theme = extendTheme({
+  fontConfig: getPlatformFamilies(fontConfig),
   colors: {
     // default colors
     grey: "#FFFFFF20",
@@ -29,7 +30,6 @@ export const theme = extendTheme({
   sizes: {
     "md": "200px",
   },
-  fontConfig,
   fonts: {
     heading: "Montserrat",
     body: "Montserrat",

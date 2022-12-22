@@ -1,4 +1,5 @@
 import { chain, first, toPairs } from 'lodash';
+import { Platform } from 'react-native';
 
 export const fontConfig = {
   Montserrat: {
@@ -57,7 +58,7 @@ export const fontConfig = {
       italic: 'Roboto-Italic',
     },
     500: {
-      normal: 'Roboto-Medium', //todo: this isnt a font we load in
+      normal: 'Roboto-Medium',
       italic: 'Roboto-MediumItalic',
     },
     600: {
@@ -87,7 +88,7 @@ export const pickWeight = (list: any[], style: 'normal' | 'italic') => chain(lis
   .values()
   .value();
 
-export const getFamiliesUrl = (families: Record<string, any>, fontName: string) => {
+export const getFamiliesUrl = (families: typeof fontConfig, fontName: string) => {
   const list = toPairs(families).map(([weight, props]: [string, any]) => ({ weight, ...props }));
 
   const [normalWeights, italicWeights] = ["normal", "italic"]
@@ -96,3 +97,8 @@ export const getFamiliesUrl = (families: Record<string, any>, fontName: string) 
 
   return `//fonts.googleapis.com/css2?family=${fontName}:ital,wght@${normalWeights};${italicWeights}&display=swap`
 };
+
+export const getPlatformFamilies = (families: typeof fontConfig) => Platform.select<Partial<typeof fontConfig>>({
+  native: families,
+  default: {}
+});
