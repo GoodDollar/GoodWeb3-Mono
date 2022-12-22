@@ -53,7 +53,7 @@ const ClaimButton = ({ firstName, method, refresh, claimed, claim, ...props }: F
             ),
             body: (
               <>
-                <Text color={textColor} fontSize="sm" fontWeight="medium">
+                <Text color={textColor} fontSize="sm" fontWeight="500">
                   Watch this video to learn more about signing transactions.
                 </Text>
                 <Image source={ClaimImage} w="full" h="auto" />

@@ -57,7 +57,7 @@ export const fontConfig = {
       italic: 'Roboto-Italic',
     },
     500: {
-      normal: 'Roboto-Medium',
+      normal: 'Roboto-Medium', //todo: this isnt a font we load in
       italic: 'Roboto-MediumItalic',
     },
     600: {
