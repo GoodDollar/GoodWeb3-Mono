@@ -10,10 +10,10 @@ export const theme = {
   defaultProps: {
     color: "main",
     size: "lg",
+    fontWeight: "1000"
   },
   baseStyle: {
     fontFamily: "heading",
-    fontWeight: "700"
   },
   sizes: {
     lg: {

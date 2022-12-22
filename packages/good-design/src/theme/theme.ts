@@ -2,6 +2,7 @@ import { extendTheme } from "native-base";
 import * as layout from "../core/layout/theme";
 import * as buttons from "../core/buttons/theme";
 import * as advanced from "../advanced/theme";
+import { fontConfig } from "./fonts";
 
 export const theme = extendTheme({
   colors: {
@@ -28,11 +29,12 @@ export const theme = extendTheme({
   sizes: {
     "md": "200px",
   },
+  fontConfig,
   fonts: {
     heading: "Montserrat",
     body: "Montserrat",
     mono: "Montserrat",
-    subheading: "Roboto"
+    subheading: "Roboto",
   },
   components: {
     ...layout,
