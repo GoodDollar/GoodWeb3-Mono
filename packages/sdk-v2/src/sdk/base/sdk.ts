@@ -56,7 +56,7 @@ export class BaseSDK {
     this.env = Envs[devEnv];
     this.contracts = Contracts[contractsEnv as keyof typeof Contracts] as EnvValue;
 
-    console.log("baseSdk provider", { provider });
+    // console.log("baseSdk provider", { provider });
 
     provider
       .getNetwork()

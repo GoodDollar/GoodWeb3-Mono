@@ -30,7 +30,7 @@ const ClaimCard: FC<ClaimCardProps> = ({ backgroundColor, titleColor, descriptio
     >
         {/* //todo-fix: bold prop is not being applied, IE. underline works..
       //ref: https://docs.nativebase.io/text */}
-      <Title bold style={{fontWeight: "bold"}} color={titleColor}>{title}</Title>
+      <Title bold color={titleColor}>{title}</Title>
 
       {content?.map((contentItem, index) => (
         <Box key={index}>

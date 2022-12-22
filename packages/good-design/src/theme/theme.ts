@@ -1,5 +1,4 @@
 import { extendTheme } from "native-base";
-import { fontConfig } from "./fonts";
 import * as layout from "../core/layout/theme";
 import * as buttons from "../core/buttons/theme";
 import * as advanced from "../advanced/theme";
@@ -35,7 +34,6 @@ export const theme = extendTheme({
     mono: "Montserrat",
     subheading: "Roboto"
   },
-  fontConfig,
   components: {
     ...layout,
     ...buttons,

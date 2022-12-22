@@ -13,7 +13,7 @@ export const theme = {
   },
   baseStyle: {
     fontFamily: "heading",
-    fontWeight: "700",
+    fontWeight: "700"
   },
   sizes: {
     lg: {
