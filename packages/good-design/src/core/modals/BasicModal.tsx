@@ -37,7 +37,7 @@ const BasicModal: FC<BasicModalProps> = ({
   _body = {},
   _footer = {}
 }) => {
-  const backgroundColor = useColorModeValue("main-dark-contrast", "white");
+  const backgroundColor = useColorModeValue("white", "mainDarkContrast");
 
   const onActionButtonPress = useCallback(() => {
     onAction();
@@ -47,17 +47,17 @@ const BasicModal: FC<BasicModalProps> = ({
   const actionButton = actionText ? <Button onPress={onActionButtonPress}>{actionText}</Button> : <React.Fragment />;
   return (
     /* height 100vh is required so modal always shows in the middle */
-    <NBModal isOpen={modalVisible} onClose={onClose} {..._modal} minH="100vh" bgColor={backgroundColor}>
-      <NBModal.Content>
+    <NBModal isOpen={modalVisible} onClose={onClose} {..._modal} minH="100vh" >
+      <NBModal.Content bgColor={backgroundColor}>
         {hasCloseButton && <NBModal.CloseButton />}
         {!!header && (
-          <NBModal.Header borderBottomWidth={hasTopBorder ? "px" : "0"} {..._header}>
+          <NBModal.Header borderBottomWidth={hasTopBorder ? "px" : "0"} {..._header} bgColor={backgroundColor}>
             {header}
           </NBModal.Header>
         )}
         <NBModal.Body {..._body}>{body}</NBModal.Body>
         {(!!footer || !!closeText || !!actionText) && (
-          <NBModal.Footer borderTopWidth={hasBottomBorder ? "px" : "0"} {..._footer}>
+          <NBModal.Footer borderTopWidth={hasBottomBorder ? "px" : "0"} {..._footer} bgColor={backgroundColor}>
             {footer}
             <Button.Group space={2}>
               {closeText ? (
