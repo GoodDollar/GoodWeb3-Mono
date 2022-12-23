@@ -43,7 +43,7 @@ export const theme = extendTheme({
     Text: {
       baseStyle: {
         fontFamily: 'body',
-        fontWeight: '400'
+        fontWeight: 'normal'
       }
     },
   }
