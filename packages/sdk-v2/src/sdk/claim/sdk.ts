@@ -8,16 +8,12 @@ const FV_LOGIN_MSG = `Sign this message to login into GoodDollar Unique Identity
 WARNING: do not sign this message unless you trust the website/application requesting this signature.
 nonce:`;
 
-const FV_IDENTIFIER_MSG = `Sign this message to create your own unique identifier for your anonymized record.
-You can use this identifier in the future to delete this anonymized record.
-WARNING: do not sign this message unless you trust the website/application requesting this signature.`;
-
 const FV_IDENTIFIER_MSG2 = `Sign this message to request verifying your account <account> and to create your own secret unique identifier for your anonymized record.
 You can use this identifier in the future to delete this anonymized record.
 WARNING: do not sign this message unless you trust the website/application requesting this signature.`;
 
 export class ClaimSDK extends BaseSDK {
-  async generateFVLink(firstName: string, callbackUrl?: string, popupMode: boolean = false) {
+  async generateFVLink(firstName: string, callbackUrl?: string, popupMode = false) {
     const steps = this.getFVLink();
 
     await steps.getLoginSig();
@@ -45,7 +41,7 @@ export class ClaimSDK extends BaseSDK {
       return fvSig;
     };
 
-    const getLink = (firstName: string, callbackUrl?: string, popupMode: boolean = false) => {
+    const getLink = (firstName: string, callbackUrl?: string, popupMode = false) => {
       if (!fvSig) {
         throw new Error("missing login or identifier signature");
       }
@@ -69,9 +65,11 @@ export class ClaimSDK extends BaseSDK {
       }
 
       const url = new URL(identityUrl);
-
+      console.log("fv url test", { url, params });
       url.search = params.toString();
-      return url.href;
+      const decodeTest = decodeURIComponent(url.href);
+      console.log("decoding test", { decodeTest });
+      return decodeURIComponent(url.href);
     };
 
     return { getLoginSig, getFvSig, getLink };
@@ -79,7 +77,7 @@ export class ClaimSDK extends BaseSDK {
 
   async isAddressVerified(address: string): Promise<boolean> {
     const identity = this.getContract("Identity");
-    
+
     return identity.isWhitelisted(address);
   }
 
@@ -108,13 +106,13 @@ export class ClaimSDK extends BaseSDK {
     if (startRef < new Date()) {
       startRef = new Date(startRef.getTime() + DAY);
     }
-    
+
     return startRef;
   }
 
   async claim() {
     const ubi = this.getContract("UBIScheme");
-    
+
     return ubi.claim();
   }
 }

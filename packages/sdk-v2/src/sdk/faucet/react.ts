@@ -1,11 +1,11 @@
-import React, { useMemo, useEffect, useRef } from "react";
+import { Faucet } from "@gooddollar/goodprotocol/types";
 import { QueryParams, useCalls, useEtherBalance, useEthers, useGasPrice, useNotifications } from "@usedapp/core";
 import { BigNumber, ethers } from "ethers";
-import { Faucet } from "@gooddollar/goodprotocol/types";
-import { first, maxBy } from "lodash";
+import { maxBy } from "lodash";
+import { useEffect, useMemo, useRef } from "react";
+import useRefreshOrNever from "../../hooks/useRefreshOrNever";
 import { useGetContract, useGetEnvChainId } from "../base/react";
 import { Envs, SupportedChains } from "../constants";
-import useRefreshOrNever from "../../hooks/useRefreshOrNever";
 
 //default wait roughly 1 minute
 export const useFaucet = async (refresh: QueryParams["refresh"] = 12) => {
@@ -24,13 +24,8 @@ export const useFaucet = async (refresh: QueryParams["refresh"] = 12) => {
   const minBalance = BigNumber.from("110000").mul(gasPrice);
   const { account, chainId } = useEthers();
   const balance = useEtherBalance(account, { refresh: refreshOrNever }); // refresh roughly once in 10 minutes
-  const { connectedEnv, baseEnv } = useGetEnvChainId(); // get the env the user is connected to
-  const faucet = useGetContract(
-    chainId === SupportedChains.FUSE ? "FuseFaucet" : "Faucet",
-    true,
-    "base",
-    connectedEnv
-  ) as Faucet;
+  const { baseEnv } = useGetEnvChainId(); // get the env the user is connected to
+  const faucet = useGetContract(chainId === SupportedChains.FUSE ? "FuseFaucet" : "Faucet", true, "base") as Faucet;
 
   const [result] = useCalls(
     [
@@ -45,7 +40,8 @@ export const useFaucet = async (refresh: QueryParams["refresh"] = 12) => {
 
   useEffect(() => {
     if (result?.value && account && balance && balance.lt(minBalance)) {
-      const { backend } = Envs[baseEnv];
+      const devEnv = baseEnv === "fuse" ? "development" : baseEnv;
+      const { backend } = Envs[devEnv];
 
       fetch(backend + "/verify/topWallet", {
         method: "POST",

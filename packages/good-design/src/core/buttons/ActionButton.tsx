@@ -1,13 +1,13 @@
-import React from "react";
 import { Button, IButtonProps } from "native-base";
+import React from "react";
 import { withTheme } from "../../theme/hoc/withTheme";
 
 interface IBasicButtonProps extends IButtonProps {
   text: string;
-  onPress: () => {};
+  onPress: () => void;
 }
 
-const ButtonAction = ({ text, ...props }: IBasicButtonProps) => (
+const ActionButton = withTheme({ name: "ActionButton" })(({ text, ...props }: IBasicButtonProps) => (
   <Button
     alignItems="center"
     justifyContent="center"
@@ -21,14 +21,14 @@ const ButtonAction = ({ text, ...props }: IBasicButtonProps) => (
   >
     {text}
   </Button>
-);
+));
 
 export const theme = {
+  defaultProps: {},
   baseStyle: {
-    fontStyle: "normal",
-    fontSize: 20,
-    lineHeight: "16px",
-    fontWeight: 900,
+    fontSize: "xl",
+    lineHeight: "2xs",
+    fontWeight: "black",
     textTransform: "capitalize",
     boxShadow: "3px 3px 10px -1px rgba(11, 27, 102, 0.304824)",
     backgroundColor: "#00B0FF",
@@ -37,5 +37,4 @@ export const theme = {
   }
 };
 
-export default withTheme()(ButtonAction);
-// export default withTheme()(ButtonAction);
+export default ActionButton;

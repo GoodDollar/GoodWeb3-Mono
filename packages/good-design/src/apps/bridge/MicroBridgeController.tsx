@@ -1,24 +1,21 @@
-import React, { useCallback, useState } from "react";
-import { useTokenBalance, TransactionStatus, useEthers } from "@usedapp/core";
 import {
   G$,
-  SupportedChains,
-  useGetEnvChainId,
-  useRefreshOrNever,
-  useBridge,
-  useBridgeHistory,
-  useRelayTx,
-  useWithinBridgeLimits,
-  useGetBridgeData
+  SupportedChains, useBridge,
+  useBridgeHistory, useGetBridgeData, useGetEnvChainId,
+  useRefreshOrNever, useRelayTx,
+  useWithinBridgeLimits
 } from "@gooddollar/web3sdk-v2";
-import { MicroBridge } from "./MicroBridge";
+import { useEthers, useTokenBalance } from "@usedapp/core";
 import { sortBy } from "lodash";
-import { Box, Button, Flex, Heading, HStack, Text, ArrowForwardIcon, Stack } from "native-base";
-import { useSignWalletModal } from "../../hooks/useSignWalletModal";
+import { ArrowForwardIcon, Box, Button, Flex, Heading, HStack, Stack, Text } from "native-base";
+import React, { useCallback, useState } from "react";
 import { ExplorerLink } from "../../core/web3/ExplorerLink";
+import { useSignWalletModal } from "../../hooks/useSignWalletModal";
+import { MicroBridge } from "./MicroBridge";
 
-const useBalanceHook = (chain: string) => {
+export const useBalanceHook = (chain: string) => {
   const env = useGetEnvChainId(chain === "fuse" ? SupportedChains.FUSE : SupportedChains.CELO);
+
   const refresh = useRefreshOrNever(12);
   const { account } = useEthers();
   const gdBalance = useTokenBalance(G$(env.chainId, env.defaultEnv).address, account, {
@@ -146,7 +143,7 @@ const MicroBridgeHistory = () => {
   );
 };
 
-export const MicroBridgeController = ({}) => {
+export const MicroBridgeController = ({ withRelay = false }) => {
   const { sendBridgeRequest, bridgeRequestStatus, relayStatus, selfRelayStatus } = useBridge();
   const { bridgeFees: fuseBridgeFees, bridgeLimits: fuseBridgeLimits } = useGetBridgeData(SupportedChains.FUSE, "");
   const { bridgeFees: celoBridgeFees, bridgeLimits: celoBridgeLimits } = useGetBridgeData(SupportedChains.CELO, "");
@@ -164,7 +161,7 @@ export const MicroBridgeController = ({}) => {
         limits={{ fuse: fuseBridgeLimits, celo: celoBridgeLimits }}
         fees={{ fuse: fuseBridgeFees, celo: celoBridgeFees }}
       />
-      <MicroBridgeHistory />
+      {withRelay && <MicroBridgeHistory />}
       <SignWalletModal txStatus={bridgeRequestStatus.status} />
       <SignWalletModal txStatus={selfRelayStatus?.status} />
     </>

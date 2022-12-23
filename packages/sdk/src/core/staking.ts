@@ -29,6 +29,7 @@ import { cDaiPrice } from "methods/cDaiPrice";
 import { TransactionDetails } from "constants/transactions";
 import { DAO_NETWORK, SupportedChainId } from "constants/chains";
 import { getContract } from "utils/getContract";
+import { noop } from "lodash";
 
 export type Stake = {
   APY?: Fraction;
@@ -583,7 +584,7 @@ const getAPY = memoize<(web3: Web3, address: string, protocol: LIQUIDITY_PROTOCO
     stakedValue = await getStakedValuev2(web3, address, protocol, token, true);
 
     stakedValue = stakedValue.equalTo(0)
-      ? CurrencyAmount.fromRawAmount(stakedValue.currency, 10 ** stakedValue.currency.decimals * 1000) //1000$
+      ? CurrencyAmount.fromRawAmount(stakedValue.currency, 10 ** stakedValue.currency.decimals * 1000) // 1000$
       : stakedValue;
 
     const APY = yearlyRewardG$
@@ -935,7 +936,7 @@ export async function promiseAll(
             resolve("done");
           })
       )
-    );
+    ).catch(noop);
   }
   return Promise.all(transactions);
 }

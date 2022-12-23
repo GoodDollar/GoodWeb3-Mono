@@ -8,7 +8,7 @@ export default {
   title: "Apps/MicroBridgeController",
   component: MicroBridgeController,
   decorators: [
-    Story => (
+    (Story:any) => (
       <W3Wrapper withMetaMask={true} env="fuse">
         <SwitchChainModal>
           <WalletAndChainGuard validChains={[122, 42220]}>
@@ -25,6 +25,9 @@ export default {
   // }
 };
 
-export const MicroBridgeControllerStart = {
-  args: {}
+export const MicroBridgeControllerWithoutRelay = {
+  args: { withRelay: false }
+};
+export const MicroBridgeControllerWithRelay = {
+  args: { withRelay: true }
 };

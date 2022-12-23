@@ -1,25 +1,26 @@
-import { Text } from "native-base";
-import React, { ReactNode } from "react";
+import { ITextProps, Text } from "native-base";
+import React, { FC } from "react";
 import { withTheme } from "../../theme/hoc/withTheme";
 
-interface ITitleProps {
-  children: ReactNode;
-}
-
-const Title = ({ children, ...props }: ITitleProps) => (
-  <Text color="heading" {...props}>
-    {children}
-  </Text>
-);
+const Title: FC<ITextProps> = withTheme({ name: "Title" })(({ children, ...props }) => (
+  <Text {...props}>{children}</Text> 
+));
 
 export const theme = {
+  defaultProps: {
+    color: "main",
+    size: "lg",
+  },
   baseStyle: {
-    fontStyle: "normal",
+    fontFamily: "heading",
     fontWeight: "bold",
-    fontSize: 34,
-    lineHeight: 40,
-    letterSpacing: -0.02
+    lineHeight: "md"
+  },
+  sizes: {
+    lg: {
+      fontSize: "32px"
+    }
   }
 };
 
-export default withTheme()(Title);
+export default Title;

@@ -3,6 +3,7 @@ import { ethers } from "ethers";
 import Web3 from "web3";
 import { SupportedChainId, DAO_NETWORK } from "constants/chains";
 import GdSdkContext from "./useGdSdkContext";
+import { noop } from "lodash";
 
 export interface RPC {
   MAINNET_RPC: string | undefined;
@@ -68,7 +69,8 @@ export const useEnvWeb3 = (
       }
       setWeb3([new Web3(provider), selectedChainId]);
     };
-    getProvider();
+    
+    getProvider().catch(noop);
   }, [activeWeb3, dao, activeChainId, contractsEnv]);
 
   return web3;

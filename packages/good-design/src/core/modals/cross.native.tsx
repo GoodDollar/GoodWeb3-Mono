@@ -1,7 +1,7 @@
 import * as React from "react";
 import Svg, { Path } from "react-native-svg";
 
-export default () => (
+const CrossIcon = () => (
   <Svg
     // xmlns="http://www.w3.org/2000/svg"
     width={18}
@@ -14,3 +14,5 @@ export default () => (
     />
   </Svg>
 );
+
+export default CrossIcon;

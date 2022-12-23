@@ -1,3 +1,5 @@
+import { encodeBase64Params } from "@gooddollar/web3sdk-v2";
+
 export type DataToRequest = "mobile" | "email" | "location" | "name" | "avatar";
 
 interface Props {
@@ -29,17 +31,10 @@ export const createLoginLink = ({
   const websiteLink =
     redirectLink ?? "http://wallet.gooddollar.org/AppNavigation/LoginRedirect";
   const objectToEncode = { v, web, id, cbu, rdu, r };
+  
   if (!cbu && !rdu) {
     throw new Error("Please provide either a cbu or rdu");
   }
-  const encodedString = Buffer.from(JSON.stringify(objectToEncode)).toString(
-    "base64"
-  );
-  return `${websiteLink}?login=${encodeURIComponent(encodedString)}`;
-};
-
-export const parseLoginLink = (link: string) => {
-  return JSON.parse(
-    Buffer.from(decodeURIComponent(link), "base64").toString("ascii")
-  );
+  
+  return `${websiteLink}?login=${encodeBase64Params(objectToEncode)}`;
 };

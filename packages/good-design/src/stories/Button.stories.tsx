@@ -3,7 +3,6 @@ import { Celo, Fuse, Web3Provider } from "@gooddollar/web3sdk-v2";
 import { Config, DAppProvider, Goerli, Mainnet, useEthers } from "@usedapp/core";
 import { ethers, getDefaultProvider } from "ethers";
 import React, { useEffect, useState } from "react";
-// import BaseButtonWithTheme, { BaseButton } from "../core/buttons/BaseButton";
 import BaseButton from "../core/buttons/BaseButton";
 import ClaimButton from "../core/buttons/ClaimButton";
 
@@ -11,7 +10,6 @@ export const BaseButtonWithThemeExample = () => {
   return (
     <>
       <BaseButton width="250px" onPress={() => {}} text="RegularBB with default NB Theming" />
-      {/* <BaseButtonWithTheme width="250px" onPress={() => {}} text="Button with applied basebutton theme" /> */}
     </>
   );
 };
@@ -48,7 +46,7 @@ export const ClaimButtonWithThemeExample = () => {
   return (
     <DAppProvider config={config}>
       <Web3Provider env="fuse" web3Provider={provider} config={config}>
-        <ClaimButton firstName="Test2" method="popup" />
+        <ClaimButton firstName="Test2" method="popup" claim={async () => false} />
       </Web3Provider>
     </DAppProvider>
   );

@@ -1,21 +1,21 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useContractFunction, useCalls, useEthers, useLogs, TransactionStatus } from "@usedapp/core";
-import { Contract, BigNumber, ethers } from "ethers";
-import { mapValues, groupBy, first } from "lodash";
-import { TokenBridge } from "@gooddollar/bridge-contracts/typechain-types";
+import { noop } from "lodash";
+import { BridgeSDK } from "@gooddollar/bridge-app/dist/sdk.js";
 import TokenBridgeABI from "@gooddollar/bridge-contracts/artifacts/contracts/bridge/TokenBridge.sol/TokenBridge.json";
 import bridgeContracts from "@gooddollar/bridge-contracts/release/deployment.json";
-import { BridgeSDK } from "@gooddollar/bridge-app/dist/sdk.js";
+import { TokenBridge } from "@gooddollar/bridge-contracts/typechain-types";
 import { IGoodDollar } from "@gooddollar/goodprotocol/types";
-import { useGetEnvChainId, useGetContract } from "../base/react";
-import useRefreshOrNever from "../../hooks/useRefreshOrNever";
-import { SupportedChains } from "../constants";
+import { TransactionStatus, useCalls, useContractFunction, useEthers, useLogs } from "@usedapp/core";
+import { BigNumber, Contract, ethers } from "ethers";
+import { first, groupBy, mapValues } from "lodash";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useSwitchNetwork } from "../../contexts";
+import useRefreshOrNever from "../../hooks/useRefreshOrNever";
+import { useGetContract, useGetEnvChainId } from "../base/react";
+import { SupportedChains } from "../constants";
 
 export const useGetBridgeContracts = () => {
   const { baseEnv } = useGetEnvChainId();
   const { fuseBridge, celoBridge } = bridgeContracts[baseEnv] || {};
-  
   if (fuseBridge && celoBridge) {
     return {
       [SupportedChains.FUSE]: new Contract(fuseBridge, TokenBridgeABI.abi) as TokenBridge,
@@ -33,7 +33,7 @@ export const useWithinBridgeLimits = (requestChainId: number, account: string, a
         method: "canBridge",
         args: [account, amount]
       }
-    ].filter(_ => bridgeContract && account && amount),
+    ].filter(() => bridgeContract && account && amount),
     {
       refresh: "never",
       chainId: requestChainId
@@ -41,7 +41,6 @@ export const useWithinBridgeLimits = (requestChainId: number, account: string, a
   );
 
   const [isValid = false, reason = ""]: [boolean, string] = canBridge?.[0]?.value || [];
-  
   return { isValid, reason };
 };
 
@@ -91,12 +90,14 @@ export const useGetBridgeData = (requestChainId: number, account: string): Bridg
   };
 };
 
-export const useBridge = () => {
+export const useBridge = (withRelay = false) => {
   const lock = useRef(false);
   const { switchNetwork } = useSwitchNetwork();
   const { account, chainId } = useEthers();
   const g$Contract = useGetContract("GoodDollar") as IGoodDollar;
-  const bridgeContract = useGetBridgeContracts()[chainId || 122] as TokenBridge;
+  const bridgeContracts = useGetBridgeContracts();
+  const bridgeContract = bridgeContracts[chainId || 122] as TokenBridge;
+
   const relayTx = useRelayTx();
 
   const [bridgeRequest, setBridgeRequest] = useState<
@@ -111,17 +112,18 @@ export const useBridge = () => {
     .filter(log => log.address === bridgeContract.address)
     .map(log => bridgeContract.interface.parseLog(log))?.[0]?.args?.id;
 
-  //poll target chain for transfer if bridgeRequestEvent was found
+  // poll target chain for transfer if bridgeRequestEvent was found
   const relayEvent = useLogs(
-    bridgeRequest && {
-      contract: bridgeContract ?? { address: ethers.constants.AddressZero },
-      event: "ExecutedTransfer",
-      args: [account, bridgeRequest?.target, bridgeRequestId]
-    },
+    bridgeRequest &&
+      bridgeRequestId && {
+        contract: bridgeContracts[bridgeRequest.targetChainId] ?? { address: ethers.constants.AddressZero },
+        event: "ExecutedTransfer",
+        args: [null, null, null, null, null, null, null, bridgeRequestId]
+      },
     {
       refresh: useRefreshOrNever(bridgeRequestId ? 5 : "never"),
       chainId: bridgeRequest?.targetChainId,
-      fromBlock: 1e4
+      fromBlock: -1000
     }
   );
 
@@ -138,61 +140,72 @@ export const useBridge = () => {
       setBridgeRequest(undefined);
       lock.current = false;
       transferAndCall.resetState();
+
       const targetChainId = sourceChain === "fuse" ? SupportedChains.CELO : SupportedChains.FUSE;
       const sourceChainId = sourceChain === "fuse" ? SupportedChains.FUSE : SupportedChains.CELO;
-      try {
-        if (sourceChainId !== chainId) await switchNetwork(sourceChainId);
+
+      await (async () => {
+        if (sourceChainId !== chainId) {
+          await switchNetwork(sourceChainId);
+        }
+        
         setBridgeRequest({ amount, sourceChainId, targetChainId, target });
-      } catch (e) {}
+      })().catch(noop)      
     },
     [transferAndCall, switchNetwork, setBridgeRequest, chainId]
   );
 
-  //trigger the actual bridge request
+  // trigger the actual bridge request
   useEffect(() => {
     if (transferAndCall.state.status === "None" && bridgeRequest && account && !lock.current) {
       lock.current = true;
-      //we use transfer and call to save the approve step
+      // we use transfer and call to save the approve step
       const encoded = ethers.utils.defaultAbiCoder.encode(
         ["uint256", "address"],
         [bridgeRequest.targetChainId, bridgeRequest.target || account]
       );
-      transferAndCall.send(bridgeContract.address, bridgeRequest.amount, encoded).then(async sendTx => {
-        if (sendTx) {
-          let relayTxHash: string = "";
-          try {
-            setSelfRelay({
-              status: "None",
-              transaction: {}
-            } as TransactionStatus);
-            const { relayTxHash: txHash = "", relayPromise } = await relayTx(
-              chainId || 0,
-              bridgeRequest.targetChainId,
-              sendTx.transactionHash
-            );
-            relayTxHash = txHash;
-            setSelfRelay({
-              chainId: chainId,
-              status: relayTxHash ? "Mining" : "Fail",
-              transaction: { hash: relayTxHash }
-            } as TransactionStatus);
-            await relayPromise;
-            setSelfRelay({
-              status: "Success",
-              chainId: chainId,
-              transaction: { hash: relayTxHash }
-            } as TransactionStatus);
-          } catch (e: any) {
-            setSelfRelay({
-              ...selfRelayStatus,
-              status: "Exception",
-              chainId: chainId,
-              errorMessage: e.message,
-              transaction: { hash: relayTxHash }
-            } as TransactionStatus);
+      
+      transferAndCall
+        .send(bridgeContract.address, bridgeRequest.amount, encoded)
+        .then(async sendTx => {
+          if (sendTx && withRelay) {
+            let relayTxHash = "";
+
+            try {
+              setSelfRelay({
+                status: "None",
+                transaction: {}
+              } as TransactionStatus);
+              const { relayTxHash: txHash = "", relayPromise } = await relayTx(
+                chainId || 0,
+                bridgeRequest.targetChainId,
+                sendTx.transactionHash
+              );
+              relayTxHash = txHash;
+              setSelfRelay({
+                chainId: chainId,
+                status: relayTxHash ? "Mining" : "Fail",
+                transaction: { hash: relayTxHash }
+              } as TransactionStatus);
+              await relayPromise;
+              setSelfRelay({
+                status: "Success",
+                chainId: chainId,
+                transaction: { hash: relayTxHash }
+              } as TransactionStatus);
+            } catch (e: any) {
+              console.log("transferAndCall catch:", { e });
+              setSelfRelay({
+                ...selfRelayStatus,
+                status: "Exception",
+                chainId: chainId,
+                errorMessage: e.message,
+                transaction: { hash: relayTxHash }
+              } as TransactionStatus);
+            }
           }
-        }
-      });
+        })
+        .catch(noop);
     }
   }, [bridgeContract, bridgeRequest, transferAndCall, lock]);
 
@@ -230,12 +243,17 @@ export const useRelayTx = () => {
             await switchNetwork(targetChain);
           }
           const targetBalance = await signer.getBalance();
+          
           if (targetBalance.lt(ethers.utils.parseEther("0.01"))) {
             throw new Error(`not enough balance for self relay: ${targetBalance.toNumber() / 1e18}`);
           }
+          
+          // todo-fix: library connected to different signer, signer is connected wallet here
           relayResult = await sdk.relayTx(sourceChain, targetChain, txHash, signer);
+          
           return relayResult;
         } catch (e: any) {
+          // console.log("useRelayTX:", { error: e });
           //retry if checkpoint still missing or txhash not found yet
           if (!e.message.includes("does not exists yet") && !e.message.includes("txhash/targetReceipt not found")) {
             throw e;

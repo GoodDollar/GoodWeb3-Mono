@@ -1,8 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { AppState } from "react-native";
-import { noop as _ } from "lodash";
 
-export default () => {
+const useAppState = () => {
   const [appState, setAppState] = useState(AppState.currentState);
 
   useEffect(() => {
@@ -16,3 +15,5 @@ export default () => {
 
   return { appState, active: appState === "active" };
 };
+
+export default useAppState;

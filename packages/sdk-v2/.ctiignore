@@ -1,0 +1,5 @@
+{
+  "src/hooks/useAppRestart.api.native.ts": "*",
+  "src/hooks/useAppRestart.api.ts": "*",
+  "src/sdk/analytics/**/*": "*"
+}

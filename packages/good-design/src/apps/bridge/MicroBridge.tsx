@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useState } from "react";
+import React, { useEffect, useCallback, useState, useMemo } from "react";
 import {
   Box,
   Button,
@@ -25,6 +25,13 @@ import { ExplorerLink } from "../../core/web3/ExplorerLink";
 
 type OnBridge = (amount: string, sourceChain: string, target?: string) => Promise<void>;
 
+type ILimits = Record<
+  string,
+  { dailyLimit: BigNumber; txLimit: BigNumber; accountDailyLimit: BigNumber; minAmount: BigNumber }
+>;
+
+type IFees = Record<string, { minFee: BigNumber; maxFee: BigNumber; fee: BigNumber }>;
+
 const Status = ({ result, ...props }: { result?: string }) => {
   switch (result) {
     case undefined:
@@ -46,7 +53,6 @@ const StatusBox = ({
   txStatus,
   text,
   infoText,
-  sourceChain
 }: {
   txStatus?: Partial<TransactionStatus>;
   text: string;
@@ -78,6 +84,39 @@ const StatusBox = ({
   </Stack>
 );
 
+const useBridgeEstimate = ({
+  limits,
+  fees,
+  sourceChain,
+  inputWei
+}: {
+  limits?: ILimits;
+  fees?: IFees;
+  sourceChain: string;
+  inputWei: string;
+}): {
+  expectedFee?: string;
+  expectedToReceive?: string;
+  minimumAmount?: number;
+  maximumAmount?: number;
+  bridgeFee?: number;
+  minFee?: number;
+  maxFee?: number;
+  minAmountWei?: string;
+} =>
+  useMemo(() => {
+    const expectedFee = Number((Number(inputWei) * 0.001) / 100).toFixed(2);
+    const expectedToReceive = (Number(inputWei) / 100 - Number(expectedFee)).toFixed(2);
+    const minimumAmount = limits?.[sourceChain]?.minAmount?.toNumber() || 0 / 100;
+    const maximumAmount = limits?.[sourceChain]?.txLimit?.toNumber() || 0 / 100;
+    const bridgeFee = fees?.[sourceChain]?.fee?.toNumber() || 0 / 100;
+    const minFee = fees?.[sourceChain]?.minFee?.toNumber() || 0 / 100;
+    const maxFee = fees?.[sourceChain]?.maxFee?.toNumber() || 0 / 100;
+    const minAmountWei = limits?.[sourceChain]?.minAmount?.toString();
+
+    return { expectedFee, expectedToReceive, minimumAmount, maximumAmount, bridgeFee, minFee, maxFee, minAmountWei };
+  }, [limits, fees, sourceChain, inputWei]);
+
 export const MicroBridge = ({
   useBalanceHook,
   useCanBridge,
@@ -93,31 +132,30 @@ export const MicroBridge = ({
   useBalanceHook: (chain: string) => string;
   useCanBridge: (chain: string, amountWei: string) => { isValid: boolean; reason: string };
   onSetChain?: (chain: string) => void;
-  limits?: {
-    [key: string]: { dailyLimit: BigNumber; txLimit: BigNumber; accountDailyLimit: BigNumber; minAmount: BigNumber };
-  };
-  fees?: { [key: string]: { minFee: BigNumber; maxFee: BigNumber; fee: BigNumber } };
+  limits?: ILimits;
+  fees?: IFees;
   bridgeStatus?: Partial<TransactionStatus>;
   relayStatus?: Partial<TransactionStatus>;
   selfRelayStatus?: Partial<TransactionStatus>;
 }) => {
   const [isBridging, setBridging] = useState(false);
   const [inputWei, setInput] = useState<string>("0");
-  const expectedFee = Number((Number(inputWei) * 0.001) / 100).toFixed(2);
   const [enableTarget, setEnableTarget] = useState(false);
 
   const [target, setTarget] = useState<string | undefined>();
 
   const [sourceChain, setSourceChain] = useState<"fuse" | "celo">("fuse");
 
+  const toggleEnableTarget = useCallback(() => setEnableTarget(value => !value), [setEnableTarget]);
+
   const targetChain = sourceChain === "fuse" ? "celo" : "fuse";
   const balanceWei = useBalanceHook(sourceChain);
 
-  let { isValid, reason } = useCanBridge(sourceChain, inputWei);
+  const { isValid, reason } = useCanBridge(sourceChain, inputWei);
   const hasBalance = Number(inputWei) <= Number(balanceWei);
   const isTargetValid = !enableTarget || isAddressValid(target || "");
   const isValidInput = isValid && hasBalance && isTargetValid;
-  reason = reason || (!hasBalance && "balance") || (!isTargetValid && "target") || "";
+  const reasonOf = reason || (!hasBalance && "balance") || (!isTargetValid && "target") || "";
 
   const toggleChains = useCallback(() => {
     setSourceChain(targetChain);
@@ -126,18 +164,19 @@ export const MicroBridge = ({
 
   const triggerBridge = useCallback(async () => {
     setBridging(true);
+
     try {
       await onBridge(inputWei, sourceChain, enableTarget ? target : undefined);
-    } catch (e) {
+    } finally {
       setBridging(false);
     }
   }, [setBridging, onBridge, inputWei, sourceChain, enableTarget, target]);
 
   useEffect(() => {
     if (
-      ["Mining", "PendingSignature", "Success"].includes(bridgeStatus?.status || "") &&
-      (["None", "Fail", "Exception", "Success"].includes(selfRelayStatus?.status || "") &&
-        ["None", "Fail", "Exception", "Success"].includes(relayStatus?.status || "")) === false
+      ["Fail", "Exception", "Success"].includes(relayStatus?.status || "") === false && //if bridge relayer failed or succeeded then we are done
+      ["Success"].includes(selfRelayStatus?.status || "") === false && //if self relay succeeded then we are done, other wise we need to wait for relayStatus
+      ["Mining", "PendingSignature", "Success"].includes(bridgeStatus?.status || "")
     ) {
       setBridging(true);
     } else {
@@ -145,9 +184,12 @@ export const MicroBridge = ({
     }
   }, [relayStatus, bridgeStatus, selfRelayStatus]);
 
+  const { expectedFee, expectedToReceive, minimumAmount, maximumAmount, bridgeFee, minFee, maxFee, minAmountWei } =
+    useBridgeEstimate({ limits, fees, inputWei, sourceChain });
+
   return (
     <Box>
-      <Flex direction="row" justifyContent={"space-between"}>
+      <Flex direction="row" justifyContent={"space-between"} mb={"40px"}>
         <Box>
           <Text textTransform="capitalize">{sourceChain}</Text>
         </Box>
@@ -156,19 +198,14 @@ export const MicroBridge = ({
           <Text textTransform="capitalize">{sourceChain === "fuse" ? "Celo" : "Fuse"}</Text>
         </Box>
       </Flex>
-      <TokenInput
-        balanceWei={balanceWei}
-        decimals={2}
-        onChange={setInput}
-        minAmountWei={limits?.[sourceChain]?.minAmount?.toString()}
-      />
-      <FormControl isInvalid={!!reason}>
+      <TokenInput balanceWei={balanceWei} decimals={2} onChange={setInput} minAmountWei={minAmountWei} />
+      <FormControl isInvalid={!!reasonOf}>
         <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon variant="outline" />}>
-          {reason}
+          {reasonOf}
         </FormControl.ErrorMessage>
       </FormControl>
       <Box mt="5">
-        <Checkbox isChecked={enableTarget} value="" onChange={() => setEnableTarget(!enableTarget)}>
+        <Checkbox isChecked={enableTarget} value="" onChange={toggleEnableTarget}>
           Send to a different address
         </Checkbox>
         <AddressInput mt="2" onChange={setTarget} display={enableTarget ? "inherit" : "none"} />
@@ -180,7 +217,7 @@ export const MicroBridge = ({
         </HStack>
         <HStack>
           <Text w={{ base: "1/2", sm: "1/4" }}>Expected to receive </Text>
-          <Text w={{ base: "1/2", sm: "1/4" }}>{(Number(inputWei) / 100 - Number(expectedFee)).toFixed(2)} G$</Text>
+          <Text w={{ base: "1/2", sm: "1/4" }}>{expectedToReceive} G$</Text>
         </HStack>
       </Box>
       <Button
@@ -194,12 +231,12 @@ export const MicroBridge = ({
 
       {limits?.[sourceChain] && fees?.[sourceChain] && (
         <Box mt="5">
-          <Text>Minimum amount: {limits?.[sourceChain]?.minAmount?.toNumber() || 0 / 100} G$</Text>
-          <Text>Maximum amount: {limits?.[sourceChain]?.txLimit?.toNumber() || 0 / 100} G$</Text>
+          <Text>Minimum amount: {minimumAmount} G$</Text>
+          <Text>Maximum amount: {maximumAmount} G$</Text>
           <HStack>
-            <Text>Bridge fee: {fees?.[sourceChain]?.fee?.toNumber() / 100}%</Text>
-            <Text> (min fee: {fees?.[sourceChain]?.minFee?.toNumber() / 100} G$</Text>
-            <Text> max fee: {fees?.[sourceChain]?.maxFee?.toNumber() / 100} G$)</Text>
+            <Text>Bridge fee: {bridgeFee}%</Text>
+            <Text> (min fee: {minFee} G$</Text>
+            <Text> max fee: {maxFee} G$)</Text>
           </HStack>
         </Box>
       )}

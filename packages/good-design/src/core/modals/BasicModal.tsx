@@ -1,76 +1,79 @@
-import { Button, Modal } from "native-base";
-import React, { useCallback, useState } from "react";
+import { noop } from "lodash";
+import { Button, Modal as NBModal, useColorModeValue } from "native-base";
+import React, { FC, ReactNode, useCallback } from "react";
 
-export const useModal = () => {
-  const [modalVisible, setModalVisible] = useState(false);
+export interface BasicModalProps {
+  modalVisible: boolean;
+  header?: ReactNode;
+  body: ReactNode;
+  footer?: ReactNode;
+  actionText?: string;
+  closeText?: string;
+  hasCloseButton?: boolean;
+  hasTopBorder?: boolean;
+  hasBottomBorder?: boolean;
+  onClose?: () => void;
+  onAction?: () => void;
+  _modal?: any;
+  _body?: any;
+  _footer?: any;
+  _header?: any;
+}
 
-  return {
-    modalVisible,
-    showModal: useCallback(() => setModalVisible(true), []),
-    hideModal: useCallback(() => setModalVisible(false), []),
-    Modal: ({
-      header,
-      body,
-      footer,
-      actionText,
-      closeText = "Cancel",
-      onClose,
-      onAction,
-      _modal,
-      _header,
-      _body,
-      _footer
-    }: {
-      header?: any;
-      body: any;
-      footer?: any;
-      actionText?: string;
-      closeText: string;
-      onClose?: () => void;
-      onAction?: () => void;
-      _modal?: any;
-      _body?: any;
-      _footer?: any;
-      _header?: any;
-    }) => {
-      const actionButton = actionText ? (
-        <Button
-          onPress={() => {
-            setModalVisible(false);
-          }}
-        >
-          {actionText}
-        </Button>
-      ) : (
-        <React.Fragment />
-      );
-      return (
-        <Modal isOpen={modalVisible} onClose={setModalVisible} {..._modal}>
-          <Modal.Content>
-            {closeText && <Modal.CloseButton />}
-            <Modal.Header {..._header}>{header}</Modal.Header>
-            <Modal.Body {..._body}>{body}</Modal.Body>
-            <Modal.Footer {..._footer}>
-              <Button.Group space={2}>
-                {closeText ? (
-                  <Button
-                    variant="ghost"
-                    colorScheme="blueGray"
-                    onPress={() => {
-                      setModalVisible(false);
-                    }}
-                  >
-                    {closeText}
-                  </Button>
-                ) : (
-                  <></>
-                )}
-                {actionButton}
-              </Button.Group>
-            </Modal.Footer>
-          </Modal.Content>
-        </Modal>
-      );
-    }
-  };
+const BasicModal: FC<BasicModalProps> = ({
+  modalVisible,
+  header,
+  body,
+  footer,
+  actionText,
+  closeText = "Cancel",
+  hasCloseButton = !!closeText,
+  hasTopBorder = true,
+  hasBottomBorder = true,
+  onClose = noop,
+  onAction = noop,
+  _modal = {},
+  _header = {},
+  _body = {},
+  _footer = {}
+}) => {
+  const backgroundColor = useColorModeValue("main-dark-contrast", "white");
+
+  const onActionButtonPress = useCallback(() => {
+    onAction();
+    onClose();
+  }, [onAction, onClose]);
+
+  const actionButton = actionText ? <Button onPress={onActionButtonPress}>{actionText}</Button> : <React.Fragment />;
+  return (
+    /* height 100vh is required so modal always shows in the middle */
+    <NBModal isOpen={modalVisible} onClose={onClose} {..._modal} minH="100vh" bgColor={backgroundColor}>
+      <NBModal.Content>
+        {hasCloseButton && <NBModal.CloseButton />}
+        {!!header && (
+          <NBModal.Header borderBottomWidth={hasTopBorder ? "px" : "0"} {..._header}>
+            {header}
+          </NBModal.Header>
+        )}
+        <NBModal.Body {..._body}>{body}</NBModal.Body>
+        {(!!footer || !!closeText || !!actionText) && (
+          <NBModal.Footer borderTopWidth={hasBottomBorder ? "px" : "0"} {..._footer}>
+            {footer}
+            <Button.Group space={2}>
+              {closeText ? (
+                <Button variant="ghost" colorScheme="blueGray" onPress={onClose}>
+                  {closeText}
+                </Button>
+              ) : (
+                <></>
+              )}
+              {actionButton}
+            </Button.Group>
+          </NBModal.Footer>
+        )}
+      </NBModal.Content>
+    </NBModal>
+  );
 };
+
+export default BasicModal;
