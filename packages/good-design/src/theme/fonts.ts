@@ -1,4 +1,5 @@
 import { chain, first, toPairs } from 'lodash';
+import { Platform } from 'react-native';
 
 export const fontConfig = {
   Montserrat: {
@@ -75,7 +76,7 @@ export const fontConfig = {
     900: {
       normal: 'Roboto-Black',
       italic: 'Roboto-BlackItalic',
-    }
+    },
   }
 };
 
@@ -96,3 +97,8 @@ export const getFamiliesUrl = (families: Record<string, any>, fontName: string) 
 
   return `//fonts.googleapis.com/css2?family=${fontName}:ital,wght@${normalWeights};${italicWeights}&display=swap`
 };
+
+export const getPlatformFamilies = (families: typeof fontConfig) => Platform.select<Partial<typeof fontConfig>>({
+  native: families,
+  default: {}
+});

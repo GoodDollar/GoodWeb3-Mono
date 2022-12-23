@@ -1,6 +1,7 @@
-import type { IButtonProps, ITextProps } from "native-base";
+import { IButtonProps, ITextProps, View } from "native-base";
 import { Button, Text } from "native-base";
-import React, { ReactNode } from "react";
+import { IViewProps } from "native-base/lib/typescript/components/basic/View/types";
+import React from "react";
 import { withTheme } from "../../theme/hoc/withTheme";
 import { withThemingTools } from "../../theme/utils/themingTools";
 
@@ -11,15 +12,18 @@ export interface BaseButtonProps extends IButtonProps {
   text: string;
   onPress: () => void;
   innerText?: ITextProps;
-  children?: ReactNode;
+  innerView?: IViewProps;
+  children?: any;
   name?: string;
 }
 
 const BaseButton = withTheme({ name: "BaseButton" })(
-  ({ text, innerText, onPress, children, ...props }: BaseButtonProps) => (
+  ({ text, innerText, innerView, onPress, children, ...props }: BaseButtonProps) => (
     <Button onPress={onPress} maxWidth="750px" px={100} {...props}>
-      <Text {...innerText}>{text}</Text>
-      {children}
+      <View {...innerView}>
+        <Text {...innerText}>{text}</Text>
+        {children}
+      </View>
     </Button>
   )
 );
@@ -36,8 +40,7 @@ export const theme = {
         bg: bgHover
       },
       innerText: {
-        fontFamily: "normal",
-        fontWeight: "100",
+        fontWeight: "hairline",
         color: "white"
       }
     };

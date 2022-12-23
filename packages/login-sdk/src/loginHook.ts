@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { parseLoginLink } from "./loginLinkUtils";
+import { decodeBase64Params } from "@gooddollar/web3sdk-v2";
 
 export interface LoginProps extends React.ComponentPropsWithoutRef<"button"> {
   /* Gooddollar link */
@@ -43,7 +43,7 @@ export const useLogin = (props: LoginProps): (() => void) => {
     if (window.location.href.includes("?login=")) {
       const loginURI = window.location.href.split("=");
       
-      onLoginCallback(parseLoginLink(loginURI[1]));
+      onLoginCallback(decodeBase64Params(loginURI[1]));
     }
   }, []);
 

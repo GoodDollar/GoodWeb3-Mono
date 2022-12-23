@@ -1,15 +1,18 @@
 import { extendTheme } from "native-base";
-import { fontConfig } from "./fonts";
 import * as layout from "../core/layout/theme";
 import * as buttons from "../core/buttons/theme";
+import * as advanced from "../advanced/theme";
+import { fontConfig, getPlatformFamilies } from "./fonts";
 
 export const theme = extendTheme({
+  fontConfig: getPlatformFamilies(fontConfig),
   colors: {
     // default colors
-    grey: "#FFFFFF20",
+    grey: "#E5E5E5",
     greyCard: "#F6F8FA",
     lightGrey: "#636363",
     smokeWhite: "#F5F5F5",
+    dimgray: "#696969",
 
     // typo
     main: "#00AEFF",
@@ -31,11 +34,18 @@ export const theme = extendTheme({
     heading: "Montserrat",
     body: "Montserrat",
     mono: "Montserrat",
+    subheading: "Roboto",
   },
-  fontConfig,
   components: {
     ...layout,
-    ...buttons
+    ...buttons,
+    ...advanced,
+    Text: {
+      baseStyle: {
+        fontFamily: 'body',
+        fontWeight: 'normal'
+      }
+    },
   }
 });
 
@@ -43,5 +53,5 @@ export const theme = extendTheme({
 export type MyThemeType = typeof theme;
 
 declare module "native-base" {
-  type ICustomTheme = MyThemeType
+  type ICustomTheme = MyThemeType;
 }

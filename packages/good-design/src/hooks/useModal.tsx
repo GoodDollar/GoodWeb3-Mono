@@ -1,6 +1,7 @@
 import { noop, over } from "lodash";
-import React, { useCallback, useMemo, useState } from "react";
-import { BasicModalProps, BasicModal } from "../core/modals";
+import React, { FC, useCallback, useMemo, useState } from "react";
+import { BasicModal } from "../core/modals";
+import { BasicModalProps } from "../core/modals/BasicModal";
 
 export const useModal = () => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -8,9 +9,9 @@ export const useModal = () => {
   const showModal = useCallback(() => setModalVisible(true), [setModalVisible]);
   const hideModal = useCallback(() => setModalVisible(false), [setModalVisible]);
 
-  const MemoizedModal = useMemo(
+  const MemoizedModal: FC<Omit<BasicModalProps, "modalVisible">> = useMemo(
     () =>
-      ({ onClose = noop, ...props }: Omit<BasicModalProps, "modalVisible">) =>
+      ({ onClose = noop, ...props }) =>
         <BasicModal {...props} modalVisible={modalVisible} onClose={over(onClose, hideModal)} />,
     [modalVisible, hideModal]
   );
