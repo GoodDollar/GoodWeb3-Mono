@@ -88,7 +88,7 @@ export const pickWeight = (list: any[], style: 'normal' | 'italic') => chain(lis
   .values()
   .value();
 
-export const getFamiliesUrl = (families: typeof fontConfig, fontName: string) => {
+export const getFamiliesUrl = (families: Record<string, any>, fontName: string) => {
   const list = toPairs(families).map(([weight, props]: [string, any]) => ({ weight, ...props }));
 
   const [normalWeights, italicWeights] = ["normal", "italic"]

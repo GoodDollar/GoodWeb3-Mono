@@ -28,14 +28,13 @@ const ClaimCard: FC<ClaimCardProps> = ({ backgroundColor, titleColor, descriptio
       px="17"
       py="6"
     >
-        {/* //todo-fix: bold prop is not being applied, IE. underline works..
-      //ref: https://docs.nativebase.io/text */}
-      <Title bold style={{fontWeight: '700'}} color={titleColor}>{title}</Title>
+
+      <Title color={titleColor}>{title}</Title>
 
       {content?.map((contentItem, index) => (
         <Box key={index}>
           {!!contentItem.description && (
-            <Text color={descriptionColor} fontSize="md" fontFamily="subheading" fontWeight="1000" style={{fontWeight: "500"}} pt="4" pb="30">
+            <Text color={descriptionColor} fontSize="md" fontFamily="subheading" fontWeight="600" pt="4" pb="30">
               {contentItem.description}
             </Text>
           )}
@@ -70,7 +69,7 @@ const ClaimCard: FC<ClaimCardProps> = ({ backgroundColor, titleColor, descriptio
           {!!contentItem.list && (
             <View pt="30">
               {contentItem.list?.map((item, index, list) => (
-                <Text key={index} color="dimgray" style={{fontWeight: "500"}} fontWeight="1000" fontSize="16" fontFamily="subheading" pb={index === list.length - 1 ? "0" : "5"}>
+                <Text key={index} color="dimgray" bold fontSize="16" fontFamily="subheading" fontWeight="600" pb={index === list.length - 1 ? "0" : "5"}>
                   {item.key} <Text color="main">{item.value}</Text>
                 </Text>
               ))}

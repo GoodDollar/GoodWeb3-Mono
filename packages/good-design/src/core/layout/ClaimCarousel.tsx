@@ -1,4 +1,4 @@
-import { FlatList, View } from "native-base";
+import { FlatList, View, Box } from "native-base";
 import React, { FC, memo, useCallback, useState } from "react";
 import { LayoutChangeEvent, NativeScrollEvent, NativeSyntheticEvent } from "react-native";
 import { IClaimCard } from "../buttons";
@@ -46,10 +46,10 @@ const SlidesComponent = memo(({ activeSlide, slidesNumber }: { activeSlide: numb
 const getItemLayout = (_: IClaimCard[] | null | undefined, index: number) => ({
   index,
   length: 275,
-  offset: (275 + 16) * index
+  offset: (275 + 20) * index
 });
 
-const Separator = () => <View w="4" />;
+const Separator = () => <View w="5" />;
 
 const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards }) => {
   const [slidesNumber, setSlidesNumber] = useState(0);
@@ -57,21 +57,22 @@ const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards }) => {
 
   const onFlatListLayoutChange = useCallback(
     (event: LayoutChangeEvent) => {
-      const contentWidth = cards.length * 275 + (cards.length - 1) * 16;
+      const contentWidth = cards.length * 275 + (cards.length - 1) * 20;
 
       if (event.nativeEvent.layout.width >= contentWidth) {
         setSlidesNumber(0);
         return;
       }
 
-      setSlidesNumber(Math.ceil((contentWidth - event.nativeEvent.layout.width - 16) / (275 + 16)));
+      setSlidesNumber(Math.ceil(((contentWidth - event.nativeEvent.layout.width) + 36) / (275 + 20)));
     },
     [cards, setSlidesNumber]
   );
 
   const onScroll = useCallback(
     (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-      const currentSlide = Math.floor(event.nativeEvent.contentOffset.x / (275 + 16));
+      const offSetX = event.nativeEvent.contentOffset.x
+      const currentSlide = Math.floor(offSetX / (275 + (offSetX === 0 ? 20 : -20)));
 
       if (activeSlide === currentSlide) return;
 
@@ -81,7 +82,7 @@ const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards }) => {
   );
 
   return (
-    <>
+    <Box w="310px">
       <FlatList
         data={cards}
         horizontal
@@ -99,7 +100,7 @@ const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards }) => {
       <View flexDirection="row" w="full" pt="5" justifyContent="center">
         <SlidesComponent activeSlide={activeSlide} slidesNumber={slidesNumber} />
       </View>
-    </>
+    </Box>
   );
 };
 

@@ -8,7 +8,7 @@ export const theme = extendTheme({
   fontConfig: getPlatformFamilies(fontConfig),
   colors: {
     // default colors
-    grey: "#FFFFFF20",
+    grey: "#E5E5E5",
     greyCard: "#F6F8FA",
     lightGrey: "#636363",
     smokeWhite: "#F5F5F5",

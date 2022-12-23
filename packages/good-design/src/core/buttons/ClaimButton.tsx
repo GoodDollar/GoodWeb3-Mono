@@ -126,7 +126,7 @@ const ClaimButton = ({ firstName, method, refresh, claimed, claim, ...props }: F
 
   return (
     <View flex={1} w="full" {...props}>
-      <View w="full" alignItems="center" pt="12" pb="24">
+      <View w="full" alignItems="center" pt="12" pb="12">
         <Web3ActionButton
           text={buttonTitle}
           requiredChain={SupportedChains.FUSE}
