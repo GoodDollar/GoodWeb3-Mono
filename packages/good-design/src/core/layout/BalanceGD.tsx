@@ -9,7 +9,7 @@ interface BalanceGDProps {
 }
 
 const BalanceView: FC<Required<BalanceGDProps> & { amount: CurrencyValue }> = memo(({ gdPrice, amount }) => (
-  <View w="full" flexDirection="column" alignItems="center" mb="20" mt="45">
+  <View w="full" flexDirection="column" alignItems="center" mb="45" mt="45">
     <Text fontSize="md" fontWeight="500" opacity={0.7} mb="0.5">
       YOUR BALANCE
     </Text>
