@@ -2,13 +2,17 @@ import { BigNumberish, ethers } from "ethers";
 import { Web3AuthCore } from "@web3auth/core";
 import { OpenloginAdapter } from "@web3auth/openlogin-adapter";
 import { TorusWalletConnectorPlugin } from "@web3auth/torus-wallet-connector-plugin";
-import { UserInfo, CHAIN_NAMESPACES, ADAPTER_STATUS, WALLET_ADAPTERS, SafeEventEmitterProvider } from "@web3auth/base";
-import { IOpenLoginOptions, IOpenLoginSDK } from "./types";
+import TorusEmbed from "@toruslabs/torus-embed";
+import { UserInfo, CHAIN_NAMESPACES, ADAPTER_STATUS, WALLET_ADAPTERS, SafeEventEmitterProvider, ADAPTER_EVENTS } from "@web3auth/base";
+import EventEmitter from "eventemitter3";
+import { IOpenLoginOptions, IOpenLoginSDK, SDKEvent } from "./types";
 
 class OpenLoginWebSDK implements IOpenLoginSDK {
   private auth!: Web3AuthCore;  
-  private eth!: ethers.providers.Web3Provider | null;
-  private listener!: IOpenLoginOptions["onLoginStateChanged"] | null;
+  private eth!: ethers.providers.Web3Provider | null;  
+  private adapter!: OpenloginAdapter;
+  private plugin!: TorusWalletConnectorPlugin;
+  private emitter = new EventEmitter();
 
   get initialized(): boolean {
     return !!this.auth;
@@ -20,6 +24,10 @@ class OpenLoginWebSDK implements IOpenLoginSDK {
 
   private get provider(): SafeEventEmitterProvider | null {
     return this.auth.provider;
+  }
+
+  private get wallet(): TorusEmbed | null {
+    return this.plugin.torusWalletInstance;
   }
 
   async initialize({ 
@@ -34,9 +42,7 @@ class OpenLoginWebSDK implements IOpenLoginSDK {
     locale = "en",    
     // theme opts
     primaryColor,  
-    darkMode = false,  
-    // feedback opts
-    onLoginStateChanged 
+    darkMode = false
   }: IOpenLoginOptions): Promise<void> {
     if (this.initialized) {
       return;
@@ -60,8 +66,8 @@ class OpenLoginWebSDK implements IOpenLoginSDK {
       logoDark: appLogo || "https://web3auth.io/images/w3a-L-Favicon-1.svg",
       logoLight: appLogo || "https://web3auth.io/images/w3a-D-Favicon-1.svg",
     }
-    
-    auth.configureAdapter(new OpenloginAdapter({
+
+    const adapter = new OpenloginAdapter({
       adapterSettings: {
         uxMode: "popup",
         loginConfig: {
@@ -79,9 +85,9 @@ class OpenLoginWebSDK implements IOpenLoginSDK {
           ...logo,
         },        
       },
-    }));
+    });
 
-    await auth.addPlugin(new TorusWalletConnectorPlugin({
+    const plugin = new TorusWalletConnectorPlugin({
       torusWalletOpts: {},
       walletInitOptions: {
         whiteLabel: {
@@ -89,16 +95,22 @@ class OpenLoginWebSDK implements IOpenLoginSDK {
           ...logo,
         },                
       },
-    }));
-
-    await auth.init();
-    this.auth = auth;
+    });
     
-    if (onLoginStateChanged) {
-      this.listener = onLoginStateChanged;
-    }
+    auth.configureAdapter(adapter);
+    await auth.addPlugin(plugin);
+    await auth.init();
 
-    this.onLoginStateChanged();
+    this.auth = auth;
+    this.adapter = adapter;
+    this.plugin = plugin;  
+    
+    const { CONNECTED, DISCONNECTED } = ADAPTER_EVENTS;
+    const eventListener = this.onLoginStateChanged.bind(this);
+
+    for (const event of [CONNECTED, DISCONNECTED]) {
+      auth.on(event, eventListener);
+    }
   }
 
   async login(): Promise<void> {
@@ -111,8 +123,6 @@ class OpenLoginWebSDK implements IOpenLoginSDK {
     await this.auth.connectTo(WALLET_ADAPTERS.OPENLOGIN, {
       loginProvider: "google",
     });
-    
-    this.onLoginStateChanged();
   }
 
   async getUserInfo(): Promise<Partial<UserInfo>> {    
@@ -129,7 +139,6 @@ class OpenLoginWebSDK implements IOpenLoginSDK {
     }
 
     await this.auth.logout();
-    this.onLoginStateChanged();
   }
 
   async getChainId(): Promise<any> {
@@ -199,8 +208,16 @@ class OpenLoginWebSDK implements IOpenLoginSDK {
     })
   }
 
+  addEventListener(event: SDKEvent, listener: (...args: any[]) => void): void {
+    this.emitter.addListener(event, listener);
+  }
+
+  removeEventListener(event: SDKEvent, listener: (...args: any[]) => void): void {
+    this.emitter.removeListener(event, listener);
+  }
+
   private onLoginStateChanged() {
-    const { listener, isLoggedIn, provider } = this;
+    const { isLoggedIn, provider } = this;
     let eth: ethers.providers.Web3Provider | null = null;
     
     if (provider) {
@@ -208,10 +225,7 @@ class OpenLoginWebSDK implements IOpenLoginSDK {
     }
 
     this.eth = eth;
-    
-    if (listener) {
-      listener(isLoggedIn);
-    }
+    this.emitter.emit(SDKEvent.LoginStateChanged, isLoggedIn);    
   }
 
   private assertInitialized() {
@@ -221,7 +235,7 @@ class OpenLoginWebSDK implements IOpenLoginSDK {
   }
   
   private assertLogin() {
-    if (!this.provider || !this.eth) {
+    if (!this.provider) {
       throw new Error('User signed out');
     }
   }

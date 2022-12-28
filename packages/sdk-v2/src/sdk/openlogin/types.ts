@@ -1,6 +1,11 @@
 import { UserInfo } from "@web3auth/base";
 import { OPENLOGIN_NETWORK_TYPE } from "@toruslabs/openlogin";
 
+export enum SDKEvent {
+  LoginStateChanged = "loginStatusChanged",
+  Error = "error"
+}
+
 export interface IOpenLoginOptions {
   clientId: string;
   googleClientId: string;
@@ -27,6 +32,8 @@ export interface IOpenLoginSDK {
   sendTransaction(destination: string, amount: number): Promise<any>;
   signMessage(originalMessage: string): Promise<any>;
   getPrivateKey(): Promise<any>;
+  addEventListener(event: SDKEvent, listener: (...args: any[]) => void): void;
+  removeEventListener(event: SDKEvent, listener: (...args: any[]) => void): void;
 }
 
 export type IOpenLoginProviderProps = Omit<IOpenLoginOptions, 
