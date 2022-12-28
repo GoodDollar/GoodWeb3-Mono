@@ -3,7 +3,7 @@ import React, { FC } from "react";
 import { withTheme } from "../../theme/hoc/withTheme";
 
 const Title: FC<ITextProps> = withTheme({ name: "Title" })(({ children, ...props }) => (
-  <Text {...props}>{children}</Text> 
+  <Text {...props}>{children}</Text>
 ));
 
 export const theme = {
