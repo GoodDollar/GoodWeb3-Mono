@@ -34,13 +34,13 @@ export const TokenInput = ({
   );
 
   return (
-    <Box w="container" {...props}>
+    <Box w="container" {...props} width="100%">
       <NumericFormat
         isInvalid={Number(input) > balance || Number(input) < minAmount}
         onChangeText={handleChange}
-        InputLeftElement={
-          <Button rounded="xl" variant="outline" h="0.5" ml="1" onPress={setMax} {..._button}>
-            Max
+        InputRightElement={
+          <Button rounded="xl" variant="outline" h="0.5" mr="1" onPress={setMax} {..._button}>
+            Max 
           </Button>
         }
         size="xl"
@@ -48,11 +48,12 @@ export const TokenInput = ({
         customInput={Input}
         decimalSeparator={"."}
         decimalScale={decimals}
+        color="lightGrey"
         {..._numericformat}
       />
-      <Text alignSelf={"flex-end"} {..._text}>
-        Balance: {balance}
-      </Text>
+        <Text bold color="lightGrey:alpha.80" alignSelf={"flex-end"} {..._text}>
+          Balance: {balance}
+        </Text>
     </Box>
   );
 };
