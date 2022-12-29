@@ -1,9 +1,7 @@
 import React, { useState, useCallback } from 'react'
 import { Pressable, Icon, View, Box } from 'native-base'
 import { first } from 'lodash'
-
 import SelectBox from './SelectBox'
-import { first } from 'lodash'
 // import SwitchIcon from ' ../../assets/svg/arrow-swap.svg'
 
 const SwitchIcon = () => (
