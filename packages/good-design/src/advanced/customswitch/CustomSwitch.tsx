@@ -14,18 +14,24 @@ const SwitchIcon = () => (
 const SelectListItem = (
   {
     chain,
-    press,
+    onPress,
     isListItem,
-    isListOpen
+    isListOpen,
+    isLeft,
+    listNumber,
   }: {
     chain: string,
-    press: () => void,
+    onPress: ((isLeft: boolean) => void) | ((isLeft: boolean, listNumber: number) => void)
     isListItem: boolean,
-    isListOpen: boolean
+    isListOpen: boolean,
+    isLeft: boolean,
+    listNumber: number
+    
   }) => {
   const type = isListItem ? "list" : "button"
+  const onItemPress = useCallback(() => onPress(isLeft, listNumber), [chain, onPress]);
   return (
-    <SelectBox variant={type} text={chain} press={press} isListItem={isListItem} isListOpen={isListOpen} />
+    <SelectBox variant={type} text={chain} press={onItemPress} isListItem={isListItem} isListOpen={isListOpen} />
   )
 }
 
@@ -37,7 +43,7 @@ export const CustomSwitch = ({list, switchListCb}:{list:string[], switchListCb: 
   const [sourceList, setSourceList] = useState<string[]>(list);
   const [targetList, setTargetList] = useState<string[]>(() => list.slice().reverse());
 
-  const toggleList = useCallback((left?: boolean) => {
+  const toggleList = useCallback((left: boolean) => {
     const side = {
       show: left ? showListLeft : showListRight,
       dispatch: left ? setShowListLeft : setShowListRight
@@ -51,34 +57,36 @@ export const CustomSwitch = ({list, switchListCb}:{list:string[], switchListCb: 
     switchListCb();
   }
 
-  const selectFromList = (index: number, isLeft: boolean) => {
+  const selectFromList = (isLeft: boolean, listNumber: number) => {
     const sides = [sourceList, targetList]
     const selectedSide = isLeft ? sides.splice(0, 1)[0] : sides.splice(1,1)[0]
     const altSide = sides[0]
-    const selected = selectedSide.splice(index, index)[0]
+    const selected = selectedSide.splice(listNumber, listNumber)[0]
     selectedSide.unshift(selected);
     if (altSide.indexOf(selected) === 0) {
-      const altSelected = altSide.splice(index, index)[0]
+      const altSelected = altSide.splice(listNumber, listNumber)[0]
       altSide.unshift(altSelected)
     }
     toggleList(isLeft);
     switchListCb(); //Todo: refactor to handle list with more then 2 values
   }
 
-  const toggleOrSelect = useCallback((index: number, isLeft: boolean) => 
-  () => index === 0 ? toggleList(isLeft) : selectFromList(index, isLeft), [toggleList, selectFromList])
+  const onUncheckList = useCallback((isLeft) => toggleList(isLeft), [toggleList])
+  const onUncheckItem = useCallback((isLeft, listNumber) => selectFromList(isLeft, listNumber), [toggleList]) 
 
   return (
     <View height="16" display="flex" flexDirection="row" justifyContent="flex-start" alignItems="flex-start">
       <Box display="flex" alignItems="center" justifyContent="center" flexDirection="column">
         {
-          sourceList.map((chain, index) => (
+          sourceList.map((chain, listNumber) => (
             <SelectListItem
               key={chain}
-              chain={index === 0 ? sourceList[0] : chain}
+              chain={!listNumber ? sourceList[0] : chain}
               isListOpen={showListLeft}
-              press={toggleOrSelect(index, true)}
-              isListItem={index !== 0}
+              isLeft={true}
+              listNumber={listNumber}
+              onPress={!listNumber ? onUncheckList : onUncheckItem}
+              isListItem={listNumber !== 0}
             />
           ))
         }
@@ -102,13 +110,15 @@ export const CustomSwitch = ({list, switchListCb}:{list:string[], switchListCb: 
       </Box>
       <Box display="flex" alignItems="center" justifyContent={"center"} flexDirection="column">
         {
-          targetList.map((chain, index) => (
+          targetList.map((chain, listNumber) => (
             <SelectListItem
               key={chain}
-              chain={index === 0 ? targetList[0] : chain}
+              chain={!listNumber ? targetList[0] : chain}
               isListOpen={showListRight}
-              press={toggleOrSelect(index, false)}
-              isListItem={index !== 0}
+              isLeft={false}
+              listNumber={listNumber}
+              onPress={!listNumber ? onUncheckList : onUncheckItem}
+              isListItem={!!listNumber}
             />
           ))
         }
