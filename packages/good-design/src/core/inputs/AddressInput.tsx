@@ -12,7 +12,6 @@ const addressMask = (() => {
 })();
 
 export const isAddressValid = (v: string) => ethers.utils.isAddress(v);
-
 export const AddressInput = ({
   address,
   onChange,

@@ -16,7 +16,6 @@ import { SupportedChains } from "../constants";
 export const useGetBridgeContracts = () => {
   const { baseEnv } = useGetEnvChainId();
   const { fuseBridge, celoBridge } = bridgeContracts[baseEnv] || {};
-
   if (fuseBridge && celoBridge) {
     return {
       [SupportedChains.FUSE]: new Contract(fuseBridge, TokenBridgeABI.abi) as TokenBridge,
@@ -42,7 +41,6 @@ export const useWithinBridgeLimits = (requestChainId: number, account: string, a
   );
 
   const [isValid = false, reason = ""]: [boolean, string] = canBridge?.[0]?.value || [];
-
   return { isValid, reason };
 };
 
@@ -239,7 +237,6 @@ export const useRelayTx = () => {
       txHash: string
     ): Promise<{ relayTxHash?: string; relayPromise?: Promise<any> }> => {
       let relayResult;
-
       while (!relayResult) {
         try {
           if (chainId !== targetChain) {

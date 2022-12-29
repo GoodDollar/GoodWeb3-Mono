@@ -2,7 +2,6 @@ import React, { useEffect, useCallback, useState, useMemo } from "react";
 import {
   Box,
   Button,
-  Checkbox,
   CheckIcon,
   CloseIcon,
   Flex,
@@ -13,15 +12,14 @@ import {
   Popover,
   Spinner,
   Stack,
-  Switch,
   Text,
-  WarningOutlineIcon
+  WarningOutlineIcon,
 } from "native-base";
 import { TransactionStatus } from "@usedapp/core";
-import { TokenInput } from "../../core";
-import { AddressInput, isAddressValid } from "../../core/inputs/AddressInput";
+import { TokenInput, TokenOutput } from "../../core";
 import { BigNumber } from "ethers";
 import { ExplorerLink } from "../../core/web3/ExplorerLink";
+import { CustomSwitch } from "../../advanced/customswitch/"
 
 type OnBridge = (amount: string, sourceChain: string, target?: string) => Promise<void>;
 
@@ -140,22 +138,16 @@ export const MicroBridge = ({
 }) => {
   const [isBridging, setBridging] = useState(false);
   const [inputWei, setInput] = useState<string>("0");
-  const [enableTarget, setEnableTarget] = useState(false);
-
-  const [target, setTarget] = useState<string | undefined>();
 
   const [sourceChain, setSourceChain] = useState<"fuse" | "celo">("fuse");
-
-  const toggleEnableTarget = useCallback(() => setEnableTarget(value => !value), [setEnableTarget]);
 
   const targetChain = sourceChain === "fuse" ? "celo" : "fuse";
   const balanceWei = useBalanceHook(sourceChain);
 
   const { isValid, reason } = useCanBridge(sourceChain, inputWei);
   const hasBalance = Number(inputWei) <= Number(balanceWei);
-  const isTargetValid = !enableTarget || isAddressValid(target || "");
-  const isValidInput = isValid && hasBalance && isTargetValid;
-  const reasonOf = reason || (!hasBalance && "balance") || (!isTargetValid && "target") || "";
+  const isValidInput = isValid && hasBalance
+  const reasonOf = reason || (!hasBalance && "balance") || "";
 
   const toggleChains = useCallback(() => {
     setSourceChain(targetChain);
@@ -166,11 +158,11 @@ export const MicroBridge = ({
     setBridging(true);
 
     try {
-      await onBridge(inputWei, sourceChain, enableTarget ? target : undefined);
+      await onBridge(inputWei, sourceChain);
     } finally {
       setBridging(false);
     }
-  }, [setBridging, onBridge, inputWei, sourceChain, enableTarget, target]);
+  }, [setBridging, onBridge, inputWei, sourceChain]);
 
   useEffect(() => {
     if (
@@ -184,62 +176,51 @@ export const MicroBridge = ({
     }
   }, [relayStatus, bridgeStatus, selfRelayStatus]);
 
-  const { expectedFee, expectedToReceive, minimumAmount, maximumAmount, bridgeFee, minFee, maxFee, minAmountWei } =
+  const { minAmountWei, expectedToReceive } =
     useBridgeEstimate({ limits, fees, inputWei, sourceChain });
 
   return (
     <Box>
-      <Flex direction="row" justifyContent={"space-between"} mb={"40px"}>
-        <Box>
-          <Text textTransform="capitalize">{sourceChain}</Text>
-        </Box>
-        <Switch boxSize="8" size="lg" isChecked={sourceChain === "fuse"} onToggle={toggleChains} />
-        <Box>
-          <Text textTransform="capitalize">{sourceChain === "fuse" ? "Celo" : "Fuse"}</Text>
-        </Box>
+      <Flex direction="column" w="410px" justifyContent="center" alignSelf="center">
+      <Flex direction="row" justifyContent="center" mb="40px" zIndex="100">
+        <CustomSwitch switchListCb={toggleChains} list={["Fuse", "Celo"]} />
       </Flex>
-      <TokenInput balanceWei={balanceWei} decimals={2} onChange={setInput} minAmountWei={minAmountWei} />
+      <Flex direction="column" alignItems="flex-start" justifyContent="flex-start" width="100%">
+        <Text fontFamily="subheading" bold color="lightGrey:alpha.80">ENTER AMOUNT</Text>
+        <TokenInput balanceWei={balanceWei} decimals={2} onChange={setInput} minAmountWei={minAmountWei} />
+      </Flex>
       <FormControl isInvalid={!!reasonOf}>
         <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon variant="outline" />}>
           {reasonOf}
         </FormControl.ErrorMessage>
-      </FormControl>
-      <Box mt="5">
-        <Checkbox isChecked={enableTarget} value="" onChange={toggleEnableTarget}>
-          Send to a different address
-        </Checkbox>
-        <AddressInput mt="2" onChange={setTarget} display={enableTarget ? "inherit" : "none"} />
-      </Box>
-      <Box mt="5">
-        <HStack>
-          <Text w={{ base: "1/2", sm: "1/4" }}>Fee</Text>
-          <Text w={{ base: "1/2", sm: "1/4" }}>{expectedFee} G$</Text>
-        </HStack>
-        <HStack>
-          <Text w={{ base: "1/2", sm: "1/4" }}>Expected to receive </Text>
-          <Text w={{ base: "1/2", sm: "1/4" }}>{expectedToReceive} G$</Text>
-        </HStack>
-      </Box>
+        </FormControl>
+      <Flex mt="4" direction="column" alignItems="flex-start" justifyContent="flex-start" width="100%">
+          <Text
+            fontFamily="subheading"
+            color="lightGrey:alpha.80"
+            textTransform="uppercase"
+            bold
+          >
+            You will receive on {targetChain} 
+          </Text>
+        <TokenOutput outputValue={expectedToReceive ?? '0'} />
+      </Flex>
       <Button
         mt="5"
         onPress={triggerBridge}
-        colorScheme="secondary"
-        textTransform="capitalize"
+        backgroundColor="main"
         isLoading={isBridging}
         disabled={isBridging || isValidInput === false}
-      >{`Bridge to ${targetChain}`}</Button>
-
-      {limits?.[sourceChain] && fees?.[sourceChain] && (
-        <Box mt="5">
-          <Text>Minimum amount: {minimumAmount} G$</Text>
-          <Text>Maximum amount: {maximumAmount} G$</Text>
-          <HStack>
-            <Text>Bridge fee: {bridgeFee}%</Text>
-            <Text> (min fee: {minFee} G$</Text>
-            <Text> max fee: {maxFee} G$)</Text>
-          </HStack>
-        </Box>
-      )}
+        >
+          <Text
+            fontFamily="subheading"
+            bold
+            color="white"
+            textTransform="uppercase"
+          >
+            {`Bridge to ${targetChain}`}
+          </Text>
+        </Button>
       {(isBridging || (bridgeStatus && bridgeStatus?.status != "None")) && (
         <Box borderWidth="1" mt="10" padding="5" rounded="lg">
           <StatusBox text="Sending funds to bridge" txStatus={bridgeStatus} sourceChain={sourceChain} />
@@ -259,9 +240,10 @@ export const MicroBridge = ({
               txStatus={relayStatus}
               sourceChain={sourceChain}
             />
-          )}
-        </Box>
-      )}
+            )}
+          </Box>
+        )}
+      </Flex> 
     </Box>
   );
 };

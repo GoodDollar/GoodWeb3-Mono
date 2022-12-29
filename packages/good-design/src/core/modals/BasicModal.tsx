@@ -37,7 +37,7 @@ const BasicModal: FC<BasicModalProps> = ({
   _body = {},
   _footer = {}
 }) => {
-  const backgroundColor = useColorModeValue("white:alpha.40", "mainDarkContracts:alpha.40");
+  const backgroundColor = useColorModeValue("mainDarkContracts:alpha.40", "white:alpha.40");
 
   const onActionButtonPress = useCallback(() => {
     onAction();
