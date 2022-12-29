@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react'
 import { Pressable, Icon, View, Box } from 'native-base'
 
 import SelectBox from './SelectBox'
+import { first } from 'lodash'
 // import SwitchIcon from ' ../../assets/svg/arrow-swap.svg'
 
 const SwitchIcon = () => (
@@ -18,20 +19,17 @@ const SelectListItem = (
     isListItem,
     isListOpen,
     isLeft,
-    listNumber,
   }: {
-    chain: string,
-    onPress: ((isLeft: boolean) => void) | ((isLeft: boolean, listNumber: number) => void)
+    chain: string | undefined,
+    onPress: ((isLeft: boolean) => void) | ((isLeft: boolean, chain: string) => void)
     isListItem: boolean,
     isListOpen: boolean,
-    isLeft: boolean,
-    listNumber: number
-    
+    isLeft: boolean,    
   }) => {
   const type = isListItem ? "list" : "button"
-  const onItemPress = useCallback(() => onPress(isLeft, listNumber), [chain, onPress]);
+  const onItemPress = useCallback(() => onPress(isLeft, chain ?? ''), [chain, onPress]);
   return (
-    <SelectBox variant={type} text={chain} press={onItemPress} isListItem={isListItem} isListOpen={isListOpen} />
+    <SelectBox variant={type} text={chain ?? ''} press={onItemPress} isListItem={isListItem} isListOpen={isListOpen} />
   )
 }
 
@@ -57,13 +55,14 @@ export const CustomSwitch = ({list, switchListCb}:{list:string[], switchListCb: 
     switchListCb();
   }
 
-  const selectFromList = (isLeft: boolean, listNumber: number) => {
+  const selectFromList = (isLeft: boolean, chain: string) => {
     const sides = [sourceList, targetList]
     const selectedSide = isLeft ? sides.splice(0, 1)[0] : sides.splice(1,1)[0]
     const altSide = sides[0]
+    const listNumber = selectedSide.indexOf(chain)
     const selected = selectedSide.splice(listNumber, listNumber)[0]
     selectedSide.unshift(selected);
-    if (altSide.indexOf(selected) === 0) {
+    if (altSide.indexOf(chain) === 0) {
       const altSelected = altSide.splice(listNumber, listNumber)[0]
       altSide.unshift(altSelected)
     }
@@ -72,7 +71,7 @@ export const CustomSwitch = ({list, switchListCb}:{list:string[], switchListCb: 
   }
 
   const onUncheckList = useCallback((isLeft) => toggleList(isLeft), [toggleList])
-  const onUncheckItem = useCallback((isLeft, listNumber) => selectFromList(isLeft, listNumber), [toggleList]) 
+  const onUncheckItem = useCallback((isLeft, chain) => selectFromList(isLeft, chain), [toggleList, selectFromList]) 
 
   return (
     <View height="16" display="flex" flexDirection="row" justifyContent="flex-start" alignItems="flex-start">
@@ -81,10 +80,9 @@ export const CustomSwitch = ({list, switchListCb}:{list:string[], switchListCb: 
           sourceList.map((chain, listNumber) => (
             <SelectListItem
               key={chain}
-              chain={!listNumber ? sourceList[0] : chain}
+              chain={!listNumber ? first(sourceList) : chain}
               isListOpen={showListLeft}
               isLeft={true}
-              listNumber={listNumber}
               onPress={!listNumber ? onUncheckList : onUncheckItem}
               isListItem={listNumber !== 0}
             />
@@ -113,10 +111,9 @@ export const CustomSwitch = ({list, switchListCb}:{list:string[], switchListCb: 
           targetList.map((chain, listNumber) => (
             <SelectListItem
               key={chain}
-              chain={!listNumber ? targetList[0] : chain}
+              chain={!listNumber ? first(targetList) : chain}
               isListOpen={showListRight}
               isLeft={false}
-              listNumber={listNumber}
               onPress={!listNumber ? onUncheckList : onUncheckItem}
               isListItem={!!listNumber}
             />
