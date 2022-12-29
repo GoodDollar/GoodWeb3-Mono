@@ -11,19 +11,16 @@ export const TokenOutput = ({
   _numericformat?: any;
   _button?: any;
   _text?: any;
-}) => {
-
-  return (
-    <Box w="container" {...props} width="100%">
-      <NumericFormat
-        disabled
-        // onChangeText={handleChange}
-        size="xl"
-        value={outputValue}
-        customInput={Input}
-        color="lightGrey"
-        {..._numericformat}
-      />
-    </Box>
-  );
-};
+}) => (
+  <Box w="container" {...props} width="100%">
+    <NumericFormat
+      disabled
+      // onChangeText={handleChange}
+      size="xl"
+      value={outputValue}
+      customInput={Input}
+      color="lightGrey"
+      {..._numericformat}
+    />
+  </Box>
+);

@@ -5,6 +5,7 @@ import { ethers, getDefaultProvider } from "ethers";
 import React, { useEffect, useState } from "react";
 import BaseButton from "../core/buttons/BaseButton";
 import ClaimButton from "../core/buttons/ClaimButton";
+import SelectBox from "../advanced/customswitch/SelectBox";
 
 export const BaseButtonWithThemeExample = () => {
   return (
@@ -13,6 +14,7 @@ export const BaseButtonWithThemeExample = () => {
     </>
   );
 };
+
 const config: Config = {
   networks: [Mainnet, Fuse, Celo, Goerli],
   readOnlyChainId: Mainnet.chainId,

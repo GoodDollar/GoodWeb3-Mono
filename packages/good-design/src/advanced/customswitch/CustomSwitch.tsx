@@ -1,11 +1,8 @@
-import React, { useState } from 'react'
-import { Pressable, Icon, Text, ChevronDownIcon, View, Box } from 'native-base'
+import React, { useState, useCallback } from 'react'
+import { Pressable, Icon, View, Box } from 'native-base'
 
-import FuseIcon from '../../assets/svg/fuse.svg'
-import CeloIcon from '../../assets/svg/celo.svg'
+import SelectBox from './SelectBox'
 // import SwitchIcon from ' ../../assets/svg/arrow-swap.svg'
-
-// TODO: make imports from .svg work
 
 const SwitchIcon = () => (
   <g strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5">
@@ -14,127 +11,39 @@ const SwitchIcon = () => (
   </g>
 )
 
-const IconList: { [key: string]: string; } = {
-  "Fuse": FuseIcon,
-  "Celo": CeloIcon
-}
-
-const show = {
-  button: {
-    display: "flex",
-    borderBottomLeftRadius: "0",
-    borderBottomRightRadius: "0"
-  },
-  list: {
-    "display": "flex",
-    backgroundColor: '#F2F2F2',
-    borderTopLeftRadius: "0",
-    borderTopRightRadius: "0"
-  }
-}
-
-const hide = {
-  button: {
-    "display": "flex",
-    borderBottomLeftRadius: "2",
-    borderBottomRightRadius: "2" 
-  }, 
-  list: {
-    "display": "none",
-    backgroundColor: "inherit"
-  }
-}
-
-type CustomSelectBoxProps = {
-  text: string,
-  press: () => void,
-  styles: any,
-  isListItem: boolean
-}
-
-const CustomSelectBox = ({ text, press, styles, isListItem }: CustomSelectBoxProps) => (
-  <>
-          <Pressable
-          borderColor="blue.500"
-          borderWidth="1"
-          borderRadius="lg"
-          style={styles}
-          flexDirection="row"
-          onPress={press}
-          w="40"
-          h="16"
-          p="1"
-          _hover={{ bgColor: "mainDarkContrast:alpha.20" }}>
-          {/* Temp workaround for loading the network svg icons */}
-          <img src={IconList[text]} style={{
-            backgroundSize: 'contain',
-            backgroundPosition: 'center',
-            width: "30px",
-            height: '48px',
-            paddingLeft: '10px'
-          }} />
-          <Text
-            textAlign="center"
-            fontSize="lg"
-            ml="0" w="105%"
-            alignSelf="center"
-            display="flex"
-            pl="2"
-            fontWeight="thin"
-            fontFamily="subheading"
-            selectable={false}>
-              {text}
-          </Text>
-          {!isListItem && (
-            <ChevronDownIcon
-              mr="0"
-              ml="5"
-              size="xl"
-              display="flex"
-              alignSelf="center"
-              justifySelf="flex-end"
-              marginRight="0" />
-        )}
-        </Pressable>
-  </>
-)
-
 const SelectListItem = (
   {
     chain,
-    styles,
     press,
-    isListItem
+    isListItem,
+    isListOpen
   }: {
     chain: string,
-    styles: typeof show,
     press: () => void,
-    isListItem: boolean
+    isListItem: boolean,
+    isListOpen: boolean
   }) => {
-  const type = isListItem ? styles.list : styles.button
+  const type = isListItem ? "list" : "button"
   return (
-    <CustomSelectBox text={chain} press={press} styles={type} isListItem />
+    <SelectBox variant={type} text={chain} press={press} isListItem={isListItem} isListOpen={isListOpen} />
   )
 }
 
 //todo: add icon list (optional)
 export const CustomSwitch = ({list, switchListCb}:{list:string[], switchListCb: () => void}) => {
-  const [styleLeft, setStyleLeft] = useState<any>({
-    show: false,
-    style: hide
-  })
-  const [styleRight, setStyleRight] = useState<any>({
-    show: false,
-    style: hide
-  })
+  const [showListLeft, setShowListLeft] = useState<any>(false)
+  const [showListRight, setShowListRight] = useState<any>(false)
 
   const [sourceList, setSourceList] = useState<string[]>(list);
-  const [targetList, setTargetList] = useState<string[]>(list.slice().reverse());
+  const [targetList, setTargetList] = useState<string[]>(() => list.slice().reverse());
 
-  const toggleList = (left?: boolean) => {
-    const side = left ? [styleLeft, setStyleLeft ] : [styleRight, setStyleRight ]  
-    !side[0].show ? side[1]({ show: true, style: show }) : side[1]({ show: false, style: hide })
-  }
+  const toggleList = useCallback((left?: boolean) => {
+    const side = {
+      show: left ? showListLeft : showListRight,
+      dispatch: left ? setShowListLeft : setShowListRight
+    }
+    side.dispatch(!side.show)
+  }, [showListLeft, showListRight])
 
   const switchSelect = () => {
     setSourceList(targetList);
@@ -156,16 +65,19 @@ export const CustomSwitch = ({list, switchListCb}:{list:string[], switchListCb: 
     switchListCb(); //Todo: refactor to handle list with more then 2 values
   }
 
+  const toggleOrSelect = useCallback((index: number, isLeft: boolean) => 
+  () => index === 0 ? toggleList(isLeft) : selectFromList(index, isLeft), [toggleList, selectFromList])
+
   return (
     <View height="16" display="flex" flexDirection="row" justifyContent="flex-start" alignItems="flex-start">
       <Box display="flex" alignItems="center" justifyContent="center" flexDirection="column">
         {
           sourceList.map((chain, index) => (
             <SelectListItem
-              key={index}
+              key={chain}
               chain={index === 0 ? sourceList[0] : chain}
-              styles={styleLeft.style}
-              press={() => index === 0 ? toggleList(true) : selectFromList(index, true)}
+              isListOpen={showListLeft}
+              press={toggleOrSelect(index, true)}
               isListItem={index !== 0}
             />
           ))
@@ -192,10 +104,10 @@ export const CustomSwitch = ({list, switchListCb}:{list:string[], switchListCb: 
         {
           targetList.map((chain, index) => (
             <SelectListItem
-              key={'target'+index}
+              key={chain}
               chain={index === 0 ? targetList[0] : chain}
-              styles={styleRight.style}
-              press={() => index === 0 ? toggleList(false) : selectFromList(index, false)}
+              isListOpen={showListRight}
+              press={toggleOrSelect(index, false)}
               isListItem={index !== 0}
             />
           ))
