@@ -2,7 +2,7 @@ import { UserInfo } from "@web3auth/base";
 import { useColorMode, useColorModeValue } from "native-base";
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 
-import { IOpenLoginOptions, IOpenLoginSDK, IOpenLoginContext, IOpenLoginProviderProps, IOpenLoginHook, IEthersRPCHook, SDKEvent, IOpenLoginCustomizaiton } from "./types";
+import { IOpenLoginOptions, IOpenLoginSDK, IOpenLoginContext, IOpenLoginProviderProps, IOpenLoginHook, IEthersRPCHook, SDKEvent, IOpenLoginCustomization } from "./types";
 import SDK from "./sdk";
 
 export const OpenLoginContext = createContext<IOpenLoginContext>({
@@ -29,7 +29,7 @@ export const OpenLoginProvider = ({
   const [sdk, setSDK] = useState<IOpenLoginSDK>();
   const initiallyCustomizedRef = useRef<boolean>(false);
 
-  const customization: IOpenLoginCustomizaiton = {
+  const customization: IOpenLoginCustomization = {
     appName,
     appLogo,
     locale,

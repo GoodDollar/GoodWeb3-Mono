@@ -7,7 +7,7 @@ import TorusEmbed, { WhiteLabelParams } from "@toruslabs/torus-embed";
 import { UserInfo, CHAIN_NAMESPACES, ADAPTER_STATUS, WALLET_ADAPTERS, SafeEventEmitterProvider, ADAPTER_EVENTS } from "@web3auth/base";
 import EventEmitter from "eventemitter3";
 import { cloneDeep } from 'lodash';
-import { IOpenLoginCustomizaiton, IOpenLoginOptions, IOpenLoginSDK, SDKEvent } from "./types";
+import { IOpenLoginCustomization, IOpenLoginOptions, IOpenLoginSDK, SDKEvent } from "./types";
 
 import TorusConfig from "@toruslabs/torus-embed/src/config";
 
@@ -100,7 +100,7 @@ class OpenLoginWebSDK implements IOpenLoginSDK {
     }
   }
 
-  customize(customization: IOpenLoginCustomizaiton): void {
+  customize(customization: IOpenLoginCustomization): void {
     const whiteLabel = this.prepareWhitelabel(customization);
     const adapterOpts: OpenloginAdapterOptions = cloneDeep(this.defaultAdapterOpts);
     const { adapterSettings } = adapterOpts;
@@ -248,7 +248,7 @@ class OpenLoginWebSDK implements IOpenLoginSDK {
     // theme opts
     primaryColor,  
     darkMode = false
-  }: IOpenLoginCustomizaiton): { 
+  }: IOpenLoginCustomization): { 
     adapter: WhiteLabelData; 
     plugin: WhiteLabelParams; 
   } {
