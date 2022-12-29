@@ -2,7 +2,7 @@ import { UserInfo } from "@web3auth/base";
 import { useColorMode, useColorModeValue } from "native-base";
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 
-import { IOpenLoginOptions, IOpenLoginSDK, IOpenLoginContext, IOpenLoginProviderProps, IOpenLoginHook, IEthersRPCHook, SDKEvent } from "./types";
+import { IOpenLoginOptions, IOpenLoginSDK, IOpenLoginContext, IOpenLoginProviderProps, IOpenLoginHook, IEthersRPCHook, SDKEvent, IOpenLoginCustomizaiton } from "./types";
 import SDK from "./sdk";
 
 export const OpenLoginContext = createContext<IOpenLoginContext>({
@@ -27,19 +27,23 @@ export const OpenLoginProvider = ({
   const primaryColor = useColorModeValue("primary.50", "primary.800");
   const [userInfo, setUserInfo] = useState<Partial<UserInfo> | null>(null);
   const [sdk, setSDK] = useState<IOpenLoginSDK>();
-  
-  // TODO: usePropsRefs
-  const optionsRef = useRef<IOpenLoginOptions>({ 
-    clientId, 
-    network, 
-    googleClientId, 
-    verifier,
+  const initiallyCustomizedRef = useRef<boolean>(false);
+
+  const customization: IOpenLoginCustomizaiton = {
     appName,
     appLogo,
     locale,
     primaryColor,
     darkMode: colorMode === "dark",
-  })
+  };
+  
+  const optionsRef = useRef<IOpenLoginOptions>({ 
+    clientId, 
+    network, 
+    googleClientId, 
+    verifier,
+    ...customization,
+  });
   
   useEffect(() => {    
     const sdk = new SDK();
@@ -71,6 +75,18 @@ export const OpenLoginProvider = ({
       sdk.removeEventListener(LoginStateChanged, onLoginStateChanged);
     }
   }, [setUserInfo, setSDK]);
+
+  useEffect(() => {
+    if (initiallyCustomizedRef.current) {
+      // if flag enabled - update customization
+      sdk?.customize(customization);
+    } else if (sdk) {
+      // once SDK initialized - enable flag to start updaing from the next render
+      initiallyCustomizedRef.current = true;
+    }
+    
+    // while sdk not initialized - do nothing
+  }, [sdk, customization]);
 
   if (!sdk) {
     return null;
