@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react'
 import { Pressable, Icon, View, Box } from 'native-base'
+import { first } from 'lodash'
 
 import SelectBox from './SelectBox'
 // import SwitchIcon from ' ../../assets/svg/arrow-swap.svg'
@@ -81,7 +82,7 @@ export const CustomSwitch = ({list, switchListCb}:{list:string[], switchListCb: 
           sourceList.map((chain, listNumber) => (
             <SelectListItem
               key={chain}
-              chain={!listNumber ? sourceList[0] : chain}
+              chain={!listNumber ? first(sourceList) : chain}
               isListOpen={showListLeft}
               isLeft={true}
               listNumber={listNumber}
