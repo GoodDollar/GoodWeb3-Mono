@@ -1,17 +1,22 @@
 import { BigNumberish, ethers } from "ethers";
 import { Web3AuthCore } from "@web3auth/core";
-import { OpenloginAdapter } from "@web3auth/openlogin-adapter";
+import { OpenloginAdapter, OpenloginAdapterOptions } from "@web3auth/openlogin-adapter";
 import { TorusWalletConnectorPlugin } from "@web3auth/torus-wallet-connector-plugin";
-import TorusEmbed from "@toruslabs/torus-embed";
+import { WhiteLabelData } from "@toruslabs/openlogin-jrpc";
+import TorusEmbed, { WhiteLabelParams } from "@toruslabs/torus-embed";
 import { UserInfo, CHAIN_NAMESPACES, ADAPTER_STATUS, WALLET_ADAPTERS, SafeEventEmitterProvider, ADAPTER_EVENTS } from "@web3auth/base";
 import EventEmitter from "eventemitter3";
-import { IOpenLoginOptions, IOpenLoginSDK, SDKEvent } from "./types";
+import { cloneDeep } from 'lodash';
+import { IOpenLoginCustomization, IOpenLoginOptions, IOpenLoginSDK, SDKEvent } from "./types";
+
+import { translations } from "./i18n";
 
 class OpenLoginWebSDK implements IOpenLoginSDK {
   private auth!: Web3AuthCore;  
   private eth!: ethers.providers.Web3Provider | null;  
   private adapter!: OpenloginAdapter;
   private plugin!: TorusWalletConnectorPlugin;
+  private defaultAdapterOpts!: OpenloginAdapterOptions;
   private emitter = new EventEmitter();
 
   get initialized(): boolean {
@@ -36,13 +41,8 @@ class OpenLoginWebSDK implements IOpenLoginSDK {
     googleClientId, 
     verifier, 
     network = 'testnet',     
-    // app opts
-    appName,
-    appLogo,
-    locale = "en",    
-    // theme opts
-    primaryColor,  
-    darkMode = false
+    // customization opts
+    ...customization
   }: IOpenLoginOptions): Promise<void> {
     if (this.initialized) {
       return;
@@ -58,16 +58,9 @@ class OpenLoginWebSDK implements IOpenLoginSDK {
       },
     });   
 
-    const colors = {
-      primary: primaryColor || "#00a8ff",
-    }
+    const whiteLabel = this.prepareWhitelabel(customization);
 
-    const logo = {
-      logoDark: appLogo || "https://web3auth.io/images/w3a-L-Favicon-1.svg",
-      logoLight: appLogo || "https://web3auth.io/images/w3a-D-Favicon-1.svg",
-    }
-
-    const adapter = new OpenloginAdapter({
+    const adapterOpts: OpenloginAdapterOptions = {
       adapterSettings: {
         uxMode: "popup",
         loginConfig: {
@@ -77,23 +70,16 @@ class OpenLoginWebSDK implements IOpenLoginSDK {
             clientId: googleClientId,
           },
         },
-        whiteLabel: {
-          name: appName,
-          dark: darkMode,
-          defaultLanguage: locale,          
-          theme: colors,
-          ...logo,
-        },        
+        whiteLabel: whiteLabel.adapter,
       },
-    });
+    };
+
+    const adapter = new OpenloginAdapter(adapterOpts);
 
     const plugin = new TorusWalletConnectorPlugin({
       torusWalletOpts: {},
       walletInitOptions: {
-        whiteLabel: {
-          theme: { isDark: darkMode, colors },
-          ...logo,
-        },                
+        whiteLabel: whiteLabel.plugin,                
       },
     });
     
@@ -104,12 +90,41 @@ class OpenLoginWebSDK implements IOpenLoginSDK {
     this.auth = auth;
     this.adapter = adapter;
     this.plugin = plugin;  
+    this.defaultAdapterOpts = adapterOpts;
     
     const { CONNECTED, DISCONNECTED } = ADAPTER_EVENTS;
     const eventListener = this.onLoginStateChanged.bind(this);
 
     for (const event of [CONNECTED, DISCONNECTED]) {
       auth.on(event, eventListener);
+    }
+  }
+
+  customize(customization: IOpenLoginCustomization): void {
+    const whiteLabel = this.prepareWhitelabel(customization);
+    const adapterOpts: OpenloginAdapterOptions = cloneDeep(this.defaultAdapterOpts);
+    const { adapterSettings } = adapterOpts;
+    const { wallet } = this;
+
+    if (adapterSettings) {
+      adapterSettings.whiteLabel = whiteLabel.adapter;
+
+      this.adapter.setAdapterSettings(adapterOpts);
+    }
+    
+    if (wallet) {
+      const { plugin: pluginCfg } = whiteLabel;
+      const { defaultLanguage } = pluginCfg;
+      
+      wallet.whiteLabel = pluginCfg;
+
+      if (defaultLanguage && (defaultLanguage in translations)) {
+        const { embed } = translations[defaultLanguage as keyof typeof translations] || {};
+
+        if (embed) {
+          wallet.embedTranslations = embed;
+        }
+      }
     }
   }
 
@@ -226,6 +241,43 @@ class OpenLoginWebSDK implements IOpenLoginSDK {
 
     this.eth = eth;
     this.emitter.emit(SDKEvent.LoginStateChanged, isLoggedIn);    
+  }
+
+  private prepareWhitelabel({
+    // app opts
+    appName,
+    appLogo,
+    locale = "en",    
+    // theme opts
+    primaryColor,  
+    darkMode = false
+  }: IOpenLoginCustomization): { 
+    adapter: WhiteLabelData; 
+    plugin: WhiteLabelParams; 
+  } {
+    const colors = {
+      primary: primaryColor || "#00a8ff",
+    }
+
+    const logo = {
+      logoDark: appLogo || "https://web3auth.io/images/w3a-L-Favicon-1.svg",
+      logoLight: appLogo || "https://web3auth.io/images/w3a-D-Favicon-1.svg",
+    }
+
+    const adapter: WhiteLabelData = {
+      name: appName,
+      dark: darkMode,
+      defaultLanguage: locale,          
+      theme: colors,
+      ...logo,
+    }
+
+    const plugin: WhiteLabelParams = {
+      theme: { isDark: darkMode, colors },
+      ...logo,
+    };
+    
+    return { adapter, plugin };
   }
 
   private assertInitialized() {
