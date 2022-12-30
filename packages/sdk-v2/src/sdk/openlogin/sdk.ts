@@ -9,7 +9,7 @@ import EventEmitter from "eventemitter3";
 import { cloneDeep } from 'lodash';
 import { IOpenLoginCustomizaiton, IOpenLoginOptions, IOpenLoginSDK, SDKEvent } from "./types";
 
-import TorusConfig from "@toruslabs/torus-embed/src/config";
+import { translations } from "./i18n";
 
 class OpenLoginWebSDK implements IOpenLoginSDK {
   private auth!: Web3AuthCore;  
@@ -41,7 +41,7 @@ class OpenLoginWebSDK implements IOpenLoginSDK {
     googleClientId, 
     verifier, 
     network = 'testnet',     
-    // constomization opts
+    // customization opts
     ...customization
   }: IOpenLoginOptions): Promise<void> {
     if (this.initialized) {
@@ -104,7 +104,6 @@ class OpenLoginWebSDK implements IOpenLoginSDK {
     const whiteLabel = this.prepareWhitelabel(customization);
     const adapterOpts: OpenloginAdapterOptions = cloneDeep(this.defaultAdapterOpts);
     const { adapterSettings } = adapterOpts;
-    const { translations } = TorusConfig;
     const { wallet } = this;
 
     if (adapterSettings) {
@@ -120,7 +119,11 @@ class OpenLoginWebSDK implements IOpenLoginSDK {
       wallet.whiteLabel = pluginCfg;
 
       if (defaultLanguage && (defaultLanguage in translations)) {
-        wallet.embedTranslations = translations[defaultLanguage].embed;
+        const { embed } = translations[defaultLanguage as keyof typeof translations] || {};
+
+        if (embed) {
+          wallet.embedTranslations = embed;
+        }
       }
     }
   }
