@@ -25,7 +25,7 @@ export interface IOpenLoginSDK {
   readonly initialized: boolean;
   readonly isLoggedIn: boolean;
   initialize(options: IOpenLoginOptions): Promise<void>;
-  customize(customization: IOpenLoginCustomization): void;
+  customize(customization: IOpenLoginCustomization): Promise<void>;
   login(): Promise<void>;
   getUserInfo(): Promise<Partial<UserInfo>>;
   logout(): Promise<void>;

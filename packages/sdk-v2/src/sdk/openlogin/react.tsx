@@ -1,6 +1,7 @@
 import { UserInfo } from "@web3auth/base";
 import { useColorMode, useColorModeValue } from "native-base";
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { noop } from "lodash";
 
 import { IOpenLoginOptions, IOpenLoginSDK, IOpenLoginContext, IOpenLoginProviderProps, IOpenLoginHook, IEthersRPCHook, SDKEvent, IOpenLoginCustomization } from "./types";
 import SDK from "./sdk";
@@ -79,7 +80,7 @@ export const OpenLoginProvider = ({
   useEffect(() => {
     if (initiallyCustomizedRef.current) {
       // if flag enabled - update customization
-      sdk?.customize(customization);
+      sdk?.customize(customization).catch(noop);
     } else if (sdk) {
       // once SDK initialized - enable flag to start updaing from the next render
       initiallyCustomizedRef.current = true;

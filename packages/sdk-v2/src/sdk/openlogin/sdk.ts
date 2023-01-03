@@ -1,22 +1,22 @@
-import { BigNumberish, ethers } from "ethers";
-import { Web3AuthCore } from "@web3auth/core";
-import { OpenloginAdapter, OpenloginAdapterOptions } from "@web3auth/openlogin-adapter";
-import { TorusWalletConnectorPlugin } from "@web3auth/torus-wallet-connector-plugin";
 import { WhiteLabelData } from "@toruslabs/openlogin-jrpc";
 import TorusEmbed, { WhiteLabelParams } from "@toruslabs/torus-embed";
-import { UserInfo, CHAIN_NAMESPACES, ADAPTER_STATUS, WALLET_ADAPTERS, SafeEventEmitterProvider, ADAPTER_EVENTS } from "@web3auth/base";
+import { ADAPTER_EVENTS, ADAPTER_STATUS, CHAIN_NAMESPACES, SafeEventEmitterProvider, UserInfo, WALLET_ADAPTERS } from "@web3auth/base";
+import { Web3AuthCore } from "@web3auth/core";
+import { OpenloginAdapter } from "@web3auth/openlogin-adapter";
+import { TorusWalletConnectorPlugin } from "@web3auth/torus-wallet-connector-plugin";
+import { ethers, BigNumberish } from "ethers";
 import EventEmitter from "eventemitter3";
-import { cloneDeep } from 'lodash';
+import { bindAll, pick, values } from 'lodash';
 import { IOpenLoginCustomization, IOpenLoginOptions, IOpenLoginSDK, SDKEvent } from "./types";
 
-import { translations } from "./i18n";
+const subscribeTo = values(pick(ADAPTER_EVENTS, 'CONNECTED', 'DISCONNECTED'));
 
 class OpenLoginWebSDK implements IOpenLoginSDK {
-  private auth!: Web3AuthCore;  
-  private eth!: ethers.providers.Web3Provider | null;  
-  private adapter!: OpenloginAdapter;
-  private plugin!: TorusWalletConnectorPlugin;
-  private defaultAdapterOpts!: OpenloginAdapterOptions;
+  private auth!: Web3AuthCore | null;  
+  private eth!: ethers.providers.Web3Provider | null;
+  private adapter!: OpenloginAdapter | null;
+  private plugin!: TorusWalletConnectorPlugin | null;
+  private options!: IOpenLoginOptions;
   private emitter = new EventEmitter();
 
   get initialized(): boolean {
@@ -24,29 +24,35 @@ class OpenLoginWebSDK implements IOpenLoginSDK {
   }
 
   get isLoggedIn(): boolean {
-    return this.auth.status === ADAPTER_STATUS.CONNECTED && !!this.provider;
+    return this.auth?.status === ADAPTER_STATUS.CONNECTED && !!this.provider;
   }
 
   private get provider(): SafeEventEmitterProvider | null {
-    return this.auth.provider;
+    return this.auth?.provider || null;
   }
 
   private get wallet(): TorusEmbed | null {
-    return this.plugin.torusWalletInstance;
+    return this.plugin?.torusWalletInstance || null;
   }
 
-  async initialize({ 
-    // login opts
-    clientId, 
-    googleClientId, 
-    verifier, 
-    network = 'testnet',     
-    // customization opts
-    ...customization
-  }: IOpenLoginOptions): Promise<void> {
+  constructor() {
+    bindAll(this, 'onLoginStateChanged');
+  }
+
+  async initialize(options: IOpenLoginOptions): Promise<void> {  
     if (this.initialized) {
       return;
     }
+
+    const { 
+      // login opts
+      clientId, 
+      googleClientId, 
+      verifier, 
+      network = 'testnet',     
+       // customization opts
+       ...customization
+    } = options;
 
     const auth = new Web3AuthCore({      
       clientId,
@@ -60,7 +66,7 @@ class OpenLoginWebSDK implements IOpenLoginSDK {
 
     const whiteLabel = this.prepareWhitelabel(customization);
 
-    const adapterOpts: OpenloginAdapterOptions = {
+    const adapter = new OpenloginAdapter({
       adapterSettings: {
         uxMode: "popup",
         loginConfig: {
@@ -72,9 +78,7 @@ class OpenLoginWebSDK implements IOpenLoginSDK {
         },
         whiteLabel: whiteLabel.adapter,
       },
-    };
-
-    const adapter = new OpenloginAdapter(adapterOpts);
+    });
 
     const plugin = new TorusWalletConnectorPlugin({
       torusWalletOpts: {},
@@ -90,42 +94,30 @@ class OpenLoginWebSDK implements IOpenLoginSDK {
     this.auth = auth;
     this.adapter = adapter;
     this.plugin = plugin;  
-    this.defaultAdapterOpts = adapterOpts;
+    this.options = options;
     
-    const { CONNECTED, DISCONNECTED } = ADAPTER_EVENTS;
-    const eventListener = this.onLoginStateChanged.bind(this);
-
-    for (const event of [CONNECTED, DISCONNECTED]) {
-      auth.on(event, eventListener);
-    }
+    for (const event of subscribeTo) {
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      auth.on(event, this.onLoginStateChanged);
+    }       
   }
 
-  customize(customization: IOpenLoginCustomization): void {
-    const whiteLabel = this.prepareWhitelabel(customization);
-    const adapterOpts: OpenloginAdapterOptions = cloneDeep(this.defaultAdapterOpts);
-    const { adapterSettings } = adapterOpts;
-    const { wallet } = this;
+  async customize(customization: IOpenLoginCustomization): Promise<void> {
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    const { adapter, auth, options, onLoginStateChanged } = this;
 
-    if (adapterSettings) {
-      adapterSettings.whiteLabel = whiteLabel.adapter;
+    this.assertInitialized();
+    await adapter?.openloginInstance?._cleanup();
 
-      this.adapter.setAdapterSettings(adapterOpts);
+    for (const event of subscribeTo) {      
+      auth?.off(event, onLoginStateChanged);
     }
+
+    this.auth = null;
+    this.adapter = null;
+    this.plugin = null; 
     
-    if (wallet) {
-      const { plugin: pluginCfg } = whiteLabel;
-      const { defaultLanguage } = pluginCfg;
-      
-      wallet.whiteLabel = pluginCfg;
-
-      if (defaultLanguage && (defaultLanguage in translations)) {
-        const { embed } = translations[defaultLanguage as keyof typeof translations] || {};
-
-        if (embed) {
-          wallet.embedTranslations = embed;
-        }
-      }
-    }
+    await this.initialize({ ...options, ...customization });
   }
 
   async login(): Promise<void> {
@@ -135,7 +127,7 @@ class OpenLoginWebSDK implements IOpenLoginSDK {
       return;
     }
     
-    await this.auth.connectTo(WALLET_ADAPTERS.OPENLOGIN, {
+    await this.auth?.connectTo(WALLET_ADAPTERS.OPENLOGIN, {
       loginProvider: "google",
     });
   }
@@ -143,7 +135,9 @@ class OpenLoginWebSDK implements IOpenLoginSDK {
   async getUserInfo(): Promise<Partial<UserInfo>> {    
     this.assertInitialized();
 
-    return this.auth.getUserInfo();
+    const userInfo = await this.auth?.getUserInfo();
+
+    return userInfo || {};
   }
 
   async logout(): Promise<void> {
@@ -153,7 +147,7 @@ class OpenLoginWebSDK implements IOpenLoginSDK {
       return;
     }
 
-    await this.auth.logout();
+    await this.auth?.logout();    
   }
 
   async getChainId(): Promise<any> {
@@ -232,13 +226,17 @@ class OpenLoginWebSDK implements IOpenLoginSDK {
   }
 
   private onLoginStateChanged() {
-    const { isLoggedIn, provider } = this;
+    const { isLoggedIn, provider, wallet } = this;
     let eth: ethers.providers.Web3Provider | null = null;
+      
+    if (isLoggedIn && wallet?.torusWidgetVisibility) {
+      wallet?.hideTorusButton();
+    }
     
     if (provider) {
       eth = new ethers.providers.Web3Provider(provider);    
     }
-
+    
     this.eth = eth;
     this.emitter.emit(SDKEvent.LoginStateChanged, isLoggedIn);    
   }
