@@ -42,8 +42,8 @@ const BasicModal: FC<BasicModalProps> = ({
     onClose();
   }, [onAction, onClose]);
 
-  const bgContent = useColorModeValue("mainDarkContract:alpha.40", "white:alpha.40")
-  const bgOverlay = useColorModeValue("white:alpha.40", "mainDarkContracts:alpha.40");
+  const bgContent = useColorModeValue("white", "mainDarkContrast")
+  const bgOverlay = useColorModeValue("mainDarkContracts:alpha.40", "white:alpha.40");
   
   const actionButton = actionText ? <Button onPress={onActionButtonPress}>{actionText}</Button> : <React.Fragment />;
   return (
