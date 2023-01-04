@@ -39,5 +39,5 @@
 
   // only remove command configuration
   // remove with backup file
-  "includeBackup": false
+  "includeBackup": true
 }
