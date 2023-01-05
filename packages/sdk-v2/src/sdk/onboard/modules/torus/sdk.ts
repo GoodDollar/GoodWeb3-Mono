@@ -1,5 +1,5 @@
-import type { WalletInit } from '@web3-onboard/common'
-import type { TorusCtorArgs, TorusParams } from '@toruslabs/torus-embed'
+import { WalletInit, createEIP1193Provider, ProviderRpcErrorCode, ProviderRpcError } from '@web3-onboard/common'
+import Torus, { TorusCtorArgs, TorusParams } from '@toruslabs/torus-embed'
 
 type TorusOptions = TorusCtorArgs & TorusParams
 
@@ -31,12 +31,6 @@ function torus(options?: TorusOptions): WalletInit {
             label: 'Google (Powered by Web3Auth)',
             getIcon: async () => TorusIcon,
             getInterface: async ({ chains }) => {
-                const { default: Torus } = await import('@toruslabs/torus-embed')
-
-                const { createEIP1193Provider, ProviderRpcErrorCode, ProviderRpcError } = await import(
-                    '@web3-onboard/common'
-                )
-
                 const [chain] = chains
 
                 const instance = new Torus({
