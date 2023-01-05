@@ -6,9 +6,21 @@ import coinbaseWalletModule from '@web3-onboard/coinbase'
 import { useRef } from "react";
 import { torus as torusModule } from './modules/torus'
 import { customWcModule } from "./modules/customwalletconnect";
+import { keys, pickBy } from "lodash";
+
+export interface IOnboardWallets {
+  torus?: boolean;
+  gooddollar?: boolean;
+  metamask?: boolean;
+  walletconnect?: boolean;
+  coinbase?: boolean;
+  zengo?: boolean;
+  custom?: InitOptions["wallets"];
+}
 
 export interface IOnboardProviderProps {
   options?: Omit<InitOptions, "wallets">;
+  wallets?: IOnboardWallets;
   children?: React.ReactNode;
 }
 
@@ -80,7 +92,26 @@ const defaultOptions: IOnboardProviderProps["options"] = {
   }]
 }
 
-export const OnboardProvider = ({ options = defaultOptions, children }: IOnboardProviderProps): JSX.Element => {
+const defaultWalletsFlags: IOnboardWallets = {
+  torus: true,
+  gooddollar: true,
+  metamask: true
+  walletconnect: true,
+  coinbase: true,
+  zengo: true,
+  custom: [],
+}
+
+const walletsMap: Record<keyof Omit<IOnboardWallets, "custom">, any> = {
+  torus,
+  gooddollar: gdWc,
+  metamask: injected,
+  walletconnect: defaultWc,
+  coinbase: coinbaseWalletSdk,
+  zengo: zenGoWc,
+};
+
+export const OnboardProvider = ({ options = defaultOptions, wallets = null, children }: IOnboardProviderProps): JSX.Element => {
   const onboardRef = useRef<OnboardAPI>();
 
   // initialise once at first render
@@ -88,17 +119,16 @@ export const OnboardProvider = ({ options = defaultOptions, children }: IOnboard
     if (onboardRef.current) {
       return;
     }
+    
+    const { custom = [], ...flags } = { ...defaultWallets, ...(wallets || {}) };       
+    const selectedWallets = keys(pickBy(flags));
 
     onboardRef.current = init({
-      wallets: [
-        torus,
-        gdWc,
-        injected,
-        defaultWc,
-        coinbaseWalletSdk,
-        zenGoWc
-      ],
       ...options,
+      wallets: [
+        ...selectedWallets.map(key => walletsMap[key]),
+        ...custom
+      ],
     })
   })();
 
