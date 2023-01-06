@@ -1,6 +1,7 @@
 import { EnvKey } from "./base/sdk";
 import { Currency, CurrencyValue, Token } from "@usedapp/core";
 import contractsAddresses from "@gooddollar/goodprotocol/releases/deployment.json";
+import { BigNumberish } from "ethers";
 
 /* List of supported chains for this sdk. */
 export enum SupportedChains {
@@ -16,7 +17,7 @@ export enum SupportedV2Networks {
   CELO = 42220
 }
 
-type G$Tokens = {
+export type G$Tokens = {
   amount: CurrencyValue;
   token: Currency;
 };
@@ -82,6 +83,27 @@ export function GDX(baseEnv?: string): Token {
   const chainId = SupportedChains.MAINNET;
 
   return new Token("GoodDollar X", "G$X", chainId, address, G$Decimals.GDX[chainId]);
+}
+
+export function G$Amount(g$: Token, chainId: number, value?: BigNumberish): G$Tokens | null {
+  return !value ? null : {
+    amount: CurrencyValue.fromString(g$, value.toString()),
+    token: new Currency("GoodDollar", "G$", G$Decimals.G$[chainId]),
+  }
+}
+
+export function GOODAmount(good: Token, chainId: number, value?: BigNumberish): G$Tokens | null {
+  return !value ? null : {
+    amount: CurrencyValue.fromString(good, value.toString()),
+    token: new Currency("GDAO", "GOOD", G$Decimals.GOOD[chainId]),
+  }
+}
+
+export function GDXAmount(gdx: Token, value?: BigNumberish): G$Tokens | null {
+  return !value ? null : {
+    amount: CurrencyValue.fromString(gdx, value.toString()),
+    token: new Currency("G$X", "GDX", G$Decimals.GDX[SupportedChains.MAINNET]),
+  }
 }
 
 export function G$ContractAddresses<T = ObjectLike>(name: string, env: EnvKey): T {

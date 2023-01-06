@@ -1,15 +1,15 @@
 import { useContext, useState } from "react";
-import { Signer, providers } from "ethers";
+import { Signer, providers, BigNumberish } from "ethers";
 import { BaseSDK, EnvKey, EnvValue } from "./sdk";
 import { Web3Context } from "../../contexts";
-import { QueryParams, useCalls, useEthers, CurrencyValue, Currency, ChainId } from "@usedapp/core";
+import { QueryParams, useCalls, useEthers, ChainId } from "@usedapp/core";
 import { ClaimSDK } from "../claim/sdk";
 import { SavingsSDK } from "../savings/sdk";
 import Contracts from "@gooddollar/goodprotocol/releases/deployment.json";
 import { useReadOnlyProvider } from "../../hooks/useMulticallAtChain";
 import useUpdateEffect from "../../hooks/useUpdateEffect";
 import { useRefreshOrNever } from "../../hooks";
-import { SupportedChains, G$Balances, G$, GOOD, GDX, G$Decimals } from "../constants";
+import { SupportedChains, G$Balances, G$, GOOD, GDX, G$Amount, GOODAmount, GDXAmount, G$Tokens } from "../constants";
 import { GoodReserveCDai, GReputation, IGoodDollar } from "@gooddollar/goodprotocol/types";
 
 export const NAME_TO_SDK: { [key: string]: typeof ClaimSDK | typeof SavingsSDK | typeof BaseSDK } = {
@@ -152,6 +152,26 @@ export function useG$Tokens() {
   };
 }
 
+export function useG$Amount(value?: BigNumberish): G$Tokens | null {
+  const { chainId } = useGetEnvChainId();
+  const { g$ } = useG$Tokens();
+
+  return G$Amount(g$, chainId, value);
+}
+
+export function useGOODAmount(value?: BigNumberish): G$Tokens | null {
+  const { chainId } = useGetEnvChainId();
+  const { good } = useG$Tokens();
+
+  return GOODAmount(good, chainId, value);
+}
+
+export function useGDXAmount(value?: BigNumberish): G$Tokens | null {
+  const { gdx } = useG$Tokens();
+
+  return GDXAmount(gdx, value);
+}
+
 export function useG$Balance(refresh: QueryParams["refresh"] = "never") {
   const refreshOrNever = useRefreshOrNever(refresh);
   const { account } = useEthers();
@@ -202,26 +222,24 @@ export function useG$Balance(refresh: QueryParams["refresh"] = "never") {
   };
 
   if (!results.includes(undefined) && !results[0]?.error) {
-    const g$Balance = {
-      amount: CurrencyValue.fromString(g$, results[0]?.value[0].toString()),
-      token: new Currency("GoodDollar", "G$", G$Decimals.G$[chainId])
-    };
+    const g$Balance = G$Amount(g$, chainId, results[0]?.value[0]);
+    const goodBalance = GOODAmount(good, chainId, results[1]?.value[0]);
 
-    const goodBalance = {
-      amount: CurrencyValue.fromString(good, results[1]?.value[0].toString()),
-      token: new Currency("GDAO", "GOOD", G$Decimals.GOOD[chainId])
-    };
-    balances.G$ = g$Balance;
-    balances.GOOD = goodBalance;
+    if (g$Balance) {
+      balances.G$ = g$Balance;
+    }
+
+    if (goodBalance) {
+      balances.GOOD = goodBalance;
+    }
   }
 
   if (mainnetGdx) {
-    const gdxBalance = {
-      amount: CurrencyValue.fromString(gdx, mainnetGdx.value[0].toString()),
-      token: new Currency("G$X", "GDX", G$Decimals.GDX[MAINNET])
-    };
+    const gdxBalance = GDXAmount(gdx, mainnetGdx.value[0]);    
 
-    balances.GDX = gdxBalance;
+    if (gdxBalance) {
+      balances.GDX = gdxBalance;
+    }
   }
 
   return balances;
