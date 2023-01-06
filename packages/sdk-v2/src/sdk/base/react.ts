@@ -2,14 +2,14 @@ import { useContext, useState } from "react";
 import { Signer, providers } from "ethers";
 import { BaseSDK, EnvKey, EnvValue } from "./sdk";
 import { Web3Context } from "../../contexts";
-import { QueryParams, useCalls, useEthers, CurrencyValue, Currency, Token, ChainId } from "@usedapp/core";
+import { QueryParams, useCalls, useEthers, CurrencyValue, Currency, ChainId } from "@usedapp/core";
 import { ClaimSDK } from "../claim/sdk";
 import { SavingsSDK } from "../savings/sdk";
 import Contracts from "@gooddollar/goodprotocol/releases/deployment.json";
 import { useReadOnlyProvider } from "../../hooks/useMulticallAtChain";
 import useUpdateEffect from "../../hooks/useUpdateEffect";
 import { useRefreshOrNever } from "../../hooks";
-import { SupportedChains, G$ContractAddresses, G$Balances } from "../constants";
+import { SupportedChains, G$Balances, G$, GOOD, GDX, G$Decimals } from "../constants";
 import { GoodReserveCDai, GReputation, IGoodDollar } from "@gooddollar/goodprotocol/types";
 
 export const NAME_TO_SDK: { [key: string]: typeof ClaimSDK | typeof SavingsSDK | typeof BaseSDK } = {
@@ -144,14 +144,11 @@ export const useSDK = (
 
 export function useG$Tokens() {
   const { chainId, defaultEnv, baseEnv } = useGetEnvChainId();
-  const g$ = G$ContractAddresses("GoodDollar", defaultEnv) as string;
-  const good = G$ContractAddresses("GReputation", defaultEnv) as string;
-  const gdx = G$ContractAddresses("GoodReserveCDai", baseEnv + "-mainnet") as string;
 
   return {
-    g$: new Token("GoodDollar", "G$", chainId, g$, 2),
-    good: new Token("GDAO", "GOOD", chainId, good, 18),
-    gdx: new Token("GoodDollar X", "G$X", SupportedChains.MAINNET, gdx, 2)
+    g$: G$(chainId, defaultEnv),
+    good: GOOD(chainId, defaultEnv),
+    gdx: GDX(baseEnv),
   };
 }
 
@@ -165,6 +162,8 @@ export function useG$Balance(refresh: QueryParams["refresh"] = "never") {
   const g$Contract = useGetContract("GoodDollar", true, "base") as IGoodDollar;
   const goodContract = useGetContract("GReputation", true, "base") as GReputation;
   const gdxContract = useGetContract("GoodReserveCDai", true, "base", 1) as GoodReserveCDai;
+
+  const { MAINNET } = SupportedChains;
 
   const results = useCalls(
     [
@@ -192,8 +191,8 @@ export function useG$Balance(refresh: QueryParams["refresh"] = "never") {
         method: "balanceOf",
         args: [account]
       }
-    ].filter(_ => _.contract && chainId == SupportedChains.MAINNET),
-    { refresh: refreshOrNever, chainId: SupportedChains.MAINNET as unknown as ChainId }
+    ].filter(_ => _.contract && chainId == MAINNET),
+    { refresh: refreshOrNever, chainId: MAINNET as unknown as ChainId }
   );
 
   const balances: G$Balances = {
@@ -205,12 +204,12 @@ export function useG$Balance(refresh: QueryParams["refresh"] = "never") {
   if (!results.includes(undefined) && !results[0]?.error) {
     const g$Balance = {
       amount: CurrencyValue.fromString(g$, results[0]?.value[0].toString()),
-      token: new Currency("GoodDollar", "G$", 2)
+      token: new Currency("GoodDollar", "G$", G$Decimals.G$[chainId])
     };
 
     const goodBalance = {
       amount: CurrencyValue.fromString(good, results[1]?.value[0].toString()),
-      token: new Currency("GDAO", "GOOD", 18)
+      token: new Currency("GDAO", "GOOD", G$Decimals.GOOD[chainId])
     };
     balances.G$ = g$Balance;
     balances.GOOD = goodBalance;
@@ -219,7 +218,7 @@ export function useG$Balance(refresh: QueryParams["refresh"] = "never") {
   if (mainnetGdx) {
     const gdxBalance = {
       amount: CurrencyValue.fromString(gdx, mainnetGdx.value[0].toString()),
-      token: new Currency("G$X", "GDX", 2)
+      token: new Currency("G$X", "GDX", G$Decimals.GDX[MAINNET])
     };
 
     balances.GDX = gdxBalance;
