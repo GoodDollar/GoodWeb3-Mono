@@ -1,9 +1,11 @@
-import { WalletInit, createEIP1193Provider, ProviderRpcErrorCode, ProviderRpcError } from '@web3-onboard/common'
-import Torus, { TorusCtorArgs, TorusParams } from '@toruslabs/torus-embed'
+import { WalletInit, WalletModule, WalletHelpers } from '@web3-onboard/common'
+import { default as defaultTorus } from '@web3-onboard/torus'
+import { TorusCtorArgs, TorusParams } from '@toruslabs/torus-embed'
+import { getDevice } from '../utils'
 
 type TorusOptions = TorusCtorArgs & TorusParams
 
-const TorusIcon = `
+const GoogleIcon = `
 <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
   <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
   <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
@@ -12,105 +14,16 @@ const TorusIcon = `
   </svg>
 `
 
+const walletHelper:WalletHelpers = {
+  device: getDevice()
+}
+
 function torus(options?: TorusOptions): WalletInit {
-    const {
-        buttonPosition,
-        modalZIndex,
-        apiKey,
-        buildEnv,
-        enableLogging,
-        loginConfig,
-        showTorusButton,
-        integrity,
-        whiteLabel,
-        skipTKey,
-    } = options || {}
-
     return () => {
-        return {
-            label: 'Google (Powered by Web3Auth)',
-            getIcon: async () => TorusIcon,
-            getInterface: async ({ chains }) => {
-                const [chain] = chains
-
-                const instance = new Torus({
-                    buttonPosition,
-                    modalZIndex,
-                    apiKey,
-                })
-
-                await instance.init({
-                    buildEnv,
-                    enableLogging,
-                    network: {
-                        host: chain.rpcUrl,
-                        chainId: parseInt(chain.id),
-                        networkName: chain.label,
-                    },
-                    showTorusButton: showTorusButton,
-                    loginConfig,
-                    integrity,
-                    whiteLabel,
-                    skipTKey,
-                })
-
-                const torusProvider = instance.provider
-
-                // patch the chainChanged event
-                const on = torusProvider.on.bind(torusProvider)
-                torusProvider.on = (event, listener) => {
-                    on(event, (val) => {
-                        if (event === 'chainChanged') {
-                            console.log('chainChanged -- torus')
-                            listener(`0x${(val as number).toString(16)}`)
-                            return
-                        }
-
-                        listener(val)
-                    })
-
-                    return torusProvider
-                }
-
-                const provider = createEIP1193Provider(torusProvider, {
-                    eth_requestAccounts: async () => {
-                        try {
-                            const accounts = await instance.login()
-                            return accounts
-                        } catch (error) {
-                            throw new ProviderRpcError({
-                                code: ProviderRpcErrorCode.ACCOUNT_ACCESS_REJECTED,
-                                message: 'Account access rejected',
-                            })
-                        }
-                    },
-                    eth_selectAccounts: null,
-                    wallet_switchEthereumChain: async ({ params }) => {
-                        const chain = chains.find(({ id }) => id === params[0].chainId)
-                        if (!chain) throw new Error('chain must be set before switching')
-
-                        await instance.setProvider({
-                            host: chain.rpcUrl,
-                            chainId: parseInt(chain.id),
-                            networkName: chain.label,
-                        })
-
-                        return null
-                    },
-                    eth_chainId: async ({ baseRequest }) => {
-                        const chainId = await baseRequest({ method: 'eth_chainId' })
-                        return `0x${parseInt(chainId).toString(16)}`
-                    },
-                })
-
-                provider.disconnect = () => instance.cleanUp()
-
-                return {
-                    provider,
-                    instance,
-                }
-            },
-        }
+      const walletInit = defaultTorus(options)(walletHelper) as WalletModule;
+      walletInit.label = 'Google (Powered by Web3Auth)'
+      walletInit.getIcon = async () => GoogleIcon
+      return walletInit
     }
 }
 

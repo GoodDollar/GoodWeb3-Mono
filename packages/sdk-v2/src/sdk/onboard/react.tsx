@@ -20,7 +20,7 @@ export interface IOnboardWallets {
 
 export interface IOnboardProviderProps {
   options?: Omit<InitOptions, "wallets">;
-  wallets?: IOnboardWallets;
+  wallets?: IOnboardWallets | null;
   children?: React.ReactNode;
 }
 
@@ -95,7 +95,7 @@ const defaultOptions: IOnboardProviderProps["options"] = {
 const defaultWalletsFlags: IOnboardWallets = {
   torus: true,
   gooddollar: true,
-  metamask: true
+  metamask: true,
   walletconnect: true,
   coinbase: true,
   zengo: true,
@@ -120,7 +120,7 @@ export const OnboardProvider = ({ options = defaultOptions, wallets = null, chil
       return;
     }
     
-    const { custom = [], ...flags } = { ...defaultWallets, ...(wallets || {}) };       
+    const { custom = [], ...flags } = { ...defaultWalletsFlags, ...(wallets || {}) };       
     const selectedWallets = keys(pickBy(flags));
 
     onboardRef.current = init({
