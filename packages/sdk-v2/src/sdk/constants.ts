@@ -22,7 +22,10 @@ export type G$Tokens = {
   token: Currency;
 };
 
-export const G$Decimals = {
+export type G$DecimalsMap = Partial<Record<SupportedChains, number>>;
+
+// will be used as default (fallback) values
+export const G$Decimals: { G$: G$DecimalsMap, GOOD: G$DecimalsMap, GDX: G$DecimalsMap } = {
   G$: {
     [SupportedChains.MAINNET]: 2,
     [SupportedChains.FUSE]: 2,
@@ -66,43 +69,45 @@ export const Envs: { [key: EnvKey]: { [key: string]: string } } = {
 
 type ObjectLike = { [key: string]: string | ObjectLike | Array<string[]> | string[] | number };
 
-export function G$(chainId: number, env?: string): Token {
+export function G$(chainId: number, env?: string, decimalsMap: G$DecimalsMap = G$Decimals.G$): Token {
   const address = G$ContractAddresses("GoodDollar", env ?? "") as string;
 
-  return new Token("GoodDollar", "G$", chainId, address, G$Decimals.G$[chainId]);
+  return new Token("GoodDollar", "G$", chainId, address, decimalsMap[chainId]);
 }
 
-export function GOOD(chainId: number, env?: string): Token {
+export function GOOD(chainId: number, env?: string, decimalsMap: G$DecimalsMap = G$Decimals.GOOD): Token {
   const address = G$ContractAddresses("GReputation", env ?? "") as string;
 
-  return new Token("GDAO", "GOOD", chainId, address, G$Decimals.GOOD[chainId]);
+  return new Token("GDAO", "GOOD", chainId, address, decimalsMap[chainId]);
 }
 
-export function GDX(baseEnv?: string): Token {
+export function GDX(baseEnv?: string, decimalsMap: G$DecimalsMap = G$Decimals.GDX): Token {
   const address = G$ContractAddresses("GoodReserveCDai", baseEnv + "-mainnet") as string;
   const chainId = SupportedChains.MAINNET;
 
-  return new Token("GoodDollar X", "G$X", chainId, address, G$Decimals.GDX[chainId]);
+  return new Token("GoodDollar X", "G$X", chainId, address, decimalsMap[chainId]);
 }
 
-export function G$Amount(g$: Token, chainId: number, value?: BigNumberish): G$Tokens | null {
+export function G$Amount(g$: Token, chainId: number, value?: BigNumberish, decimalsMap: G$DecimalsMap = G$Decimals.G$): G$Tokens | null {
   return !value ? null : {
     amount: CurrencyValue.fromString(g$, value.toString()),
-    token: new Currency("GoodDollar", "G$", G$Decimals.G$[chainId]),
+    token: new Currency("GoodDollar", "G$", decimalsMap[chainId]),
   }
 }
 
-export function GOODAmount(good: Token, chainId: number, value?: BigNumberish): G$Tokens | null {
+export function GOODAmount(good: Token, chainId: number, value?: BigNumberish, decimalsMap: G$DecimalsMap = G$Decimals.GOOD): G$Tokens | null {
   return !value ? null : {
     amount: CurrencyValue.fromString(good, value.toString()),
-    token: new Currency("GDAO", "GOOD", G$Decimals.GOOD[chainId]),
+    token: new Currency("GDAO", "GOOD", decimalsMap[chainId]),
   }
 }
 
-export function GDXAmount(gdx: Token, value?: BigNumberish): G$Tokens | null {
-  return !value ? null : {
+export function GDXAmount(gdx: Token, value?: BigNumberish, decimalsMap: G$DecimalsMap = G$Decimals.GDX): G$Tokens | null {
+  const decimals = decimalsMap[SupportedChains.MAINNET];
+
+  return !value || !decimals ? null : {
     amount: CurrencyValue.fromString(gdx, value.toString()),
-    token: new Currency("G$X", "GDX", G$Decimals.GDX[SupportedChains.MAINNET]),
+    token: new Currency("G$X", "GDX", decimals),
   }
 }
 

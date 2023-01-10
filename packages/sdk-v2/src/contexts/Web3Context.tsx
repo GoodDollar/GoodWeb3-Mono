@@ -1,9 +1,10 @@
 import { JsonRpcProvider, Web3Provider as W3Provider } from "@ethersproject/providers";
 import { Chain, Config, DAppProvider, Goerli, Mainnet, useEthers } from "@usedapp/core";
 import EventEmitter from "eventemitter3";
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { createContext, FC, useCallback, useContext, useEffect, useState } from "react";
 import { EnvKey } from "../sdk/base/sdk";
-import { noop } from 'lodash';
+import { noop, cloneDeep } from 'lodash'; // eslint-disable-line @typescript-eslint/no-unused-vars
+import { G$Decimals } from "../sdk/constants";
 
 /**
  * request to switch to network id
@@ -42,12 +43,16 @@ export const txEmitter = {
   emit: ee.emit.bind(ee, "txs")
 } as TxEmitter;
 
-export const Web3Context = React.createContext<IWeb3Context>({
+export const Web3Context = createContext<IWeb3Context>({
   switchNetwork: undefined,
   setSwitchNetwork: (cb: SwitchNetwork) => undefined, // eslint-disable-line @typescript-eslint/no-unused-vars
   connectWallet: () => undefined,
   txEmitter,
   env: "production"
+});
+
+export const TokenContext = createContext<typeof G$Decimals>({
+  ...G$Decimals
 });
 
 type Props = {
@@ -113,6 +118,27 @@ const Web3Connector = ({ web3Provider }: { web3Provider: JsonRpcProvider | void 
   return null;
 };
 
+const TokenProvider: FC<{ children: React.ReactNode; }> = ({ children }) => {
+  const [value, setValue] = useState<typeof G$Decimals>({ ...G$Decimals });
+  const { chainId } = useEthers();
+
+  useEffect(() => {    
+    // TODO @L03TJ3:
+    // 1. call contract methods to get G$ GOOD and GDX tokens info for chainId been changed
+    // 2. update context using state var setter with update callback fn
+    // setValue(oldValue => {
+    //   const newValue = cloneDeep(oldValue);
+
+    //   newValue.G$[chainId] = ... ;
+    //   newValue.GOOD[chainId] = ... ;
+    //   newValue.GDX[chainId] = ... ;
+    //   return newValue;
+    // });
+  }, [chainId, setValue])
+
+  return <TokenContext.Provider value={value}>{children}</TokenContext.Provider>;
+}
+
 export const Web3Provider = ({ children, config, web3Provider, env = "production" }: Props) => {
   const [switchNetwork, setSwitchNetwork] = useState<SwitchNetwork>();
   const [onSwitchNetwork, setOnSwitchNetwork] = useState<SwitchCallback>();
@@ -146,7 +172,9 @@ export const Web3Provider = ({ children, config, web3Provider, env = "production
           env
         }}
       >
-        {children}
+        <TokenProvider>
+          {children}
+        </TokenProvider>
       </Web3Context.Provider>
     </DAppProvider>
   );

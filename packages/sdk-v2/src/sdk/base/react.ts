@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 import { Signer, providers, BigNumberish } from "ethers";
 import { BaseSDK, EnvKey, EnvValue } from "./sdk";
-import { Web3Context } from "../../contexts";
+import { TokenContext, Web3Context } from "../../contexts";
 import { QueryParams, useCalls, useEthers, ChainId } from "@usedapp/core";
 import { ClaimSDK } from "../claim/sdk";
 import { SavingsSDK } from "../savings/sdk";
@@ -144,32 +144,36 @@ export const useSDK = (
 
 export function useG$Tokens() {
   const { chainId, defaultEnv, baseEnv } = useGetEnvChainId();
+  const decimals = useContext(TokenContext).G$;
 
   return {
-    g$: G$(chainId, defaultEnv),
-    good: GOOD(chainId, defaultEnv),
-    gdx: GDX(baseEnv),
+    g$: G$(chainId, defaultEnv, decimals),
+    good: GOOD(chainId, defaultEnv, decimals),
+    gdx: GDX(baseEnv, decimals),
   };
 }
 
 export function useG$Amount(value?: BigNumberish): G$Tokens | null {
   const { chainId } = useGetEnvChainId();
   const { g$ } = useG$Tokens();
+  const decimals = useContext(TokenContext).G$;
 
-  return G$Amount(g$, chainId, value);
+  return G$Amount(g$, chainId, value, decimals);
 }
 
 export function useGOODAmount(value?: BigNumberish): G$Tokens | null {
   const { chainId } = useGetEnvChainId();
   const { good } = useG$Tokens();
+  const decimals = useContext(TokenContext).GOOD;
 
-  return GOODAmount(good, chainId, value);
+  return GOODAmount(good, chainId, value, decimals);
 }
 
 export function useGDXAmount(value?: BigNumberish): G$Tokens | null {
   const { gdx } = useG$Tokens();
+  const decimals = useContext(TokenContext).GDX;
 
-  return GDXAmount(gdx, value);
+  return GDXAmount(gdx, value, decimals);
 }
 
 export function useG$Balance(refresh: QueryParams["refresh"] = "never") {
@@ -215,6 +219,8 @@ export function useG$Balance(refresh: QueryParams["refresh"] = "never") {
     { refresh: refreshOrNever, chainId: MAINNET as unknown as ChainId }
   );
 
+  const decimals = useContext(TokenContext);
+
   const balances: G$Balances = {
     G$: undefined,
     GOOD: undefined,
@@ -222,8 +228,8 @@ export function useG$Balance(refresh: QueryParams["refresh"] = "never") {
   };
 
   if (!results.includes(undefined) && !results[0]?.error) {
-    const g$Balance = G$Amount(g$, chainId, results[0]?.value[0]);
-    const goodBalance = GOODAmount(good, chainId, results[1]?.value[0]);
+    const g$Balance = G$Amount(g$, chainId, results[0]?.value[0], decimals.G$);
+    const goodBalance = GOODAmount(good, chainId, results[1]?.value[0], decimals.GOOD);
 
     if (g$Balance) {
       balances.G$ = g$Balance;
@@ -235,7 +241,7 @@ export function useG$Balance(refresh: QueryParams["refresh"] = "never") {
   }
 
   if (mainnetGdx) {
-    const gdxBalance = GDXAmount(gdx, mainnetGdx.value[0]);    
+    const gdxBalance = GDXAmount(gdx, mainnetGdx.value[0], decimals.GDX);    
 
     if (gdxBalance) {
       balances.GDX = gdxBalance;
