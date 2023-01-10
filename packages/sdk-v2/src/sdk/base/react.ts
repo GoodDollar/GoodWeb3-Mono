@@ -153,27 +153,36 @@ export function useG$Tokens() {
   };
 }
 
-export function useG$Amount(value?: BigNumberish): G$Tokens | null {
+export function useG$Amount(value?: BigNumberish, token: keyof G$Balances = "G$"): G$Tokens | null {
   const { chainId } = useGetEnvChainId();
-  const { g$ } = useG$Tokens();
-  const decimals = useContext(TokenContext).G$;
+  const { g$, good, gdx } = useG$Tokens();
+  const decimals = useContext(TokenContext)[token];
 
-  return G$Amount(g$, chainId, value, decimals);
+  switch (token) {
+    case "G$":
+      return G$Amount(g$, chainId, value, decimals);
+    case "GOOD":
+      return GOODAmount(good, chainId, value, decimals);
+    case "GDX":
+      return GDXAmount(gdx, value, decimals);
+    default:
+      return null;
+  }
 }
 
-export function useGOODAmount(value?: BigNumberish): G$Tokens | null {
+export function useG$Decimals(token: keyof G$Balances = "G$"): number | null | undefined {
   const { chainId } = useGetEnvChainId();
-  const { good } = useG$Tokens();
-  const decimals = useContext(TokenContext).GOOD;
+  const decimals = useContext(TokenContext)[token];
 
-  return GOODAmount(good, chainId, value, decimals);
-}
-
-export function useGDXAmount(value?: BigNumberish): G$Tokens | null {
-  const { gdx } = useG$Tokens();
-  const decimals = useContext(TokenContext).GDX;
-
-  return GDXAmount(gdx, value, decimals);
+  switch (token) {
+    case "G$":
+    case "GOOD":
+      return decimals[chainId];
+    case "GDX":
+      return decimals[SupportedChains.MAINNET];
+    default:
+      return null;
+  }
 }
 
 export function useG$Balance(refresh: QueryParams["refresh"] = "never") {
