@@ -187,7 +187,7 @@ export const MicroBridge = ({
       </Flex>
       <Flex direction="column" alignItems="flex-start" justifyContent="flex-start" width="100%">
         <Text fontFamily="subheading" bold color="lightGrey:alpha.80">ENTER AMOUNT</Text>
-        <TokenInput balanceWei={balanceWei} token="G$" onChange={setInput} minAmountWei={minAmountWei} />
+        <TokenInput balanceWei={balanceWei} onChange={setInput} minAmountWei={minAmountWei} />
       </Flex>
       <FormControl isInvalid={!!reasonOf}>
         <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon variant="outline" />}>

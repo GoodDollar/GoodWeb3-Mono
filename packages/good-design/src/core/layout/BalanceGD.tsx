@@ -26,9 +26,8 @@ const BalanceView: FC<Required<BalanceGDProps> & { amount: CurrencyValue }> = me
 
 const BalanceGD: FC<BalanceGDProps> = ({ gdPrice }) => {
   const { G$ } = useG$Balance("everyBlock");
-  const { amount } = G$ || {};
   
-  return !amount || !gdPrice ? null : <BalanceView amount={amount} gdPrice={gdPrice} />;
+  return !G$ || !gdPrice ? null : <BalanceView amount={G$} gdPrice={gdPrice} />;
 };
 
 export default BalanceGD;

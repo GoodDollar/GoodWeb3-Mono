@@ -1,5 +1,5 @@
 import {
-  G$,
+  GdTokens,
   SupportedChains, useBridge,
   useBridgeHistory, useGetBridgeData, useGetEnvChainId,
   useRefreshOrNever, useRelayTx,
@@ -18,7 +18,8 @@ export const useBalanceHook = (chain: string) => {
 
   const refresh = useRefreshOrNever(12);
   const { account } = useEthers();
-  const gdBalance = useTokenBalance(G$(env.chainId, env.defaultEnv).address, account, {
+  const g$Token = GdTokens('G$', env.chainId, env.defaultEnv)
+  const gdBalance = useTokenBalance(g$Token.address, account, {
     refresh,
     chainId: env.chainId
   });

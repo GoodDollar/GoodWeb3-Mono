@@ -1,30 +1,28 @@
 import { Box, Button, Input, Text } from "native-base";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useContext } from "react";
 import { NumericFormat } from "react-number-format";
-import { G$Balances, useG$Decimals } from "@gooddollar/web3sdk-v2";
+import { G$Balances, TokenContext } from "@gooddollar/web3sdk-v2";
 
 export const TokenInput = ({
-  decimals,
-  token,
   balanceWei,
   onChange,
+  token = "G$",
   _numericformat,
   _button,
   _text,
   minAmountWei = "0",
   ...props
 }: {
-  decimals?: number;
-  token?: keyof G$Balances,
   balanceWei: string;
   onChange: (v: string) => void;
+  token?: keyof G$Balances
   _numericformat?: any;
   _button?: any;
   _text?: any;
   minAmountWei?: string;
 }) => {
-  const g$decimals = useG$Decimals(token);
-  const _decimals = decimals || g$decimals;
+  const g$decimals = useContext(TokenContext)[token];
+  const _decimals = g$decimals;
   const [input, setInput] = useState<number>(0);
   const balance = Number(balanceWei) / 10 ** _decimals;
   const minAmount = Number(minAmountWei) / 10 ** _decimals;

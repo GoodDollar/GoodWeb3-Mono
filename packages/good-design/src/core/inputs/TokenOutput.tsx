@@ -1,11 +1,11 @@
-import { G$Balances, useG$Decimals } from "@gooddollar/web3sdk-v2";
+import { G$Balances, TokenContext } from "@gooddollar/web3sdk-v2";
 import { Box, Input } from "native-base";
-import React from "react";
+import React, { useContext } from "react";
 import { NumericFormat } from "react-number-format";
 
 export const TokenOutput = ({
   outputValue,
-  token,
+  token = 'G$',
   _numericformat,
   ...props
 }: {
@@ -15,7 +15,7 @@ export const TokenOutput = ({
   _button?: any;
   _text?: any;
 }) => {
-  const decimals = useG$Decimals(token);
+  const decimals = useContext(TokenContext)[token];
 
   return (
     <Box w="container" {...props} width="100%">
