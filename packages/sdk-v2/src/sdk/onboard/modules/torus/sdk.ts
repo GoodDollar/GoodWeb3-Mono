@@ -21,8 +21,9 @@ const walletHelper:WalletHelpers = {
 function torus(options?: TorusOptions): WalletInit {
     return () => {
       const walletInit = defaultTorus(options)(walletHelper) as WalletModule;
-      walletInit.label = 'Google (Powered by Web3Auth)'
-      walletInit.getIcon = async () => GoogleIcon
+      
+      walletInit.label = 'Google (Powered by Web3Auth)';
+      walletInit.getIcon = async () => GoogleIcon;
       return walletInit
     }
 }
