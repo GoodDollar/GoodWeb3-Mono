@@ -3,8 +3,7 @@ import { ChainId, CurrencyValue, QueryParams, useCalls, useContractFunction, use
 import { ethers } from "ethers";
 import { useCallback } from "react";
 import useRefreshOrNever from "../../hooks/useRefreshOrNever";
-import { useGetContract, useGetEnvChainId } from "../base/react";
-import { G$, GOOD } from "../constants";
+import { useGetContract, useGetEnvChainId, useG$Tokens,  } from "../base/react";
 
 export interface StakerInfo {
   claimable:
@@ -36,6 +35,8 @@ export function useSavingsBalance(refresh: QueryParams["refresh"] = "never", req
   const refreshOrNever = useRefreshOrNever(refresh);
   const { account } = useEthers();
 
+  const [G$] = useG$Tokens()
+
   const gooddollar = useGetContract("GoodDollar", true, "savings") as IGoodDollar;
   const gdStaking = useGetContract("GoodDollarStaking", true, "savings") as GoodDollarStaking;
 
@@ -60,7 +61,10 @@ export function useSavingsBalance(refresh: QueryParams["refresh"] = "never", req
 
   const [balance = { value: 0, error: undefined }, sBalance = { value: 0, error: undefined }] = results;
 
-  return { g$Balance: balance, savingsBalance: sBalance };
+  return { 
+    g$Balance: new CurrencyValue(G$, balance.value), 
+    savingsBalance: new CurrencyValue(G$, sBalance.value) 
+  };
 }
 
 export const useSavingsFunctions = () => {
@@ -100,9 +104,10 @@ export const useSavingsFunctions = () => {
 
 export const useSavingsStats = (requiredChainId: number, refresh: QueryParams["refresh"] = "never") => {
   const refreshOrNever = useRefreshOrNever(refresh);
-  const { chainId, defaultEnv } = useGetEnvChainId(requiredChainId);
+  const { chainId } = useGetEnvChainId(requiredChainId);
 
   const gdStaking = useGetContract("GoodDollarStaking", true, "savings", chainId) as GoodDollarStaking;
+  const [G$] = useG$Tokens()
 
   const results = useCalls(
     [
@@ -146,8 +151,8 @@ export const useSavingsStats = (requiredChainId: number, refresh: QueryParams["r
 
   if (results[0]) {
     const [, totalStaked, totalRewardsPaid] = results[0]?.value; // eslint-disable-line no-unsafe-optional-chaining
-    const staked = CurrencyValue.fromString(G$(chainId, defaultEnv), totalStaked.toString());
-    const rewardsPaid = CurrencyValue.fromString(G$(chainId, defaultEnv), totalRewardsPaid.toString());
+    const staked = new CurrencyValue(G$, totalStaked);
+    const rewardsPaid = new CurrencyValue(G$, totalRewardsPaid);
 
     globalStats.totalStaked = staked;
     globalStats.totalRewardsPaid = rewardsPaid;
@@ -169,8 +174,9 @@ export const useSavingsStats = (requiredChainId: number, refresh: QueryParams["r
 
 export const useStakerInfo = (requiredChainId: number, refresh: QueryParams["refresh"] = "never", account: string) => {
   const refreshOrNever = useRefreshOrNever(refresh);
-  const { chainId, defaultEnv } = useGetEnvChainId(requiredChainId);
+  const { chainId } = useGetEnvChainId(requiredChainId);
   const contract = useGetContract("GoodDollarStaking", true, "savings", chainId) as GoodDollarStaking;
+  const [G$, GOOD] = useG$Tokens()
 
   const results = useCalls(
     [
@@ -208,15 +214,15 @@ export const useStakerInfo = (requiredChainId: number, refresh: QueryParams["ref
   if (results[0]) { // eslint-disable-line no-unsafe-optional-chaining
     const [goodReward, g$Reward] = results[0]?.value; // eslint-disable-line no-unsafe-optional-chaining
     const claimableRewards = {
-      g$Reward: CurrencyValue.fromString(G$(chainId, defaultEnv), g$Reward.toString()),
-      goodReward: CurrencyValue.fromString(GOOD(chainId, defaultEnv), goodReward.toString())
+      g$Reward: new CurrencyValue(G$, g$Reward),
+      goodReward: new CurrencyValue(GOOD, goodReward)
     };
     stakerInfo.claimable = claimableRewards;
   }
 
   if (results[1]) {
     const [principle] = results[1]?.value; // eslint-disable-line no-unsafe-optional-chaining
-    const deposit = CurrencyValue.fromString(G$(chainId, defaultEnv), principle.toString());
+    const deposit = new CurrencyValue(G$, principle);
     stakerInfo.principle = deposit;
   }
 

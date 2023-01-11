@@ -1,10 +1,13 @@
 import { JsonRpcProvider, Web3Provider as W3Provider } from "@ethersproject/providers";
-import { Chain, Config, DAppProvider, Goerli, Mainnet, useEthers } from "@usedapp/core";
+import { Chain, Config, DAppProvider, Goerli, Mainnet, useEthers, useCalls, ChainId} from "@usedapp/core";
 import EventEmitter from "eventemitter3";
 import React, { createContext, FC, useCallback, useContext, useEffect, useState } from "react";
 import { EnvKey } from "../sdk/base/sdk";
-import { noop, cloneDeep } from 'lodash'; // eslint-disable-line @typescript-eslint/no-unused-vars
+import { noop } from 'lodash'; // eslint-disable-line @typescript-eslint/no-unused-vars
 import { G$Decimals } from "../sdk/constants";
+import { GoodReserveCDai, GReputation, IGoodDollar } from "@gooddollar/goodprotocol/types";
+import { useGetContract } from "../sdk";
+import { SupportedChains } from "../sdk/constants";
 
 /**
  * request to switch to network id
@@ -119,24 +122,49 @@ const Web3Connector = ({ web3Provider }: { web3Provider: JsonRpcProvider | void 
 };
 
 const TokenProvider: FC<{ children: React.ReactNode; }> = ({ children }) => {
-  const [value, setValue] = useState<typeof G$Decimals>({ ...G$Decimals });
   const { chainId } = useEthers();
+  const g$Contract = useGetContract("GoodDollar", true, "base") as IGoodDollar;
+  const goodContract = useGetContract("GReputation", true, "base") as GReputation;
+  const gdxContract = useGetContract("GoodReserveCDai", true, "base", 1) as GoodReserveCDai;
 
-  useEffect(() => {    
-    // TODO @L03TJ3:
-    // 1. call contract methods to get G$ GOOD and GDX tokens info for chainId been changed
-    // 2. update context using state var setter with update callback fn
-    // setValue(oldValue => {
-    //   const newValue = cloneDeep(oldValue);
+  const { MAINNET } = SupportedChains
 
-    //   newValue.G$[chainId] = ... ;
-    //   newValue.GOOD[chainId] = ... ;
-    //   newValue.GDX[chainId] = ... ;
-    //   return newValue;
-    // });
-  }, [chainId, setValue])
+  const results = useCalls([
+    {
+      contract: g$Contract,
+      method: "decimals",
+      args: []
+    },
+    {
+      contract: goodContract,
+      method: "decimals", 
+      args: []
+    }
+  ], { refresh: "never", chainId })
 
-  return <TokenContext.Provider value={value}>{children}</TokenContext.Provider>;
+  const [mainnetGdx] = useCalls(
+    [
+      {
+        contract: gdxContract,
+        method: "decimals",
+        args: []
+      }
+    ].filter(_ => _.contract && chainId == MAINNET),
+    { refresh: "never", chainId: MAINNET as unknown as ChainId }
+  );
+  
+  const value = G$Decimals
+
+  if (!results.includes(undefined) && !results[0]?.error) {
+    value.G$ = results[0]?.value[0]
+    value.GOOD = results[1]?.value[0]
+  }
+
+  if (mainnetGdx) {
+    value.GDX = mainnetGdx.value[0]
+  }
+
+  return <TokenContext.Provider value={value}>{children}</TokenContext.Provider>
 }
 
 export const Web3Provider = ({ children, config, web3Provider, env = "production" }: Props) => {

@@ -1,15 +1,15 @@
 import { useContext, useState } from "react";
-import { Signer, providers, BigNumberish } from "ethers";
+import { Signer, providers, BigNumber } from "ethers";
 import { BaseSDK, EnvKey, EnvValue } from "./sdk";
 import { TokenContext, Web3Context } from "../../contexts";
-import { QueryParams, useCalls, useEthers, ChainId } from "@usedapp/core";
+import { QueryParams, useCalls, useEthers, ChainId, CurrencyValue } from "@usedapp/core";
 import { ClaimSDK } from "../claim/sdk";
 import { SavingsSDK } from "../savings/sdk";
 import Contracts from "@gooddollar/goodprotocol/releases/deployment.json";
 import { useReadOnlyProvider } from "../../hooks/useMulticallAtChain";
 import useUpdateEffect from "../../hooks/useUpdateEffect";
 import { useRefreshOrNever } from "../../hooks";
-import { SupportedChains, G$Balances, G$, GOOD, GDX, G$Amount, GOODAmount, GDXAmount, G$Tokens } from "../constants";
+import { SupportedChains, G$Balances, GdTokens, G$TokenContracts } from "../constants";
 import { GoodReserveCDai, GReputation, IGoodDollar } from "@gooddollar/goodprotocol/types";
 
 export const NAME_TO_SDK: { [key: string]: typeof ClaimSDK | typeof SavingsSDK | typeof BaseSDK } = {
@@ -140,49 +140,23 @@ export const useSDK = (
   return sdk;
 };
 
-/* Not sure about placement of this hook, use base for now */
-
 export function useG$Tokens() {
-  const { chainId, defaultEnv, baseEnv } = useGetEnvChainId();
-  const decimals = useContext(TokenContext).G$;
+  const { chainId, defaultEnv } = useGetEnvChainId();
 
-  return {
-    g$: G$(chainId, defaultEnv, decimals),
-    good: GOOD(chainId, defaultEnv, decimals),
-    gdx: GDX(baseEnv, decimals),
-  };
+  const tokens = Object.keys(G$TokenContracts).map(name => {
+    const decimals = useContext(TokenContext)[name];
+    return GdTokens(name, chainId, defaultEnv, decimals)
+  })
+
+  return tokens
 }
 
-export function useG$Amount(value?: BigNumberish, token: keyof G$Balances = "G$"): G$Tokens | null {
-  const { chainId } = useGetEnvChainId();
-  const { g$, good, gdx } = useG$Tokens();
-  const decimals = useContext(TokenContext)[token];
+export function useG$Amount(value: BigNumber, tokenName: keyof G$Balances = "G$"): CurrencyValue | number {
+  const { chainId, defaultEnv } = useGetEnvChainId();
+  const decimals = useContext(TokenContext)[tokenName];
+  const token = GdTokens(tokenName, chainId, defaultEnv, decimals)
 
-  switch (token) {
-    case "G$":
-      return G$Amount(g$, chainId, value, decimals);
-    case "GOOD":
-      return GOODAmount(good, chainId, value, decimals);
-    case "GDX":
-      return GDXAmount(gdx, value, decimals);
-    default:
-      return null;
-  }
-}
-
-export function useG$Decimals(token: keyof G$Balances = "G$"): number | null | undefined {
-  const { chainId } = useGetEnvChainId();
-  const decimals = useContext(TokenContext)[token];
-
-  switch (token) {
-    case "G$":
-    case "GOOD":
-      return decimals[chainId];
-    case "GDX":
-      return decimals[SupportedChains.MAINNET];
-    default:
-      return null;
-  }
+  return new CurrencyValue(token, value)
 }
 
 export function useG$Balance(refresh: QueryParams["refresh"] = "never") {
@@ -190,7 +164,7 @@ export function useG$Balance(refresh: QueryParams["refresh"] = "never") {
   const { account } = useEthers();
 
   const { chainId } = useGetEnvChainId();
-  const { g$, good, gdx } = useG$Tokens();
+  const [ G$, GOOD, GDX ] = useG$Tokens()
 
   const g$Contract = useGetContract("GoodDollar", true, "base") as IGoodDollar;
   const goodContract = useGetContract("GReputation", true, "base") as GReputation;
@@ -209,7 +183,7 @@ export function useG$Balance(refresh: QueryParams["refresh"] = "never") {
         contract: goodContract,
         method: "balanceOf",
         args: [account]
-      }
+      },
     ],
     {
       refresh: refreshOrNever,
@@ -223,12 +197,10 @@ export function useG$Balance(refresh: QueryParams["refresh"] = "never") {
         contract: gdxContract,
         method: "balanceOf",
         args: [account]
-      }
+      },
     ].filter(_ => _.contract && chainId == MAINNET),
     { refresh: refreshOrNever, chainId: MAINNET as unknown as ChainId }
   );
-
-  const decimals = useContext(TokenContext);
 
   const balances: G$Balances = {
     G$: undefined,
@@ -237,8 +209,8 @@ export function useG$Balance(refresh: QueryParams["refresh"] = "never") {
   };
 
   if (!results.includes(undefined) && !results[0]?.error) {
-    const g$Balance = G$Amount(g$, chainId, results[0]?.value[0], decimals.G$);
-    const goodBalance = GOODAmount(good, chainId, results[1]?.value[0], decimals.GOOD);
+    const g$Balance = new CurrencyValue(G$, results[0]?.value[0]);
+    const goodBalance = new CurrencyValue(GOOD, results[1]?.value[0]);
 
     if (g$Balance) {
       balances.G$ = g$Balance;
@@ -250,7 +222,7 @@ export function useG$Balance(refresh: QueryParams["refresh"] = "never") {
   }
 
   if (mainnetGdx) {
-    const gdxBalance = GDXAmount(gdx, mainnetGdx.value[0], decimals.GDX);    
+    const gdxBalance = new CurrencyValue(GDX, mainnetGdx.value[0]);    
 
     if (gdxBalance) {
       balances.GDX = gdxBalance;
