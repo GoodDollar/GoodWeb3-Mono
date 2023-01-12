@@ -127,9 +127,9 @@ export const MicroBridge = ({
   selfRelayStatus
 }: {
   onBridge: OnBridge;
-  useBalanceHook: (chain: string) => string;
-  useCanBridge: (chain: string, amountWei: string) => { isValid: boolean; reason: string };
-  onSetChain?: (chain: string) => void;
+  useBalanceHook: (chain: "fuse" | "celo") => string;
+  useCanBridge: (chain: "fuse" | "celo", amountWei: string) => { isValid: boolean; reason: string };
+  onSetChain?: (chain: "fuse" | "celo") => void;
   limits?: ILimits;
   fees?: IFees;
   bridgeStatus?: Partial<TransactionStatus>;

@@ -15,7 +15,7 @@ export const TokenInput = ({
 }: {
   balanceWei: string;
   onChange: (v: string) => void;
-  token: G$Token;
+  token?: G$Token;
   _numericformat?: any;
   _button?: any;
   _text?: any;

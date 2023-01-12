@@ -1,6 +1,6 @@
 import { G$Token, useG$Decimals } from "@gooddollar/web3sdk-v2";
 import { Box, Input } from "native-base";
-import React, { useContext } from "react";
+import React from "react";
 import { NumericFormat } from "react-number-format";
 
 export const TokenOutput = ({
@@ -10,7 +10,7 @@ export const TokenOutput = ({
   ...props
 }: {
   outputValue: string;
-  token: G$Token,
+  token?: G$Token,
   _numericformat?: any;
   _button?: any;
   _text?: any;
