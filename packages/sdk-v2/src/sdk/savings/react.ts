@@ -194,7 +194,7 @@ export const useStakerInfo = (requiredChainId: number, refresh: QueryParams["ref
   };
 
   const [goodRewardValue, g$RewardValue] = results[0]?.value ?? []
-  const [principle] = results[1]?.value
+  const [principle] = results[1]?.value // eslint-disable-line no-unsafe-optional-chaining
   
   const g$Reward = useG$Amount(g$RewardValue);
   const goodReward = useG$Amount(goodRewardValue, "GOOD");
@@ -212,15 +212,13 @@ export const useStakerInfo = (requiredChainId: number, refresh: QueryParams["ref
     };
   }
 
-  if (goodReward && g$Reward) { // eslint-disable-line no-unsafe-optional-chaining
+  if (goodReward && g$Reward) {
     const claimableRewards = { g$Reward, goodReward };
     
     stakerInfo.claimable = claimableRewards;
   }
 
-  if (deposit) {
-    const [principle] = results[1]?.value; // eslint-disable-line no-unsafe-optional-chaining
-    
+  if (deposit) {    
     stakerInfo.principle = deposit;
   }
 

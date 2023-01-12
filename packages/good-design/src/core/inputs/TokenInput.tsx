@@ -1,5 +1,5 @@
 import { Box, Button, Input, Text } from "native-base";
-import React, { useCallback, useState, useContext } from "react";
+import React, { useCallback, useState } from "react";
 import { NumericFormat } from "react-number-format";
 import { G$Token, useG$Decimals } from "@gooddollar/web3sdk-v2";
 
