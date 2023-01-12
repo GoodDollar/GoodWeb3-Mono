@@ -203,7 +203,7 @@ export const MicroBridge = ({
           >
             You will receive on {targetChain} 
           </Text>
-        <TokenOutput token="G$" outputValue={expectedToReceive ?? '0'} />
+        <TokenOutput outputValue={expectedToReceive ?? '0'} />
       </Flex>
       <Button
         mt="5"
