@@ -1,14 +1,14 @@
 import { JsonRpcProvider, Web3Provider as W3Provider } from "@ethersproject/providers";
 import { Chain, Config, DAppProvider, Goerli, Mainnet, useEthers, useCalls, ChainId} from "@usedapp/core";
 import EventEmitter from "eventemitter3";
-import React, { createContext, FC, useCallback, useContext, useEffect, useState } from "react";
+import React, { createContext, FC, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { EnvKey } from "../sdk/base/sdk";
 import { noop } from 'lodash'; // eslint-disable-line @typescript-eslint/no-unused-vars
-import { G$Decimals } from "../sdk/constants";
+import { G$Decimals, G$DecimalsMap, G$Token } from "../sdk/constants";
 import { GoodReserveCDai, GReputation, IGoodDollar } from "@gooddollar/goodprotocol/types";
 import { useGetContract } from "../sdk";
 import { SupportedChains } from "../sdk/constants";
-
+import { cloneDeep } from "lodash";
 /**
  * request to switch to network id
  * returns void if no result yet true/false if success
@@ -54,9 +54,7 @@ export const Web3Context = createContext<IWeb3Context>({
   env: "production"
 });
 
-export const TokenContext = createContext<typeof G$Decimals>({
-  ...G$Decimals
-});
+export const TokenContext = createContext<typeof G$Decimals>(cloneDeep(G$Decimals));
 
 type Props = {
   children: React.ReactNode;
@@ -152,17 +150,25 @@ const TokenProvider: FC<{ children: React.ReactNode; }> = ({ children }) => {
     ].filter(_ => _.contract && chainId == MAINNET),
     { refresh: "never", chainId: MAINNET as unknown as ChainId }
   );
-  
-  const value = G$Decimals
 
-  if (!results.includes(undefined) && !results[0]?.error) {
-    value.G$ = results[0]?.value[0]
-    value.GOOD = results[1]?.value[0]
-  }
+  // TODO @L03TJ3 think how to call each token for some chainid once
+  // e.g. if we already requested G$ for celo - do not request it again once chain changed to celo
 
-  if (mainnetGdx) {
-    value.GDX = mainnetGdx.value[0]
-  }
+  const value = useMemo(() => {
+    const newValue = cloneDeep(G$Decimals);
+    const [g$, good] = results;
+
+    if (chainId && !results.some(result => !result || result.error)) {
+      newValue.G$[chainId] = g$?.value[0];
+      newValue.GOOD[chainId] = good?.value[0];
+    }
+
+    if (mainnetGdx && !mainnetGdx.error) {
+      newValue.GDX[MAINNET] = mainnetGdx.value[0];
+    }
+
+    return newValue;
+  }, [results, chainId, mainnetGdx]);
 
   return <TokenContext.Provider value={value}>{children}</TokenContext.Provider>
 }

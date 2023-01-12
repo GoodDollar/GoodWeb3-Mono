@@ -1,6 +1,7 @@
 import { EnvKey } from "./base/sdk";
 import { CurrencyValue, Token } from "@usedapp/core";
 import contractsAddresses from "@gooddollar/goodprotocol/releases/deployment.json";
+import { BigNumber, BigNumberish } from "ethers";
 
 /* List of supported chains for this sdk. */
 export enum SupportedChains {
@@ -22,18 +23,34 @@ export interface G$Balances {
   GDX: CurrencyValue | undefined,
 };
 
+export type G$Token = keyof G$Balances;
+
+export type G$DecimalsByChain = Partial<Record<SupportedChains, number>>;
+
 export type G$DecimalsMap = {
-  G$: number,
-  GOOD: number,
-  GDX: number
-}
+  G$: G$DecimalsByChain,
+  GOOD: G$DecimalsByChain,
+  GDX: G$DecimalsByChain
+};
 
 // will be used as default (fallback) values
-export const G$Decimals = {
-  G$: 18, // 18 because default chain will be Celo
-  GOOD: 18,
-  GDX: 2
-}
+export const G$Decimals: G$DecimalsMap = {
+  G$: {
+    [SupportedChains.MAINNET]: 2,
+    [SupportedChains.FUSE]: 2,
+    [SupportedChains.CELO]: 18,
+  },
+  GOOD: {
+    [SupportedChains.MAINNET]: 18,
+    [SupportedChains.FUSE]: 18,
+    [SupportedChains.CELO]: 18,
+  },
+  GDX: {
+    [SupportedChains.MAINNET]: 2,
+  }
+};
+
+export const G$Tokens = Object.keys(G$Decimals) as G$Token[];
 
 export type SupportedV2Network = keyof typeof SupportedV2Networks;
 
@@ -61,42 +78,45 @@ export const G$TokenContracts = {
   G$: {
     contract: "GoodDollar",
     name: "GoodDollar",
-    symbol: "G$",
-    decimals: G$Decimals.G$
+    ticker: "G$",
   },
   GOOD: {
     contract: "GReputation",
     name: "GDAO",
-    symbol: "GOOD",
-    decimals: G$Decimals.GOOD,
+    ticker: "GOOD",
   },
   GDX: {
     contract: "GoodReserveCDai",
     name: "GoodDollar X",
-    symbol: "GDX",
-    decimals: G$Decimals.GDX
+    ticker: "GDX",
   }
 }
 
-export function GdTokens(tokenName: string, chainId: number, env: string, tokenDecimals?: any) {
-  const { contract, name, symbol, decimals: defaultDecimals } = G$TokenContracts[tokenName]
+export function G$Token(tokenName: G$Token, chainId: number, env: string, decimalsMap: G$DecimalsMap = G$Decimals) {
+  const { contract, name, ticker } = G$TokenContracts[tokenName]  
   
-  let tokenEnv: string, tokenChain: number;
+  let tokenEnv: string = env;
+  let tokenChain: number = chainId;
+
   switch (tokenName) {
     case 'GDX':
       tokenEnv = "production-mainnet"; // only hardcoded because of missing dev contracts (deprecated ropsten/kovan)
       tokenChain = SupportedChains.MAINNET;
       break;
     default:
-      tokenEnv = env;
-      tokenChain = chainId;
       break;
   }
 
-  const decimals = tokenDecimals ?? defaultDecimals
-  const address = G$ContractAddresses(contract, tokenEnv) as string
+  const decimals = decimalsMap[tokenName][chainId];
+  const address = <string>G$ContractAddresses(contract, tokenEnv);
 
-  return new Token(name, symbol, tokenChain, address, decimals)
+  return new Token(name, ticker, tokenChain, address, decimals);
+}
+
+export function G$Amount(tokenName: G$Token, value: BigNumber, chainId: number, env: string, decimalsMap: G$DecimalsMap = G$Decimals) {
+  const token = G$Token(tokenName, chainId, env, decimalsMap);
+
+  return new CurrencyValue(token, value);
 }
 
 export function G$ContractAddresses<T = ObjectLike>(name: string, env: EnvKey): T {

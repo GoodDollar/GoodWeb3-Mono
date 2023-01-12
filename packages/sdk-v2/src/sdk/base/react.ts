@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useMemo, useState } from "react";
 import { Signer, providers, BigNumber } from "ethers";
 import { BaseSDK, EnvKey, EnvValue } from "./sdk";
 import { TokenContext, Web3Context } from "../../contexts";
@@ -9,7 +9,7 @@ import Contracts from "@gooddollar/goodprotocol/releases/deployment.json";
 import { useReadOnlyProvider } from "../../hooks/useMulticallAtChain";
 import useUpdateEffect from "../../hooks/useUpdateEffect";
 import { useRefreshOrNever } from "../../hooks";
-import { SupportedChains, G$Balances, GdTokens, G$TokenContracts } from "../constants";
+import { SupportedChains, G$Balances, G$Tokens, G$Token, G$Amount } from "../constants";
 import { GoodReserveCDai, GReputation, IGoodDollar } from "@gooddollar/goodprotocol/types";
 
 export const NAME_TO_SDK: { [key: string]: typeof ClaimSDK | typeof SavingsSDK | typeof BaseSDK } = {
@@ -142,29 +142,43 @@ export const useSDK = (
 
 export function useG$Tokens() {
   const { chainId, defaultEnv } = useGetEnvChainId();
+  const decimals = useContext(TokenContext);
 
-  const tokens = Object.keys(G$TokenContracts).map(name => {
-    const decimals = useContext(TokenContext)[name];
-    return GdTokens(name, chainId, defaultEnv, decimals)
-  })
+  const tokens = useMemo(
+    () => G$Tokens.map(token => G$Token(token, chainId, defaultEnv, decimals)), 
+    [chainId, defaultEnv, decimals]
+  );
 
-  return tokens
+  return tokens;
 }
 
-export function useG$Amount(value: BigNumber, tokenName: keyof G$Balances = "G$"): CurrencyValue | number {
+export function useG$Amount(value?: BigNumber, token: G$Token = "G$"): CurrencyValue | null {
   const { chainId, defaultEnv } = useGetEnvChainId();
-  const decimals = useContext(TokenContext)[tokenName];
-  const token = GdTokens(tokenName, chainId, defaultEnv, decimals)
+  const decimals = useContext(TokenContext);  
 
-  return new CurrencyValue(token, value)
+  return value ? G$Amount(token, value, chainId, defaultEnv, decimals) : null;
+}
+
+export function useG$Decimals(token: G$Token = "G$"): number | null | undefined {
+  const { chainId } = useGetEnvChainId();
+  const decimals = useContext(TokenContext)[token];
+
+  switch (token) {
+    case "G$":
+    case "GOOD":
+      return decimals[chainId];
+    case "GDX":
+      return decimals[SupportedChains.MAINNET];
+    default:
+      return null;
+  }
 }
 
 export function useG$Balance(refresh: QueryParams["refresh"] = "never") {
   const refreshOrNever = useRefreshOrNever(refresh);
   const { account } = useEthers();
-
-  const { chainId } = useGetEnvChainId();
-  const [ G$, GOOD, GDX ] = useG$Tokens()
+  const decimals = useContext(TokenContext);  
+  const { chainId, defaultEnv } = useGetEnvChainId();  
 
   const g$Contract = useGetContract("GoodDollar", true, "base") as IGoodDollar;
   const goodContract = useGetContract("GReputation", true, "base") as GReputation;
@@ -202,32 +216,19 @@ export function useG$Balance(refresh: QueryParams["refresh"] = "never") {
     { refresh: refreshOrNever, chainId: MAINNET as unknown as ChainId }
   );
 
+  const [g$Value, goodValue, gdxValue] = [...results, mainnetGdx].map(
+    result => result && !result.error ? result.value[0] : BigNumber.from(0)
+  );
+  
+  const g$Balance = <CurrencyValue>useG$Amount(g$Value);
+  const goodBalance = <CurrencyValue>useG$Amount(goodValue, "GOOD");
+  const gdxBalance = <CurrencyValue>useG$Amount(gdxValue, "GDX");
+
   const balances: G$Balances = {
-    G$: undefined,
-    GOOD: undefined,
-    GDX: undefined
+    G$: g$Balance,
+    GOOD: goodBalance,
+    GDX: gdxBalance
   };
-
-  if (!results.includes(undefined) && !results[0]?.error) {
-    const g$Balance = new CurrencyValue(G$, results[0]?.value[0]);
-    const goodBalance = new CurrencyValue(GOOD, results[1]?.value[0]);
-
-    if (g$Balance) {
-      balances.G$ = g$Balance;
-    }
-
-    if (goodBalance) {
-      balances.GOOD = goodBalance;
-    }
-  }
-
-  if (mainnetGdx) {
-    const gdxBalance = new CurrencyValue(GDX, mainnetGdx.value[0]);    
-
-    if (gdxBalance) {
-      balances.GDX = gdxBalance;
-    }
-  }
 
   return balances;
 }
