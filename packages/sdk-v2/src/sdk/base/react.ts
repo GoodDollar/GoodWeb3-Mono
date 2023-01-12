@@ -176,9 +176,8 @@ export function useG$Decimals(token: G$Token = "G$"): number | null | undefined 
 
 export function useG$Balance(refresh: QueryParams["refresh"] = "never") {
   const refreshOrNever = useRefreshOrNever(refresh);
-  const { account } = useEthers();
-  const decimals = useContext(TokenContext);  
-  const { chainId, defaultEnv } = useGetEnvChainId();  
+  const { account } = useEthers();  
+  const { chainId } = useGetEnvChainId();  
 
   const g$Contract = useGetContract("GoodDollar", true, "base") as IGoodDollar;
   const goodContract = useGetContract("GReputation", true, "base") as GReputation;
@@ -217,7 +216,7 @@ export function useG$Balance(refresh: QueryParams["refresh"] = "never") {
   );
 
   const [g$Value, goodValue, gdxValue] = [...results, mainnetGdx].map(
-    result => result && !result.error ? result.value[0] : BigNumber.from(0)
+    result => result && !result.error ? result.value[0] : undefined
   );
   
   const g$Balance = <CurrencyValue>useG$Amount(g$Value);
