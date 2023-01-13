@@ -26,6 +26,25 @@ export const theme = extendTheme({
 
     // UI
     buttonBackground: "#40C4FFCC",
+
+    /* g$ design system */
+    primary: '#00AFFF',
+    // text
+    goodGrey: {
+      300: '#D4D4D4',
+      400: '#A3A3A3',
+      500: '#737373',
+      600: '#525252',
+      700: '#404040'
+    },
+    // background
+    goodWhite: {
+      0: '#FFFFFF', // main
+      100: '#F6F8FA' // secondary
+    },
+    // borders
+    borderBlue: '#00AEFF',
+    borderWhite: '#E2E5EA'
   },
   sizes: {
     "md": "200px",
@@ -35,6 +54,15 @@ export const theme = extendTheme({
     body: "Montserrat",
     mono: "Montserrat",
     subheading: "Roboto",
+  },
+  fontSizes: {
+    '2x': 12,
+    'xs': 14,
+    'sm': 16,
+    'md': 20,
+    'l': 24,
+    'xl': 30,
+    '2xl': 36
   },
   components: {
     ...layout,
