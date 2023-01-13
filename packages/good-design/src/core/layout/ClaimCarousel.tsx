@@ -19,9 +19,9 @@ const SlideMark: FC<SlideMarkProps> = memo(({ isActive, isLast }) => (
 
 const ClaimCardItem: FC<{ item: IClaimCard; index: number }> = ({ item, index }) => {
   const isOdd = index % 2 === 0;
-  const backgroundColor = isOdd ? "greyCard" : "main";
-  const titleColor = isOdd ? "main" : "white";
-  const descriptionColor = isOdd ? "lightGrey" : "white";
+  const backgroundColor = isOdd ? "goodWhite.100" : "primary";
+  const titleColor = isOdd ? "primary" : "white";
+  const descriptionColor = isOdd ? "goodGrey.500" : "white";
   return (
     <ClaimCard
       key={index}
@@ -88,6 +88,7 @@ const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards }) => {
         horizontal
         onScroll={onScroll}
         scrollEventThrottle={16}
+        ml="-8"
         mt="8"
         showsHorizontalScrollIndicator={false}
         onLayout={onFlatListLayoutChange}

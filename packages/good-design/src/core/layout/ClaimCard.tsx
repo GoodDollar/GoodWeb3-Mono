@@ -17,7 +17,8 @@ interface ClaimCardProps {
 const ClaimCard: FC<ClaimCardProps> = ({ backgroundColor, titleColor, descriptionColor, content, title }) => {
   return (
     <View
-      w="275"
+      shadow="1"
+      w="240"
       h="423"
       bg={backgroundColor}
       borderRadius={30}
@@ -29,18 +30,18 @@ const ClaimCard: FC<ClaimCardProps> = ({ backgroundColor, titleColor, descriptio
       py="6"
     >
 
-      <Title color={titleColor}>{title}</Title>
+      <Title fontSize="xl" lineHeight="36" fontWeight="bold" fontFamily="heading" color={titleColor}>{title}</Title>
 
       {content?.map((contentItem, index) => (
         <Box key={index}>
           {!!contentItem.description && (
-            <Text color={descriptionColor} fontSize="md" fontFamily="subheading" fontWeight="semibold" pt="4" pb="30">
+            <Text color={descriptionColor} fontSize="15" fontFamily="subheading" fontWeight="normal" pt="4" pb="30">
               {contentItem.description}
             </Text>
           )}
 
           {!!contentItem.imageUrl && (
-            <Image source={{ uri: contentItem.imageUrl }} w="241" h="auto" borderRadius={10} alt="GoodDollar" />
+            <Image source={{ uri: contentItem.imageUrl }} w="208" h="178" borderRadius={10} alt="GoodDollar" />
           )}
 
           {!!contentItem.link && (
@@ -48,29 +49,48 @@ const ClaimCard: FC<ClaimCardProps> = ({ backgroundColor, titleColor, descriptio
               text={contentItem.link.linkText}
               onPress={() => contentItem.link && openLink(contentItem.link.linkUrl)}
               bg="white"
-              innerText={{ fontSize: "md", fontWeight: "semibold", fontFamily: "body", color: "main" }}
-              px="0"
-              pl="4"
-              pr="1.5"
+              w="208"
+              h="58"
+              innerText={{
+                fontSize: "md",
+                fontWeight: "medium",
+                fontFamily: "subheading",
+                color: "main"
+              }}
               innerView={{
-                width: "217",
+                width: "208",
                 flexDirection: "row",
                 justifyContent: "space-between",
-                alignItems: "center"
+                alignItems: "center",
+                px: '1.5',
+                pl: '4',
+                pr: '1.5',
+                flexGrow: "0",
+                
               }}
               borderRadius={15}
             >
-              <View w="46" h="46" bg="main" borderRadius={12} justifyContent="center" alignItems="center">
+              <View w="46" h="46" mr="1.5" bg="primary" borderRadius="12" justifyContent="center" alignItems="center">
                 <ArrowForwardIcon color="white" />
               </View>
             </BaseButton>
           )}
 
           {!!contentItem.list && (
-            <View pt="30">
+            <View pt="30" textAlign="center">
               {contentItem.list?.map((item, index, list) => (
-                <Text key={index} color="dimgray" bold fontSize="16" fontFamily="subheading" fontWeight="semibold" pb={index === list.length - 1 ? "0" : "5"}>
-                  {item.key} <Text color="main">{item.value}</Text>
+                <Text
+                  key={index}
+                  color="goodGrey.500"
+                  bold
+                  fontSize="16"
+                  fontFamily="subheading"
+                  fontWeight="normal"
+                  display="flex"
+                  justifyContent="center"
+                  flexDirection="column"
+                  pb={index === list.length - 1 ? "0" : "5"}>
+                  {item.key} <Text color="primary">{item.value}</Text>
                 </Text>
               ))}
             </View>

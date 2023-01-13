@@ -126,18 +126,26 @@ const ClaimButton = ({ firstName, method, refresh, claimed, claim, ...props }: F
 
   return (
     <View flex={1} w="full" {...props}>
-      <View w="full" alignItems="center" pt="12" pb="12">
+      <View w="full" alignItems="center" pt="8" pb="8">
         <Web3ActionButton
+          shadow="2"
           text={buttonTitle}
           requiredChain={SupportedChains.FUSE}
           web3Action={handleClaim}
-          w="56"
-          h="56"
+          w="40"
+          h="40"
           px="2.5"
           borderRadius="50%"
-          bg="buttonBackground"
+          bg="main"
           disabled={claimed}
-          innerText={{style: {fontWeight: "bold"}, fontFamily: "body"}}
+          innerText={{
+            variant: 'shadowed',
+            fontWeight: "700",
+            fontFamily: "body",
+            fontSize: 'l',
+            width: 144,
+            lineHeight: 26.4
+          }}
         />
       </View>
 
