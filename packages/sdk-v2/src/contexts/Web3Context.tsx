@@ -4,7 +4,7 @@ import EventEmitter from "eventemitter3";
 import React, { createContext, FC, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { EnvKey } from "../sdk/base/sdk";
 import { noop } from 'lodash'; // eslint-disable-line @typescript-eslint/no-unused-vars
-import { G$Decimals, G$DecimalsMap, G$Token } from "../sdk/constants";
+import { G$Decimals } from "../sdk/constants";
 import { GoodReserveCDai, GReputation, IGoodDollar } from "@gooddollar/goodprotocol/types";
 import { useGetContract } from "../sdk";
 import { SupportedChains } from "../sdk/constants";
@@ -150,9 +150,6 @@ const TokenProvider: FC<{ children: React.ReactNode; }> = ({ children }) => {
     ].filter(_ => _.contract && chainId == MAINNET),
     { refresh: "never", chainId: MAINNET as unknown as ChainId }
   );
-
-  // TODO @L03TJ3 think how to call each token for some chainid once
-  // e.g. if we already requested G$ for celo - do not request it again once chain changed to celo
 
   const value = useMemo(() => {
     const newValue = cloneDeep(G$Decimals);

@@ -159,18 +159,15 @@ export function useG$Amount(value?: BigNumber, token: G$Token = "G$", requiredCh
   return value ? G$Amount(token, value, chainId, defaultEnv, decimals) : null;
 }
 
-export function useG$Decimals(token: G$Token = "G$", requiredChainId?: number): number | null | undefined {
+export function useG$Decimals(token: G$Token = "G$", requiredChainId?: number): number {
   const { chainId } = useGetEnvChainId(requiredChainId);
   const decimals = useContext(TokenContext)[token];
 
   switch (token) {
-    case "G$":
-    case "GOOD":
-      return decimals[chainId];
     case "GDX":
-      return decimals[SupportedChains.MAINNET];
+      return decimals[SupportedChains.MAINNET] || 2;
     default:
-      return null;
+      return decimals[chainId]
   }
 }
 
