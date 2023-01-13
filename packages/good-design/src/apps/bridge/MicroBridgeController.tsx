@@ -4,10 +4,11 @@ import {
   useRefreshOrNever, useRelayTx,
   useWithinBridgeLimits
 } from "@gooddollar/web3sdk-v2";
+
 import { useEthers } from "@usedapp/core";
-import { sortBy } from "lodash";
+import { noop, sortBy } from "lodash";
 import { ArrowForwardIcon, Box, Button, Flex, Heading, HStack, Stack, Text } from "native-base";
-import React, { useCallback, useState } from "react";
+import React, { FC, useCallback, useState } from "react";
 import { ExplorerLink } from "../../core/web3/ExplorerLink";
 import { useSignWalletModal } from "../../hooks/useSignWalletModal";
 import { MicroBridge } from "./MicroBridge";
@@ -136,7 +137,19 @@ const MicroBridgeHistory = () => {
   );
 };
 
-export const MicroBridgeController = ({ withRelay = false }) => {
+interface IMicroBridgeControllerProps {
+  withRelay?: boolean;
+  onBridgeStart?: () => void;
+  onBridgeSuccess?: () => void;
+  onBridgeFailed?: (e: Error) => void;
+}
+
+export const MicroBridgeController: FC<IMicroBridgeControllerProps> = ({ 
+  withRelay = false, 
+  onBridgeStart = noop, 
+  onBridgeSuccess = noop, 
+  onBridgeFailed = noop 
+}: IMicroBridgeControllerProps) => {
   const { sendBridgeRequest, bridgeRequestStatus, relayStatus, selfRelayStatus } = useBridge();
   const { bridgeFees: fuseBridgeFees, bridgeLimits: fuseBridgeLimits } = useGetBridgeData(SupportedChains.FUSE, "");
   const { bridgeFees: celoBridgeFees, bridgeLimits: celoBridgeLimits } = useGetBridgeData(SupportedChains.CELO, "");
@@ -153,6 +166,9 @@ export const MicroBridgeController = ({ withRelay = false }) => {
         selfRelayStatus={selfRelayStatus}
         limits={{ fuse: fuseBridgeLimits, celo: celoBridgeLimits }}
         fees={{ fuse: fuseBridgeFees, celo: celoBridgeFees }}
+        onBridgeStart={onBridgeStart}
+        onBridgeSuccess={onBridgeSuccess}
+        onBridgeFailed={onBridgeFailed}
       />
       {withRelay && <MicroBridgeHistory />}
       <SignWalletModal txStatus={bridgeRequestStatus.status} />
