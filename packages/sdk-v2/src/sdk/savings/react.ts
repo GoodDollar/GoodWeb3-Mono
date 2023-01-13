@@ -194,7 +194,7 @@ export const useStakerInfo = (requiredChainId: number, refresh: QueryParams["ref
   };
 
   const [goodRewardValue, g$RewardValue] = results[0]?.value ?? []
-  const [principle] = results[1]?.value // eslint-disable-line no-unsafe-optional-chaining
+  const [principle] = results[1]?.value ?? []
   
   const g$Reward = useG$Amount(g$RewardValue);
   const goodReward = useG$Amount(goodRewardValue, "GOOD");
