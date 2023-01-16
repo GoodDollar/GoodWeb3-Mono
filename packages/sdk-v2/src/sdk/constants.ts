@@ -1,7 +1,7 @@
 import { EnvKey } from "./base/sdk";
 import { CurrencyValue, Token } from "@usedapp/core";
 import contractsAddresses from "@gooddollar/goodprotocol/releases/deployment.json";
-import { BigNumber, BigNumberish } from "ethers";
+import { BigNumber } from "ethers";
 
 /* List of supported chains for this sdk. */
 export enum SupportedChains {
@@ -108,7 +108,7 @@ export function G$Token(tokenName: G$Token, chainId: number, env: string, decima
   }
 
   const decimals = decimalsMap[tokenName][chainId];
-  const address = <string>G$ContractAddresses(contract, tokenEnv);
+  const address = G$ContractAddresses(contract, tokenEnv) as string;
 
   return new Token(name, ticker, tokenChain, address, decimals);
 }

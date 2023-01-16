@@ -216,9 +216,9 @@ export function useG$Balance(refresh: QueryParams["refresh"] = "never", required
     result => result && !result.error ? result.value[0] : undefined
   );
   
-  const g$Balance = <CurrencyValue>useG$Amount(g$Value);
-  const goodBalance = <CurrencyValue>useG$Amount(goodValue, "GOOD");
-  const gdxBalance = <CurrencyValue>useG$Amount(gdxValue, "GDX");
+  const g$Balance = useG$Amount(g$Value) as CurrencyValue;
+  const goodBalance = useG$Amount(goodValue, "GOOD") as CurrencyValue;
+  const gdxBalance = useG$Amount(gdxValue, "GDX") as CurrencyValue;
 
   const balances: G$Balances = {
     G$: g$Balance,

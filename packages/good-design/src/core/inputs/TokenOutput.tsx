@@ -5,17 +5,20 @@ import { NumericFormat } from "react-number-format";
 
 export const TokenOutput = ({
   outputValue,
-  token = 'G$',
+  token,
+  decimals,
   _numericformat,
   ...props
 }: {
   outputValue: string;
   token?: G$Token,
+  decimals?: number,
   _numericformat?: any;
   _button?: any;
   _text?: any;
 }) => {
-  const decimals = useG$Decimals(token);
+  const tokenDecimals = useG$Decimals(token);
+  const _decimals = token ? tokenDecimals : decimals;
 
   return (
     <Box w="container" {...props} width="100%">
@@ -25,7 +28,7 @@ export const TokenOutput = ({
         value={outputValue}
         customInput={Input}
         color="lightGrey"
-        decimalScale={decimals || undefined}
+        decimalScale={_decimals}
         {..._numericformat}
       />
     </Box>
