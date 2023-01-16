@@ -7,7 +7,8 @@ export const TokenInput = ({
   balanceWei,
   onChange,
   token,
-  decimals,
+  requiredChainId,
+  decimals = 2,
   _numericformat,
   _button,
   _text,
@@ -18,12 +19,13 @@ export const TokenInput = ({
   onChange: (v: string) => void;
   token?: G$Token;
   decimals?: number;
+  requiredChainId?: number;
   _numericformat?: any;
   _button?: any;
   _text?: any;
   minAmountWei?: string;
 }) => {
-  const tokenDecimals = useG$Decimals(token);
+  const tokenDecimals = useG$Decimals(token, requiredChainId);
   const _decimals = token ? tokenDecimals : decimals;
   const [input, setInput] = useState<number>(0);
   const balance = Number(balanceWei) / 10 ** _decimals;

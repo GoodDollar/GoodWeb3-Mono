@@ -6,18 +6,20 @@ import { NumericFormat } from "react-number-format";
 export const TokenOutput = ({
   outputValue,
   token,
-  decimals,
+  requiredChainId,
+  decimals = 2,
   _numericformat,
   ...props
 }: {
   outputValue: string;
   token?: G$Token,
+  requiredChainId?: number;
   decimals?: number,
   _numericformat?: any;
   _button?: any;
   _text?: any;
 }) => {
-  const tokenDecimals = useG$Decimals(token);
+  const tokenDecimals = useG$Decimals(token, requiredChainId);
   const _decimals = token ? tokenDecimals : decimals;
 
   return (

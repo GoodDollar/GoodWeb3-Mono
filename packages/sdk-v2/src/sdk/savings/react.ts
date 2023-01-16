@@ -57,8 +57,8 @@ export function useSavingsBalance(refresh: QueryParams["refresh"] = "never", req
   );
 
   const [balance = { value: 0, error: undefined }, sBalance = { value: 0, error: undefined }] = results;
-  const g$Balance = useG$Amount(balance.value);
-  const savingsBalance = useG$Amount(sBalance.value);
+  const g$Balance = useG$Amount(balance.value, "G$", requiredChainId);
+  const savingsBalance = useG$Amount(sBalance.value, "G$", requiredChainId);
 
   return { g$Balance, savingsBalance };
 }
@@ -132,8 +132,8 @@ export const useSavingsStats = (requiredChainId: number, refresh: QueryParams["r
   };
 
   const [, totalStaked, totalRewardsPaid] = results[0]?.value ?? []; // eslint-disable-line no-unsafe-optional-chaining
-  const staked = useG$Amount(totalStaked);
-  const rewardsPaid = useG$Amount(totalRewardsPaid);
+  const staked = useG$Amount(totalStaked, "G$", requiredChainId);
+  const rewardsPaid = useG$Amount(totalRewardsPaid, "G$", requiredChainId);
 
   if (results[0]?.error) {
     // one fails, all fails
@@ -196,9 +196,9 @@ export const useStakerInfo = (requiredChainId: number, refresh: QueryParams["ref
   const [goodRewardValue, g$RewardValue] = results[0]?.value ?? []
   const [principle] = results[1]?.value ?? []
   
-  const g$Reward = useG$Amount(g$RewardValue);
-  const goodReward = useG$Amount(goodRewardValue, "GOOD");
-  const deposit = useG$Amount(principle);
+  const g$Reward = useG$Amount(g$RewardValue, "G$", requiredChainId);
+  const goodReward = useG$Amount(goodRewardValue, "GOOD", requiredChainId);
+  const deposit = useG$Amount(principle, "G$", requiredChainId);
 
   if (results[0]?.error) {
     const errMessages: Array<any> = [];
