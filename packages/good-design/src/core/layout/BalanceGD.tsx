@@ -11,7 +11,7 @@ interface BalanceGDProps {
 }
 
 const BalanceGD: FC<BalanceGDProps> = ({ gdPrice, requiredChainId, refresh = "never" }) => {
-  const { G$ } = useG$Balance(refresh);
+  const { G$ } = useG$Balance(refresh, requiredChainId);
 
   return !G$ || !gdPrice ? null : <BalanceView amount={G$} gdPrice={gdPrice} refresh={refresh} />;
 };
