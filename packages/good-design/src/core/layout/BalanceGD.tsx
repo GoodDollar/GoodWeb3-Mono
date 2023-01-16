@@ -2,18 +2,25 @@ import React, { FC, memo } from "react";
 import { Text, View } from "native-base";
 import { useG$Balance } from "@gooddollar/web3sdk-v2";
 import { Fraction } from "@uniswap/sdk-core";
-import { CurrencyValue } from "@usedapp/core";
+import { CurrencyValue, QueryParams } from "@usedapp/core";
 
 interface BalanceGDProps {
   gdPrice?: Fraction;
+  refresh?: QueryParams["refresh"];
 }
+
+const BalanceGD: FC<BalanceGDProps> = ({ gdPrice, refresh = "never" }) => {
+  const { G$ } = useG$Balance(refresh);
+
+  return !G$ || !gdPrice ? null : <BalanceView amount={G$} gdPrice={gdPrice} refresh={refresh} />;
+};
 
 const BalanceView: FC<Required<BalanceGDProps> & { amount: CurrencyValue }> = memo(({ gdPrice, amount }) => (
   <View w="full" flexDirection="column" alignItems="center" mb="45" mt="45">
     <Text fontSize="md" fontWeight="medium" opacity={0.7} mb="0.5">
       YOUR BALANCE
     </Text>
-    <Text fontSize="3xl" bold style={{fontWeight: "bold"}}>
+    <Text fontSize="3xl" bold style={{ fontWeight: "bold" }}>
       {amount.format({ suffix: "", prefix: amount.currency.ticker + " " })}
     </Text>
     <Text fontSize="md" fontWeight="medium" opacity={0.7}>
@@ -23,11 +30,5 @@ const BalanceView: FC<Required<BalanceGDProps> & { amount: CurrencyValue }> = me
     </Text>
   </View>
 ));
-
-const BalanceGD: FC<BalanceGDProps> = ({ gdPrice }) => {
-  const { G$ } = useG$Balance("everyBlock");
-  
-  return !G$ || !gdPrice ? null : <BalanceView amount={G$} gdPrice={gdPrice} />;
-};
 
 export default BalanceGD;

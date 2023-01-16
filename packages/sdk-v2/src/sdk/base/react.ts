@@ -171,7 +171,7 @@ export function useG$Decimals(token: G$Token = "G$", requiredChainId?: number): 
   }
 }
 
-export function useG$Balance(refresh: QueryParams["refresh"] = "never", requiredChainId?: number) {
+export function useG$Balance(refresh: QueryParams["refresh"] = "never", requiredChainId?: number) { 
   const refreshOrNever = useRefreshOrNever(refresh);
   const { account } = useEthers();  
   const { chainId } = useGetEnvChainId(requiredChainId);  
