@@ -7,6 +7,7 @@ import { CurrencyValue, QueryParams } from "@usedapp/core";
 interface BalanceGDProps {
   gdPrice?: Fraction;
   refresh?: QueryParams["refresh"];
+  requiredChainId?: number;
 }
 
 const BalanceGD: FC<BalanceGDProps> = ({ gdPrice, requiredChainId, refresh = "never" }) => {
