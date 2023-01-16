@@ -9,7 +9,7 @@ interface BalanceGDProps {
   refresh?: QueryParams["refresh"];
 }
 
-const BalanceGD: FC<BalanceGDProps> = ({ gdPrice, refresh = "never" }) => {
+const BalanceGD: FC<BalanceGDProps> = ({ gdPrice, requiredChainId, refresh = "never" }) => {
   const { G$ } = useG$Balance(refresh);
 
   return !G$ || !gdPrice ? null : <BalanceView amount={G$} gdPrice={gdPrice} refresh={refresh} />;
