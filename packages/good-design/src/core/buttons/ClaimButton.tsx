@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback, useMemo, useState } from "react";
 import { SupportedChains, useClaim } from "@gooddollar/web3sdk-v2";
-import { Text, View, Spinner, useColorModeValue } from "native-base";
+import { Text, View, Spinner, useColorModeValue, Box } from "native-base";
 
 import { useQueryParam } from "../../hooks/useQueryParam";
 import { Web3ActionButton } from "../../advanced";
@@ -22,7 +22,7 @@ const ClaimButton = ({ firstName, method, refresh, claimed, claim, ...props }: F
   const { isWhitelisted, claimAmount } = useClaim(refresh);
   const [firstClaim, setFirstClaim] = useState(false);
   const isVerified = useQueryParam("verified", true);
-  const textColor = useColorModeValue("paragraph", "white");
+  const textColor = useColorModeValue("goodGrey.500", "white");
 
   const claimModalProps: Omit<BasicModalProps, "modalVisible"> = useMemo(
     () =>
@@ -30,7 +30,9 @@ const ClaimButton = ({ firstName, method, refresh, claimed, claim, ...props }: F
         ? {
             header: (
               <>
-                <Title mb="2">Your first claim is ready!</Title>
+                <Title fontSize="xl" mb="2">
+                  Your first claim is ready!
+                </Title>
                 <Text color={textColor} fontSize="md">
                   To complete it, sign in your wallet
                 </Text>
@@ -45,19 +47,24 @@ const ClaimButton = ({ firstName, method, refresh, claimed, claim, ...props }: F
         : {
             header: (
               <>
-                <Title mb="2">Action Required</Title>
-                <Text color={textColor} fontSize="md">
+                <Title fontSize="xl" mb="2" fontWeight="bold" lineHeight="36px">
+                  Action Required
+                </Title>
+                <Text color={textColor} fontFamily="subheading" fontWeight="normal" fontSize="md">
                   To complete this action, sign in your wallet.
                 </Text>
               </>
             ),
             body: (
-              <>
-                <Text color={textColor} fontSize="sm" fontWeight="medium">
-                  Watch this video to learn more about signing transactions.
+              <Box mb="24px" mt="16px">
+                <Title fontFamily="subheading" fontWeight="normal" fontSize="sm">
+                  WATCH
+                </Title>
+                <Text fontFamily="mono" color="primary" mb="8px" fontSize="l" fontWeight="bold">
+                  What is signing?
                 </Text>
                 <Image source={ClaimImage} w="full" h="auto" />
-              </>
+              </Box>
             ),
             closeText: "",
             hasBottomBorder: false
@@ -128,25 +135,13 @@ const ClaimButton = ({ firstName, method, refresh, claimed, claim, ...props }: F
     <View flex={1} w="full" {...props}>
       <View w="full" alignItems="center" pt="8" pb="8">
         <Web3ActionButton
-          shadow="2"
           text={buttonTitle}
           requiredChain={SupportedChains.FUSE}
           web3Action={handleClaim}
-          w="40"
-          h="40"
-          px="2.5"
-          borderRadius="50%"
-          bg="main"
           disabled={claimed}
-          innerText={{
-            variant: 'shadowed',
-            fontWeight: "700",
-            fontFamily: "body",
-            fontSize: 'l',
-            width: 144,
-            lineHeight: 26.4
-          }}
+          variant="round"
         />
+        <Text variant="shadowed" />
       </View>
 
       <FVModal

@@ -1,5 +1,5 @@
 import { noop } from "lodash";
-import { Box, Button, Modal as NBModal, useColorModeValue } from "native-base";
+import { Box, Button, Modal as NBModal, useColorModeValue, useBreakpointValue } from "native-base";
 import React, { FC, ReactNode, useCallback } from "react";
 
 export interface BasicModalProps {
@@ -42,24 +42,41 @@ const BasicModal: FC<BasicModalProps> = ({
     onClose();
   }, [onAction, onClose]);
 
-  const bgContent = useColorModeValue("white", "mainDarkContrast")
+  const bgContent = useColorModeValue("white", "mainDarkContrast");
   const bgOverlay = useColorModeValue("mainDarkContracts:alpha.40", "white:alpha.40");
-  
+  const width = useBreakpointValue({
+    base: 288,
+    md: "initial"
+  });
+  const height = useBreakpointValue({
+    base: 424,
+    md: "initial"
+  });
+
   const actionButton = actionText ? <Button onPress={onActionButtonPress}>{actionText}</Button> : <React.Fragment />;
   return (
     /* height 100vh is required so modal always shows in the middle */
     <NBModal isOpen={modalVisible} onClose={onClose} {..._modal} minH="100vh" bgColor={bgOverlay}>
-      <Box bgColor={bgContent} borderRadius="lg">
+      <Box bgColor={bgContent} borderRadius="lg" h={height} width={width}>
         <NBModal.Content w={"100%"}>
           {hasCloseButton && <NBModal.CloseButton />}
           {!!header && (
-            <NBModal.Header borderBottomWidth={hasTopBorder ? "px" : "0"} {..._header} >
+            <NBModal.Header
+              style={{
+                paddingLeft: 18,
+                paddingRight: 18,
+                paddingTop: 24
+              }}
+              borderBottomWidth={hasTopBorder ? "px" : "0"}
+              {..._header}
+            >
               {header}
             </NBModal.Header>
           )}
+          <Box borderWidth="1" borderColor="borderGrey" width="90%" alignSelf="center" />
           <NBModal.Body {..._body}>{body}</NBModal.Body>
           {(!!footer || !!closeText || !!actionText) && (
-            <NBModal.Footer borderTopWidth={hasBottomBorder ? "px" : "0"} {..._footer} >
+            <NBModal.Footer borderTopWidth={hasBottomBorder ? "px" : "0"} {..._footer}>
               {footer}
               <Button.Group space={2}>
                 {closeText ? (

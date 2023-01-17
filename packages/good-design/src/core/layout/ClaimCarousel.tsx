@@ -33,15 +33,15 @@ const ClaimCardItem: FC<{ item: IClaimCard; index: number }> = ({ item, index })
   );
 };
 
-const SlidesComponent = memo(({ activeSlide, slidesNumber }: { activeSlide: number, slidesNumber: number }) => <>
-  {Array(slidesNumber)
-    .fill(0)
-    .map((_, index, arr) => (
-      <SlideMark key={index} isActive={index === activeSlide} isLast={index === arr.length - 1} />
-    ))}
+const SlidesComponent = memo(({ activeSlide, slidesNumber }: { activeSlide: number; slidesNumber: number }) => (
+  <>
+    {Array(slidesNumber)
+      .fill(0)
+      .map((_, index, arr) => (
+        <SlideMark key={index} isActive={index === activeSlide} isLast={index === arr.length - 1} />
+      ))}
   </>
-);
-
+));
 
 const getItemLayout = (_: IClaimCard[] | null | undefined, index: number) => ({
   index,
@@ -64,14 +64,14 @@ const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards }) => {
         return;
       }
 
-      setSlidesNumber(Math.ceil(((contentWidth - event.nativeEvent.layout.width) + 36) / (275 + 20)));
+      setSlidesNumber(Math.ceil((contentWidth - event.nativeEvent.layout.width + 36) / (275 + 20)));
     },
     [cards, setSlidesNumber]
   );
 
   const onScroll = useCallback(
     (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-      const offSetX = event.nativeEvent.contentOffset.x
+      const offSetX = event.nativeEvent.contentOffset.x;
       const currentSlide = Math.floor(offSetX / (275 + (offSetX === 0 ? 20 : -20)));
 
       if (activeSlide === currentSlide) return;
@@ -90,6 +90,7 @@ const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards }) => {
         scrollEventThrottle={16}
         ml="-8"
         mt="8"
+        h="425"
         showsHorizontalScrollIndicator={false}
         onLayout={onFlatListLayoutChange}
         getItemLayout={getItemLayout}

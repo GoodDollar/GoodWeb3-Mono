@@ -31,7 +31,7 @@ const StepIndicator: FC<{ text?: string } & ITextProps> = withTheme({ name: "Ste
   ({ text, color, fontSize }) => (
     <HStack space={2} alignItems="center" flexDirection="row">
       <Spinner accessibilityLabel="Waiting on wallet confirmation" />
-      <Heading color={color} fontSize={fontSize} fontFamily='Montserrat'>
+      <Heading color={color} fontSize={fontSize} fontFamily="heading">
         {text}
       </Heading>
     </HStack>
@@ -64,8 +64,12 @@ export const Web3ActionButton: FC<Web3ActionProps> = withTheme({ name: "Web3Acti
 
     const connectWallet = useCallback(async () => {
       const connectFn = handleConnect || (activateBrowserWallet as any);
+      const isConnected = await connectFn().catch(throwCancelled);
 
-      return await connectFn().catch(throwCancelled);
+      if (handleConnect && !isConnected) {
+        throw new Error("User cancelled");
+      }
+      return isConnected;
     }, [handleConnect, activateBrowserWallet]);
 
     const switchToChain = useCallback(

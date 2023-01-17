@@ -29,6 +29,7 @@ export const theme = extendTheme({
 
     /* g$ design system */
     primary: '#00AFFF',
+    primaryHoverDark: '#0387c3',
     // text
     goodGrey: {
       300: '#D4D4D4',
@@ -43,10 +44,17 @@ export const theme = extendTheme({
     },
     // borders
     borderBlue: '#00AEFF',
-    borderWhite: '#E2E5EA'
+    borderGrey: '#E2E5EA'
+
   },
   sizes: {
     "md": "200px",
+  },
+  breakpoints: {
+    // custom keys for breakpoints cannot be used in useBreakpoint hook so we override defaults
+    sm: 375,
+    md: 480,
+    lg: 976,
   },
   fonts: {
     heading: "Montserrat",
@@ -55,7 +63,7 @@ export const theme = extendTheme({
     subheading: "Roboto",
   },
   fontSizes: {
-    '2x': 12,
+    '2xs': 12,
     'xs': 14,
     'sm': 16,
     'md': 20,
@@ -86,7 +94,7 @@ export const theme = extendTheme({
           }
         }
       }
-    }
+    },
   }
 });
 

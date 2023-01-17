@@ -19,7 +19,7 @@ export interface BaseButtonProps extends IButtonProps {
 
 const BaseButton = withTheme({ name: "BaseButton" })(
   ({ text, innerText, innerView, onPress, children, ...props }: BaseButtonProps) => (
-    <Button onPress={onPress} maxWidth="750px" px={100} {...props}>
+    <Button onPress={onPress} px={100} {...props}>
       <View {...innerView}>
         <Text {...innerText}>{text}</Text>
         {children}
@@ -35,6 +35,7 @@ export const theme = {
     const [bg, bgHover] = colorModeValue(colors, [...colors].reverse());
 
     return {
+      maxWidth: 750,
       bg,
       _hover: {
         bg: bgHover
@@ -44,7 +45,31 @@ export const theme = {
         color: "white"
       }
     };
-  })
+  }),
+  variants: {
+    arrowIcon: () => ({
+      bg: "white",
+      w: 208,
+      h: 58,
+      innerText: {
+        fontSize: "md",
+        fontWeight: "medium",
+        fontFamily: "subheading",
+        color: "main"
+      },
+      innerView: {
+        width: 208,
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        px: 1.5,
+        pl: 4,
+        pr: 1.5,
+        flexGrow: 0
+      },
+      borderRadius: 15
+    })
+  }
 };
 
 export default BaseButton;
