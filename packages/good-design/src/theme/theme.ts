@@ -28,48 +28,50 @@ export const theme = extendTheme({
     buttonBackground: "#40C4FFCC",
 
     /* g$ design system */
-    primary: '#00AFFF',
-    primaryHoverDark: '#0387c3',
+    primary: "#00AFFF",
+    primaryHoverDark: "#0387c3",
     // text
     goodGrey: {
-      300: '#D4D4D4',
-      400: '#A3A3A3',
-      500: '#737373',
-      600: '#525252',
-      700: '#404040'
+      300: "#D4D4D4",
+      400: "#A3A3A3",
+      500: "#737373",
+      600: "#525252",
+      700: "#404040"
     },
     // background
     goodWhite: {
-      100: '#F6F8FA' // secondary
+      100: "#F6F8FA" // secondary
     },
     // borders
-    borderBlue: '#00AEFF',
-    borderGrey: '#E2E5EA'
-
+    borderBlue: "#00AEFF",
+    borderGrey: "#E2E5EA"
   },
   sizes: {
-    "md": "200px",
+    md: "200px"
   },
   breakpoints: {
     // custom keys for breakpoints cannot be used in useBreakpoint hook so we override defaults
+    base: 0,
     sm: 375,
     md: 480,
     lg: 976,
+    xl: 1280,
+    "2xl": 1440
   },
   fonts: {
     heading: "Montserrat",
     body: "Montserrat",
     mono: "Montserrat",
-    subheading: "Roboto",
+    subheading: "Roboto"
   },
   fontSizes: {
-    '2xs': 12,
-    'xs': 14,
-    'sm': 16,
-    'md': 20,
-    'l': 24,
-    'xl': 30,
-    '2xl': 36
+    "2xs": 12,
+    xs: 14,
+    sm: 16,
+    md: 20,
+    l: 24,
+    xl: 30,
+    "2xl": 36
   },
   components: {
     ...layout,
@@ -77,8 +79,8 @@ export const theme = extendTheme({
     ...advanced,
     Text: {
       baseStyle: {
-        fontFamily: 'body',
-        fontWeight: 'normal'
+        fontFamily: "body",
+        fontWeight: "normal"
       },
       variants: {
         shadowed: () => {
@@ -87,14 +89,14 @@ export const theme = extendTheme({
               textShadowRadius: 2.22,
               textShadowOffset: {
                 width: 0,
-                height: 1,
+                height: 1
               },
-              textShadowColor: 'rgba(0,0,0, .22)',
+              textShadowColor: "rgba(0,0,0, .22)"
             }
-          }
+          };
         }
       }
-    },
+    }
   }
 });
 

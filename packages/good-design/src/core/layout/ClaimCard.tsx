@@ -1,26 +1,25 @@
 import { Text, View, Box } from "native-base";
-import { ColorType } from "native-base/lib/typescript/components/types";
 import React, { FC } from "react";
 import { ClaimCardContent, ArrowButton } from "../buttons";
 import { Image } from "../images";
 import { openLink } from "@gooddollar/web3sdk-v2";
 import Title from "./Title";
-
 interface ClaimCardProps {
-  titleColor: ColorType;
-  descriptionColor: ColorType;
-  backgroundColor: ColorType;
-  title: string;
+  bgColor: string;
+  title: {
+    text: string;
+    color: string;
+  };
   content?: ClaimCardContent[];
 }
 
-const ClaimCard: FC<ClaimCardProps> = ({ backgroundColor, titleColor, descriptionColor, content, title }) => {
+const ClaimCard: FC<ClaimCardProps> = ({ content, title, bgColor }) => {
   return (
     <View
       shadow="1"
       w="240"
       h="423"
-      bg={backgroundColor}
+      bg={bgColor}
       borderRadius={30}
       flex={1}
       justifyContent={content?.length !== 1 ? "space-between" : undefined}
@@ -29,15 +28,22 @@ const ClaimCard: FC<ClaimCardProps> = ({ backgroundColor, titleColor, descriptio
       px="17"
       py="6"
     >
-      <Title fontSize="xl" lineHeight="36" fontWeight="bold" fontFamily="heading" color={titleColor}>
-        {title}
+      <Title fontSize="xl" lineHeight="36" fontWeight="bold" fontFamily="heading" color={title.color}>
+        {title.text}
       </Title>
 
       {content?.map((contentItem, index) => (
         <Box key={index}>
           {!!contentItem.description && (
-            <Text color={descriptionColor} fontSize="15" fontFamily="subheading" fontWeight="normal" pt="4" pb="30">
-              {contentItem.description}
+            <Text
+              color={contentItem.description.color}
+              fontSize="15"
+              fontFamily="subheading"
+              fontWeight="normal"
+              pt="4"
+              pb="30"
+            >
+              {contentItem.description.text}
             </Text>
           )}
 

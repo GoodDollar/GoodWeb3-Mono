@@ -36,7 +36,7 @@ const BalanceView: FC<Required<BalanceGDProps> & { amount: CurrencyValue }> = me
   return (
     <View w="full" flexDirection="column" alignItems="center">
       {copies.map(copy => (
-        <BalanceCopy heading={copy.heading} subHeading={copy.subheading} />
+        <BalanceCopy key={copy.heading.charAt(0)} heading={copy.heading} subHeading={copy.subheading} />
       ))}
     </View>
   );
