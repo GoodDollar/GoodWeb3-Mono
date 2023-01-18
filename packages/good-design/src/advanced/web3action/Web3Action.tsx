@@ -21,10 +21,17 @@ const ButtonSteps = {
   action: "Awaiting confirmation..."
 };
 
-const throwCancelled = (e: any) => {
+const throwIfCancelled = (e: any) => {
   if (e.code === 4001) {
     throw e;
   }
+};
+
+const throwCancelled = () => {
+  const e = new Error("User cancelled");
+
+  (e as any).code = 4001;
+  throw e;
 };
 
 const StepIndicator: FC<{ text?: string } & ITextProps> = withTheme({ name: "StepIndicator" })(
@@ -64,21 +71,22 @@ export const Web3ActionButton: FC<Web3ActionProps> = withTheme({ name: "Web3Acti
 
     const connectWallet = useCallback(async () => {
       const connectFn = handleConnect || (activateBrowserWallet as any);
-      const isConnected = await connectFn().catch(throwCancelled);
+      const isConnected = await connectFn().catch(throwIfCancelled);
 
       if (handleConnect && !isConnected) {
-        throw new Error("User cancelled");
+        throwCancelled();
       }
+
       return isConnected;
     }, [handleConnect, activateBrowserWallet]);
 
     const switchToChain = useCallback(
       async (chain: number) => {
         const switchFn = switchChain || switchNetwork;
-        const result = await switchFn(chain).catch(throwCancelled);
+        const result = await switchFn(chain).catch(throwIfCancelled);
 
         if (switchChain && !result) {
-          throw new Error("User cancelled");
+          throwCancelled();
         }
       },
       [switchNetwork, switchChain]
