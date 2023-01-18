@@ -2400,7 +2400,7 @@ __metadata:
     "@babel/preset-typescript": ^7.16.0
     "@babel/runtime": ^7.18.9
     "@gooddollar/goodprotocol": 1.0.29-beta.5
-    "@gooddollar/web3sdk-v2": "file:.yalc/@gooddollar/web3sdk-v2"
+    "@gooddollar/web3sdk-v2": latest
     "@lingui/macro": ^3.14.0
     "@lingui/react": ^3.14.0
     "@storybook/addon-actions": ^6.5.12
@@ -2575,39 +2575,6 @@ __metadata:
     truffle-plugin-verify: ^0.5.11
     truffle-source-verify: ^0.0.6
   checksum: 505b96867d15d2c5f14ba6b17cbebfc1e02224f2a128ea76edc333a60b3417f43b4d9a3fb1d0df94b909c8afdb2daf6ca5e8a094cbe3510ed96948dcc14b7429
-  languageName: node
-  linkType: hard
-
-"@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2::locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design":
-  version: 0.1.58
-  resolution: "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2#.yalc/@gooddollar/web3sdk-v2::hash=79eba4&locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design"
-  dependencies:
-    "@amplitude/analytics-browser": ^1.6.4
-    "@amplitude/analytics-react-native": ^0.7.0
-    "@gooddollar/bridge-app": ^1.2.2
-    "@gooddollar/bridge-contracts": ^1.0.10
-    "@gooddollar/goodprotocol": 1.0.29-beta.5
-    "@react-native-firebase/analytics": ^16.4.6
-    "@sentry/browser": 7.16.0
-    "@sentry/react-native": ^4.8.0
-    "@solana/web3.js": ^1.72.0
-    "@usedapp/core": 1.*
-    "@web3auth/base": ^4.0.0
-    "@web3auth/core": ^4.0.0
-    "@web3auth/openlogin-adapter": ^4.1.0
-    "@web3auth/torus-wallet-connector-plugin": ^4.0.0
-    eventemitter3: ^4.0.7
-    react-native: ^0.70.2
-    react-native-indicative: ^0.2.1
-    react-native-restart: ^0.0.24
-    react-use-promise: ^0.5.0
-  peerDependencies:
-    "@react-native-async-storage/async-storage": 1.17.10
-    ethers: 5.*
-    react: "*"
-    react-native: "*"
-    react-native-web: "*"
-  checksum: 70f8cd942395fb1297b9441a0155ac97fbfb74004fc01e4e9c9f48c6f814f7fc74234f2fe06f425128fa22e90c40406b680e58edc6b3cd5bcf836a2371647866
   languageName: node
   linkType: hard
 
