@@ -21,7 +21,7 @@ export interface ClaimCardContent {
     linkText: string;
     linkUrl: string;
   };
-  list?: Array<{ key: string; value: string }>;
+  list?: Array<{ id: string; key: string; value: string }>;
 }
 export interface IClaimCard {
   title: {

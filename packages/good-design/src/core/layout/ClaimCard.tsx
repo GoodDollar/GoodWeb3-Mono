@@ -60,9 +60,9 @@ const ClaimCard: FC<ClaimCardProps> = ({ content, title, bgColor }) => {
 
           {!!contentItem.list && (
             <View pt="30" textAlign="center">
-              {contentItem.list?.map((item, index, list) => (
+              {contentItem.list?.map(({ id, key, value }, index, list) => (
                 <Text
-                  key={index}
+                  key={id}
                   color="goodGrey.500"
                   bold
                   fontSize="16"
@@ -73,7 +73,7 @@ const ClaimCard: FC<ClaimCardProps> = ({ content, title, bgColor }) => {
                   flexDirection="column"
                   pb={index === list.length - 1 ? "0" : "5"}
                 >
-                  {item.key} <Text color="primary">{item.value}</Text>
+                  {key} <Text color="primary">{value}</Text>
                 </Text>
               ))}
             </View>

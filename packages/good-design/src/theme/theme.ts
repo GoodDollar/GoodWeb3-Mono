@@ -2,6 +2,7 @@ import { extendTheme } from "native-base";
 import * as layout from "../core/layout/theme";
 import * as buttons from "../core/buttons/theme";
 import * as advanced from "../advanced/theme";
+import * as nativebase from "./nativebase";
 import { fontConfig, getPlatformFamilies } from "./fonts";
 
 export const theme = extendTheme({
@@ -77,26 +78,7 @@ export const theme = extendTheme({
     ...layout,
     ...buttons,
     ...advanced,
-    Text: {
-      baseStyle: {
-        fontFamily: "body",
-        fontWeight: "normal"
-      },
-      variants: {
-        shadowed: () => {
-          return {
-            style: {
-              textShadowRadius: 2.22,
-              textShadowOffset: {
-                width: 0,
-                height: 1
-              },
-              textShadowColor: "rgba(0,0,0, .22)"
-            }
-          };
-        }
-      }
-    }
+    ...nativebase
   }
 });
 

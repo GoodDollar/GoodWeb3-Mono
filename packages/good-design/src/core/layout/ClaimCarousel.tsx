@@ -27,7 +27,7 @@ const SlidesComponent = memo(({ activeSlide, slidesNumber }: { activeSlide: numb
     {Array(slidesNumber)
       .fill(0)
       .map((_, index, arr) => (
-        <SlideMark key={index} isActive={index === activeSlide} isLast={index === arr.length - 1} />
+        <SlideMark key={_} isActive={index === activeSlide} isLast={index === arr.length - 1} />
       ))}
   </>
 ));
