@@ -24,10 +24,12 @@ const BalanceView: FC<Required<BalanceGDProps> & { amount: CurrencyValue }> = me
   const network = chain === 122 ? "Fuse" : "Celo";
   const copies = [
     {
+      id: "your-balance-label",
       heading: "Your Balance",
       subheading: `on ${network}`
     },
     {
+      id: "your-balance-value",
       heading: amount.format({ suffix: "", prefix: amount.currency.ticker + " " }),
       subheading: "(USD " + gdPrice.multiply(amount.format({ suffix: "", thousandSeparator: "" })).toFixed(2) + ")"
     }
@@ -35,8 +37,8 @@ const BalanceView: FC<Required<BalanceGDProps> & { amount: CurrencyValue }> = me
 
   return (
     <View w="full" flexDirection="column" alignItems="center">
-      {copies.map(copy => (
-        <BalanceCopy key={copy.heading.charAt(0)} heading={copy.heading} subHeading={copy.subheading} />
+      {copies.map(({ id, heading, subheading }) => (
+        <BalanceCopy key={id} heading={heading} subHeading={subheading} />
       ))}
     </View>
   );
