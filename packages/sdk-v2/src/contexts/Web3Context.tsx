@@ -1,10 +1,14 @@
 import { JsonRpcProvider, Web3Provider as W3Provider } from "@ethersproject/providers";
-import { Chain, Config, DAppProvider, Goerli, Mainnet, useEthers } from "@usedapp/core";
+import { Chain, Config, DAppProvider, Goerli, Mainnet, useEthers, useCalls, ChainId} from "@usedapp/core";
 import EventEmitter from "eventemitter3";
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { createContext, FC, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { EnvKey } from "../sdk/base/sdk";
-import { noop } from 'lodash';
-
+import { noop } from 'lodash'; // eslint-disable-line @typescript-eslint/no-unused-vars
+import { G$Decimals } from "../sdk/constants";
+import { GoodReserveCDai, GReputation, IGoodDollar } from "@gooddollar/goodprotocol/types";
+import { useGetContract } from "../sdk";
+import { SupportedChains } from "../sdk/constants";
+import { cloneDeep } from "lodash";
 /**
  * request to switch to network id
  * returns void if no result yet true/false if success
@@ -42,13 +46,15 @@ export const txEmitter = {
   emit: ee.emit.bind(ee, "txs")
 } as TxEmitter;
 
-export const Web3Context = React.createContext<IWeb3Context>({
+export const Web3Context = createContext<IWeb3Context>({
   switchNetwork: undefined,
   setSwitchNetwork: (cb: SwitchNetwork) => undefined, // eslint-disable-line @typescript-eslint/no-unused-vars
   connectWallet: () => undefined,
   txEmitter,
   env: "production"
 });
+
+export const TokenContext = createContext<typeof G$Decimals>(cloneDeep(G$Decimals));
 
 type Props = {
   children: React.ReactNode;
@@ -113,6 +119,57 @@ const Web3Connector = ({ web3Provider }: { web3Provider: JsonRpcProvider | void 
   return null;
 };
 
+const TokenProvider: FC<{ children: React.ReactNode; }> = ({ children }) => {
+  const { chainId } = useEthers();
+  const g$Contract = useGetContract("GoodDollar", true, "base") as IGoodDollar;
+  const goodContract = useGetContract("GReputation", true, "base") as GReputation;
+  const gdxContract = useGetContract("GoodReserveCDai", true, "base", 1) as GoodReserveCDai;
+
+  const { MAINNET } = SupportedChains
+
+  const results = useCalls([
+    {
+      contract: g$Contract,
+      method: "decimals",
+      args: []
+    },
+    {
+      contract: goodContract,
+      method: "decimals", 
+      args: []
+    }
+  ], { refresh: "never", chainId })
+
+  const [mainnetGdx] = useCalls(
+    [
+      {
+        contract: gdxContract,
+        method: "decimals",
+        args: []
+      }
+    ].filter(_ => _.contract && chainId == MAINNET),
+    { refresh: "never", chainId: MAINNET as unknown as ChainId }
+  );
+
+  const value = useMemo(() => {
+    const newValue = cloneDeep(G$Decimals);
+    const [g$, good] = results;
+
+    if (chainId && !results.some(result => !result || result.error)) {
+      newValue.G$[chainId] = g$?.value[0];
+      newValue.GOOD[chainId] = good?.value[0];
+    }
+
+    if (mainnetGdx && !mainnetGdx.error) {
+      newValue.GDX[MAINNET] = mainnetGdx.value[0];
+    }
+
+    return newValue;
+  }, [results, chainId, mainnetGdx]);
+
+  return <TokenContext.Provider value={value}>{children}</TokenContext.Provider>
+}
+
 export const Web3Provider = ({ children, config, web3Provider, env = "production" }: Props) => {
   const [switchNetwork, setSwitchNetwork] = useState<SwitchNetwork>();
   const [onSwitchNetwork, setOnSwitchNetwork] = useState<SwitchCallback>();
@@ -146,7 +203,9 @@ export const Web3Provider = ({ children, config, web3Provider, env = "production
           env
         }}
       >
-        {children}
+        <TokenProvider>
+          {children}
+        </TokenProvider>
       </Web3Context.Provider>
     </DAppProvider>
   );

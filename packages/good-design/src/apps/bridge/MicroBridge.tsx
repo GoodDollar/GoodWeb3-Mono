@@ -127,9 +127,9 @@ export const MicroBridge = ({
   selfRelayStatus
 }: {
   onBridge: OnBridge;
-  useBalanceHook: (chain: string) => string;
-  useCanBridge: (chain: string, amountWei: string) => { isValid: boolean; reason: string };
-  onSetChain?: (chain: string) => void;
+  useBalanceHook: (chain: "fuse" | "celo") => string;
+  useCanBridge: (chain: "fuse" | "celo", amountWei: string) => { isValid: boolean; reason: string };
+  onSetChain?: (chain: "fuse" | "celo") => void;
   limits?: ILimits;
   fees?: IFees;
   bridgeStatus?: Partial<TransactionStatus>;
@@ -187,7 +187,7 @@ export const MicroBridge = ({
       </Flex>
       <Flex direction="column" alignItems="flex-start" justifyContent="flex-start" width="100%">
         <Text fontFamily="subheading" bold color="lightGrey:alpha.80">ENTER AMOUNT</Text>
-        <TokenInput balanceWei={balanceWei} decimals={2} onChange={setInput} minAmountWei={minAmountWei} />
+        <TokenInput token="G$" balanceWei={balanceWei} onChange={setInput} minAmountWei={minAmountWei} />
       </Flex>
       <FormControl isInvalid={!!reasonOf}>
         <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon variant="outline" />}>
@@ -203,7 +203,7 @@ export const MicroBridge = ({
           >
             You will receive on {targetChain} 
           </Text>
-        <TokenOutput outputValue={expectedToReceive ?? '0'} />
+        <TokenOutput token="G$" outputValue={expectedToReceive ?? '0'} />
       </Flex>
       <Button
         mt="5"

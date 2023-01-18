@@ -10,7 +10,7 @@
   "license": "GPL-3.0",
   "homepage": "",
   "scripts": {
-    "build": "yarn workspaces foreach -ptRv --from '{@gooddollar/sdk-v2,@gooddollar/**}' run build",
+    "build": "yarn workspaces foreach --topological-dev -v run build",
     "compile": "tsc -p tsconfig.build.json",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
