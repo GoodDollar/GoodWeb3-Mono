@@ -24,6 +24,7 @@ export interface ClaimCardContent {
   list?: Array<{ id: string; key: string; value: string }>;
 }
 export interface IClaimCard {
+  id: string;
   title: {
     text: string;
     color: string;

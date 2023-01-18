@@ -22,15 +22,17 @@ const ClaimCardItem: FC<{ item: IClaimCard; index: number }> = ({ item, index })
   return <ClaimCard key={index} {...item} />;
 };
 
-const SlidesComponent = memo(({ activeSlide, slidesNumber }: { activeSlide: number; slidesNumber: number }) => (
-  <>
-    {Array(slidesNumber)
-      .fill(0)
-      .map((_, index, arr) => (
-        <SlideMark key={_} isActive={index === activeSlide} isLast={index === arr.length - 1} />
-      ))}
-  </>
-));
+const SlidesComponent = memo(
+  ({ activeSlide, slidesNumber, data }: { activeSlide: number; slidesNumber: number; data: IClaimCard[] }) => (
+    <>
+      {Array(slidesNumber)
+        .fill(0)
+        .map((_, index, arr) => (
+          <SlideMark key={data[index].id} isActive={index === activeSlide} isLast={index === arr.length - 1} />
+        ))}
+    </>
+  )
+);
 
 const getItemLayout = (_: IClaimCard[] | null | undefined, index: number) => ({
   index,
@@ -99,7 +101,7 @@ const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards, claimed }) => {
       />
 
       <View flexDirection="row" w="full" pt="5" justifyContent="center">
-        <SlidesComponent activeSlide={activeSlide} slidesNumber={slidesNumber} />
+        <SlidesComponent data={activeCards} activeSlide={activeSlide} slidesNumber={slidesNumber} />
       </View>
     </Box>
   );
