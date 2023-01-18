@@ -1,6 +1,6 @@
 import React, { FC, memo } from "react";
 import { Text, View } from "native-base";
-import { useG$Balance } from "@gooddollar/web3sdk-v2";
+import { useG$Balance, useGetEnvChainId } from "@gooddollar/web3sdk-v2";
 import { Fraction } from "@uniswap/sdk-core";
 import { CurrencyValue, QueryParams } from "@usedapp/core";
 
@@ -11,9 +11,12 @@ interface BalanceGDProps {
 }
 
 const BalanceGD: FC<BalanceGDProps> = ({ gdPrice, requiredChainId, refresh = "never" }) => {
-  const { G$ } = useG$Balance(refresh, requiredChainId);
+  const { chainId } = useGetEnvChainId(requiredChainId);
+  const { G$ } = useG$Balance(refresh, chainId);
 
-  return !G$ || !gdPrice ? null : <BalanceView amount={G$} gdPrice={gdPrice} refresh={refresh} />;
+  return !G$ || !gdPrice ? null : (
+    <BalanceView amount={G$} gdPrice={gdPrice} refresh={refresh} requiredChainId={chainId} />
+  );
 };
 
 const BalanceView: FC<Required<BalanceGDProps> & { amount: CurrencyValue }> = memo(({ gdPrice, amount }) => (
