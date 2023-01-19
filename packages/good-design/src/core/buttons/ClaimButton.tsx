@@ -103,6 +103,7 @@ const ClaimButton = ({ firstName, method, refresh, claimed, claim, ...props }: F
       return "VERIFY UNIQUENESS";
     }
 
+    // todo: add amount when connect, use formatted token amount with G$Amount
     return "CLAIM NOW";
   }, [isWhitelisted]);
 
