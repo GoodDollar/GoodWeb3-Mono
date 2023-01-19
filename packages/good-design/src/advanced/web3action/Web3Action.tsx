@@ -21,17 +21,24 @@ const ButtonSteps = {
   action: "Awaiting confirmation..."
 };
 
-const throwCancelled = (e: any) => {
+const throwIfCancelled = (e: any) => {
   if (e.code === 4001) {
     throw e;
   }
+};
+
+const throwCancelled = () => {
+  const e = new Error("User cancelled");
+
+  (e as any).code = 4001;
+  throw e;
 };
 
 const StepIndicator: FC<{ text?: string } & ITextProps> = withTheme({ name: "StepIndicator" })(
   ({ text, color, fontSize }) => (
     <HStack space={2} alignItems="center" flexDirection="row">
       <Spinner accessibilityLabel="Waiting on wallet confirmation" />
-      <Heading color={color} fontSize={fontSize} fontFamily='Montserrat'>
+      <Heading color={color} fontSize={fontSize} fontFamily="heading">
         {text}
       </Heading>
     </HStack>
@@ -64,17 +71,22 @@ export const Web3ActionButton: FC<Web3ActionProps> = withTheme({ name: "Web3Acti
 
     const connectWallet = useCallback(async () => {
       const connectFn = handleConnect || (activateBrowserWallet as any);
+      const isConnected = await connectFn().catch(throwIfCancelled);
 
-      return await connectFn().catch(throwCancelled);
+      if (handleConnect && !isConnected) {
+        throwCancelled();
+      }
+
+      return isConnected;
     }, [handleConnect, activateBrowserWallet]);
 
     const switchToChain = useCallback(
       async (chain: number) => {
         const switchFn = switchChain || switchNetwork;
-        const result = await switchFn(chain).catch(throwCancelled);
+        const result = await switchFn(chain).catch(throwIfCancelled);
 
         if (switchChain && !result) {
-          throw new Error("User cancelled");
+          throwCancelled();
         }
       },
       [switchNetwork, switchChain]
