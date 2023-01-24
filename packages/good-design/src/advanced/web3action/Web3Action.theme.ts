@@ -6,9 +6,9 @@ export const StepIndicator = {
 };
 
 const interactionStyles = {
-  backgroundColor: 'primaryHoverDark',
-  transition: 'background 0.25s',
-}
+  backgroundColor: "primaryHoverDark",
+  transition: "background 0.25s"
+};
 
 export const Web3ActionButton = {
   baseStyle: {
@@ -26,8 +26,8 @@ export const Web3ActionButton = {
     round: () => ({
       // return {
       shadow: 2,
-      w: 40,
-      h: 40,
+      w: 50,
+      h: 50,
       px: 2.5,
       borderRadius: "50%",
       bg: "main",
@@ -40,42 +40,42 @@ export const Web3ActionButton = {
       }
     }),
     mobile: () => ({
-      backgroundColor: 'primary',
-      width: '100%',
-      maxWidth: 'none',
+      backgroundColor: "primary",
+      width: "100%",
+      maxWidth: "none",
       height: 75,
-      textAlign: 'center',
-      justifyContent: 'center',
-      alignItems: 'center',
+      textAlign: "center",
+      justifyContent: "center",
+      alignItems: "center",
       borderTopLeftRadius: 4,
       borderTopRightRadius: 4,
       py: 17,
-      pt: "20px", 
-      transition: 'background 0.25s',
+      pt: "20px",
+      transition: "background 0.25s",
       _focus: interactionStyles,
       _hover: interactionStyles,
       innerText: {
-        fontSize: 'md',
-        fontFamily: 'subheading',
-        lineHeight: 25,
+        fontSize: "md",
+        fontFamily: "subheading",
+        lineHeight: 25
       }
     }),
     outlined: () => ({
-        backgroundColor: 'white',
-        borderRadius: 15,
-        borderWidth: 1,
-        borderColor: 'borderBlue',
-        width: 170,
-        height: 43,
-        padding: "12px 16px",
-        _focus: interactionStyles,
-        _hover: interactionStyles,
-        innerText: {
-          color: 'main',
-          fontSize: 'sm',
-          fontFamily: 'subheading',
-          lineHeight: 19
-        }
+      backgroundColor: "white",
+      borderRadius: 15,
+      borderWidth: 1,
+      borderColor: "borderBlue",
+      width: 170,
+      height: 43,
+      padding: "12px 16px",
+      _focus: interactionStyles,
+      _hover: interactionStyles,
+      innerText: {
+        color: "main",
+        fontSize: "sm",
+        fontFamily: "subheading",
+        lineHeight: 19
+      }
     })
   }
 };

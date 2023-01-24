@@ -100,11 +100,11 @@ const ClaimButton = ({ firstName, method, refresh, claimed, claim, ...props }: F
 
   const buttonTitle = useMemo(() => {
     if (!isWhitelisted) {
-      return "VERIFY UNIQUENESS";
+      return "CLAIM NOW";
     }
 
     // todo: add amount when connect, use formatted token amount with G$Amount
-    return "CLAIM NOW";
+    return "CLAIM NOW " + claimAmount;
   }, [isWhitelisted]);
 
   useEffect(() => {
