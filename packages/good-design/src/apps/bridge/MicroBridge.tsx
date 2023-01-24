@@ -124,7 +124,10 @@ export const MicroBridge = ({
   fees,
   bridgeStatus,
   relayStatus,
-  selfRelayStatus
+  selfRelayStatus,
+  onBridgeStart,
+  onBridgeFailed,
+  onBridgeSuccess,
 }: {
   onBridge: OnBridge;
   useBalanceHook: (chain: "fuse" | "celo") => string;
@@ -135,6 +138,9 @@ export const MicroBridge = ({
   bridgeStatus?: Partial<TransactionStatus>;
   relayStatus?: Partial<TransactionStatus>;
   selfRelayStatus?: Partial<TransactionStatus>;
+  onBridgeStart?: () => void;
+  onBridgeSuccess?: () => void;
+  onBridgeFailed?: (e: Error) => void;
 }) => {
   const [isBridging, setBridging] = useState(false);
   const [inputWei, setInput] = useState<string>("0");
@@ -151,30 +157,46 @@ export const MicroBridge = ({
 
   const toggleChains = useCallback(() => {
     setSourceChain(targetChain);
-    onSetChain && onSetChain(targetChain);
+    onSetChain?.(targetChain);
   }, [setSourceChain, onSetChain, targetChain]);
 
   const triggerBridge = useCallback(async () => {
     setBridging(true);
+    onBridgeStart?.();
 
     try {
       await onBridge(inputWei, sourceChain);
     } finally {
       setBridging(false);
     }
-  }, [setBridging, onBridge, inputWei, sourceChain]);
+  }, [setBridging, onBridgeStart, onBridge, inputWei, sourceChain]);
 
   useEffect(() => {
-    if (
-      ["Fail", "Exception", "Success"].includes(relayStatus?.status || "") === false && //if bridge relayer failed or succeeded then we are done
-      ["Success"].includes(selfRelayStatus?.status || "") === false && //if self relay succeeded then we are done, other wise we need to wait for relayStatus
-      ["Mining", "PendingSignature", "Success"].includes(bridgeStatus?.status || "")
-    ) {
-      setBridging(true);
-    } else {
-      setBridging(false);
+    const { status = "", errorMessage, errorCode } = relayStatus ?? {};
+    const { status: selfStatus = "" } = selfRelayStatus ?? {};
+    // if self relay succeeded then we are done, other wise we need to wait for relayStatus
+    const isSuccess = [status, selfStatus].includes("Success");
+    // if bridge relayer failed or succeeded then we are done
+    const isFailed = ["Fail", "Exception"].includes(status);
+    // when bridge is signing, mining or succeed but relay not done yet - we're still bridging
+    const isBridging = !isFailed && !isSuccess && ["Mining", "PendingSignature", "Success"].includes(bridgeStatus?.status ?? "");
+    
+    setBridging(isBridging);
+
+    if (isSuccess) {
+      onBridgeSuccess?.();
     }
-  }, [relayStatus, bridgeStatus, selfRelayStatus]);
+
+    if (isFailed) {
+      const exception = new Error(errorMessage ?? "Failed to bridge");
+
+      if (errorCode) {
+        exception.name = `BridgeError #${errorCode}`;
+      }
+
+      onBridgeFailed?.(exception);
+    }
+  }, [relayStatus, bridgeStatus, selfRelayStatus, onBridgeSuccess, onBridgeFailed]);
 
   const { minAmountWei, expectedToReceive } =
     useBridgeEstimate({ limits, fees, inputWei, sourceChain });
