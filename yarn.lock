@@ -3147,7 +3147,7 @@ __metadata:
     "@web3-onboard/core": ^2.12.1
     "@web3-onboard/injected-wallets": ^2.4.0
     "@web3-onboard/react": ^2.5.3
-    "@web3-onboard/torus": ^2.2.0
+    "@web3-onboard/torus": ^2.2.1
     "@web3-onboard/walletconnect": ^2.2.2
     "@web3auth/base": ^4.0.0
     "@web3auth/core": ^4.0.0
@@ -8645,13 +8645,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@web3-onboard/torus@npm:^2.2.0":
-  version: 2.2.0
-  resolution: "@web3-onboard/torus@npm:2.2.0"
+"@web3-onboard/torus@npm:^2.2.1":
+  version: 2.2.1
+  resolution: "@web3-onboard/torus@npm:2.2.1"
   dependencies:
     "@toruslabs/torus-embed": 1.38.2
     "@web3-onboard/common": ^2.2.3
-  checksum: 6203c19d3e6e4ecf5cf1bcfdb868dc63a0bdb968cdc0c0603c1abb19ea78be02dc696f9da4d0786ccfdd181cb0dc2b01a994f89c59884d444c4385fa5da0ee47
+  checksum: bd4ec2e27406f66234092ce85621440d0c76dffcd3583077313e0556c5185ec3b5933b0745b0fdb03d4b3336b479e09d779053856ebf7f2f9302ef1f52c4d23a
   languageName: node
   linkType: hard
 
