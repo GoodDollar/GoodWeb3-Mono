@@ -32,7 +32,7 @@ function customWcModule(options: WcConnectOptions): WalletInit {
       // hack QR code opts
       connector._qrcodeModalOptions = qrcodeModalOptions;
 
-      // hack requests
+      // hack requests, SHOULD be function to keep provider instance's 'this' context
       provider.request = async function ({ method, params }: { method: string; params?: any }) {
         if (method !== 'eth_requestAccounts') {
           return request({ method, params })
