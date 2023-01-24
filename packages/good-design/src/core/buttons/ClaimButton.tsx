@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback, useMemo, useState } from "react";
-import { SupportedChains, useClaim } from "@gooddollar/web3sdk-v2";
+import { SupportedChains, useClaim, useGetEnvChainId } from "@gooddollar/web3sdk-v2";
 import { Text, View, Spinner, useColorModeValue, Box } from "native-base";
 
 import { useQueryParam } from "../../hooks/useQueryParam";
@@ -23,6 +23,18 @@ const ClaimButton = ({ firstName, method, refresh, claimed, claim, ...props }: F
   const [firstClaim, setFirstClaim] = useState(false);
   const isVerified = useQueryParam("verified", true);
   const textColor = useColorModeValue("goodGrey.500", "white");
+  const { chainId } = useGetEnvChainId();
+  const [requiredChain, setRequiredChain] = useState(SupportedChains.CELO);
+
+  useEffect(() => {
+    switch (chainId) {
+      case 122:
+        setRequiredChain(SupportedChains.FUSE);
+        break;
+      default:
+        break;
+    }
+  }, [chainId]);
 
   const claimModalProps: Omit<BasicModalProps, "modalVisible"> = useMemo(
     () =>
@@ -137,10 +149,10 @@ const ClaimButton = ({ firstName, method, refresh, claimed, claim, ...props }: F
       <View w="full" alignItems="center" pt="8" pb="8">
         <Web3ActionButton
           text={buttonTitle}
-          requiredChain={SupportedChains.FUSE}
           web3Action={handleClaim}
           disabled={claimed}
           variant="round"
+          requiredChain={requiredChain}
         />
         <Text variant="shadowed" />
       </View>
