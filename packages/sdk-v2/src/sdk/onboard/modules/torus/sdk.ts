@@ -1,7 +1,7 @@
-import { WalletInit, WalletModule, WalletHelpers } from '@web3-onboard/common'
-import { default as defaultTorus } from '@web3-onboard/torus'
+import { WalletInit, WalletModule } from '@web3-onboard/common'
+import { default as defaultTorusModule } from '@web3-onboard/torus'
 import { TorusCtorArgs, TorusParams } from '@toruslabs/torus-embed'
-import { getDevice } from '../utils'
+import { getDevice } from '../../../base/utils'
 
 type TorusOptions = TorusCtorArgs & TorusParams
 
@@ -14,18 +14,16 @@ const GoogleIcon = `
   </svg>
 `
 
-const walletHelper:WalletHelpers = {
-  device: getDevice()
-}
-
 function torus(options?: TorusOptions): WalletInit {
-    return () => {
-      const walletInit = defaultTorus(options)(walletHelper) as WalletModule;
-      
-      walletInit.label = 'Google (Powered by Web3Auth)';
-      walletInit.getIcon = async () => GoogleIcon;
-      return walletInit
-    }
+  const defaultTorus = defaultTorusModule(options)
+
+  return () => {
+    const walletInit = defaultTorus({ device: getDevice() }) as WalletModule;
+
+    walletInit.label = 'Google (Powered by Web3Auth)';
+    walletInit.getIcon = async () => GoogleIcon;
+    return walletInit
+  }
 }
 
 export default torus

@@ -1,16 +1,11 @@
 import bowser from 'bowser'
+
 import type {
   Device,
   DeviceBrowser,
   DeviceOS,
   DeviceType,
 } from '@web3-onboard/common'
-
-export type DeviceNotBrowser = {
-  type: null
-  os: null
-  browser: null
-}
 
 export function getDevice(): Device {
   const parsed = bowser.getParser(window.navigator.userAgent)
@@ -23,4 +18,10 @@ export function getDevice(): Device {
     os: os as DeviceOS,
     browser: browser as DeviceBrowser
   }
+}
+
+export function isMobile(): boolean {
+  const { type } = getDevice();
+
+  return 'desktop' !== type;
 }
