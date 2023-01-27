@@ -2525,7 +2525,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@gooddollar/goodcontracts@npm:^2.6.2, @gooddollar/goodcontracts@npm:^2.6.4, @gooddollar/goodcontracts@npm:^2.6.6":
+"@gooddollar/goodcontracts@npm:^2.6.2, @gooddollar/goodcontracts@npm:^2.6.6":
   version: 2.6.6
   resolution: "@gooddollar/goodcontracts@npm:2.6.6"
   dependencies:
@@ -2579,26 +2579,6 @@ __metadata:
     truffle-plugin-verify: ^0.5.11
     truffle-source-verify: ^0.0.6
   checksum: 7e81e83bb12cd741226a363959ad92ca44deb51e302d0c89a2861a71a5b447c23483d93abf234e972c8f289328b9449aa73edf100b3f8a8be518ffb56a4f786b
-  languageName: node
-  linkType: hard
-
-"@gooddollar/goodprotocol@npm:1.0.29-beta.4":
-  version: 1.0.29-beta.4
-  resolution: "@gooddollar/goodprotocol@npm:1.0.29-beta.4"
-  dependencies:
-    "@gooddollar/goodcontracts": ^2.6.4
-    "@jsier/retrier": ^1.2.4
-    "@openzeppelin/contracts": ^4.5.0
-    "@openzeppelin/contracts-upgradeable": ^4.3.2
-    "@typechain/hardhat": ^6.1.2
-    async-promise-pool: ^1.0.4
-    ethers-multicall: ^0.2.1
-    openzeppelin-solidity: ^4.3.2
-    patch-package: latest
-    press-any-key: ^0.1.1
-    truffle-plugin-verify: ^0.5.11
-    truffle-source-verify: ^0.0.6
-  checksum: bfe57660d6b041fdea7c48fbafb990ff5fba8bd26aafeea66e897be1e657b9acf88f7d41ce3fa8f7b7fe4c80e6db73178df76a851c8971daef27de3c912e4184
   languageName: node
   linkType: hard
 
@@ -2749,7 +2729,7 @@ __metadata:
   resolution: "@gooddollar/web3sdk@workspace:packages/sdk"
   dependencies:
     "@apollo/client": ^3.2.0
-    "@gooddollar/goodprotocol": 1.0.29-beta.4
+    "@gooddollar/goodprotocol": 1.0.30-beta.3
     "@rollup/plugin-alias": ^3.1.9
     "@rollup/plugin-commonjs": ^22.0.0
     "@rollup/plugin-eslint": ^8.0.2
