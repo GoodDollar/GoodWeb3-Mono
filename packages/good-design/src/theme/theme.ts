@@ -43,6 +43,14 @@ export const theme = extendTheme({
     goodWhite: {
       100: "#F6F8FA" // secondary
     },
+
+    goodBlack: {
+      100: "#505661",
+      200: "#3F444E",
+      300: "#2F3338",
+      500: "#26292F"
+    },
+
     // borders
     borderBlue: "#00AEFF",
     borderGrey: "#E2E5EA"

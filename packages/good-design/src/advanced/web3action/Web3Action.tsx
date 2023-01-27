@@ -1,5 +1,5 @@
 import React, { FC, useCallback, useEffect, useRef, useState } from "react";
-import { HStack, Spinner, Heading, ITextProps } from "native-base";
+import { HStack, Spinner, Text, ITextProps } from "native-base";
 import { useEthers } from "@usedapp/core";
 import BaseButton, { BaseButtonProps } from "../../core/buttons/BaseButton";
 import { withTheme } from "../../theme";
@@ -37,10 +37,10 @@ const throwCancelled = () => {
 const StepIndicator: FC<{ text?: string } & ITextProps> = withTheme({ name: "StepIndicator" })(
   ({ text, color, fontSize }) => (
     <HStack space={2} alignItems="center" flexDirection="row">
-      <Spinner accessibilityLabel="Waiting on wallet confirmation" />
-      <Heading color={color} fontSize={fontSize} fontFamily="heading">
+      <Spinner color={color as string} size="sm" accessibilityLabel="Waiting on wallet confirmation" />
+      <Text color={color} fontSize={fontSize} fontFamily="subheading">
         {text}
-      </Heading>
+      </Text>
     </HStack>
   )
 );

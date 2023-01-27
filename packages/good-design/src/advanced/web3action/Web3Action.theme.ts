@@ -19,15 +19,16 @@ export const Web3ActionButton = {
     },
     innerIndicatorText: {
       color: "white",
-      fontSize: "sm"
+      fontSize: "sm",
+      fontWeight: "bold"
     }
   },
   variants: {
     round: () => ({
       // return {
       shadow: 2,
-      w: 50,
-      h: 50,
+      w: "200px",
+      h: "200px",
       px: 2.5,
       borderRadius: "50%",
       bg: "main",
