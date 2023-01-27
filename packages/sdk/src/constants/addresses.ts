@@ -27,9 +27,10 @@ export function G$ContractAddresses<T = ObjectLike>(chainId: SupportedChainId, n
       deploymentName = "production-mainnet";
       break;
     case SupportedChainId.FUSE:
-    case SupportedChainId.CELO:
       deploymentName = CURRENT_NETWORK;
       break;
+    case SupportedChainId.CELO:
+      deploymentName = (CURRENT_NETWORK === "fuse" ? "development" : CURRENT_NETWORK) + "-celo";
   }
 
   if (!contractsAddresses[deploymentName]) {
