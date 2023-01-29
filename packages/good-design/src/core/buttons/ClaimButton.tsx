@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback, useMemo, useState } from "react";
 import { SupportedChains, useClaim, useGetEnvChainId } from "@gooddollar/web3sdk-v2";
-import { Text, View, Spinner, useColorModeValue, Box } from "native-base";
+import { Text, View, useColorModeValue, Box, Spinner } from "native-base";
 
 import { useQueryParam } from "../../hooks/useQueryParam";
 import { Web3ActionButton } from "../../advanced";
@@ -9,7 +9,6 @@ import ActionButton from "./ActionButton";
 import { useModal } from "../../hooks/useModal";
 import { Title } from "../layout";
 import { FVFlowProps } from "./types";
-import { noop } from "lodash";
 import { Image } from "../images";
 import ClaimImage from "../../assets/images/claim.png";
 import { BasicModalProps } from "../modals/BasicModal";
@@ -17,8 +16,15 @@ import { BasicModalProps } from "../modals/BasicModal";
 const ClaimButton = ({ firstName, method, refresh, claimed, claim, ...props }: FVFlowProps) => {
   const { Modal: FirstClaimModal, showModal: showFirstClaimModal } = useModal();
   const { Modal: ActionModal, showModal: showActionModal, hideModal: hideActionModal } = useModal();
-  const { Modal: FVModal, showModal: showFVModal, hideModal: hideFVModal } = useModal();
-  const { loading, verify } = useFVModalAction({ firstName, method, onClose: hideFVModal });
+  const { loading, handleFvFlow, verifying } = useFVModalAction({
+    firstName,
+    method,
+    onClose: () => {
+      if (!verifying) {
+        hideActionModal();
+      }
+    }
+  });
   const { isWhitelisted, claimAmount } = useClaim(refresh);
   const [firstClaim, setFirstClaim] = useState(false);
   const isVerified = useQueryParam("verified", true);
@@ -32,9 +38,51 @@ const ClaimButton = ({ firstName, method, refresh, claimed, claim, ...props }: F
         setRequiredChain(SupportedChains.FUSE);
         break;
       default:
+        setRequiredChain(SupportedChains.CELO);
         break;
     }
   }, [chainId]);
+
+  // todo, add loading body
+  const actionModalBody = useMemo(
+    () => ({
+      verify: {
+        body: (
+          <>
+            {" "}
+            {/* TODO: Await confirmation for copy */}
+            <Text color={textColor} mb="2">
+              To verify your identity you need to sign TWICE with your wallet.
+            </Text>
+            <Text color={textColor} mb="2">
+              First sign your address to be whitelisted
+            </Text>
+            <Text color={textColor} mb="2">
+              Second sign your self sovereign anonymized identifier, so no link is kept between your identity record and
+              your address.
+            </Text>
+          </>
+        ),
+        footer: (
+          <View justifyContent="space-between" width="full" flexDirection="row">
+            <ActionButton color="white" text={"Verify Uniqueness"} onPress={handleFvFlow} bg="main" />
+          </View>
+        )
+      },
+      confirm: (
+        <Box mb="24px" mt="16px">
+          <Title fontFamily="subheading" fontWeight="normal" fontSize="sm">
+            WATCH
+          </Title>
+          <Text fontFamily="mono" color="primary" mb="8px" fontSize="l" fontWeight="bold">
+            What are gas-fees?
+          </Text>
+          <Image source={ClaimImage} w="full" h="auto" />
+        </Box>
+      )
+    }),
+    [handleFvFlow]
+  );
 
   const claimModalProps: Omit<BasicModalProps, "modalVisible"> = useMemo(
     () =>
@@ -50,7 +98,6 @@ const ClaimButton = ({ firstName, method, refresh, claimed, claim, ...props }: F
                 </Text>
               </>
             ),
-            // body: <Image source={ClaimImage} w="full" h="auto" />,
             body: <></>,
             closeText: "",
             hasTopBorder: false,
@@ -63,52 +110,65 @@ const ClaimButton = ({ firstName, method, refresh, claimed, claim, ...props }: F
                   Action Required
                 </Title>
                 <Text color={textColor} fontFamily="subheading" fontWeight="normal" fontSize="md">
-                  To complete this action, sign in your wallet.
+                  To complete this action, continue in your wallet.
                 </Text>
               </>
             ),
-            body: (
-              <Box mb="24px" mt="16px">
-                <Title fontFamily="subheading" fontWeight="normal" fontSize="sm">
-                  WATCH
-                </Title>
-                <Text fontFamily="mono" color="primary" mb="8px" fontSize="l" fontWeight="bold">
-                  What is signing?
-                </Text>
-                <Image source={ClaimImage} w="full" h="auto" />
-              </Box>
+            body: loading ? (
+              <Spinner color="emerald.500" />
+            ) : isWhitelisted ? (
+              actionModalBody.confirm
+            ) : (
+              actionModalBody.verify.body
             ),
+            footer: isWhitelisted || loading ? undefined : actionModalBody.verify.footer,
             closeText: "",
             hasBottomBorder: false
           },
-    [firstClaim, textColor]
+    [firstClaim, textColor, loading, isWhitelisted]
   );
 
-  const handleClaimCall = useCallback(
+  const handleClaim = async (first: boolean) => {
+    try {
+      const success = await claim();
+      if (success !== true || first === false) return;
+
+      showFirstClaimModal();
+    } finally {
+      hideActionModal();
+    }
+  };
+
+  const handleVerify = async () => {
+    try {
+      const interval = setInterval(async () => {
+        if (!verifying) {
+          await handleClaim(true);
+        }
+      }, 5000);
+
+      setTimeout(() => {
+        clearInterval(interval);
+        hideActionModal();
+      }, 50000);
+    } catch (e: any) {
+      console.log("verifying cancelled or failed ->", { e });
+    }
+  };
+
+  const handleModalOpen = useCallback(
     async (first = false) => {
+      console.log("handle modal open", { isWhitelisted });
       setFirstClaim(first);
       showActionModal();
-
-      try {
-        const success = await claim();
-        if (success !== true || first === false) return;
-
-        showFirstClaimModal();
-      } finally {
-        hideActionModal();
+      if (isWhitelisted) {
+        await handleClaim(first);
+      } else {
+        await handleVerify();
       }
     },
-    [claim, hideActionModal, showFirstClaimModal]
+    [claim, hideActionModal, showFirstClaimModal, isWhitelisted]
   );
-
-  const handleClaim = useCallback(async () => {
-    if (isWhitelisted) {
-      await handleClaimCall();
-      return;
-    }
-
-    showFVModal();
-  }, [isWhitelisted, handleClaimCall, showFVModal]);
 
   const buttonTitle = useMemo(() => {
     if (!isWhitelisted) {
@@ -123,10 +183,7 @@ const ClaimButton = ({ firstName, method, refresh, claimed, claim, ...props }: F
     if (isVerified !== true || claimed || isWhitelisted === false || claimAmount.toNumber() <= 0) {
       return;
     }
-
-    handleClaimCall(true).catch(noop);
-  }, [isVerified, claimed, isWhitelisted, claimAmount, handleClaimCall]);
-
+  }, [isVerified, claimed, isWhitelisted, claimAmount]);
   if (isWhitelisted && claimed) {
     return (
       <FirstClaimModal
@@ -149,43 +206,13 @@ const ClaimButton = ({ firstName, method, refresh, claimed, claim, ...props }: F
       <View w="full" alignItems="center" pt="8" pb="8">
         <Web3ActionButton
           text={buttonTitle}
-          web3Action={handleClaim}
+          web3Action={handleModalOpen}
           disabled={claimed}
           variant="round"
           requiredChain={requiredChain}
         />
         <Text variant="shadowed" />
       </View>
-
-      <FVModal
-        header={<Title>Verify Uniqueness</Title>}
-        body={
-          <>
-            <Text color={textColor} mb="2">
-              To verify your identity you need to sign TWICE with your wallet.
-            </Text>
-            <Text color={textColor} mb="2">
-              First sign your address to be whitelisted
-            </Text>
-            <Text color={textColor} mb="2">
-              Second sign your self sovereign anonymized identifier, so no link is kept between your identity record and
-              your address.
-            </Text>
-          </>
-        }
-        footer={
-          loading ? (
-            <Spinner />
-          ) : (
-            <View justifyContent="space-between" width="full" flexDirection="row">
-              <ActionButton text={"Verify Uniqueness"} onPress={verify} bg="main" />
-            </View>
-          )
-        }
-        closeText=""
-        hasTopBorder={false}
-        hasBottomBorder={false}
-      />
       <ActionModal {...claimModalProps} />
     </View>
   );

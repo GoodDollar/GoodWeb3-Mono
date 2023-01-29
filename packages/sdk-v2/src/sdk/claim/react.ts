@@ -123,11 +123,13 @@ export const useWhitelistSync = () => {
       console.log("syncWhitelist", { account, baseEnv, isSynced, fuseResult, otherResult });
 
       if (!isSynced && fuseResult?.value[0] && otherResult?.value[0] === false) {
-        const { backend } = Envs[baseEnv];
+        const devEnv = baseEnv === "fuse" ? "development" : baseEnv;
+        const { backend } = Envs[devEnv];
 
         setSyncStatus(
           fetch(backend + `/syncWhitelist/${account}`)
             .then(async r => {
+              console.log("sync whitelist response -->", { r });
               if (r.status === 200) {
                 await r.json();
                 AsyncStorage.safeSet(`${account}-whitelistedSync`, true);
