@@ -11,20 +11,28 @@ export const useFVModalAction = ({ firstName, method, onClose }: FVModalActionPr
   const fvlink = useFVLink();
   const [loading, setLoading] = useState(false);
   const [verifying, setIsVerifying] = useState(true);
-  const { fuseWhitelisted, currentWhitelisted, syncStatus } = useWhitelistSync();
+  const { fuseWhitelisted, currentWhitelisted, whitelistSync } = useWhitelistSync();
 
   const handleFvFlow = useCallback(async () => {
     setLoading(true);
-    if (fuseWhitelisted) {
-      await syncStatus;
-      setLoading(false);
-      return;
+
+    if (fuseWhitelisted && currentWhitelisted === false) {
+      const sync = await whitelistSync();
+      if (sync || (fuseWhitelisted && currentWhitelisted)) {
+        setTimeout(() => {
+          setIsVerifying(false);
+          setLoading(false);
+        }, 10000);
+      } else {
+        setLoading(false);
+      }
     } else {
-      await verify();
+      setLoading(false);
     }
-  }, [fuseWhitelisted, currentWhitelisted, syncStatus]);
+  }, [fuseWhitelisted, currentWhitelisted, whitelistSync]);
 
   const verify = useCallback(async () => {
+    setLoading(true);
     try {
       await fvlink?.getLoginSig();
       await fvlink?.getFvSig();
@@ -55,9 +63,8 @@ export const useFVModalAction = ({ firstName, method, onClose }: FVModalActionPr
     }
 
     setLoading(false);
-    setIsVerifying(false);
     onClose();
   }, [fvlink, method, firstName, onClose]);
 
-  return { loading, handleFvFlow, verifying };
+  return { loading, verifying, handleFvFlow, verify };
 };

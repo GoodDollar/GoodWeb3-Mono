@@ -65,7 +65,7 @@
     "@amplitude/analytics-react-native": "^0.7.0",
     "@gooddollar/bridge-app": "^1.2.2",
     "@gooddollar/bridge-contracts": "^1.0.10",
-    "@gooddollar/goodprotocol": "1.0.30-beta.3",
+    "@gooddollar/goodprotocol": "^2.0.1",
     "@react-native-firebase/analytics": "^16.4.6",
     "@sentry/browser": "7.16.0",
     "@sentry/react-native": "^4.8.0",

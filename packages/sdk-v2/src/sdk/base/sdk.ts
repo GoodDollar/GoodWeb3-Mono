@@ -76,11 +76,13 @@ export class BaseSDK {
       signer
         .getAddress()
         .then(async () => void (this.signer = signer))
-        .catch(e => {
-          console.warn("BaseSDK: provider has no signer", { signer, provider, e });
+        .catch(() => {
+          // todo @l03tj3: revert back
+          // console.warn("BaseSDK: provider has no signer", { signer, provider, e });
         });
     } catch (e) {
-      console.warn("BaseSDK: provider has no signer", { provider, e });
+      // todo @l03tj3: revert back
+      // console.warn("BaseSDK: provider has no signer", { provider, e });
     }
   }
 

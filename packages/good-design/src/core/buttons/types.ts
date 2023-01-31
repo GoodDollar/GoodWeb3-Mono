@@ -3,10 +3,11 @@ import { IModalProps } from "native-base";
 export interface FVFlowProps {
   firstName: string;
   method: "popup" | "redirect";
+  claim: () => Promise<boolean>;
   styles?: any;
   claimed?: boolean;
   refresh?: "everyBlock" | "never" | number | undefined;
-  claim: () => Promise<boolean>;
+  handleConnect?: () => Promise<any> | void;
 }
 
 export type FVModalProps = IModalProps & FVFlowProps;

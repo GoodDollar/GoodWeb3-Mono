@@ -73,7 +73,7 @@ export const Web3ActionButton: FC<Web3ActionProps> = withTheme({ name: "Web3Acti
       const connectFn = handleConnect || (activateBrowserWallet as any);
       const isConnected = await connectFn().catch(throwIfCancelled);
 
-      if (handleConnect && !isConnected) {
+      if (handleConnect && !isConnected.length) {
         throwCancelled();
       }
 

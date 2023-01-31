@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback, useMemo, useState } from "react";
 import { SupportedChains, useClaim, useGetEnvChainId } from "@gooddollar/web3sdk-v2";
-import { Text, View, useColorModeValue, Box, Spinner } from "native-base";
+import { Text, View, useColorModeValue, Spinner } from "native-base";
 
 import { useQueryParam } from "../../hooks/useQueryParam";
 import { Web3ActionButton } from "../../advanced";
@@ -12,15 +12,19 @@ import { FVFlowProps } from "./types";
 import { Image } from "../images";
 import ClaimImage from "../../assets/images/claim.png";
 import { BasicModalProps } from "../modals/BasicModal";
+import { noop } from "lodash";
+import { useEthers } from "@usedapp/core";
 
-const ClaimButton = ({ firstName, method, refresh, claimed, claim, ...props }: FVFlowProps) => {
+const ClaimButton = ({ firstName, method, refresh, claimed, claim, handleConnect, ...props }: FVFlowProps) => {
+  const { account } = useEthers();
   const { Modal: FirstClaimModal, showModal: showFirstClaimModal } = useModal();
   const { Modal: ActionModal, showModal: showActionModal, hideModal: hideActionModal } = useModal();
-  const { loading, handleFvFlow, verifying } = useFVModalAction({
+  const [claimLoading, setClaimLoading] = useState(false);
+  const { loading, verifying, handleFvFlow, verify } = useFVModalAction({
     firstName,
     method,
     onClose: () => {
-      if (!verifying) {
+      if (!verifying && !claimLoading) {
         hideActionModal();
       }
     }
@@ -35,7 +39,7 @@ const ClaimButton = ({ firstName, method, refresh, claimed, claim, ...props }: F
   useEffect(() => {
     switch (chainId) {
       case 122:
-        setRequiredChain(SupportedChains.FUSE);
+        setRequiredChain(account ? SupportedChains.FUSE : SupportedChains.CELO);
         break;
       default:
         setRequiredChain(SupportedChains.CELO);
@@ -43,7 +47,7 @@ const ClaimButton = ({ firstName, method, refresh, claimed, claim, ...props }: F
     }
   }, [chainId]);
 
-  // todo, add loading body
+  // TODO:  replace placeholder loader with styled loader
   const actionModalBody = useMemo(
     () => ({
       verify: {
@@ -65,23 +69,17 @@ const ClaimButton = ({ firstName, method, refresh, claimed, claim, ...props }: F
         ),
         footer: (
           <View justifyContent="space-between" width="full" flexDirection="row">
-            <ActionButton color="white" text={"Verify Uniqueness"} onPress={handleFvFlow} bg="main" />
+            <ActionButton color="white" text={"Verify Uniqueness"} onPress={verify} bg="main" />
           </View>
         )
-      },
-      confirm: (
-        <Box mb="24px" mt="16px">
-          <Title fontFamily="subheading" fontWeight="normal" fontSize="sm">
-            WATCH
-          </Title>
-          <Text fontFamily="mono" color="primary" mb="8px" fontSize="l" fontWeight="bold">
-            What are gas-fees?
-          </Text>
-          <Image source={ClaimImage} w="full" h="auto" />
-        </Box>
-      )
+      }
+      // confirm: (
+      //   <Box mb="24px" mt="16px">
+      //     {/* placeholder for vid here */}
+      //   </Box>
+      // )
     }),
-    [handleFvFlow]
+    [textColor]
   );
 
   const claimModalProps: Omit<BasicModalProps, "modalVisible"> = useMemo(
@@ -114,18 +112,12 @@ const ClaimButton = ({ firstName, method, refresh, claimed, claim, ...props }: F
                 </Text>
               </>
             ),
-            body: loading ? (
-              <Spinner color="emerald.500" />
-            ) : isWhitelisted ? (
-              actionModalBody.confirm
-            ) : (
-              actionModalBody.verify.body
-            ),
-            footer: isWhitelisted || loading ? undefined : actionModalBody.verify.footer,
+            body: loading || claimLoading ? <Spinner color="emerald.500" /> : actionModalBody.verify.body,
+            footer: isWhitelisted || loading || claimLoading ? undefined : actionModalBody.verify.footer,
             closeText: "",
             hasBottomBorder: false
           },
-    [firstClaim, textColor, loading, isWhitelisted]
+    [firstClaim, textColor, loading, isWhitelisted, claimLoading]
   );
 
   const handleClaim = async (first: boolean) => {
@@ -135,55 +127,44 @@ const ClaimButton = ({ firstName, method, refresh, claimed, claim, ...props }: F
 
       showFirstClaimModal();
     } finally {
+      setClaimLoading(false);
       hideActionModal();
-    }
-  };
-
-  const handleVerify = async () => {
-    try {
-      const interval = setInterval(async () => {
-        if (!verifying) {
-          await handleClaim(true);
-        }
-      }, 5000);
-
-      setTimeout(() => {
-        clearInterval(interval);
-        hideActionModal();
-      }, 50000);
-    } catch (e: any) {
-      console.log("verifying cancelled or failed ->", { e });
     }
   };
 
   const handleModalOpen = useCallback(
     async (first = false) => {
-      console.log("handle modal open", { isWhitelisted });
       setFirstClaim(first);
       showActionModal();
       if (isWhitelisted) {
+        setClaimLoading(true);
         await handleClaim(first);
       } else {
-        await handleVerify();
+        await handleFvFlow();
       }
     },
     [claim, hideActionModal, showFirstClaimModal, isWhitelisted]
   );
+
+  useEffect(() => {
+    const doClaim = async () => {
+      if (!verifying) {
+        setClaimLoading(true);
+        await handleClaim(true);
+      }
+    };
+    doClaim().catch(noop);
+  }, [verifying, isVerified]);
 
   const buttonTitle = useMemo(() => {
     if (!isWhitelisted) {
       return "CLAIM NOW";
     }
 
-    // todo: add amount when connect, use formatted token amount with G$Amount
-    return "CLAIM NOW " + claimAmount;
+    // todo: use formatted token amount with G$Amount
+    return "CLAIM NOW " + (claimAmount ?? "");
   }, [isWhitelisted]);
 
-  useEffect(() => {
-    if (isVerified !== true || claimed || isWhitelisted === false || claimAmount.toNumber() <= 0) {
-      return;
-    }
-  }, [isVerified, claimed, isWhitelisted, claimAmount]);
   if (isWhitelisted && claimed) {
     return (
       <FirstClaimModal
@@ -210,6 +191,7 @@ const ClaimButton = ({ firstName, method, refresh, claimed, claim, ...props }: F
           disabled={claimed}
           variant="round"
           requiredChain={requiredChain}
+          handleConnect={handleConnect}
         />
         <Text variant="shadowed" />
       </View>

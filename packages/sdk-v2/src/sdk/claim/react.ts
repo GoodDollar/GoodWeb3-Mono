@@ -1,11 +1,10 @@
 import { IIdentity } from "@gooddollar/goodprotocol/types";
 import { UBIScheme } from "@gooddollar/goodprotocol/types/UBIScheme";
-import { AsyncStorage } from "../storage";
 import { ChainId, QueryParams, useCalls, useContractFunction, useEthers } from "@usedapp/core";
 import { BigNumber } from "ethers";
 import { first } from "lodash";
-import { useEffect, useMemo, useState } from "react";
-import { noop } from "lodash";
+import { useMemo, useState } from "react";
+import { AsyncStorage } from "../storage";
 import usePromise from "react-use-promise";
 
 import { EnvKey } from "../base/sdk";
@@ -80,7 +79,7 @@ export const useClaim = (refresh: QueryParams["refresh"] = "never") => {
 
   return {
     isWhitelisted: first(results[0]?.value) as boolean,
-    claimAmount: (first(results[3]?.value) as BigNumber) || BigNumber.from("0"),
+    claimAmount: (first(results[3]?.value) as BigNumber) || undefined,
     claimTime: startRef,
     claimCall
   };
@@ -88,11 +87,11 @@ export const useClaim = (refresh: QueryParams["refresh"] = "never") => {
 
 // if user is verified on fuse and not on current network then send backend request to whitelist
 export const useWhitelistSync = () => {
-  const [syncStatus, setSyncStatus] = useState<Promise<boolean> | undefined>();
   const { baseEnv } = useGetEnvChainId();
   const { account, chainId } = useEthers();
   const identity = useGetContract("Identity", true, "claim", SupportedChains.FUSE) as IIdentity;
   const identity2 = useGetContract("Identity", true, "claim", chainId) as IIdentity;
+  const [otherRefresh, setOtherRefresh] = useState<QueryParams["refresh"]>("never");
 
   const [fuseResult] = useCalls(
     [
@@ -113,43 +112,46 @@ export const useWhitelistSync = () => {
         args: [account]
       }
     ].filter(_ => _.contract && chainId != SupportedChains.FUSE),
-    { refresh: "never", chainId }
+    { refresh: otherRefresh, chainId }
   );
 
-  useEffect(() => {
-    const whitelistSync = async () => {
-      const isSynced = await AsyncStorage.getItem(`${account}-whitelistedSync`);
+  const whitelistSync = async () => {
+    const devEnv = baseEnv === "fuse" ? "development" : baseEnv;
+    const { backend } = Envs[devEnv];
+    const isSynced = await AsyncStorage.getItem(`${account}-whitelistedSync`);
 
-      console.log("syncWhitelist", { account, baseEnv, isSynced, fuseResult, otherResult });
+    if (isSynced) {
+      // send error log to analytics
+      console.error("Something went wrong, should have been synced", {
+        account,
+        chainId,
+        id1: identity.address,
+        id2: identity.address
+      });
+      return false;
+    }
 
-      if (!isSynced && fuseResult?.value[0] && otherResult?.value[0] === false) {
-        const devEnv = baseEnv === "fuse" ? "development" : baseEnv;
-        const { backend } = Envs[devEnv];
-
-        setSyncStatus(
-          fetch(backend + `/syncWhitelist/${account}`)
-            .then(async r => {
-              console.log("sync whitelist response -->", { r });
-              if (r.status === 200) {
-                await r.json();
-                AsyncStorage.safeSet(`${account}-whitelistedSync`, true);
-
-                return true;
-              } else {
-                return false;
-              }
-            })
-            .catch(() => false)
-        );
-      }
-    };
-
-    whitelistSync().catch(noop);
-  }, [fuseResult, otherResult, account, setSyncStatus]);
+    return fetch(backend + `/syncWhitelist/${account}`)
+      .then(async r => {
+        if (r.status === 200) {
+          await r.json();
+          AsyncStorage.safeSet(`${account}-whitelistedSync`, true);
+          setOtherRefresh(10);
+          setTimeout(() => {
+            setOtherRefresh("never");
+          }, 60000);
+          return true;
+        } else {
+          return false;
+        }
+      })
+      .catch(() => false);
+  };
 
   return {
-    fuseWhitelisted: fuseResult?.value as boolean,
-    currentWhitelisted: otherResult?.value as boolean,
-    syncStatus
+    fuseWhitelisted: fuseResult?.value && (fuseResult?.value[0] as boolean),
+    currentWhitelisted: otherResult?.value[0] as boolean,
+    // syncStatus,
+    whitelistSync
   };
 };

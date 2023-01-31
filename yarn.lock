@@ -2462,7 +2462,7 @@ __metadata:
     "@babel/preset-react": ^7.16.0
     "@babel/preset-typescript": ^7.16.0
     "@babel/runtime": ^7.18.9
-    "@gooddollar/goodprotocol": 1.0.30-beta.3
+    "@gooddollar/goodprotocol": ^2.0.1
     "@gooddollar/web3sdk-v2": "file:.yalc/@gooddollar/web3sdk-v2"
     "@lingui/macro": ^3.14.0
     "@lingui/react": ^3.14.0
@@ -2622,15 +2622,36 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@gooddollar/goodprotocol@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "@gooddollar/goodprotocol@npm:2.0.1"
+  dependencies:
+    "@gooddollar/goodcontracts": ^2.6.6
+    "@jsier/retrier": ^1.2.4
+    "@openzeppelin/contracts": ^4.8.0
+    "@openzeppelin/contracts-upgradeable": ^4.8.0
+    "@superfluid-finance/ethereum-contracts": ^1.4.3
+    "@superfluid-finance/sdk-core": ^0.5.8
+    "@typechain/hardhat": ^6.1.2
+    async-promise-pool: ^1.0.4
+    openzeppelin-solidity: ^4.3.2
+    patch-package: latest
+    press-any-key: ^0.1.1
+    truffle-plugin-verify: ^0.6.1
+    truffle-source-verify: ^0.0.6
+  checksum: d27825498a70c98b1cdb9afa8f29a527348352b1ba9a2bb8f47ccd34ed0c78e218ae51973e4d84f25d156987f1ce486fe898056f1aa57162f92e341078466af2
+  languageName: node
+  linkType: hard
+
 "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2::locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design":
   version: 0.1.59
-  resolution: "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2#.yalc/@gooddollar/web3sdk-v2::hash=035481&locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design"
+  resolution: "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2#.yalc/@gooddollar/web3sdk-v2::hash=adca9d&locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design"
   dependencies:
     "@amplitude/analytics-browser": ^1.6.4
     "@amplitude/analytics-react-native": ^0.7.0
     "@gooddollar/bridge-app": ^1.2.2
     "@gooddollar/bridge-contracts": ^1.0.10
-    "@gooddollar/goodprotocol": 1.0.30-beta.3
+    "@gooddollar/goodprotocol": ^2.0.1
     "@react-native-firebase/analytics": ^16.4.6
     "@sentry/browser": 7.16.0
     "@sentry/react-native": ^4.8.0
@@ -2651,7 +2672,7 @@ __metadata:
     react: "*"
     react-native: "*"
     react-native-web: "*"
-  checksum: ab1321b56cddb2f221a476bcffbca785c7dc7bf95283bd9d7de29dcbbd4efb402c955ef0a2ce9028833729fbc051562e29d357ec1e98f4a72a7a51f34436ed20
+  checksum: e13276a4ba23ffdc62cfc74b315f9f1765ddca6afd25d6882d01bc4c6b81f18cfce2ae8fef58dd01d36377558c381ec973ee6d37cbd3c37a16944abc120ce73f
   languageName: node
   linkType: hard
 
@@ -2701,7 +2722,7 @@ __metadata:
     "@babel/preset-typescript": ^7.16.0
     "@gooddollar/bridge-app": ^1.2.2
     "@gooddollar/bridge-contracts": ^1.0.10
-    "@gooddollar/goodprotocol": 1.0.30-beta.3
+    "@gooddollar/goodprotocol": ^2.0.1
     "@react-native-async-storage/async-storage": 1.17.10
     "@react-native-firebase/analytics": ^16.4.6
     "@sentry/browser": 7.16.0
