@@ -148,7 +148,8 @@ const ClaimButton = ({ firstName, method, refresh, claimed, claim, handleConnect
 
   useEffect(() => {
     const doClaim = async () => {
-      if (!verifying) {
+      if (!verifying || isVerified) {
+        showActionModal();
         setClaimLoading(true);
         await handleClaim(true);
       }

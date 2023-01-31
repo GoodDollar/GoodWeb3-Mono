@@ -43,8 +43,8 @@ export const useFVModalAction = ({ firstName, method, onClose }: FVModalActionPr
 
     switch (method) {
       case "redirect": {
-        const link = fvlink?.getLink(firstName, document.location.href, false);
-        console.log("test for redirect back link -->", { link });
+        const callbackUrl = document.location.href.replace("#", "%23");
+        const link = fvlink?.getLink(firstName, callbackUrl, false);
 
         if (link) {
           openLink(link, "_self").catch(noop);

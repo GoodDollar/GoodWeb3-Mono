@@ -65,10 +65,8 @@ export class ClaimSDK extends BaseSDK {
       }
 
       const url = new URL(identityUrl);
-      console.log("fv url test", { url, params });
       url.search = params.toString();
-      const decodeTest = decodeURIComponent(url.href);
-      console.log("decoding test", { decodeTest });
+
       return decodeURIComponent(url.href);
     };
 
