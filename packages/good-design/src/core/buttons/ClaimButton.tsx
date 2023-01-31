@@ -20,15 +20,19 @@ const ClaimButton = ({ firstName, method, refresh, claimed, claim, handleConnect
   const { Modal: FirstClaimModal, showModal: showFirstClaimModal } = useModal();
   const { Modal: ActionModal, showModal: showActionModal, hideModal: hideActionModal } = useModal();
   const [claimLoading, setClaimLoading] = useState(false);
+
+  const onFVModalClose = useCallback(async (isVerifying: boolean) => {
+    if (!isVerifying && !claimLoading) {
+      hideActionModal();
+    }
+  }, [claimLoading, hideActionModal])
+
   const { loading, verifying, handleFvFlow, verify } = useFVModalAction({
     firstName,
     method,
-    onClose: () => {
-      if (!verifying && !claimLoading) {
-        hideActionModal();
-      }
-    }
+    onClose: onFVModalClose
   });
+  
   const { isWhitelisted, claimAmount } = useClaim(refresh);
   const [firstClaim, setFirstClaim] = useState(false);
   const isVerified = useQueryParam("verified", true);

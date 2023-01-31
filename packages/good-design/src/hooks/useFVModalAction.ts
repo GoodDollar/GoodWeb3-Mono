@@ -4,7 +4,7 @@ import { useCallback, useState } from "react";
 import { FVFlowProps } from "../core";
 
 interface FVModalActionProps extends Pick<FVFlowProps, "method" | "firstName"> {
-  onClose: () => void;
+  onClose: (isVerifying: boolean) => Promise<void>;
 }
 
 export const useFVModalAction = ({ firstName, method, onClose }: FVModalActionProps) => {
@@ -14,37 +14,44 @@ export const useFVModalAction = ({ firstName, method, onClose }: FVModalActionPr
   const { fuseWhitelisted, currentWhitelisted, whitelistSync } = useWhitelistSync();
 
   const handleFvFlow = useCallback(async () => {
+    setLoading(false);
+
+    if (!fuseWhitelisted || currentWhitelisted !== false) {
+      return
+    }
+      
     setLoading(true);
 
-    if (fuseWhitelisted && currentWhitelisted === false) {
-      const sync = await whitelistSync();
-      if (sync || (fuseWhitelisted && currentWhitelisted)) {
-        setTimeout(() => {
-          setIsVerifying(false);
-          setLoading(false);
-        }, 10000);
-      } else {
-        setLoading(false);
-      }
-    } else {
+    const sync = await whitelistSync();
+
+    if (!sync && (!fuseWhitelisted || !currentWhitelisted)) {
       setLoading(false);
+      return
     }
+
+    setTimeout(() => {
+      setIsVerifying(false);
+      setLoading(false);
+    }, 10000);    
   }, [fuseWhitelisted, currentWhitelisted, whitelistSync]);
 
   const verify = useCallback(async () => {
     setLoading(true);
+
     try {
       await fvlink?.getLoginSig();
       await fvlink?.getFvSig();
     } catch (e: any) {
-      setLoading(false);
       return;
+    } finally {
+      setLoading(false);
     }
+
+    await onClose(verifying);
 
     switch (method) {
       case "redirect": {
-        const callbackUrl = document.location.href.replace("#", "%23");
-        const link = fvlink?.getLink(firstName, callbackUrl, false);
+        const link = fvlink?.getLink(firstName, document.location.href, false);
 
         if (link) {
           openLink(link, "_self").catch(noop);
@@ -61,10 +68,7 @@ export const useFVModalAction = ({ firstName, method, onClose }: FVModalActionPr
         break;
       }
     }
-
-    setLoading(false);
-    onClose();
-  }, [fvlink, method, firstName, onClose]);
+  }, [fvlink, verifying, method, firstName, onClose]);
 
   return { loading, verifying, handleFvFlow, verify };
 };
