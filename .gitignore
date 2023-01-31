@@ -12,3 +12,5 @@ packages/**/tsconfig.tsbuildinfo
 packages/**/index.ts.bak
 .vscode
 .DS_Store
+.yalc
+yalc.lock

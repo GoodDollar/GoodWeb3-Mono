@@ -1,7 +1,7 @@
 {
   "name": "@gooddollar/web3sdk-v2",
   "repository": "https://github.com/GoodDollar/GoodWeb3-mono/packages/sdk-v2",
-  "version": "0.1.59",
+  "version": "0.1.60",
   "description": "ethers and react hooks based on usedapp sdk for GoodDollar protocol",
   "scripts": {
     "build": "yarn dev:clean && ctix c && tsc",
@@ -40,7 +40,7 @@
     "@types/jest": "^28.1.3",
     "@types/node": "18.0.0",
     "@types/react": "17.0.2",
-    "@types/react-native": "^0.70.4",
+    "@types/react-native": "0.70.4",
     "@walletconnect/client": "^1.8.0",
     "@walletconnect/qrcode-modal": "^1.8.0",
     "@web3-onboard/coinbase": "^2.2.0",
@@ -60,8 +60,8 @@
     "jest": "^27.3.1",
     "react": "17.0.2",
     "react-dom": "17.0.2",
-    "react-native": "0.70.*",
-    "react-native-web": "0.17",
+    "react-native": "0.70.4",
+    "react-native-web": "0.17.7",
     "sass": "^1.43.5",
     "sass-loader": "^12.3.0",
     "style-loader": "^3.3.1",
@@ -70,8 +70,8 @@
   "dependencies": {
     "@amplitude/analytics-browser": "^1.6.4",
     "@amplitude/analytics-react-native": "^0.7.0",
-    "@gooddollar/bridge-app": "^1.2.2",
-    "@gooddollar/bridge-contracts": "^1.0.10",
+    "@gooddollar/bridge-app": "^1.2.9",
+    "@gooddollar/bridge-contracts": "^1.0.13",
     "@gooddollar/goodprotocol": "1.0.30-beta.3",
     "@react-native-firebase/analytics": "^16.4.6",
     "@sentry/browser": "7.16.0",
@@ -84,7 +84,6 @@
     "@web3auth/openlogin-adapter": "^4.1.0",
     "@web3auth/torus-wallet-connector-plugin": "^4.0.0",
     "eventemitter3": "^4.0.7",
-    "react-native": "^0.70.2",
     "react-native-indicative": "^0.2.1",
     "react-native-restart": "^0.0.24",
     "react-use-promise": "^0.5.0"
