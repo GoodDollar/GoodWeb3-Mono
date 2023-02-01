@@ -3,6 +3,7 @@ import { IModalProps } from "native-base";
 export interface FVFlowProps {
   firstName: string;
   method: "popup" | "redirect";
+  redirectUrl?: string;
   claim: () => Promise<boolean>;
   styles?: any;
   claimed?: boolean;

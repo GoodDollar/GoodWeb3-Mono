@@ -5,9 +5,12 @@ import { FVFlowProps } from "../core";
 
 interface FVModalActionProps extends Pick<FVFlowProps, "method" | "firstName"> {
   onClose: (isVerifying: boolean) => Promise<void>;
+  redirectUrl?: string;
 }
 
-export const useFVModalAction = ({ firstName, method, onClose }: FVModalActionProps) => {
+export const defaultRedirect = document.location.href
+
+export const useFVModalAction = ({ firstName, method, onClose, redirectUrl = defaultRedirect }: FVModalActionProps) => {
   const fvlink = useFVLink();
   const [loading, setLoading] = useState(false);
   const [verifying, setIsVerifying] = useState(true);
@@ -51,7 +54,7 @@ export const useFVModalAction = ({ firstName, method, onClose }: FVModalActionPr
 
     switch (method) {
       case "redirect": {
-        const link = fvlink?.getLink(firstName, document.location.href, false);
+        const link = fvlink?.getLink(firstName, redirectUrl, false);
 
         if (link) {
           openLink(link, "_self").catch(noop);
@@ -68,7 +71,7 @@ export const useFVModalAction = ({ firstName, method, onClose }: FVModalActionPr
         break;
       }
     }
-  }, [fvlink, verifying, method, firstName, onClose]);
+  }, [fvlink, verifying, method, firstName, redirectUrl, onClose]);
 
   return { loading, verifying, handleFvFlow, verify };
 };
