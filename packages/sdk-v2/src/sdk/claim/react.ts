@@ -121,8 +121,6 @@ export const useWhitelistSync = () => {
     const whitelistSync = async () => {
       const isSynced = await AsyncStorage.getItem(`${account}-whitelistedSync`);
 
-      console.log("syncWhitelist", { account, baseEnv, isSynced, fuseResult, otherResult });
-
       if (!isSynced && fuseResult?.value[0] && otherResult?.value[0] === false) {
         const { backend } = Envs[baseEnv];
 

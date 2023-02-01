@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback, useMemo, useState } from "react";
-import { SupportedChains, useClaim, useGetEnvChainId } from "@gooddollar/web3sdk-v2";
+import { SupportedChains, useClaim, useGetEnvChainId, useWhitelistSync } from "@gooddollar/web3sdk-v2";
 import { Text, View, useColorModeValue, Spinner } from "native-base";
 
 import { useQueryParam } from "../../hooks/useQueryParam";
@@ -21,24 +21,19 @@ const ClaimButton = ({ firstName, method, refresh, claimed, claim, handleConnect
   const { Modal: ActionModal, showModal: showActionModal, hideModal: hideActionModal } = useModal();
   const [claimLoading, setClaimLoading] = useState(false);
 
-  const onFVModalClose = useCallback(async (isSyncing: boolean) => {
-    if (!isSyncing && !claimLoading) {
-      hideActionModal();
-    }
-  }, [claimLoading, hideActionModal])
-
-  const { loading, syncing, handleFvFlow, verify } = useFVModalAction({
+  const { loading, verify } = useFVModalAction({
     firstName,
     method,
-    onClose: onFVModalClose
+    onClose: hideActionModal
   });
-  
+
   const { isWhitelisted, claimAmount } = useClaim(refresh);
   const [firstClaim, setFirstClaim] = useState(false);
   const isVerified = useQueryParam("verified", true);
   const textColor = useColorModeValue("goodGrey.500", "white");
   const { chainId } = useGetEnvChainId();
   const [requiredChain, setRequiredChain] = useState(SupportedChains.CELO);
+  const { syncStatus } = useWhitelistSync();
 
   useEffect(() => {
     switch (chainId) {
@@ -140,11 +135,9 @@ const ClaimButton = ({ firstName, method, refresh, claimed, claim, handleConnect
     async (first = false) => {
       setFirstClaim(first);
       showActionModal();
-      if (isWhitelisted) {
+      if (isWhitelisted && syncStatus) {
         setClaimLoading(true);
         await handleClaim(first);
-      } else {
-        await handleFvFlow();
       }
     },
     [claim, hideActionModal, showFirstClaimModal, isWhitelisted]
@@ -152,14 +145,14 @@ const ClaimButton = ({ firstName, method, refresh, claimed, claim, handleConnect
 
   useEffect(() => {
     const doClaim = async () => {
-      if (!syncing || isVerified) {
+      if (isVerified) {
         showActionModal();
         setClaimLoading(true);
         await handleClaim(true);
       }
     };
     doClaim().catch(noop);
-  }, [syncing, isVerified]);
+  }, [isVerified]);
 
   const buttonTitle = useMemo(() => {
     if (!isWhitelisted) {

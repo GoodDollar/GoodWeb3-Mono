@@ -1,38 +1,15 @@
-import { useFVLink, openLink, useWhitelistSync } from "@gooddollar/web3sdk-v2";
+import { useFVLink, openLink } from "@gooddollar/web3sdk-v2";
 import { noop } from "lodash";
 import { useCallback, useState } from "react";
 import { FVFlowProps } from "../core";
 
 interface FVModalActionProps extends Pick<FVFlowProps, "method" | "firstName"> {
-  onClose: (isVerifying: boolean) => Promise<void>;
+  onClose: () => void;
 }
 
 export const useFVModalAction = ({ firstName, method, onClose }: FVModalActionProps) => {
   const fvlink = useFVLink();
   const [loading, setLoading] = useState(false);
-  const [syncing, setIsSyncing] = useState(true);
-  const { fuseWhitelisted, currentWhitelisted, whitelistSync } = useWhitelistSync();
-
-  const handleFvFlow = useCallback(async () => {
-    setLoading(true);
-
-    if (!fuseWhitelisted || currentWhitelisted !== false) {
-      setLoading(false);
-      return;
-    }
-
-    const sync = await whitelistSync();
-
-    if (!sync && (!fuseWhitelisted || !currentWhitelisted)) {
-      setLoading(false);
-      return;
-    }
-
-    setTimeout(() => {
-      setIsSyncing(false);
-      setLoading(false);
-    }, 10000);
-  }, [fuseWhitelisted, currentWhitelisted, whitelistSync]);
 
   const verify = useCallback(async () => {
     setLoading(true);
@@ -64,7 +41,7 @@ export const useFVModalAction = ({ firstName, method, onClose }: FVModalActionPr
         break;
       }
     }
-  }, [fvlink, syncing, method, firstName, onClose]);
+  }, [fvlink, method, firstName, onClose]);
 
-  return { loading, syncing, handleFvFlow, verify };
+  return { loading, verify };
 };
