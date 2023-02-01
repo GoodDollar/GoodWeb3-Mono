@@ -1,5 +1,5 @@
 import { BigNumber } from "ethers";
-import { invokeMap, pickBy } from "lodash";
+import { invokeMap, pickBy, forIn } from "lodash";
 import { BaseSDK } from "../base/sdk";
 
 const DAY = 1000 * 60 * 60 * 24;
@@ -45,29 +45,31 @@ export class ClaimSDK extends BaseSDK {
       if (!fvSig) {
         throw new Error("missing login or identifier signature");
       }
-
-      const params = new URLSearchParams(
-        pickBy({
-          account,
-          nonce,
-          fvsig: fvSig,
-          firstname: firstName,
-          sg: loginSig
-        })
-      );
-
+      
       if (popupMode === false && !callbackUrl) {
         throw new Error("redirect url is missing for redirect mode");
       }
+      
+      const url = new URL(identityUrl);
+      const { searchParams } = url
+
+      const params = pickBy({
+        account,
+        nonce,
+        fvsig: fvSig,
+        firstname: firstName,
+        sg: loginSig
+      });
+
+      forIn(params, (value, param) => {
+        searchParams.append(param, value);
+      });
 
       if (callbackUrl) {
-        params.append(popupMode ? "cbu" : "rdu", callbackUrl);
+        searchParams.append(popupMode ? "cbu" : "rdu", callbackUrl);
       }
 
-      const url = new URL(identityUrl);
-      url.search = params.toString();
-
-      return decodeURIComponent(url.href);
+      return url.toString();
     };
 
     return { getLoginSig, getFvSig, getLink };

@@ -4,7 +4,7 @@ import { Text, View, useColorModeValue, Spinner } from "native-base";
 
 import { useQueryParam } from "../../hooks/useQueryParam";
 import { Web3ActionButton } from "../../advanced";
-import { useFVModalAction } from "../../hooks/useFVModalAction";
+import { defaultRedirect, useFVModalAction } from "../../hooks/useFVModalAction";
 import ActionButton from "./ActionButton";
 import { useModal } from "../../hooks/useModal";
 import { Title } from "../layout";
@@ -15,7 +15,16 @@ import { BasicModalProps } from "../modals/BasicModal";
 import { noop } from "lodash";
 import { useEthers } from "@usedapp/core";
 
-const ClaimButton = ({ firstName, method, refresh, claimed, claim, handleConnect, ...props }: FVFlowProps) => {
+const ClaimButton = ({
+  firstName,
+  method,
+  refresh,
+  claimed,
+  claim,
+  handleConnect,
+  redirectUrl = defaultRedirect,
+  ...props
+}: FVFlowProps) => {
   const { account } = useEthers();
   const { Modal: FirstClaimModal, showModal: showFirstClaimModal } = useModal();
   const { Modal: ActionModal, showModal: showActionModal, hideModal: hideActionModal } = useModal();
@@ -24,7 +33,8 @@ const ClaimButton = ({ firstName, method, refresh, claimed, claim, handleConnect
   const { loading, verify } = useFVModalAction({
     firstName,
     method,
-    onClose: hideActionModal
+    onClose: hideActionModal,
+    redirectUrl
   });
 
   const { isWhitelisted, claimAmount } = useClaim(refresh);
@@ -72,11 +82,6 @@ const ClaimButton = ({ firstName, method, refresh, claimed, claim, handleConnect
           </View>
         )
       }
-      // confirm: (
-      //   <Box mb="24px" mt="16px">
-      //     {/* placeholder for vid here */}
-      //   </Box>
-      // )
     }),
     [textColor]
   );
@@ -122,7 +127,10 @@ const ClaimButton = ({ firstName, method, refresh, claimed, claim, handleConnect
   const handleClaim = async (first: boolean) => {
     try {
       const success = await claim();
-      if (success !== true || first === false) return;
+
+      if (success !== true || first === false) {
+        return;
+      }
 
       showFirstClaimModal();
     } finally {
@@ -151,6 +159,7 @@ const ClaimButton = ({ firstName, method, refresh, claimed, claim, handleConnect
         await handleClaim(true);
       }
     };
+
     doClaim().catch(noop);
   }, [isVerified]);
 

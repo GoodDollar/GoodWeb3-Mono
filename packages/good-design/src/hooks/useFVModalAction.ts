@@ -5,9 +5,12 @@ import { FVFlowProps } from "../core";
 
 interface FVModalActionProps extends Pick<FVFlowProps, "method" | "firstName"> {
   onClose: () => void;
+  redirectUrl?: string;
 }
 
-export const useFVModalAction = ({ firstName, method, onClose }: FVModalActionProps) => {
+export const defaultRedirect = document.location.href;
+
+export const useFVModalAction = ({ firstName, method, redirectUrl = defaultRedirect }: FVModalActionProps) => {
   const fvlink = useFVLink();
   const [loading, setLoading] = useState(false);
 
@@ -24,7 +27,7 @@ export const useFVModalAction = ({ firstName, method, onClose }: FVModalActionPr
 
     switch (method) {
       case "redirect": {
-        const link = fvlink?.getLink(firstName, document.location.href, false);
+        const link = fvlink?.getLink(firstName, redirectUrl, false);
 
         if (link) {
           openLink(link, "_self").catch(noop);
@@ -41,7 +44,7 @@ export const useFVModalAction = ({ firstName, method, onClose }: FVModalActionPr
         break;
       }
     }
-  }, [fvlink, method, firstName, onClose]);
+  }, [fvlink, method, firstName, redirectUrl]);
 
   return { loading, verify };
 };
