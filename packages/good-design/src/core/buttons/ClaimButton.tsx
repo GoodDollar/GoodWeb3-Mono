@@ -21,13 +21,13 @@ const ClaimButton = ({ firstName, method, refresh, claimed, claim, handleConnect
   const { Modal: ActionModal, showModal: showActionModal, hideModal: hideActionModal } = useModal();
   const [claimLoading, setClaimLoading] = useState(false);
 
-  const onFVModalClose = useCallback(async (isVerifying: boolean) => {
-    if (!isVerifying && !claimLoading) {
+  const onFVModalClose = useCallback(async (isSyncing: boolean) => {
+    if (!isSyncing && !claimLoading) {
       hideActionModal();
     }
   }, [claimLoading, hideActionModal])
 
-  const { loading, verifying, handleFvFlow, verify } = useFVModalAction({
+  const { loading, syncing, handleFvFlow, verify } = useFVModalAction({
     firstName,
     method,
     onClose: onFVModalClose
@@ -49,7 +49,7 @@ const ClaimButton = ({ firstName, method, refresh, claimed, claim, handleConnect
         setRequiredChain(SupportedChains.CELO);
         break;
     }
-  }, [chainId]);
+  }, [chainId, account]);
 
   // TODO:  replace placeholder loader with styled loader
   const actionModalBody = useMemo(
@@ -152,14 +152,14 @@ const ClaimButton = ({ firstName, method, refresh, claimed, claim, handleConnect
 
   useEffect(() => {
     const doClaim = async () => {
-      if (!verifying || isVerified) {
+      if (!syncing || isVerified) {
         showActionModal();
         setClaimLoading(true);
         await handleClaim(true);
       }
     };
     doClaim().catch(noop);
-  }, [verifying, isVerified]);
+  }, [syncing, isVerified]);
 
   const buttonTitle = useMemo(() => {
     if (!isWhitelisted) {

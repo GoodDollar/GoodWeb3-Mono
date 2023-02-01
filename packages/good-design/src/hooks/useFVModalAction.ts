@@ -10,29 +10,28 @@ interface FVModalActionProps extends Pick<FVFlowProps, "method" | "firstName"> {
 export const useFVModalAction = ({ firstName, method, onClose }: FVModalActionProps) => {
   const fvlink = useFVLink();
   const [loading, setLoading] = useState(false);
-  const [verifying, setIsVerifying] = useState(true);
+  const [syncing, setIsSyncing] = useState(true);
   const { fuseWhitelisted, currentWhitelisted, whitelistSync } = useWhitelistSync();
 
   const handleFvFlow = useCallback(async () => {
-    setLoading(false);
+    setLoading(true);
 
     if (!fuseWhitelisted || currentWhitelisted !== false) {
-      return
+      setLoading(false);
+      return;
     }
-      
-    setLoading(true);
 
     const sync = await whitelistSync();
 
     if (!sync && (!fuseWhitelisted || !currentWhitelisted)) {
       setLoading(false);
-      return
+      return;
     }
 
     setTimeout(() => {
-      setIsVerifying(false);
+      setIsSyncing(false);
       setLoading(false);
-    }, 10000);    
+    }, 10000);
   }, [fuseWhitelisted, currentWhitelisted, whitelistSync]);
 
   const verify = useCallback(async () => {
@@ -42,12 +41,9 @@ export const useFVModalAction = ({ firstName, method, onClose }: FVModalActionPr
       await fvlink?.getLoginSig();
       await fvlink?.getFvSig();
     } catch (e: any) {
-      return;
-    } finally {
       setLoading(false);
+      return;
     }
-
-    await onClose(verifying);
 
     switch (method) {
       case "redirect": {
@@ -68,7 +64,7 @@ export const useFVModalAction = ({ firstName, method, onClose }: FVModalActionPr
         break;
       }
     }
-  }, [fvlink, verifying, method, firstName, onClose]);
+  }, [fvlink, syncing, method, firstName, onClose]);
 
-  return { loading, verifying, handleFvFlow, verify };
+  return { loading, syncing, handleFvFlow, verify };
 };
