@@ -10,7 +10,7 @@ interface FVModalActionProps extends Pick<FVFlowProps, "method" | "firstName"> {
 
 export const defaultRedirect = document.location.href;
 
-export const useFVModalAction = ({ firstName, method, redirectUrl = defaultRedirect }: FVModalActionProps) => {
+export const useFVModalAction = ({ firstName, method, onClose = noop, redirectUrl = defaultRedirect }: FVModalActionProps) => {
   const fvlink = useFVLink();
   const [loading, setLoading] = useState(false);
 
@@ -21,9 +21,12 @@ export const useFVModalAction = ({ firstName, method, redirectUrl = defaultRedir
       await fvlink?.getLoginSig();
       await fvlink?.getFvSig();
     } catch (e: any) {
-      setLoading(false);
       return;
+    } finally {
+      setLoading(false);
     }
+    
+    onClose();
 
     switch (method) {
       case "redirect": {
@@ -44,7 +47,7 @@ export const useFVModalAction = ({ firstName, method, redirectUrl = defaultRedir
         break;
       }
     }
-  }, [fvlink, method, firstName, redirectUrl]);
+  }, [fvlink, method, firstName, redirectUrl, onClose]);
 
   return { loading, verify };
 };
