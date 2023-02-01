@@ -43,7 +43,7 @@ const ClaimButton = ({
   const textColor = useColorModeValue("goodGrey.500", "white");
   const { chainId } = useGetEnvChainId();
   const [requiredChain, setRequiredChain] = useState(SupportedChains.CELO);
-  const { syncStatus } = useWhitelistSync();
+  const { fuseWhitelisted, syncStatus } = useWhitelistSync();
 
   useEffect(() => {
     switch (chainId) {
@@ -143,12 +143,24 @@ const ClaimButton = ({
     async (first = false) => {
       setFirstClaim(first);
       showActionModal();
-      if (isWhitelisted && syncStatus) {
+      if (isWhitelisted) {
         setClaimLoading(true);
         await handleClaim(first);
+      } else if (fuseWhitelisted && syncStatus) {
+        const success = await syncStatus;
+        if (success) {
+          setClaimLoading(true);
+          await handleClaim(true);
+        } else {
+          //// what to do here? tjis should not continue with FV Flow
+        }
+      } else {
+        // here nothing happens, FV flow starts
+        // what to do with an edge case where fuseWhitelisted or syncStatus might not be set or
+        // give a value in time before user interaction is done
       }
     },
-    [claim, hideActionModal, showFirstClaimModal, isWhitelisted]
+    [claim, hideActionModal, showFirstClaimModal, isWhitelisted, fuseWhitelisted, syncStatus]
   );
 
   useEffect(() => {

@@ -116,14 +116,12 @@ export const useWhitelistSync = () => {
     ].filter(_ => _.contract && chainId != SupportedChains.FUSE),
     { refresh: "never", chainId }
   );
-
   useEffect(() => {
     const whitelistSync = async () => {
       const isSynced = await AsyncStorage.getItem(`${account}-whitelistedSync`);
-
       if (!isSynced && fuseResult?.value[0] && otherResult?.value[0] === false) {
-        const { backend } = Envs[baseEnv];
-
+        const devEnv = baseEnv === "fuse" ? "development" : baseEnv;
+        const { backend } = Envs[devEnv];
         setSyncStatus(
           fetch(backend + `/syncWhitelist/${account}`)
             .then(async r => {
