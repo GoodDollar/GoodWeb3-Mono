@@ -119,9 +119,11 @@ export const useWhitelistSync = () => {
   useEffect(() => {
     const whitelistSync = async () => {
       const isSynced = await AsyncStorage.getItem(`${account}-whitelistedSync`);
+
       if (!isSynced && fuseResult?.value[0] && otherResult?.value[0] === false) {
         const devEnv = baseEnv === "fuse" ? "development" : baseEnv;
         const { backend } = Envs[devEnv];
+
         setSyncStatus(
           fetch(backend + `/syncWhitelist/${account}`)
             .then(async r => {
@@ -136,6 +138,8 @@ export const useWhitelistSync = () => {
             })
             .catch(() => false)
         );
+      } else {
+        setSyncStatus(Promise.resolve(true));
       }
     };
 
@@ -143,8 +147,8 @@ export const useWhitelistSync = () => {
   }, [fuseResult, otherResult, account, setSyncStatus]);
 
   return {
-    fuseWhitelisted: fuseResult?.value as boolean,
-    currentWhitelisted: otherResult?.value as boolean,
+    fuseWhitelisted: fuseResult?.value && (fuseResult?.value[0] as boolean),
+    currentWhitelisted: otherResult?.value && (otherResult?.value[0] as boolean),
     syncStatus
   };
 };
