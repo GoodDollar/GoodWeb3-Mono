@@ -4,7 +4,7 @@ import { Text, View, Spinner, useColorModeValue, Box } from "native-base";
 
 import { useQueryParam } from "../../hooks/useQueryParam";
 import { Web3ActionButton } from "../../advanced";
-import { defaultRedirect, useFVModalAction } from "../../hooks/useFVModalAction";
+import { useFVModalAction } from "../../hooks/useFVModalAction";
 import ActionButton from "./ActionButton";
 import { useModal } from "../../hooks/useModal";
 import { Title } from "../layout";
@@ -21,7 +21,7 @@ const ClaimButton = ({
   claimed, 
   claim,
   chainId,
-  redirectUrl = defaultRedirect,
+  redirectUrl,
   whitelistAtChain = false,
   ...props 
 }: FVFlowProps) => {
