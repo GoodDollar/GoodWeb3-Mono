@@ -5,12 +5,11 @@ import { PostHog } from "../../sdk/analytics/posthog/posthog";
 import { useSDK } from "../../sdk/base/react";
 
 export interface PageProps {
-  address?: string;
-  firstName?: string;
+  apiKey: string;
 }
 
-const posthog = new PostHog({ apiKey: "phc_rhdMD130Z0vPn8EJO49LJgJPSDYnZyrPCTFFX9nFrlZ" });
 const Web3Component = (params: PageProps) => {
+  const posthog = new PostHog({ apiKey: params.apiKey });
   const [initialized, setInitialized] = useState(false);
   const init = async () => {
     console.log("initializing");
@@ -42,7 +41,6 @@ const Template: ComponentStory<typeof Page> = args => (
 );
 
 export const PostHogSDKExample = Template.bind({});
-// IdentitySDKExample.args = {
-//   address: "",
-//   firstName: "Hadar"
-// };
+PostHogSDKExample.args = {
+  apiKey: ""
+};
