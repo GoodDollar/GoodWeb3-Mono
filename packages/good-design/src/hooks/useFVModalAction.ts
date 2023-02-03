@@ -1,6 +1,6 @@
 import { useFVLink, openLink } from "@gooddollar/web3sdk-v2";
 import { noop } from "lodash";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { FVFlowProps } from "../core";
 
 interface FVModalActionProps extends Pick<FVFlowProps, "method" | "firstName"> {
@@ -8,11 +8,10 @@ interface FVModalActionProps extends Pick<FVFlowProps, "method" | "firstName"> {
   redirectUrl?: string;
 }
 
-export const defaultRedirect = document.location.href;
-
-export const useFVModalAction = ({ firstName, method, onClose = noop, redirectUrl = defaultRedirect }: FVModalActionProps) => {
+export const useFVModalAction = ({ firstName, method, onClose = noop, redirectUrl }: FVModalActionProps) => {
   const fvlink = useFVLink();
   const [loading, setLoading] = useState(false);
+  const redirectUri = useMemo(() => redirectUrl || document.location.href, [redirectUrl]);
 
   const verify = useCallback(async () => {
     setLoading(true);
@@ -30,7 +29,7 @@ export const useFVModalAction = ({ firstName, method, onClose = noop, redirectUr
 
     switch (method) {
       case "redirect": {
-        const link = fvlink?.getLink(firstName, redirectUrl, false);
+        const link = fvlink?.getLink(firstName, redirectUri, false);
 
         if (link) {
           openLink(link, "_self").catch(noop);
