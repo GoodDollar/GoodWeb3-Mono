@@ -147,8 +147,8 @@ export const useWhitelistSync = () => {
   }, [fuseResult, otherResult, account, setSyncStatus]);
 
   return {
-    fuseWhitelisted: fuseResult?.value && (fuseResult?.value[0] as boolean),
-    currentWhitelisted: otherResult?.value && (otherResult?.value[0] as boolean),
+    fuseWhitelisted: first(fuseResult?.value) as boolean,
+    currentWhitelisted: first(otherResult?.value) as boolean,
     syncStatus
   };
 };
