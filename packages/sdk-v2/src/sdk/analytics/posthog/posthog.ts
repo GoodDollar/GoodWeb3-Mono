@@ -7,6 +7,7 @@ import { getUserProps } from "../utils";
 export interface IPostHogConfig extends PostHogOptions, IAbstractConfig {
   apiKey?: string;
 }
+
 export class PostHog implements IAbstractProvider, IAnalyticsProvider {
   private config: any;
   private api: PostHogAPI | undefined = undefined;
@@ -26,7 +27,7 @@ export class PostHog implements IAbstractProvider, IAnalyticsProvider {
       host: "https://app.posthog.com"
     });
 
-    this.api.capture("APP_OPEN", { ...omit(appProps, "$once"), $set_once: appProps.$once });
+    this.api.identify(undefined, { ...omit(appProps, "$once"), $set_once: appProps.$once });
 
     return true;
   }

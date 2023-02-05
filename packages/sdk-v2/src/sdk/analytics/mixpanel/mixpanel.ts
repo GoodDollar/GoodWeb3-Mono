@@ -1,5 +1,5 @@
 import { MixpanelAPI } from "./api";
-import { omit, clone, defaults } from "lodash";
+import { omit, clone } from "lodash";
 
 import { IAbstractProvider, IAnalyticsProvider, IAppProps, IAbstractConfig } from "../types";
 import { getUserProps } from "../utils";
@@ -10,19 +10,19 @@ export interface IMixpanelAPI {
   registerSuperPropertiesOnce(...params): void;
   identify(...params): void;
   track(...params): void;
-  setUserProps(props): any;
+  setUserProps(props): void;
+  setUserPropsOnce(props): void;
 }
 
 export interface IMixpanelConfig extends IAbstractConfig {
   apiKey?: string;
-  trackAutomaticEvents?: string;
 }
 
 export class Mixpanel implements IAbstractProvider, IAnalyticsProvider {
-  private config: any;
+  private config: IMixpanelConfig;
   private api: IMixpanelAPI | undefined;
-  constructor(config: any) {
-    this.config = defaults(clone(config));
+  constructor(config: IMixpanelConfig) {
+    this.config = clone(config);
   }
 
   async initialize(appProps: IAppProps): Promise<boolean> {
