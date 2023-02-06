@@ -15,13 +15,13 @@ import useRefreshOrNever from "../../hooks/useRefreshOrNever";
 import { useGetContract, useGetEnvChainId, useReadOnlySDK, useSDK } from "../base/react";
 import { Envs, SupportedChains } from "../constants";
 
-export const useFVLink = (requiredChainId?: number, whitelistAtChain: boolean = false) => {
-  const { chainId } = useGetEnvChainId(requiredChainId);
-  const sdk = useSDK(false, "claim", chainId) as ClaimSDK;
+export const useFVLink = (chainId?: number) => {
+  const { chainId: defaultChainId } = useGetEnvChainId();
+  const sdk = useSDK(false, "claim", chainId ?? defaultChainId) as ClaimSDK;
 
   return useMemo(
-    () => sdk?.getFVLink(whitelistAtChain ? chainId : undefined), 
-    [sdk, chainId, whitelistAtChain]
+    () => sdk?.getFVLink(chainId), 
+    [sdk, chainId]
   );
 };
 

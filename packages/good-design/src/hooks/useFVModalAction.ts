@@ -7,7 +7,6 @@ interface FVModalActionProps extends Pick<FVFlowProps, "method" | "firstName"> {
   onClose: () => void;
   redirectUrl?: string;
   chainId?: number;
-  whitelistAtChain?: boolean;
 }
 
 export const useFVModalAction = ({ 
@@ -16,9 +15,8 @@ export const useFVModalAction = ({
   chainId,
   onClose = noop, 
   redirectUrl,
-  whitelistAtChain = false
 }: FVModalActionProps) => {
-  const fvlink = useFVLink(chainId, whitelistAtChain);
+  const fvlink = useFVLink(chainId);
   const [loading, setLoading] = useState(false);
   const redirectUri = useMemo(() => redirectUrl || document.location.href, [redirectUrl]);
 

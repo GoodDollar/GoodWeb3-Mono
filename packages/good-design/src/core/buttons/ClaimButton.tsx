@@ -22,13 +22,12 @@ const ClaimButton = ({
   claim,
   chainId,
   redirectUrl,
-  whitelistAtChain = false,
   ...props 
 }: FVFlowProps) => {
   const { Modal: FirstClaimModal, showModal: showFirstClaimModal } = useModal();
   const { Modal: ActionModal, showModal: showActionModal, hideModal: hideActionModal } = useModal();
   const { Modal: FVModal, showModal: showFVModal, hideModal: hideFVModal } = useModal();
-  const { loading, verify } = useFVModalAction({ firstName, method, chainId, whitelistAtChain, redirectUrl, onClose: hideFVModal });
+  const { loading, verify } = useFVModalAction({ firstName, method, chainId, redirectUrl, onClose: hideFVModal });
   const { isWhitelisted, claimAmount } = useClaim(refresh);
   const [firstClaim, setFirstClaim] = useState(false);
   const isVerified = useQueryParam("verified", true);

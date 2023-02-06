@@ -5,7 +5,6 @@ export interface FVFlowProps {
   method: "popup" | "redirect";
   redirectUrl?: string;
   chainId?: number;
-  whitelistAtChain?: boolean;
   styles?: any;
   claimed?: boolean;
   refresh?: "everyBlock" | "never" | number | undefined;
