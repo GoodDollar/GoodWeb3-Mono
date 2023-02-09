@@ -3,6 +3,8 @@ import { IModalProps } from "native-base";
 export interface FVFlowProps {
   firstName: string;
   method: "popup" | "redirect";
+  redirectUrl?: string;
+  chainId?: number;
   styles?: any;
   claimed?: boolean;
   refresh?: "everyBlock" | "never" | number | undefined;

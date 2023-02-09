@@ -14,11 +14,20 @@ import { Image } from "../images";
 import ClaimImage from "../../assets/images/claim.png";
 import { BasicModalProps } from "../modals/BasicModal";
 
-const ClaimButton = ({ firstName, method, refresh, claimed, claim, ...props }: FVFlowProps) => {
+const ClaimButton = ({ 
+  firstName, 
+  method, 
+  refresh, 
+  claimed, 
+  claim,
+  chainId,
+  redirectUrl,
+  ...props 
+}: FVFlowProps) => {
   const { Modal: FirstClaimModal, showModal: showFirstClaimModal } = useModal();
   const { Modal: ActionModal, showModal: showActionModal, hideModal: hideActionModal } = useModal();
   const { Modal: FVModal, showModal: showFVModal, hideModal: hideFVModal } = useModal();
-  const { loading, verify } = useFVModalAction({ firstName, method, onClose: hideFVModal });
+  const { loading, verify } = useFVModalAction({ firstName, method, chainId, redirectUrl, onClose: hideFVModal });
   const { isWhitelisted, claimAmount } = useClaim(refresh);
   const [firstClaim, setFirstClaim] = useState(false);
   const isVerified = useQueryParam("verified", true);

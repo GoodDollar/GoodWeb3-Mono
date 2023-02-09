@@ -15,11 +15,14 @@ import useRefreshOrNever from "../../hooks/useRefreshOrNever";
 import { useGetContract, useGetEnvChainId, useReadOnlySDK, useSDK } from "../base/react";
 import { Envs, SupportedChains } from "../constants";
 
-export const useFVLink = () => {
-  const { chainId } = useGetEnvChainId();
-  const sdk = useSDK(false, "claim", chainId) as ClaimSDK;
+export const useFVLink = (chainId?: number) => {
+  const { chainId: defaultChainId } = useGetEnvChainId();
+  const sdk = useSDK(false, "claim", chainId ?? defaultChainId) as ClaimSDK;
 
-  return useMemo(() => sdk?.getFVLink(), [sdk]);
+  return useMemo(
+    () => sdk?.getFVLink(chainId), 
+    [sdk, chainId]
+  );
 };
 
 export const useIsAddressVerified = (address: string, env?: EnvKey) => {
@@ -29,6 +32,7 @@ export const useIsAddressVerified = (address: string, env?: EnvKey) => {
     if (address && sdk) return sdk.isAddressVerified(address);
     return Promise.resolve(undefined);
   }, [address, env, sdk]);
+
   return result;
 };
 
