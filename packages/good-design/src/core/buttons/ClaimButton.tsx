@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback, useMemo, useState } from "react";
-import { SupportedChains, useClaim, useGetEnvChainId, useWhitelistSync } from "@gooddollar/web3sdk-v2";
+import { SupportedChains, useClaim, useGetEnvChainId, useWhitelistSync, G$Amount } from "@gooddollar/web3sdk-v2";
 import { Text, View, useColorModeValue, Spinner } from "native-base";
 
 import { useQueryParam } from "../../hooks/useQueryParam";
@@ -41,7 +41,7 @@ const ClaimButton = ({
   const [firstClaim, setFirstClaim] = useState(false);
   const isVerified = useQueryParam("verified", true);
   const textColor = useColorModeValue("goodGrey.500", "white");
-  const { chainId } = useGetEnvChainId();
+  const { chainId, defaultEnv } = useGetEnvChainId();
   const [requiredChain, setRequiredChain] = useState(SupportedChains.CELO);
   const { fuseWhitelisted, syncStatus } = useWhitelistSync();
 
@@ -176,12 +176,13 @@ const ClaimButton = ({
   }, [isVerified]);
 
   const buttonTitle = useMemo(() => {
-    if (!isWhitelisted) {
+    if (!isWhitelisted || !claimAmount) {
       return "CLAIM NOW";
     }
 
-    // todo: use formatted token amount with G$Amount
-    return "CLAIM NOW " + (claimAmount ?? "");
+    const amount = G$Amount("G$", claimAmount, chainId, defaultEnv);
+
+    return "CLAIM NOW " + amount.format();
   }, [isWhitelisted]);
 
   if (isWhitelisted && claimed) {
@@ -212,7 +213,7 @@ const ClaimButton = ({
           requiredChain={requiredChain}
           handleConnect={handleConnect}
         />
-        <Text variant="shadowed" />
+        <Text variant="shadowed" fontSize="md" />
       </View>
       <ActionModal {...claimModalProps} />
     </View>
