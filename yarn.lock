@@ -3085,22 +3085,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/bridge-app@npm:^1.2.2":
-  version: 1.2.8
-  resolution: "@gooddollar/bridge-app@npm:1.2.8"
-  dependencies:
-    dotenv: ^16.0.3
-    eth-proof: ^2.1.6
-    ethers: ^5.*
-    ethers-multicall: ^0.2.3
-    js-logger: ^1.6.1
-    lodash: ^4.17.21
-    node-fetch: 2
-    p-all: 3.0.0
-  checksum: 94f6badfb0d8a1ef35dc2e9b7f53085b6b31a931838ab3da0d59e2cc71f5cf5f4523b040f6f627de3de42c3e13b2ebef89ffb2c5522e762f5fb2d1b6c2d64610
-  languageName: node
-  linkType: hard
-
 "@gooddollar/bridge-app@npm:^1.2.9":
   version: 1.2.9
   resolution: "@gooddollar/bridge-app@npm:1.2.9"
@@ -3114,20 +3098,6 @@ __metadata:
     node-fetch: 2
     p-all: 3.0.0
   checksum: 637dfc496541a622972f8a4c481cffdb6c0c2be0ff7ac76a5731a37d8dfe66aa0a5dd8d1951f1b75abed913bcdc999fc122d8a01ea0d36578b7ce3b3220401ac
-  languageName: node
-  linkType: hard
-
-"@gooddollar/bridge-contracts@npm:^1.0.10":
-  version: 1.0.10
-  resolution: "@gooddollar/bridge-contracts@npm:1.0.10"
-  dependencies:
-    "@gooddollar/goodprotocol": ^1.0.29
-    "@openzeppelin/contracts": ^4.4.1
-    eth-proof: ^2.1.6
-    merkle-patricia-tree: ^2.*
-    prompt: ^1.3.0
-    solidity-rlp: ^2.0.5
-  checksum: ca9273161d2be3233411f927b99ba0f9b2bad204dfe8d3c49c350a61e638b7881db6f2bdd8d25f5bf4b84b4b106147872b82e5cfc9ecae3a1a3d1fb961940951
   languageName: node
   linkType: hard
 
@@ -3159,7 +3129,7 @@ __metadata:
     "@babel/preset-typescript": ^7.16.0
     "@babel/runtime": ^7.18.9
     "@gooddollar/goodprotocol": 1.0.30-beta.3
-    "@gooddollar/web3sdk-v2": latest
+    "@gooddollar/web3sdk-v2": ^0.1.62
     "@lingui/macro": ^3.14.0
     "@lingui/react": ^3.14.0
     "@storybook/addon-actions": ^6.5.12
@@ -3238,7 +3208,7 @@ __metadata:
     "@babel/core": ^7.17.5
     "@babel/preset-env": ^7.16.11
     "@gooddollar/goodprotocol": 1.0.27
-    "@gooddollar/web3sdk-v2": latest
+    "@gooddollar/web3sdk-v2": ^0.1.62
     "@testing-library/react": ^12.1.4
     "@types/jest": ^27.4.1
     "@types/node": ^17.0.21
@@ -3299,7 +3269,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/goodprotocol@npm:^1.0.29, @gooddollar/goodprotocol@npm:^1.0.30-beta.3":
+"@gooddollar/goodprotocol@npm:^1.0.30-beta.3":
   version: 1.0.30
   resolution: "@gooddollar/goodprotocol@npm:1.0.30"
   dependencies:
@@ -3318,40 +3288,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/web3sdk-v2@npm:latest":
-  version: 0.1.59
-  resolution: "@gooddollar/web3sdk-v2@npm:0.1.59"
-  dependencies:
-    "@amplitude/analytics-browser": ^1.6.4
-    "@amplitude/analytics-react-native": ^0.7.0
-    "@gooddollar/bridge-app": ^1.2.2
-    "@gooddollar/bridge-contracts": ^1.0.10
-    "@gooddollar/goodprotocol": 1.0.30-beta.3
-    "@react-native-firebase/analytics": ^16.4.6
-    "@sentry/browser": 7.16.0
-    "@sentry/react-native": ^4.8.0
-    "@solana/web3.js": ^1.72.0
-    "@usedapp/core": 1.*
-    "@web3auth/base": ^4.0.0
-    "@web3auth/core": ^4.0.0
-    "@web3auth/openlogin-adapter": ^4.1.0
-    "@web3auth/torus-wallet-connector-plugin": ^4.0.0
-    eventemitter3: ^4.0.7
-    react-native: ^0.70.2
-    react-native-indicative: ^0.2.1
-    react-native-restart: ^0.0.24
-    react-use-promise: ^0.5.0
-  peerDependencies:
-    "@react-native-async-storage/async-storage": 1.17.10
-    ethers: 5.*
-    react: "*"
-    react-native: "*"
-    react-native-web: "*"
-  checksum: 6476ee9c6e0f493fb857cce25438ad1757402f83da4976ab936e7eedcf35cac8d8e1d7d03f15838644a54640558e26e7d1132ba87bcf3b16b2bcc80b906aee69
-  languageName: node
-  linkType: hard
-
-"@gooddollar/web3sdk-v2@workspace:packages/sdk-v2":
+"@gooddollar/web3sdk-v2@^0.1.62, @gooddollar/web3sdk-v2@workspace:packages/sdk-v2":
   version: 0.0.0-use.local
   resolution: "@gooddollar/web3sdk-v2@workspace:packages/sdk-v2"
   dependencies:
