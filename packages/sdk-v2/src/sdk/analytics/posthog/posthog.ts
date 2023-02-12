@@ -1,5 +1,5 @@
 import { default as PostHogAPI, PostHogOptions } from "posthog-react-native";
-import { omit, clone, defaults } from "lodash";
+import { omit, clone } from "lodash";
 
 import { IAbstractProvider, IAnalyticsProvider, IAppProps, IAbstractConfig } from "../types";
 import { getUserProps } from "../utils";
@@ -9,10 +9,11 @@ export interface IPostHogConfig extends PostHogOptions, IAbstractConfig {
 }
 
 export class PostHog implements IAbstractProvider, IAnalyticsProvider {
-  private config: any;
+  private config: IPostHogConfig;
   private api: PostHogAPI | undefined = undefined;
+
   constructor(config: any) {
-    this.config = defaults(clone(config));
+    this.config = clone(config);
   }
 
   async initialize(appProps: IAppProps): Promise<boolean> {
