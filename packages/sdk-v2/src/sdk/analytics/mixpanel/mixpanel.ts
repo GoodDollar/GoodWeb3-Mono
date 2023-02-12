@@ -21,6 +21,7 @@ export interface IMixpanelConfig extends IAbstractConfig {
 export class Mixpanel implements IAbstractProvider, IAnalyticsProvider {
   private config: IMixpanelConfig;
   private api: IMixpanelAPI | undefined;
+
   constructor(config: IMixpanelConfig) {
     this.config = clone(config);
   }
