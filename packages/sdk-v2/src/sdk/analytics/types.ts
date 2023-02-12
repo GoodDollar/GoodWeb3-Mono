@@ -2,15 +2,17 @@ export enum ProviderType {
   Amplitude = "amplitude",
   GoogleAnalytics = "google",
   Indicative = "indicative",
-  Sentry = "sentry"
+  Sentry = "sentry",
+  Mixpanel = "mixpanel",
+  PostHog = "posthog"
 }
 
 export type IAppProps = Record<string, string> & {
   env: string;
   version: string;
   osVersion: string;
-  $once?: Record<string, string>
-}
+  $once?: Record<string, string>;
+};
 
 export interface IUserProps {
   id: string;
@@ -34,4 +36,7 @@ export interface IMonitoringProvider {
   capture(exception: Error, fingerprint?: string[], tags?: object, extra?: object): void;
 }
 
-export interface IProvider extends Partial<IAbstractProvider>, Partial<IAnalyticsProvider>, Partial<IMonitoringProvider> {};
+export interface IProvider
+  extends Partial<IAbstractProvider>,
+    Partial<IAnalyticsProvider>,
+    Partial<IMonitoringProvider> {}
