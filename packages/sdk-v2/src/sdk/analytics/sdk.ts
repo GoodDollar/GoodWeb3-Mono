@@ -12,12 +12,16 @@ import { Amplitude, IAmplitudeConfig } from "./amplitude";
 import { GoogleAnalytics, IGoogleConfig } from "./google";
 import { Sentry, ISentryConfig } from "./sentry";
 import { IIndicativeConfig, Indicative } from "./indicative";
+import { IMixpanelConfig, Mixpanel } from "./mixpanel/mixpanel";
+import { IPostHogConfig, PostHog } from "./posthog/posthog";
 
 export interface IAnalyticsConfig {
   [ProviderType.Amplitude]?: IAmplitudeConfig;
   [ProviderType.GoogleAnalytics]?: IGoogleConfig;
   [ProviderType.Indicative]?: IIndicativeConfig;
   [ProviderType.Sentry]?: ISentryConfig;
+  [ProviderType.Mixpanel]?: IMixpanelConfig;
+  [ProviderType.PostHog]?: IPostHogConfig;
 }
 
 type ProviderFactories = {
@@ -29,7 +33,9 @@ export class Analytics implements IAbstractProvider, IAnalyticsProvider, IMonito
     [ProviderType.Amplitude]: Amplitude,
     [ProviderType.GoogleAnalytics]: GoogleAnalytics,
     [ProviderType.Indicative]: Indicative,
-    [ProviderType.Sentry]: Sentry
+    [ProviderType.Sentry]: Sentry,
+    [ProviderType.Mixpanel]: Mixpanel,
+    [ProviderType.PostHog]: PostHog
   };
 
   private providers: IProvider[] = [];
@@ -52,8 +58,8 @@ export class Analytics implements IAbstractProvider, IAnalyticsProvider, IMonito
           return;
         }
 
-        const provider = new ProviderClass(config);        
-        const initialized = await provider.initialize!(appProps); // eslint-disable-line @typescript-eslint/no-non-null-assertion 
+        const provider = new ProviderClass(config);
+        const initialized = await provider.initialize!(appProps); // eslint-disable-line @typescript-eslint/no-non-null-assertion
 
         if (!initialized) {
           return;

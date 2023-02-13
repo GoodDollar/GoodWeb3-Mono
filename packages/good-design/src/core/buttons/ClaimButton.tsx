@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback, useMemo, useState } from "react";
-import { SupportedChains, useClaim, useGetEnvChainId, useWhitelistSync } from "@gooddollar/web3sdk-v2";
+import { SupportedChains, useClaim, useWhitelistSync } from "@gooddollar/web3sdk-v2";
 import { Text, View, useColorModeValue, Spinner } from "native-base";
 
 import { useQueryParam } from "../../hooks/useQueryParam";
@@ -21,6 +21,7 @@ const ClaimButton = ({
   refresh,
   claimed,
   claim,
+  chainId,
   handleConnect,
   redirectUrl,
   ...props
@@ -33,6 +34,7 @@ const ClaimButton = ({
   const { loading, verify } = useFVModalAction({
     firstName,
     method,
+    chainId,
     onClose: hideActionModal,
     redirectUrl
   });
@@ -41,7 +43,6 @@ const ClaimButton = ({
   const [firstClaim, setFirstClaim] = useState(false);
   const isVerified = useQueryParam("verified", true);
   const textColor = useColorModeValue("goodGrey.500", "white");
-  const { chainId } = useGetEnvChainId();
   const [requiredChain, setRequiredChain] = useState(SupportedChains.CELO);
   const { fuseWhitelisted, syncStatus } = useWhitelistSync();
 
