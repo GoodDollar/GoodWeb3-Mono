@@ -60,7 +60,8 @@ const defaultWc = walletConnectModule({
   bridge: "https://bridge.walletconnect.org",
   qrcodeModalOptions: {
     mobileLinks: ["rainbow", "metamask", "argent", "trust", "imtoken", "pillar"]
-  }
+  },
+  connectFirstChainId: true
 });
 
 const coinbaseWalletSdk = coinbaseWalletModule();
@@ -70,12 +71,14 @@ const zenGoWc = customWcModule({
   qrcodeModalOptions: {
     desktopLinks: ["zengo", "metamask"],
     mobileLinks: ["metamask", "zengo"] // TODO: has to be tested on IOS, android does not show list
-  }
+  },
+  connectFirstChainId: true
 });
 
 const gdWc = customWcModule({
   customLabelFor: "gooddollar",
-  bridge: "https://bridge.walletconnect.org"
+  bridge: "https://bridge.walletconnect.org",
+  connectFirstChainId: true
 });
 
 const torus = torusModule({
