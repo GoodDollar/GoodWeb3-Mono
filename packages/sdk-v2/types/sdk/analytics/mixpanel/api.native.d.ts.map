@@ -1,0 +1,1 @@
+{"version":3,"file":"api.native.d.ts","sourceRoot":"","sources":["../../../../src/sdk/analytics/mixpanel/api.native.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,QAAQ,EAAE,MAAM,uBAAuB,CAAC;AASjD,UAAU,cAAe,SAAQ,QAAQ;IACvC,YAAY,CAAC,KAAK,KAAA,GAAG,IAAI,CAAC;IAC1B,gBAAgB,CAAC,KAAK,KAAA,GAAG,IAAI,CAAC;CAC/B;AAED,eAAO,MAAM,WAAW;;CAIvB,CAAC"}

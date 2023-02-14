@@ -2,7 +2,7 @@
 node_modules
 .vscode
 .yalc
-types
+#types
 tsconfig.tsbuildinfo
 yalc.lock
 storybook-static
