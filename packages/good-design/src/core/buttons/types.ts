@@ -5,6 +5,7 @@ export interface FVFlowProps {
   method: "popup" | "redirect";
   redirectUrl?: string;
   claim: () => Promise<boolean>;
+  chainId?: number;
   styles?: any;
   claimed?: boolean;
   refresh?: "everyBlock" | "never" | number | undefined;

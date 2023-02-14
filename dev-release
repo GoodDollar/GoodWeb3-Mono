@@ -1,0 +1,64 @@
+#!/usr/bin/env node
+
+const { exec } = require('child_process')
+const { writeFile } = require('fs')
+const { promisify } = require('util')
+
+const pkgDir = pkg => `./packages/${pkg}`
+const pkgPath = pkg => `${pkgDir(pkg)}/package.json`
+
+const v2pkg = require(pkgPath('sdk-v2'))
+const loginpkg = require(pkgPath('login-sdk'))
+const designpkg = require(pkgPath('good-design'))
+
+const execAsync = promisify(exec)
+const writeFileAsync = promisify(writeFile)
+
+const run = (cmd, opts = {}) => execAsync(cmd, opts).then(({ stdout }) => stdout)
+const updateVersion = (version, suffix) => version.replace(/^(.?\d+\.\d+\.\d+)(.*?)$/i, `$1${suffix}`)
+
+const writePkg = async (pkg, json) => {
+  const contents = JSON.stringify(json, null, 2)
+  const path = pkgPath(pkg)
+
+  await writeFileAsync(path, contents)
+}
+
+;(async () => {
+  const commit = await run("git rev-parse --short HEAD")
+  const suffix = `-beta.${commit.trimEnd()}`
+
+  console.log('1. Update sdk-v2 version')
+  v2pkg.version = updateVersion(v2pkg.version, suffix)
+  await writePkg('sdk-v2', v2pkg)
+
+  console.log('2. Build sdk-v2')
+  await run('yarn workspace @gooddollar/web3sdk-v2 install')
+  await run('yarn workspace @gooddollar/web3sdk-v2 build')
+
+  console.log('3. Publish sdk-v2')
+  await run('npm publish --access public --tag beta', { cwd: pkgDir('sdk-v2') })
+
+  console.log('4. Update design/login versions & deps')
+  ;[designpkg, loginpkg].forEach(pkg => {
+    pkg.version = updateVersion(pkg.version, suffix)
+    pkg.devDependencies["@gooddollar/web3sdk-v2"] = v2pkg.version
+  })
+  await writePkg('good-design', designpkg)
+  await writePkg('login-sdk', loginpkg)
+
+  console.log('5. Build design & login SDKs')
+  await run('yarn workspace @gooddollar/good-design install')
+  await run('yarn workspace @gooddollar/good-design build')
+  await run('yarn workspace @gooddollar/goodlogin-sdk install')
+  await run('yarn workspace @gooddollar/goodlogin-sdk build')
+
+  console.log('6. Publish design & login SDKs')
+  await run('npm publish --access public --tag beta', { cwd: pkgDir('good-design') })
+  await run('npm publish --access public --tag beta', { cwd: pkgDir('login-sdk') })
+
+  console.log('7. Commit changes')
+  await run('git add .')
+  await run(`git commit -m 'Dev version ${suffix.substring(1)} released' -n`)
+  await run('git push')
+})()

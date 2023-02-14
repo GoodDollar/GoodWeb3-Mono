@@ -6,10 +6,11 @@ import { FVFlowProps } from "../core";
 interface FVModalActionProps extends Pick<FVFlowProps, "method" | "firstName"> {
   onClose: () => void;
   redirectUrl?: string;
+  chainId?: number;
 }
 
-export const useFVModalAction = ({ firstName, method, onClose = noop, redirectUrl }: FVModalActionProps) => {
-  const fvlink = useFVLink();
+export const useFVModalAction = ({ firstName, method, onClose = noop, chainId, redirectUrl }: FVModalActionProps) => {
+  const fvlink = useFVLink(chainId);
   const [loading, setLoading] = useState(false);
   const redirectUri = useMemo(() => redirectUrl || document.location.href, [redirectUrl]);
 

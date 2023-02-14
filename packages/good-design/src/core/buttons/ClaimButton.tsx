@@ -21,6 +21,7 @@ const ClaimButton = ({
   refresh,
   claimed,
   claim,
+  chainId,
   handleConnect,
   redirectUrl,
   ...props
@@ -33,6 +34,7 @@ const ClaimButton = ({
   const { loading, verify } = useFVModalAction({
     firstName,
     method,
+    chainId,
     onClose: hideActionModal,
     redirectUrl
   });
@@ -41,12 +43,12 @@ const ClaimButton = ({
   const [firstClaim, setFirstClaim] = useState(false);
   const isVerified = useQueryParam("verified", true);
   const textColor = useColorModeValue("goodGrey.500", "white");
-  const { chainId, defaultEnv } = useGetEnvChainId();
+  const { chainId: defaultChainId, defaultEnv } = useGetEnvChainId();
   const [requiredChain, setRequiredChain] = useState(SupportedChains.CELO);
   const { fuseWhitelisted, syncStatus } = useWhitelistSync();
 
   useEffect(() => {
-    switch (chainId) {
+    switch (chainId ?? defaultChainId) {
       case 122:
         setRequiredChain(account ? SupportedChains.FUSE : SupportedChains.CELO);
         break;
@@ -54,7 +56,7 @@ const ClaimButton = ({
         setRequiredChain(SupportedChains.CELO);
         break;
     }
-  }, [chainId, account]);
+  }, [chainId, defaultChainId, account]);
 
   // TODO:  replace placeholder loader with styled loader
   const actionModalBody = useMemo(
@@ -180,7 +182,7 @@ const ClaimButton = ({
       return "CLAIM NOW";
     }
 
-    const amount = G$Amount("G$", claimAmount, chainId, defaultEnv);
+    const amount = G$Amount("G$", claimAmount, chainId ?? defaultChainId, defaultEnv);
 
     return "CLAIM NOW " + amount.format();
   }, [isWhitelisted]);
