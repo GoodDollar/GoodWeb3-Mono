@@ -167,7 +167,7 @@ const ClaimButton = ({
 
   useEffect(() => {
     const doClaim = async () => {
-      if (isVerified) {
+      if (isVerified && account) {
         showActionModal();
         setClaimLoading(true);
         await handleClaim(true);
@@ -175,7 +175,7 @@ const ClaimButton = ({
     };
 
     doClaim().catch(noop);
-  }, [isVerified]);
+  }, [isVerified, account]);
 
   const buttonTitle = useMemo(() => {
     if (!isWhitelisted || !claimAmount) {
@@ -185,7 +185,7 @@ const ClaimButton = ({
     const amount = G$Amount("G$", claimAmount, chainId ?? defaultChainId, defaultEnv);
 
     return "CLAIM NOW " + amount.format();
-  }, [isWhitelisted]);
+  }, [isWhitelisted, account, chainId, claimAmount]);
 
   if (isWhitelisted && claimed) {
     return (

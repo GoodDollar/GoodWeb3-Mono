@@ -43,6 +43,7 @@ export const useClaim = (refresh: QueryParams["refresh"] = "never") => {
   const identity = useGetContract("Identity", true, "claim", chainId) as IIdentity;
   const claimCall = useContractFunction(ubi, "claim");
 
+  console.log("useClaim -->", { account, chainId, refreshOrNever });
   const results = useCalls(
     [
       identity &&
@@ -79,6 +80,13 @@ export const useClaim = (refresh: QueryParams["refresh"] = "never") => {
     startRef = new Date(periodStart.toNumber() * 1000 + (currentDay.toNumber() + 1) * DAY);
   }
 
+  const t = {
+    isWhitelisted: first(results[0]?.value) as boolean,
+    claimAmount: (first(results[3]?.value) as BigNumber) || undefined,
+    claimTime: startRef,
+    claimCall
+  };
+  console.log("useClaim -->", { t });
   return {
     isWhitelisted: first(results[0]?.value) as boolean,
     claimAmount: (first(results[3]?.value) as BigNumber) || undefined,
@@ -119,6 +127,7 @@ export const useWhitelistSync = () => {
   useEffect(() => {
     const whitelistSync = async () => {
       const isSynced = await AsyncStorage.getItem(`${account}-whitelistedSync`);
+      console.log("whitelistsync -->", { isSynced, fuseResult, otherResult });
 
       if (!isSynced && fuseResult?.value[0] && otherResult?.value[0] === false) {
         const devEnv = baseEnv === "fuse" ? "development" : baseEnv;
@@ -128,11 +137,13 @@ export const useWhitelistSync = () => {
           fetch(backend + `/syncWhitelist/${account}`)
             .then(async r => {
               if (r.status === 200) {
+                console.log("sync successfull", { account });
                 await r.json();
                 AsyncStorage.safeSet(`${account}-whitelistedSync`, true);
 
                 return true;
               } else {
+                console.log("whitelist sync failed");
                 return false;
               }
             })
