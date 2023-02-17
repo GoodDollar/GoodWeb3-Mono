@@ -1,11 +1,10 @@
 import { IIdentity } from "@gooddollar/goodprotocol/types";
 import { UBIScheme } from "@gooddollar/goodprotocol/types/UBIScheme";
-import { AsyncStorage } from "../storage";
 import { ChainId, QueryParams, useCalls, useContractFunction, useEthers } from "@usedapp/core";
 import { BigNumber } from "ethers";
 import { first } from "lodash";
-import { useEffect, useMemo, useState } from "react";
-import { noop } from "lodash";
+import { useMemo, useState, useEffect } from "react";
+import { AsyncStorage } from "../storage";
 import usePromise from "react-use-promise";
 
 import { EnvKey } from "../base/sdk";
@@ -14,15 +13,13 @@ import { ClaimSDK } from "./sdk";
 import useRefreshOrNever from "../../hooks/useRefreshOrNever";
 import { useGetContract, useGetEnvChainId, useReadOnlySDK, useSDK } from "../base/react";
 import { Envs, SupportedChains } from "../constants";
+import { noop } from "lodash";
 
 export const useFVLink = (chainId?: number) => {
   const { chainId: defaultChainId } = useGetEnvChainId();
   const sdk = useSDK(false, "claim", chainId ?? defaultChainId) as ClaimSDK;
 
-  return useMemo(
-    () => sdk?.getFVLink(chainId), 
-    [sdk, chainId]
-  );
+  return useMemo(() => sdk?.getFVLink(chainId), [sdk, chainId]);
 };
 
 export const useIsAddressVerified = (address: string, env?: EnvKey) => {
@@ -84,7 +81,7 @@ export const useClaim = (refresh: QueryParams["refresh"] = "never") => {
 
   return {
     isWhitelisted: first(results[0]?.value) as boolean,
-    claimAmount: (first(results[3]?.value) as BigNumber) || BigNumber.from("0"),
+    claimAmount: (first(results[3]?.value) as BigNumber) || undefined,
     claimTime: startRef,
     claimCall
   };
@@ -119,15 +116,13 @@ export const useWhitelistSync = () => {
     ].filter(_ => _.contract && chainId != SupportedChains.FUSE),
     { refresh: "never", chainId }
   );
-
   useEffect(() => {
     const whitelistSync = async () => {
       const isSynced = await AsyncStorage.getItem(`${account}-whitelistedSync`);
 
-      console.log("syncWhitelist", { account, baseEnv, isSynced, fuseResult, otherResult });
-
       if (!isSynced && fuseResult?.value[0] && otherResult?.value[0] === false) {
-        const { backend } = Envs[baseEnv];
+        const devEnv = baseEnv === "fuse" ? "development" : baseEnv;
+        const { backend } = Envs[devEnv];
 
         setSyncStatus(
           fetch(backend + `/syncWhitelist/${account}`)
@@ -143,6 +138,8 @@ export const useWhitelistSync = () => {
             })
             .catch(() => false)
         );
+      } else {
+        setSyncStatus(Promise.resolve(true));
       }
     };
 
@@ -150,8 +147,8 @@ export const useWhitelistSync = () => {
   }, [fuseResult, otherResult, account, setSyncStatus]);
 
   return {
-    fuseWhitelisted: fuseResult?.value as boolean,
-    currentWhitelisted: otherResult?.value as boolean,
+    fuseWhitelisted: first(fuseResult?.value) as boolean,
+    currentWhitelisted: first(otherResult?.value) as boolean,
     syncStatus
   };
 };

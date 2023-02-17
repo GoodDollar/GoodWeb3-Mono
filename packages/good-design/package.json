@@ -41,7 +41,7 @@
     "@storybook/react": "^6.5.12",
     "@storybook/theming": "^6.5.12",
     "@types/lodash": "^4.14.186",
-    "@types/react": "17.0.2",
+    "@types/react": "17.0.52",
     "@types/react-helmet": "^6.1.6",
     "@types/react-native": "0.70.4",
     "@usedapp/core": "1.*",
@@ -64,7 +64,7 @@
   "dependencies": {
     "@babel/core": "^7.18.10",
     "@babel/runtime": "^7.18.9",
-    "@gooddollar/goodprotocol": "1.0.30-beta.3",
+    "@gooddollar/goodprotocol": "^2.0.1",
     "@lingui/macro": "^3.14.0",
     "@lingui/react": "^3.14.0",
     "@types/moment-duration-format": "^2.2.3",

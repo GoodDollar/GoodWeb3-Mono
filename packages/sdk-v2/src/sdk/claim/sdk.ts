@@ -43,17 +43,22 @@ export class ClaimSDK extends BaseSDK {
       return fvSig;
     };
 
-    const getLink = (firstName: string, callbackUrl?: string, popupMode = false, chainId: number | undefined = defaultChainId) => {
+    const getLink = (
+      firstName: string,
+      callbackUrl?: string,
+      popupMode = false,
+      chainId: number | undefined = defaultChainId
+    ) => {
       if (!fvSig) {
         throw new Error("missing login or identifier signature");
       }
-      
+
       if (popupMode === false && !callbackUrl) {
         throw new Error("redirect url is missing for redirect mode");
       }
-      
+
       const url = new URL(identityUrl);
-      const { searchParams } = url
+      const { searchParams } = url;
 
       const params = {
         account,
@@ -66,10 +71,10 @@ export class ClaimSDK extends BaseSDK {
 
       forIn(params, (value, param) => {
         if (!value) {
-          return
+          return;
         }
-        
-        searchParams.append(param, String(value))
+
+        searchParams.append(param, String(value));
       });
 
       if (callbackUrl) {

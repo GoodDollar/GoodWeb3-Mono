@@ -35,8 +35,8 @@ export const Web3ActionButton = {
       innerText: {
         variant: "shadowed",
         fontFamily: "body",
-        fontSize: "l",
-        width: 144,
+        fontSize: "md",
+        width: 175,
         lineHeight: 26.4
       }
     }),
