@@ -145,21 +145,22 @@ const ClaimButton = ({
     async (first = false) => {
       setFirstClaim(first);
       showActionModal();
+
       if (isWhitelisted) {
         setClaimLoading(true);
         await handleClaim(first);
-      } else if (fuseWhitelisted && syncStatus) {
+        return;
+      }
+
+      if (fuseWhitelisted && syncStatus) {
         const success = await syncStatus;
-        if (success) {
-          setClaimLoading(true);
-          await handleClaim(true);
-        } else {
-          //// what to do here? tjis should not continue with FV Flow
+
+        if (!success) {
+          return;
         }
-      } else {
-        // here nothing happens, FV flow starts
-        // what to do with an edge case where fuseWhitelisted or syncStatus might not be set or
-        // give a value in time before user interaction is done
+
+        setClaimLoading(true);
+        await handleClaim(true);
       }
     },
     [claim, hideActionModal, showFirstClaimModal, isWhitelisted, fuseWhitelisted, syncStatus]
@@ -184,7 +185,7 @@ const ClaimButton = ({
 
     const amount = G$Amount("G$", claimAmount, chainId ?? defaultChainId, defaultEnv);
 
-    return "CLAIM NOW " + amount.format({useFixedPrecision: true, significantDigits: 2});
+    return "CLAIM NOW " + amount.format({ useFixedPrecision: true, significantDigits: 2 });
   }, [isWhitelisted, account, chainId, claimAmount]);
 
   if (isWhitelisted && claimed) {

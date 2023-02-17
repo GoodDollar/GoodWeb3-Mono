@@ -46,7 +46,7 @@ export type EnvValue = any;
 
 export class BaseSDK {
   provider: providers.JsonRpcProvider;
-  env: typeof Envs[EnvKey];
+  env: (typeof Envs)[EnvKey];
   contracts: EnvValue;
   signer: Signer | void = undefined;
   constructor(provider: providers.JsonRpcProvider, contractsEnv: EnvKey = "production") {
@@ -76,13 +76,11 @@ export class BaseSDK {
       signer
         .getAddress()
         .then(async () => void (this.signer = signer))
-        .catch(() => {
-          // todo @l03tj3: revert back
-          // console.warn("BaseSDK: provider has no signer", { signer, provider, e });
+        .catch(e => {
+          console.warn("BaseSDK: provider has no signer", { signer, provider, e });
         });
     } catch (e) {
-      // todo @l03tj3: revert back
-      // console.warn("BaseSDK: provider has no signer", { provider, e });
+      console.warn("BaseSDK: provider has no signer", { provider, e });
     }
   }
 

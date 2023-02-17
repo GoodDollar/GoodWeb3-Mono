@@ -9,7 +9,7 @@ export interface FVFlowProps {
   styles?: any;
   claimed?: boolean;
   refresh?: "everyBlock" | "never" | number | undefined;
-  handleConnect?: () => Promise<any> | void;
+  handleConnect?: () => Promise<boolean>;
 }
 
 export type FVModalProps = IModalProps & FVFlowProps;
