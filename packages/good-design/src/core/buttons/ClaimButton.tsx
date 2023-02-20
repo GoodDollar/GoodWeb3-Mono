@@ -48,7 +48,7 @@ const ClaimButton = ({
   const { fuseWhitelisted, syncStatus } = useWhitelistSync();
 
   useEffect(() => {
-    switch (chainId ?? defaultChainId) {
+    switch (defaultChainId) {
       case 122:
         setRequiredChain(account ? SupportedChains.FUSE : SupportedChains.CELO);
         break;

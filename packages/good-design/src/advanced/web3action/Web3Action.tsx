@@ -116,7 +116,7 @@ export const Web3ActionButton: FC<Web3ActionProps> = withTheme({ name: "Web3Acti
       if (runningFlow) {
         continueSteps().catch(finishFlow);
       }
-    }, [runningFlow, account, chainId]);
+    }, [runningFlow, account, chainId, requiredChain]);
 
     return (
       <BaseButton text={actionText ? "" : text} onPress={startFlow} {...buttonProps}>
