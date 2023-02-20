@@ -87,6 +87,39 @@ export const useClaim = (refresh: QueryParams["refresh"] = "never") => {
   };
 };
 
+export const useHasClaimed = () => {
+  const { account } = useEthers();
+  const ubiFuse = useGetContract("UBIScheme", true, "claim", SupportedChains.FUSE) as UBIScheme;
+  const ubiCelo = useGetContract("UBIScheme", true, "claim", SupportedChains.CELO) as UBIScheme;
+
+  const [claimedFuse] = useCalls(
+    [
+      {
+        contract: ubiFuse,
+        method: "checkEntitlement(address)",
+        args: [account]
+      }
+    ],
+    { refresh: "never", chainId: SupportedChains.FUSE as unknown as ChainId }
+  );
+
+  const [claimedCelo] = useCalls(
+    [
+      {
+        contract: ubiCelo,
+        method: "checkEntitlement(address)",
+        args: [account]
+      }
+    ],
+    { refresh: "never", chainId: SupportedChains.CELO as unknown as ChainId }
+  );
+
+  return {
+    claimedFuse: first(claimedFuse?.value) as boolean,
+    claimedCelo: first(claimedCelo?.value) as boolean
+  };
+};
+
 // if user is verified on fuse and not on current network then send backend request to whitelist
 export const useWhitelistSync = () => {
   const [syncStatus, setSyncStatus] = useState<Promise<boolean> | undefined>();
