@@ -56,12 +56,22 @@ const injected = injectedModule({
   }
 });
 
+interface WcInitOptions {
+  projectId: string;
+  version: 2;
+}
+const wcInitOptions: WcInitOptions = {
+  projectId: "095eb531a0c00781cb45644be58b065e",
+  version: 2
+};
+
 const defaultWc = walletConnectModule({
   bridge: "https://bridge.walletconnect.org",
   qrcodeModalOptions: {
     mobileLinks: ["rainbow", "metamask", "argent", "trust", "imtoken", "pillar"]
   },
-  connectFirstChainId: true
+  connectFirstChainId: true,
+  ...wcInitOptions
 });
 
 const coinbaseWalletSdk = coinbaseWalletModule();
@@ -72,13 +82,15 @@ const zenGoWc = customWcModule({
     desktopLinks: ["zengo", "metamask"],
     mobileLinks: ["metamask", "zengo"] // TODO: has to be tested on IOS, android does not show list
   },
-  connectFirstChainId: true
+  connectFirstChainId: true,
+  ...wcInitOptions
 });
 
 const gdWc = customWcModule({
   customLabelFor: "gooddollar",
   bridge: "https://bridge.walletconnect.org",
-  connectFirstChainId: true
+  connectFirstChainId: true,
+  ...wcInitOptions
 });
 
 const torus = torusModule({
