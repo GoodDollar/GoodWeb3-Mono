@@ -3419,7 +3419,7 @@ __metadata:
     "@types/node": 18.0.0
     "@types/react": 17.0.2
     "@types/react-native": 0.70.4
-    "@usedapp/core": 1.*
+    "@usedapp/core": 1.2.2
     "@walletconnect/client": ^1.8.0
     "@walletconnect/qrcode-modal": ^1.8.0
     "@web3-onboard/coinbase": ^2.2.0
@@ -9568,7 +9568,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@usedapp/core@npm:1.*":
+"@usedapp/core@npm:1.*, @usedapp/core@npm:1.2.2":
   version: 1.2.2
   resolution: "@usedapp/core@npm:1.2.2"
   dependencies:
