@@ -4,7 +4,7 @@ import TokenBridgeABI from "@gooddollar/bridge-contracts/artifacts/contracts/bri
 import bridgeContracts from "@gooddollar/bridge-contracts/release/deployment.json";
 import { TokenBridge } from "@gooddollar/bridge-contracts/typechain-types";
 import { IGoodDollar } from "@gooddollar/goodprotocol/types";
-import { TransactionStatus, useCalls, useContractFunction, useEthers, useLogs } from "@usedapp/core";
+import { TransactionStatus, useCalls, useEthers, useLogs } from "@usedapp/core";
 import { BigNumber, Contract, ethers } from "ethers";
 import { first, groupBy, mapValues } from "lodash";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -12,6 +12,7 @@ import { useSwitchNetwork } from "../../contexts";
 import useRefreshOrNever from "../../hooks/useRefreshOrNever";
 import { useGetContract, useGetEnvChainId } from "../base/react";
 import { SupportedChains } from "../constants";
+import { useContractFunctionWithDefaultGasFees } from "../base/hooks/useGasFees";
 
 export const useGetBridgeContracts = () => {
   const { baseEnv } = useGetEnvChainId();
@@ -107,7 +108,7 @@ export const useBridge = (withRelay = false) => {
   const [selfRelayStatus, setSelfRelay] = useState<Partial<TransactionStatus> | undefined>();
 
   // const bridgeTo = useContractFunction(bridgeContract, "bridgeTo", {});
-  const transferAndCall = useContractFunction(g$Contract, "transferAndCall", {});
+  const transferAndCall = useContractFunctionWithDefaultGasFees(g$Contract, "transferAndCall", {});
   const bridgeRequestId = (transferAndCall.state?.receipt?.logs || [])
     .filter(log => log.address === bridgeContract.address)
     .map(log => bridgeContract.interface.parseLog(log))?.[0]?.args?.id;
@@ -148,9 +149,9 @@ export const useBridge = (withRelay = false) => {
         if (sourceChainId !== chainId) {
           await switchNetwork(sourceChainId);
         }
-        
+
         setBridgeRequest({ amount, sourceChainId, targetChainId, target });
-      })().catch(noop)      
+      })().catch(noop);
     },
     [transferAndCall, switchNetwork, setBridgeRequest, chainId]
   );
@@ -164,7 +165,7 @@ export const useBridge = (withRelay = false) => {
         ["uint256", "address"],
         [bridgeRequest.targetChainId, bridgeRequest.target || account]
       );
-      
+
       transferAndCall
         .send(bridgeContract.address, bridgeRequest.amount, encoded)
         .then(async sendTx => {
@@ -243,14 +244,14 @@ export const useRelayTx = () => {
             await switchNetwork(targetChain);
           }
           const targetBalance = await signer.getBalance();
-          
+
           if (targetBalance.lt(ethers.utils.parseEther("0.01"))) {
             throw new Error(`not enough balance for self relay: ${targetBalance.toNumber() / 1e18}`);
           }
-          
+
           // todo-fix: library connected to different signer, signer is connected wallet here
           relayResult = await sdk.relayTx(sourceChain, targetChain, txHash, signer);
-          
+
           return relayResult;
         } catch (e: any) {
           // console.log("useRelayTX:", { error: e });
