@@ -87,36 +87,23 @@ export const useClaim = (refresh: QueryParams["refresh"] = "never") => {
   };
 };
 
-export const useHasClaimed = () => {
+export const useHasClaimed = (requiredNetwork: keyof typeof SupportedChains) => {
   const { account } = useEthers();
-  const ubiFuse = useGetContract("UBIScheme", true, "claim", SupportedChains.FUSE) as UBIScheme;
-  const ubiCelo = useGetContract("UBIScheme", true, "claim", SupportedChains.CELO) as UBIScheme;
+  const ubi = useGetContract("UBIScheme", true, "claim", SupportedChains[requiredNetwork]) as UBIScheme;
 
-  const [claimedFuse] = useCalls(
+  const [hasClaimed] = useCalls(
     [
       {
-        contract: ubiFuse,
+        contract: ubi,
         method: "checkEntitlement(address)",
         args: [account]
       }
     ],
-    { refresh: "never", chainId: SupportedChains.FUSE as unknown as ChainId }
-  );
-
-  const [claimedCelo] = useCalls(
-    [
-      {
-        contract: ubiCelo,
-        method: "checkEntitlement(address)",
-        args: [account]
-      }
-    ],
-    { refresh: "never", chainId: SupportedChains.CELO as unknown as ChainId }
+    { refresh: "never", chainId: SupportedChains[requiredNetwork] as unknown as ChainId }
   );
 
   return {
-    claimedFuse: first(claimedFuse?.value) as boolean,
-    claimedCelo: first(claimedCelo?.value) as boolean
+    claimedFuse: first(hasClaimed?.value) as boolean
   };
 };
 
