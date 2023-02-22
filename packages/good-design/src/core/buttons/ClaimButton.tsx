@@ -12,7 +12,7 @@ import { FVFlowProps } from "./types";
 import { Image } from "../images";
 import ClaimImage from "../../assets/images/claim.png";
 import { BasicModalProps } from "../modals/BasicModal";
-import { noop } from "lodash";
+import { noop, isNil } from "lodash";
 import { useEthers } from "@usedapp/core";
 
 const ClaimButton = ({
@@ -134,6 +134,17 @@ const ClaimButton = ({
       setFirstClaim(first);
       showActionModal();
 
+      // if handleModalOpen is triggered, and isWhitelisted is undefined
+      // it means a wallet used the claim button to connect and the blockchain data has not been fetched yet
+      // so
+      // 1. we should retry after x seconds by running a seperate useEffect and a awaitingWhitelist state variable
+      // 2. isWhitelisted should be returned as Promise<boolean> to be awaited on
+
+      if (isNil(isWhitelisted)) {
+        // should recheck is whitelist, as it will be defined after some seconds
+        hideActionModal();
+      }
+
       if (isWhitelisted) {
         setClaimLoading(true);
         await handleClaim(first);
@@ -151,7 +162,7 @@ const ClaimButton = ({
         await handleClaim(true);
       }
     },
-    [claim, hideActionModal, showFirstClaimModal, isWhitelisted, fuseWhitelisted, syncStatus]
+    [claim, hideActionModal, showFirstClaimModal, isWhitelisted, fuseWhitelisted, syncStatus, account]
   );
 
   useEffect(() => {

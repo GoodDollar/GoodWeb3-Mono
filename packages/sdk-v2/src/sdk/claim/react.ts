@@ -67,7 +67,7 @@ export const useClaim = (refresh: QueryParams["refresh"] = "never") => {
           method: "checkEntitlement(address)",
           args: [account]
         }
-    ].filter(_ => _),
+    ],
     { refresh: refreshOrNever, chainId }
   );
 
