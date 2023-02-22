@@ -44,19 +44,7 @@ const ClaimButton = ({
   const isVerified = useQueryParam("verified", true);
   const textColor = useColorModeValue("goodGrey.500", "white");
   const { chainId: defaultChainId, defaultEnv } = useGetEnvChainId();
-  const [requiredChain, setRequiredChain] = useState(SupportedChains.CELO);
   const { fuseWhitelisted, syncStatus } = useWhitelistSync();
-
-  useEffect(() => {
-    switch (defaultChainId) {
-      case 122:
-        setRequiredChain(account ? SupportedChains.FUSE : SupportedChains.CELO);
-        break;
-      default:
-        setRequiredChain(SupportedChains.CELO);
-        break;
-    }
-  }, [chainId, defaultChainId, account]);
 
   // TODO:  replace placeholder loader with styled loader
   const actionModalBody = useMemo(
@@ -213,7 +201,7 @@ const ClaimButton = ({
           web3Action={handleModalOpen}
           disabled={claimed}
           variant="round"
-          requiredChain={requiredChain}
+          ntp_supportedChains={[SupportedChains.CELO, SupportedChains.FUSE]}
           handleConnect={handleConnect}
         />
         <Text variant="shadowed" fontSize="md" />

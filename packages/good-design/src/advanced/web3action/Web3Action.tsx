@@ -8,7 +8,8 @@ export interface Web3ActionProps extends Omit<BaseButtonProps, "onPress"> {
   /**
    * a text to be rendered in the component.
    */
-  requiredChain: number;
+  /** list of supported chains, first in list will be used as default */
+  ntp_supportedChains: number[];
   innerIndicatorText?: ITextProps;
   web3Action: () => Promise<void> | void;
   switchChain?: (requiredChain: number) => Promise<any>;
@@ -46,7 +47,15 @@ const StepIndicator: FC<{ text?: string } & ITextProps> = withTheme({ name: "Ste
 );
 
 export const Web3ActionButton: FC<Web3ActionProps> = withTheme({ name: "Web3ActionButton" })(
-  ({ text, requiredChain, switchChain, web3Action, handleConnect, innerIndicatorText, ...buttonProps }) => {
+  ({
+    text,
+    ntp_supportedChains: supportedChains,
+    switchChain,
+    web3Action,
+    handleConnect,
+    innerIndicatorText,
+    ...buttonProps
+  }) => {
     const { account, switchNetwork, chainId, activateBrowserWallet } = useEthers();
     const [runningFlow, setRunningFlow] = useState(false);
     const [actionText, setActionText] = useState("");
@@ -102,9 +111,9 @@ export const Web3ActionButton: FC<Web3ActionProps> = withTheme({ name: "Web3Acti
           return;
         }
 
-        if (requiredChain !== chainId) {
+        if (!supportedChains.includes(chainId ?? 0)) {
           setActionText(ButtonSteps.switch);
-          await switchToChain(requiredChain);
+          await switchToChain(supportedChains[0]);
           return;
         }
 
@@ -116,7 +125,7 @@ export const Web3ActionButton: FC<Web3ActionProps> = withTheme({ name: "Web3Acti
       if (runningFlow) {
         continueSteps().catch(finishFlow);
       }
-    }, [runningFlow, account, chainId, requiredChain]);
+    }, [runningFlow, account, chainId, supportedChains]);
 
     return (
       <BaseButton text={actionText ? "" : text} onPress={startFlow} {...buttonProps}>
