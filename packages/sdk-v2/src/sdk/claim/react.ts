@@ -12,7 +12,7 @@ import { ClaimSDK } from "./sdk";
 
 import useRefreshOrNever from "../../hooks/useRefreshOrNever";
 import { useGetContract, useGetEnvChainId, useReadOnlySDK, useSDK } from "../base/react";
-import { Envs, SupportedChains } from "../constants";
+import { Envs, SupportedChains, SupportedV2Networks } from "../constants";
 import { noop } from "lodash";
 
 export const useFVLink = (chainId?: number) => {
@@ -87,9 +87,9 @@ export const useClaim = (refresh: QueryParams["refresh"] = "never") => {
   };
 };
 
-export const useHasClaimed = (requiredNetwork: keyof typeof SupportedChains) => {
+export const useHasClaimed = (requiredNetwork: keyof typeof SupportedV2Networks) => {
   const { account } = useEthers();
-  const ubi = useGetContract("UBIScheme", true, "claim", SupportedChains[requiredNetwork]) as UBIScheme;
+  const ubi = useGetContract("UBIScheme", true, "claim", SupportedV2Networks[requiredNetwork]) as UBIScheme;
 
   const [hasClaimed] = useCalls(
     [
@@ -99,7 +99,7 @@ export const useHasClaimed = (requiredNetwork: keyof typeof SupportedChains) => 
         args: [account]
       }
     ],
-    { refresh: "never", chainId: SupportedChains[requiredNetwork] as unknown as ChainId }
+    { refresh: "never", chainId: SupportedV2Networks[requiredNetwork] as unknown as ChainId }
   );
 
   return {
