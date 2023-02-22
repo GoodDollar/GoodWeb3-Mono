@@ -103,7 +103,7 @@ export const useHasClaimed = (requiredNetwork: keyof typeof SupportedV2Networks)
   );
 
   return {
-    claimedFuse: first(hasClaimed?.value) as boolean
+    hasClaimed: first(hasClaimed?.value) as boolean
   };
 };
 
