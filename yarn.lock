@@ -3315,8 +3315,8 @@ __metadata:
   linkType: hard
 
 "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2::locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design":
-  version: 0.1.69-beta.57fb259
-  resolution: "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2#.yalc/@gooddollar/web3sdk-v2::hash=dde385&locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design"
+  version: 0.1.71
+  resolution: "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2#.yalc/@gooddollar/web3sdk-v2::hash=c940f8&locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design"
   dependencies:
     "@amplitude/analytics-browser": ^1.6.4
     "@amplitude/analytics-react-native": ^0.7.0
@@ -3346,7 +3346,7 @@ __metadata:
     react: "*"
     react-native: "*"
     react-native-web: "*"
-  checksum: c98d10e00ae24014c51bf48111356375644f114a448dc004bdd1e722981766568c1e543b394c8cab7c7fe2e62effdcabdc812f0403d0eeadbc47023e90ad4f98
+  checksum: eeb7aad224b5b2c099ace2d37493530772a1d40e5beb99fd5409d66440ee9747a26c6b586b76af8c680fc4125e9c90a8d988ad4f92ed2fdd2022935415e28972
   languageName: node
   linkType: hard
 
