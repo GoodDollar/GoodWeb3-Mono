@@ -129,21 +129,34 @@ const ClaimButton = ({
     }
   };
 
+  // handles a delay in fetching isWhitelisted after just being connected
+  useEffect(() => {
+    claimLoading && isWhitelisted && handleModalOpen().catch(noop);
+  }, [isWhitelisted]);
+
+  // trigger claim when user succesfully has verified through FV
+  // uses the first claimer flow
+  useEffect(() => {
+    const doClaim = async () => {
+      if (isVerified && account) {
+        showActionModal();
+        setClaimLoading(true);
+        await handleClaim(true);
+      }
+    };
+
+    doClaim().catch(noop);
+  }, [isVerified, account]);
+
   const handleModalOpen = useCallback(
     async (first = false) => {
+      if (isNil(isWhitelisted)) {
+        setClaimLoading(true);
+        return;
+      }
+
       setFirstClaim(first);
       showActionModal();
-
-      // if handleModalOpen is triggered, and isWhitelisted is undefined
-      // it means a wallet used the claim button to connect and the blockchain data has not been fetched yet
-      // so
-      // 1. we should retry after x seconds by running a seperate useEffect and a awaitingWhitelist state variable
-      // 2. isWhitelisted should be returned as Promise<boolean> to be awaited on
-
-      if (isNil(isWhitelisted)) {
-        // should recheck is whitelist, as it will be defined after some seconds
-        hideActionModal();
-      }
 
       if (isWhitelisted) {
         setClaimLoading(true);
@@ -161,21 +174,11 @@ const ClaimButton = ({
         setClaimLoading(true);
         await handleClaim(true);
       }
+
+      setClaimLoading(false);
     },
     [claim, hideActionModal, showFirstClaimModal, isWhitelisted, fuseWhitelisted, syncStatus, account]
   );
-
-  useEffect(() => {
-    const doClaim = async () => {
-      if (isVerified && account) {
-        showActionModal();
-        setClaimLoading(true);
-        await handleClaim(true);
-      }
-    };
-
-    doClaim().catch(noop);
-  }, [isVerified, account]);
 
   const buttonTitle = useMemo(() => {
     if (!isWhitelisted || !claimAmount) {
