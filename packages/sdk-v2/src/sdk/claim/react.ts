@@ -12,7 +12,7 @@ import { ClaimSDK } from "./sdk";
 
 import useRefreshOrNever from "../../hooks/useRefreshOrNever";
 import { useGetContract, useGetEnvChainId, useReadOnlySDK, useSDK } from "../base/react";
-import { Envs, SupportedChains } from "../constants";
+import { Envs, SupportedChains, SupportedV2Networks } from "../constants";
 import { noop } from "lodash";
 
 export const useFVLink = (chainId?: number) => {
@@ -85,6 +85,24 @@ export const useClaim = (refresh: QueryParams["refresh"] = "never") => {
     claimTime: startRef,
     claimCall
   };
+};
+
+export const useHasClaimed = (requiredNetwork: keyof typeof SupportedV2Networks): boolean => {
+  const { account } = useEthers();
+  const ubi = useGetContract("UBIScheme", true, "claim", SupportedV2Networks[requiredNetwork]) as UBIScheme;
+
+  const [hasClaimed] = useCalls(
+    [
+      {
+        contract: ubi,
+        method: "checkEntitlement(address)",
+        args: [account]
+      }
+    ],
+    { refresh: "never", chainId: SupportedV2Networks[requiredNetwork] as unknown as ChainId }
+  );
+
+  return first(hasClaimed?.value) as boolean;
 };
 
 // if user is verified on fuse and not on current network then send backend request to whitelist
