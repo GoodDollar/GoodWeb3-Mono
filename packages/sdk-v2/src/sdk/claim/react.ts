@@ -87,7 +87,7 @@ export const useClaim = (refresh: QueryParams["refresh"] = "never") => {
   };
 };
 
-export const useHasClaimed = (requiredNetwork: keyof typeof SupportedV2Networks) => {
+export const useHasClaimed = (requiredNetwork: keyof typeof SupportedV2Networks): boolean => {
   const { account } = useEthers();
   const ubi = useGetContract("UBIScheme", true, "claim", SupportedV2Networks[requiredNetwork]) as UBIScheme;
 
@@ -102,9 +102,7 @@ export const useHasClaimed = (requiredNetwork: keyof typeof SupportedV2Networks)
     { refresh: "never", chainId: SupportedV2Networks[requiredNetwork] as unknown as ChainId }
   );
 
-  return {
-    hasClaimed: first(hasClaimed?.value) as boolean
-  };
+  return first(hasClaimed?.value) as boolean;
 };
 
 // if user is verified on fuse and not on current network then send backend request to whitelist
