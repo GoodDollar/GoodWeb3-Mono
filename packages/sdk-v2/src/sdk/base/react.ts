@@ -167,7 +167,7 @@ export function useG$Formatted(
   const { chainId } = useGetEnvChainId(requiredChainId);
   const decimals = useContext(TokenContext);
 
-  return value ? G$Amount(token, value, chainId, decimals).format(formatOptions) : "0";
+  return G$Amount(token, value || BigNumber.from("0"), chainId, decimals).format(formatOptions);
 }
 
 export function useG$Decimals(token: G$Token = "G$", requiredChainId?: number): number {

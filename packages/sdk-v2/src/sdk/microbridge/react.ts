@@ -328,9 +328,20 @@ export const useBridgeHistory = () => {
 
   const celoExecuted = groupBy(celoIn?.value || [], _ => _.data.id);
   const fuseExecuted = groupBy(fuseIn?.value || [], _ => _.data.id);
-  fuseOut?.value?.forEach(e => (e["relayEvent"] = first(celoExecuted[e.data.id])));
-  celoOut?.value?.forEach(e => (e["relayEvent"] = first(fuseExecuted[e.data.id])));
-  celoOut?.value?.forEach(e => (e["amount"] = formatAmount(e.data.amount, 18))); //amount is normalized to 18 decimals in the bridge
-  fuseOut?.value?.forEach(e => (e["amount"] = formatAmount(e.data.amount, 18))); //amount is normalized to 18 decimals in the bridge
-  return { fuseHistory: fuseOut, celoHistory: celoOut };
+  const fuseHistory = fuseOut?.value?.map(e => {
+    type BridgeEvent = typeof e & { relayEvent: any; amount: string };
+    const extended = e as BridgeEvent;
+    extended.relayEvent = first(celoExecuted[e.data.id]);
+    extended.amount = formatAmount(e.data.amount, 18); //amount is normalized to 18 decimals in the bridge
+    return extended;
+  });
+  const celoHistory = celoOut?.value?.map(e => {
+    type BridgeEvent = typeof e & { relayEvent: any; amount: string };
+    const extended = e as BridgeEvent;
+    extended.relayEvent = first(fuseExecuted[e.data.id]);
+    extended.amount = formatAmount(e.data.amount, 18); //amount is normalized to 18 decimals in the bridge
+    return extended;
+  });
+
+  return { fuseHistory, celoHistory };
 };

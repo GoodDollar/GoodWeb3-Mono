@@ -43,7 +43,7 @@ const ClaimButton = ({
   const [firstClaim, setFirstClaim] = useState(false);
   const isVerified = useQueryParam("verified", true);
   const textColor = useColorModeValue("goodGrey.500", "white");
-  const { chainId: defaultChainId, defaultEnv } = useGetEnvChainId();
+  const { chainId: defaultChainId } = useGetEnvChainId();
   const [requiredChain, setRequiredChain] = useState(SupportedChains.CELO);
   const { fuseWhitelisted, syncStatus } = useWhitelistSync();
 
@@ -183,9 +183,9 @@ const ClaimButton = ({
       return "CLAIM NOW";
     }
 
-    const amount = G$Amount("G$", claimAmount, chainId ?? defaultChainId, defaultEnv);
+    const amount = G$Amount("G$", claimAmount, chainId ?? defaultChainId);
 
-    return "CLAIM NOW " + amount.format({ useFixedPrecision: true, significantDigits: 2 });
+    return "CLAIM NOW " + amount.format({ fixedPrecisionDigits: 2, useFixedPrecision: true, significantDigits: 2 });
   }, [isWhitelisted, account, chainId, claimAmount]);
 
   if (isWhitelisted && claimed) {
