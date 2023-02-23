@@ -1,12 +1,13 @@
 import React from "react";
 import { useThemeProps } from "native-base";
-import { pickBy, startsWith } from "lodash";
+import { pickBy, isArray } from "lodash";
 
 export const withTheme =
-  (options?: { name?: string }) =>
+  (options?: { name?: string; forceProps?: string[] }) =>
   <T,>(Component: React.ComponentType<T>) => {
     const { name: defaultName } = Component;
     const id = options?.name ?? defaultName;
+    const forcedPropsKeys = options?.forceProps ?? [];
 
     if (!id) {
       throw new Error(
@@ -18,12 +19,12 @@ export const withTheme =
 
     const Wrapped: React.ComponentType<T> = ({ children, ...props }) => {
       // useThemeProps expects themed props,
-      // and array props are considered ?breakpoint values? or ?darkMode? values,
+      // and array props are considered ie. breakpoint values or colormode values,
       // so it only returns a single value from any arrayed prop
       // to prevent component specific props from losing its context,
-      // we split the props based on ntp_ prefix (ntp = no_theme_prop)
-      const themedProps = pickBy(props, (value, key) => !startsWith(key, "ntp_"));
-      const componentProps = pickBy(props, (value, key) => startsWith(key, "ntp_"));
+      // we split the arrayed props based on a list of given keys
+      const componentProps = pickBy(props, (value, key) => isArray(value) && forcedPropsKeys.includes(key));
+      const themedProps = pickBy(props, (value, key) => !isArray(value) || !(key in componentProps));
 
       const themeProps = useThemeProps(id, themedProps);
       // @ts-ignore
