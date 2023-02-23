@@ -212,7 +212,7 @@ const ClaimButton = ({
           web3Action={handleModalOpen}
           disabled={claimed}
           variant="round"
-          ntp_supportedChains={[SupportedChains.CELO, SupportedChains.FUSE]}
+          supportedChains={[SupportedChains.CELO, SupportedChains.FUSE]}
           handleConnect={handleConnect}
         />
         <Text variant="shadowed" fontSize="md" />
