@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { View, Button, Modal, Text, StyleSheet, Linking, Platform, ModalProps } from "react-native";
 import { W3Wrapper } from "../W3Wrapper";
 import { ComponentStory, ComponentMeta } from "@storybook/react";
-import { ethers } from "ethers";
+import { BigNumber, ethers } from "ethers";
 import { first, noop } from "lodash";
 import { ClaimSDK } from "../../sdk/claim/sdk";
 
@@ -81,7 +81,11 @@ const styles = StyleSheet.create({
 });
 
 const ClaimButton = ({ firstName }: PageProps) => {
-  const [claimStatus, setClaimStatus] = useState({ isWhitelisted: false, claimAmount: 0, claimTime: new Date(0) });
+  const [claimStatus, setClaimStatus] = useState({
+    isWhitelisted: false,
+    claimAmount: BigNumber.from("0"),
+    claimTime: new Date(0)
+  });
   const [isCheckTimer, setCheckTimer] = useState(false);
   const sdk = useMemo(() => new ClaimSDK(new ethers.providers.Web3Provider((window as any).ethereum), "fuse"), []); //fuse=dev env contracts
   const init = async () => {
@@ -99,7 +103,7 @@ const ClaimButton = ({ firstName }: PageProps) => {
     ]);
 
     // console.log("init result:", { address, isWhitelisted, claimValue, claimTime });
-    setClaimStatus({ isWhitelisted, claimAmount: claimValue.toNumber(), claimTime });
+    setClaimStatus({ isWhitelisted, claimAmount: claimValue, claimTime });
     if (isWhitelisted) setCheckTimer(false);
   };
 
@@ -120,7 +124,7 @@ const ClaimButton = ({ firstName }: PageProps) => {
 
   const handleClaim = async () => {
     if (isWhitelisted) {
-      if (claimAmount > 0) {
+      if (claimAmount.gt(0)) {
         await sdk.claim();
         init(); //force reading claim status again
       }
@@ -130,7 +134,7 @@ const ClaimButton = ({ firstName }: PageProps) => {
   };
   const buttonTitle = () => {
     if (isWhitelisted) {
-      if (claimAmount > 0) return `Claim ${claimAmount}`;
+      if (claimAmount.gt(0)) return `Claim ${claimAmount}`;
       else return `Claim at: ${claimTime}`;
     } else return "Verify Uniqueness";
   };

@@ -1,5 +1,5 @@
 import { EnvKey } from "./base/sdk";
-import { CurrencyValue, Token } from "@usedapp/core";
+import { Currency, CurrencyValue } from "@usedapp/core";
 import contractsAddresses from "@gooddollar/goodprotocol/releases/deployment.json";
 import { BigNumber } from "ethers";
 
@@ -82,47 +82,70 @@ export const G$TokenContracts = {
   },
   GOOD: {
     contract: "GReputation",
-    name: "GDAO",
+    name: "GOOD",
     ticker: "GOOD"
   },
   GDX: {
     contract: "GoodReserveCDai",
-    name: "GoodDollar X",
+    name: "G$X",
     ticker: "GDX"
   }
 };
 
-export function G$Token(tokenName: G$Token, chainId: number, env: string, decimalsMap: G$DecimalsMap = G$Decimals) {
-  const { contract, name, ticker } = G$TokenContracts[tokenName];
+const CURRENCIES_CASH = {};
+export function G$Token(tokenName: G$Token, chainId: number, decimalsMap: G$DecimalsMap = G$Decimals) {
+  const { name, ticker } = G$TokenContracts[tokenName];
 
-  let tokenEnv: string = env;
   let tokenChain: number = chainId;
 
   switch (tokenName) {
     case "GDX":
-      tokenEnv = "production-mainnet"; // only hardcoded because of missing dev contracts (deprecated ropsten/kovan)
+      // only hardcoded because of missing dev contracts (deprecated ropsten/kovan)
       tokenChain = SupportedChains.MAINNET;
       break;
     default:
       break;
   }
 
-  const decimals = decimalsMap[tokenName][chainId];
-  const address = G$ContractAddresses(contract, tokenEnv) as string;
-
-  return new Token(name, ticker, tokenChain, address, decimals, { significantDigits: decimals });
+  const decimals = decimalsMap[tokenName][tokenChain];
+  const key = tokenName + "_" + chainId + "_" + decimals;
+  CURRENCIES_CASH[key] =
+    CURRENCIES_CASH[key] ||
+    new Currency(name, ticker, decimals, {
+      significantDigits: decimals,
+      useFixedPrecision: true,
+      fixedPrecisionDigits: 2
+    });
+  return CURRENCIES_CASH[key];
 }
 
 export function G$Amount(
   tokenName: G$Token,
   value: BigNumber,
   chainId: number,
-  env: string,
   decimalsMap: G$DecimalsMap = G$Decimals
 ) {
-  const token = G$Token(tokenName, chainId, env, decimalsMap);
+  const token = G$Token(tokenName, chainId, decimalsMap);
 
   return new CurrencyValue(token, value);
+}
+
+// display amount with X decimals
+export function formatAmount(
+  value: BigNumber,
+  tokenDecimals: number,
+  displayDecimals = 2,
+  currencyFormatOptions?: any,
+  tokenName = "GoodDollar",
+  tokenSymbol = "G$"
+) {
+  const c = new Currency(tokenName, tokenSymbol, tokenDecimals, {
+    useFixedPrecision: true,
+    fixedPrecisionDigits: displayDecimals,
+    thousandSeparator: "",
+    ...currencyFormatOptions
+  });
+  return new CurrencyValue(c, value).format();
 }
 
 export function G$ContractAddresses<T = ObjectLike>(name: string, env: EnvKey): T {

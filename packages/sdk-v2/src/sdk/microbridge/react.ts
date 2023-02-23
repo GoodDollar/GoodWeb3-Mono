@@ -11,7 +11,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useSwitchNetwork } from "../../contexts";
 import useRefreshOrNever from "../../hooks/useRefreshOrNever";
 import { useGetContract, useGetEnvChainId } from "../base/react";
-import { SupportedChains } from "../constants";
+import { SupportedChains, formatAmount } from "../constants";
 import { useContractFunctionWithDefaultGasFees } from "../base/hooks/useGasFees";
 
 export const useGetBridgeContracts = () => {
@@ -108,7 +108,7 @@ export const useBridge = (withRelay = false) => {
   const [selfRelayStatus, setSelfRelay] = useState<Partial<TransactionStatus> | undefined>();
 
   // const bridgeTo = useContractFunction(bridgeContract, "bridgeTo", {});
-  const transferAndCall = useContractFunctionWithDefaultGasFees(g$Contract, "transferAndCall", {});
+  const transferAndCall = useContractFunctionWithDefaultGasFees(g$Contract, "transferAndCall");
   const bridgeRequestId = (transferAndCall.state?.receipt?.logs || [])
     .filter(log => log.address === bridgeContract.address)
     .map(log => bridgeContract.interface.parseLog(log))?.[0]?.args?.id;
@@ -159,11 +159,12 @@ export const useBridge = (withRelay = false) => {
   // trigger the actual bridge request
   useEffect(() => {
     if (transferAndCall.state.status === "None" && bridgeRequest && account && !lock.current) {
+      const withoutRelay = false;
       lock.current = true;
       // we use transfer and call to save the approve step
       const encoded = ethers.utils.defaultAbiCoder.encode(
-        ["uint256", "address"],
-        [bridgeRequest.targetChainId, bridgeRequest.target || account]
+        ["uint256", "address", "bool"],
+        [bridgeRequest.targetChainId, bridgeRequest.target || account, withoutRelay]
       );
 
       transferAndCall
@@ -246,7 +247,7 @@ export const useRelayTx = () => {
           const targetBalance = await signer.getBalance();
 
           if (targetBalance.lt(ethers.utils.parseEther("0.01"))) {
-            throw new Error(`not enough balance for self relay: ${targetBalance.toNumber() / 1e18}`);
+            throw new Error(`not enough balance for self relay: ${formatAmount(targetBalance, 18, 18)}`);
           }
 
           // todo-fix: library connected to different signer, signer is connected wallet here
@@ -329,5 +330,7 @@ export const useBridgeHistory = () => {
   const fuseExecuted = groupBy(fuseIn?.value || [], _ => _.data.id);
   fuseOut?.value?.forEach(e => (e["relayEvent"] = first(celoExecuted[e.data.id])));
   celoOut?.value?.forEach(e => (e["relayEvent"] = first(fuseExecuted[e.data.id])));
+  celoOut?.value?.forEach(e => (e["amount"] = formatAmount(e.data.amount, 18))); //amount is normalized to 18 decimals in the bridge
+  fuseOut?.value?.forEach(e => (e["amount"] = formatAmount(e.data.amount, 18))); //amount is normalized to 18 decimals in the bridge
   return { fuseHistory: fuseOut, celoHistory: celoOut };
 };

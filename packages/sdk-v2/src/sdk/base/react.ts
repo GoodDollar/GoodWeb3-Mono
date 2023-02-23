@@ -45,7 +45,7 @@ export const useGetEnvChainId = (requiredChainId?: number) => {
   }
 
   const defaultEnv = connectedEnv;
-  
+
   return {
     chainId: Number((Contracts[defaultEnv as keyof typeof Contracts] as EnvValue)?.networkId),
     defaultEnv,
@@ -145,18 +145,29 @@ export function useG$Tokens(requiredChainId?: number) {
   const decimals = useContext(TokenContext);
 
   const tokens = useMemo(
-    () => G$Tokens.map(token => G$Token(token, chainId, defaultEnv, decimals)), 
+    () => G$Tokens.map(token => G$Token(token, chainId, decimals)),
     [chainId, defaultEnv, decimals]
   );
 
   return tokens;
 }
 
-export function useG$Amount(value?: BigNumber, token: G$Token = "G$", requiredChainId?: number): CurrencyValue | null {
-  const { chainId, defaultEnv } = useGetEnvChainId(requiredChainId);
-  const decimals = useContext(TokenContext);  
+export function useG$Amount(value?: BigNumber, token: G$Token = "G$", requiredChainId?: number): CurrencyValue {
+  const { chainId } = useGetEnvChainId(requiredChainId);
+  const decimals = useContext(TokenContext);
+  return G$Amount(token, value || BigNumber.from("0"), chainId, decimals);
+}
 
-  return value ? G$Amount(token, value, chainId, defaultEnv, decimals) : null;
+export function useG$Formatted(
+  value?: BigNumber,
+  token: G$Token = "G$",
+  requiredChainId?: number,
+  formatOptions?: any
+): string {
+  const { chainId } = useGetEnvChainId(requiredChainId);
+  const decimals = useContext(TokenContext);
+
+  return value ? G$Amount(token, value, chainId, decimals).format(formatOptions) : "0";
 }
 
 export function useG$Decimals(token: G$Token = "G$", requiredChainId?: number): number {
@@ -167,14 +178,14 @@ export function useG$Decimals(token: G$Token = "G$", requiredChainId?: number): 
     case "GDX":
       return decimals[SupportedChains.MAINNET] || 2;
     default:
-      return decimals[chainId]
+      return decimals[chainId];
   }
 }
 
-export function useG$Balance(refresh: QueryParams["refresh"] = "never", requiredChainId?: number) { 
+export function useG$Balance(refresh: QueryParams["refresh"] = "never", requiredChainId?: number) {
   const refreshOrNever = useRefreshOrNever(refresh);
-  const { account } = useEthers();  
-  const { chainId } = useGetEnvChainId(requiredChainId);  
+  const { account } = useEthers();
+  const { chainId } = useGetEnvChainId(requiredChainId);
 
   const g$Contract = useGetContract("GoodDollar", true, "base") as IGoodDollar;
   const goodContract = useGetContract("GReputation", true, "base") as GReputation;
@@ -193,7 +204,7 @@ export function useG$Balance(refresh: QueryParams["refresh"] = "never", required
         contract: goodContract,
         method: "balanceOf",
         args: [account]
-      },
+      }
     ],
     {
       refresh: refreshOrNever,
@@ -207,15 +218,15 @@ export function useG$Balance(refresh: QueryParams["refresh"] = "never", required
         contract: gdxContract,
         method: "balanceOf",
         args: [account]
-      },
+      }
     ].filter(_ => _.contract && chainId == MAINNET),
     { refresh: refreshOrNever, chainId: MAINNET as unknown as ChainId }
   );
 
-  const [g$Value, goodValue, gdxValue] = [...results, mainnetGdx].map(
-    result => result && !result.error ? result.value[0] : undefined
+  const [g$Value, goodValue, gdxValue] = [...results, mainnetGdx].map(result =>
+    result && !result.error ? result.value[0] : undefined
   );
-  
+
   const g$Balance = useG$Amount(g$Value) as CurrencyValue;
   const goodBalance = useG$Amount(goodValue, "GOOD") as CurrencyValue;
   const gdxBalance = useG$Amount(gdxValue, "GDX") as CurrencyValue;
