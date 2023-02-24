@@ -4,7 +4,7 @@ import { pick, omit, isArray } from "lodash";
 
 interface IWIthThemeOpts { 
   name?: string; 
-  skipProps?: string[]; 
+  skipProps?: string | string[]; 
 }
 
 export const withTheme =
