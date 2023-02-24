@@ -1,13 +1,18 @@
 import React from "react";
 import { useThemeProps } from "native-base";
-import { pickBy, isArray } from "lodash";
+import { pick, omit, isArray } from "lodash";
+
+interface IWIthThemeOpts { 
+  name?: string; 
+  skipProps?: string[]; 
+}
 
 export const withTheme =
-  (options?: { name?: string; forceProps?: string[] }) =>
+  (options?: IWithThemeOpts) =>
   <T,>(Component: React.ComponentType<T>) => {
     const { name: defaultName } = Component;
-    const id = options?.name ?? defaultName;
-    const forcedPropsKeys = options?.forceProps ?? [];
+    const { name, skipProps = [] } = options ?? {};
+    const id = name ?? defaultName;
 
     if (!id) {
       throw new Error(
@@ -23,10 +28,9 @@ export const withTheme =
       // so it only returns a single value from any arrayed prop
       // to prevent component specific props from losing its context,
       // we split the arrayed props based on a list of given keys
-      const componentProps = pickBy(props, (value, key) => isArray(value) && forcedPropsKeys.includes(key));
-      const themedProps = pickBy(props, (value, key) => !isArray(value) || !(key in componentProps));
-
-      const themeProps = useThemeProps(id, themedProps);
+      const componentProps = pick(props, skipProps);
+      const themeProps = useThemeProps(id, omit(props, skipProps));
+      
       // @ts-ignore
       // prettier-ignore
       return <Component {...componentProps} {...themeProps}>{children}</Component>;
