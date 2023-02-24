@@ -8,7 +8,8 @@ export interface Web3ActionProps extends Omit<BaseButtonProps, "onPress"> {
   /**
    * a text to be rendered in the component.
    */
-  requiredChain: number;
+  /** list of supported chains, first in list will be used as default */
+  supportedChains: number[];
   innerIndicatorText?: ITextProps;
   web3Action: () => Promise<void> | void;
   switchChain?: (requiredChain: number) => Promise<any>;
@@ -45,83 +46,84 @@ const StepIndicator: FC<{ text?: string } & ITextProps> = withTheme({ name: "Ste
   )
 );
 
-export const Web3ActionButton: FC<Web3ActionProps> = withTheme({ name: "Web3ActionButton" })(
-  ({ text, requiredChain, switchChain, web3Action, handleConnect, innerIndicatorText, ...buttonProps }) => {
-    const { account, switchNetwork, chainId, activateBrowserWallet } = useEthers();
-    const [runningFlow, setRunningFlow] = useState(false);
-    const [actionText, setActionText] = useState("");
-    const timerRef = useRef<any>(null);
+export const Web3ActionButton: FC<Web3ActionProps> = withTheme({
+  name: "Web3ActionButton",
+  skipProps: "supportedChains",
+})(({ text, supportedChains, switchChain, web3Action, handleConnect, innerIndicatorText, ...buttonProps }) => {
+  const { account, switchNetwork, chainId, activateBrowserWallet } = useEthers();
+  const [runningFlow, setRunningFlow] = useState(false);
+  const [actionText, setActionText] = useState("");
+  const timerRef = useRef<any>(null);
 
-    const resetText = useCallback(() => setActionText(""), []);
+  const resetText = useCallback(() => setActionText(""), []);
 
-    const finishFlow = useCallback(() => {
-      resetText();
-      setRunningFlow(false);
+  const finishFlow = useCallback(() => {
+    resetText();
+    setRunningFlow(false);
 
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-        timerRef.current = null;
-      }
-    }, []);
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+  }, []);
 
-    const startFlow = useCallback(() => {
-      setRunningFlow(true);
-      timerRef.current = setTimeout(finishFlow, 60000);
-    }, []);
+  const startFlow = useCallback(() => {
+    setRunningFlow(true);
+    timerRef.current = setTimeout(finishFlow, 60000);
+  }, []);
 
-    const connectWallet = useCallback(async () => {
-      const connectFn = handleConnect || (activateBrowserWallet as any);
-      const isConnected = await connectFn().catch(throwIfCancelled);
+  const connectWallet = useCallback(async () => {
+    const connectFn = handleConnect || (activateBrowserWallet as any);
+    const isConnected = await connectFn().catch(throwIfCancelled);
 
-      if (!isConnected) {
+    if (!isConnected) {
+      throwCancelled();
+    }
+
+    return isConnected;
+  }, [handleConnect, activateBrowserWallet]);
+
+  const switchToChain = useCallback(
+    async (chain: number) => {
+      const switchFn = switchChain || switchNetwork;
+      const result = await switchFn(chain).catch(throwIfCancelled);
+
+      if (switchChain && !result) {
         throwCancelled();
       }
+    },
+    [switchNetwork, switchChain]
+  );
 
-      return isConnected;
-    }, [handleConnect, activateBrowserWallet]);
-
-    const switchToChain = useCallback(
-      async (chain: number) => {
-        const switchFn = switchChain || switchNetwork;
-        const result = await switchFn(chain).catch(throwIfCancelled);
-
-        if (switchChain && !result) {
-          throwCancelled();
-        }
-      },
-      [switchNetwork, switchChain]
-    );
-
-    // while button is in loading state (1 min), be reactive to external/manual
-    // account/chainId changes and re-try to perform current step action
-    useEffect(() => {
-      const continueSteps = async () => {
-        if (!account) {
-          setActionText(ButtonSteps.connect);
-          await connectWallet();
-          return;
-        }
-
-        if (requiredChain !== chainId) {
-          setActionText(ButtonSteps.switch);
-          await switchToChain(requiredChain);
-          return;
-        }
-
-        setActionText(ButtonSteps.action);
-        await web3Action();
-        finishFlow();
-      };
-
-      if (runningFlow) {
-        continueSteps().catch(finishFlow);
+  // while button is in loading state (1 min), be reactive to external/manual
+  // account/chainId changes and re-try to perform current step action
+  useEffect(() => {
+    const continueSteps = async () => {
+      if (!account) {
+        setActionText(ButtonSteps.connect);
+        await connectWallet();
+        return;
       }
-    }, [runningFlow, account, chainId]);
 
-    return (
-      <BaseButton text={actionText ? "" : text} onPress={startFlow} {...buttonProps}>
-        {!!actionText && <StepIndicator text={actionText} {...innerIndicatorText} />}
-      </BaseButton>
-    );
-  }
-);
+      if (!supportedChains.includes(chainId ?? 0)) {
+        setActionText(ButtonSteps.switch);
+        await switchToChain(supportedChains[0]);
+        return;
+      }
+
+      setActionText(ButtonSteps.action);
+      await web3Action();
+      finishFlow();
+    };
+
+    if (runningFlow) {
+      continueSteps().catch(finishFlow);
+    }
+  }, [runningFlow, account, chainId]);
+
+  return (
+    <BaseButton text={actionText ? "" : text} onPress={startFlow} {...buttonProps}>
+      {!!actionText && <StepIndicator text={actionText} {...innerIndicatorText} />}
+    </BaseButton>
+  );
+});
