@@ -1,10 +1,10 @@
 import React from "react";
 import { useThemeProps } from "native-base";
-import { pick, omit, isArray } from "lodash";
+import { pick, omit } from "lodash";
 
-interface IWIthThemeOpts { 
-  name?: string; 
-  skipProps?: string | string[]; 
+interface IWithThemeOpts {
+  name?: string;
+  skipProps?: string | string[];
 }
 
 export const withTheme =
@@ -30,7 +30,7 @@ export const withTheme =
       // we split the arrayed props based on a list of given keys
       const componentProps = pick(props, skipProps);
       const themeProps = useThemeProps(id, omit(props, skipProps));
-      
+
       // @ts-ignore
       // prettier-ignore
       return <Component {...componentProps} {...themeProps}>{children}</Component>;
