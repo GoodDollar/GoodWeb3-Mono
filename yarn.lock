@@ -3134,7 +3134,7 @@ __metadata:
     "@babel/preset-typescript": ^7.16.0
     "@babel/runtime": ^7.18.9
     "@gooddollar/goodprotocol": ^2.0.1
-    "@gooddollar/web3sdk-v2": "file:.yalc/@gooddollar/web3sdk-v2"
+    "@gooddollar/web3sdk-v2": 0.1.74-beta.77cae1d
     "@lingui/macro": ^3.14.0
     "@lingui/react": ^3.14.0
     "@storybook/addon-actions": ^6.5.12
@@ -3213,7 +3213,7 @@ __metadata:
     "@babel/core": ^7.17.5
     "@babel/preset-env": ^7.16.11
     "@gooddollar/goodprotocol": 1.0.27
-    "@gooddollar/web3sdk-v2": 0.1.71-beta.099e3bc
+    "@gooddollar/web3sdk-v2": 0.1.74-beta.77cae1d
     "@testing-library/react": ^12.1.4
     "@types/jest": ^27.4.1
     "@types/node": ^17.0.21
@@ -3314,79 +3314,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2::locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design":
-  version: 0.1.73
-  resolution: "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2#.yalc/@gooddollar/web3sdk-v2::hash=421e76&locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design"
-  dependencies:
-    "@amplitude/analytics-browser": ^1.6.4
-    "@amplitude/analytics-react-native": ^0.7.0
-    "@gooddollar/bridge-app": ^1.2.9
-    "@gooddollar/bridge-contracts": ^1.0.13
-    "@gooddollar/goodprotocol": ^2.0.1
-    "@react-native-firebase/analytics": ^16.4.6
-    "@sentry/browser": 7.16.0
-    "@sentry/react-native": ^4.8.0
-    "@solana/web3.js": ^1.72.0
-    "@usedapp/core": 1.2.2
-    "@web3-onboard/torus": ^2.2.1
-    "@web3auth/base": ^4.0.0
-    "@web3auth/core": ^4.0.0
-    "@web3auth/openlogin-adapter": ^4.1.0
-    "@web3auth/torus-wallet-connector-plugin": ^4.0.0
-    eventemitter3: ^4.0.7
-    mixpanel-browser: ^2.45.0
-    mixpanel-react-native: ^2.1.0
-    posthog-react-native: ^2.4.0
-    react-native-indicative: ^0.2.1
-    react-native-restart: ^0.0.24
-    react-use-promise: ^0.5.0
-  peerDependencies:
-    "@react-native-async-storage/async-storage": 1.17.10
-    ethers: 5.*
-    react: "*"
-    react-native: "*"
-    react-native-web: "*"
-  checksum: 84be2606a760e7ca7167c454b85d23e2dbc5b8156fd295e9252b39372428670489a1e55af45602263efc54da0d057ed1e0f8e9702f2c84c4ab3b21e1e930a8e6
-  languageName: node
-  linkType: hard
-
-"@gooddollar/web3sdk-v2@npm:0.1.71-beta.099e3bc":
-  version: 0.1.71-beta.099e3bc
-  resolution: "@gooddollar/web3sdk-v2@npm:0.1.71-beta.099e3bc"
-  dependencies:
-    "@amplitude/analytics-browser": ^1.6.4
-    "@amplitude/analytics-react-native": ^0.7.0
-    "@gooddollar/bridge-app": ^1.2.9
-    "@gooddollar/bridge-contracts": ^1.0.13
-    "@gooddollar/goodprotocol": ^2.0.1
-    "@react-native-firebase/analytics": ^16.4.6
-    "@sentry/browser": 7.16.0
-    "@sentry/react-native": ^4.8.0
-    "@solana/web3.js": ^1.72.0
-    "@usedapp/core": 1.2.2
-    "@web3-onboard/torus": ^2.2.1
-    "@web3auth/base": ^4.0.0
-    "@web3auth/core": ^4.0.0
-    "@web3auth/openlogin-adapter": ^4.1.0
-    "@web3auth/torus-wallet-connector-plugin": ^4.0.0
-    eventemitter3: ^4.0.7
-    mixpanel-browser: ^2.45.0
-    mixpanel-react-native: ^2.1.0
-    posthog-react-native: ^2.4.0
-    react-native-indicative: ^0.2.1
-    react-native-restart: ^0.0.24
-    react-use-promise: ^0.5.0
-  peerDependencies:
-    "@react-native-async-storage/async-storage": 1.17.10
-    ethers: 5.*
-    react: "*"
-    react-native: "*"
-    react-native-web: "*"
-  checksum: ca3550a0b59d43304bf3b038d3a9cfbe6ca4db0e0b23ca59e7456b8fdfbca18f7ce493645b492d44315a86ddc96479bfb77f3bdf367b3b640f021389fdff56d9
-  languageName: node
-  linkType: hard
-
-"@gooddollar/web3sdk-v2@workspace:packages/sdk-v2":
+"@gooddollar/web3sdk-v2@0.1.74-beta.77cae1d, @gooddollar/web3sdk-v2@workspace:packages/sdk-v2":
   version: 0.0.0-use.local
   resolution: "@gooddollar/web3sdk-v2@workspace:packages/sdk-v2"
   dependencies:
