@@ -48,7 +48,7 @@ function customWcModule(options: WcConnectOptions): WalletInit {
       provider.request = async function ({ method, params }: { method: string; params?: any }) {
         if (method !== "eth_requestAccounts") {
           // new implementation of @web3-onboard/walletconnect uses a custom request
-          // which works for MetaMask, but not for GoodDollar wallet or Zengo
+          // which works for MetaMask, but is not supported by GoodDollar wallet or Zengo
           // below is the older implementation
           // where it did not support switch network requests and notified user to do it manually
           if (method === "wallet_switchEthereumChain") {
