@@ -1,14 +1,15 @@
 import { JsonRpcProvider, Web3Provider as W3Provider } from "@ethersproject/providers";
-import { Chain, Config, DAppProvider, Goerli, Mainnet, useEthers, useCalls, ChainId} from "@usedapp/core";
+import { Chain, Config, DAppProvider, Goerli, Mainnet, useEthers, useCalls, ChainId } from "@usedapp/core";
 import EventEmitter from "eventemitter3";
 import React, { createContext, FC, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { EnvKey } from "../sdk/base/sdk";
-import { noop } from 'lodash'; // eslint-disable-line @typescript-eslint/no-unused-vars
+import { noop } from "lodash"; // eslint-disable-line @typescript-eslint/no-unused-vars
 import { G$Decimals } from "../sdk/constants";
 import { GoodReserveCDai, GReputation, IGoodDollar } from "@gooddollar/goodprotocol/types";
 import { useGetContract } from "../sdk";
 import { SupportedChains } from "../sdk/constants";
 import { cloneDeep } from "lodash";
+import { ethers } from "ethers";
 /**
  * request to switch to network id
  * returns void if no result yet true/false if success
@@ -112,33 +113,36 @@ const Web3Connector = ({ web3Provider }: { web3Provider: JsonRpcProvider | void 
     if (web3Provider) {
       activate(web3Provider).catch(noop);
     }
-    
+
     return deactivate;
   }, [web3Provider]);
 
   return null;
 };
 
-const TokenProvider: FC<{ children: React.ReactNode; }> = ({ children }) => {
+const TokenProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
   const { chainId } = useEthers();
   const g$Contract = useGetContract("GoodDollar", true, "base") as IGoodDollar;
   const goodContract = useGetContract("GReputation", true, "base") as GReputation;
   const gdxContract = useGetContract("GoodReserveCDai", true, "base", 1) as GoodReserveCDai;
 
-  const { MAINNET } = SupportedChains
+  const { MAINNET } = SupportedChains;
 
-  const results = useCalls([
-    {
-      contract: g$Contract,
-      method: "decimals",
-      args: []
-    },
-    {
-      contract: goodContract,
-      method: "decimals", 
-      args: []
-    }
-  ], { refresh: "never", chainId })
+  const results = useCalls(
+    [
+      {
+        contract: g$Contract,
+        method: "decimals",
+        args: []
+      },
+      {
+        contract: goodContract,
+        method: "decimals",
+        args: []
+      }
+    ],
+    { refresh: "never", chainId }
+  );
 
   const [mainnetGdx] = useCalls(
     [
@@ -167,14 +171,28 @@ const TokenProvider: FC<{ children: React.ReactNode; }> = ({ children }) => {
     return newValue;
   }, [results, chainId, mainnetGdx]);
 
-  return <TokenContext.Provider value={value}>{children}</TokenContext.Provider>
-}
+  return <TokenContext.Provider value={value}>{children}</TokenContext.Provider>;
+};
 
 export const Web3Provider = ({ children, config, web3Provider, env = "production" }: Props) => {
   const [switchNetwork, setSwitchNetwork] = useState<SwitchNetwork>();
   const [onSwitchNetwork, setOnSwitchNetwork] = useState<SwitchCallback>();
 
   const setSwitcNetworkCallback = useCallback((cb: SwitchNetwork) => setSwitchNetwork(() => cb), [setSwitchNetwork]);
+
+  // use this to override usedapp default switchNetwork used in our custom web3contextprovider
+  // this will work with both metamask and wallet connect
+  const newSwitch = useCallback(
+    async (chainId: number): Promise<any> => {
+      if (!chainId) return;
+      const hexId = "0x" + chainId.toString(16);
+      return (web3Provider as any).provider.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: hexId }]
+      });
+    },
+    [web3Provider]
+  );
   //make sure we have Fuse and mainnet by default and the relevant multicall available from useConfig for useMulticallAtChain hook
   config.networks = config.networks || [Fuse, Mainnet, Goerli, Celo];
   config.multicallVersion = config.multicallVersion ? config.multicallVersion : 1;
@@ -190,6 +208,12 @@ export const Web3Provider = ({ children, config, web3Provider, env = "production
     config.multicallVersion === 1 ? getMulticallAddresses(config.networks) : getMulticall2Addresses(config.networks);
   config.multicallAddresses = { ...defaultAddresses, ...config.multicallAddresses };
 
+  useEffect(() => {
+    if (web3Provider instanceof ethers.providers.Web3Provider && web3Provider.provider.request) {
+      setSwitchNetwork(() => newSwitch);
+    }
+  }, [web3Provider]);
+
   return (
     <DAppProvider config={config}>
       <Web3Connector web3Provider={web3Provider} />
@@ -203,9 +227,7 @@ export const Web3Provider = ({ children, config, web3Provider, env = "production
           env
         }}
       >
-        <TokenProvider>
-          {children}
-        </TokenProvider>
+        <TokenProvider>{children}</TokenProvider>
       </Web3Context.Provider>
     </DAppProvider>
   );
@@ -216,12 +238,14 @@ export const useSwitchNetwork = () => {
   const { switchNetwork, setSwitchNetwork, onSwitchNetwork, setOnSwitchNetwork } = useContext(Web3Context);
   const switchCallback = useCallback(
     async (chainId: number) => {
-      onSwitchNetwork && onSwitchNetwork(chainId, undefined);
+      onSwitchNetwork && (await onSwitchNetwork(chainId, undefined));
       try {
-        await (switchNetwork || ethersSwitchNetwork)(chainId);
-        onSwitchNetwork && onSwitchNetwork(chainId, true);
+        const func = switchNetwork || ethersSwitchNetwork;
+
+        await func(chainId);
+        onSwitchNetwork && (await onSwitchNetwork(chainId, true));
       } catch (e) {
-        onSwitchNetwork && onSwitchNetwork(chainId, false);
+        onSwitchNetwork && (await onSwitchNetwork(chainId, false));
         throw e;
       }
     },

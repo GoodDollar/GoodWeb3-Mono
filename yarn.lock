@@ -3383,7 +3383,7 @@ __metadata:
     "@types/node": 18.0.0
     "@types/react": 17.0.2
     "@types/react-native": 0.70.4
-    "@usedapp/core": 1.2.2
+    "@usedapp/core": ^1.2.6
     "@walletconnect/client": ^1.8.0
     "@walletconnect/qrcode-modal": ^1.8.0
     "@web3-onboard/coinbase": ^2.2.0
@@ -4238,6 +4238,13 @@ __metadata:
   version: 1.2.0
   resolution: "@metamask/detect-provider@npm:1.2.0"
   checksum: 2c152534a8dd15bc1430bb5159cdf58993549a644cff344a1ff43f4ede8f041aad72b909e822747f6545de3ed293a740ecffc86a859daf7a925c4096efd61eb3
+  languageName: node
+  linkType: hard
+
+"@metamask/detect-provider@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "@metamask/detect-provider@npm:2.0.0"
+  checksum: 45d3128069310e6cdb9a572b31da88b3fddb0aa78f94deba71657efd7e40d0680912a4ee0291a7a0e9ab66681aba271e74de87c5464d979f115726c740db641b
   languageName: node
   linkType: hard
 
@@ -9532,7 +9539,26 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@usedapp/core@npm:1.*, @usedapp/core@npm:1.2.2":
+"@usedapp/core@npm:1.*, @usedapp/core@npm:^1.2.6":
+  version: 1.2.6
+  resolution: "@usedapp/core@npm:1.2.6"
+  dependencies:
+    "@metamask/detect-provider": ^2.0.0
+    "@uniswap/token-lists": ^1.0.0-beta.27
+    fetch-mock: ^9.11.0
+    lodash.merge: ^4.6.2
+    lodash.pickby: ^4.6.0
+    nanoid: 3.3.4
+  peerDependencies:
+    ethers: ^5
+    react: "*"
+  bin:
+    usedapp-generate-hooks: bin/usedapp-generate-hooks.js
+  checksum: 2dbaba0129b8e74dd543ffcec5a7faa56ae0bd8ea7393a56693aae922d055e0424edf9e4c531e198144680d21e9cf85d29c120a682b0a0c413ea0ec1d162e8df
+  languageName: node
+  linkType: hard
+
+"@usedapp/core@npm:1.2.2":
   version: 1.2.2
   resolution: "@usedapp/core@npm:1.2.2"
   dependencies:
