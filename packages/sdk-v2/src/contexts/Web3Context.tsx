@@ -240,27 +240,27 @@ export const Web3Provider = ({ children, config, web3Provider, env = "production
   );
 };
 
+const onSwitchNetworkNoop = async (chainId: number, status?: boolean) => {}
+
 export const useSwitchNetwork = () => {
   const { switchNetwork: ethersSwitchNetwork } = useEthers();
   const { switchNetwork, setSwitchNetwork, onSwitchNetwork, setOnSwitchNetwork } = useContext(Web3Context);
-  
+  const _onSwitchNetwork = onSwitchNetwork || onSwitchNetworkNoop;
+  const _switchNetwork = switchNetwork || ethersSwitchNetwork;
+        
   const switchCallback = useCallback(
     async (chainId: number) => {
-      const notify = onSwitchNetwork || (async (status?: boolean) => {})
-      
-      await notify()
+      await _onSwitchNetwork(chainId)
       
       try {
-        const func = switchNetwork || ethersSwitchNetwork;
-
-        await func(chainId);
-        await notify(true);
+        await _switchNetwork(chainId);
+        await _onSwitchNetwork(chainId, true);
       } catch (e) {
-        await notify(false);
+        await _onSwitchNetwork(chainId, false);
         throw e;
       }
     },
-    [onSwitchNetwork, switchNetwork, ethersSwitchNetwork]
+    [_onSwitchNetwork, _switchNetwork]
   );
   
   return { switchNetwork: switchCallback, setSwitchNetwork, setOnSwitchNetwork };
