@@ -1,5 +1,5 @@
 import { EnvKey } from "./base/sdk";
-import { CurrencyValue, Token } from "@usedapp/core";
+import { Currency, CurrencyValue, Token } from "@usedapp/core";
 import contractsAddresses from "@gooddollar/goodprotocol/releases/deployment.json";
 import { BigNumber } from "ethers";
 
@@ -82,16 +82,17 @@ export const G$TokenContracts = {
   },
   GOOD: {
     contract: "GReputation",
-    name: "GDAO",
+    name: "GOOD",
     ticker: "GOOD"
   },
   GDX: {
     contract: "GoodReserveCDai",
-    name: "GoodDollar X",
+    name: "G$X",
     ticker: "GDX"
   }
 };
 
+const CURRENCIES_CASH = {};
 export function G$Token(tokenName: G$Token, chainId: number, env: string, decimalsMap: G$DecimalsMap = G$Decimals) {
   const { contract, name, ticker } = G$TokenContracts[tokenName];
 
@@ -109,8 +110,16 @@ export function G$Token(tokenName: G$Token, chainId: number, env: string, decima
 
   const decimals = decimalsMap[tokenName][chainId];
   const address = G$ContractAddresses(contract, tokenEnv) as string;
+  const key = tokenName + "_" + chainId + "_" + decimals;
 
-  return new Token(name, ticker, tokenChain, address, decimals, { significantDigits: decimals });
+  CURRENCIES_CASH[key] =
+    CURRENCIES_CASH[key] ||
+    new Token(name, ticker, tokenChain, address, decimals, {
+      significantDigits: decimals,
+      useFixedPrecision: true,
+      fixedPrecisionDigits: 2
+    });
+  return CURRENCIES_CASH[key];
 }
 
 export function G$Amount(
@@ -123,6 +132,24 @@ export function G$Amount(
   const token = G$Token(tokenName, chainId, env, decimalsMap);
 
   return new CurrencyValue(token, value);
+}
+
+// display amount with X decimals
+export function formatAmount(
+  value: BigNumber,
+  tokenDecimals: number,
+  displayDecimals = 2,
+  currencyFormatOptions?: any,
+  tokenName = "GoodDollar",
+  tokenSymbol = "G$"
+) {
+  const c = new Currency(tokenName, tokenSymbol, tokenDecimals, {
+    useFixedPrecision: true,
+    fixedPrecisionDigits: displayDecimals,
+    thousandSeparator: "",
+    ...currencyFormatOptions
+  });
+  return new CurrencyValue(c, value).format();
 }
 
 export function G$ContractAddresses<T = ObjectLike>(name: string, env: EnvKey): T {

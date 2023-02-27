@@ -102,7 +102,7 @@ const ClaimButton = ({ address, firstName }: PageProps) => {
 
   const buttonTitle = () => {
     if (isWhitelisted) {
-      if (claimAmount.toNumber() > 0) return `Claim ${claimAmount}`;
+      if (claimAmount.gt(0)) return `Claim ${claimAmount}`;
       else return `Claim at: ${claimTime}`;
     } else return "Verify Uniqueness";
   };
