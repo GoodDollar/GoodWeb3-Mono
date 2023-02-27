@@ -1,5 +1,5 @@
 import { EnvKey } from "./base/sdk";
-import { Currency, CurrencyValue } from "@usedapp/core";
+import { Currency, CurrencyValue, Token } from "@usedapp/core";
 import contractsAddresses from "@gooddollar/goodprotocol/releases/deployment.json";
 import { BigNumber } from "ethers";
 
@@ -93,25 +93,28 @@ export const G$TokenContracts = {
 };
 
 const CURRENCIES_CASH = {};
-export function G$Token(tokenName: G$Token, chainId: number, decimalsMap: G$DecimalsMap = G$Decimals) {
-  const { name, ticker } = G$TokenContracts[tokenName];
+export function G$Token(tokenName: G$Token, chainId: number, env: string, decimalsMap: G$DecimalsMap = G$Decimals) {
+  const { contract, name, ticker } = G$TokenContracts[tokenName];
 
+  let tokenEnv: string = env;
   let tokenChain: number = chainId;
 
   switch (tokenName) {
     case "GDX":
-      // only hardcoded because of missing dev contracts (deprecated ropsten/kovan)
+      tokenEnv = "production-mainnet"; // only hardcoded because of missing dev contracts (deprecated ropsten/kovan)
       tokenChain = SupportedChains.MAINNET;
       break;
     default:
       break;
   }
 
-  const decimals = decimalsMap[tokenName][tokenChain];
+  const decimals = decimalsMap[tokenName][chainId];
+  const address = G$ContractAddresses(contract, tokenEnv) as string;
   const key = tokenName + "_" + chainId + "_" + decimals;
+
   CURRENCIES_CASH[key] =
     CURRENCIES_CASH[key] ||
-    new Currency(name, ticker, decimals, {
+    new Token(name, ticker, tokenChain, address, decimals, {
       significantDigits: decimals,
       useFixedPrecision: true,
       fixedPrecisionDigits: 2
@@ -123,9 +126,10 @@ export function G$Amount(
   tokenName: G$Token,
   value: BigNumber,
   chainId: number,
+  env: string,
   decimalsMap: G$DecimalsMap = G$Decimals
 ) {
-  const token = G$Token(tokenName, chainId, decimalsMap);
+  const token = G$Token(tokenName, chainId, env, decimalsMap);
 
   return new CurrencyValue(token, value);
 }

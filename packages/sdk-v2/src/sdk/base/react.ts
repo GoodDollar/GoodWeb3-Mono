@@ -145,7 +145,7 @@ export function useG$Tokens(requiredChainId?: number) {
   const decimals = useContext(TokenContext);
 
   const tokens = useMemo(
-    () => G$Tokens.map(token => G$Token(token, chainId, decimals)),
+    () => G$Tokens.map(token => G$Token(token, chainId, defaultEnv, decimals)),
     [chainId, defaultEnv, decimals]
   );
 
@@ -153,9 +153,10 @@ export function useG$Tokens(requiredChainId?: number) {
 }
 
 export function useG$Amount(value?: BigNumber, token: G$Token = "G$", requiredChainId?: number): CurrencyValue {
-  const { chainId } = useGetEnvChainId(requiredChainId);
+  const { chainId, defaultEnv } = useGetEnvChainId(requiredChainId);
   const decimals = useContext(TokenContext);
-  return G$Amount(token, value || BigNumber.from("0"), chainId, decimals);
+
+  return G$Amount(token, value || BigNumber.from("0"), chainId, defaultEnv, decimals);
 }
 
 export function useG$Formatted(
@@ -164,10 +165,10 @@ export function useG$Formatted(
   requiredChainId?: number,
   formatOptions?: any
 ): string {
-  const { chainId } = useGetEnvChainId(requiredChainId);
+  const { chainId, defaultEnv } = useGetEnvChainId(requiredChainId);
   const decimals = useContext(TokenContext);
 
-  return G$Amount(token, value || BigNumber.from("0"), chainId, decimals).format(formatOptions);
+  return G$Amount(token, value || BigNumber.from("0"), chainId, defaultEnv, decimals).format(formatOptions);
 }
 
 export function useG$Decimals(token: G$Token = "G$", requiredChainId?: number): number {
