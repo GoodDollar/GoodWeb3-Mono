@@ -12,7 +12,7 @@ import { FVFlowProps } from "./types";
 import { Image } from "../images";
 import ClaimImage from "../../assets/images/claim.png";
 import { BasicModalProps } from "../modals/BasicModal";
-import { noop } from "lodash";
+import { noop, isNil } from "lodash";
 import { useEthers } from "@usedapp/core";
 
 const ClaimButton = ({
@@ -43,20 +43,8 @@ const ClaimButton = ({
   const [firstClaim, setFirstClaim] = useState(false);
   const isVerified = useQueryParam("verified", true);
   const textColor = useColorModeValue("goodGrey.500", "white");
-  const { chainId: defaultChainId } = useGetEnvChainId();
-  const [requiredChain, setRequiredChain] = useState(SupportedChains.CELO);
+  const { chainId: defaultChainId, defaultEnv } = useGetEnvChainId();
   const { fuseWhitelisted, syncStatus } = useWhitelistSync();
-
-  useEffect(() => {
-    switch (chainId ?? defaultChainId) {
-      case 122:
-        setRequiredChain(account ? SupportedChains.FUSE : SupportedChains.CELO);
-        break;
-      default:
-        setRequiredChain(SupportedChains.CELO);
-        break;
-    }
-  }, [chainId, defaultChainId, account]);
 
   // TODO:  replace placeholder loader with styled loader
   const actionModalBody = useMemo(
@@ -141,8 +129,32 @@ const ClaimButton = ({
     }
   };
 
+  // handles a delay in fetching isWhitelisted after just being connected
+  useEffect(() => {
+    claimLoading && isWhitelisted && handleModalOpen().catch(noop);
+  }, [isWhitelisted]);
+
+  // trigger claim when user succesfully has verified through FV
+  // uses the first claimer flow
+  useEffect(() => {
+    const doClaim = async () => {
+      if (isVerified && account) {
+        showActionModal();
+        setClaimLoading(true);
+        await handleClaim(true);
+      }
+    };
+
+    doClaim().catch(noop);
+  }, [isVerified, account]);
+
   const handleModalOpen = useCallback(
     async (first = false) => {
+      if (isNil(isWhitelisted)) {
+        setClaimLoading(true);
+        return;
+      }
+
       setFirstClaim(first);
       showActionModal();
 
@@ -162,28 +174,18 @@ const ClaimButton = ({
         setClaimLoading(true);
         await handleClaim(true);
       }
+
+      setClaimLoading(false);
     },
-    [claim, hideActionModal, showFirstClaimModal, isWhitelisted, fuseWhitelisted, syncStatus]
+    [claim, hideActionModal, showFirstClaimModal, isWhitelisted, fuseWhitelisted, syncStatus, account]
   );
-
-  useEffect(() => {
-    const doClaim = async () => {
-      if (isVerified && account) {
-        showActionModal();
-        setClaimLoading(true);
-        await handleClaim(true);
-      }
-    };
-
-    doClaim().catch(noop);
-  }, [isVerified, account]);
 
   const buttonTitle = useMemo(() => {
     if (!isWhitelisted || !claimAmount) {
       return "CLAIM NOW";
     }
 
-    const amount = G$Amount("G$", claimAmount, chainId ?? defaultChainId);
+    const amount = G$Amount("G$", claimAmount, chainId ?? defaultChainId, defaultEnv);
 
     return "CLAIM NOW " + amount.format({ fixedPrecisionDigits: 2, useFixedPrecision: true, significantDigits: 2 });
   }, [isWhitelisted, account, chainId, claimAmount]);
@@ -213,7 +215,7 @@ const ClaimButton = ({
           web3Action={handleModalOpen}
           disabled={claimed}
           variant="round"
-          requiredChain={requiredChain}
+          supportedChains={[SupportedChains.CELO, SupportedChains.FUSE]}
           handleConnect={handleConnect}
         />
         <Text variant="shadowed" fontSize="md" />

@@ -3212,7 +3212,7 @@ __metadata:
     "@babel/core": ^7.17.5
     "@babel/preset-env": ^7.16.11
     "@gooddollar/goodprotocol": 1.0.27
-    "@gooddollar/web3sdk-v2": 0.1.64-beta.23ab675
+    "@gooddollar/web3sdk-v2": latest
     "@testing-library/react": ^12.1.4
     "@types/jest": ^27.4.1
     "@types/node": ^17.0.21
@@ -3313,9 +3313,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/web3sdk-v2@npm:0.1.64-beta.23ab675":
-  version: 0.1.64-beta.23ab675
-  resolution: "@gooddollar/web3sdk-v2@npm:0.1.64-beta.23ab675"
+"@gooddollar/web3sdk-v2@npm:latest":
+  version: 0.1.73
+  resolution: "@gooddollar/web3sdk-v2@npm:0.1.73"
   dependencies:
     "@amplitude/analytics-browser": ^1.6.4
     "@amplitude/analytics-react-native": ^0.7.0
@@ -3326,7 +3326,7 @@ __metadata:
     "@sentry/browser": 7.16.0
     "@sentry/react-native": ^4.8.0
     "@solana/web3.js": ^1.72.0
-    "@usedapp/core": 1.*
+    "@usedapp/core": 1.2.2
     "@web3-onboard/torus": ^2.2.1
     "@web3auth/base": ^4.0.0
     "@web3auth/core": ^4.0.0
@@ -3345,7 +3345,7 @@ __metadata:
     react: "*"
     react-native: "*"
     react-native-web: "*"
-  checksum: 3d9190ae6287f8560a0402f3c53da962e53be851a18db2ce345014004ca957a0ea65eb929ca2929e19724919ccdba34289216f7a063d408e7406e4a2218ef2c3
+  checksum: a584fdb0fb10852837d593a2ff18851e77030db84754f10c39ccf95909f6505021c40d67ad0a702deeeffc0305ce5967ddae0fb9696819edf7d953c3af194e36
   languageName: node
   linkType: hard
 
