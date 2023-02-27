@@ -187,7 +187,7 @@ const ClaimButton = ({
 
     const amount = G$Amount("G$", claimAmount, chainId ?? defaultChainId, defaultEnv);
 
-    return "CLAIM NOW " + amount.format({ useFixedPrecision: true, significantDigits: 2 });
+    return "CLAIM NOW " + amount.format({ fixedPrecisionDigits: 2, useFixedPrecision: true, significantDigits: 2 });
   }, [isWhitelisted, account, chainId, claimAmount]);
 
   if (isWhitelisted && claimed) {

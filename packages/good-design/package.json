@@ -1,7 +1,7 @@
 {
   "name": "@gooddollar/good-design",
   "repository": "https://github.com/GoodDollar/GoodWeb3-mono/packages/good-design",
-  "version": "0.0.36",
+  "version": "0.0.38",
   "scripts": {
     "build": "yarn dev:clean && tsc && yarn copy:assets",
     "dev:clean": "rm -fr dist types",
@@ -47,17 +47,16 @@
     "@types/react": "17.0.52",
     "@types/react-helmet": "^6.1.6",
     "@types/react-native": "0.70.4",
-    "@usedapp/core": "1.*",
     "babel-jest": "^27.3.1",
     "babel-loader": "^8.2.3",
     "babel-plugin-module-resolver": "^4.1.0",
     "babel-plugin-react-native-web": "^0.17.1",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "cpx": "^1.5.0",
+    "css-loader": "^6.7.1",
     "ctix": "^1.4.0",
     "lodash": "^4.17.21",
     "metro-react-native-babel-preset": "^0.72.0",
-    "native-base": "3.4.11",
     "react-docgen-typescript-plugin": "^1.0.1",
     "sass-loader": "^13.0.2",
     "style-loader": "^3.3.1",
@@ -66,6 +65,7 @@
     "webpack": "^5.74.0"
   },
   "peerDependencies": {
+    "@gooddollar/web3sdk-v2": "^0.1.75",
     "@usedapp/core": "1.*"
   },
   "packageManager": "yarn@3.2.1",
@@ -75,9 +75,9 @@
     "@lingui/react": "^3.14.0",
     "@uniswap/sdk-core": "^3.1.0",
     "buffer": "^6.0.3",
-    "css-loader": "^6.7.1",
     "moment": "^2.29.4",
     "moment-duration-format": "^2.3.2",
+    "native-base": "3.4.11",
     "prop-types": "^15.8.1",
     "react": "17.0.2",
     "react-dom": "17.0.2",

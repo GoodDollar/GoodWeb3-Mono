@@ -48,7 +48,7 @@ const StepIndicator: FC<{ text?: string } & ITextProps> = withTheme({ name: "Ste
 
 export const Web3ActionButton: FC<Web3ActionProps> = withTheme({
   name: "Web3ActionButton",
-  skipProps: "supportedChains",
+  skipProps: "supportedChains"
 })(({ text, supportedChains, switchChain, web3Action, handleConnect, innerIndicatorText, ...buttonProps }) => {
   const { account, switchNetwork, chainId, activateBrowserWallet } = useEthers();
   const [runningFlow, setRunningFlow] = useState(false);

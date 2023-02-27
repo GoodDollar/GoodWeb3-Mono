@@ -1,6 +1,6 @@
 import { IIdentity } from "@gooddollar/goodprotocol/types";
 import { UBIScheme } from "@gooddollar/goodprotocol/types/UBIScheme";
-import { ChainId, QueryParams, useCalls, useContractFunction, useEthers } from "@usedapp/core";
+import { ChainId, QueryParams, useCalls, useEthers } from "@usedapp/core";
 import { BigNumber } from "ethers";
 import { first } from "lodash";
 import { useMemo, useState, useEffect } from "react";
@@ -14,6 +14,7 @@ import useRefreshOrNever from "../../hooks/useRefreshOrNever";
 import { useGetContract, useGetEnvChainId, useReadOnlySDK, useSDK } from "../base/react";
 import { Envs, SupportedChains, SupportedV2Networks } from "../constants";
 import { noop } from "lodash";
+import { useContractFunctionWithDefaultGasFees } from "../base/hooks/useGasFees";
 
 export const useFVLink = (chainId?: number) => {
   const { chainId: defaultChainId } = useGetEnvChainId();
@@ -41,7 +42,7 @@ export const useClaim = (refresh: QueryParams["refresh"] = "never") => {
 
   const ubi = useGetContract("UBIScheme", true, "claim", chainId) as UBIScheme;
   const identity = useGetContract("Identity", true, "claim", chainId) as IIdentity;
-  const claimCall = useContractFunction(ubi, "claim");
+  const claimCall = useContractFunctionWithDefaultGasFees(ubi, "claim");
 
   const results = useCalls(
     [

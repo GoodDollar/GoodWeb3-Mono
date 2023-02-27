@@ -14,6 +14,8 @@ interface MixPanelNative extends Mixpanel {
 
 export const MixpanelAPI = {
   async init(apiKey) {
-    return (await Mixpanel.init(apiKey, false)) as MixPanelNative;
+    const mixpanel = new Mixpanel(apiKey, false);
+    await mixpanel.init();
+    return mixpanel as MixPanelNative;
   }
 };
