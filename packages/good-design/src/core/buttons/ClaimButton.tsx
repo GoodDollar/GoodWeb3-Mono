@@ -43,6 +43,7 @@ const ClaimButton = ({
   const { isWhitelisted, claimAmount } = useClaim(refresh);
   const [firstClaim, setFirstClaim] = useState(false);
   const isVerified = useQueryParam("verified", true);
+  const isVerifiedTest = true;
   const textColor = useColorModeValue("goodGrey.500", "white");
   const { chainId: defaultChainId, defaultEnv } = useGetEnvChainId();
   const { fuseWhitelisted, syncStatus } = useWhitelistSync();
@@ -196,7 +197,11 @@ const ClaimButton = ({
     return "CLAIM NOW " + amount.format({ useFixedPrecision: true, significantDigits: 2 });
   }, [isWhitelisted, account, chainId, claimAmount]);
 
-  if (isWhitelisted && claimed) {
+  useEffect(() => {
+    if (isVerifiedTest) showFirstClaimModal();
+  }, [isVerifiedTest]);
+
+  if (isVerifiedTest) {
     return (
       <FirstClaimModal
         header={
@@ -215,7 +220,7 @@ const ClaimButton = ({
         }
         body={
           <Box display="flex" justifyContent="center" alignItems="center">
-            <Image source={SocialShare} w="100px" h="100px" />
+            <Image source={SocialShare} w="100px" h="100px" style={{ resizeMode: "contain" }} />
           </Box>
         }
         closeText=""
