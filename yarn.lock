@@ -3198,7 +3198,6 @@ __metadata:
     "@types/react-helmet": ^6.1.6
     "@types/react-native": 0.70.4
     "@uniswap/sdk-core": ^3.1.0
-    "@usedapp/core": 1.*
     babel-jest: ^27.3.1
     babel-loader: ^8.2.3
     babel-plugin-module-resolver: ^4.1.0
@@ -3233,6 +3232,7 @@ __metadata:
     typescript: 4.7.4
     webpack: ^5.74.0
   peerDependencies:
+    "@gooddollar/web3sdk-v2": ^0.1.75
     "@usedapp/core": 1.*
   languageName: unknown
   linkType: soft
@@ -4286,13 +4286,6 @@ __metadata:
   version: 1.2.0
   resolution: "@metamask/detect-provider@npm:1.2.0"
   checksum: 2c152534a8dd15bc1430bb5159cdf58993549a644cff344a1ff43f4ede8f041aad72b909e822747f6545de3ed293a740ecffc86a859daf7a925c4096efd61eb3
-  languageName: node
-  linkType: hard
-
-"@metamask/detect-provider@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "@metamask/detect-provider@npm:2.0.0"
-  checksum: 45d3128069310e6cdb9a572b31da88b3fddb0aa78f94deba71657efd7e40d0680912a4ee0291a7a0e9ab66681aba271e74de87c5464d979f115726c740db641b
   languageName: node
   linkType: hard
 
@@ -9584,25 +9577,6 @@ __metadata:
     crypto-js: ^4.1.1
     elliptic: ^6.5.4
   checksum: 3deaae15c0ff9699a30306a5c2a4ff09a5fc9bd9f2c4e9ab22621e85bad7109cff5bfe8bebe2f334cf7b76e602e25b9af659a4d5f5dab44738b41a0b60d8d608
-  languageName: node
-  linkType: hard
-
-"@usedapp/core@npm:1.*":
-  version: 1.2.6
-  resolution: "@usedapp/core@npm:1.2.6"
-  dependencies:
-    "@metamask/detect-provider": ^2.0.0
-    "@uniswap/token-lists": ^1.0.0-beta.27
-    fetch-mock: ^9.11.0
-    lodash.merge: ^4.6.2
-    lodash.pickby: ^4.6.0
-    nanoid: 3.3.4
-  peerDependencies:
-    ethers: ^5
-    react: "*"
-  bin:
-    usedapp-generate-hooks: bin/usedapp-generate-hooks.js
-  checksum: 2dbaba0129b8e74dd543ffcec5a7faa56ae0bd8ea7393a56693aae922d055e0424edf9e4c531e198144680d21e9cf85d29c120a682b0a0c413ea0ec1d162e8df
   languageName: node
   linkType: hard
 

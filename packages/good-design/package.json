@@ -47,7 +47,6 @@
     "@types/react": "17.0.52",
     "@types/react-helmet": "^6.1.6",
     "@types/react-native": "0.70.4",
-    "@usedapp/core": "1.*",
     "babel-jest": "^27.3.1",
     "babel-loader": "^8.2.3",
     "babel-plugin-module-resolver": "^4.1.0",
@@ -66,6 +65,7 @@
     "webpack": "^5.74.0"
   },
   "peerDependencies": {
+    "@gooddollar/web3sdk-v2": "^0.1.75",
     "@usedapp/core": "1.*"
   },
   "packageManager": "yarn@3.2.1",
