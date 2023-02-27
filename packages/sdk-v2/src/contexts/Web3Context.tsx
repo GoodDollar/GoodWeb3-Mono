@@ -184,8 +184,12 @@ export const Web3Provider = ({ children, config, web3Provider, env = "production
   // this will work with both metamask and wallet connect
   const newSwitch = useCallback(
     async (chainId: number): Promise<any> => {
-      if (!chainId) return;
+      if (!chainId) {
+        return;
+      }  
+      
       const hexId = "0x" + chainId.toString(16);
+      
       return (web3Provider as any).provider.request({
         method: "wallet_switchEthereumChain",
         params: [{ chainId: hexId }]
@@ -193,7 +197,8 @@ export const Web3Provider = ({ children, config, web3Provider, env = "production
     },
     [web3Provider]
   );
-  //make sure we have Fuse and mainnet by default and the relevant multicall available from useConfig for useMulticallAtChain hook
+  
+  // make sure we have Fuse and mainnet by default and the relevant multicall available from useConfig for useMulticallAtChain hook
   config.networks = config.networks || [Fuse, Mainnet, Goerli, Celo];
   config.multicallVersion = config.multicallVersion ? config.multicallVersion : 1;
   config.gasLimitBufferPercentage = 10;
@@ -204,8 +209,10 @@ export const Web3Provider = ({ children, config, web3Provider, env = "production
     5: "https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
     ...config.readOnlyUrls
   };
+  
   const defaultAddresses =
     config.multicallVersion === 1 ? getMulticallAddresses(config.networks) : getMulticall2Addresses(config.networks);
+  
   config.multicallAddresses = { ...defaultAddresses, ...config.multicallAddresses };
 
   useEffect(() => {
@@ -236,20 +243,29 @@ export const Web3Provider = ({ children, config, web3Provider, env = "production
 export const useSwitchNetwork = () => {
   const { switchNetwork: ethersSwitchNetwork } = useEthers();
   const { switchNetwork, setSwitchNetwork, onSwitchNetwork, setOnSwitchNetwork } = useContext(Web3Context);
+  
   const switchCallback = useCallback(
     async (chainId: number) => {
-      onSwitchNetwork && (await onSwitchNetwork(chainId, undefined));
+      const notify = async (status?: boolean): Promise<any> => {
+        if (onSwitchNetwork) {
+          await onSwitchNetwork(chainId, status));
+        }  
+      }
+      
+      await notify()
+      
       try {
         const func = switchNetwork || ethersSwitchNetwork;
 
         await func(chainId);
-        onSwitchNetwork && (await onSwitchNetwork(chainId, true));
+        await notify(true);
       } catch (e) {
-        onSwitchNetwork && (await onSwitchNetwork(chainId, false));
+        await notify(false);
         throw e;
       }
     },
     [onSwitchNetwork, switchNetwork, ethersSwitchNetwork]
   );
+  
   return { switchNetwork: switchCallback, setSwitchNetwork, setOnSwitchNetwork };
 };
