@@ -246,11 +246,7 @@ export const useSwitchNetwork = () => {
   
   const switchCallback = useCallback(
     async (chainId: number) => {
-      const notify = async (status?: boolean): Promise<any> => {
-        if (onSwitchNetwork) {
-          await onSwitchNetwork(chainId, status));
-        }  
-      }
+      const notify = onSwitchNetwork || (async (status?: boolean) => {})
       
       await notify()
       
