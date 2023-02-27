@@ -4,7 +4,7 @@
   "version": "0.0.38",
   "scripts": {
     "build": "yarn dev:clean && tsc && yarn copy:assets",
-    "dev:clean": "rm -fr dist types",
+    "dev:clean": "rm -fr dist types tsconfig.tsbuildinfo",
     "test": "jest",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
@@ -27,7 +27,7 @@
     "@babel/preset-react": "^7.16.0",
     "@babel/preset-typescript": "^7.16.0",
     "@babel/runtime": "^7.18.9",
-    "@gooddollar/web3sdk-v2": "latest",
+    "@gooddollar/web3sdk-v2": "file:.yalc/@gooddollar/web3sdk-v2",
     "@storybook/addon-actions": "^6.5.12",
     "@storybook/addon-essentials": "^6.5.12",
     "@storybook/addon-links": "^6.5.12",
@@ -47,6 +47,7 @@
     "@types/react": "17.0.52",
     "@types/react-helmet": "^6.1.6",
     "@types/react-native": "0.70.4",
+    "@usedapp/core": "1.2.2",
     "babel-jest": "^27.3.1",
     "babel-loader": "^8.2.3",
     "babel-plugin-module-resolver": "^4.1.0",
@@ -64,8 +65,7 @@
     "typescript": "4.7.4",
     "webpack": "^5.74.0"
   },
-  "peerDependencies": {
-    "@gooddollar/web3sdk-v2": "^0.1.75",
+  "peerDepedencies": {
     "@usedapp/core": "1.*"
   },
   "packageManager": "yarn@3.2.1",
