@@ -15,13 +15,15 @@
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
-    "typeRoots": ["./node_modules/@types", "../../node_modules/@types"],
+    "typeRoots": ["./node_modules/@types", "../../node_modules/@types", "src/custom.d.ts"],
     "noEmit": false,
     "isolatedModules": true,
     "declaration": true,
     "emitDeclarationOnly": false,
-    "declarationMap": true
+    "declarationMap": true,
+    "composite": true
   },
-  "include": ["src/**/*", "src/custom.d.ts"],
+  "references": [{ "path": "../sdk-v2" }],
+  "include": ["src/**/*"],
   "exclude": ["node_modules", "../../node_modules", "src/stories", "**/*.stories.tsx"]
 }

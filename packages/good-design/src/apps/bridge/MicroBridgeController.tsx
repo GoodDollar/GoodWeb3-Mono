@@ -1,7 +1,12 @@
 import {
-  SupportedChains, useBridge,
-  useBridgeHistory, useG$Balance, useGetBridgeData, useGetEnvChainId,
-  useRefreshOrNever, useRelayTx,
+  SupportedChains,
+  useBridge,
+  useBridgeHistory,
+  useG$Balance,
+  useGetBridgeData,
+  useGetEnvChainId,
+  useRefreshOrNever,
+  useRelayTx,
   useWithinBridgeLimits
 } from "@gooddollar/web3sdk-v2";
 
@@ -31,10 +36,7 @@ const useCanBridge = (chain: "fuse" | "celo", amountWei: string) => {
 const MicroBridgeHistory = () => {
   const { fuseHistory, celoHistory } = useBridgeHistory();
 
-  const historySorted = sortBy(
-    (fuseHistory?.value || []).concat(celoHistory?.value || []),
-    _ => _.data.from === "account"
-  );
+  const historySorted = sortBy((fuseHistory || []).concat(celoHistory || []), _ => _.data.from === "account");
 
   const relayTx = useRelayTx();
   const [relaying, setRelaying] = useState<{ [key: string]: boolean }>({});
@@ -116,7 +118,7 @@ const MicroBridgeHistory = () => {
             <ExplorerLink chainId={i.data.targetChainId.toNumber() === 122 ? 42220 : 122} addressOrTx={i.data.to} />
           </Flex>
           <Flex flex={["1 1", "1 1", "1 0"]} maxWidth="100%">
-            <Text>{i.data.amount.toNumber() / 100} G$</Text>
+            <Text>{i.amount} G$</Text>
           </Flex>
           <Flex flex={["1 1", "1 1", "1 0"]} maxWidth="100%">
             {(i as any).relayEvent ? (
@@ -144,11 +146,11 @@ interface IMicroBridgeControllerProps {
   onBridgeFailed?: (e: Error) => void;
 }
 
-export const MicroBridgeController: FC<IMicroBridgeControllerProps> = ({ 
-  withRelay = false, 
-  onBridgeStart = noop, 
-  onBridgeSuccess = noop, 
-  onBridgeFailed = noop 
+export const MicroBridgeController: FC<IMicroBridgeControllerProps> = ({
+  withRelay = false,
+  onBridgeStart = noop,
+  onBridgeSuccess = noop,
+  onBridgeFailed = noop
 }: IMicroBridgeControllerProps) => {
   const { sendBridgeRequest, bridgeRequestStatus, relayStatus, selfRelayStatus } = useBridge();
   const { bridgeFees: fuseBridgeFees, bridgeLimits: fuseBridgeLimits } = useGetBridgeData(SupportedChains.FUSE, "");
