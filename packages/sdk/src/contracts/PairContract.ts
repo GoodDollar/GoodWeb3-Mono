@@ -1,7 +1,7 @@
-import { abi as IUniswapV2PairABI } from '@uniswap/v2-core/build/IUniswapV2Pair.json'
+import { abi as IUniswapV2PairABI } from "@uniswap/v2-core/build/IUniswapV2Pair.json";
 
-import { SupportedChainId } from 'constants/chains'
-import { getContract } from 'utils/getContract'
+import { SupportedChainId } from "constants/chains";
+import { getContract } from "utils/getContract";
 
 /**
  * Returns instance of GoodMarket contract.
@@ -10,5 +10,5 @@ import { getContract } from 'utils/getContract'
  * @constructor
  */
 export function PairContract(chainId: SupportedChainId, address: string) {
-    return getContract(chainId, address, IUniswapV2PairABI)
+  return getContract(chainId, address, IUniswapV2PairABI);
 }

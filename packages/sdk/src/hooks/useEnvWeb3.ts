@@ -69,7 +69,7 @@ export const useEnvWeb3 = (
       }
       setWeb3([new Web3(provider), selectedChainId]);
     };
-    
+
     getProvider().catch(noop);
   }, [activeWeb3, dao, activeChainId, contractsEnv]);
 

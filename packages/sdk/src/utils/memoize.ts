@@ -1,4 +1,4 @@
-export {}
+export {};
 /**
  * Clear cache with delay.
  * @param {MemoizedFunction} memoize Memoize function.
@@ -6,7 +6,7 @@ export {}
  * @returns {void}
  */
 export function delayedCacheClear(memoize: any, delay = 1000): void {
-  setTimeout(() => memoize.cache.clear(), delay)
+  setTimeout(() => memoize.cache.clear(), delay);
 }
 
 /**
@@ -15,6 +15,5 @@ export function delayedCacheClear(memoize: any, delay = 1000): void {
  * @returns {void}
  */
 export function cacheClear(memoize: any): void {
-  memoize.cache.clear()
+  memoize.cache.clear();
 }
-

@@ -1,10 +1,9 @@
-import Web3 from "web3"
-import { Contract } from 'web3-eth-contract'
-import { AbiItem } from "web3-utils"
-import GoodMarketMaker
-  from "@gooddollar/goodprotocol/artifacts/contracts/reserve/GoodMarketMaker.sol/GoodMarketMaker.json"
+import Web3 from "web3";
+import { Contract } from "web3-eth-contract";
+import { AbiItem } from "web3-utils";
+import GoodMarketMaker from "@gooddollar/goodprotocol/artifacts/contracts/reserve/GoodMarketMaker.sol/GoodMarketMaker.json";
 
-import { G$ContractAddresses } from "constants/addresses"
+import { G$ContractAddresses } from "constants/addresses";
 
 /**
  * Returns instance of GoodMarket contract.
@@ -13,7 +12,7 @@ import { G$ContractAddresses } from "constants/addresses"
  * @constructor
  */
 export async function goodMarketMakerContract(web3: Web3, chainId: number, address?: string): Promise<Contract> {
-  address = address ?? G$ContractAddresses(chainId, 'GoodMarketMaker')
+  address = address ?? G$ContractAddresses(chainId, "GoodMarketMaker");
 
-  return new web3.eth.Contract(GoodMarketMaker.abi as AbiItem[], address)
+  return new web3.eth.Contract(GoodMarketMaker.abi as AbiItem[], address);
 }
