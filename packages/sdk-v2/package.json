@@ -70,7 +70,7 @@
     "@sentry/browser": "7.16.0",
     "@sentry/react-native": "^4.8.0",
     "@solana/web3.js": "^1.72.0",
-    "@usedapp/core": "1.2.2",
+    "@usedapp/core": "^1.2.6",
     "@walletconnect/client": "^1.8.0",
     "@walletconnect/qrcode-modal": "^1.8.0",
     "@web3-onboard/coinbase": "^2.2.0",
