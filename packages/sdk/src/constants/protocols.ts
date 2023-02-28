@@ -1,7 +1,7 @@
 export enum LIQUIDITY_PROTOCOL {
-    COMPOUND = 'COMPOUND',
-    AAVE = 'AAVE',
-    UNKNOWN = 'UNKNOWN',
-    G$ = 'GOODDOLLAR',
-    GOODDAO = 'GoodDAO'
+  COMPOUND = "COMPOUND",
+  AAVE = "AAVE",
+  UNKNOWN = "UNKNOWN",
+  G$ = "GOODDOLLAR",
+  GOODDAO = "GoodDAO"
 }

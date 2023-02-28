@@ -1,1 +1,1 @@
-export * from './useGovernanceStaking';
+export * from "./useGovernanceStaking";
