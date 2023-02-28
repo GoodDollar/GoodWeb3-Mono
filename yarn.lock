@@ -3175,7 +3175,7 @@ __metadata:
     "@babel/preset-typescript": ^7.16.0
     "@babel/runtime": ^7.18.9
     "@gooddollar/goodprotocol": ^2.0.1
-    "@gooddollar/web3sdk-v2": "file:.yalc/@gooddollar/web3sdk-v2"
+    "@gooddollar/web3sdk-v2": 0.1.77-beta.a4f259a
     "@lingui/macro": ^3.14.0
     "@lingui/react": ^3.14.0
     "@storybook/addon-actions": ^6.5.12
@@ -3252,7 +3252,7 @@ __metadata:
     "@babel/core": ^7.17.5
     "@babel/preset-env": ^7.16.11
     "@gooddollar/goodprotocol": 1.0.27
-    "@gooddollar/web3sdk-v2": 0.1.77-beta.4bfcded
+    "@gooddollar/web3sdk-v2": 0.1.77-beta.a4f259a
     "@testing-library/react": ^12.1.4
     "@types/jest": ^27.4.1
     "@types/node": ^17.0.21
@@ -3351,7 +3351,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/web3sdk-v2@0.1.77-beta.4bfcded, @gooddollar/web3sdk-v2@workspace:packages/sdk-v2":
+"@gooddollar/web3sdk-v2@0.1.77-beta.a4f259a, @gooddollar/web3sdk-v2@workspace:packages/sdk-v2":
   version: 0.0.0-use.local
   resolution: "@gooddollar/web3sdk-v2@workspace:packages/sdk-v2"
   dependencies:
@@ -3430,49 +3430,6 @@ __metadata:
     react-native-web: "*"
   languageName: unknown
   linkType: soft
-
-"@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2::locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design":
-  version: 0.1.77-beta.4bfcded
-  resolution: "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2#.yalc/@gooddollar/web3sdk-v2::hash=65a12a&locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design"
-  dependencies:
-    "@amplitude/analytics-browser": ^1.6.4
-    "@amplitude/analytics-react-native": ^0.7.0
-    "@gooddollar/bridge-app": ^1.2.9
-    "@gooddollar/bridge-contracts": ^1.0.13
-    "@gooddollar/goodprotocol": ^2.0.1
-    "@react-native-firebase/analytics": ^16.4.6
-    "@sentry/browser": 7.16.0
-    "@sentry/react-native": ^4.8.0
-    "@solana/web3.js": ^1.72.0
-    "@usedapp/core": 1.2.2
-    "@walletconnect/client": ^1.8.0
-    "@walletconnect/qrcode-modal": ^1.8.0
-    "@web3-onboard/coinbase": ^2.2.0
-    "@web3-onboard/core": ^2.12.1
-    "@web3-onboard/injected-wallets": ^2.4.0
-    "@web3-onboard/react": ^2.5.3
-    "@web3-onboard/torus": ^2.2.1
-    "@web3-onboard/walletconnect": ^2.2.2
-    "@web3auth/base": ^4.0.0
-    "@web3auth/core": ^4.0.0
-    "@web3auth/openlogin-adapter": ^4.1.0
-    "@web3auth/torus-wallet-connector-plugin": ^4.0.0
-    eventemitter3: ^4.0.7
-    mixpanel-browser: ^2.45.0
-    mixpanel-react-native: ^2.1.0
-    posthog-react-native: ^2.4.0
-    react-native-indicative: ^0.2.1
-    react-native-restart: ^0.0.24
-    react-use-promise: ^0.5.0
-  peerDependencies:
-    "@react-native-async-storage/async-storage": 1.17.10
-    ethers: 5.*
-    react: "*"
-    react-native: "*"
-    react-native-web: "*"
-  checksum: 7c9f14aa56d1ced44fe067d82ed1073bbcc9534568981582dd1d4307edfc6d79d78f948c349e5cfb93d16158f15afb9f920e3c9c6370f5644fe7446d563c3e83
-  languageName: node
-  linkType: hard
 
 "@gooddollar/web3sdk@workspace:packages/sdk":
   version: 0.0.0-use.local
