@@ -3175,7 +3175,7 @@ __metadata:
     "@babel/preset-typescript": ^7.16.0
     "@babel/runtime": ^7.18.9
     "@gooddollar/goodprotocol": ^2.0.1
-    "@gooddollar/web3sdk-v2": 0.1.77-beta.4bfcded
+    "@gooddollar/web3sdk-v2": latest
     "@lingui/macro": ^3.14.0
     "@lingui/react": ^3.14.0
     "@storybook/addon-actions": ^6.5.12
@@ -3252,7 +3252,7 @@ __metadata:
     "@babel/core": ^7.17.5
     "@babel/preset-env": ^7.16.11
     "@gooddollar/goodprotocol": 1.0.27
-    "@gooddollar/web3sdk-v2": 0.1.77-beta.4bfcded
+    "@gooddollar/web3sdk-v2": latest
     "@testing-library/react": ^12.1.4
     "@types/jest": ^27.4.1
     "@types/node": ^17.0.21
@@ -3351,7 +3351,50 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/web3sdk-v2@0.1.77-beta.4bfcded, @gooddollar/web3sdk-v2@workspace:packages/sdk-v2":
+"@gooddollar/web3sdk-v2@npm:latest":
+  version: 0.1.76
+  resolution: "@gooddollar/web3sdk-v2@npm:0.1.76"
+  dependencies:
+    "@amplitude/analytics-browser": ^1.6.4
+    "@amplitude/analytics-react-native": ^0.7.0
+    "@gooddollar/bridge-app": ^1.2.9
+    "@gooddollar/bridge-contracts": ^1.0.13
+    "@gooddollar/goodprotocol": ^2.0.1
+    "@react-native-firebase/analytics": ^16.4.6
+    "@sentry/browser": 7.16.0
+    "@sentry/react-native": ^4.8.0
+    "@solana/web3.js": ^1.72.0
+    "@usedapp/core": ^1.2.6
+    "@walletconnect/client": ^1.8.0
+    "@walletconnect/qrcode-modal": ^1.8.0
+    "@web3-onboard/coinbase": ^2.2.0
+    "@web3-onboard/core": ^2.12.1
+    "@web3-onboard/injected-wallets": ^2.4.0
+    "@web3-onboard/react": ^2.5.3
+    "@web3-onboard/torus": ^2.2.1
+    "@web3-onboard/walletconnect": ^2.2.2
+    "@web3auth/base": ^4.0.0
+    "@web3auth/core": ^4.0.0
+    "@web3auth/openlogin-adapter": ^4.1.0
+    "@web3auth/torus-wallet-connector-plugin": ^4.0.0
+    eventemitter3: ^4.0.7
+    mixpanel-browser: ^2.45.0
+    mixpanel-react-native: ^2.1.0
+    posthog-react-native: ^2.4.0
+    react-native-indicative: ^0.2.1
+    react-native-restart: ^0.0.24
+    react-use-promise: ^0.5.0
+  peerDependencies:
+    "@react-native-async-storage/async-storage": 1.17.10
+    ethers: 5.*
+    react: "*"
+    react-native: "*"
+    react-native-web: "*"
+  checksum: af71cc8cea2dbdda51f86c8b9e4a86a9f66ac2cd4ef9c300498d858a71809a3213e1f451193035db9734d62eb0724eeb66584cd5983470ee3dd2f6fc943825fe
+  languageName: node
+  linkType: hard
+
+"@gooddollar/web3sdk-v2@workspace:packages/sdk-v2":
   version: 0.0.0-use.local
   resolution: "@gooddollar/web3sdk-v2@workspace:packages/sdk-v2"
   dependencies:
@@ -3384,7 +3427,7 @@ __metadata:
     "@types/node": 18.0.0
     "@types/react": 17.0.2
     "@types/react-native": 0.70.4
-    "@usedapp/core": 1.2.2
+    "@usedapp/core": ^1.2.6
     "@walletconnect/client": ^1.8.0
     "@walletconnect/qrcode-modal": ^1.8.0
     "@web3-onboard/coinbase": ^2.2.0
@@ -4239,6 +4282,13 @@ __metadata:
   version: 1.2.0
   resolution: "@metamask/detect-provider@npm:1.2.0"
   checksum: 2c152534a8dd15bc1430bb5159cdf58993549a644cff344a1ff43f4ede8f041aad72b909e822747f6545de3ed293a740ecffc86a859daf7a925c4096efd61eb3
+  languageName: node
+  linkType: hard
+
+"@metamask/detect-provider@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "@metamask/detect-provider@npm:2.0.0"
+  checksum: 45d3128069310e6cdb9a572b31da88b3fddb0aa78f94deba71657efd7e40d0680912a4ee0291a7a0e9ab66681aba271e74de87c5464d979f115726c740db641b
   languageName: node
   linkType: hard
 
@@ -9540,6 +9590,25 @@ __metadata:
   bin:
     usedapp-generate-hooks: bin/usedapp-generate-hooks.js
   checksum: 656df73e33b96d2d414bd9b84fbff529aae6c454a2978b0e4a84b092254a1440bd63ed1db4566656374febdf4bf028b1425e3c2932a5737d878b21d03b8d6208
+  languageName: node
+  linkType: hard
+
+"@usedapp/core@npm:^1.2.6":
+  version: 1.2.6
+  resolution: "@usedapp/core@npm:1.2.6"
+  dependencies:
+    "@metamask/detect-provider": ^2.0.0
+    "@uniswap/token-lists": ^1.0.0-beta.27
+    fetch-mock: ^9.11.0
+    lodash.merge: ^4.6.2
+    lodash.pickby: ^4.6.0
+    nanoid: 3.3.4
+  peerDependencies:
+    ethers: ^5
+    react: "*"
+  bin:
+    usedapp-generate-hooks: bin/usedapp-generate-hooks.js
+  checksum: 2dbaba0129b8e74dd543ffcec5a7faa56ae0bd8ea7393a56693aae922d055e0424edf9e4c531e198144680d21e9cf85d29c120a682b0a0c413ea0ec1d162e8df
   languageName: node
   linkType: hard
 
