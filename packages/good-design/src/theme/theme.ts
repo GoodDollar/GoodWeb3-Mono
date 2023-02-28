@@ -30,7 +30,7 @@ export const theme = extendTheme({
 
     /* g$ design system */
     primary: "#00AFFF",
-    primaryHoverDark: "#0387c3",
+    primaryHoverDark: "#0075AC",
     // text
     goodGrey: {
       300: "#D4D4D4",

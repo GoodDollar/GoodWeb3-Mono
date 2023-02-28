@@ -5,7 +5,6 @@ import { Text, View, useColorModeValue, Spinner } from "native-base";
 import { useQueryParam } from "../../hooks/useQueryParam";
 import { Web3ActionButton } from "../../advanced";
 import { useFVModalAction } from "../../hooks/useFVModalAction";
-import ActionButton from "./ActionButton";
 import { useModal } from "../../hooks/useModal";
 import { Title } from "../layout";
 import { FVFlowProps } from "./types";
@@ -14,6 +13,7 @@ import ClaimImage from "../../assets/images/claim.png";
 import { BasicModalProps } from "../modals/BasicModal";
 import { noop, isNil } from "lodash";
 import { useEthers } from "@usedapp/core";
+import ArrowButton from "./ArrowButton";
 
 const ClaimButton = ({
   firstName,
@@ -67,8 +67,8 @@ const ClaimButton = ({
           </>
         ),
         footer: (
-          <View justifyContent="space-between" width="full" flexDirection="row">
-            <ActionButton color="white" text={"Verify Uniqueness"} onPress={verify} bg="main" />
+          <View justifyContent="center" width="full" flexDirection="row">
+            <ArrowButton text={"VERIFY I'M HUMAN"} onPress={verify} textInteraction={{ hover: { color: "white" } }} />
           </View>
         )
       }
