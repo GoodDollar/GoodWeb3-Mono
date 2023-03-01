@@ -15,11 +15,16 @@ export interface FVFlowProps {
 export type FVModalProps = IModalProps & FVFlowProps;
 
 export interface ClaimCardContent {
+  subTitle?: {
+    text: string;
+    color: string;
+  };
   description?: {
     text: string;
     color: string;
   };
   imageUrl?: string;
+  imgSrc?: any;
   link?: {
     linkText: string;
     linkUrl: string;
@@ -32,6 +37,7 @@ export interface IClaimCard {
     text: string;
     color: string;
   };
+  externalLink?: string;
   bgColor: string;
   content?: Array<ClaimCardContent>;
   hide?: boolean;
