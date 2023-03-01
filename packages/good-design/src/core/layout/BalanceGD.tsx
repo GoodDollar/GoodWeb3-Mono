@@ -1,11 +1,10 @@
 import React, { FC, memo } from "react";
 import { Text, View, Box } from "native-base";
 import { useG$Balance, useGetEnvChainId } from "@gooddollar/web3sdk-v2";
-import { Fraction } from "@uniswap/sdk-core";
 import { CurrencyValue, QueryParams } from "@usedapp/core";
 
 interface BalanceGDProps {
-  gdPrice?: Fraction;
+  gdPrice?: number;
   refresh?: QueryParams["refresh"];
   requiredChainId?: number;
 }
@@ -24,6 +23,8 @@ const BalanceCopy = ({ heading, subHeading }: { heading: string; subHeading: str
 const BalanceView: FC<Required<BalanceGDProps> & { amount: CurrencyValue }> = memo(
   ({ gdPrice, amount, requiredChainId }) => {
     const network = requiredChainId === 122 ? "Fuse" : "Celo";
+    const usdValue = ((+amount.value / 10 ** amount.currency.decimals) * gdPrice).toFixed(2);
+
     const copies = [
       {
         id: "your-balance-label",
@@ -33,7 +34,7 @@ const BalanceView: FC<Required<BalanceGDProps> & { amount: CurrencyValue }> = me
       {
         id: "your-balance-value",
         heading: amount.format({ suffix: "", prefix: amount.currency.ticker + " " }),
-        subheading: "(USD " + gdPrice.multiply(amount.format({ suffix: "", thousandSeparator: "" })).toFixed(2) + ")"
+        subheading: "(USD " + usdValue + ")"
       }
     ];
 

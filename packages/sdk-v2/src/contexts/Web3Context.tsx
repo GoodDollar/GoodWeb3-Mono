@@ -49,7 +49,7 @@ export const txEmitter = {
 
 export const Web3Context = createContext<IWeb3Context>({
   switchNetwork: undefined,
-  setSwitchNetwork: (cb: SwitchNetwork) => undefined, // eslint-disable-line @typescript-eslint/no-unused-vars
+  setSwitchNetwork: (_cb: SwitchNetwork) => undefined, // eslint-disable-line @typescript-eslint/no-unused-vars
   connectWallet: () => undefined,
   txEmitter,
   env: "production"
@@ -186,10 +186,10 @@ export const Web3Provider = ({ children, config, web3Provider, env = "production
     async (chainId: number): Promise<any> => {
       if (!chainId) {
         return;
-      }  
-      
+      }
+
       const hexId = "0x" + chainId.toString(16);
-      
+
       return (web3Provider as any).provider.request({
         method: "wallet_switchEthereumChain",
         params: [{ chainId: hexId }]
@@ -197,7 +197,7 @@ export const Web3Provider = ({ children, config, web3Provider, env = "production
     },
     [web3Provider]
   );
-  
+
   // make sure we have Fuse and mainnet by default and the relevant multicall available from useConfig for useMulticallAtChain hook
   config.networks = config.networks || [Fuse, Mainnet, Goerli, Celo];
   config.multicallVersion = config.multicallVersion ? config.multicallVersion : 1;
@@ -209,10 +209,10 @@ export const Web3Provider = ({ children, config, web3Provider, env = "production
     5: "https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
     ...config.readOnlyUrls
   };
-  
+
   const defaultAddresses =
     config.multicallVersion === 1 ? getMulticallAddresses(config.networks) : getMulticall2Addresses(config.networks);
-  
+
   config.multicallAddresses = { ...defaultAddresses, ...config.multicallAddresses };
 
   useEffect(() => {
@@ -240,18 +240,19 @@ export const Web3Provider = ({ children, config, web3Provider, env = "production
   );
 };
 
-const onSwitchNetworkNoop = async (chainId: number, status?: boolean) => {}
+// eslint-disable-next-line @typescript-eslint/no-empty-function, @typescript-eslint/no-unused-vars
+const onSwitchNetworkNoop = async (_chainId: number, _status?: boolean) => {};
 
 export const useSwitchNetwork = () => {
   const { switchNetwork: ethersSwitchNetwork } = useEthers();
   const { switchNetwork, setSwitchNetwork, onSwitchNetwork, setOnSwitchNetwork } = useContext(Web3Context);
   const _onSwitchNetwork = onSwitchNetwork || onSwitchNetworkNoop;
   const _switchNetwork = switchNetwork || ethersSwitchNetwork;
-        
+
   const switchCallback = useCallback(
     async (chainId: number) => {
-      await _onSwitchNetwork(chainId)
-      
+      await _onSwitchNetwork(chainId);
+
       try {
         await _switchNetwork(chainId);
         await _onSwitchNetwork(chainId, true);
@@ -262,6 +263,6 @@ export const useSwitchNetwork = () => {
     },
     [_onSwitchNetwork, _switchNetwork]
   );
-  
+
   return { switchNetwork: switchCallback, setSwitchNetwork, setOnSwitchNetwork };
 };
