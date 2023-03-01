@@ -37,6 +37,7 @@ export interface IClaimCard {
     text: string;
     color: string;
   };
+  externalLink?: string;
   bgColor: string;
   content?: Array<ClaimCardContent>;
   hide?: boolean;

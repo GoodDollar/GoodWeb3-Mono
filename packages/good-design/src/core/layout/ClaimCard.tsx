@@ -1,9 +1,10 @@
 import { Text, View, Box } from "native-base";
-import React, { FC } from "react";
+import React, { FC, useCallback } from "react";
 import { ClaimCardContent, ArrowButton } from "../buttons";
 import { Image } from "../images";
 import { openLink } from "@gooddollar/web3sdk-v2";
 import Title from "./Title";
+import BasePressable from "../buttons/BasePressable";
 interface ClaimCardProps {
   bgColor: string;
   title: {
@@ -11,21 +12,32 @@ interface ClaimCardProps {
     color: string;
   };
   content?: ClaimCardContent[];
+  externalLink?: string;
 }
 
-const ClaimCard: FC<ClaimCardProps> = ({ content, title, bgColor }) => {
+const ClaimCard: FC<ClaimCardProps> = ({ content, title, bgColor, externalLink }) => {
+  const handlePress = useCallback(async () => {
+    if (externalLink) {
+      await openLink(externalLink, "_blank");
+    }
+  }, [useCallback]);
+
   return (
-    <View
-      shadow="1"
-      w="240"
-      h="423"
-      bg={bgColor}
-      borderRadius={30}
-      flex={1}
-      flexDirection="column"
-      alignItems="flex-start"
-      px="17"
-      py="6"
+    <BasePressable
+      w={240}
+      h={423}
+      onPress={handlePress}
+      innerView={{
+        shadow: "1",
+        bg: bgColor,
+        borderRadius: 30,
+        flex: 1,
+        flexDirection: "column",
+        alignItems: "flex-start",
+        px: "17",
+        py: "6"
+      }}
+      viewInteraction={{ hover: { shadow: "3" } }}
     >
       <Title fontSize="xl" lineHeight="36" pb="6" fontWeight="bold" fontFamily="heading" color={title.color}>
         {title.text}
@@ -85,7 +97,7 @@ const ClaimCard: FC<ClaimCardProps> = ({ content, title, bgColor }) => {
           )}
         </Box>
       ))}
-    </View>
+    </BasePressable>
   );
 };
 
