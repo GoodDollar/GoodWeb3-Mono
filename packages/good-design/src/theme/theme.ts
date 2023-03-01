@@ -24,6 +24,7 @@ export const theme = extendTheme({
     heading: "#42454A",
     headingBlack: "#303030",
     headingGrey: "#999",
+    lightBlue: "#8499BB",
 
     // UI
     buttonBackground: "#40C4FFCC",

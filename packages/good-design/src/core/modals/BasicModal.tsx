@@ -42,7 +42,6 @@ const BasicModal: FC<BasicModalProps> = ({
     onClose();
   }, [onAction, onClose]);
 
-  const bgContent = useColorModeValue("white", "mainDarkContrast");
   const bgOverlay = useColorModeValue("mainDarkContracts:alpha.40", "white:alpha.40");
   const width = useBreakpointValue({
     base: "fit-content",
@@ -57,8 +56,8 @@ const BasicModal: FC<BasicModalProps> = ({
   return (
     /* height 100vh is required so modal always shows in the middle */
     <NBModal isOpen={modalVisible} onClose={onClose} {..._modal} minH="100vh" bgColor={bgOverlay}>
-      <Box bgColor={bgContent} borderRadius="lg" h={height} width={width}>
-        <NBModal.Content w={"100%"}>
+      <Box borderRadius="lg" h={height} width={width} bgColor="white">
+        <NBModal.Content w={"100%"} px="18px" pb="18px" bgColor="white">
           {hasCloseButton && <NBModal.CloseButton />}
           {!!header && (
             <NBModal.Header
@@ -67,6 +66,7 @@ const BasicModal: FC<BasicModalProps> = ({
                 paddingRight: 18,
                 paddingTop: 24
               }}
+              backgroundColor="white"
               borderBottomWidth={hasTopBorder ? "px" : "0"}
               {..._header}
             >
@@ -74,20 +74,13 @@ const BasicModal: FC<BasicModalProps> = ({
             </NBModal.Header>
           )}
 
-          <NBModal.Body {..._body}>{body}</NBModal.Body>
+          <NBModal.Body {..._body} bgColor="white">
+            {body}
+          </NBModal.Body>
           {(!!footer || !!closeText || !!actionText) && (
-            <NBModal.Footer borderTopWidth={hasBottomBorder ? "px" : "0"} {..._footer}>
+            <NBModal.Footer borderTopWidth={hasBottomBorder ? "px" : "0"} {..._footer} bgColor="white">
               {footer}
-              <Button.Group space={2}>
-                {closeText ? (
-                  <Button variant="ghost" colorScheme="blueGray" onPress={onClose}>
-                    {closeText}
-                  </Button>
-                ) : (
-                  <></>
-                )}
-                {actionButton}
-              </Button.Group>
+              <Button.Group space={2}>{actionButton}</Button.Group>
             </NBModal.Footer>
           )}
         </NBModal.Content>
