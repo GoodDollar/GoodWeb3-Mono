@@ -2,9 +2,9 @@ import { Text, View, Box } from "native-base";
 import React, { FC, useCallback } from "react";
 import { ClaimCardContent, ArrowButton } from "../buttons";
 import { Image } from "../images";
-import { openLink } from "@gooddollar/web3sdk-v2";
 import Title from "./Title";
 import BasePressable from "../buttons/BasePressable";
+import { openLink } from "@gooddollar/web3sdk-v2";
 interface ClaimCardProps {
   bgColor: string;
   title: {
