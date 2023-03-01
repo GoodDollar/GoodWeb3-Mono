@@ -7,7 +7,7 @@ import { BETTER_TRADE_LESS_HOPS_THRESHOLD } from "constants/misc";
 import { SupportedChainId } from "constants/chains";
 import { debug } from "utils/debug";
 
-const MAX_HOPS = 2
+const MAX_HOPS = 2;
 
 /**
  * Returns the best trade for the token in to the exact amount of token in.
@@ -22,31 +22,30 @@ export async function v2TradeExactIn(
   currencyOut?: Currency,
   { maxHops = MAX_HOPS, chainId = SupportedChainId.MAINNET } = {}
 ): Promise<Trade<Currency, Currency, TradeType.EXACT_INPUT> | null> {
-  const allowedPairs = await allCommonPairs(chainId, currencyAmountIn?.currency, currencyOut)
+  const allowedPairs = await allCommonPairs(chainId, currencyAmountIn?.currency, currencyOut);
 
-  debug(allowedPairs.map(pair => [pair.token0.symbol, pair.token0.address, pair.token1.symbol, pair.token1.address]))
+  debug(allowedPairs.map(pair => [pair.token0.symbol, pair.token0.address, pair.token1.symbol, pair.token1.address]));
 
   if (currencyAmountIn && currencyOut && allowedPairs.length > 0) {
     if (maxHops === 1) {
       return (
-        Trade.bestTradeExactIn(allowedPairs, currencyAmountIn, currencyOut, { maxHops: 1, maxNumResults: 1 })[0] ??
-        null
-      )
+        Trade.bestTradeExactIn(allowedPairs, currencyAmountIn, currencyOut, { maxHops: 1, maxNumResults: 1 })[0] ?? null
+      );
     }
     // search through trades with varying hops, find best trade out of them
-    let bestTradeSoFar: Trade<Currency, Currency, TradeType.EXACT_INPUT> | null = null
+    let bestTradeSoFar: Trade<Currency, Currency, TradeType.EXACT_INPUT> | null = null;
     for (let i = 1; i <= maxHops; i++) {
       const currentTrade: Trade<Currency, Currency, TradeType.EXACT_INPUT> | null =
         Trade.bestTradeExactIn(allowedPairs, currencyAmountIn, currencyOut, { maxHops: i, maxNumResults: 1 })[0] ??
-        null
+        null;
 
       // if current trade is best yet, save it
       if (isTradeBetter(bestTradeSoFar, currentTrade, BETTER_TRADE_LESS_HOPS_THRESHOLD)) {
-        bestTradeSoFar = currentTrade
+        bestTradeSoFar = currentTrade;
       }
     }
-    return bestTradeSoFar
+    return bestTradeSoFar;
   }
 
-  return null
+  return null;
 }

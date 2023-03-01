@@ -1,10 +1,10 @@
-import JSBI from 'jsbi'
-import { Currency, Percent, TradeType } from '@uniswap/sdk-core'
-import { Trade } from '@uniswap/v2-sdk'
+import JSBI from "jsbi";
+import { Currency, Percent, TradeType } from "@uniswap/sdk-core";
+import { Trade } from "@uniswap/v2-sdk";
 
-const THIRTY_BIPS_FEE = new Percent(JSBI.BigInt(30), JSBI.BigInt(10000))
-const ONE_HUNDRED_PERCENT = new Percent(JSBI.BigInt(10000), JSBI.BigInt(10000))
-const INPUT_FRACTION_AFTER_FEE = ONE_HUNDRED_PERCENT.subtract(THIRTY_BIPS_FEE)
+const THIRTY_BIPS_FEE = new Percent(JSBI.BigInt(30), JSBI.BigInt(10000));
+const ONE_HUNDRED_PERCENT = new Percent(JSBI.BigInt(10000), JSBI.BigInt(10000));
+const INPUT_FRACTION_AFTER_FEE = ONE_HUNDRED_PERCENT.subtract(THIRTY_BIPS_FEE);
 
 /**
  * Computes realized lp fee as a percent.
@@ -19,7 +19,7 @@ export function computeRealizedLPFeePercent(trade: Trade<Currency, Currency, Tra
       (currentFee: Percent): Percent => currentFee.multiply(INPUT_FRACTION_AFTER_FEE),
       ONE_HUNDRED_PERCENT
     )
-  )
+  );
 
-  return new Percent(percent.numerator, percent.denominator)
+  return new Percent(percent.numerator, percent.denominator);
 }

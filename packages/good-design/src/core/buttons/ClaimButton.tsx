@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback, useMemo, useState } from "react";
 import { SupportedChains, useClaim, useGetEnvChainId, useWhitelistSync, G$Amount } from "@gooddollar/web3sdk-v2";
-import { Text, View, useColorModeValue, Spinner } from "native-base";
+import { Text, View, useColorModeValue, Spinner, Box } from "native-base";
 
 import { useQueryParam } from "../../hooks/useQueryParam";
 import { Web3ActionButton } from "../../advanced";
@@ -9,7 +9,8 @@ import { useModal } from "../../hooks/useModal";
 import { Title } from "../layout";
 import { FVFlowProps } from "./types";
 import { Image } from "../images";
-import ClaimImage from "../../assets/images/claim.png";
+import FirstClaimYay from "../../assets/images/yay.png";
+import SocialShare from "../../assets/images/social_share.png";
 import { BasicModalProps } from "../modals/BasicModal";
 import { noop, isNil } from "lodash";
 import { useEthers } from "@usedapp/core";
@@ -82,15 +83,19 @@ const ClaimButton = ({
         ? {
             header: (
               <>
-                <Title fontSize="xl" mb="2">
-                  Your first claim is ready!
+                <Title fontSize="2xl" mb="2" lineHeight="43px">
+                  Your G$ tokens are ready!
                 </Title>
-                <Text color={textColor} fontSize="md">
-                  To complete it, sign in your wallet
+                <Text color={textColor} fontSize="sm">
+                  To claim, confirm the transaction in your wallet
                 </Text>
               </>
             ),
-            body: <></>,
+            body: (
+              <Box display="flex" justifyContent="center" alignItems="center">
+                <Image source={FirstClaimYay} w="220px" h="180px" />
+              </Box>
+            ),
             closeText: "",
             hasTopBorder: false,
             hasBottomBorder: false
@@ -117,7 +122,7 @@ const ClaimButton = ({
   const handleClaim = async (first: boolean) => {
     try {
       const success = await claim();
-
+      console.log("handleClaim -->", { success });
       if (success !== true || first === false) {
         return;
       }
@@ -139,9 +144,10 @@ const ClaimButton = ({
   useEffect(() => {
     const doClaim = async () => {
       if (isVerified && account) {
+        setFirstClaim(true);
         showActionModal();
-        setClaimLoading(true);
         await handleClaim(true);
+        setClaimLoading(true);
       }
     };
 
@@ -160,7 +166,7 @@ const ClaimButton = ({
 
       if (isWhitelisted) {
         setClaimLoading(true);
-        await handleClaim(first);
+        await handleClaim(false);
         return;
       }
 
@@ -195,11 +201,23 @@ const ClaimButton = ({
       <FirstClaimModal
         header={
           <>
-            <Title mb="2">Yay! You've made your first claim.</Title>
-            <Text color={textColor}>Check out how you can use your GoodDollars:</Text>
+            <Title mb="2" fontSize="xl" lineHeight="36px">
+              Congrats! You claimed G$ today
+            </Title>
+            <Text color={textColor} fontSize="sm">
+              Why not tell your friends on social media?
+            </Text>
+            <Text color="primary" fontSize="sm">
+              Don't forget to tag us.
+            </Text>
+            <Box>** Social share here **</Box>
           </>
         }
-        body={<Image source={ClaimImage} w="full" h="auto" />}
+        body={
+          <Box display="flex" justifyContent="center" alignItems="center">
+            <Image source={SocialShare} w="100px" h="100px" style={{ resizeMode: "contain" }} />
+          </Box>
+        }
         closeText=""
         hasTopBorder={false}
         hasBottomBorder={false}
