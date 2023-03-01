@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback, useMemo, useState } from "react";
 import { SupportedChains, useClaim, useGetEnvChainId, useWhitelistSync, G$Amount } from "@gooddollar/web3sdk-v2";
-import { Text, View, useColorModeValue, Spinner, Box } from "native-base";
+import { Text, View, useColorModeValue, Box, Link } from "native-base";
 
 import { useQueryParam } from "../../hooks/useQueryParam";
 import { Web3ActionButton } from "../../advanced";
@@ -15,6 +15,7 @@ import { BasicModalProps } from "../modals/BasicModal";
 import { noop, isNil } from "lodash";
 import { useEthers } from "@usedapp/core";
 import ArrowButton from "./ArrowButton";
+import BackToSchool from "../../assets/images/backtoschool.png";
 
 const ClaimButton = ({
   firstName,
@@ -51,19 +52,26 @@ const ClaimButton = ({
   const actionModalBody = useMemo(
     () => ({
       verify: {
+        header: (
+          <>
+            <Title fontSize="xl" mb="2" lineHeight="43px">
+              Verify Uniqueness
+            </Title>
+            <Text color={textColor} fontSize="sm" fontFamily="subheading">
+              You're almost there! To claim G$, you need to be a unique human and prove it wiht your camera.
+            </Text>
+            <Link _text={{ color: "main" }} mt="10">
+              Learn more about the identification process.
+            </Link>
+          </>
+        ),
         body: (
           <>
-            {" "}
-            {/* TODO: Await confirmation for copy */}
-            <Text color={textColor} mb="2">
-              To verify your identity you need to sign TWICE with your wallet.
+            <Text color={textColor} mb="2" fontFamily="subheading" fontSize="sm">
+              Verifying your identity is easy. You'll be asked to sign TWICE with your wallet.
             </Text>
-            <Text color={textColor} mb="2">
-              First sign your address to be whitelisted
-            </Text>
-            <Text color={textColor} mb="2">
-              Second sign your self sovereign anonymized identifier, so no link is kept between your identity record and
-              your address.
+            <Text color={textColor} mb="2" fontFamily="subheading" fontSize="sm">
+              Don't worry, no link is kept between your identity record and your wallet address.
             </Text>
           </>
         ),
@@ -74,7 +82,7 @@ const ClaimButton = ({
         )
       }
     }),
-    [textColor]
+    [textColor, verify]
   );
 
   const claimModalProps: Omit<BasicModalProps, "modalVisible"> = useMemo(
@@ -101,19 +109,54 @@ const ClaimButton = ({
             hasBottomBorder: false
           }
         : {
-            header: (
-              <>
-                <Title fontSize="xl" mb="2" fontWeight="bold" lineHeight="36px">
-                  Action Required
-                </Title>
-                <Text color={textColor} fontFamily="subheading" fontWeight="normal" fontSize="md">
-                  To complete this action, continue in your wallet.
-                </Text>
-              </>
-            ),
-            body: loading || claimLoading ? <Spinner color="emerald.500" /> : actionModalBody.verify.body,
+            header:
+              loading || claimLoading ? (
+                <Box backgroundColor={"white"}>
+                  <Title fontSize="xl" mb="2" fontWeight="bold" lineHeight="36px">
+                    Action Required
+                  </Title>
+                  <Text color={textColor} fontFamily="subheading" fontWeight="normal" fontSize="md">
+                    To complete this action, continue in your wallet.
+                  </Text>
+                </Box>
+              ) : (
+                actionModalBody.verify.header
+              ),
+            body:
+              loading || claimLoading ? (
+                <View
+                  w="300"
+                  h="130px"
+                  bgColor="goodWhite.100"
+                  display="flex"
+                  flexDir="row"
+                  alignItems="center"
+                  justifyContent="center"
+                  style={{ flexGrow: 1 }}
+                >
+                  <Box display="flex" w="60%" alignSelf="flex-start" p={2}>
+                    <Text color="lightBlue" fontSize="sm">
+                      LEARN
+                    </Text>
+                    <Text color="main" fontSize="sm" fontWeight="normal">
+                      {`What is signing? >`}{" "}
+                    </Text>
+                  </Box>
+                  <Box>
+                    <Image
+                      source={BackToSchool}
+                      w="92px"
+                      h="111px"
+                      margin-right="0"
+                      style={{ resizeMode: "contain" }}
+                    />
+                  </Box>
+                </View>
+              ) : (
+                actionModalBody.verify.body
+              ),
             footer: isWhitelisted || loading || claimLoading ? undefined : actionModalBody.verify.footer,
-            closeText: "",
+            closeText: "x",
             hasBottomBorder: false
           },
     [firstClaim, textColor, loading, isWhitelisted, claimLoading]
