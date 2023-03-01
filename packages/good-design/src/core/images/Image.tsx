@@ -1,15 +1,11 @@
-import { get, isFunction, isString } from "lodash";
+import { get, isString } from "lodash";
 import React, { FC, useEffect, useMemo, useState } from "react";
-import { GestureResponderEvent, Image as NativeImage, StyleSheet } from "react-native";
-import { Image as BaseImage, IImageProps, Pressable } from "native-base";
+import { Image as NativeImage, StyleSheet } from "react-native";
+import { Image as BaseImage, IImageProps } from "native-base";
 
 const isAutoHeight = (width: IImageProps["w"], height: IImageProps["h"]) => !!width && "auto" === height;
 
-export interface CustomImageProps extends IImageProps {
-  onPress?: (event: GestureResponderEvent) => void;
-}
-
-const Image: FC<CustomImageProps> = ({ source, style = {}, w, h, onPress, ...props }) => {
+const Image: FC<IImageProps> = ({ source, style = {}, w, h, ...props }) => {
   const [aspectRatio, setAspectRatio] = useState<number>();
 
   const flattenStyle = useMemo(() => StyleSheet.flatten(style), [style]);
@@ -43,11 +39,7 @@ const Image: FC<CustomImageProps> = ({ source, style = {}, w, h, onPress, ...pro
     return null;
   }
 
-  return (
-    <Pressable disabled={!isFunction(onPress)} onPress={onPress}>
-      <BaseImage alt="GoodDollar" {...props} source={source} style={imageStyle} w={w} h={h} />
-    </Pressable>
-  );
+  return <BaseImage alt="GoodDollar" {...props} source={source} style={imageStyle} w={w} h={h} />;
 };
 
 export default Image;

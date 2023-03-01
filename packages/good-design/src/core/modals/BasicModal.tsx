@@ -73,7 +73,7 @@ const BasicModal: FC<BasicModalProps> = ({
               {header}
             </NBModal.Header>
           )}
-          <Box borderWidth="1" borderColor="borderGrey" width="90%" alignSelf="center" />
+
           <NBModal.Body {..._body}>{body}</NBModal.Body>
           {(!!footer || !!closeText || !!actionText) && (
             <NBModal.Footer borderTopWidth={hasBottomBorder ? "px" : "0"} {..._footer}>
