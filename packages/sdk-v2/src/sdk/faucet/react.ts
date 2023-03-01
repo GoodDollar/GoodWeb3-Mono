@@ -28,19 +28,26 @@ export const useFaucet = async (refresh: QueryParams["refresh"] = 12) => {
   const { gasPrice = BigNumber.from(5e9) } = useGasFees();
   const minBalance = BigNumber.from(chainId === 42220 ? "250000" : "150000").mul(gasPrice);
 
-  const [result] = useCalls(
+  const faucetResult = useCalls(
     [
       {
         contract: faucet,
         method: "canTop",
         args: [account || ethers.constants.AddressZero]
+      },
+      {
+        contract: faucet,
+        method: "getToppingAmount",
+        args: []
       }
     ].filter(_ => _.contract),
     { refresh: "never" }
   );
 
   useEffect(() => {
-    if (result?.value && account && balance && balance.lt(minBalance)) {
+    const [canTop, toppingAmount] = faucetResult || [];
+    const threshold = (toppingAmount?.value as BigNumber)?.mul(50)?.div(100) || minBalance;
+    if (canTop?.value && account && balance && balance.lte(threshold)) {
       const devEnv = baseEnv === "fuse" ? "development" : baseEnv;
       const { backend } = Envs[devEnv];
 
@@ -52,5 +59,5 @@ export const useFaucet = async (refresh: QueryParams["refresh"] = 12) => {
         console.error("topping wallet failed:", e.message, e);
       });
     }
-  }, [result, account, balance, baseEnv]);
+  }, [faucetResult, account, balance, baseEnv]);
 };
