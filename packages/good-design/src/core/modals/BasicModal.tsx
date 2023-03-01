@@ -59,7 +59,7 @@ const BasicModal: FC<BasicModalProps> = ({
   return (
     /* height 100vh is required so modal always shows in the middle */
     <NBModal isOpen={modalVisible} onClose={onClose} {..._modal} minH="100vh" bgColor={bgOverlay}>
-      <Box borderRadius="lg" h={height} width={width} bgColor="white">
+      <Box borderRadius="lg" h={height} width={width} bgColor={bgColor}>
         <NBModal.Content w={"100%"} px="18px" pb="18px" bgColor={bgColor}>
           {hasCloseButton && <NBModal.CloseButton />}
           {!!header && (
