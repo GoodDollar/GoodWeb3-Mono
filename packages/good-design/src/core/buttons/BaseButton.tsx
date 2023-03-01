@@ -10,7 +10,7 @@ export interface BaseButtonProps extends IButtonProps {
    * a text to be rendered in the component.
    */
   text: string;
-  onPress: () => void;
+  onPress?: () => void;
   innerText?: ITextProps;
   innerView?: IViewProps;
   children?: any;
@@ -45,31 +45,7 @@ export const theme = {
         color: "white"
       }
     };
-  }),
-  variants: {
-    arrowIcon: () => ({
-      bg: "white",
-      w: 208,
-      h: 58,
-      innerText: {
-        fontSize: "md",
-        fontWeight: "medium",
-        fontFamily: "subheading",
-        color: "main"
-      },
-      innerView: {
-        width: 208,
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        px: 1.5,
-        pl: 4,
-        pr: 1.5,
-        flexGrow: 0
-      },
-      borderRadius: 15
-    })
-  }
+  })
 };
 
 export default BaseButton;

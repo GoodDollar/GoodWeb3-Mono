@@ -1,8 +1,7 @@
 import { Text, View, Box } from "native-base";
 import React, { FC } from "react";
-import { ClaimCardContent, ArrowButton } from "../buttons";
+import { ClaimCardContent } from "../buttons";
 import { Image } from "../images";
-import { openLink } from "@gooddollar/web3sdk-v2";
 import Title from "./Title";
 interface ClaimCardProps {
   bgColor: string;
@@ -49,13 +48,6 @@ const ClaimCard: FC<ClaimCardProps> = ({ content, title, bgColor }) => {
 
           {!!contentItem.imageUrl && (
             <Image source={{ uri: contentItem.imageUrl }} w="208" h="178" borderRadius={10} alt="GoodDollar" />
-          )}
-
-          {!!contentItem.link && (
-            <ArrowButton
-              text={contentItem.link.linkText}
-              onPress={() => contentItem.link && openLink(contentItem.link.linkUrl)}
-            />
           )}
 
           {!!contentItem.list && (

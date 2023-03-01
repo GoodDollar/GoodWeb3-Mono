@@ -45,7 +45,7 @@ const BasicModal: FC<BasicModalProps> = ({
   const bgContent = useColorModeValue("white", "mainDarkContrast");
   const bgOverlay = useColorModeValue("mainDarkContracts:alpha.40", "white:alpha.40");
   const width = useBreakpointValue({
-    base: 288,
+    base: "fit-content",
     md: "initial"
   });
   const height = useBreakpointValue({
