@@ -60,7 +60,11 @@ const ClaimButton = ({
             <Text color={textColor} fontSize="sm" fontFamily="subheading">
               You're almost there! To claim G$, you need to be a unique human and prove it wiht your camera.
             </Text>
-            <Link _text={{ color: "main" }} mt="10">
+            <Link
+              _text={{ color: "main" }}
+              mt="10"
+              href="https://www.notion.so/gooddollar/Get-G-873391f31aee4a18ab5ad7fb7467acb3"
+            >
               Learn more about the identification process.
             </Link>
           </>
@@ -138,9 +142,14 @@ const ClaimButton = ({
                     <Text color="lightBlue" fontSize="sm">
                       LEARN
                     </Text>
-                    <Text color="main" fontSize="sm" fontWeight="normal">
+                    <Link
+                      color="main"
+                      fontSize="sm"
+                      fontWeight="normal"
+                      href="https://www.notion.so/gooddollar/What-is-signing-b0019fe6c43241068050c9aa16e87ee1"
+                    >
                       {`What is signing? >`}{" "}
-                    </Text>
+                    </Link>
                   </Box>
                   <Box>
                     <Image
