@@ -1,4 +1,4 @@
-export {}
+export {};
 import Decimal from "decimal.js";
 import JSBI from "jsbi";
 import { Currency, CurrencyAmount, Fraction, Percent } from "@uniswap/sdk-core";
@@ -12,9 +12,9 @@ import { getToken } from "methods/tokenLists";
  */
 export function toJSBI(decimals: number | string = 18): JSBI {
   if (decimals === 0) {
-    return JSBI.BigInt(1)
+    return JSBI.BigInt(1);
   }
-  return JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(decimals))
+  return JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(decimals));
 }
 
 /**
@@ -24,7 +24,7 @@ export function toJSBI(decimals: number | string = 18): JSBI {
  * @returns {JSBI}
  */
 export function decimalToJSBI(decimal: number | string, decimals: number | string = 18): JSBI {
-  return JSBI.BigInt(new Decimal(decimal).mul(toJSBI(decimals).toString()).toFixed(0))
+  return JSBI.BigInt(new Decimal(decimal).mul(toJSBI(decimals).toString()).toFixed(0));
 }
 
 /**
@@ -33,8 +33,8 @@ export function decimalToJSBI(decimal: number | string, decimals: number | strin
  * @returns {Percent}
  */
 export function decimalPercentToPercent(decimalPercent: number | string): Percent {
-  const [n, d] = new Decimal(decimalPercent).toFraction(1e18)
-  return new Percent(n.toFixed(), d.mul(100).toFixed(0))
+  const [n, d] = new Decimal(decimalPercent).toFraction(1e18);
+  return new Percent(n.toFixed(), d.mul(100).toFixed(0));
 }
 
 /**
@@ -43,7 +43,7 @@ export function decimalPercentToPercent(decimalPercent: number | string): Percen
  * @returns {Percent}
  */
 export function decimalToFraction(decimal: number | string): Fraction {
-  return new Fraction(...new Decimal(decimal).toFraction(1e18).map(v => v.toFixed(0)) as [string, string])
+  return new Fraction(...(new Decimal(decimal).toFraction(1e18).map(v => v.toFixed(0)) as [string, string]));
 }
 
 /**
@@ -52,11 +52,14 @@ export function decimalToFraction(decimal: number | string): Fraction {
  * @param {number | string} amount Decimal value of G$ tokens.
  * @returns {Promise<CurrencyAmount>}
  */
-export async function g$FromDecimal(chainId: SupportedChainId, amount: number | string): Promise<CurrencyAmount<Currency>> {
-  const G$ = await getToken(chainId, 'G$')
+export async function g$FromDecimal(
+  chainId: SupportedChainId,
+  amount: number | string
+): Promise<CurrencyAmount<Currency>> {
+  const G$ = await getToken(chainId, "G$");
   if (!G$) {
-    throw new Error('Unsupported chain ID')
+    throw new Error("Unsupported chain ID");
   }
 
-  return CurrencyAmount.fromRawAmount(G$, decimalToJSBI(amount, G$.decimals))
+  return CurrencyAmount.fromRawAmount(G$, decimalToJSBI(amount, G$.decimals));
 }

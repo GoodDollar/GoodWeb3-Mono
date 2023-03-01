@@ -1,10 +1,10 @@
-import Web3 from "web3"
-import { Contract } from 'web3-eth-contract'
-import { AbiItem } from "web3-utils"
-import GoodFundManager from "@gooddollar/goodprotocol/artifacts/contracts/staking/GoodFundManager.sol/GoodFundManager.json"
+import Web3 from "web3";
+import { Contract } from "web3-eth-contract";
+import { AbiItem } from "web3-utils";
+import GoodFundManager from "@gooddollar/goodprotocol/artifacts/contracts/staking/GoodFundManager.sol/GoodFundManager.json";
 
-import { G$ContractAddresses } from "constants/addresses"
-import { getChainId } from "utils/web3"
+import { G$ContractAddresses } from "constants/addresses";
+import { getChainId } from "utils/web3";
 
 /**
  * Returns instance of GoodFundManager contract.
@@ -13,7 +13,7 @@ import { getChainId } from "utils/web3"
  * @constructor
  */
 export async function goodFundManagerContract(web3: Web3, address?: string): Promise<Contract> {
-  address = address ?? G$ContractAddresses(await getChainId(web3), 'GoodFundManager')
+  address = address ?? G$ContractAddresses(await getChainId(web3), "GoodFundManager");
 
-  return new web3.eth.Contract(GoodFundManager.abi as AbiItem[], address)
+  return new web3.eth.Contract(GoodFundManager.abi as AbiItem[], address);
 }

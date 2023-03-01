@@ -1,23 +1,23 @@
-import { Pair } from '@uniswap/v2-sdk'
-import { Currency, CurrencyAmount, Token } from '@uniswap/sdk-core'
-import { BigNumber } from 'ethers'
+import { Pair } from "@uniswap/v2-sdk";
+import { Currency, CurrencyAmount, Token } from "@uniswap/sdk-core";
+import { BigNumber } from "ethers";
 import JSBI from "jsbi";
 
 import { PairContract } from "contracts/PairContract";
-import { UNISWAP_FACTORY_ADDRESSES } from 'constants/addresses'
+import { UNISWAP_FACTORY_ADDRESSES } from "constants/addresses";
 import { computePairAddress } from "utils/computePairAddress";
 import { SupportedChainId } from "constants/chains";
 
 type Response = {
-  reserve0: BigNumber
-  reserve1: BigNumber
-  tokenA: Token
-  tokenB: Token
-}
+  reserve0: BigNumber;
+  reserve1: BigNumber;
+  tokenA: Token;
+  tokenB: Token;
+};
 
 export enum PairState {
   EXISTS,
-  INVALID,
+  INVALID
 }
 
 /**
@@ -27,49 +27,57 @@ export enum PairState {
  * @returns {Promise<[PairState, Pair | null][]>} List of pairs that can be used for currencies exchange.
  */
 
-export async function v2Pairs(chainId: SupportedChainId, currencies: Array<[Currency, Currency]>): Promise<[PairState, Pair | null][]> {
-  const tokens = currencies.map(([currencyA, currencyB]) => [currencyA.wrapped, currencyB.wrapped])
+export async function v2Pairs(
+  chainId: SupportedChainId,
+  currencies: Array<[Currency, Currency]>
+): Promise<[PairState, Pair | null][]> {
+  const tokens = currencies.map(([currencyA, currencyB]) => [currencyA.wrapped, currencyB.wrapped]);
 
   const pairAddresses = tokens.reduce((map, [tokenA, tokenB]) => {
-    const address = tokenA.chainId === tokenB.chainId &&
-    !tokenA.equals(tokenB) &&
-    UNISWAP_FACTORY_ADDRESSES[tokenA.chainId]
-      ? computePairAddress(tokenA.chainId, tokenA, tokenB).toLowerCase()
-      : undefined
+    const address =
+      tokenA.chainId === tokenB.chainId && !tokenA.equals(tokenB) && UNISWAP_FACTORY_ADDRESSES[tokenA.chainId]
+        ? computePairAddress(tokenA.chainId, tokenA, tokenB).toLowerCase()
+        : undefined;
 
     if (address) {
-      map.set(address, [tokenA!, tokenB!])
+      map.set(address, [tokenA!, tokenB!]);
     }
 
-    return map
-  }, new Map() as Map<string, [Token, Token]>)
+    return map;
+  }, new Map() as Map<string, [Token, Token]>);
 
-  const promises = []
+  const promises = [];
 
   for (const address of pairAddresses.keys()) {
-    promises.push(PairContract(chainId, address).getReserves().then((data: any) => {
-      const [tokenA, tokenB] = pairAddresses.get(address)!
+    promises.push(
+      PairContract(chainId, address)
+        .getReserves()
+        .then((data: any) => {
+          const [tokenA, tokenB] = pairAddresses.get(address)!;
 
-      return { ...data, tokenA, tokenB }
-    }))
+          return { ...data, tokenA, tokenB };
+        })
+    );
   }
 
-  const result = await Promise.allSettled(promises)
-  
-  const pairs = result.filter((pair): pair is PromiseFulfilledResult<Response> => pair.status === 'fulfilled').map(pair => pair.value)
+  const result = await Promise.allSettled(promises);
 
-  return pairs.map((pair) => {
-    const { reserve0, reserve1, tokenA, tokenB } = pair
+  const pairs = result
+    .filter((pair): pair is PromiseFulfilledResult<Response> => pair.status === "fulfilled")
+    .map(pair => pair.value);
 
-    if (!tokenA || !tokenB || tokenA.equals(tokenB)) return [PairState.INVALID, null]
-    const [token0, token1] = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA]
+  return pairs.map(pair => {
+    const { reserve0, reserve1, tokenA, tokenB } = pair;
+
+    if (!tokenA || !tokenB || tokenA.equals(tokenB)) return [PairState.INVALID, null];
+    const [token0, token1] = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA];
 
     return [
       PairState.EXISTS,
       new Pair(
         CurrencyAmount.fromRawAmount(token0, JSBI.BigInt(reserve0.toString())),
         CurrencyAmount.fromRawAmount(token1, JSBI.BigInt(reserve1.toString()))
-      ),
-    ]
-  })
+      )
+    ];
+  });
 }
