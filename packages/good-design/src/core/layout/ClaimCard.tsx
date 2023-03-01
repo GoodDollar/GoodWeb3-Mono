@@ -20,7 +20,7 @@ const ClaimCard: FC<ClaimCardProps> = ({ content, title, bgColor, externalLink }
     if (externalLink) {
       await openLink(externalLink, "_blank");
     }
-  }, [useCallback]);
+  }, []);
 
   return (
     <BasePressable
