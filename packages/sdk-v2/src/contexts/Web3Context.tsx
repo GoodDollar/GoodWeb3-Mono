@@ -49,7 +49,7 @@ export const txEmitter = {
 
 export const Web3Context = createContext<IWeb3Context>({
   switchNetwork: undefined,
-  setSwitchNetwork: (cb: SwitchNetwork) => undefined, // eslint-disable-line @typescript-eslint/no-unused-vars
+  setSwitchNetwork: (_cb: SwitchNetwork) => undefined, // eslint-disable-line @typescript-eslint/no-unused-vars
   connectWallet: () => undefined,
   txEmitter,
   env: "production"
@@ -240,8 +240,8 @@ export const Web3Provider = ({ children, config, web3Provider, env = "production
   );
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
-const onSwitchNetworkNoop = async (chainId: number, status?: boolean) => {};
+// eslint-disable-next-line @typescript-eslint/no-empty-function, @typescript-eslint/no-unused-vars
+const onSwitchNetworkNoop = async (_chainId: number, _status?: boolean) => {};
 
 export const useSwitchNetwork = () => {
   const { switchNetwork: ethersSwitchNetwork } = useEthers();
