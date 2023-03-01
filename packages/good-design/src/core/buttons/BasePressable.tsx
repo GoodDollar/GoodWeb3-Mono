@@ -40,6 +40,7 @@ const BasePressable = withTheme({ name: "BasePressable" })(
   }: BasePressableProps) => {
     const { focus: textFocus, hover: textHover, pressed: textPressed } = textInteraction ?? {};
     const { focus: viewFocus, hover: viewHover, pressed: viewPressed } = viewInteraction ?? {};
+
     return (
       <Pressable onPress={onPress} {...props}>
         {({ isHovered, isPressed, isFocused }) => (
