@@ -48,7 +48,7 @@ const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards, claimed }) => {
 
   const activeCards = useMemo(() => cards.filter(card => !card.hide), [cards, claimed]);
   const containerWidth = useBreakpointValue({
-    base: "380px",
+    base: "auto",
     xl: "auto"
   });
   const listWidth = useBreakpointValue({

@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback, useMemo, useState } from "react";
 import { SupportedChains, useClaim, useGetEnvChainId, useWhitelistSync, G$Amount } from "@gooddollar/web3sdk-v2";
-import { Text, View, useColorModeValue, Box, Link } from "native-base";
+import { Text, View, useColorModeValue, Box, Link, HStack } from "native-base";
 
 import { useQueryParam } from "../../hooks/useQueryParam";
 import { Web3ActionButton } from "../../advanced";
@@ -16,6 +16,10 @@ import { noop, isNil } from "lodash";
 import { useEthers } from "@usedapp/core";
 import ArrowButton from "./ArrowButton";
 import BackToSchool from "../../assets/images/backtoschool.png";
+import TwitterIcon from "../../assets/svg/twitter.svg";
+import LinkedInIcon from "../../assets/svg/linkedin.svg";
+import FbIcon from "../../assets/svg/facebook.svg";
+import SocialsLink from "./SocialLink";
 
 const ClaimButton = ({
   firstName,
@@ -29,7 +33,7 @@ const ClaimButton = ({
   ...props
 }: FVFlowProps) => {
   const { account } = useEthers();
-  const { Modal: FirstClaimModal, showModal: showFirstClaimModal } = useModal();
+  const { Modal: ShareSocialModal, showModal: showShareSocialModal } = useModal();
   const { Modal: ActionModal, showModal: showActionModal, hideModal: hideActionModal } = useModal();
   const [claimLoading, setClaimLoading] = useState(false);
 
@@ -171,15 +175,15 @@ const ClaimButton = ({
     [firstClaim, textColor, loading, isWhitelisted, claimLoading]
   );
 
-  const handleClaim = async (first: boolean) => {
+  const handleClaim = async () => {
     try {
       const success = await claim();
       console.log("handleClaim -->", { success });
-      if (success !== true || first === false) {
+      if (success !== true) {
         return;
       }
 
-      showFirstClaimModal();
+      showShareSocialModal();
     } finally {
       setClaimLoading(false);
       hideActionModal();
@@ -198,7 +202,7 @@ const ClaimButton = ({
       if (isVerified && account) {
         setFirstClaim(true);
         showActionModal();
-        await handleClaim(true);
+        await handleClaim();
         setClaimLoading(true);
       }
     };
@@ -218,7 +222,7 @@ const ClaimButton = ({
 
       if (isWhitelisted) {
         setClaimLoading(true);
-        await handleClaim(false);
+        await handleClaim();
         return;
       }
 
@@ -230,12 +234,12 @@ const ClaimButton = ({
         }
 
         setClaimLoading(true);
-        await handleClaim(true);
+        await handleClaim();
       }
 
       setClaimLoading(false);
     },
-    [claim, hideActionModal, showFirstClaimModal, isWhitelisted, fuseWhitelisted, syncStatus, account]
+    [claim, hideActionModal, showShareSocialModal, isWhitelisted, fuseWhitelisted, syncStatus, account]
   );
 
   const buttonTitle = useMemo(() => {
@@ -250,7 +254,7 @@ const ClaimButton = ({
 
   if (isWhitelisted && claimed) {
     return (
-      <FirstClaimModal
+      <ShareSocialModal
         header={
           <>
             <Title mb="2" fontSize="xl" lineHeight="36px">
@@ -262,7 +266,13 @@ const ClaimButton = ({
             <Text color="primary" fontSize="sm">
               Don't forget to tag us.
             </Text>
-            <Box>** Social share here **</Box>
+            <Box display="flex" flexDir="row" justifyContent="center" alignItems="center" mt="5">
+              <HStack space={10}>
+                <SocialsLink network="facebook" logo={FbIcon} url="https://facebook.com" />
+                <SocialsLink network="twitter" logo={TwitterIcon} url="https://twitter.com/gooddollarorg" />
+                <SocialsLink network="linkedin" logo={LinkedInIcon} url="https://linkedin.com/" />
+              </HStack>
+            </Box>
           </>
         }
         body={
@@ -270,7 +280,7 @@ const ClaimButton = ({
             <Image source={SocialShare} w="100px" h="100px" style={{ resizeMode: "contain" }} />
           </Box>
         }
-        closeText=""
+        closeText="x"
         hasTopBorder={false}
         hasBottomBorder={false}
       />
