@@ -85,7 +85,12 @@ const ClaimButton = ({
         ),
         footer: (
           <View justifyContent="center" width="full" flexDirection="row">
-            <ArrowButton text={"VERIFY I'M HUMAN"} onPress={verify} textInteraction={{ hover: { color: "white" } }} />
+            <ArrowButton
+              px="6px"
+              text={"VERIFY I'M HUMAN"}
+              onPress={verify}
+              textInteraction={{ hover: { color: "white" } }}
+            />
           </View>
         )
       }

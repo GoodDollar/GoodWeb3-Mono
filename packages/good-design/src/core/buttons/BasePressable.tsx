@@ -72,7 +72,7 @@ export const theme = {
     arrowIcon: () => ({
       bgColor: "primary:alpha.10",
       w: 306,
-      h: 52,
+      h: "48px",
       shadow: "2",
       innerText: {
         fontSize: "sm",
@@ -81,7 +81,7 @@ export const theme = {
         color: "main"
       },
       innerView: {
-        width: 300,
+        width: "auto",
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
