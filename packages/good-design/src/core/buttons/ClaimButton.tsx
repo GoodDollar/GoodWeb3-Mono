@@ -20,6 +20,8 @@ import TwitterIcon from "../../assets/svg/twitter.svg";
 import LinkedInIcon from "../../assets/svg/linkedin.svg";
 import FbIcon from "../../assets/svg/facebook.svg";
 import SocialsLink from "./SocialLink";
+import BasePressable from "./BasePressable";
+import { openLink } from "@gooddollar/web3sdk-v2";
 
 const ClaimButton = ({
   firstName,
@@ -51,6 +53,11 @@ const ClaimButton = ({
   const textColor = useColorModeValue("goodGrey.500", "white");
   const { chainId: defaultChainId, defaultEnv } = useGetEnvChainId();
   const { fuseWhitelisted, syncStatus } = useWhitelistSync();
+
+  const openSigningTab = useCallback(async () => {
+    const link = "https://www.notion.so/gooddollar/What-is-signing-b0019fe6c43241068050c9aa16e87ee1";
+    await openLink(link, "_blank");
+  }, []);
 
   // TODO:  replace placeholder loader with styled loader
   const actionModalBody = useMemo(
@@ -137,28 +144,26 @@ const ClaimButton = ({
               ),
             body:
               loading || claimLoading ? (
-                <View
-                  w="300"
-                  h="130px"
-                  bgColor="goodWhite.100"
-                  display="flex"
-                  flexDir="row"
-                  alignItems="center"
-                  justifyContent="center"
-                  style={{ flexGrow: 1 }}
+                <BasePressable
+                  innerView={{
+                    w: "300",
+                    h: "130px",
+                    bgColor: "goodWhite.100",
+                    display: "flex",
+                    flexDir: "row",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    style: { flexGrow: 1 }
+                  }}
+                  onPress={openSigningTab}
                 >
                   <Box display="flex" w="60%" alignSelf="flex-start" p={2}>
                     <Text color="lightBlue" fontSize="sm">
                       LEARN
                     </Text>
-                    <Link
-                      color="main"
-                      fontSize="sm"
-                      fontWeight="normal"
-                      href="https://www.notion.so/gooddollar/What-is-signing-b0019fe6c43241068050c9aa16e87ee1"
-                    >
-                      {`What is signing? >`}{" "}
-                    </Link>
+                    <Text color="main" fontSize="sm" fontWeight="normal" textDecoration>
+                      {`What is signing? >`}
+                    </Text>
                   </Box>
                   <Box>
                     <Image
@@ -169,7 +174,7 @@ const ClaimButton = ({
                       style={{ resizeMode: "contain" }}
                     />
                   </Box>
-                </View>
+                </BasePressable>
               ) : (
                 actionModalBody.verify.body
               ),

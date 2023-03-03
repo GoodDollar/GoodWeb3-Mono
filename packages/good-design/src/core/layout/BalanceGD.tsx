@@ -28,7 +28,7 @@ const BalanceView: FC<Required<BalanceGDProps> & { amount: CurrencyValue }> = me
     const copies = [
       {
         id: "your-balance-label",
-        heading: "Your Balance",
+        heading: "Balance",
         subheading: `on ${network}`
       },
       {
