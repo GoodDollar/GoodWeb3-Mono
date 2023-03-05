@@ -27,7 +27,7 @@ export const getRpc = (chainId: number): string => {
     case 1:
       return rpcUrls.MAINNET_RPC || defaultRPC[chainId];
     default:
-      return "https://eth-mainnet.alchemyapi.io/v2/2kSbx330Sc8S3QRwD9nutr9XST_DfeJh";
+      return "https://mainnet.infura.io/v3/586298cc4e26485d9a6f9c4a5f555a22";
   }
 };
 
