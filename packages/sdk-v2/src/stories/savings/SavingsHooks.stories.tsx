@@ -15,7 +15,7 @@ const Web3Component = (params: PageProps) => {
   return (
     <div>
       <pre>
-        {Object.entries(stats.stats || {}).map(_ => (
+        {Object.entries(stats?.stats || {}).map(_ => (
           <div>
             {_[0]}: {JSON.stringify(_[1])}
           </div>
