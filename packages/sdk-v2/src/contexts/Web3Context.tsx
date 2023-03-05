@@ -8,7 +8,7 @@ import { G$Decimals } from "../sdk/constants";
 import { GoodReserveCDai, GReputation, IGoodDollar } from "@gooddollar/goodprotocol/types";
 import { useGetContract } from "../sdk";
 import { SupportedChains } from "../sdk/constants";
-import { cloneDeep } from "lodash";
+import { defaultsDeep } from "lodash";
 import { ethers } from "ethers";
 /**
  * request to switch to network id
@@ -55,7 +55,7 @@ export const Web3Context = createContext<IWeb3Context>({
   env: "production"
 });
 
-export const TokenContext = createContext<typeof G$Decimals>(cloneDeep(G$Decimals));
+export const TokenContext = createContext<typeof G$Decimals>(defaultsDeep(G$Decimals));
 
 type Props = {
   children: React.ReactNode;
@@ -151,24 +151,32 @@ const TokenProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
         method: "decimals",
         args: []
       }
-    ].filter(_ => _.contract && chainId == MAINNET),
+    ].filter(_ => _.contract),
     { refresh: "never", chainId: MAINNET as unknown as ChainId }
   );
 
   const value = useMemo(() => {
-    const newValue = cloneDeep(G$Decimals);
     const [g$, good] = results;
 
-    if (chainId && !results.some(result => !result || result.error)) {
-      newValue.G$[chainId] = g$?.value[0];
-      newValue.GOOD[chainId] = good?.value[0];
+    if (chainId && mainnetGdx && results) {
+      const newValue = defaultsDeep(
+        {
+          G$: {
+            [chainId]: g$?.value?.[0]
+          },
+          GOOD: {
+            [chainId]: good?.value?.[0]
+          },
+          GDX: {
+            [MAINNET]: mainnetGdx?.value?.[0]
+          }
+        },
+        G$Decimals
+      );
+      return newValue;
     }
 
-    if (mainnetGdx && !mainnetGdx.error) {
-      newValue.GDX[MAINNET] = mainnetGdx.value[0];
-    }
-
-    return newValue;
+    return G$Decimals;
   }, [results, chainId, mainnetGdx]);
 
   return <TokenContext.Provider value={value}>{children}</TokenContext.Provider>;

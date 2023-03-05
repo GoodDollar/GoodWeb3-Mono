@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, Button, Modal, Text, StyleSheet, Linking, ModalProps } from "react-native";
 import { W3Wrapper } from "../W3Wrapper";
 import { ComponentStory, ComponentMeta } from "@storybook/react";
-import { useClaim, useFVLink } from "../../sdk/claim/react";
+import { useClaim, useFVLink, useHasClaimed } from "../../sdk/claim/react";
 import { noop } from "lodash";
 
 export interface PageProps {
@@ -84,6 +84,7 @@ const ClaimButton = ({ address, firstName }: PageProps) => {
   // const library = useSDK(true, "claim");
   const [showModal, setShowModal] = useState(false);
   const [refresh, setRefresh] = useState(false);
+  const hasClaimed = useHasClaimed("FUSE");
   const { isWhitelisted, claimAmount, claimTime, claimCall } = useClaim(refresh ? "everyBlock" : "never");
   const handleClaim = async () => {
     if (isWhitelisted) {
@@ -110,9 +111,10 @@ const ClaimButton = ({ address, firstName }: PageProps) => {
   return (
     <View>
       <View style={styles.container}>
+        <Text>hasClaimed: {String(hasClaimed)}</Text>
         <Text>isWhitelisted: {String(isWhitelisted)}</Text>
-        <Text>Claim time: {claimTime.toString()}</Text>
-        <Text>Claim amount: {claimAmount.toString()}</Text>
+        <Text>Claim time: {claimTime?.toString()}</Text>
+        <Text>Claim amount: {claimAmount?.toString()}</Text>
         <FVModal visible={showModal} onRequestClose={() => setShowModal(false)} firstName={firstName}></FVModal>
       </View>
       <Button title={buttonTitle()} onPress={handleClaim}></Button>

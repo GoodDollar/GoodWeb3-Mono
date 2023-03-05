@@ -141,7 +141,7 @@ export const useWhitelistSync = () => {
       const isSynced = await AsyncStorage.getItem(`${account}-whitelistedSync`);
 
       // not need for sync when already synced or user whitelisted on both chains
-      if (isSynced || (fuseResult?.value[0] && otherResult?.value[0])) {
+      if (isSynced || (first(fuseResult?.value) && first(otherResult?.value))) {
         return setSyncStatus(Promise.resolve(true));
       }
 
@@ -149,7 +149,7 @@ export const useWhitelistSync = () => {
       if (syncInProgress) return;
 
       // if whitelisted on fuse but not on celo then sync
-      if (fuseResult?.value[0] && otherResult?.value[0] === false) {
+      if (first(fuseResult?.value) && first(otherResult?.value) === false) {
         syncInProgress = true;
         const devEnv = baseEnv === "fuse" ? "development" : baseEnv;
         const { backend } = Envs[devEnv];

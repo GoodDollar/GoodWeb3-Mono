@@ -224,8 +224,8 @@ export function useG$Balance(refresh: QueryParams["refresh"] = "never", required
     { refresh: refreshOrNever, chainId: MAINNET as unknown as ChainId }
   );
 
-  const [g$Value, goodValue, gdxValue] = [...results, mainnetGdx].map(result =>
-    result && !result.error ? result.value[0] : undefined
+  const [g$Value, goodValue, gdxValue] = [...results, mainnetGdx].map(
+    result => result?.value?.[0] as BigNumber | undefined
   );
 
   const g$Balance = useG$Amount(g$Value) as CurrencyValue;

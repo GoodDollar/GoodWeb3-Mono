@@ -45,9 +45,9 @@ export const useFaucet = async (refresh: QueryParams["refresh"] = 12) => {
   );
 
   useEffect(() => {
-    const [canTop, toppingAmount] = faucetResult || [];
-    const threshold = (toppingAmount?.value[0] as BigNumber)?.mul(50)?.div(100) || minBalance;
-    if (canTop?.value && account && balance && balance.lte(threshold)) {
+    const [canTop, toppingAmount] = faucetResult.map(_ => _?.value?.[0] as boolean | BigNumber | undefined) || [];
+    const threshold = (toppingAmount as BigNumber)?.mul(50)?.div(100) || minBalance;
+    if (canTop && account && balance && balance.lte(threshold)) {
       const devEnv = baseEnv === "fuse" ? "development" : baseEnv;
       const { backend } = Envs[devEnv];
 
