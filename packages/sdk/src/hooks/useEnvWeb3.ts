@@ -27,7 +27,7 @@ export const getRpc = (chainId: number): string => {
     case 1:
       return rpcUrls.MAINNET_RPC || defaultRPC[chainId];
     default:
-      return "https://mainnet.infura.io/v3/586298cc4e26485d9a6f9c4a5f555a22";
+      return "https://eth-rpc.gateway.pokt.network";
   }
 };
 
