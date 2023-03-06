@@ -1,3 +1,4 @@
+import { TransactionStatus } from "@usedapp/core";
 import { IModalProps } from "native-base";
 
 export interface FVFlowProps {
@@ -7,7 +8,7 @@ export interface FVFlowProps {
   claim: () => Promise<boolean>;
   chainId?: number;
   styles?: any;
-  claimed?: boolean;
+  claimed?: { claimed: boolean; state: TransactionStatus };
   refresh?: "everyBlock" | "never" | number | undefined;
   handleConnect?: () => Promise<boolean>;
 }
