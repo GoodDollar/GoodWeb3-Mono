@@ -16,7 +16,6 @@ export class ClaimSDK extends BaseSDK {
   async generateFVLink(firstName: string, callbackUrl?: string, popupMode = false, chainId?: number) {
     const steps = this.getFVLink(chainId);
 
-    await steps.getLoginSig();
     await steps.getFvSig();
 
     return steps.getLink(firstName, callbackUrl, popupMode);
@@ -122,9 +121,9 @@ export class ClaimSDK extends BaseSDK {
     return startRef;
   }
 
-  async claim() {
+  async claim(txOverrides?: object) {
     const ubi = this.getContract("UBIScheme");
 
-    return ubi.claim();
+    return ubi.claim(txOverrides);
   }
 }

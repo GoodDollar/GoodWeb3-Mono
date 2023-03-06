@@ -20,24 +20,17 @@ const FVModal = (params: ModalProps & { firstName: string; sdk: ClaimSDK }) => {
     <Modal {...params} animationType="slide">
       <View style={styles.containeralt}>
         <View>
-          <Text>To verify your identity you need to sign TWICE with your wallet.</Text>
-          <Text>First sign your address to be whitelisted</Text>
+          <Text>To verify your identity you need to sign with your wallet.</Text>
           <Text>
-            Second sign your self sovereign anonymized identifier, so no link is kept between your identity record and
-            your address.
+            Sign your self sovereign anonymized identifier, so no link is kept between your identity record and your
+            address.
           </Text>
         </View>
         <Button
           onPress={async () => {
-            await fvlink?.getLoginSig();
-          }}
-          title={"Step 1 - Login"}
-        />
-        <Button
-          onPress={async () => {
             await fvlink?.getFvSig();
           }}
-          title={"Step 2 - Sign unique identifier"}
+          title={"Step 1 - Sign"}
         />
         <Button
           onPress={async () => {
@@ -50,7 +43,7 @@ const FVModal = (params: ModalProps & { firstName: string; sdk: ClaimSDK }) => {
             }
             params.onRequestClose?.(noop as any);
           }}
-          title={"Step 3 - Verify"}
+          title={"Step 2 - Verify"}
         />
         <Button color="red" onPress={() => params.onRequestClose?.(noop as any)} title="Close" />
       </View>

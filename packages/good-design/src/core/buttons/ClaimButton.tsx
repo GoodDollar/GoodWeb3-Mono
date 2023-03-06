@@ -83,7 +83,7 @@ const ClaimButton = ({
         body: (
           <>
             <Text color={textColor} mb="2" fontFamily="subheading" fontSize="sm">
-              Verifying your identity is easy. You'll be asked to sign TWICE with your wallet.
+              Verifying your identity is easy. You'll be asked to sign with your wallet.
             </Text>
             <Text color={textColor} mb="2" fontFamily="subheading" fontSize="sm">
               Don't worry, no link is kept between your identity record and your wallet address.

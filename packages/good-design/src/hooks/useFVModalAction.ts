@@ -18,7 +18,6 @@ export const useFVModalAction = ({ firstName, method, onClose = noop, chainId, r
     setLoading(true);
 
     try {
-      await fvlink?.getLoginSig();
       await fvlink?.getFvSig();
     } catch {
       return;
