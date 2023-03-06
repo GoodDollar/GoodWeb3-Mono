@@ -12,7 +12,7 @@
     "test": "craco test --env=jsdom",
     "dev": "rollup -c -w",
     "build:dev": "rm -fr dist types && ctix r && ctix c && rollup -c",
-    "build": "rm -fr dist types && rollup -c rollup-prod.config.js"
+    "build": "rm -fr dist types && NODE_OPTIONS='--max-old-space-size=8192' && rollup -c rollup-prod.config.js"
   },
   "files": [
     "dist",
