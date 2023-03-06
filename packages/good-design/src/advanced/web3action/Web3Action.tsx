@@ -99,7 +99,7 @@ export const Web3ActionButton: FC<Web3ActionProps> = withTheme({
   // account/chainId changes and re-try to perform current step action
   useEffect(() => {
     const continueSteps = async () => {
-      if (!account) {
+      if (!account && !chainId) {
         setActionText(ButtonSteps.connect);
         await connectWallet();
         return;
@@ -108,8 +108,12 @@ export const Web3ActionButton: FC<Web3ActionProps> = withTheme({
       if (!supportedChains.includes(chainId ?? 0)) {
         setActionText(ButtonSteps.switch);
         await switchToChain(supportedChains[0]);
+        setActionText(ButtonSteps.action);
         return;
       }
+
+      // if there is already a switch request, don't do action
+      if (actionText === ButtonSteps.switch) return;
 
       setActionText(ButtonSteps.action);
       await web3Action();
