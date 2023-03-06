@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { W3Wrapper } from "../W3Wrapper";
 import { ComponentStory, ComponentMeta } from "@storybook/react";
-import { useSavingsStats } from "../../sdk/savings/react";
-import { useNetwork } from "@usedapp/core";
-import { SupportedV2Networks } from "../../sdk/constants";
+import { useSavingsBalance, useSavingsStats } from "../../sdk/savings/react";
+import { useEthers } from "@usedapp/core";
 
 export interface PageProps {
   address?: string;
@@ -11,13 +10,24 @@ export interface PageProps {
 }
 
 const Web3Component = (params: PageProps) => {
-  const [fvVerificationLink, setLink] = useState<string>();
-  const stats = useSavingsStats(1);
-  const { network } = useNetwork();
-  console.log({ network });
+  const stats = useSavingsStats(122);
+  const accountStats = useSavingsBalance("never", 122);
   return (
     <div>
-      <div>{JSON.stringify(stats.stats)}</div>
+      <pre>
+        {Object.entries(stats?.stats || {}).map(_ => (
+          <div>
+            {_[0]}: {JSON.stringify(_[1])}
+          </div>
+        ))}
+      </pre>
+      <pre>
+        {Object.entries(accountStats || {}).map(_ => (
+          <div>
+            {_[0]}: {JSON.stringify(_[1])}
+          </div>
+        ))}
+      </pre>
     </div>
   );
 };

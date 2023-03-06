@@ -57,9 +57,9 @@ export function useSavingsBalance(refresh: QueryParams["refresh"] = "never", req
     }
   );
 
-  const [balance = { value: 0, error: undefined }, sBalance = { value: 0, error: undefined }] = results;
-  const g$Balance = useG$Amount(balance.value, "G$", requiredChainId);
-  const savingsBalance = useG$Amount(sBalance.value, "G$", requiredChainId);
+  const [balance, sBalance] = results;
+  const g$Balance = useG$Amount(balance?.value?.[0], "G$", requiredChainId);
+  const savingsBalance = useG$Amount(sBalance?.value?.[0], "G$", requiredChainId);
 
   return { g$Balance, savingsBalance };
 }
@@ -163,7 +163,7 @@ export const useSavingsStats = (requiredChainId: number, refresh: QueryParams["r
 
   if (results[1] && results[2]) {
     const { _gdInterestRatePerBlock: gdIrpb } = results[1]?.value || { _gdInterestRatePerBlock: 0 };
-    const numberOfBlocksPerYear = results[2]?.value;
+    const numberOfBlocksPerYear = results[2]?.value?.[0];
     const apy = (Math.pow(gdIrpb / 1e18, numberOfBlocksPerYear) - 1) * 100;
 
     globalStats.apy = apy;
