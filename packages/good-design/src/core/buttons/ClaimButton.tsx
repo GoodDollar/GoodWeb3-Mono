@@ -1,7 +1,6 @@
 import React, { useEffect, useCallback, useMemo, useState } from "react";
 import { SupportedChains, useClaim, useGetEnvChainId, useWhitelistSync, G$Amount } from "@gooddollar/web3sdk-v2";
 import { Text, View, useColorModeValue, Box, Link, HStack } from "native-base";
-
 import { useQueryParam } from "../../hooks/useQueryParam";
 import { Web3ActionButton } from "../../advanced";
 import { useFVModalAction } from "../../hooks/useFVModalAction";
@@ -214,6 +213,9 @@ const ClaimButton = ({
         showActionModal();
         await handleClaim();
         setClaimLoading(true);
+        // Here we assume claiming was completed succesfully,
+        // so it pushes the default route without params to prevent repeated claim requests
+        window.history.pushState(null, "", window.location.origin + window.location.hash);
       }
     };
 
