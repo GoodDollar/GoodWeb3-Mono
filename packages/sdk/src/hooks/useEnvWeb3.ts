@@ -29,7 +29,7 @@ export const getRpc = (chainId: number): string => {
       return defaultRPC[chainId];
     default:
     case 1:
-      return defaultRPC[chainId];
+      return "https://eth-rpc.gateway.pokt.network";
   }
 };
 
