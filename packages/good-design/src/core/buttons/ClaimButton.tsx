@@ -28,6 +28,7 @@ const ClaimButton = ({
   method,
   refresh,
   claimed,
+  claiming,
   claim,
   chainId,
   handleConnect,
@@ -38,7 +39,6 @@ const ClaimButton = ({
   const { Modal: FinalizationModal, showModal: showFinalizationModal } = useModal();
   const { Modal: ActionModal, showModal: showActionModal, hideModal: hideActionModal } = useModal();
   const [claimLoading, setClaimLoading] = useState(false);
-  const { claimed: hasClaimed, state: txState } = claimed ?? {};
 
   const { loading, verify } = useFVModalAction({
     firstName,
@@ -107,7 +107,7 @@ const ClaimButton = ({
                   fontFamily="subheading"
                   textDecoration
                 >
-                  {txState?.status === "Mining" ? `How do transactions work? >` : `What is signing? >`}
+                  {claiming ? `How do transactions work? >` : `What is signing? >`}
                 </Text>
               </Box>
               <Box>
@@ -136,7 +136,7 @@ const ClaimButton = ({
         )
       }
     }),
-    [textColor, verify, loading, claimLoading, txState]
+    [textColor, verify, loading, claimLoading, claiming]
   );
 
   const claimModalProps: Omit<BasicModalProps, "modalVisible"> = useMemo(
@@ -186,7 +186,7 @@ const ClaimButton = ({
 
   const finalModalProps: Omit<BasicModalProps, "modalVisible"> = useMemo(
     () =>
-      hasClaimed && isWhitelisted
+      claimed && isWhitelisted
         ? {
             header: (
               <>
@@ -233,7 +233,7 @@ const ClaimButton = ({
             hasTopBorder: false,
             hasBottomBorder: false
           },
-    [hasClaimed, isWhitelisted, txState]
+    [claimed, isWhitelisted, claiming]
   );
 
   const handleClaim = async () => {
@@ -302,11 +302,11 @@ const ClaimButton = ({
   // will be replaced with solution to issue: https://github.com/GoodDollar/GoodProtocolUI/issues/366 & https://github.com/GoodDollar/GoodProtocolUI/issues/365
   // which should handle tx-statuses and confirm modals more globally
   useEffect(() => {
-    if (txState?.status === "Mining") {
+    if (claiming) {
       hideActionModal();
       showFinalizationModal();
     }
-  }, [txState]);
+  }, [claiming]);
 
   // trigger claim when user succesfully has verified through FV
   // uses the first claimer flow
@@ -323,7 +323,7 @@ const ClaimButton = ({
     doClaim().catch(noop);
   }, [isVerified, account]);
 
-  if (isWhitelisted && (hasClaimed || txState?.status === "Mining")) {
+  if (isWhitelisted && (claimed || claiming)) {
     return <FinalizationModal {...finalModalProps} />;
   }
 
@@ -333,7 +333,7 @@ const ClaimButton = ({
         <Web3ActionButton
           text={buttonTitle}
           web3Action={handleModalOpen}
-          disabled={hasClaimed}
+          disabled={claimed}
           variant="round"
           supportedChains={[SupportedChains.CELO, SupportedChains.FUSE]}
           handleConnect={handleConnect}
