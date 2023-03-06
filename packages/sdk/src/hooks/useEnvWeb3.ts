@@ -1,6 +1,6 @@
 import { useEffect, useState, useContext } from "react";
-import { ethers } from "ethers";
 import Web3 from "web3";
+import { sample } from "lodash";
 import { SupportedChainId, DAO_NETWORK } from "constants/chains";
 import GdSdkContext from "./useGdSdkContext";
 import { noop } from "lodash";
@@ -11,22 +11,24 @@ export interface RPC {
 }
 
 export const defaultRPC = {
-  [SupportedChainId.MAINNET]: (ethers.getDefaultProvider("mainnet") as any).providerConfigs[0].provider.connection.url,
-  [SupportedChainId.FUSE]: "https://rpc.fuse.io"
+  [SupportedChainId.MAINNET]: sample([
+    "https://cloudflare-eth.com",
+    "https://rpc.ankr.com/eth",
+    "https://eth-rpc.gateway.pokt.network"
+  ]),
+  [SupportedChainId.FUSE]: sample([
+    "https://rpc.fuse.io",
+    "https://fuse-rpc.gateway.pokt.network",
+    "https://fuse-mainnet.chainstacklabs.com"
+  ])
 };
 
 export const getRpc = (chainId: number): string => {
-  const rpcs = localStorage.getItem("GD_RPCS");
-  if (!rpcs) return "https://rpc.fuse.io";
-
-  const rpcUrls: RPC = JSON.parse(rpcs);
-
   switch (chainId) {
     case 122:
-      return rpcUrls.FUSE_RPC || defaultRPC[chainId];
-    case 1:
-      return rpcUrls.MAINNET_RPC || defaultRPC[chainId];
+      return defaultRPC[chainId];
     default:
+    case 1:
       return "https://eth-rpc.gateway.pokt.network";
   }
 };

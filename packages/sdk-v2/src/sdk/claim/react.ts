@@ -107,6 +107,7 @@ export const useHasClaimed = (requiredNetwork: keyof typeof SupportedV2Networks)
 };
 
 // if user is verified on fuse and not on current network then send backend request to whitelist
+let syncInProgress = false;
 export const useWhitelistSync = () => {
   const [syncStatus, setSyncStatus] = useState<Promise<boolean> | undefined>();
   const { baseEnv } = useGetEnvChainId();
@@ -139,7 +140,17 @@ export const useWhitelistSync = () => {
     const whitelistSync = async () => {
       const isSynced = await AsyncStorage.getItem(`${account}-whitelistedSync`);
 
-      if (!isSynced && fuseResult?.value[0] && otherResult?.value[0] === false) {
+      // not need for sync when already synced or user whitelisted on both chains
+      if (isSynced || (first(fuseResult?.value) && first(otherResult?.value))) {
+        return setSyncStatus(Promise.resolve(true));
+      }
+
+      // already sent sync request
+      if (syncInProgress) return;
+
+      // if whitelisted on fuse but not on celo then sync
+      if (first(fuseResult?.value) && first(otherResult?.value) === false) {
+        syncInProgress = true;
         const devEnv = baseEnv === "fuse" ? "development" : baseEnv;
         const { backend } = Envs[devEnv];
 
@@ -156,9 +167,10 @@ export const useWhitelistSync = () => {
               }
             })
             .catch(() => false)
+            .finally(() => (syncInProgress = false))
         );
       } else {
-        setSyncStatus(Promise.resolve(true));
+        setSyncStatus(Promise.resolve(false));
       }
     };
 
