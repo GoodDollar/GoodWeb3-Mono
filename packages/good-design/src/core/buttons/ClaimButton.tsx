@@ -28,6 +28,7 @@ const ClaimButton = ({
   method,
   refresh,
   claimed,
+  claiming,
   claim,
   chainId,
   handleConnect,
@@ -35,7 +36,7 @@ const ClaimButton = ({
   ...props
 }: FVFlowProps) => {
   const { account } = useEthers();
-  const { Modal: ShareSocialModal, showModal: showShareSocialModal } = useModal();
+  const { Modal: FinalizationModal, showModal: showFinalizationModal } = useModal();
   const { Modal: ActionModal, showModal: showActionModal, hideModal: hideActionModal } = useModal();
   const [claimLoading, setClaimLoading] = useState(false);
 
@@ -59,7 +60,6 @@ const ClaimButton = ({
     await openLink(link, "_blank");
   }, []);
 
-  // TODO:  replace placeholder loader with styled loader
   const actionModalBody = useMemo(
     () => ({
       verify: {
@@ -80,16 +80,50 @@ const ClaimButton = ({
             </Link>
           </>
         ),
-        body: (
-          <>
-            <Text color={textColor} mb="2" fontFamily="subheading" fontSize="sm">
-              Verifying your identity is easy. You'll be asked to sign with your wallet.
-            </Text>
-            <Text color={textColor} mb="2" fontFamily="subheading" fontSize="sm">
-              Don't worry, no link is kept between your identity record and your wallet address.
-            </Text>
-          </>
-        ),
+        body:
+          loading || claimLoading ? (
+            <BasePressable
+              innerView={{
+                w: "300",
+                h: "130px",
+                bgColor: "goodWhite.100",
+                display: "flex",
+                flexDir: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                style: { flexGrow: 1 }
+              }}
+              onPress={openSigningTab}
+            >
+              <Box display="flex" w="60%" alignSelf="flex-start" p={2}>
+                <Text color="lightBlue" fontSize="sm">
+                  LEARN
+                </Text>
+                <Text
+                  color="main"
+                  lineHeight="normal"
+                  fontSize="sm"
+                  fontWeight="normal"
+                  fontFamily="subheading"
+                  textDecoration
+                >
+                  {claiming ? `How do transactions work? >` : `What is signing? >`}
+                </Text>
+              </Box>
+              <Box>
+                <Image source={BackToSchool} w="92px" h="111px" margin-right="0" style={{ resizeMode: "contain" }} />
+              </Box>
+            </BasePressable>
+          ) : (
+            <>
+              <Text color={textColor} mb="2" fontFamily="subheading" fontSize="sm">
+                Verifying your identity is easy. You'll be asked to sign with your wallet.
+              </Text>
+              <Text color={textColor} mb="2" fontFamily="subheading" fontSize="sm">
+                Don't worry, no link is kept between your identity record and your wallet address.
+              </Text>
+            </>
+          ),
         footer: (
           <View justifyContent="center" width="full" flexDirection="row">
             <ArrowButton
@@ -102,7 +136,7 @@ const ClaimButton = ({
         )
       }
     }),
-    [textColor, verify]
+    [textColor, verify, loading, claimLoading, claiming]
   );
 
   const claimModalProps: Omit<BasicModalProps, "modalVisible"> = useMemo(
@@ -142,42 +176,7 @@ const ClaimButton = ({
               ) : (
                 actionModalBody.verify.header
               ),
-            body:
-              loading || claimLoading ? (
-                <BasePressable
-                  innerView={{
-                    w: "300",
-                    h: "130px",
-                    bgColor: "goodWhite.100",
-                    display: "flex",
-                    flexDir: "row",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    style: { flexGrow: 1 }
-                  }}
-                  onPress={openSigningTab}
-                >
-                  <Box display="flex" w="60%" alignSelf="flex-start" p={2}>
-                    <Text color="lightBlue" fontSize="sm">
-                      LEARN
-                    </Text>
-                    <Text color="main" fontSize="sm" fontWeight="normal" textDecoration>
-                      {`What is signing? >`}
-                    </Text>
-                  </Box>
-                  <Box>
-                    <Image
-                      source={BackToSchool}
-                      w="92px"
-                      h="111px"
-                      margin-right="0"
-                      style={{ resizeMode: "contain" }}
-                    />
-                  </Box>
-                </BasePressable>
-              ) : (
-                actionModalBody.verify.body
-              ),
+            body: actionModalBody.verify.body,
             footer: isWhitelisted || loading || claimLoading ? undefined : actionModalBody.verify.footer,
             closeText: "x",
             hasBottomBorder: false
@@ -185,40 +184,72 @@ const ClaimButton = ({
     [firstClaim, textColor, loading, isWhitelisted, claimLoading]
   );
 
+  const finalModalProps: Omit<BasicModalProps, "modalVisible"> = useMemo(
+    () =>
+      claimed && isWhitelisted
+        ? {
+            header: (
+              <>
+                <Title mb="2" fontSize="xl" lineHeight="36px">
+                  Congrats! You claimed G$ today
+                </Title>
+                <Text color={textColor} fontSize="sm">
+                  Why not tell your friends on social media?
+                </Text>
+                <Text color="primary" fontSize="sm">
+                  Don't forget to tag us.
+                </Text>
+                <Box display="flex" flexDir="row" justifyContent="center" alignItems="center" mt="5">
+                  <HStack space={10}>
+                    <SocialsLink network="facebook" logo={FbIcon} url="https://facebook.com" />
+                    <SocialsLink network="twitter" logo={TwitterIcon} url="https://twitter.com/gooddollarorg" />
+                    <SocialsLink network="linkedin" logo={LinkedInIcon} url="https://linkedin.com/" />
+                  </HStack>
+                </Box>
+              </>
+            ),
+            body: (
+              <Box display="flex" justifyContent="center" alignItems="center">
+                <Image source={SocialShare} w="100px" h="100px" style={{ resizeMode: "contain" }} />
+              </Box>
+            ),
+            closeText: "x",
+            hasTopBorder: false,
+            hasBottomBorder: false
+          }
+        : {
+            header: (
+              <>
+                <Title mb="2" color="main" fontSize="xl" lineHeight="36px">
+                  Waiting for confirmation
+                </Title>
+                <Text color={textColor} fontSize="sm">
+                  Please wait for the transaction to be validated.
+                </Text>
+              </>
+            ),
+            body: actionModalBody.verify.body,
+            closeText: "x",
+            hasTopBorder: false,
+            hasBottomBorder: false
+          },
+    [claimed, isWhitelisted, claiming]
+  );
+
   const handleClaim = async () => {
     try {
       const success = await claim();
-      console.log("handleClaim -->", { success });
       if (success !== true) {
+        setClaimLoading(false);
         return;
       }
 
-      showShareSocialModal();
+      showFinalizationModal();
     } finally {
       setClaimLoading(false);
       hideActionModal();
     }
   };
-
-  // handles a delay in fetching isWhitelisted after just being connected
-  useEffect(() => {
-    claimLoading && isWhitelisted && handleModalOpen().catch(noop);
-  }, [isWhitelisted]);
-
-  // trigger claim when user succesfully has verified through FV
-  // uses the first claimer flow
-  useEffect(() => {
-    const doClaim = async () => {
-      if (isVerified && account) {
-        setFirstClaim(true);
-        showActionModal();
-        await handleClaim();
-        setClaimLoading(true);
-      }
-    };
-
-    doClaim().catch(noop);
-  }, [isVerified, account]);
 
   const handleModalOpen = useCallback(
     async (first = false) => {
@@ -249,7 +280,7 @@ const ClaimButton = ({
 
       setClaimLoading(false);
     },
-    [claim, hideActionModal, showShareSocialModal, isWhitelisted, fuseWhitelisted, syncStatus, account]
+    [claim, hideActionModal, isWhitelisted, fuseWhitelisted, syncStatus, account]
   );
 
   const buttonTitle = useMemo(() => {
@@ -262,39 +293,38 @@ const ClaimButton = ({
     return "CLAIM NOW " + amount.format({ fixedPrecisionDigits: 2, useFixedPrecision: true, significantDigits: 2 });
   }, [isWhitelisted, account, chainId, claimAmount]);
 
-  if (isWhitelisted && claimed) {
-    return (
-      <ShareSocialModal
-        header={
-          <>
-            <Title mb="2" fontSize="xl" lineHeight="36px">
-              Congrats! You claimed G$ today
-            </Title>
-            <Text color={textColor} fontSize="sm">
-              Why not tell your friends on social media?
-            </Text>
-            <Text color="primary" fontSize="sm">
-              Don't forget to tag us.
-            </Text>
-            <Box display="flex" flexDir="row" justifyContent="center" alignItems="center" mt="5">
-              <HStack space={10}>
-                <SocialsLink network="facebook" logo={FbIcon} url="https://facebook.com" />
-                <SocialsLink network="twitter" logo={TwitterIcon} url="https://twitter.com/gooddollarorg" />
-                <SocialsLink network="linkedin" logo={LinkedInIcon} url="https://linkedin.com/" />
-              </HStack>
-            </Box>
-          </>
-        }
-        body={
-          <Box display="flex" justifyContent="center" alignItems="center">
-            <Image source={SocialShare} w="100px" h="100px" style={{ resizeMode: "contain" }} />
-          </Box>
-        }
-        closeText="x"
-        hasTopBorder={false}
-        hasBottomBorder={false}
-      />
-    );
+  // handles a delay in fetching isWhitelisted after just being connected
+  useEffect(() => {
+    claimLoading && isWhitelisted && handleModalOpen().catch(noop);
+  }, [isWhitelisted]);
+
+  // temporary transaction status check, to trigger final 2 modals: Awaiting validation + Social Share
+  // will be replaced with solution to issue: https://github.com/GoodDollar/GoodProtocolUI/issues/366 & https://github.com/GoodDollar/GoodProtocolUI/issues/365
+  // which should handle tx-statuses and confirm modals more globally
+  useEffect(() => {
+    if (claiming) {
+      hideActionModal();
+      showFinalizationModal();
+    }
+  }, [claiming]);
+
+  // trigger claim when user succesfully has verified through FV
+  // uses the first claimer flow
+  useEffect(() => {
+    const doClaim = async () => {
+      if (isVerified && account) {
+        setFirstClaim(true);
+        showActionModal();
+        await handleClaim();
+        setClaimLoading(true);
+      }
+    };
+
+    doClaim().catch(noop);
+  }, [isVerified, account]);
+
+  if (isWhitelisted && (claimed || claiming)) {
+    return <FinalizationModal {...finalModalProps} />;
   }
 
   return (
