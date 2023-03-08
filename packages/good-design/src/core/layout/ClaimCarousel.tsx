@@ -86,7 +86,6 @@ const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards, claimed }) => {
         _contentContainerStyle={{
           width: contentWidth
         }}
-        testID="FlatlistContainer"
         data={activeCards}
         horizontal
         onScroll={onScroll}
