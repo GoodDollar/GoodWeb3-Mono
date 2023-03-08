@@ -1,7 +1,6 @@
 import React, { useEffect, useCallback, useMemo, useState } from "react";
 import { SupportedChains, useClaim, useGetEnvChainId, useWhitelistSync, G$Amount } from "@gooddollar/web3sdk-v2";
 import { Text, View, useColorModeValue, Box, Link, HStack } from "native-base";
-
 import { useQueryParam } from "../../hooks/useQueryParam";
 import { Web3ActionButton } from "../../advanced";
 import { useFVModalAction } from "../../hooks/useFVModalAction";
@@ -312,16 +311,15 @@ const ClaimButton = ({
   // uses the first claimer flow
   useEffect(() => {
     const doClaim = async () => {
-      if (isVerified && account) {
+      if (!claimed && isVerified && account) {
         setFirstClaim(true);
         showActionModal();
-        await handleClaim();
         setClaimLoading(true);
       }
     };
 
     doClaim().catch(noop);
-  }, [isVerified, account]);
+  }, [isVerified, account, claimed]);
 
   if (isWhitelisted && (claimed || claiming)) {
     return <FinalizationModal {...finalModalProps} />;
