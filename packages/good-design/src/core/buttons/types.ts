@@ -8,6 +8,7 @@ export interface FVFlowProps {
   chainId?: number;
   styles?: any;
   claimed?: boolean;
+  claiming?: boolean;
   refresh?: "everyBlock" | "never" | number | undefined;
   handleConnect?: () => Promise<boolean>;
 }
