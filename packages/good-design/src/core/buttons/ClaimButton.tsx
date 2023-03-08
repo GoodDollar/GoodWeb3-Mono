@@ -337,7 +337,7 @@ const ClaimButton = ({
           variant="round"
           supportedChains={[SupportedChains.CELO, SupportedChains.FUSE]}
           handleConnect={handleConnect}
-          eventsCb={eventsCb}
+          onEvent={eventsCb}
         />
         <Text variant="shadowed" fontSize="md" />
       </View>

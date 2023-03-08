@@ -3,6 +3,7 @@ import { HStack, Spinner, Text, ITextProps } from "native-base";
 import { useEthers } from "@usedapp/core";
 import BaseButton, { BaseButtonProps } from "../../core/buttons/BaseButton";
 import { withTheme } from "../../theme";
+import { noop } from "lodash";
 
 export interface Web3ActionProps extends Omit<BaseButtonProps, "onPress"> {
   /** list of supported chains, first in list will be used as default */
@@ -18,7 +19,7 @@ export interface Web3ActionProps extends Omit<BaseButtonProps, "onPress"> {
    * 'action' only has a suffixed '_start',
    * final 'finish' indicating action has been done
    */
-  eventsCb?: (event: string) => void;
+  onEvent?: (event: string) => void;
 }
 
 const ButtonSteps = {
@@ -55,7 +56,16 @@ export const Web3ActionButton: FC<Web3ActionProps> = withTheme({
   name: "Web3ActionButton",
   skipProps: "supportedChains"
 })(
-  ({ text, supportedChains, switchChain, web3Action, handleConnect, eventsCb, innerIndicatorText, ...buttonProps }) => {
+  ({
+    text,
+    supportedChains,
+    switchChain,
+    web3Action,
+    handleConnect,
+    onEvent = noop,
+    innerIndicatorText,
+    ...buttonProps
+  }) => {
     const { account, switchNetwork, chainId, activateBrowserWallet } = useEthers();
     const [runningFlow, setRunningFlow] = useState(false);
     const [actionText, setActionText] = useState("");
@@ -63,18 +73,10 @@ export const Web3ActionButton: FC<Web3ActionProps> = withTheme({
 
     const resetText = useCallback(() => setActionText(""), []);
 
-    const sendEvents = useCallback(
-      (event: string) => {
-        if (!eventsCb) return;
-        eventsCb(event);
-      },
-      [eventsCb]
-    );
-
     const finishFlow = useCallback(() => {
       resetText();
       setRunningFlow(false);
-      sendEvents("finish");
+      onEvent("finish");
       if (timerRef.current) {
         clearTimeout(timerRef.current);
         timerRef.current = null;
@@ -82,7 +84,7 @@ export const Web3ActionButton: FC<Web3ActionProps> = withTheme({
     }, []);
 
     const startFlow = useCallback(() => {
-      sendEvents("start");
+      onEvent("start");
       setRunningFlow(true);
       timerRef.current = setTimeout(finishFlow, 60000);
     }, []);
@@ -115,22 +117,22 @@ export const Web3ActionButton: FC<Web3ActionProps> = withTheme({
     useEffect(() => {
       const continueSteps = async () => {
         if (!account) {
-          sendEvents("connect_start");
+          onEvent("connect_start");
           setActionText(ButtonSteps.connect);
           await connectWallet();
-          sendEvents("connect_success");
+          onEvent("connect_success");
           return;
         }
 
         if (!supportedChains.includes(chainId ?? 0)) {
-          sendEvents("switch_start");
+          onEvent("switch_start");
           setActionText(ButtonSteps.switch);
           await switchToChain(supportedChains[0]);
-          sendEvents("switch_success");
+          onEvent("switch_success");
           return;
         }
 
-        sendEvents("action_start");
+        onEvent("action_start");
         setActionText(ButtonSteps.action);
         await web3Action();
         finishFlow();
