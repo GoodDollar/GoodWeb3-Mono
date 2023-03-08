@@ -276,7 +276,6 @@ const ClaimButton = ({
 
         setClaimLoading(true);
         await handleClaim();
-        eventsCb && eventsCb("claimed");
       }
 
       setClaimLoading(false);
