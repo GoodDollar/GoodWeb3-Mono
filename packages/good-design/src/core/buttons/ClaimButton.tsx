@@ -314,6 +314,7 @@ const ClaimButton = ({
       if (!claimed && isVerified && account) {
         setFirstClaim(true);
         showActionModal();
+        await handleClaim();
         setClaimLoading(true);
       }
     };
