@@ -311,18 +311,15 @@ const ClaimButton = ({
   // uses the first claimer flow
   useEffect(() => {
     const doClaim = async () => {
-      if (isVerified && account) {
+      if (!claimed && isVerified && account) {
         setFirstClaim(true);
         showActionModal();
-        await handleClaim();
         setClaimLoading(true);
-
-        // on close of modal, refresh
       }
     };
 
     doClaim().catch(noop);
-  }, [isVerified, account]);
+  }, [isVerified, account, claimed]);
 
   if (isWhitelisted && (claimed || claiming)) {
     return <FinalizationModal {...finalModalProps} />;
