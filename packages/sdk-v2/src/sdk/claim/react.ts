@@ -17,10 +17,12 @@ import { noop } from "lodash";
 import { useContractFunctionWithDefaultGasFees } from "../base/hooks/useGasFees";
 
 export const useFVLink = (chainId?: number) => {
+  const { account } = useEthers();
   const { chainId: defaultChainId } = useGetEnvChainId();
-  const sdk = useSDK(false, "claim", chainId ?? defaultChainId) as ClaimSDK;
 
-  return useMemo(() => sdk?.getFVLink(chainId), [sdk, chainId]);
+  const sdk = useSDK(account ? false : true, "claim", chainId ?? defaultChainId) as ClaimSDK;
+
+  return useMemo(() => sdk?.getFVLink(chainId), [sdk, chainId, account]);
 };
 
 export const useIsAddressVerified = (address: string, env?: EnvKey) => {
