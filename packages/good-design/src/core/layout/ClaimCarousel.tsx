@@ -36,36 +36,34 @@ const SlidesComponent = memo(
 
 const getItemLayout = (_: IClaimCard[] | null | undefined, index: number) => ({
   index,
-  length: 260,
-  offset: (260 + 20) * index
+  length: 275,
+  offset: (275 + 20) * index
 });
 
 const Separator = () => <View w="5" />;
 
 const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards, claimed }) => {
-  const [slidesNumber, setSlidesNumber] = useState(0);
+  const [slidesNumber, setSlidesNumber] = useState(1);
   const [activeSlide, setActiveSlide] = useState(0);
+  const [activeContentWidth, setActiveContentWidth] = useState<string | number>("auto");
 
   const activeCards = useMemo(() => cards.filter(card => !card.hide), [cards, claimed]);
-  const containerWidth = useBreakpointValue({
-    base: "auto",
-    xl: "auto"
-  });
-  const listWidth = useBreakpointValue({
-    base: "auto",
-    xl: claimed ? "auto" : activeCards.length * 260
+
+  const contentWidth = useBreakpointValue({
+    base: activeContentWidth,
+    xl: claimed ? "auto" : activeContentWidth
   });
 
   const onFlatListLayoutChange = useCallback(
     (event: LayoutChangeEvent) => {
-      const contentWidth = activeCards.length * 260 + (activeCards.length - 1) * 20;
-
+      const contentWidth = activeCards.length * 275 + (activeCards.length - 1) * 20;
+      setActiveContentWidth(contentWidth);
       if (event.nativeEvent.layout.width >= contentWidth) {
         setSlidesNumber(0);
         return;
       }
 
-      setSlidesNumber(Math.ceil((contentWidth - event.nativeEvent.layout.width + 36) / (260 + 20)));
+      setSlidesNumber(Math.ceil((contentWidth - event.nativeEvent.layout.width + 36) / (275 + 20)));
     },
     [activeCards, setSlidesNumber]
   );
@@ -73,7 +71,7 @@ const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards, claimed }) => {
   const onScroll = useCallback(
     (event: NativeSyntheticEvent<NativeScrollEvent>) => {
       const offSetX = event.nativeEvent.contentOffset.x;
-      const currentSlide = Math.floor(offSetX / (260 + (offSetX === 0 ? 20 : -20)));
+      const currentSlide = Math.floor(offSetX / (275 + (offSetX === 0 ? 20 : -20)));
 
       if (activeSlide === currentSlide) return;
 
@@ -83,14 +81,17 @@ const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards, claimed }) => {
   );
 
   return (
-    <Box w={containerWidth}>
+    <Box>
       <FlatList
+        _contentContainerStyle={{
+          width: contentWidth
+        }}
         data={activeCards}
         horizontal
         onScroll={onScroll}
         scrollEventThrottle={16}
         h="425"
-        w={listWidth}
+        w="auto"
         showsHorizontalScrollIndicator={false}
         onLayout={onFlatListLayoutChange}
         getItemLayout={getItemLayout}
@@ -99,7 +100,7 @@ const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards, claimed }) => {
         pagingEnabled
       />
 
-      <View flexDirection="row" w="full" pt="5" justifyContent="center">
+      <View flexDirection="row" pt="5" justifyContent="center">
         <SlidesComponent data={activeCards} activeSlide={activeSlide} slidesNumber={slidesNumber} />
       </View>
     </Box>
