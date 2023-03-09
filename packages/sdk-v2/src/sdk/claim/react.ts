@@ -20,7 +20,7 @@ export const useFVLink = (chainId?: number) => {
   const { account } = useEthers();
   const { chainId: defaultChainId } = useGetEnvChainId();
   const sdkFactory = useSDKFactory(false, "claim", chainId ?? defaultChainId);
-  const [fvLink, setFVLink] = useState<any>(null);
+  const [fvLink, setFVLink] = useState<ClaimSDK["getFVLink"] | null>(null);
 
   useEffect(() => {
     // skip effect if no account
