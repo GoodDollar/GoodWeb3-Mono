@@ -11,6 +11,7 @@ export interface FVFlowProps {
   claiming?: boolean;
   refresh?: "everyBlock" | "never" | number | undefined;
   handleConnect?: () => Promise<boolean>;
+  onEvent?: (event: string) => void;
 }
 
 export type FVModalProps = IModalProps & FVFlowProps;
