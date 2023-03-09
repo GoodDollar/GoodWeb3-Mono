@@ -1,4 +1,4 @@
-import { useContext, useMemo, useState } from "react";
+import { useContext, useMemo, useState, useCallback } from "react";
 import { Signer, providers, BigNumber } from "ethers";
 import { BaseSDK, EnvKey, EnvValue } from "./sdk";
 import { TokenContext, Web3Context } from "../../contexts";
@@ -105,6 +105,24 @@ function sdkFactory(
 
   return new reqSdk(provider as providers.JsonRpcProvider, defaultEnv) as ClaimSDK | SavingsSDK;
 }
+
+export const useSDKFactory = (readOnly = false, type: SdkTypes = "base", requiredChainId?: number | undefined): any => {
+  const { library } = useEthers();
+  const { chainId, defaultEnv } = useGetEnvChainId(requiredChainId);
+  const rolibrary = useReadOnlyProvider(chainId);
+
+  return useCallback(
+    () =>
+      sdkFactory(
+        type,
+        defaultEnv,
+        readOnly,
+        library instanceof providers.JsonRpcProvider ? library : undefined,
+        rolibrary
+      ),
+    [type, defaultEnv, readOnly, library, rolibrary]
+  );
+};
 
 export const useSDK = (
   readOnly = false,

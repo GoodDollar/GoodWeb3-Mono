@@ -3,7 +3,7 @@ import { UBIScheme } from "@gooddollar/goodprotocol/types/UBIScheme";
 import { ChainId, QueryParams, useCalls, useEthers } from "@usedapp/core";
 import { BigNumber } from "ethers";
 import { first } from "lodash";
-import { useMemo, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { AsyncStorage } from "../storage";
 import usePromise from "react-use-promise";
 
@@ -11,7 +11,7 @@ import { EnvKey } from "../base/sdk";
 import { ClaimSDK } from "./sdk";
 
 import useRefreshOrNever from "../../hooks/useRefreshOrNever";
-import { useGetContract, useGetEnvChainId, useReadOnlySDK, useSDK } from "../base/react";
+import { useGetContract, useGetEnvChainId, useReadOnlySDK, useSDKFactory } from "../base/react";
 import { Envs, SupportedChains, SupportedV2Networks } from "../constants";
 import { noop } from "lodash";
 import { useContractFunctionWithDefaultGasFees } from "../base/hooks/useGasFees";
@@ -19,10 +19,22 @@ import { useContractFunctionWithDefaultGasFees } from "../base/hooks/useGasFees"
 export const useFVLink = (chainId?: number) => {
   const { account } = useEthers();
   const { chainId: defaultChainId } = useGetEnvChainId();
+  const sdkFactory = useSDKFactory(false, "claim", chainId ?? defaultChainId);
+  const [fvLink, setFVLink] = useState<any>(null);
 
-  const sdk = useSDK(account ? false : true, "claim", chainId ?? defaultChainId) as ClaimSDK;
+  useEffect(() => {
+    // skip effect if no account
+    if (!account) {
+      return;
+    }
 
-  return useMemo(() => sdk?.getFVLink(chainId), [sdk, chainId, account]);
+    const sdk = sdkFactory();
+    const link = sdk.getFVLink(chainId);
+
+    setFVLink(link);
+  }, [account, sdkFactory, chainId]);
+
+  return fvLink;
 };
 
 export const useIsAddressVerified = (address: string, env?: EnvKey) => {
