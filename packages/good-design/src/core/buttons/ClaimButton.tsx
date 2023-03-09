@@ -31,7 +31,7 @@ const ClaimButton = ({
   claim,
   chainId,
   handleConnect,
-  eventsCb,
+  onEvent,
   redirectUrl,
   ...props
 }: FVFlowProps) => {
@@ -337,7 +337,7 @@ const ClaimButton = ({
           variant="round"
           supportedChains={[SupportedChains.CELO, SupportedChains.FUSE]}
           handleConnect={handleConnect}
-          onEvent={eventsCb}
+          onEvent={onEvent}
         />
         <Text variant="shadowed" fontSize="md" />
       </View>
