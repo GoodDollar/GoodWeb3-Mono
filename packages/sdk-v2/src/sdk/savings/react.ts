@@ -1,8 +1,9 @@
 import { GoodDollarStaking, IGoodDollar } from "@gooddollar/goodprotocol/types";
-import { ChainId, CurrencyValue, QueryParams, useCalls, useContractFunction, useEthers } from "@usedapp/core";
+import { ChainId, CurrencyValue, QueryParams, useCalls, useEthers } from "@usedapp/core";
 import { ethers } from "ethers";
 import { useCallback } from "react";
 import useRefreshOrNever from "../../hooks/useRefreshOrNever";
+import { useContractFunctionWithDefaultGasFees } from "../base/hooks/useGasFees";
 import { useGetContract, useGetEnvChainId, useG$Amount } from "../base/react";
 
 export interface StakerInfo {
@@ -56,9 +57,9 @@ export function useSavingsBalance(refresh: QueryParams["refresh"] = "never", req
     }
   );
 
-  const [balance = { value: 0, error: undefined }, sBalance = { value: 0, error: undefined }] = results;
-  const g$Balance = useG$Amount(balance.value, "G$", requiredChainId);
-  const savingsBalance = useG$Amount(sBalance.value, "G$", requiredChainId);
+  const [balance, sBalance] = results;
+  const g$Balance = useG$Amount(balance?.value?.[0], "G$", requiredChainId);
+  const savingsBalance = useG$Amount(sBalance?.value?.[0], "G$", requiredChainId);
 
   return { g$Balance, savingsBalance };
 }
@@ -66,14 +67,21 @@ export function useSavingsBalance(refresh: QueryParams["refresh"] = "never", req
 export const useSavingsFunctions = () => {
   const gooddollar = useGetContract("GoodDollar", false, "savings") as IGoodDollar;
   const gdStaking = useGetContract("GoodDollarStaking", false, "savings") as GoodDollarStaking;
-
-  const { state: transferState, send: sendTransfer } = useContractFunction(gooddollar, "transferAndCall", {
-    transactionName: "Transfer to savings"
-  });
-  const { state: withdrawState, send: sendWithdraw } = useContractFunction(gdStaking, "withdrawStake", {
-    transactionName: "Withdraw from savings"
-  });
-  const { state: claimState, send: sendClaim } = useContractFunction(gdStaking, "withdrawRewards", {
+  const { state: transferState, send: sendTransfer } = useContractFunctionWithDefaultGasFees(
+    gooddollar,
+    "transferAndCall",
+    {
+      transactionName: "Transfer to savings"
+    }
+  );
+  const { state: withdrawState, send: sendWithdraw } = useContractFunctionWithDefaultGasFees(
+    gdStaking,
+    "withdrawStake",
+    {
+      transactionName: "Withdraw from savings"
+    }
+  );
+  const { state: claimState, send: sendClaim } = useContractFunctionWithDefaultGasFees(gdStaking, "withdrawRewards", {
     transactionName: "Withdraw rewards from savings"
   });
 
@@ -153,9 +161,9 @@ export const useSavingsStats = (requiredChainId: number, refresh: QueryParams["r
     globalStats.totalRewardsPaid = rewardsPaid;
   }
 
-  if (results[1] && results[2]) { // eslint-disable-line no-unsafe-optional-chaining
-    const { _gdInterestRatePerBlock: gdIrpb } = results[1]?.value; // eslint-disable-line no-unsafe-optional-chaining
-    const numberOfBlocksPerYear = results[2]?.value;
+  if (results[1] && results[2]) {
+    const { _gdInterestRatePerBlock: gdIrpb } = results[1]?.value || { _gdInterestRatePerBlock: 0 };
+    const numberOfBlocksPerYear = results[2]?.value?.[0];
     const apy = (Math.pow(gdIrpb / 1e18, numberOfBlocksPerYear) - 1) * 100;
 
     globalStats.apy = apy;
@@ -193,9 +201,9 @@ export const useStakerInfo = (requiredChainId: number, refresh: QueryParams["ref
     principle: undefined
   };
 
-  const [goodRewardValue, g$RewardValue] = results[0]?.value ?? []
-  const [principle] = results[1]?.value ?? []
-  
+  const [goodRewardValue, g$RewardValue] = results[0]?.value ?? [];
+  const [principle] = results[1]?.value ?? [];
+
   const g$Reward = useG$Amount(g$RewardValue, "G$", requiredChainId);
   const goodReward = useG$Amount(goodRewardValue, "GOOD", requiredChainId);
   const deposit = useG$Amount(principle, "G$", requiredChainId);
@@ -214,11 +222,11 @@ export const useStakerInfo = (requiredChainId: number, refresh: QueryParams["ref
 
   if (goodReward && g$Reward) {
     const claimableRewards = { g$Reward, goodReward };
-    
+
     stakerInfo.claimable = claimableRewards;
   }
 
-  if (deposit) {    
+  if (deposit) {
     stakerInfo.principle = deposit;
   }
 

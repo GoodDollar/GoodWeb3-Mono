@@ -24,13 +24,14 @@ export const theme = extendTheme({
     heading: "#42454A",
     headingBlack: "#303030",
     headingGrey: "#999",
+    lightBlue: "#8499BB",
 
     // UI
     buttonBackground: "#40C4FFCC",
 
     /* g$ design system */
     primary: "#00AFFF",
-    primaryHoverDark: "#0387c3",
+    primaryHoverDark: "#0075AC",
     // text
     goodGrey: {
       300: "#D4D4D4",

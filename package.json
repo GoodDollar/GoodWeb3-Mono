@@ -21,6 +21,7 @@
   "packageManager": "yarn@3.2.1",
   "dependencies": {
     "@types/react-native": "^0.70.4",
+    "@usedapp/core": "1.2.2",
     "prettier": "^2.7.1",
     "react-native": "^0.70.2"
   },

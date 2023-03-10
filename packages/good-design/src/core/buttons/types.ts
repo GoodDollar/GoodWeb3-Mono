@@ -4,21 +4,29 @@ export interface FVFlowProps {
   firstName: string;
   method: "popup" | "redirect";
   redirectUrl?: string;
+  claim: () => Promise<boolean>;
   chainId?: number;
   styles?: any;
   claimed?: boolean;
+  claiming?: boolean;
   refresh?: "everyBlock" | "never" | number | undefined;
-  claim: () => Promise<boolean>;
+  handleConnect?: () => Promise<boolean>;
+  onEvent?: (event: string) => void;
 }
 
 export type FVModalProps = IModalProps & FVFlowProps;
 
 export interface ClaimCardContent {
+  subTitle?: {
+    text: string;
+    color: string;
+  };
   description?: {
     text: string;
     color: string;
   };
   imageUrl?: string;
+  imgSrc?: any;
   link?: {
     linkText: string;
     linkUrl: string;
@@ -31,6 +39,7 @@ export interface IClaimCard {
     text: string;
     color: string;
   };
+  externalLink?: string;
   bgColor: string;
   content?: Array<ClaimCardContent>;
   hide?: boolean;

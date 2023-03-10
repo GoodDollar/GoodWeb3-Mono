@@ -16,7 +16,6 @@ export class ClaimSDK extends BaseSDK {
   async generateFVLink(firstName: string, callbackUrl?: string, popupMode = false, chainId?: number) {
     const steps = this.getFVLink(chainId);
 
-    await steps.getLoginSig();
     await steps.getFvSig();
 
     return steps.getLink(firstName, callbackUrl, popupMode);
@@ -43,17 +42,22 @@ export class ClaimSDK extends BaseSDK {
       return fvSig;
     };
 
-    const getLink = (firstName: string, callbackUrl?: string, popupMode = false, chainId: number | undefined = defaultChainId) => {
+    const getLink = (
+      firstName: string,
+      callbackUrl?: string,
+      popupMode = false,
+      chainId: number | undefined = defaultChainId
+    ) => {
       if (!fvSig) {
         throw new Error("missing login or identifier signature");
       }
-      
+
       if (popupMode === false && !callbackUrl) {
         throw new Error("redirect url is missing for redirect mode");
       }
-      
+
       const url = new URL(identityUrl);
-      const { searchParams } = url
+      const { searchParams } = url;
 
       const params = {
         account,
@@ -66,10 +70,10 @@ export class ClaimSDK extends BaseSDK {
 
       forIn(params, (value, param) => {
         if (!value) {
-          return
+          return;
         }
-        
-        searchParams.append(param, String(value))
+
+        searchParams.append(param, String(value));
       });
 
       if (callbackUrl) {
@@ -117,9 +121,9 @@ export class ClaimSDK extends BaseSDK {
     return startRef;
   }
 
-  async claim() {
+  async claim(txOverrides?: object) {
     const ubi = this.getContract("UBIScheme");
 
-    return ubi.claim();
+    return ubi.claim(txOverrides);
   }
 }

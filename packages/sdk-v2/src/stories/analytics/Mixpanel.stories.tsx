@@ -9,7 +9,7 @@ export interface PageProps {
 }
 
 const Web3Component = (params: PageProps) => {
-  const mixpanel = new Mixpanel({ apiKey: params.apiKey });
+  const mixpanel = new Mixpanel({ apiKey: params.apiKey, enabled: true });
 
   const [initialized, setInitialized] = useState(false);
   const init = async () => {

@@ -4,12 +4,10 @@ import injectedModule from "@web3-onboard/injected-wallets";
 import walletConnectModule from "@web3-onboard/walletconnect";
 import coinbaseWalletModule from "@web3-onboard/coinbase";
 import { useRef } from "react";
-import { torus as torusModule } from "./modules/torus";
 import { customWcModule } from "./modules/customwalletconnect";
 import { keys, pickBy } from "lodash";
 
 export interface IOnboardWallets {
-  torus?: boolean;
   gooddollar?: boolean;
   metamask?: boolean;
   walletconnect?: boolean;
@@ -70,7 +68,7 @@ const defaultWc = walletConnectModule({
   qrcodeModalOptions: {
     mobileLinks: ["rainbow", "metamask", "argent", "trust", "imtoken", "pillar"]
   },
-  connectFirstChainId: true,
+  connectFirstChainId: false,
   ...wcInitOptions
 });
 
@@ -82,20 +80,15 @@ const zenGoWc = customWcModule({
     desktopLinks: ["zengo", "metamask"],
     mobileLinks: ["metamask", "zengo"] // TODO: has to be tested on IOS, android does not show list
   },
-  connectFirstChainId: true,
+  connectFirstChainId: false,
   ...wcInitOptions
 });
 
 const gdWc = customWcModule({
   customLabelFor: "gooddollar",
   bridge: "https://bridge.walletconnect.org",
-  connectFirstChainId: true,
+  connectFirstChainId: false,
   ...wcInitOptions
-});
-
-const torus = torusModule({
-  buildEnv: "testing",
-  showTorusButton: false
 });
 
 const defaultOptions: IOnboardProviderProps["options"] = {
@@ -111,7 +104,6 @@ const defaultOptions: IOnboardProviderProps["options"] = {
 };
 
 const defaultWalletsFlags: IOnboardWallets = {
-  torus: true,
   gooddollar: true,
   metamask: true,
   walletconnect: true,
@@ -121,7 +113,6 @@ const defaultWalletsFlags: IOnboardWallets = {
 };
 
 const walletsMap: Record<keyof Omit<IOnboardWallets, "custom">, any> = {
-  torus,
   gooddollar: gdWc,
   metamask: injected,
   walletconnect: defaultWc,
@@ -145,9 +136,10 @@ export const OnboardProvider = ({
     const { custom = [], ...flags } = { ...defaultWalletsFlags, ...(wallets || {}) };
     const selectedWallets = keys(pickBy(flags));
 
+    // TODO: add option to define order when custom wallets are added
     onboardRef.current = init({
       ...options,
-      wallets: [...selectedWallets.map(key => walletsMap[key]), ...custom]
+      wallets: [...custom, ...selectedWallets.map(key => walletsMap[key])]
     });
   })();
 

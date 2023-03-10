@@ -1,9 +1,10 @@
 import { Faucet } from "@gooddollar/goodprotocol/types";
-import { QueryParams, useCalls, useEtherBalance, useEthers, useGasPrice, useNotifications } from "@usedapp/core";
+import { QueryParams, useCalls, useEtherBalance, useEthers, useNotifications } from "@usedapp/core";
 import { BigNumber, ethers } from "ethers";
 import { maxBy } from "lodash";
 import { useEffect, useMemo, useRef } from "react";
 import useRefreshOrNever from "../../hooks/useRefreshOrNever";
+import { useGasFees } from "../base/hooks/useGasFees";
 import { useGetContract, useGetEnvChainId } from "../base/react";
 import { Envs, SupportedChains } from "../constants";
 
@@ -13,33 +14,40 @@ export const useFaucet = async (refresh: QueryParams["refresh"] = 12) => {
   const { notifications } = useNotifications();
   const latest = useMemo(() => maxBy(notifications, "submittedAt"), [notifications]);
   const lastNotification = useRef(latest?.submittedAt || 0);
+  const { account, chainId } = useEthers();
 
   // if we connected wallet or did a tx then force a refresh
   if (latest && latest.type !== "transactionStarted" && latest?.submittedAt > lastNotification.current) {
     lastNotification.current = latest?.submittedAt;
     refreshOrNever = 1;
   }
-
-  const gasPrice = useGasPrice({ refresh: "never" }) || BigNumber.from("1000000000");
-  const minBalance = BigNumber.from("110000").mul(gasPrice);
-  const { account, chainId } = useEthers();
   const balance = useEtherBalance(account, { refresh: refreshOrNever }); // refresh roughly once in 10 minutes
   const { baseEnv } = useGetEnvChainId(); // get the env the user is connected to
   const faucet = useGetContract(chainId === SupportedChains.FUSE ? "FuseFaucet" : "Faucet", true, "base") as Faucet;
 
-  const [result] = useCalls(
+  const { gasPrice = BigNumber.from(5e9) } = useGasFees();
+  const minBalance = BigNumber.from(chainId === 42220 ? "250000" : "150000").mul(gasPrice);
+
+  const faucetResult = useCalls(
     [
       {
         contract: faucet,
         method: "canTop",
         args: [account || ethers.constants.AddressZero]
+      },
+      {
+        contract: faucet,
+        method: "getToppingAmount",
+        args: []
       }
     ].filter(_ => _.contract),
     { refresh: "never" }
   );
 
   useEffect(() => {
-    if (result?.value && account && balance && balance.lt(minBalance)) {
+    const [canTop, toppingAmount] = faucetResult.map(_ => _?.value?.[0] as boolean | BigNumber | undefined) || [];
+    const threshold = (toppingAmount as BigNumber)?.mul(50)?.div(100) || minBalance;
+    if (canTop && account && balance && balance.lte(threshold)) {
       const devEnv = baseEnv === "fuse" ? "development" : baseEnv;
       const { backend } = Envs[devEnv];
 
@@ -51,5 +59,5 @@ export const useFaucet = async (refresh: QueryParams["refresh"] = 12) => {
         console.error("topping wallet failed:", e.message, e);
       });
     }
-  }, [result, account, balance, baseEnv]);
+  }, [faucetResult, account, balance, baseEnv]);
 };

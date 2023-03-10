@@ -9,13 +9,7 @@ interface FVModalActionProps extends Pick<FVFlowProps, "method" | "firstName"> {
   chainId?: number;
 }
 
-export const useFVModalAction = ({ 
-  firstName, 
-  method, 
-  chainId,
-  onClose = noop, 
-  redirectUrl,
-}: FVModalActionProps) => {
+export const useFVModalAction = ({ firstName, method, onClose = noop, chainId, redirectUrl }: FVModalActionProps) => {
   const fvlink = useFVLink(chainId);
   const [loading, setLoading] = useState(false);
   const redirectUri = useMemo(() => redirectUrl || document.location.href, [redirectUrl]);
@@ -23,8 +17,15 @@ export const useFVModalAction = ({
   const verify = useCallback(async () => {
     setLoading(true);
 
-    await fvlink?.getLoginSig();
-    await fvlink?.getFvSig();
+    try {
+      await fvlink?.getFvSig();
+    } catch {
+      return;
+    } finally {
+      setLoading(false);
+    }
+
+    onClose();
 
     switch (method) {
       case "redirect": {
@@ -45,10 +46,7 @@ export const useFVModalAction = ({
         break;
       }
     }
-
-    setLoading(false);
-    onClose();
-  }, [fvlink, method, firstName, onClose]);
+  }, [fvlink, method, firstName, redirectUrl, onClose]);
 
   return { loading, verify };
 };

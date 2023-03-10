@@ -8,11 +8,7 @@
   },
   "tags": {},
   "logoURI": "ipfs://QmQQGd3Kbb8fhxKQLvzPPngzBGd5aydV3QAigLHy53Hr3g",
-  "keywords": [
-    "fuseswap",
-    "fuse",
-    "default"
-  ],
+  "keywords": ["fuseswap", "fuse", "default"],
   "tokens": [
     {
       "name": "BNB on Fuse",

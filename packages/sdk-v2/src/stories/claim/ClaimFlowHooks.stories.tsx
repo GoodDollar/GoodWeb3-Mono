@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, Button, Modal, Text, StyleSheet, Linking, ModalProps } from "react-native";
 import { W3Wrapper } from "../W3Wrapper";
 import { ComponentStory, ComponentMeta } from "@storybook/react";
-import { useClaim, useFVLink } from "../../sdk/claim/react";
+import { useClaim, useFVLink, useHasClaimed } from "../../sdk/claim/react";
 import { noop } from "lodash";
 
 export interface PageProps {
@@ -17,24 +17,17 @@ const FVModal = (params: ModalProps & { firstName: string }) => {
     <Modal {...params} animationType="slide">
       <View style={styles.containeralt}>
         <View>
-          <Text>To verify your identity you need to sign TWICE with your wallet.</Text>
-          <Text>First sign your address to be whitelisted</Text>
+          <Text>To verify your identity you need to sign once with your wallet.</Text>
           <Text>
-            Second sign your self sovereign anonymized identifier, so no link is kept between your identity record and
-            your address.
+            Sign your self sovereign anonymized identifier, so no link is kept between your identity record and your
+            address.
           </Text>
         </View>
         <Button
           onPress={async () => {
-            await fvlink?.getLoginSig();
-          }}
-          title={"Step 1 - Login"}
-        />
-        <Button
-          onPress={async () => {
             await fvlink?.getFvSig();
           }}
-          title={"Step 2 - Sign unique identifier"}
+          title={"Step 1 - Sign"}
         />
         <Button
           onPress={async () => {
@@ -49,7 +42,7 @@ const FVModal = (params: ModalProps & { firstName: string }) => {
             // console.log({ link });
             params.onRequestClose?.(noop as any);
           }}
-          title={"Step 3 - Verify"}
+          title={"Step 2 - Verify"}
         />
         <Button color="red" onPress={() => params.onRequestClose?.(noop as any)} title="Close" />
       </View>
@@ -84,6 +77,7 @@ const ClaimButton = ({ address, firstName }: PageProps) => {
   // const library = useSDK(true, "claim");
   const [showModal, setShowModal] = useState(false);
   const [refresh, setRefresh] = useState(false);
+  const hasClaimed = useHasClaimed("FUSE");
   const { isWhitelisted, claimAmount, claimTime, claimCall } = useClaim(refresh ? "everyBlock" : "never");
   const handleClaim = async () => {
     if (isWhitelisted) {
@@ -102,7 +96,7 @@ const ClaimButton = ({ address, firstName }: PageProps) => {
 
   const buttonTitle = () => {
     if (isWhitelisted) {
-      if (claimAmount.toNumber() > 0) return `Claim ${claimAmount}`;
+      if (claimAmount.gt(0)) return `Claim ${claimAmount}`;
       else return `Claim at: ${claimTime}`;
     } else return "Verify Uniqueness";
   };
@@ -110,9 +104,10 @@ const ClaimButton = ({ address, firstName }: PageProps) => {
   return (
     <View>
       <View style={styles.container}>
+        <Text>hasClaimed: {String(hasClaimed)}</Text>
         <Text>isWhitelisted: {String(isWhitelisted)}</Text>
-        <Text>Claim time: {claimTime.toString()}</Text>
-        <Text>Claim amount: {claimAmount.toString()}</Text>
+        <Text>Claim time: {claimTime?.toString()}</Text>
+        <Text>Claim amount: {claimAmount?.toString()}</Text>
         <FVModal visible={showModal} onRequestClose={() => setShowModal(false)} firstName={firstName}></FVModal>
       </View>
       <Button title={buttonTitle()} onPress={handleClaim}></Button>

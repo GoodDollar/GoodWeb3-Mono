@@ -6,7 +6,7 @@ import { isTradeBetter } from "utils/isTradeBetter";
 import { BETTER_TRADE_LESS_HOPS_THRESHOLD } from "constants/misc";
 import { SupportedChainId } from "constants/chains";
 
-const MAX_HOPS = 2
+const MAX_HOPS = 2;
 
 /**
  * Returns the best trade for the token in to the exact amount of token out.
@@ -21,26 +21,26 @@ export async function v2TradeExactOut(
   currencyAmountOut?: CurrencyAmount<Currency>,
   { maxHops = MAX_HOPS, chainId = SupportedChainId.MAINNET } = {}
 ): Promise<Trade<Currency, Currency, TradeType.EXACT_OUTPUT> | null> {
-  const allowedPairs = await allCommonPairs(chainId, currencyIn, currencyAmountOut?.currency)
+  const allowedPairs = await allCommonPairs(chainId, currencyIn, currencyAmountOut?.currency);
 
   if (currencyIn && currencyAmountOut && allowedPairs.length > 0) {
     if (maxHops === 1) {
       return (
         Trade.bestTradeExactOut(allowedPairs, currencyIn, currencyAmountOut, { maxHops: 1, maxNumResults: 1 })[0] ??
         null
-      )
+      );
     }
     // search through trades with varying hops, find best trade out of them
-    let bestTradeSoFar: Trade<Currency, Currency, TradeType.EXACT_OUTPUT> | null = null
+    let bestTradeSoFar: Trade<Currency, Currency, TradeType.EXACT_OUTPUT> | null = null;
     for (let i = 1; i <= maxHops; i++) {
       const currentTrade =
         Trade.bestTradeExactOut(allowedPairs, currencyIn, currencyAmountOut, { maxHops: i, maxNumResults: 1 })[0] ??
-        null
+        null;
       if (isTradeBetter(bestTradeSoFar, currentTrade, BETTER_TRADE_LESS_HOPS_THRESHOLD)) {
-        bestTradeSoFar = currentTrade
+        bestTradeSoFar = currentTrade;
       }
     }
-    return bestTradeSoFar
+    return bestTradeSoFar;
   }
-  return null
+  return null;
 }

@@ -27,8 +27,8 @@ export const Web3ActionButton = {
     round: () => ({
       // return {
       shadow: 2,
-      w: "200px",
-      h: "200px",
+      w: "220px",
+      h: "220px",
       px: 2.5,
       borderRadius: "50%",
       bg: "main",
@@ -36,9 +36,10 @@ export const Web3ActionButton = {
         variant: "shadowed",
         fontFamily: "body",
         fontSize: "l",
-        width: 144,
+        width: 175,
         lineHeight: 26.4
-      }
+      },
+      _hover: interactionStyles
     }),
     mobile: () => ({
       backgroundColor: "primary",
