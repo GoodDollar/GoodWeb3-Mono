@@ -111,7 +111,7 @@ const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards, claimed }) => {
         _contentContainerStyle={{
           width: contentWidth
         }}
-        //@ts-ignore
+        // @ts-ignore
         ref={getFlatListRef}
         data={activeCards}
         horizontal
