@@ -86,7 +86,10 @@ const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards, claimed }) => {
   );
 
   const clickAndSlide = useCallback(() => {
-    if (!flatListRef.current) return;
+    if (!flatListRef.current) {
+      return;
+    }
+      
     const isLast = activeSlide === slidesNumber - 1;
     flatListRef.current.scrollToOffset({
       animated: true,
