@@ -1,5 +1,5 @@
 import { FlatList, View, Box, useBreakpointValue, Pressable } from "native-base";
-import React, { FC, memo, useCallback, useState, useMemo, useRef } from "react";
+import React, { FC, memo, useCallback, useState, useMemo, useRef, useEffect } from "react";
 import { LayoutChangeEvent, NativeScrollEvent, NativeSyntheticEvent } from "react-native";
 import { IClaimCard } from "../buttons";
 import ClaimCard from "./ClaimCard";
@@ -48,6 +48,7 @@ const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards, claimed }) => {
   const [activeContentWidth, setActiveContentWidth] = useState<string | number>("auto");
   const flatListRef = useRef<any>();
   const [layoutOffset, setLayoutOffset] = useState(0);
+  const [initialLayoutWidth, setInitialLayoutWidth] = useState(0);
 
   const activeCards = useMemo(() => cards.filter(card => !card.hide), [cards, claimed]);
 
@@ -56,11 +57,25 @@ const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards, claimed }) => {
     xl: claimed ? "auto" : activeContentWidth
   });
 
+  //start-hotfix: on mobile flatListLayout only updates on initial mount
+  // so we need to handle the slidesnumber change after claim sets manually
+  const updateSlidesNumber = useCallback(() => {
+    setSlidesNumber(activeCards.length);
+  }, [activeCards, claimed, slidesNumber, initialLayoutWidth]);
+
+  useEffect(() => {
+    if (initialLayoutWidth <= 480) {
+      updateSlidesNumber();
+    }
+  }, [claimed, initialLayoutWidth]);
+  // end-of-hotfix
+
   const onFlatListLayoutChange = useCallback(
     (event: LayoutChangeEvent) => {
       const contentWidth = activeCards.length * 275 + (activeCards.length - 1) * 20;
       const layoutWidth = event.nativeEvent.layout.width;
       setActiveContentWidth(contentWidth);
+      setInitialLayoutWidth(layoutWidth);
       if (layoutWidth >= contentWidth) {
         setSlidesNumber(0);
         return;
@@ -89,7 +104,7 @@ const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards, claimed }) => {
     if (!flatListRef.current) {
       return;
     }
-      
+
     const isLast = activeSlide === slidesNumber - 1;
     flatListRef.current.scrollToOffset({
       animated: true,
