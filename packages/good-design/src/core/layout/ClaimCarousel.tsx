@@ -3,6 +3,7 @@ import React, { FC, memo, useCallback, useState, useMemo, useRef, useEffect } fr
 import { LayoutChangeEvent, NativeScrollEvent, NativeSyntheticEvent } from "react-native";
 import { IClaimCard } from "../buttons";
 import ClaimCard from "./ClaimCard";
+import { isMobile } from "react-device-detect";
 
 interface ClaimCarouselProps {
   cards: Array<IClaimCard>;
@@ -48,7 +49,6 @@ const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards, claimed }) => {
   const [activeContentWidth, setActiveContentWidth] = useState<string | number>("auto");
   const flatListRef = useRef<any>();
   const [layoutOffset, setLayoutOffset] = useState(0);
-  const [initialLayoutWidth, setInitialLayoutWidth] = useState(0);
 
   const activeCards = useMemo(() => cards.filter(card => !card.hide), [cards, claimed]);
 
@@ -61,13 +61,13 @@ const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards, claimed }) => {
   // so we need to handle the slidesnumber change after claim sets manually
   const updateSlidesNumber = useCallback(() => {
     setSlidesNumber(activeCards.length);
-  }, [activeCards, claimed, slidesNumber, initialLayoutWidth]);
+  }, [activeCards, claimed, slidesNumber]);
 
   useEffect(() => {
-    if (initialLayoutWidth <= 480) {
+    if (isMobile) {
       updateSlidesNumber();
     }
-  }, [claimed, initialLayoutWidth]);
+  }, [claimed]);
   // end-of-hotfix
 
   const onFlatListLayoutChange = useCallback(
@@ -75,13 +75,11 @@ const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards, claimed }) => {
       const contentWidth = activeCards.length * 275 + (activeCards.length - 1) * 20;
       const layoutWidth = event.nativeEvent.layout.width;
       setActiveContentWidth(contentWidth);
-      setInitialLayoutWidth(layoutWidth);
       if (layoutWidth >= contentWidth) {
         setSlidesNumber(0);
         return;
       }
-      const slides =
-        layoutWidth >= 480 ? Math.ceil((contentWidth - layoutWidth + 36) / (275 + 20)) : activeCards.length;
+      const slides = isMobile ? activeCards.length : Math.ceil((contentWidth - layoutWidth + 36) / (275 + 20));
       setSlidesNumber(slides);
     },
     [activeCards, setSlidesNumber]
