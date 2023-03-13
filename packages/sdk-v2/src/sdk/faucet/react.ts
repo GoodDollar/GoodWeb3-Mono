@@ -10,7 +10,7 @@ import { Envs, SupportedChains } from "../constants";
 
 const throttledFetch = throttle(fetch, 60000, { leading: true });
 
-//default wait roughly 1 minute
+// default wait roughly 1 minute
 export const useFaucet = async (refresh: QueryParams["refresh"] = 12) => {
   let refreshOrNever = useRefreshOrNever(refresh);
   const { notifications } = useNotifications();
@@ -23,6 +23,7 @@ export const useFaucet = async (refresh: QueryParams["refresh"] = 12) => {
     lastNotification.current = latest?.submittedAt;
     refreshOrNever = 1;
   }
+  
   const balance = useEtherBalance(account, { refresh: refreshOrNever }); // refresh roughly once in 1 minute
   const { baseEnv } = useGetEnvChainId(); // get the env the user is connected to
   const faucet = useGetContract(chainId === SupportedChains.FUSE ? "FuseFaucet" : "Faucet", true, "base") as Faucet;
@@ -50,12 +51,16 @@ export const useFaucet = async (refresh: QueryParams["refresh"] = 12) => {
     if (!account) {
       return;
     }
+    
     const [canTop, toppingAmount] = faucetResult.map(_ => _?.value?.[0] as boolean | BigNumber | undefined) || [];
     const threshold = (toppingAmount as BigNumber)?.mul(50)?.div(100) || minBalance;
+    
     console.log("faucet:", { canTop, balance, threshold, account, toppingAmount });
+    
     if (canTop && balance && balance.lte(threshold)) {
       const devEnv = baseEnv === "fuse" ? "development" : baseEnv;
       const { backend } = Envs[devEnv];
+      
       throttledFetch(backend + "/verify/topWallet", {
         method: "POST",
         body: JSON.stringify({ chainId, account }),
