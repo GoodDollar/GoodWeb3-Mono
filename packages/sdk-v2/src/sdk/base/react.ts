@@ -1,4 +1,4 @@
-import { useContext, useMemo, useState, useCallback } from "react";
+import { useContext, useMemo, useState } from "react";
 import { Signer, providers, BigNumber } from "ethers";
 import { BaseSDK, EnvKey, EnvValue } from "./sdk";
 import { TokenContext, Web3Context } from "../../contexts";
@@ -98,42 +98,45 @@ function sdkFactory(
     provider = roLibrary;
   }
 
-  if (!provider) {
-    console.error("Error detecting readonly urls from config");
+  if (!provider && !readOnly) {
+    console.warn("Need a connected wallet for non-readonly sdk initializations", { type });
     return;
   }
 
   return new reqSdk(provider as providers.JsonRpcProvider, defaultEnv) as ClaimSDK | SavingsSDK;
 }
 
-export const useSDKFactory = (readOnly = false, type: SdkTypes = "base", requiredChainId?: number | undefined): any => {
+export const useSDK = (
+  readOnly = false,
+  type: SdkTypes = "base",
+  requiredChainId?: number | undefined
+): RequestedSdk["sdk"] => {
   const { library } = useEthers();
   const { chainId, defaultEnv } = useGetEnvChainId(requiredChainId);
   const rolibrary = useReadOnlyProvider(chainId);
+  const [sdk, setSdk] = useState<ClaimSDK | SavingsSDK | undefined>(() =>
+    sdkFactory(
+      type,
+      defaultEnv,
+      readOnly,
+      library instanceof providers.JsonRpcProvider ? library : undefined,
+      rolibrary
+    )
+  );
 
-  return useCallback(
-    () =>
+  // skip first render as sdk already initialized by useState()
+  useUpdateEffect(() => {
+    setSdk(
       sdkFactory(
         type,
         defaultEnv,
         readOnly,
         library instanceof providers.JsonRpcProvider ? library : undefined,
         rolibrary
-      ),
-    [type, defaultEnv, readOnly, library, rolibrary]
-  );
-};
+      )
+    );
+  }, [library, rolibrary, readOnly, defaultEnv, type]);
 
-export const useSDK = (
-  readOnly = false,
-  type: SdkTypes = "base",
-  requiredChainId?: number | undefined
-): RequestedSdk["sdk"] => {
-  const factory = useSDKFactory(readOnly, type, requiredChainId);
-  const [sdk, setSdk] = useState<ClaimSDK | SavingsSDK | undefined>(factory);
-
-  // skip first render as sdk already initialized by useState()
-  useUpdateEffect(() => void setSdk(factory()), [factory]);
   return sdk;
 };
 
