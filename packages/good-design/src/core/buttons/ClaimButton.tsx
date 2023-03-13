@@ -39,6 +39,7 @@ const ClaimButton = ({
   const { Modal: FinalizationModal, showModal: showFinalizationModal } = useModal();
   const { Modal: ActionModal, showModal: showActionModal, hideModal: hideActionModal } = useModal();
   const [claimLoading, setClaimLoading] = useState(false);
+  const [whitelistLoading, setWhitelistLoading] = useState(false);
 
   const { loading, verify } = useFVModalAction({
     firstName,
@@ -254,17 +255,23 @@ const ClaimButton = ({
   const handleModalOpen = useCallback(
     async (first = false) => {
       if (isNil(isWhitelisted)) {
-        setClaimLoading(true);
+        // no value for isWhitelisted means we are not having a established connection to bc yet but should expect soon, handled by useEffect
+        setWhitelistLoading(true);
         return;
       }
 
       setFirstClaim(first);
+      // we set claimLoading here because it only updates state-vars after current callback or effect has completed
+      // which is why it cannot be set in the handleClaim callback as it would be set too late
+      setClaimLoading(true);
       showActionModal();
 
       if (isWhitelisted) {
-        setClaimLoading(true);
         await handleClaim();
         return;
+      } else {
+        // means we no longer are expecting a claimCall and actionModal should show default verify uniqueness message
+        setClaimLoading(false);
       }
 
       if (fuseWhitelisted && syncStatus) {
@@ -274,13 +281,10 @@ const ClaimButton = ({
           return;
         }
 
-        setClaimLoading(true);
         await handleClaim();
       }
-
-      setClaimLoading(false);
     },
-    [claim, hideActionModal, isWhitelisted, fuseWhitelisted, syncStatus, account]
+    [claim, hideActionModal, isWhitelisted, fuseWhitelisted, syncStatus, account, claimLoading, setWhitelistLoading]
   );
 
   const buttonTitle = useMemo(() => {
@@ -295,8 +299,12 @@ const ClaimButton = ({
 
   // handles a delay in fetching isWhitelisted after just being connected
   useEffect(() => {
-    claimLoading && isWhitelisted && handleModalOpen().catch(noop);
-  }, [isWhitelisted]);
+    if (whitelistLoading) {
+      // making sure it only runs once (is set after useEffect completes)
+      setWhitelistLoading(false);
+      handleModalOpen().catch(noop);
+    }
+  }, [isWhitelisted, whitelistLoading, setWhitelistLoading]);
 
   // temporary transaction status check, to trigger final 2 modals: Awaiting validation + Social Share
   // will be replaced with solution to issue: https://github.com/GoodDollar/GoodProtocolUI/issues/366 & https://github.com/GoodDollar/GoodProtocolUI/issues/365
