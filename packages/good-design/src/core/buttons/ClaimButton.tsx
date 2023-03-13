@@ -255,7 +255,7 @@ const ClaimButton = ({
   const handleModalOpen = useCallback(
     async (first = false) => {
       if (isNil(isWhitelisted)) {
-        // no value for isWhitelisted means we are not having a established connection to bc yet but should expect soon
+        // no value for isWhitelisted means we are not having a established connection to bc yet but should expect soon, handled by useEffect
         setWhitelistLoading(true);
         return;
       }
