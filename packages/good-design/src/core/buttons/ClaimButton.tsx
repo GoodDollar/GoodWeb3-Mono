@@ -299,9 +299,11 @@ const ClaimButton = ({
 
   // handles a delay in fetching isWhitelisted after just being connected
   useEffect(() => {
-    // making sure it only runs once (is set after useEffect completes)
-    setWhitelistLoading(false);
-    whitelistLoading && handleModalOpen().catch(noop);
+    if (whitelistLoading) {
+      // making sure it only runs once (is set after useEffect completes)
+      setWhitelistLoading(false);
+      handleModalOpen().catch(noop);
+    }
   }, [isWhitelisted, whitelistLoading, setWhitelistLoading]);
 
   // temporary transaction status check, to trigger final 2 modals: Awaiting validation + Social Share
