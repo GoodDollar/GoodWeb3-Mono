@@ -3,7 +3,7 @@ import { UBIScheme } from "@gooddollar/goodprotocol/types/UBIScheme";
 import { ChainId, QueryParams, useCalls, useEthers } from "@usedapp/core";
 import { BigNumber } from "ethers";
 import { first } from "lodash";
-import { useMemo, useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { AsyncStorage } from "../storage";
 import usePromise from "react-use-promise";
 

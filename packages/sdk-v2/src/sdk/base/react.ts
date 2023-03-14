@@ -98,8 +98,14 @@ function sdkFactory(
     provider = roLibrary;
   }
 
-  if (!provider) {
-    console.error("Error detecting readonly urls from config");
+  if (!provider && readOnly) {
+    // the only reason why there is no provider when a read-only one is requested is because there
+    // are no read-only urls set for the chain data is requested from
+    console.error("No read-only provider could be found", { type });
+  }
+
+  if (!provider && !readOnly) {
+    console.warn("Need a connected wallet for non-readonly sdk initializations", { type });
     return;
   }
 
