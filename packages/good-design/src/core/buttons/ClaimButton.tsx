@@ -137,7 +137,7 @@ const ClaimButton = ({
         )
       }
     }),
-    [textColor, verify, loading, claimLoading, claiming]
+    [textColor, verify, loading, claimLoading, claiming, openSigningTab]
   );
 
   const claimModalProps: Omit<BasicModalProps, "modalVisible"> = useMemo(
@@ -182,7 +182,7 @@ const ClaimButton = ({
             closeText: "x",
             hasBottomBorder: false
           },
-    [firstClaim, textColor, loading, isWhitelisted, claimLoading]
+    [firstClaim, textColor, loading, isWhitelisted, claimLoading, actionModalBody]
   );
 
   const finalModalProps: Omit<BasicModalProps, "modalVisible"> = useMemo(
@@ -234,10 +234,10 @@ const ClaimButton = ({
             hasTopBorder: false,
             hasBottomBorder: false
           },
-    [claimed, isWhitelisted, claiming]
+    [claimed, isWhitelisted, actionModalBody, textColor]
   );
 
-  const handleClaim = async () => {
+  const handleClaim = useCallback(async () => {
     try {
       const success = await claim();
       if (success !== true) {
@@ -250,7 +250,7 @@ const ClaimButton = ({
       setClaimLoading(false);
       hideActionModal();
     }
-  };
+  }, [claim, hideActionModal, showFinalizationModal]);
 
   const handleModalOpen = useCallback(
     async (first = false) => {
@@ -284,7 +284,7 @@ const ClaimButton = ({
         await handleClaim();
       }
     },
-    [claim, hideActionModal, isWhitelisted, fuseWhitelisted, syncStatus, account, claimLoading, setWhitelistLoading]
+    [isWhitelisted, fuseWhitelisted, syncStatus, setWhitelistLoading, handleClaim, showActionModal]
   );
 
   const buttonTitle = useMemo(() => {
@@ -295,7 +295,7 @@ const ClaimButton = ({
     const amount = G$Amount("G$", claimAmount, chainId ?? defaultChainId, defaultEnv);
 
     return "CLAIM NOW " + amount.format({ fixedPrecisionDigits: 2, useFixedPrecision: true, significantDigits: 2 });
-  }, [isWhitelisted, account, chainId, claimAmount]);
+  }, [isWhitelisted, chainId, claimAmount, defaultChainId, defaultEnv]);
 
   // handles a delay in fetching isWhitelisted after just being connected
   useEffect(() => {
@@ -304,7 +304,7 @@ const ClaimButton = ({
       setWhitelistLoading(false);
       handleModalOpen().catch(noop);
     }
-  }, [isWhitelisted, whitelistLoading, setWhitelistLoading]);
+  }, [/* used */ isWhitelisted, whitelistLoading, setWhitelistLoading, handleModalOpen]);
 
   // temporary transaction status check, to trigger final 2 modals: Awaiting validation + Social Share
   // will be replaced with solution to issue: https://github.com/GoodDollar/GoodProtocolUI/issues/366 & https://github.com/GoodDollar/GoodProtocolUI/issues/365
@@ -314,7 +314,7 @@ const ClaimButton = ({
       hideActionModal();
       showFinalizationModal();
     }
-  }, [claiming]);
+  }, [claiming, hideActionModal, showFinalizationModal]);
 
   // trigger claim when user succesfully has verified through FV
   // uses the first claimer flow
@@ -329,7 +329,7 @@ const ClaimButton = ({
     };
 
     doClaim().catch(noop);
-  }, [isVerified, account, claimed]);
+  }, [isVerified, account, claimed, handleClaim, showActionModal]);
 
   if (isWhitelisted && (claimed || claiming)) {
     return <FinalizationModal {...finalModalProps} />;

@@ -12,7 +12,7 @@ module.exports = {
     "plugin:prettier/recommended",
     "prettier"
   ],
-  plugins: ["@typescript-eslint", "prettier"],
+  plugins: ["@typescript-eslint", "prettier", 'react-hooks', 'react-hooks-addons'],
   parserOptions: {
     tsconfigRootDir: __dirname,
     project: ["./tsconfig.json", "./packages/*/tsconfig.json"]
@@ -31,7 +31,9 @@ module.exports = {
     "@typescript-eslint/require-await": "off",
     "@typescript-eslint/no-unnecessary-type-assertion": "off",
     "@typescript-eslint/ban-ts-comment": "off",
-    "@typescript-eslint/no-misused-promises": "off"
+    "@typescript-eslint/no-misused-promises": "off",
+    'react-hooks/exhaustive-deps': 'warn',
+    'react-hooks-addons/no-unused-deps': ['warn', { "effectComment": "used"}],
   },
   globals: {
     JSX: true,

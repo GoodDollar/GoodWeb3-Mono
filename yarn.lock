@@ -16340,7 +16340,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-react-hooks@npm:^4.3.0, eslint-plugin-react-hooks@npm:^4.5.0":
+"eslint-plugin-react-hooks-addons@npm:^0.3.1":
+  version: 0.3.1
+  resolution: "eslint-plugin-react-hooks-addons@npm:0.3.1"
+  peerDependencies:
+    eslint: ">=3.0.0"
+  checksum: 09596e96fea47d32260a3e0a7c4e90316cc1fc74bf41587db5d182bf337c174d6fc44bed8e089c9fc3b46b84b2e30e0b06ef55a8f16a4b8c2a04b4cbdf6212fc
+  languageName: node
+  linkType: hard
+
+"eslint-plugin-react-hooks@npm:^4.2.0, eslint-plugin-react-hooks@npm:^4.3.0, eslint-plugin-react-hooks@npm:^4.5.0":
   version: 4.6.0
   resolution: "eslint-plugin-react-hooks@npm:4.6.0"
   peerDependencies:
@@ -18744,6 +18753,8 @@ __metadata:
     eslint: ^8.28.0
     eslint-config-prettier: ^8.5.0
     eslint-plugin-prettier: ^4.2.1
+    eslint-plugin-react-hooks: ^4.2.0
+    eslint-plugin-react-hooks-addons: ^0.3.1
     husky: ^8.0.2
     lint-staged: ^13.1.0
     pinst: ^3.0.0
