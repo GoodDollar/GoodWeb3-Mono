@@ -234,7 +234,8 @@ const ClaimButton = ({
             hasTopBorder: false,
             hasBottomBorder: false
           },
-    [claimed, isWhitelisted, actionModalBody, textColor]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [claimed, isWhitelisted, claiming, textColor]
   );
 
   const handleClaim = useCallback(async () => {
@@ -314,7 +315,8 @@ const ClaimButton = ({
       hideActionModal();
       showFinalizationModal();
     }
-  }, [claiming, hideActionModal, showFinalizationModal]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [claiming]);
 
   // trigger claim when user succesfully has verified through FV
   // uses the first claimer flow
