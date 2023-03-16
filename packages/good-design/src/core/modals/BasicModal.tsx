@@ -49,17 +49,13 @@ const BasicModal: FC<BasicModalProps> = ({
     base: "fit-content",
     md: "initial"
   });
-  const height = useBreakpointValue({
-    base: 424,
-    md: "initial"
-  });
 
   const actionButton = actionText ? <Button onPress={onActionButtonPress}>{actionText}</Button> : <React.Fragment />;
 
   return (
     /* height 100vh is required so modal always shows in the middle */
     <NBModal isOpen={modalVisible} onClose={onClose} {..._modal} minH="100vh" bgColor={bgOverlay}>
-      <Box borderRadius="lg" h={height} width={width} bgColor={bgColor}>
+      <Box borderRadius="lg" width={width} bgColor={bgColor}>
         <NBModal.Content w={"100%"} px="18px" pb="18px" bgColor={bgColor}>
           {hasCloseButton && <NBModal.CloseButton />}
           {!!header && (
