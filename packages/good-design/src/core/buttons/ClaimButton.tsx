@@ -70,7 +70,7 @@ const ClaimButton = ({
               Verify Uniqueness
             </Title>
             <Text color={textColor} fontSize="sm" fontFamily="subheading">
-              You're almost there! To claim G$, you need to be a unique human and prove it wiht your camera.
+              You're almost there! To claim G$, you need to be a unique human and prove it with your camera.
             </Text>
             <Link
               _text={{ color: "main" }}
