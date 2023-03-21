@@ -78,7 +78,9 @@ export const theme = {
         fontSize: "sm",
         fontWeight: "medium",
         fontFamily: "subheading",
-        color: "main"
+        color: "main",
+        pt: "1px",
+        pb: 0
       },
       innerView: {
         width: "auto",
