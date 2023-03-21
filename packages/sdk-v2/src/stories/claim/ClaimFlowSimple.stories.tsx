@@ -125,6 +125,13 @@ const ClaimButton = ({ firstName }: PageProps) => {
       setShowModal(true);
     }
   };
+
+  const handleDelete = async () => {
+    if (isWhitelisted) {
+      const { success, error } = await sdk.deleteFVRecord();
+      console.log("deleteFVRecord result:", { success, error });
+    }
+  };
   const buttonTitle = () => {
     if (isWhitelisted) {
       if (claimAmount.gt(0)) return `Claim ${claimAmount}`;
@@ -143,7 +150,12 @@ const ClaimButton = ({ firstName }: PageProps) => {
           firstName={firstName}
         ></FVModal>
       </View>
-      <Button title={buttonTitle()} onPress={handleClaim}></Button>
+      <View>
+        <Button title={buttonTitle()} onPress={handleClaim}></Button>
+      </View>
+      <View>
+        <Button title={"Delete Record"} onPress={handleDelete}></Button>
+      </View>
     </View>
   );
 };
