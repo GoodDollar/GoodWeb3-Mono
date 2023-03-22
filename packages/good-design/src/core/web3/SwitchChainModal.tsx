@@ -11,8 +11,8 @@ import BackToSchool from "../../assets/images/backtoschool.png";
 
 const openNotionTab = async () => {
   const link = "https://www.notion.so/gooddollar/User-Guides-24dd615eb7804792a44057b96b40147d";
+
   await openLink(link, "_blank");
-  
 };
 
 export interface SwitchChainProps {
