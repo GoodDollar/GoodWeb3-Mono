@@ -37,7 +37,7 @@ export const SwitchChainModal = ({ children }: SwitchChainProps) => {
   useEffect(() => {
     if (setOnSwitchNetwork) {
       setOnSwitchNetwork(() => async (chainId: number, afterSwitch: any) => {
-        if (afterSwitch !== undefined) {
+        if (afterSwitch) {
           hideModal();
         } else {
           setRequestedChain(chainId);
