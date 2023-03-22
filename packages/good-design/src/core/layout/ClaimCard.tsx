@@ -20,7 +20,7 @@ const ClaimCard: FC<ClaimCardProps> = ({ content, title, bgColor, externalLink }
     if (externalLink) {
       await openLink(externalLink, "_blank");
     }
-  }, []);
+  }, [externalLink]);
 
   return (
     <BasePressable
@@ -77,9 +77,8 @@ const ClaimCard: FC<ClaimCardProps> = ({ content, title, bgColor, externalLink }
           {!!contentItem.list && (
             <View textAlign="center">
               {contentItem.list?.map(({ id, key, value }) => (
-                <Box borderBottomColor="borderGrey" borderBottomWidth="1px">
+                <Box key={id} borderBottomColor="borderGrey" borderBottomWidth="1px">
                   <Text
-                    key={id}
                     color="goodGrey.500"
                     bold
                     fontSize="16"
