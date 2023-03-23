@@ -1,19 +1,11 @@
-import { Text, useColorModeValue, Box } from "native-base";
+import { useColorModeValue } from "native-base";
 import React, { useEffect, useState } from "react";
 import { useConfig } from "@usedapp/core";
-import { useSwitchNetwork, openLink } from "@gooddollar/web3sdk-v2";
+import { useSwitchNetwork } from "@gooddollar/web3sdk-v2";
 import { find } from "lodash";
 import { useModal } from "../../hooks/useModal";
 import { ActionHeader } from "../layout";
-import { BasePressable } from "../buttons";
-import { Image } from "../images";
-import BackToSchool from "../../assets/images/backtoschool.png";
-
-const openNotionTab = async () => {
-  const link = "https://www.notion.so/gooddollar/User-Guides-24dd615eb7804792a44057b96b40147d";
-
-  await openLink(link, "_blank");
-};
+import { LearnButton } from "../buttons";
 
 export interface SwitchChainProps {
   children?: any;
@@ -54,28 +46,7 @@ export const SwitchChainModal = ({ children }: SwitchChainProps) => {
     <React.Fragment>
       <Modal
         header={<ActionHeader textColor={textColor} actionText={`switch to ${networkName} in your wallet`} />}
-        body={
-          <BasePressable onPress={openNotionTab} variant="externalLink">
-            <Box display="flex" w="70%" alignSelf="flex-start" p={3}>
-              <Text color="lightBlue" fontSize="sm">
-                LEARN
-              </Text>
-              <Text
-                color="main"
-                lineHeight="normal"
-                fontSize="sm"
-                fontWeight="normal"
-                fontFamily="subheading"
-                textDecoration
-              >
-                {`What is a web3 network >`}
-              </Text>
-            </Box>
-            <Box>
-              <Image source={BackToSchool} w="92px" h="111px" margin-right="0" style={{ resizeMode: "contain" }} />
-            </Box>
-          </BasePressable>
-        }
+        body={<LearnButton source="networks" />}
         closeText="x"
       />
       {children}
