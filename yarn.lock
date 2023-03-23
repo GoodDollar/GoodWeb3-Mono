@@ -3252,6 +3252,7 @@ __metadata:
     "@types/react-native": 0.70.4
     "@uniswap/sdk-core": ^3.1.0
     "@usedapp/core": 1.2.2
+    "@web3-onboard/react": ^2.6.6
     babel-jest: ^27.3.1
     babel-loader: ^8.2.3
     babel-plugin-module-resolver: ^4.1.0
@@ -9881,6 +9882,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@web3-onboard/core@npm:^2.15.5":
+  version: 2.15.5
+  resolution: "@web3-onboard/core@npm:2.15.5"
+  dependencies:
+    "@unstoppabledomains/resolution": ^8.0
+    "@web3-onboard/common": ^2.2.3
+    bignumber.js: ^9.0.0
+    bnc-sdk: ^4.6.7
+    bowser: ^2.11.0
+    ethers: 5.5.3
+    eventemitter3: ^4.0.7
+    joi: ^17.6.1
+    lodash.merge: ^4.6.2
+    lodash.partition: ^4.6.0
+    nanoid: ^4.0.0
+    rxjs: ^7.5.5
+    svelte: ^3.49.0
+    svelte-i18n: ^3.3.13
+  checksum: de64ed2058b2bafe4695a6986ecb78f3fad2570a8cbb2ee8e847835767ad3ef41e3224db52c7ae34d00f9c8650c75792ee924ed43f97a7b9a6e9d26112fa3193
+  languageName: node
+  linkType: hard
+
 "@web3-onboard/injected-wallets@npm:^2.4.0":
   version: 2.8.0
   resolution: "@web3-onboard/injected-wallets@npm:2.8.0"
@@ -9902,6 +9925,19 @@ __metadata:
   peerDependencies:
     react: ">=16.8"
   checksum: 0b6762df89d56a92da6592ca56869b5c8c7b5834a5743ba16d2a181e42a5a692b0629d072d3ba78a12e6dda37da4b84ce2d49d7d4eb37e15483f0f3ea285e9ea
+  languageName: node
+  linkType: hard
+
+"@web3-onboard/react@npm:^2.6.6":
+  version: 2.6.6
+  resolution: "@web3-onboard/react@npm:2.6.6"
+  dependencies:
+    "@web3-onboard/common": ^2.2.3
+    "@web3-onboard/core": ^2.15.5
+    use-sync-external-store: 1.0.0
+  peerDependencies:
+    react: ">=16.8"
+  checksum: 666debfc1f510d52648b6fc00c7f8957790b50089d28c9f532d6ab90ea1e83173496036c14aa3cbe8e517144ad64e769a12981947da95a9c908a01478c699b17
   languageName: node
   linkType: hard
 

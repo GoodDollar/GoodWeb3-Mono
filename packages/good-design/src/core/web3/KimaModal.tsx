@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { useModal } from "../../hooks/useModal";
 import { Box, Text } from "native-base";
-import { isEmpty } from "lodash";
 import { LearnButton } from "../buttons";
 
 interface KimaModalProps {
@@ -27,7 +26,7 @@ export const KimaModal = ({ success, children }: KimaModalProps) => {
   const kimaCopy = KimaModalCopy(success ?? false);
 
   useEffect(() => {
-    if (!isEmpty(success) && success) {
+    if (success !== undefined) {
       showModal();
     }
   }, [success, showModal]);
