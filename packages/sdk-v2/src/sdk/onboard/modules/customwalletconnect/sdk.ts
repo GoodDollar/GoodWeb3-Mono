@@ -1,20 +1,32 @@
-import { fromEvent } from 'rxjs'
-import { take } from 'rxjs/operators'
-import QRCodeModal from '@walletconnect/qrcode-modal'
-import { default as defaultWcModule } from '@web3-onboard/walletconnect'
-import { GetInterfaceHelpers, ProviderAccounts, ProviderRpcError, WalletInit, WalletModule } from '@web3-onboard/common'
+import { fromEvent } from "rxjs";
+import { take } from "rxjs/operators";
+import QRCodeModal from "@walletconnect/qrcode-modal";
+import { default as defaultWcModule } from "@web3-onboard/walletconnect";
+import {
+  GetInterfaceHelpers,
+  ProviderAccounts,
+  ProviderRpcError,
+  WalletInit,
+  WalletModule
+} from "@web3-onboard/common";
+import { ISessionError } from "@walletconnect/types";
 
-import { getDevice, isMobile } from '../../../base/utils/platform'
-import { icons } from './icons'
+import { getDevice, isMobile } from "../../../base/utils/platform";
+import { icons } from "./icons";
 
-import { CustomLabels, WcConnectOptions } from './types'
+import { CustomLabels, WcConnectOptions } from "./types";
 
 function customWcModule(options: WcConnectOptions): WalletInit {
-  const { customLabelFor: label, connectFirstChainId, qrcodeModalOptions = {}, bridge = 'https://bridge.walletconnect.org' } = options
+  const {
+    customLabelFor: label,
+    connectFirstChainId,
+    qrcodeModalOptions = {},
+    bridge = "https://bridge.walletconnect.org"
+  } = options;
   const defaultWc = defaultWcModule({ bridge });
 
   if (!isMobile()) {
-    (qrcodeModalOptions as any).desktopLinks = ['ZenGo'];
+    (qrcodeModalOptions as any).desktopLinks = ["ZenGo"];
   }
 
   return () => {
@@ -28,14 +40,24 @@ function customWcModule(options: WcConnectOptions): WalletInit {
       const ui = await getInterface(helpers);
       const { provider } = ui as { provider: any };
       const { connector, request } = provider;
+      const { killSession } = connector;
 
       // hack QR code opts
       connector._qrcodeModalOptions = qrcodeModalOptions;
 
+      // hotfix: multiple killSession request send causing peerId error at disconnect
+      connector.killSession = async function (sessionError?: ISessionError): Promise<void> {
+        if (!this._connected) {
+          return;
+        }
+
+        await killSession.call(this, sessionError);
+      };
+
       // hack requests, SHOULD be function to keep provider instance's 'this' context
       provider.request = async function ({ method, params }: { method: string; params?: any }) {
-        if (method !== 'eth_requestAccounts') {
-          return request({ method, params })
+        if (method !== "eth_requestAccounts") {
+          return request({ method, params });
         }
 
         // for 'eth_requestAccounts' method only
@@ -46,11 +68,8 @@ function customWcModule(options: WcConnectOptions): WalletInit {
             void this.connector
               .createSession(connectFirstChainId ? { chainId: parseInt(this.chains[0].id, 16) } : undefined)
               .then(() => {
-                if (label === 'zengo' && isMobile()) {
-                  window.open(
-                    `https://get.zengo.com/wc?uri=${encodeURIComponent(this.connector.uri)}`,
-                    '_blank'
-                  )
+                if (label === "zengo" && isMobile()) {
+                  window.open(`https://get.zengo.com/wc?uri=${encodeURIComponent(this.connector.uri)}`, "_blank");
                 } else {
                   QRCodeModal.open(
                     this.connector.uri,
@@ -58,47 +77,47 @@ function customWcModule(options: WcConnectOptions): WalletInit {
                       reject(
                         new ProviderRpcError({
                           code: 4001,
-                          message: 'User rejected the request.',
+                          message: "User rejected the request."
                         })
                       ),
                     qrcodeModalOptions
-                  )
+                  );
                 }
-              })
+              });
           } else {
-            const { accounts, chainId } = this.connector.session
+            const { accounts, chainId } = this.connector.session;
 
-            this.emit('chainChanged', `0x${chainId.toString(16)}`)
-            return resolve(accounts)
+            this.emit("chainChanged", `0x${chainId.toString(16)}`);
+            return resolve(accounts);
           }
 
           // Subscribe to connection events
-          fromEvent(this.connector, 'connect', (error: any, payload: any) => {
+          fromEvent(this.connector, "connect", (error: any, payload: any) => {
             if (error) {
-              throw error
+              throw error;
             }
 
-            return payload
+            return payload;
           })
             .pipe(take(1))
             .subscribe({
               next: ({ params }: { params: any }) => {
-                const [{ accounts, chainId }] = params
-                this.emit('accountsChanged', accounts)
-                this.emit('chainChanged', `0x${chainId.toString(16)}`)
-                QRCodeModal.close()
-                resolve(accounts)
+                const [{ accounts, chainId }] = params;
+                this.emit("accountsChanged", accounts);
+                this.emit("chainChanged", `0x${chainId.toString(16)}`);
+                QRCodeModal.close();
+                resolve(accounts);
               },
-              error: reject,
-            })
-        })
-      }
+              error: reject
+            });
+        });
+      };
 
       return ui;
-    }
+    };
 
-    return wc
+    return wc;
   };
 }
 
-export default customWcModule
+export default customWcModule;
