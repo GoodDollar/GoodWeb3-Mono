@@ -64,11 +64,7 @@ const wcInitOptions: WcInitOptions = {
 };
 
 const defaultWc = walletConnectModule({
-  bridge: "https://bridge.walletconnect.org",
-  qrcodeModalOptions: {
-    mobileLinks: ["rainbow", "metamask", "argent", "trust", "imtoken", "pillar"]
-  },
-  connectFirstChainId: false,
+  requiredChains: [42220, 122],
   ...wcInitOptions
 });
 
@@ -77,7 +73,7 @@ const zenGoWc = customWcModule({
   customLabelFor: "zengo",
   bridge: "https://bridge.walletconnect.org",
   qrcodeModalOptions: {
-    desktopLinks: ["zengo", "metamask"],
+    // desktopLinks: ["zengo", "metamask"],
     mobileLinks: ["metamask", "zengo"] // TODO: has to be tested on IOS, android does not show list
   },
   connectFirstChainId: false,
