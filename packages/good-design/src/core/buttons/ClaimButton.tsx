@@ -38,7 +38,7 @@ const ClaimButton = ({
   const { account } = useEthers();
   const { Modal: FinalizationModal, showModal: showFinalizationModal } = useModal();
   const { Modal: ActionModal, showModal: showActionModal, hideModal: hideActionModal } = useModal();
-  const [claimLoading, setClaimLoading] = useState(false);
+  const [claimConfirming, setClaimConfirming] = useState<boolean | undefined>(undefined);
   const [whitelistLoading, setWhitelistLoading] = useState(false);
 
   const { loading, verify } = useFVModalAction({
@@ -82,7 +82,7 @@ const ClaimButton = ({
           </>
         ),
         body:
-          loading || claimLoading ? (
+          loading || claimConfirming || claiming ? (
             <BasePressable
               innerView={{
                 w: "300",
@@ -137,7 +137,7 @@ const ClaimButton = ({
         )
       }
     }),
-    [textColor, verify, loading, claimLoading, claiming, openSigningTab]
+    [textColor, verify, loading, claimConfirming, claiming, openSigningTab]
   );
 
   const claimModalProps: Omit<BasicModalProps, "modalVisible"> = useMemo(
@@ -165,7 +165,7 @@ const ClaimButton = ({
           }
         : {
             header:
-              loading || claimLoading ? (
+              loading || claimConfirming ? (
                 <Box backgroundColor={"white"}>
                   <Title fontSize="xl" mb="2" fontWeight="bold" lineHeight="36px">
                     Action Required
@@ -178,11 +178,11 @@ const ClaimButton = ({
                 actionModalBody.verify.header
               ),
             body: actionModalBody.verify.body,
-            footer: isWhitelisted || loading || claimLoading ? undefined : actionModalBody.verify.footer,
+            footer: isWhitelisted || loading || claimConfirming ? undefined : actionModalBody.verify.footer,
             closeText: "x",
             hasBottomBorder: false
           },
-    [firstClaim, textColor, loading, isWhitelisted, claimLoading, actionModalBody]
+    [firstClaim, textColor, loading, isWhitelisted, claimConfirming, actionModalBody]
   );
 
   const finalModalProps: Omit<BasicModalProps, "modalVisible"> = useMemo(
@@ -242,14 +242,11 @@ const ClaimButton = ({
     try {
       const success = await claim();
       if (success !== true) {
-        setClaimLoading(false);
         return;
       }
-
-      showFinalizationModal();
     } finally {
-      setClaimLoading(false);
       hideActionModal();
+      showFinalizationModal();
     }
   }, [claim, hideActionModal, showFinalizationModal]);
 
@@ -264,7 +261,7 @@ const ClaimButton = ({
       setFirstClaim(first);
       // we set claimLoading here because it only updates state-vars after current callback or effect has completed
       // which is why it cannot be set in the handleClaim callback as it would be set too late
-      setClaimLoading(true);
+      setClaimConfirming(true);
       showActionModal();
 
       if (isWhitelisted) {
@@ -272,7 +269,7 @@ const ClaimButton = ({
         return;
       } else {
         // means we no longer are expecting a claimCall and actionModal should show default verify uniqueness message
-        setClaimLoading(false);
+        setClaimConfirming(false);
       }
 
       if (fuseWhitelisted && syncStatus) {
@@ -308,7 +305,7 @@ const ClaimButton = ({
   }, [/* used */ isWhitelisted, whitelistLoading, setWhitelistLoading, handleModalOpen]);
 
   // temporary transaction status check, to trigger final 2 modals: Awaiting validation + Social Share
-  // will be replaced with solution to issue: https://github.com/GoodDollar/GoodProtocolUI/issues/366 & https://github.com/GoodDollar/GoodProtocolUI/issues/365
+  // will be replaced with solution to issue: https://github.com/GoodDollar/GoodProtocolUI/issues/365
   // which should handle tx-statuses and confirm modals more globally
   useEffect(() => {
     if (claiming) {
@@ -322,16 +319,17 @@ const ClaimButton = ({
   // uses the first claimer flow
   useEffect(() => {
     const doClaim = async () => {
-      if (!claimed && isVerified && account) {
+      if (isVerified && account) {
         setFirstClaim(true);
         showActionModal();
+        setClaimConfirming(true);
         await handleClaim();
-        setClaimLoading(true);
       }
     };
 
-    doClaim().catch(noop);
-  }, [isVerified, account, claimed, handleClaim, showActionModal]);
+    if (claimed === false && claimConfirming === undefined) doClaim().catch(noop);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isVerified, account, claimed, showActionModal, claimConfirming]);
 
   if (isWhitelisted && (claimed || claiming)) {
     return <FinalizationModal {...finalModalProps} />;
