@@ -246,9 +246,12 @@ const ClaimButton = ({
       }
     } finally {
       hideActionModal();
-      showFinalizationModal();
     }
-  }, [claim, hideActionModal, showFinalizationModal]);
+  }, [claim, hideActionModal]);
+
+  useEffect(() => {
+    console.log("(test-claim-flow) keep track of deps", { isWhitelisted, claiming, claimed, claimConfirming, loading });
+  }, [isWhitelisted, claiming, claimed, claimConfirming, loading]);
 
   const handleModalOpen = useCallback(
     async (first = false) => {
