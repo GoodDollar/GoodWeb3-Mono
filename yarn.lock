@@ -3252,6 +3252,7 @@ __metadata:
     "@types/react-native": 0.70.4
     "@uniswap/sdk-core": ^3.1.0
     "@usedapp/core": 1.2.2
+    "@web3-onboard/react": ^2.7.0
     babel-jest: ^27.3.1
     babel-loader: ^8.2.3
     babel-plugin-module-resolver: ^4.1.0
@@ -3712,10 +3713,47 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@hapi/address@npm:^5.1.0":
+  version: 5.1.1
+  resolution: "@hapi/address@npm:5.1.1"
+  dependencies:
+    "@hapi/hoek": ^11.0.2
+  checksum: 678790d86d120e36ff5ea7db061763447cd2589e99fd82bcb5d86c8e6ec290f1c0370d3e2050bf483413757e798f5a9495af0af13ba7e0d8a747c5bcd5682b33
+  languageName: node
+  linkType: hard
+
+"@hapi/formula@npm:^3.0.2":
+  version: 3.0.2
+  resolution: "@hapi/formula@npm:3.0.2"
+  checksum: a774d8133e4cfc7059a1196f1233ba4ed204ac9a6835db476eb94b301555038ba2511664b5e941df3b6e973759e8c0ddf76124e1c04716a48b7ffeedb070d288
+  languageName: node
+  linkType: hard
+
+"@hapi/hoek@npm:^11.0.2":
+  version: 11.0.2
+  resolution: "@hapi/hoek@npm:11.0.2"
+  checksum: 02e5d5d030f2c81180b43c380e6445558d1cb463c8db957c2d50e11dff83687a0ff4539a88530338e2bab1924bb8cdc7896eeb48ebf32199f89e178591d8b0b1
+  languageName: node
+  linkType: hard
+
 "@hapi/hoek@npm:^9.0.0":
   version: 9.3.0
   resolution: "@hapi/hoek@npm:9.3.0"
   checksum: 4771c7a776242c3c022b168046af4e324d116a9d2e1d60631ee64f474c6e38d1bb07092d898bf95c7bc5d334c5582798a1456321b2e53ca817d4e7c88bc25b43
+  languageName: node
+  linkType: hard
+
+"@hapi/pinpoint@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "@hapi/pinpoint@npm:2.0.1"
+  checksum: 8a1bb399f7cf48948669fdc80dff83892ed56eb62eee2cca128fc8b0683733b16e274b395eddfae6154a698aa57c66a3905ceaa3119c59de29751d4601831057
+  languageName: node
+  linkType: hard
+
+"@hapi/tlds@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "@hapi/tlds@npm:1.0.1"
+  checksum: 202d09a348c4e138631c424864f03b85bed2e29913036d930c0d67df6dc7f782284ad151d2d6c310bec20340d809e214aa6b274f12eccd9c353886bf9f0a66fd
   languageName: node
   linkType: hard
 
@@ -3725,6 +3763,15 @@ __metadata:
   dependencies:
     "@hapi/hoek": ^9.0.0
   checksum: 604dfd5dde76d5c334bd03f9001fce69c7ce529883acf92da96f4fe7e51221bf5e5110e964caca287a6a616ba027c071748ab636ff178ad750547fba611d6014
+  languageName: node
+  linkType: hard
+
+"@hapi/topo@npm:^6.0.1":
+  version: 6.0.2
+  resolution: "@hapi/topo@npm:6.0.2"
+  dependencies:
+    "@hapi/hoek": ^11.0.2
+  checksum: c11da8a995ac66d94dcc8ffe37cc094ace15ab8aec30ba2b556e8318394454cc93967a5bcc6519b846586fea4d347f95d924cb6ce5d51236c199c5e677b9575c
   languageName: node
   linkType: hard
 
@@ -9859,6 +9906,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@web3-onboard/common@npm:^2.3.0":
+  version: 2.3.0
+  resolution: "@web3-onboard/common@npm:2.3.0"
+  dependencies:
+    bignumber.js: ^9.1.0
+    ethers: 5.5.4
+    joi: 17.8.1
+  checksum: eb4b79c8f78de7ab33af0cbd6d345050aa5d0725623fe75b4fc74ce080f07a0e7fc2b3c9ae7cb6b531cf8915093fd2c6a7b37feaee9179c37066207708227743
+  languageName: node
+  linkType: hard
+
 "@web3-onboard/core@npm:^2.12.1, @web3-onboard/core@npm:^2.15.2":
   version: 2.15.2
   resolution: "@web3-onboard/core@npm:2.15.2"
@@ -9878,6 +9936,28 @@ __metadata:
     svelte: ^3.49.0
     svelte-i18n: ^3.3.13
   checksum: bc108214609193ada1a00f743c44e8e3287786b9a5f45c8fcd13244b398c5b9621c2fcfcff9741b5c8efe3da35d1dfdc9b9fd6def48be6f601c627663bd79635
+  languageName: node
+  linkType: hard
+
+"@web3-onboard/core@npm:^2.16.0":
+  version: 2.16.0
+  resolution: "@web3-onboard/core@npm:2.16.0"
+  dependencies:
+    "@unstoppabledomains/resolution": ^8.0
+    "@web3-onboard/common": ^2.3.0
+    bignumber.js: ^9.0.0
+    bnc-sdk: ^4.6.7
+    bowser: ^2.11.0
+    ethers: 5.5.3
+    eventemitter3: ^4.0.7
+    joi: 17.8.1
+    lodash.merge: ^4.6.2
+    lodash.partition: ^4.6.0
+    nanoid: ^4.0.0
+    rxjs: ^7.5.5
+    svelte: ^3.49.0
+    svelte-i18n: ^3.3.13
+  checksum: 7a8e437d07f326abaa75c788579311b861a0ae40dc46a4a23dfedbfac6ad2b499199383122fbce43666bc10c1572603b5a113f293699a43a348dd936e7b7b9b0
   languageName: node
   linkType: hard
 
@@ -9902,6 +9982,19 @@ __metadata:
   peerDependencies:
     react: ">=16.8"
   checksum: 0b6762df89d56a92da6592ca56869b5c8c7b5834a5743ba16d2a181e42a5a692b0629d072d3ba78a12e6dda37da4b84ce2d49d7d4eb37e15483f0f3ea285e9ea
+  languageName: node
+  linkType: hard
+
+"@web3-onboard/react@npm:^2.7.0":
+  version: 2.7.0
+  resolution: "@web3-onboard/react@npm:2.7.0"
+  dependencies:
+    "@web3-onboard/common": ^2.3.0
+    "@web3-onboard/core": ^2.16.0
+    use-sync-external-store: 1.0.0
+  peerDependencies:
+    react: ">=16.8"
+  checksum: 6d38b8eb3a28036b18e60fba29224f74d9c4e7b8f7a64ed5077993b977a66c974bd454d1273e0b29e817beabd71cc9a32fed4f1e44750e9f5f0b7a8968709d79
   languageName: node
   linkType: hard
 
@@ -21480,6 +21573,20 @@ __metadata:
   bin:
     jest: bin/jest.js
   checksum: 96f1d69042b3c6dfc695f2a4e4b0db38af6fb78582ad1a02beaa57cfcd77cbd31567d7d865c1c85709b7c3e176eefa3b2035ffecd646005f15d8ef528eccf205
+  languageName: node
+  linkType: hard
+
+"joi@npm:17.8.1":
+  version: 17.8.1
+  resolution: "joi@npm:17.8.1"
+  dependencies:
+    "@hapi/address": ^5.1.0
+    "@hapi/formula": ^3.0.2
+    "@hapi/hoek": ^11.0.2
+    "@hapi/pinpoint": ^2.0.1
+    "@hapi/tlds": ^1.0.1
+    "@hapi/topo": ^6.0.1
+  checksum: 918cca486cad072921b3bc35e2eb9e620fb9cd243c2627686cac463db2ea1237dfa64a8861cd1ce7531d4b6c660c23c58b496ea5a6b9a095d4148095ed7ff05a
   languageName: node
   linkType: hard
 
