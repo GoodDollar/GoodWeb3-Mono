@@ -3231,6 +3231,7 @@ __metadata:
     "@gooddollar/web3sdk-v2": latest
     "@lingui/macro": ^3.14.0
     "@lingui/react": ^3.14.0
+    "@magiklabs/react-sdk": ^1.0.8
     "@storybook/addon-actions": ^6.5.12
     "@storybook/addon-essentials": ^6.5.12
     "@storybook/addon-links": ^6.5.12
@@ -4322,6 +4323,16 @@ __metadata:
   peerDependencies:
     react: ^16.8.0 || ^17.0.0 || ^18.0.0
   checksum: 82d6c1abff61fd4128cbc4764ab8bcf0fc4c78b982a37f9e8551fb57db5fd84f21b14b654a319593824ed34d1ca66a4d56158eaa458e8a17952eae8037f94514
+  languageName: node
+  linkType: hard
+
+"@magiklabs/react-sdk@npm:^1.0.8":
+  version: 1.0.8
+  resolution: "@magiklabs/react-sdk@npm:1.0.8"
+  peerDependencies:
+    react: ^16.0 || ^17.0 || ^18.0
+    react-dom: ^16.0 || ^17.0 || ^18.0
+  checksum: c40273a27984ebc16cfb68711066353d4ce5fbdb3dadb8c8459ca4d10afd685ea9d0336528aefcd1ec2f009bf98493a0dfadd1a979c513d90459b1688ba4abf7
   languageName: node
   linkType: hard
 
