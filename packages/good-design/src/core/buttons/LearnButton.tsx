@@ -20,7 +20,7 @@ const links: learnLinks = {
 
 const linkCopys = {
   transactions: "How do transactions work?",
-  bridging: "What is bridging? / How does bridging work?",
+  bridging: "How does bridging work?",
   network: "What is a web3 network?",
   signing: "What is signing?"
 };
