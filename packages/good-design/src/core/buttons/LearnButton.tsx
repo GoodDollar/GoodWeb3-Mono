@@ -5,35 +5,33 @@ import { openLink } from "@gooddollar/web3sdk-v2";
 import { Image } from "../images";
 import BackToSchool from "../../assets/images/backtoschool.png";
 
-type learnLinks = {
-  transactions: string;
-  bridging: string;
-  network: string;
-  signing: string;
-};
-const links: learnLinks = {
-  transactions: "https://www.notion.so/gooddollar/How-do-transactions-work-in-web3-ccf11b4e16874a1682722a20c4e24742",
-  bridging: "https://www.notion.so/gooddollar/How-to-bridge-G-using-Kima-bridge-0a4c4a3e85f146bdbf15746e81055a25",
-  network: "https://www.notion.so/gooddollar/What-is-a-web3-network-4bf6c8efecab4834b25c006f57687cc6",
-  signing: "https://www.notion.so/gooddollar/What-is-signing-b0019fe6c43241068050c9aa16e87ee1"
+type learnSources = "transactions" | "bridging" | "network" | "signing";
+
+const linksNew: Record<learnSources, { link: string; label: string }> = {
+  transactions: {
+    link: "https://gooddollar.notion.site/How-do-transactions-work-in-web3-ccf11b4e16874a1682722a20c4e24742",
+    label: "How do transactions work?"
+  },
+  bridging: {
+    link: "https://gooddollar.notion.site/What-is-bridging-f42ec5d3c388454bb2266411a67d93f5",
+    label: "How does bridging work?"
+  },
+  network: {
+    link: "https://gooddollar.notion.site/What-is-a-web3-network-4bf6c8efecab4834b25c006f57687cc6",
+    label: "What is a web3 network?"
+  },
+  signing: {
+    link: "https://gooddollar.notion.site/What-is-signing-b0019fe6c43241068050c9aa16e87ee1",
+    label: "What is signing?"
+  }
 };
 
-const linkCopys = {
-  transactions: "How do transactions work?",
-  bridging: "How does bridging work?",
-  network: "What is a web3 network?",
-  signing: "What is signing?"
-};
-
-const LearnButton = ({ source }: { source: string }) => {
-  const key = source as keyof typeof links;
-  const copy = linkCopys[key];
+const LearnButton = ({ source }: { source: learnSources }) => {
+  const { link, label } = linksNew[source];
 
   const openNotionTab = useCallback(async () => {
-    const link = links[key];
-
     await openLink(link, "_blank");
-  }, [key]);
+  }, [link]);
 
   return (
     <BasePressable variant="externalLink" onPress={openNotionTab}>
@@ -42,7 +40,7 @@ const LearnButton = ({ source }: { source: string }) => {
           LEARN
         </Text>
         <Text color="main" lineHeight="normal" fontSize="sm" fontWeight="normal" fontFamily="subheading" textDecoration>
-          {copy}
+          {label}
         </Text>
       </Box>
       <Box>

@@ -46,7 +46,7 @@ export const SwitchChainModal = ({ children }: SwitchChainProps) => {
     <React.Fragment>
       <Modal
         header={<ActionHeader textColor={textColor} actionText={`switch to ${networkName} in your wallet`} />}
-        body={<LearnButton source="networks" />}
+        body={<LearnButton source="network" />}
         closeText="x"
       />
       {children}
