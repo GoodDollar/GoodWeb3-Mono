@@ -13,7 +13,7 @@ type learnLinks = {
 };
 const links: learnLinks = {
   transactions: "https://www.notion.so/gooddollar/How-do-transactions-work-in-web3-ccf11b4e16874a1682722a20c4e24742",
-  bridging: "", // todo: add guide to notion
+  bridging: "https://www.notion.so/gooddollar/How-to-bridge-G-using-Kima-bridge-0a4c4a3e85f146bdbf15746e81055a25",
   network: "https://www.notion.so/gooddollar/What-is-a-web3-network-4bf6c8efecab4834b25c006f57687cc6",
   signing: "https://www.notion.so/gooddollar/What-is-signing-b0019fe6c43241068050c9aa16e87ee1"
 };
