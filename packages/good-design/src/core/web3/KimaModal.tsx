@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useModal } from "../../hooks/useModal";
 import { Box, Text } from "native-base";
 import { LearnButton } from "../buttons";
+import { Title } from "../layout";
 
 type BridgeNetworks = {
   origin: string;
@@ -18,6 +19,9 @@ interface KimaModalProps {
 const KimaModalHeader = (success: boolean, networks: BridgeNetworks) => ({
   header: (
     <Box backgroundColor={"white"}>
+      <Title mb="2" color="main" fontSize="xl" lineHeight="36px">
+        {success ? `Success!` : `Oops!`}
+      </Title>
       <Text color="goodGrey.500" fontSize="sm" fontFamily="subheading">
         {success
           ? `You have succesfully bridged from ${networks.origin} to ${networks.destination}`
