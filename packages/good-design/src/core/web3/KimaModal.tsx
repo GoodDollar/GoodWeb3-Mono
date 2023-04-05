@@ -16,24 +16,21 @@ interface KimaModalProps {
   children: any;
 }
 
-const KimaModalHeader = (success: boolean, networks: BridgeNetworks) => ({
-  header: (
-    <Box backgroundColor={"white"}>
-      <Title mb="2" color="main" fontSize="xl" lineHeight="36px">
-        {success ? `Success!` : `Oops!`}
-      </Title>
-      <Text color="goodGrey.500" fontSize="sm" fontFamily="subheading">
-        {success
-          ? `You have succesfully bridged from ${networks.origin} to ${networks.destination}`
-          : `Something went wrong while trying to bridge your tokens`}
-      </Text>
-    </Box>
-  )
-});
+const KimaModalHeader = ({ success, networks }: { success: boolean; networks: BridgeNetworks }) => (
+  <Box backgroundColor={"white"}>
+    <Title mb="2" color="main" fontSize="xl" lineHeight="36px">
+      {success ? `Success!` : `Oops!`}
+    </Title>
+    <Text color="goodGrey.500" fontSize="sm" fontFamily="subheading">
+      {success
+        ? `You have succesfully bridged from ${networks.origin} to ${networks.destination}`
+        : `Something went wrong while trying to bridge your tokens`}
+    </Text>
+  </Box>
+);
 
 export const KimaModal = ({ success, networks, resetState, children }: KimaModalProps) => {
   const { Modal, showModal } = useModal();
-  const { header } = KimaModalHeader(success ?? false, networks);
 
   useEffect(() => {
     if (success !== undefined) {
@@ -43,7 +40,12 @@ export const KimaModal = ({ success, networks, resetState, children }: KimaModal
 
   return (
     <React.Fragment>
-      <Modal header={header} body={<LearnButton source="bridging" />} onClose={resetState} closeText="x" />
+      <Modal
+        header={<KimaModalHeader success={success ?? false} networks={networks} />}
+        body={<LearnButton source="bridging" />}
+        onClose={resetState}
+        closeText="x"
+      />
       {children}
     </React.Fragment>
   );
