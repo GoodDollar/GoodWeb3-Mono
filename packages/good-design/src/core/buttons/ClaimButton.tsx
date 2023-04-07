@@ -14,13 +14,11 @@ import { BasicModalProps } from "../modals/BasicModal";
 import { noop, isNil } from "lodash";
 import { useEthers } from "@usedapp/core";
 import ArrowButton from "./ArrowButton";
-import BackToSchool from "../../assets/images/backtoschool.png";
 import TwitterIcon from "../../assets/svg/twitter.svg";
 import LinkedInIcon from "../../assets/svg/linkedin.svg";
 import FbIcon from "../../assets/svg/facebook.svg";
 import SocialsLink from "./SocialLink";
-import BasePressable from "./BasePressable";
-import { openLink } from "@gooddollar/web3sdk-v2";
+import LearnButton from "./LearnButton";
 
 const ClaimButton = ({
   firstName,
@@ -56,11 +54,6 @@ const ClaimButton = ({
   const { chainId: defaultChainId, defaultEnv } = useGetEnvChainId();
   const { fuseWhitelisted, syncStatus } = useWhitelistSync();
 
-  const openSigningTab = useCallback(async () => {
-    const link = "https://www.notion.so/gooddollar/What-is-signing-b0019fe6c43241068050c9aa16e87ee1";
-    await openLink(link, "_blank");
-  }, []);
-
   const actionModalBody = useMemo(
     () => ({
       verify: {
@@ -83,38 +76,7 @@ const ClaimButton = ({
         ),
         body:
           loading || claimConfirming || claiming ? (
-            <BasePressable
-              innerView={{
-                w: "300",
-                h: "130px",
-                bgColor: "goodWhite.100",
-                display: "flex",
-                flexDir: "row",
-                alignItems: "center",
-                justifyContent: "center",
-                style: { flexGrow: 1 }
-              }}
-              onPress={openSigningTab}
-            >
-              <Box display="flex" w="60%" alignSelf="flex-start" p={2}>
-                <Text color="lightBlue" fontSize="sm">
-                  LEARN
-                </Text>
-                <Text
-                  color="main"
-                  lineHeight="normal"
-                  fontSize="sm"
-                  fontWeight="normal"
-                  fontFamily="subheading"
-                  textDecoration
-                >
-                  {claiming ? `How do transactions work? >` : `What is signing? >`}
-                </Text>
-              </Box>
-              <Box>
-                <Image source={BackToSchool} w="92px" h="111px" margin-right="0" style={{ resizeMode: "contain" }} />
-              </Box>
-            </BasePressable>
+            <LearnButton source={claiming ? "transactions" : "signing"} />
           ) : (
             <>
               <Text color={textColor} mb="2" fontFamily="subheading" fontSize="sm">
@@ -137,7 +99,7 @@ const ClaimButton = ({
         )
       }
     }),
-    [textColor, verify, loading, claimConfirming, claiming, openSigningTab]
+    [textColor, verify, loading, claimConfirming, claiming]
   );
 
   const claimModalProps: Omit<BasicModalProps, "modalVisible"> = useMemo(
