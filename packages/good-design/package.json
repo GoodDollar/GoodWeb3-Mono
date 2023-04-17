@@ -46,7 +46,7 @@
     "@types/react": "17.0.52",
     "@types/react-helmet": "^6.1.6",
     "@types/react-native": "0.70.4",
-    "@usedapp/core": "1.2.2",
+    "@usedapp/core": "^1.2.6",
     "@web3-onboard/react": "2.6.4",
     "babel-jest": "^27.3.1",
     "babel-loader": "^8.2.3",
@@ -66,7 +66,7 @@
     "webpack": "^5.74.0"
   },
   "peerDepedencies": {
-    "@usedapp/core": "1.*"
+    "@usedapp/core": "^1.2.6"
   },
   "packageManager": "yarn@3.2.1",
   "dependencies": {
