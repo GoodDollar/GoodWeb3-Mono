@@ -3184,9 +3184,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/bridge-app@npm:^1.2.9":
-  version: 1.2.9
-  resolution: "@gooddollar/bridge-app@npm:1.2.9"
+"@gooddollar/bridge-app@npm:^1.2.9, @gooddollar/bridge-app@npm:^1.3.2":
+  version: 1.3.2
+  resolution: "@gooddollar/bridge-app@npm:1.3.2"
   dependencies:
     dotenv: ^16.0.3
     eth-proof: ^2.1.6
@@ -3196,15 +3196,15 @@ __metadata:
     lodash: ^4.17.21
     node-fetch: 2
     p-all: 3.0.0
-  checksum: 637dfc496541a622972f8a4c481cffdb6c0c2be0ff7ac76a5731a37d8dfe66aa0a5dd8d1951f1b75abed913bcdc999fc122d8a01ea0d36578b7ce3b3220401ac
+  checksum: 97edf7c707b0b7f99e4f735cceeeff06f82817621d80f23ad3b416ec8a57d0020dd25a5e63b0815ef602a89d68c004e33bc1c1808dfdde5995691ebc80128292
   languageName: node
   linkType: hard
 
-"@gooddollar/bridge-contracts@npm:^1.0.13":
-  version: 1.0.13
-  resolution: "@gooddollar/bridge-contracts@npm:1.0.13"
+"@gooddollar/bridge-contracts@npm:^1.0.13, @gooddollar/bridge-contracts@npm:^1.0.14":
+  version: 1.0.14
+  resolution: "@gooddollar/bridge-contracts@npm:1.0.14"
   dependencies:
-    "@gooddollar/goodprotocol": ^1.0.30-beta.3
+    "@gooddollar/goodprotocol": ^2.0.4
     "@openzeppelin/contracts": ^4.4.1
     eth-proof: ^2.1.6
     merkle-patricia-tree: ^2.*
@@ -3212,7 +3212,7 @@ __metadata:
     solidity-rlp: ^2.0.5
     truffle: ^5.7.3
     truffle-plugin-verify: ^0.6.1
-  checksum: 0967c9e868df510854fcf16ade44542aa4b7e981bc6c4748cdb398707a35e22879f915f857cfce4370020d84ac72b1dce9258beb53481cdc97882c3bbab6cd0f
+  checksum: fc329aae07589565652614ad5508b260f882349d53bc93635cd7016f33f2a911fbb4b98a47944bb4e2b0e4f7bc96afd33ab73ee238735d31c2a872ffd89f95a1
   languageName: node
   linkType: hard
 
@@ -3367,28 +3367,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/goodprotocol@npm:^1.0.30-beta.3":
-  version: 1.0.30
-  resolution: "@gooddollar/goodprotocol@npm:1.0.30"
-  dependencies:
-    "@gooddollar/goodcontracts": ^2.6.2
-    "@jsier/retrier": ^1.2.4
-    "@openzeppelin/contracts": ^4.5.0
-    "@openzeppelin/contracts-upgradeable": ^4.3.2
-    "@typechain/hardhat": ^6.1.2
-    async-promise-pool: ^1.0.4
-    openzeppelin-solidity: ^4.3.2
-    patch-package: latest
-    press-any-key: ^0.1.1
-    truffle-plugin-verify: ^0.5.11
-    truffle-source-verify: ^0.0.6
-  checksum: 505b96867d15d2c5f14ba6b17cbebfc1e02224f2a128ea76edc333a60b3417f43b4d9a3fb1d0df94b909c8afdb2daf6ca5e8a094cbe3510ed96948dcc14b7429
-  languageName: node
-  linkType: hard
-
-"@gooddollar/goodprotocol@npm:^2.0.3":
-  version: 2.0.3
-  resolution: "@gooddollar/goodprotocol@npm:2.0.3"
+"@gooddollar/goodprotocol@npm:^2.0.3, @gooddollar/goodprotocol@npm:^2.0.4":
+  version: 2.0.4
+  resolution: "@gooddollar/goodprotocol@npm:2.0.4"
   dependencies:
     "@gooddollar/goodcontracts": ^2.6.6
     "@jsier/retrier": ^1.2.4
@@ -3403,7 +3384,7 @@ __metadata:
     press-any-key: ^0.1.1
     truffle-plugin-verify: ^0.6.1
     truffle-source-verify: ^0.0.6
-  checksum: 46ed393bcd0ec902e2403b31540bec6121f475d7f2d07029b2a1a15a82e21fbdb9012646bb32c14d6fc25d1aae32ff5670f4b8c365ed5f456f4fb8096e0ae272
+  checksum: 5c2b37e117eccf50043b824082a8462c17b9efbf26cb3a324c60ba4f1c2c0f56fcfd3587dc694e93b0a11a723698da1c2630996d4993541a20f8e9782d63b946
   languageName: node
   linkType: hard
 
@@ -3459,8 +3440,8 @@ __metadata:
     "@babel/preset-env": ^7.16.4
     "@babel/preset-react": ^7.16.0
     "@babel/preset-typescript": ^7.16.0
-    "@gooddollar/bridge-app": ^1.2.9
-    "@gooddollar/bridge-contracts": ^1.0.13
+    "@gooddollar/bridge-app": ^1.3.2
+    "@gooddollar/bridge-contracts": ^1.0.14
     "@gooddollar/goodprotocol": ^2.0.3
     "@react-native-async-storage/async-storage": 1.17.10
     "@react-native-firebase/analytics": ^16.4.6
