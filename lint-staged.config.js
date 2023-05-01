@@ -68,6 +68,11 @@ function prepareTscCommands(files) {
 
     if (!(package in toCompile)) {
       toCompile[package] = []
+
+      // workaround to fix "error TS2307: Cannot find module path/to/some.svg"
+      if (package === "good-design") {
+        toCompile[package].push("packages/good-design/src/custom.d.ts")
+      }
     }
 
     toCompile[package].push(file)

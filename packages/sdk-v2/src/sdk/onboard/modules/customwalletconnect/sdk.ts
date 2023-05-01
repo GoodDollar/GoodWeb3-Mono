@@ -9,6 +9,7 @@ import {
   WalletInit,
   WalletModule
 } from "@web3-onboard/common";
+import { ISession } from "@walletconnect/types";
 
 import { getDevice, isMobile } from "../../../base/utils/platform";
 import { icons } from "./icons";
@@ -39,9 +40,19 @@ function customWcModule(options: WcConnectOptions): WalletInit {
       const ui = await getInterface(helpers);
       const { provider } = ui as { provider: any };
       const { connector, request } = provider;
+      const { killSession } = connector;
 
       // hack QR code opts
       connector._qrcodeModalOptions = qrcodeModalOptions;
+
+      // hotfix: multiple killSession request send causing peerId error at disconnect
+      connector.killSession = async function (sessionError?: ISession): Promise<void> {
+        if (!this._connected) {
+          return;
+        }
+
+        await killSession.call(this, sessionError);
+      };
 
       // hack requests, SHOULD be function to keep provider instance's 'this' context
       provider.request = async function ({ method, params }: { method: string; params?: any }) {

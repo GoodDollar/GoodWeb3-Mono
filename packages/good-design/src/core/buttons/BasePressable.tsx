@@ -71,14 +71,16 @@ export const theme = {
   variants: {
     arrowIcon: () => ({
       bgColor: "primary:alpha.10",
-      w: 306,
-      h: "48px",
+      w: "306px",
+      h: 12,
       shadow: "2",
       innerText: {
         fontSize: "sm",
         fontWeight: "medium",
         fontFamily: "subheading",
-        color: "main"
+        color: "main",
+        pt: "1px",
+        pb: 0
       },
       innerView: {
         width: "auto",
@@ -94,6 +96,18 @@ export const theme = {
       borderRadius: "30px",
       _hover: {
         bgColor: "primary"
+      }
+    }),
+    externalLink: () => ({
+      innerView: {
+        w: "300px",
+        h: "130px",
+        bgColor: "goodWhite.100",
+        display: "flex",
+        flexDir: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        style: { flexGrow: 1 }
       }
     })
   }

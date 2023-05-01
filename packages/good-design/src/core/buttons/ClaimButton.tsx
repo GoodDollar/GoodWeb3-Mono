@@ -14,13 +14,11 @@ import { BasicModalProps } from "../modals/BasicModal";
 import { noop, isNil } from "lodash";
 import { useEthers } from "@usedapp/core";
 import ArrowButton from "./ArrowButton";
-import BackToSchool from "../../assets/images/backtoschool.png";
 import TwitterIcon from "../../assets/svg/twitter.svg";
 import LinkedInIcon from "../../assets/svg/linkedin.svg";
 import FbIcon from "../../assets/svg/facebook.svg";
 import SocialsLink from "./SocialLink";
-import BasePressable from "./BasePressable";
-import { openLink } from "@gooddollar/web3sdk-v2";
+import LearnButton from "./LearnButton";
 
 const ClaimButton = ({
   firstName,
@@ -38,7 +36,8 @@ const ClaimButton = ({
   const { account } = useEthers();
   const { Modal: FinalizationModal, showModal: showFinalizationModal } = useModal();
   const { Modal: ActionModal, showModal: showActionModal, hideModal: hideActionModal } = useModal();
-  const [claimLoading, setClaimLoading] = useState(false);
+  const [claimConfirming, setClaimConfirming] = useState<boolean | undefined>(undefined);
+  const [whitelistLoading, setWhitelistLoading] = useState(false);
 
   const { loading, verify } = useFVModalAction({
     firstName,
@@ -55,11 +54,6 @@ const ClaimButton = ({
   const { chainId: defaultChainId, defaultEnv } = useGetEnvChainId();
   const { fuseWhitelisted, syncStatus } = useWhitelistSync();
 
-  const openSigningTab = useCallback(async () => {
-    const link = "https://www.notion.so/gooddollar/What-is-signing-b0019fe6c43241068050c9aa16e87ee1";
-    await openLink(link, "_blank");
-  }, []);
-
   const actionModalBody = useMemo(
     () => ({
       verify: {
@@ -69,7 +63,7 @@ const ClaimButton = ({
               Verify Uniqueness
             </Title>
             <Text color={textColor} fontSize="sm" fontFamily="subheading">
-              You're almost there! To claim G$, you need to be a unique human and prove it wiht your camera.
+              You're almost there! To claim G$, you need to be a unique human and prove it with your camera.
             </Text>
             <Link
               _text={{ color: "main" }}
@@ -81,39 +75,8 @@ const ClaimButton = ({
           </>
         ),
         body:
-          loading || claimLoading ? (
-            <BasePressable
-              innerView={{
-                w: "300",
-                h: "130px",
-                bgColor: "goodWhite.100",
-                display: "flex",
-                flexDir: "row",
-                alignItems: "center",
-                justifyContent: "center",
-                style: { flexGrow: 1 }
-              }}
-              onPress={openSigningTab}
-            >
-              <Box display="flex" w="60%" alignSelf="flex-start" p={2}>
-                <Text color="lightBlue" fontSize="sm">
-                  LEARN
-                </Text>
-                <Text
-                  color="main"
-                  lineHeight="normal"
-                  fontSize="sm"
-                  fontWeight="normal"
-                  fontFamily="subheading"
-                  textDecoration
-                >
-                  {claiming ? `How do transactions work? >` : `What is signing? >`}
-                </Text>
-              </Box>
-              <Box>
-                <Image source={BackToSchool} w="92px" h="111px" margin-right="0" style={{ resizeMode: "contain" }} />
-              </Box>
-            </BasePressable>
+          loading || claimConfirming || claiming ? (
+            <LearnButton source={claiming ? "transactions" : "signing"} />
           ) : (
             <>
               <Text color={textColor} mb="2" fontFamily="subheading" fontSize="sm">
@@ -136,7 +99,7 @@ const ClaimButton = ({
         )
       }
     }),
-    [textColor, verify, loading, claimLoading, claiming]
+    [textColor, verify, loading, claimConfirming, claiming]
   );
 
   const claimModalProps: Omit<BasicModalProps, "modalVisible"> = useMemo(
@@ -164,7 +127,7 @@ const ClaimButton = ({
           }
         : {
             header:
-              loading || claimLoading ? (
+              loading || claimConfirming ? (
                 <Box backgroundColor={"white"}>
                   <Title fontSize="xl" mb="2" fontWeight="bold" lineHeight="36px">
                     Action Required
@@ -177,11 +140,11 @@ const ClaimButton = ({
                 actionModalBody.verify.header
               ),
             body: actionModalBody.verify.body,
-            footer: isWhitelisted || loading || claimLoading ? undefined : actionModalBody.verify.footer,
+            footer: isWhitelisted || loading || claimConfirming ? undefined : actionModalBody.verify.footer,
             closeText: "x",
             hasBottomBorder: false
           },
-    [firstClaim, textColor, loading, isWhitelisted, claimLoading]
+    [firstClaim, textColor, loading, isWhitelisted, claimConfirming, actionModalBody]
   );
 
   const finalModalProps: Omit<BasicModalProps, "modalVisible"> = useMemo(
@@ -233,38 +196,41 @@ const ClaimButton = ({
             hasTopBorder: false,
             hasBottomBorder: false
           },
-    [claimed, isWhitelisted, claiming]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [claimed, isWhitelisted, claiming, textColor]
   );
 
-  const handleClaim = async () => {
+  const handleClaim = useCallback(async () => {
     try {
       const success = await claim();
       if (success !== true) {
-        setClaimLoading(false);
         return;
       }
-
-      showFinalizationModal();
     } finally {
-      setClaimLoading(false);
       hideActionModal();
     }
-  };
+  }, [claim, hideActionModal]);
 
   const handleModalOpen = useCallback(
     async (first = false) => {
       if (isNil(isWhitelisted)) {
-        setClaimLoading(true);
+        // no value for isWhitelisted means we are not having a established connection to bc yet but should expect soon, handled by useEffect
+        setWhitelistLoading(true);
         return;
       }
 
       setFirstClaim(first);
+      // we set claimLoading here because it only updates state-vars after current callback or effect has completed
+      // which is why it cannot be set in the handleClaim callback as it would be set too late
+      setClaimConfirming(true);
       showActionModal();
 
       if (isWhitelisted) {
-        setClaimLoading(true);
         await handleClaim();
         return;
+      } else {
+        // means we no longer are expecting a claimCall and actionModal should show default verify uniqueness message
+        setClaimConfirming(false);
       }
 
       if (fuseWhitelisted && syncStatus) {
@@ -274,13 +240,10 @@ const ClaimButton = ({
           return;
         }
 
-        setClaimLoading(true);
         await handleClaim();
       }
-
-      setClaimLoading(false);
     },
-    [claim, hideActionModal, isWhitelisted, fuseWhitelisted, syncStatus, account]
+    [isWhitelisted, fuseWhitelisted, syncStatus, setWhitelistLoading, handleClaim, showActionModal]
   );
 
   const buttonTitle = useMemo(() => {
@@ -291,37 +254,43 @@ const ClaimButton = ({
     const amount = G$Amount("G$", claimAmount, chainId ?? defaultChainId, defaultEnv);
 
     return "CLAIM NOW " + amount.format({ fixedPrecisionDigits: 2, useFixedPrecision: true, significantDigits: 2 });
-  }, [isWhitelisted, account, chainId, claimAmount]);
+  }, [isWhitelisted, chainId, claimAmount, defaultChainId, defaultEnv]);
 
   // handles a delay in fetching isWhitelisted after just being connected
   useEffect(() => {
-    claimLoading && isWhitelisted && handleModalOpen().catch(noop);
-  }, [isWhitelisted]);
+    if (whitelistLoading) {
+      // making sure it only runs once (is set after useEffect completes)
+      setWhitelistLoading(false);
+      handleModalOpen().catch(noop);
+    }
+  }, [/* used */ isWhitelisted, whitelistLoading, setWhitelistLoading, handleModalOpen]);
 
   // temporary transaction status check, to trigger final 2 modals: Awaiting validation + Social Share
-  // will be replaced with solution to issue: https://github.com/GoodDollar/GoodProtocolUI/issues/366 & https://github.com/GoodDollar/GoodProtocolUI/issues/365
+  // will be replaced with solution to issue: https://github.com/GoodDollar/GoodProtocolUI/issues/365
   // which should handle tx-statuses and confirm modals more globally
   useEffect(() => {
     if (claiming) {
       hideActionModal();
       showFinalizationModal();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [claiming]);
 
   // trigger claim when user succesfully has verified through FV
   // uses the first claimer flow
   useEffect(() => {
     const doClaim = async () => {
-      if (!claimed && isVerified && account) {
+      if (isVerified && account) {
         setFirstClaim(true);
         showActionModal();
+        setClaimConfirming(true);
         await handleClaim();
-        setClaimLoading(true);
       }
     };
 
-    doClaim().catch(noop);
-  }, [isVerified, account, claimed]);
+    if (claimed === false && claimConfirming === undefined) doClaim().catch(noop);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isVerified, account, claimed, showActionModal, claimConfirming]);
 
   if (isWhitelisted && (claimed || claiming)) {
     return <FinalizationModal {...finalModalProps} />;
