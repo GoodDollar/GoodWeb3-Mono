@@ -4,7 +4,7 @@
   "version": "0.1.91-beta.76d816c",
   "description": "ethers and react hooks based on usedapp sdk for GoodDollar protocol",
   "scripts": {
-    "build": "yarn dev:clean && ctix c && tsc",
+    "build": "yarn dev:clean && ctix c && tsc && yalc push",
     "build:release": "yarn dev:clean && ctix c && tsc -p tsconfig.release.json",
     "dev:clean": "rm -fr dist types tsconfig.tsbuildinfo tsconfig.release.tsbuildinfo",
     "test": "jest",
@@ -74,10 +74,11 @@
     "@walletconnect/client": "^1.8.0",
     "@walletconnect/qrcode-modal": "^1.8.0",
     "@walletconnect/types": "^2.5.2",
-    "@web3-onboard/coinbase": "^2.2.0",
-    "@web3-onboard/core": "^2.12.1",
-    "@web3-onboard/injected-wallets": "^2.4.0",
-    "@web3-onboard/torus": "^2.2.1",
+    "@web3-onboard/coinbase": "^2.2.2",
+    "@web3-onboard/core": "^2.17.0",
+    "@web3-onboard/injected-wallets": "^2.8.5",
+    "@web3-onboard/react": "^2.8.1",
+    "@web3-onboard/torus": "^2.2.3",
     "@web3-onboard/walletconnect": "^2.3.6",
     "@web3auth/base": "^4.0.0",
     "@web3auth/core": "^4.0.0",
@@ -98,5 +99,8 @@
     "react": "*",
     "react-native": "*",
     "react-native-web": "*"
+  },
+  "resolutions": {
+    "ethers": "^5.7.2"
   }
 }

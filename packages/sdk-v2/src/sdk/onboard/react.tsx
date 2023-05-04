@@ -1,3 +1,4 @@
+import React from "react";
 import { InitOptions, OnboardAPI } from "@web3-onboard/core";
 import { init, Web3OnboardProvider } from "@web3-onboard/react";
 import injectedModule from "@web3-onboard/injected-wallets";
@@ -64,7 +65,7 @@ const wcInitOptions: WcInitOptions = {
 };
 
 const defaultWc = walletConnectModule({
-  requiredChains: [42220, 122],
+  requiredChains: [42220, 122, 1, 137],
   ...wcInitOptions
 });
 
@@ -90,10 +91,20 @@ const gdWc = customWcModule({
 const defaultOptions: IOnboardProviderProps["options"] = {
   chains: [
     {
-      id: "0xa4ec",
-      token: "CELO",
-      label: "CELO Testnet",
-      rpcUrl: "https://alfajores-forno.celo-testnet.org",
+      id: 42220,
+      namespace: "evm"
+    },
+    {
+      id: 122,
+      namespace: "evm",
+      rpcUrl: "https://rpc.fuse.io"
+    },
+    {
+      id: 1,
+      namespace: "evm"
+    },
+    {
+      id: 5,
       namespace: "evm"
     }
   ]
