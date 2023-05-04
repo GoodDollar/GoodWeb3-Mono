@@ -3211,7 +3211,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/bridge-app@npm:^1.2.9, @gooddollar/bridge-app@npm:^1.3.2":
+"@gooddollar/bridge-app@npm:^1.3.2":
   version: 1.3.2
   resolution: "@gooddollar/bridge-app@npm:1.3.2"
   dependencies:
@@ -3227,7 +3227,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/bridge-contracts@npm:^1.0.13, @gooddollar/bridge-contracts@npm:^1.0.14":
+"@gooddollar/bridge-contracts@npm:^1.0.14":
   version: 1.0.14
   resolution: "@gooddollar/bridge-contracts@npm:1.0.14"
   dependencies:
@@ -3255,7 +3255,7 @@ __metadata:
     "@babel/preset-typescript": ^7.16.0
     "@babel/runtime": ^7.18.9
     "@gooddollar/goodprotocol": ^2.0.3
-    "@gooddollar/web3sdk-v2": "file:.yalc/@gooddollar/web3sdk-v2"
+    "@gooddollar/web3sdk-v2": 0.1.91-beta.c3457a6
     "@lingui/macro": ^3.14.0
     "@lingui/react": ^3.14.0
     "@magiklabs/react-sdk": ^1.0.8
@@ -3335,7 +3335,7 @@ __metadata:
     "@babel/core": ^7.17.5
     "@babel/preset-env": ^7.16.11
     "@gooddollar/goodprotocol": 1.0.27
-    "@gooddollar/web3sdk-v2": 0.1.87-beta.1dc5775
+    "@gooddollar/web3sdk-v2": 0.1.91-beta.c3457a6
     "@testing-library/react": ^12.1.4
     "@types/jest": ^27.4.1
     "@types/node": ^17.0.21
@@ -3415,92 +3415,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2::locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design":
-  version: 0.1.91
-  resolution: "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2#.yalc/@gooddollar/web3sdk-v2::hash=5507b8&locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design"
-  dependencies:
-    "@amplitude/analytics-browser": ^1.6.4
-    "@amplitude/analytics-react-native": ^0.7.0
-    "@gooddollar/bridge-app": ^1.3.2
-    "@gooddollar/bridge-contracts": ^1.0.14
-    "@gooddollar/goodprotocol": ^2.0.3
-    "@react-native-firebase/analytics": ^16.4.6
-    "@sentry/browser": 7.16.0
-    "@sentry/react-native": ^4.8.0
-    "@solana/web3.js": ^1.72.0
-    "@walletconnect/client": ^1.8.0
-    "@walletconnect/qrcode-modal": ^1.8.0
-    "@walletconnect/types": ^2.5.2
-    "@web3-onboard/coinbase": ^2.2.0
-    "@web3-onboard/core": ^2.12.1
-    "@web3-onboard/injected-wallets": ^2.4.0
-    "@web3-onboard/torus": ^2.2.1
-    "@web3-onboard/walletconnect": ^2.3.6
-    "@web3auth/base": ^4.0.0
-    "@web3auth/core": ^4.0.0
-    "@web3auth/openlogin-adapter": ^4.1.0
-    "@web3auth/torus-wallet-connector-plugin": ^4.0.0
-    eventemitter3: ^4.0.7
-    mixpanel-browser: ^2.45.0
-    mixpanel-react-native: ^2.1.0
-    posthog-react-native: ^2.4.0
-    react-native-indicative: ^0.2.1
-    react-native-restart: ^0.0.24
-    react-use-promise: ^0.5.0
-  peerDependencies:
-    "@react-native-async-storage/async-storage": 1.17.10
-    "@usedapp/core": ^1.2.6
-    ethers: 5.*
-    react: "*"
-    react-native: "*"
-    react-native-web: "*"
-  checksum: 0645baa9253bdd1de24fc590612a4274f846b9e7d6689b71d8a75f1f5c3d727d1c01c2aa78f6a4d3fac62b0d0e11738fe86970d63d711194a8056f8d8dc67156
-  languageName: node
-  linkType: hard
-
-"@gooddollar/web3sdk-v2@npm:0.1.87-beta.1dc5775":
-  version: 0.1.87-beta.1dc5775
-  resolution: "@gooddollar/web3sdk-v2@npm:0.1.87-beta.1dc5775"
-  dependencies:
-    "@amplitude/analytics-browser": ^1.6.4
-    "@amplitude/analytics-react-native": ^0.7.0
-    "@gooddollar/bridge-app": ^1.2.9
-    "@gooddollar/bridge-contracts": ^1.0.13
-    "@gooddollar/goodprotocol": ^2.0.3
-    "@react-native-firebase/analytics": ^16.4.6
-    "@sentry/browser": 7.16.0
-    "@sentry/react-native": ^4.8.0
-    "@solana/web3.js": ^1.72.0
-    "@walletconnect/client": ^1.8.0
-    "@walletconnect/qrcode-modal": ^1.8.0
-    "@walletconnect/types": ^2.5.2
-    "@web3-onboard/coinbase": ^2.2.0
-    "@web3-onboard/injected-wallets": ^2.4.0
-    "@web3-onboard/torus": ^2.2.1
-    "@web3-onboard/walletconnect": ^2.3.2
-    "@web3auth/base": ^4.0.0
-    "@web3auth/core": ^4.0.0
-    "@web3auth/openlogin-adapter": ^4.1.0
-    "@web3auth/torus-wallet-connector-plugin": ^4.0.0
-    eventemitter3: ^4.0.7
-    mixpanel-browser: ^2.45.0
-    mixpanel-react-native: ^2.1.0
-    posthog-react-native: ^2.4.0
-    react-native-indicative: ^0.2.1
-    react-native-restart: ^0.0.24
-    react-use-promise: ^0.5.0
-  peerDependencies:
-    "@react-native-async-storage/async-storage": 1.17.10
-    "@usedapp/core": ^1.2.6
-    ethers: 5.*
-    react: "*"
-    react-native: "*"
-    react-native-web: "*"
-  checksum: c6ee674c42a03ce405848c855092e11a48dc8a446d4cb72bf4435e0e206759f7862fe1e9404fc4245617c297588c7499dd8e1cc7e59bd0c375ea0a787708cad2
-  languageName: node
-  linkType: hard
-
-"@gooddollar/web3sdk-v2@workspace:packages/sdk-v2":
+"@gooddollar/web3sdk-v2@0.1.91-beta.c3457a6, @gooddollar/web3sdk-v2@workspace:packages/sdk-v2":
   version: 0.0.0-use.local
   resolution: "@gooddollar/web3sdk-v2@workspace:packages/sdk-v2"
   dependencies:
@@ -10555,7 +10470,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@web3-onboard/walletconnect@npm:^2.3.2, @web3-onboard/walletconnect@npm:^2.3.6":
+"@web3-onboard/walletconnect@npm:^2.3.6":
   version: 2.3.6
   resolution: "@web3-onboard/walletconnect@npm:2.3.6"
   dependencies:
