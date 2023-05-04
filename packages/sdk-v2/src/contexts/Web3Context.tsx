@@ -115,7 +115,7 @@ const Web3Connector = ({ web3Provider }: { web3Provider: JsonRpcProvider | void 
     }
 
     return deactivate;
-  }, [web3Provider, activate, deactivate]);
+  }, [web3Provider]);
 
   return null;
 };
@@ -177,7 +177,7 @@ const TokenProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
     }
 
     return G$Decimals;
-  }, [results, chainId, mainnetGdx, MAINNET]);
+  }, [results, chainId, mainnetGdx]);
 
   return <TokenContext.Provider value={value}>{children}</TokenContext.Provider>;
 };
@@ -235,7 +235,7 @@ export const Web3Provider = ({ children, config, web3Provider, env = "production
     if (web3Provider instanceof ethers.providers.Web3Provider && web3Provider.provider.request) {
       setSwitchNetwork(() => newSwitch);
     }
-  }, [web3Provider, newSwitch]);
+  }, [web3Provider]);
 
   return (
     <DAppProvider config={config}>
