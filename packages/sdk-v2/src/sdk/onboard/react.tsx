@@ -5,7 +5,7 @@ import injectedModule from "@web3-onboard/injected-wallets";
 import walletConnectModule from "@web3-onboard/walletconnect";
 import coinbaseWalletModule from "@web3-onboard/coinbase";
 import { useRef } from "react";
-import { customWcModule } from "./modules/customwalletconnect";
+import { customWcModule, customWc2Module } from "./modules/customwalletconnect";
 import { keys, pickBy } from "lodash";
 
 export interface IOnboardWallets {
@@ -65,26 +65,27 @@ const wcInitOptions: WcInitOptions = {
 };
 
 const defaultWc = walletConnectModule({
-  requiredChains: [42220, 122, 1, 137],
-  ...wcInitOptions
+  bridge: "https://bridge.walletconnect.org",
+  qrcodeModalOptions: {
+    mobileLinks: ["rainbow", "metamask", "argent", "trust", "imtoken", "pillar"]
+  },
+  connectFirstChainId: false
 });
 
 const coinbaseWalletSdk = coinbaseWalletModule();
+
 const zenGoWc = customWcModule({
   customLabelFor: "zengo",
   bridge: "https://bridge.walletconnect.org",
   qrcodeModalOptions: {
-    // desktopLinks: ["zengo", "metamask"],
     mobileLinks: ["metamask", "zengo"] // TODO: has to be tested on IOS, android does not show list
   },
-  connectFirstChainId: false,
-  ...wcInitOptions
+  connectFirstChainId: false
 });
 
-const gdWc = customWcModule({
+const gdWc = customWc2Module({
   customLabelFor: "gooddollar",
-  bridge: "https://bridge.walletconnect.org",
-  connectFirstChainId: false,
+  requiredChains: [42220, 122, 1, 137],
   ...wcInitOptions
 });
 
