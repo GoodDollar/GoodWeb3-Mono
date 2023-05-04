@@ -9,6 +9,7 @@ import { G$Decimals } from "../sdk/constants";
 import { GoodReserveCDai, GReputation, IGoodDollar } from "@gooddollar/goodprotocol/types";
 import { useGetContract } from "../sdk";
 import { SupportedChains } from "../sdk/constants";
+import { useConnectWallet } from "@web3-onboard/react";
 /**
  * request to switch to network id
  * returns void if no result yet true/false if success
@@ -114,7 +115,7 @@ const Web3Connector = ({ web3Provider }: { web3Provider: JsonRpcProvider | void 
     }
 
     return deactivate;
-  }, [web3Provider]);
+  }, [web3Provider, activate, deactivate]);
 
   return null;
 };
@@ -176,7 +177,7 @@ const TokenProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
     }
 
     return G$Decimals;
-  }, [results, chainId, mainnetGdx]);
+  }, [results, chainId, mainnetGdx, MAINNET]);
 
   return <TokenContext.Provider value={value}>{children}</TokenContext.Provider>;
 };
@@ -234,7 +235,7 @@ export const Web3Provider = ({ children, config, web3Provider, env = "production
     if (web3Provider instanceof ethers.providers.Web3Provider && web3Provider.provider.request) {
       setSwitchNetwork(() => newSwitch);
     }
-  }, [web3Provider]);
+  }, [web3Provider, newSwitch]);
 
   return (
     <DAppProvider config={config}>
@@ -263,6 +264,8 @@ export const useSwitchNetwork = () => {
   const { switchNetwork, setSwitchNetwork, onSwitchNetwork, setOnSwitchNetwork } = useContext(Web3Context);
   const _onSwitchNetwork = onSwitchNetwork || onSwitchNetworkNoop;
   const _switchNetwork = switchNetwork || ethersSwitchNetwork;
+  const [{ wallet }] = useConnectWallet();
+  console.log("WCV2Testing useSwitchNetwork -->", { wallet });
 
   const switchCallback = useCallback(
     async (chainId: number) => {
