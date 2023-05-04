@@ -55,12 +55,12 @@ function customWc2Module(options: WcConnectOptions): WalletInit {
         // eslint-disable-next-line no-async-promise-executor
         return new Promise<ProviderAccounts>(async (resolve, reject) => {
           // Subscribe to connection events
-          fromEvent(this.connector, "connect", payload => payload)
+          fromEvent(this.connector, "connect", (payload: any) => payload)
             .pipe(take(1))
             .subscribe({
-              next: chainId => {
+              next: ({ chainId }) => {
                 this.emit("accountsChanged", this.connector.accounts);
-                const hexChainId = isHexString(chainId as any) ? chainId : `0x${Number(chainId).toString(16)}`;
+                const hexChainId = isHexString(chainId) ? chainId : `0x${chainId.toString(16)}`;
                 this.emit("chainChanged", hexChainId);
                 resolve(this.connector.accounts);
               },
