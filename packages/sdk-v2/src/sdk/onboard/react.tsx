@@ -85,7 +85,7 @@ const zenGoWc = customWcModule({
 
 const gdWc = customWc2Module({
   customLabelFor: "gooddollar",
-  requiredChains: [42220, 122, 1, 137],
+  requiredChains: [42220, 122, 1],
   ...wcInitOptions
 });
 
