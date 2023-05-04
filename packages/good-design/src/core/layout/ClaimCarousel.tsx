@@ -50,7 +50,6 @@ const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards, claimed }) => {
   const flatListRef = useRef<any>();
   const [layoutOffset, setLayoutOffset] = useState(0);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const activeCards = useMemo(() => cards.filter(card => !card.hide), [cards, claimed]);
 
   const contentWidth = useBreakpointValue({
@@ -62,14 +61,12 @@ const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards, claimed }) => {
   // so we need to handle the slidesnumber change after claim sets manually
   const updateSlidesNumber = useCallback(() => {
     setSlidesNumber(activeCards.length);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeCards, claimed, slidesNumber]);
 
   useEffect(() => {
     if (isMobile) {
       updateSlidesNumber();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [/* used */ claimed]);
   // end-of-hotfix
 
@@ -112,14 +109,12 @@ const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards, claimed }) => {
       index: isLast ? 0 : activeSlide + 1,
       offset: isLast ? 0 : layoutOffset + 275
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeSlide, flatListRef, onScroll, slidesNumber, layoutOffset, activeCards]);
 
   const getFlatListRef = useCallback(
     flatList => {
       flatListRef.current = flatList;
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [activeSlide, onScroll, clickAndSlide]
   );
 
