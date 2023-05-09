@@ -3184,7 +3184,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/bridge-app@npm:^1.2.9, @gooddollar/bridge-app@npm:^1.3.2":
+"@gooddollar/bridge-app@npm:^1.3.2":
   version: 1.3.2
   resolution: "@gooddollar/bridge-app@npm:1.3.2"
   dependencies:
@@ -3200,7 +3200,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/bridge-contracts@npm:^1.0.13, @gooddollar/bridge-contracts@npm:^1.0.14":
+"@gooddollar/bridge-contracts@npm:^1.0.14":
   version: 1.0.14
   resolution: "@gooddollar/bridge-contracts@npm:1.0.14"
   dependencies:
@@ -3389,13 +3389,13 @@ __metadata:
   linkType: hard
 
 "@gooddollar/web3sdk-v2@npm:latest":
-  version: 0.1.88
-  resolution: "@gooddollar/web3sdk-v2@npm:0.1.88"
+  version: 0.1.93
+  resolution: "@gooddollar/web3sdk-v2@npm:0.1.93"
   dependencies:
     "@amplitude/analytics-browser": ^1.6.4
     "@amplitude/analytics-react-native": ^0.7.0
-    "@gooddollar/bridge-app": ^1.2.9
-    "@gooddollar/bridge-contracts": ^1.0.13
+    "@gooddollar/bridge-app": ^1.3.2
+    "@gooddollar/bridge-contracts": ^1.0.14
     "@gooddollar/goodprotocol": ^2.0.3
     "@react-native-firebase/analytics": ^16.4.6
     "@sentry/browser": 7.16.0
@@ -3404,7 +3404,9 @@ __metadata:
     "@walletconnect/client": ^1.8.0
     "@walletconnect/qrcode-modal": ^1.8.0
     "@web3-onboard/coinbase": ^2.2.0
+    "@web3-onboard/core": ^2.12.1
     "@web3-onboard/injected-wallets": ^2.4.0
+    "@web3-onboard/react": 2.7.0
     "@web3-onboard/torus": ^2.2.1
     "@web3-onboard/walletconnect": ^2.2.2
     "@web3auth/base": ^4.0.0
@@ -3425,7 +3427,7 @@ __metadata:
     react: "*"
     react-native: "*"
     react-native-web: "*"
-  checksum: 524eca904ef93a9a567c407cd2796696abd8a0f6696e99407103b6a874d15ac31f0f5ad666331130618b1dbbcc17c07bd04f9e3b4d84a1b6bcfcac2f17fbb4bc
+  checksum: 77271d6ac38c6d2bc433cdbcce816b9380bc084f8cd803de0c39a22a4e6b009e1ecdffbae275da2c0537153ad8f1af54c6ab8a604ca4e630dd6c28d6cb89c992
   languageName: node
   linkType: hard
 
