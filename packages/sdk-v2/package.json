@@ -75,7 +75,7 @@
     "@web3-onboard/coinbase": "^2.2.0",
     "@web3-onboard/core": "^2.12.1",
     "@web3-onboard/injected-wallets": "^2.4.0",
-    "@web3-onboard/react": "^2.5.3",
+    "@web3-onboard/react": "2.7.0",
     "@web3-onboard/torus": "^2.2.1",
     "@web3-onboard/walletconnect": "^2.2.2",
     "@web3auth/base": "^4.0.0",
