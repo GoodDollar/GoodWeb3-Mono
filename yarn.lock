@@ -3184,7 +3184,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/bridge-app@npm:^1.3.2, @gooddollar/bridge-app@npm:^1.5.0":
+"@gooddollar/bridge-app@npm:^1.5.0":
   version: 1.5.0
   resolution: "@gooddollar/bridge-app@npm:1.5.0"
   dependencies:
@@ -3389,12 +3389,12 @@ __metadata:
   linkType: hard
 
 "@gooddollar/web3sdk-v2@npm:latest":
-  version: 0.1.93
-  resolution: "@gooddollar/web3sdk-v2@npm:0.1.93"
+  version: 0.1.94
+  resolution: "@gooddollar/web3sdk-v2@npm:0.1.94"
   dependencies:
     "@amplitude/analytics-browser": ^1.6.4
     "@amplitude/analytics-react-native": ^0.7.0
-    "@gooddollar/bridge-app": ^1.3.2
+    "@gooddollar/bridge-app": ^1.5.0
     "@gooddollar/bridge-contracts": ^1.0.14
     "@gooddollar/goodprotocol": ^2.0.3
     "@react-native-firebase/analytics": ^16.4.6
@@ -3427,7 +3427,7 @@ __metadata:
     react: "*"
     react-native: "*"
     react-native-web: "*"
-  checksum: 77271d6ac38c6d2bc433cdbcce816b9380bc084f8cd803de0c39a22a4e6b009e1ecdffbae275da2c0537153ad8f1af54c6ab8a604ca4e630dd6c28d6cb89c992
+  checksum: 0aa91b48ac980a197268ae7b1b717f0915e67fefa071f3feed7b9bee7f8d476acd826f7df29157dc2281a13ed8afb15749d7248c2fa2b62469d2c87be61946ea
   languageName: node
   linkType: hard
 
