@@ -5,11 +5,13 @@ import injectedModule from "@web3-onboard/injected-wallets";
 import walletConnectModule from "@web3-onboard/walletconnect";
 import coinbaseWalletModule from "@web3-onboard/coinbase";
 import { useRef } from "react";
-import { customWcModule, customWc2Module } from "./modules/customwalletconnect";
+import { customwc, icons } from "./modules/customwalletconnect";
 import { keys, pickBy } from "lodash";
+import { getDevice, isMobile } from "../base";
 
 export interface IOnboardWallets {
-  gooddollar?: boolean;
+  valora?: boolean;
+  gd?: boolean;
   metamask?: boolean;
   walletconnect?: boolean;
   coinbase?: boolean;
@@ -55,38 +57,145 @@ const injected = injectedModule({
   }
 });
 
-interface WcInitOptions {
-  projectId: string;
-  version: 2;
-}
-const wcInitOptions: WcInitOptions = {
+const wc1InitOptions = {
+  version: 1,
   projectId: "095eb531a0c00781cb45644be58b065e",
-  version: 2
+  bridge: "https://bridge.walletconnect.org",
+  qrcodeModalOptions: {
+    mobileLinks: ["valora", "fuse.cash", "zengo", "metamask", "coinbasewallet", "safe"] // TODO: has to be tested on IOS, android does not show list
+  },
+  connectFirstChainId: false,
+  handleUri: undefined
+};
+
+const wc2InitOptions = {
+  projectId: "095eb531a0c00781cb45644be58b065e",
+  version: 2,
+  requiredChains: [42220, 122, 1],
+  qrModalOptions: {
+    themeVariables: [],
+    chainImages: [],
+    enableExplorer: true,
+    explorerAllowList: [],
+    explorerDenyList: [],
+    privacyPolicyUrl: {} as any,
+    tokenImages: [],
+    termsOfServiceUrl: "",
+    themeMode: "dark",
+    walletImages: { gooddollar: icons["gooddollar"], metamask: icons["gooddollar"] },
+    desktopWallets: [
+      {
+        id: "gooddollar",
+        name: "GoodDollar",
+        links: {
+          universal: "https://wallet.gooddollar.org"
+        }
+      },
+      {
+        id: "metamask",
+        name: "Metamask",
+        links: {
+          universal: "https://metamask.org"
+        }
+      },
+      {
+        id: "celosafe",
+        name: "CeloSafe",
+        links: {
+          universal: "https://safe.celo.org"
+        }
+      },
+      {
+        id: "fusesafe",
+        name: "FuseSafe",
+        links: {
+          universal: "https://safe.fuse.io"
+        }
+      },
+      {
+        id: "safe",
+        name: "Safe",
+        links: {
+          universal: "https://app.safe.global"
+        }
+      }
+    ],
+    mobileWallets: [
+      {
+        id: "gooddollar",
+        name: "GoodDollar",
+        links: {
+          universal: "https://wallet.gooddollar.org",
+          native: "gooddollar:"
+        }
+      },
+      {
+        id: "valora",
+        name: "Valora",
+        links: {
+          universal: "celo:",
+          native: "celo:"
+        }
+      },
+      {
+        id: "zengo",
+        name: "Zengo",
+        links: {
+          universal: "https://get.zengo.com"
+        }
+      },
+      {
+        id: "metamask",
+        name: "Metamask",
+        links: {
+          native: "metamask:",
+          universal: "https://metamask.app.link"
+        }
+      }
+    ]
+  }
 };
 
 const defaultWc = walletConnectModule({
-  bridge: "https://bridge.walletconnect.org",
-  qrcodeModalOptions: {
-    mobileLinks: ["rainbow", "metamask", "argent", "trust", "imtoken", "pillar"]
-  },
-  connectFirstChainId: false
+  ...(wc1InitOptions as any)
 });
 
 const coinbaseWalletSdk = coinbaseWalletModule();
 
-const zenGoWc = customWcModule({
-  customLabelFor: "zengo",
-  bridge: "https://bridge.walletconnect.org",
-  qrcodeModalOptions: {
-    mobileLinks: ["metamask", "zengo"] // TODO: has to be tested on IOS, android does not show list
-  },
-  connectFirstChainId: false
+const zengo = customwc({
+  label: "zengo",
+  ...(wc1InitOptions as any),
+  handleUri: uri =>
+    new Promise(res => {
+      isMobile() && window.open(`https://get.zengo.com/wc?uri=${encodeURIComponent(uri)}`, "_blank");
+      res(true);
+    })
 });
 
-const gdWc = customWc2Module({
-  customLabelFor: "gooddollar",
-  requiredChains: [42220, 122, 1],
-  ...wcInitOptions
+const valora = customwc({
+  label: "valora",
+  ...(wc2InitOptions as any),
+  handleUri: uri =>
+    new Promise(res => {
+      isMobile() && window.open(`celo://wc?uri=${encodeURIComponent(uri)}`, "_blank");
+      res(true);
+    })
+});
+
+const gd = customwc({
+  label: "gooddollar",
+  ...(wc2InitOptions as any),
+  handleUri: uri =>
+    new Promise(res => {
+      switch (getDevice().os.name) {
+        case "Android":
+          window.open(`gooddollar://wc?uri=${encodeURIComponent(uri)}`, "_blank");
+          break;
+        default:
+          window.open(`https://wallet.gooddollar.org/wc?uri=${encodeURIComponent(uri)}`, "_blank");
+      }
+      res(true);
+    })
 });
 
 const defaultOptions: IOnboardProviderProps["options"] = {
@@ -103,16 +212,13 @@ const defaultOptions: IOnboardProviderProps["options"] = {
     {
       id: 1,
       namespace: "evm"
-    },
-    {
-      id: 5,
-      namespace: "evm"
     }
   ]
 };
 
 const defaultWalletsFlags: IOnboardWallets = {
-  gooddollar: true,
+  valora: true,
+  gd: true,
   metamask: true,
   walletconnect: true,
   coinbase: true,
@@ -121,11 +227,12 @@ const defaultWalletsFlags: IOnboardWallets = {
 };
 
 const walletsMap: Record<keyof Omit<IOnboardWallets, "custom">, any> = {
-  gooddollar: gdWc,
+  valora,
+  gd,
   metamask: injected,
   walletconnect: defaultWc,
   coinbase: coinbaseWalletSdk,
-  zengo: zenGoWc
+  zengo
 };
 
 export const OnboardProvider = ({

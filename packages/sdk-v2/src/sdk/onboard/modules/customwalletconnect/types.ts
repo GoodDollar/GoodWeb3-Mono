@@ -37,5 +37,6 @@ export type WcConnectOptions = {
 
 export enum CustomLabels {
   zengo = "ZenGo",
-  gooddollar = "GoodDollar Wallet"
+  gooddollar = "GoodDollar Wallet",
+  valora = "Valora"
 }

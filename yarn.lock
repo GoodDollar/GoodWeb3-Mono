@@ -3456,7 +3456,7 @@ __metadata:
     "@web3-onboard/injected-wallets": ^2.8.5
     "@web3-onboard/react": ^2.8.1
     "@web3-onboard/torus": ^2.2.3
-    "@web3-onboard/walletconnect": ^2.3.6
+    "@web3-onboard/walletconnect": v2.3.7-alpha.2
     "@web3auth/base": ^4.0.0
     "@web3auth/core": ^4.0.0
     "@web3auth/openlogin-adapter": ^4.1.0
@@ -10401,6 +10401,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@web3-onboard/common@npm:^2.3.2-alpha.1":
+  version: 2.3.2-alpha.1
+  resolution: "@web3-onboard/common@npm:2.3.2-alpha.1"
+  dependencies:
+    bignumber.js: ^9.1.0
+    ethers: 5.5.4
+    joi: 17.9.1
+  checksum: f67e9d42e33f31973adcb62ca647ecdeefe0168b812c077a0a03fdf8ec2205ae301a9c2e485106c873449695b0978033fc4b38c0fa94566d6a94ae1fe6e39703
+  languageName: node
+  linkType: hard
+
 "@web3-onboard/core@npm:^2.16.0, @web3-onboard/core@npm:^2.17.0":
   version: 2.17.0
   resolution: "@web3-onboard/core@npm:2.17.0"
@@ -10469,18 +10480,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@web3-onboard/walletconnect@npm:^2.3.6":
-  version: 2.3.6
-  resolution: "@web3-onboard/walletconnect@npm:2.3.6"
+"@web3-onboard/walletconnect@npm:v2.3.7-alpha.2":
+  version: 2.3.7-alpha.2
+  resolution: "@web3-onboard/walletconnect@npm:2.3.7-alpha.2"
   dependencies:
     "@ethersproject/providers": 5.5.0
     "@walletconnect/client": ^1.8.0
     "@walletconnect/ethereum-provider": 2.7.0
     "@walletconnect/qrcode-modal": ^1.8.0
-    "@web3-onboard/common": ^2.3.1
+    "@web3-onboard/common": ^2.3.2-alpha.1
     "@web3modal/standalone": 2.2.2
     rxjs: ^7.5.2
-  checksum: bc31eb4e2351ec86a2cb74c06bd8b81e98051018159d4aa7ee3d21014abe1fd4491a729845e94a94351c852a3e174de934546d498cf51b6f43bb97664c819e26
+  checksum: b767d7e822b45636c1d74357b9078129948332f3f390c930ecda7bd1195ad3475741ba50107ec713521f94328676badbb694d8f5e68cac8f3ebadf8765a35a27
   languageName: node
   linkType: hard
 

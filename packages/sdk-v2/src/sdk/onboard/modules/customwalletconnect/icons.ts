@@ -44,7 +44,7 @@ viewBox="0 0 268 298" fill="black" xmlns="http://www.w3.org/2000/svg">
   </stop><stop offset="1" stop-color="#43CFC7"></stop></linearGradient>
   <linearGradient id="paint1_linear_661_406" x1="134" y1="42.1484" x2="134" y2="213.89" gradientUnits="userSpaceOnUse"><stop stop-color="white">
   </stop><stop offset="0.999087" stop-color="#E6F7F7"></stop></linearGradient></defs></svg>
-`
+`;
 
 const GdIcon = `
 <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -58,9 +58,10 @@ const GdIcon = `
 </clipPath>
 </defs>
 </svg>
-`
+`;
 
 export const icons = {
   gooddollar: GdIcon,
-  zengo: ZengoIcon
-}
+  zengo: ZengoIcon,
+  valora: ZengoIcon
+};
