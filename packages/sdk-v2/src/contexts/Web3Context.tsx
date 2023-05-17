@@ -9,7 +9,6 @@ import { G$Decimals } from "../sdk/constants";
 import { GoodReserveCDai, GReputation, IGoodDollar } from "@gooddollar/goodprotocol/types";
 import { useGetContract } from "../sdk";
 import { SupportedChains } from "../sdk/constants";
-import { useConnectWallet } from "@web3-onboard/react";
 /**
  * request to switch to network id
  * returns void if no result yet true/false if success
@@ -264,8 +263,6 @@ export const useSwitchNetwork = () => {
   const { switchNetwork, setSwitchNetwork, onSwitchNetwork, setOnSwitchNetwork } = useContext(Web3Context);
   const _onSwitchNetwork = onSwitchNetwork || onSwitchNetworkNoop;
   const _switchNetwork = switchNetwork || ethersSwitchNetwork;
-  const [{ wallet }] = useConnectWallet();
-  console.log("WCV2Testing useSwitchNetwork -->", { wallet });
 
   const switchCallback = useCallback(
     async (chainId: number) => {

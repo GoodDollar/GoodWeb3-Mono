@@ -12,7 +12,7 @@ export const customwc = (options: WalletConnectOptions & { label: keyof typeof C
     const walletInit = defaultWC({ device: getDevice() }) as WalletModule;
 
     walletInit.label = CustomLabels[options.label];
-    walletInit.getIcon = async () => icons[options.label];
+    walletInit.getIcon = async () => icons[options.label].svg;
     return walletInit;
   };
 };

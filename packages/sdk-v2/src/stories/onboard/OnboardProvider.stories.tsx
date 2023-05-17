@@ -34,7 +34,7 @@ const Web3Component = (params: PageProps) => {
   };
 
   const switchRequest = async () => {
-    const switched = await switchChain({ chainId: "7a", chainNamespace: "evm" });
+    const switched = await switchChain({ chainId: "0x7a", chainNamespace: "evm" });
     console.log("switched:", switched);
   };
 

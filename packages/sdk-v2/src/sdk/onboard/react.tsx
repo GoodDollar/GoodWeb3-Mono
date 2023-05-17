@@ -81,21 +81,20 @@ const wc2InitOptions = {
     privacyPolicyUrl: {} as any,
     tokenImages: [],
     termsOfServiceUrl: "",
-    themeMode: "dark",
-    walletImages: { gooddollar: icons["gooddollar"], metamask: icons["gooddollar"] },
+    themeMode: "light",
+    walletImages: {
+      valora: icons["valora"].webp,
+      zengo: icons["zengo"].webp,
+      gooddollar: icons["gooddollar"].webp,
+      celosafe: icons["celosafe"].webp,
+      safe: icons["safe"].webp
+    },
     desktopWallets: [
       {
         id: "gooddollar",
         name: "GoodDollar",
         links: {
           universal: "https://wallet.gooddollar.org"
-        }
-      },
-      {
-        id: "metamask",
-        name: "Metamask",
-        links: {
-          universal: "https://metamask.org"
         }
       },
       {
@@ -192,7 +191,8 @@ const gd = customwc({
           window.open(`gooddollar://wc?uri=${encodeURIComponent(uri)}`, "_blank");
           break;
         default:
-          window.open(`https://wallet.gooddollar.org/wc?uri=${encodeURIComponent(uri)}`, "_blank");
+          // TODO: add domains based on envs
+          window.open(`http://localhost:3000/wc?uri=${encodeURIComponent(uri)}`, "_blank");
       }
       res(true);
     })
