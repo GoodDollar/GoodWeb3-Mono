@@ -192,7 +192,7 @@ const gd = customwc({
           break;
         default:
           // TODO: add domains based on envs
-          window.open(`http://localhost:3000/wc?uri=${encodeURIComponent(uri)}`, "_blank");
+          window.open(`http://dev.gooddollar.org/wc?uri=${encodeURIComponent(uri)}`, "_blank");
       }
       res(true);
     })
