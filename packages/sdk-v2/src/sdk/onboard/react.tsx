@@ -176,7 +176,7 @@ const valora = customwc({
   ...(wc2InitOptions as any),
   handleUri: uri =>
     new Promise(res => {
-      isMobile() && window.open(`celo://wc?uri=${encodeURIComponent(uri)}`, "_blank");
+      isMobile() && window.open(`celo://wallet/wc?uri=${encodeURIComponent(uri)}`, "_blank");
       res(true);
     })
 });
