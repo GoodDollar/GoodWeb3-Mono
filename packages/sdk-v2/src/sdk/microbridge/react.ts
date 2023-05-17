@@ -7,7 +7,7 @@ import { IGoodDollar } from "@gooddollar/goodprotocol/types";
 import { TransactionStatus, useCalls, useEthers, useLogs } from "@usedapp/core";
 import { BigNumber, Contract, ethers } from "ethers";
 import { first, groupBy, mapValues } from "lodash";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSwitchNetwork } from "../../contexts";
 import useRefreshOrNever from "../../hooks/useRefreshOrNever";
 import { useGetContract, useGetEnvChainId } from "../base/react";
@@ -101,9 +101,10 @@ export const useBridge = (withRelay = false) => {
 
   const relayTx = useRelayTx();
 
-  const [bridgeRequest, setBridgeRequest] = useState<
-    { amount: string; sourceChainId: number; targetChainId: number; target?: string; bridging?: boolean } | undefined
-  >();
+  const [bridgeRequest, setBridgeRequest] =
+    useState<
+      { amount: string; sourceChainId: number; targetChainId: number; target?: string; bridging?: boolean } | undefined
+    >();
 
   const [selfRelayStatus, setSelfRelay] = useState<Partial<TransactionStatus> | undefined>();
 
@@ -153,14 +154,14 @@ export const useBridge = (withRelay = false) => {
         setBridgeRequest({ amount, sourceChainId, targetChainId, target });
       })().catch(noop);
     },
-    [transferAndCall, switchNetwork, setBridgeRequest, chainId]
+    [account, transferAndCall, chainId, switchNetwork]
   );
 
   // trigger the actual bridge request
   useEffect(() => {
     if (transferAndCall.state.status === "None" && bridgeRequest && account && !lock.current) {
-      const withoutRelay = false;
       lock.current = true;
+      const withoutRelay = !withRelay;
       // we use transfer and call to save the approve step
       const encoded = ethers.utils.defaultAbiCoder.encode(
         ["uint256", "address", "bool"],
@@ -209,6 +210,7 @@ export const useBridge = (withRelay = false) => {
         })
         .catch(noop);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bridgeContract, bridgeRequest, transferAndCall, lock]);
 
   return { sendBridgeRequest, bridgeRequestStatus: transferAndCall?.state, relayStatus, selfRelayStatus };
@@ -227,10 +229,14 @@ export const useRelayTx = () => {
   const { registry = "0x44a1E0A83821E239F9Cef248CECc3AC5b910aeD2" } = bridgeContracts[baseEnv] || {};
 
   const signer = (library as ethers.providers.JsonRpcProvider)?.getSigner();
-  const sdk = new BridgeSDK(
-    registry,
-    mapValues(contracts, _ => _?.address),
-    50
+  const sdk = useMemo(
+    () =>
+      new BridgeSDK(
+        registry,
+        mapValues(contracts, _ => _?.address),
+        50
+      ),
+    [contracts, registry]
   );
   const relayTx = useCallback(
     async (
