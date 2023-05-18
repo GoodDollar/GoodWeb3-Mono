@@ -68,7 +68,7 @@ const wc1InitOptions = {
   handleUri: undefined
 };
 
-const wc2InitOptions = {
+export const wc2InitOptions = {
   projectId: "095eb531a0c00781cb45644be58b065e",
   version: 2,
   requiredChains: [42220, 122, 1],
@@ -191,7 +191,6 @@ const gd = customwc({
           window.open(`gooddollar://wc?uri=${encodeURIComponent(uri)}`, "_blank");
           break;
         default:
-          // TODO: add domains based on envs
           window.open(`http://dev.gooddollar.org/wc?uri=${encodeURIComponent(uri)}`, "_blank");
       }
       res(true);
