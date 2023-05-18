@@ -87,7 +87,8 @@ export const wc2InitOptions = {
       zengo: icons["zengo"].webp,
       gooddollar: icons["gooddollar"].webp,
       celosafe: icons["celosafe"].webp,
-      safe: icons["safe"].webp
+      safe: icons["safe"].webp,
+      fusesafe: icons["fusesafe"].webp
     },
     desktopWallets: [
       {
@@ -184,17 +185,16 @@ const valora = customwc({
 const gd = customwc({
   label: "gooddollar",
   ...(wc2InitOptions as any),
-  handleUri: uri =>
-    new Promise(res => {
-      switch (getDevice().os.name) {
-        case "Android":
-          window.open(`gooddollar://wc?uri=${encodeURIComponent(uri)}`, "_blank");
-          break;
-        default:
-          window.open(`http://dev.gooddollar.org/wc?uri=${encodeURIComponent(uri)}`, "_blank");
-      }
-      res(true);
-    })
+  handleUri: async uri => {
+    switch (getDevice().os.name) {
+      case "Android":
+        window.open(`gooddollar://wc?uri=${encodeURIComponent(uri)}`, "_blank");
+        break;
+      default:
+        window.open(`http://dev.gooddollar.org/wc?uri=${encodeURIComponent(uri)}`, "_blank");
+    }
+    return true;
+  }
 });
 
 const defaultOptions: IOnboardProviderProps["options"] = {
@@ -216,20 +216,20 @@ const defaultOptions: IOnboardProviderProps["options"] = {
 };
 
 const defaultWalletsFlags: IOnboardWallets = {
-  valora: true,
   gd: true,
-  metamask: true,
   walletconnect: true,
+  valora: true,
+  metamask: true,
   coinbase: true,
   zengo: true,
   custom: []
 };
 
 const walletsMap: Record<keyof Omit<IOnboardWallets, "custom">, any> = {
-  valora,
   gd,
-  metamask: injected,
   walletconnect: defaultWc,
+  valora,
+  metamask: injected,
   coinbase: coinbaseWalletSdk,
   zengo
 };
