@@ -156,9 +156,9 @@ export const useWhitelistSync = () => {
       // if whitelisted on fuse but not on celo then sync
       if (first(fuseResult?.value) && first(otherResult?.value) === false) {
         syncInProgress = true;
-
-        const devEnv = baseEnvRef.current?.split("-")[0] as keyof typeof Envs;
-        const { backend } = Envs[devEnv];
+        const { current: baseEnv } = baseEnvRef;
+        const devEnv = baseEnvRef.current === "fuse" ? "development" : baseEnv;
+        const { backend } = Envs[devEnv as keyof typeof Envs];
 
         setSyncStatus(
           fetch(backend + `/syncWhitelist/${account}`)
