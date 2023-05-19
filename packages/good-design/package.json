@@ -4,7 +4,8 @@
   "version": "0.0.73",
   "scripts": {
     "build": "yarn install && yarn dev:clean && tsc && yarn copy:assets && yalc publish --push",
-    "dev:clean": "rm -fr dist types tsconfig.tsbuildinfo",
+    "build:release": "yarn dev:clean && tsc -p tsconfig.release.json && yarn copy:assets",
+    "dev:clean": "rm -fr dist types tsconfig.tsbuildinfo tsconfig.release.tsbuildinfo",
     "test": "jest",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
