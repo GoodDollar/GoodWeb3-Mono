@@ -3318,7 +3318,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@gooddollar/goodcontracts@npm:^2.6.2, @gooddollar/goodcontracts@npm:^2.6.6":
+"@gooddollar/goodcontracts@npm:^2.6.6":
   version: 2.6.6
   resolution: "@gooddollar/goodcontracts@npm:2.6.6"
   dependencies:
@@ -3334,7 +3334,7 @@ __metadata:
   dependencies:
     "@babel/core": ^7.17.5
     "@babel/preset-env": ^7.16.11
-    "@gooddollar/goodprotocol": 1.0.27
+    "@gooddollar/goodprotocol": ^2.0.4
     "@gooddollar/web3sdk-v2": latest
     "@testing-library/react": ^12.1.4
     "@types/jest": ^27.4.1
@@ -3352,26 +3352,6 @@ __metadata:
     react: ^17.0.2
   languageName: unknown
   linkType: soft
-
-"@gooddollar/goodprotocol@npm:1.0.27":
-  version: 1.0.27
-  resolution: "@gooddollar/goodprotocol@npm:1.0.27"
-  dependencies:
-    "@gooddollar/goodcontracts": ^2.6.2
-    "@jsier/retrier": ^1.2.4
-    "@openzeppelin/contracts": ^4.5.0
-    "@openzeppelin/contracts-upgradeable": ^4.3.2
-    "@typechain/hardhat": ^6.1.2
-    async-promise-pool: ^1.0.4
-    ethers-multicall: ^0.2.1
-    openzeppelin-solidity: ^4.3.2
-    patch-package: latest
-    press-any-key: ^0.1.1
-    truffle-plugin-verify: ^0.5.11
-    truffle-source-verify: ^0.0.6
-  checksum: 7e81e83bb12cd741226a363959ad92ca44deb51e302d0c89a2861a71a5b447c23483d93abf234e972c8f289328b9449aa73edf100b3f8a8be518ffb56a4f786b
-  languageName: node
-  linkType: hard
 
 "@gooddollar/goodprotocol@npm:1.0.30-beta.3":
   version: 1.0.30-beta.3
@@ -4628,7 +4608,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@openzeppelin/contracts-upgradeable@npm:^4.3.2, @openzeppelin/contracts-upgradeable@npm:^4.8.0":
+"@openzeppelin/contracts-upgradeable@npm:^4.8.0":
   version: 4.8.1
   resolution: "@openzeppelin/contracts-upgradeable@npm:4.8.1"
   checksum: 6af2fbddf263214c02d80430b218cb3ca8482e77b1cc070d07ca4f79d42460941e7ea1bb89a096bd292841040652e10d779b491cd19c201008d92e9e689d9000
@@ -4649,7 +4629,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@openzeppelin/contracts@npm:^4.4.1, @openzeppelin/contracts@npm:^4.5.0, @openzeppelin/contracts@npm:^4.8.0":
+"@openzeppelin/contracts@npm:^4.4.1, @openzeppelin/contracts@npm:^4.8.0":
   version: 4.8.1
   resolution: "@openzeppelin/contracts@npm:4.8.1"
   checksum: 99acefde1ae42c2d935ec9b4ebd327e786c499a4ec76b9582eb9adb0ff94a77c48047332fba44fb97b82b5a46d80e74d3e5d8cf73d5defa7f746f2a67f070281
@@ -17624,7 +17604,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ethers-multicall@npm:^0.2.1, ethers-multicall@npm:^0.2.3":
+"ethers-multicall@npm:^0.2.3":
   version: 0.2.3
   resolution: "ethers-multicall@npm:0.2.3"
   dependencies:
@@ -31655,19 +31635,6 @@ __metadata:
   bin:
     truffle-flattener: index.js
   checksum: 54670aa558d648b46e1bb992e6c672651fd2e25089cae8f1b09f762e36fd470304c5661ad3b20cc0d8e83f3ab5449effe0086c5b97a6537c5aa900ab00f27ad3
-  languageName: node
-  linkType: hard
-
-"truffle-plugin-verify@npm:^0.5.11":
-  version: 0.5.33
-  resolution: "truffle-plugin-verify@npm:0.5.33"
-  dependencies:
-    axios: ^0.26.1
-    cli-logger: ^0.5.40
-    delay: ^5.0.0
-    querystring: ^0.2.1
-    tunnel: 0.0.6
-  checksum: 7d89f70ba47e5fe3599f2a65d6ac8fb3f7e16e486c66d4c00ef268fa3d6ba0cc29d9ab276409ca49012a341d11d075c0b68324652434fa4553d226477541fc2e
   languageName: node
   linkType: hard
 
