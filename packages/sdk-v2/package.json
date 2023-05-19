@@ -5,7 +5,7 @@
   "description": "ethers and react hooks based on usedapp sdk for GoodDollar protocol",
   "scripts": {
     "build": "yarn dev:clean && ctix c && tsc && yarn copy:assets && yalc publish --push",
-    "build:release": "yarn dev:clean && ctix c && tsc -p tsconfig.release.json",
+    "build:release": "yarn dev:clean && ctix c && tsc -p tsconfig.release.json && yarn copy:assets",
     "copy:assets": "cpx 'src/assets/**' 'dist/assets'",
     "dev:clean": "rm -fr dist types tsconfig.tsbuildinfo tsconfig.release.tsbuildinfo",
     "test": "jest",
