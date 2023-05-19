@@ -1,11 +1,12 @@
 {
   "name": "@gooddollar/web3sdk-v2",
   "repository": "https://github.com/GoodDollar/GoodWeb3-mono/packages/sdk-v2",
-  "version": "0.1.94",
+  "version": "0.1.95-beta.e1d2b5f",
   "description": "ethers and react hooks based on usedapp sdk for GoodDollar protocol",
   "scripts": {
-    "build": "yarn dev:clean && ctix c && tsc",
+    "build": "yarn dev:clean && ctix c && tsc && yarn copy:assets && yalc publish --push",
     "build:release": "yarn dev:clean && ctix c && tsc -p tsconfig.release.json",
+    "copy:assets": "cpx 'src/assets/**' 'dist/assets'",
     "dev:clean": "rm -fr dist types tsconfig.tsbuildinfo tsconfig.release.tsbuildinfo",
     "test": "jest",
     "storybook": "start-storybook -p 6006",
@@ -97,5 +98,8 @@
     "react": "*",
     "react-native": "*",
     "react-native-web": "*"
+  },
+  "resolutions": {
+    "ethers": "^5.7.2"
   }
 }

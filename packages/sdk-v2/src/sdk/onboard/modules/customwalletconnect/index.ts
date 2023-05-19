@@ -1,3 +1,3 @@
-export { default as customWcModule } from './sdk';
 export * from './icons';
+export * from './sdk';
 export * from './types';

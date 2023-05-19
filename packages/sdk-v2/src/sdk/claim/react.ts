@@ -3,7 +3,7 @@ import { UBIScheme } from "@gooddollar/goodprotocol/types/UBIScheme";
 import { ChainId, QueryParams, useCalls, useEthers } from "@usedapp/core";
 import { BigNumber } from "ethers";
 import { first } from "lodash";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { AsyncStorage } from "../storage";
 import usePromise from "react-use-promise";
 
@@ -114,6 +114,11 @@ export const useWhitelistSync = () => {
   const { account, chainId } = useEthers();
   const identity = useGetContract("Identity", true, "claim", SupportedChains.FUSE) as IIdentity;
   const identity2 = useGetContract("Identity", true, "claim", chainId) as IIdentity;
+  const baseEnvRef = useRef<typeof baseEnv>();
+
+  useEffect(() => {
+    baseEnvRef.current = baseEnv;
+  }, [baseEnv]);
 
   const [fuseResult] = useCalls(
     [
@@ -151,8 +156,9 @@ export const useWhitelistSync = () => {
       // if whitelisted on fuse but not on celo then sync
       if (first(fuseResult?.value) && first(otherResult?.value) === false) {
         syncInProgress = true;
-        const devEnv = baseEnv === "fuse" ? "development" : baseEnv;
-        const { backend } = Envs[devEnv];
+        const { current: baseEnv } = baseEnvRef;
+        const devEnv = baseEnvRef.current === "fuse" ? "development" : baseEnv;
+        const { backend } = Envs[devEnv as keyof typeof Envs];
 
         setSyncStatus(
           fetch(backend + `/syncWhitelist/${account}`)

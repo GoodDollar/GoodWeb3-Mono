@@ -67,7 +67,7 @@ const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards, claimed }) => {
     if (isMobile) {
       updateSlidesNumber();
     }
-  }, [claimed]);
+  }, [/* used */ claimed]);
   // end-of-hotfix
 
   const onFlatListLayoutChange = useCallback(
