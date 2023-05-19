@@ -1,6 +1,6 @@
 {
   "name": "@gooddollar/goodlogin-sdk",
-  "version": "1.1.24-beta.e1d2b5f",
+  "version": "1.1.24",
   "description": "Login SDK for login with Gooddollar wallet",
   "scripts": {
     "build": "tsc",
