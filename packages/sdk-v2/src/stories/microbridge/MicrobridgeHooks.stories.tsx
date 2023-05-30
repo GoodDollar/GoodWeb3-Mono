@@ -13,6 +13,7 @@ const BridgeHooksTest = (params: PageProps) => {
   const bridgeInfo = useGetBridgeData(params.chainId, params.address);
   return (
     <>
+      <pre>bridge minFee {bridgeInfo?.bridgeFees?.minFee?.toString()}</pre>
       <div>canBridge result: {JSON.stringify(limits)}</div>
       <pre>bridge data {JSON.stringify(bridgeInfo, null, 4)}</pre>
     </>

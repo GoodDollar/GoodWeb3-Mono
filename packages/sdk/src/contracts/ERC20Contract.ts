@@ -1,7 +1,7 @@
-import Web3 from 'web3'
-import { AbiItem } from 'web3-utils'
+import Web3 from "web3";
+import { AbiItem } from "web3-utils";
 
-import ERC20 from '@gooddollar/goodprotocol/artifacts/contracts/Interfaces.sol/ERC20.json'
+import ERC20 from "@gooddollar/goodprotocol/artifacts/contracts/Interfaces.sol/ERC20.json";
 
 /**
  * Returns instance of ERC20 contract.
@@ -10,5 +10,5 @@ import ERC20 from '@gooddollar/goodprotocol/artifacts/contracts/Interfaces.sol/E
  * @constructor
  */
 export function ERC20Contract(web3: Web3, address: string): any {
-    return new web3.eth.Contract(ERC20.abi as AbiItem[], address)
+  return new web3.eth.Contract(ERC20.abi as AbiItem[], address);
 }

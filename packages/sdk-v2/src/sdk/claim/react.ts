@@ -1,11 +1,10 @@
 import { IIdentity } from "@gooddollar/goodprotocol/types";
 import { UBIScheme } from "@gooddollar/goodprotocol/types/UBIScheme";
-import { AsyncStorage } from "../storage";
-import { ChainId, QueryParams, useCalls, useContractFunction, useEthers } from "@usedapp/core";
+import { ChainId, QueryParams, useCalls, useEthers } from "@usedapp/core";
 import { BigNumber } from "ethers";
 import { first } from "lodash";
-import { useEffect, useMemo, useState } from "react";
-import { noop } from "lodash";
+import { useState, useEffect, useMemo, useRef } from "react";
+import { AsyncStorage } from "../storage";
 import usePromise from "react-use-promise";
 
 import { EnvKey } from "../base/sdk";
@@ -13,13 +12,15 @@ import { ClaimSDK } from "./sdk";
 
 import useRefreshOrNever from "../../hooks/useRefreshOrNever";
 import { useGetContract, useGetEnvChainId, useReadOnlySDK, useSDK } from "../base/react";
-import { Envs, SupportedChains } from "../constants";
+import { Envs, SupportedChains, SupportedV2Networks } from "../constants";
+import { noop } from "lodash";
+import { useContractFunctionWithDefaultGasFees } from "../base/hooks/useGasFees";
 
-export const useFVLink = () => {
-  const { chainId } = useGetEnvChainId();
-  const sdk = useSDK(false, "claim", chainId) as ClaimSDK;
+export const useFVLink = (chainId?: number) => {
+  const { chainId: defaultChainId } = useGetEnvChainId();
+  const sdk = useSDK(false, "claim", chainId ?? defaultChainId) as ClaimSDK;
 
-  return useMemo(() => sdk?.getFVLink(), [sdk]);
+  return useMemo(() => sdk?.getFVLink(chainId), [sdk, chainId]);
 };
 
 export const useIsAddressVerified = (address: string, env?: EnvKey) => {
@@ -29,6 +30,7 @@ export const useIsAddressVerified = (address: string, env?: EnvKey) => {
     if (address && sdk) return sdk.isAddressVerified(address);
     return Promise.resolve(undefined);
   }, [address, env, sdk]);
+
   return result;
 };
 
@@ -40,7 +42,7 @@ export const useClaim = (refresh: QueryParams["refresh"] = "never") => {
 
   const ubi = useGetContract("UBIScheme", true, "claim", chainId) as UBIScheme;
   const identity = useGetContract("Identity", true, "claim", chainId) as IIdentity;
-  const claimCall = useContractFunction(ubi, "claim");
+  const claimCall = useContractFunctionWithDefaultGasFees(ubi, "claim");
 
   const results = useCalls(
     [
@@ -66,7 +68,7 @@ export const useClaim = (refresh: QueryParams["refresh"] = "never") => {
           method: "checkEntitlement(address)",
           args: [account]
         }
-    ].filter(_ => _),
+    ],
     { refresh: refreshOrNever, chainId }
   );
 
@@ -80,19 +82,43 @@ export const useClaim = (refresh: QueryParams["refresh"] = "never") => {
 
   return {
     isWhitelisted: first(results[0]?.value) as boolean,
-    claimAmount: (first(results[3]?.value) as BigNumber) || BigNumber.from("0"),
+    claimAmount: (first(results[3]?.value) as BigNumber) || undefined,
     claimTime: startRef,
     claimCall
   };
 };
 
+export const useHasClaimed = (requiredNetwork: keyof typeof SupportedV2Networks): boolean => {
+  const { account } = useEthers();
+  const ubi = useGetContract("UBIScheme", true, "claim", SupportedV2Networks[requiredNetwork]) as UBIScheme;
+
+  const [hasClaimed] = useCalls(
+    [
+      {
+        contract: ubi,
+        method: "checkEntitlement(address)",
+        args: [account]
+      }
+    ],
+    { refresh: "never", chainId: SupportedV2Networks[requiredNetwork] as unknown as ChainId }
+  );
+
+  return first(hasClaimed?.value) as boolean;
+};
+
 // if user is verified on fuse and not on current network then send backend request to whitelist
+let syncInProgress = false;
 export const useWhitelistSync = () => {
   const [syncStatus, setSyncStatus] = useState<Promise<boolean> | undefined>();
   const { baseEnv } = useGetEnvChainId();
   const { account, chainId } = useEthers();
   const identity = useGetContract("Identity", true, "claim", SupportedChains.FUSE) as IIdentity;
   const identity2 = useGetContract("Identity", true, "claim", chainId) as IIdentity;
+  const baseEnvRef = useRef<typeof baseEnv>();
+
+  useEffect(() => {
+    baseEnvRef.current = baseEnv;
+  }, [baseEnv]);
 
   const [fuseResult] = useCalls(
     [
@@ -115,15 +141,24 @@ export const useWhitelistSync = () => {
     ].filter(_ => _.contract && chainId != SupportedChains.FUSE),
     { refresh: "never", chainId }
   );
-
   useEffect(() => {
     const whitelistSync = async () => {
       const isSynced = await AsyncStorage.getItem(`${account}-whitelistedSync`);
 
-      console.log("syncWhitelist", { account, baseEnv, isSynced, fuseResult, otherResult });
+      // not need for sync when already synced or user whitelisted on both chains
+      if (isSynced || (first(fuseResult?.value) && first(otherResult?.value))) {
+        return setSyncStatus(Promise.resolve(true));
+      }
 
-      if (!isSynced && fuseResult?.value[0] && otherResult?.value[0] === false) {
-        const { backend } = Envs[baseEnv];
+      // already sent sync request
+      if (syncInProgress) return;
+
+      // if whitelisted on fuse but not on celo then sync
+      if (first(fuseResult?.value) && first(otherResult?.value) === false) {
+        syncInProgress = true;
+        const { current: baseEnv } = baseEnvRef;
+        const devEnv = baseEnvRef.current === "fuse" ? "development" : baseEnv;
+        const { backend } = Envs[devEnv as keyof typeof Envs];
 
         setSyncStatus(
           fetch(backend + `/syncWhitelist/${account}`)
@@ -138,7 +173,10 @@ export const useWhitelistSync = () => {
               }
             })
             .catch(() => false)
+            .finally(() => (syncInProgress = false))
         );
+      } else {
+        setSyncStatus(Promise.resolve(false));
       }
     };
 
@@ -146,8 +184,8 @@ export const useWhitelistSync = () => {
   }, [fuseResult, otherResult, account, setSyncStatus]);
 
   return {
-    fuseWhitelisted: fuseResult?.value as boolean,
-    currentWhitelisted: otherResult?.value as boolean,
+    fuseWhitelisted: first(fuseResult?.value) as boolean,
+    currentWhitelisted: first(otherResult?.value) as boolean,
     syncStatus
   };
 };

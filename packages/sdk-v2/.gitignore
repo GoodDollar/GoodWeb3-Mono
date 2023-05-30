@@ -4,5 +4,6 @@ node_modules
 .yalc
 types
 tsconfig.tsbuildinfo
+tsconfig.release.tsbuildinfo
 yalc.lock
 storybook-static

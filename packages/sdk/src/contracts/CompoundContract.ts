@@ -1,8 +1,8 @@
-import Web3 from "web3"
-import { Contract } from "web3-eth-contract"
-import { AbiItem } from "web3-utils"
+import Web3 from "web3";
+import { Contract } from "web3-eth-contract";
+import { AbiItem } from "web3-utils";
 
-import CDAIAbi from "abi/CDAI.json"
+import CDAIAbi from "abi/CDAI.json";
 
 /**
  * Returns instance of compound contract.
@@ -11,5 +11,5 @@ import CDAIAbi from "abi/CDAI.json"
  * @constructor
  */
 export async function compoundContract(web3: Web3, address: string): Promise<Contract> {
-  return new web3.eth.Contract(CDAIAbi as AbiItem[], address)
+  return new web3.eth.Contract(CDAIAbi as AbiItem[], address);
 }

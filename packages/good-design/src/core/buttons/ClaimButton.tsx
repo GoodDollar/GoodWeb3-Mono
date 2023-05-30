@@ -1,28 +1,106 @@
 import React, { useEffect, useCallback, useMemo, useState } from "react";
-import { SupportedChains, useClaim } from "@gooddollar/web3sdk-v2";
-import { Text, View, Spinner, useColorModeValue } from "native-base";
-
+import { SupportedChains, useClaim, useGetEnvChainId, useWhitelistSync, G$Amount } from "@gooddollar/web3sdk-v2";
+import { Text, View, useColorModeValue, Box, Link, HStack } from "native-base";
 import { useQueryParam } from "../../hooks/useQueryParam";
 import { Web3ActionButton } from "../../advanced";
 import { useFVModalAction } from "../../hooks/useFVModalAction";
-import ActionButton from "./ActionButton";
 import { useModal } from "../../hooks/useModal";
 import { Title } from "../layout";
 import { FVFlowProps } from "./types";
-import { noop } from "lodash";
 import { Image } from "../images";
-import ClaimImage from "../../assets/images/claim.png";
+import FirstClaimYay from "../../assets/images/yay.png";
+import SocialShare from "../../assets/images/social_share.png";
 import { BasicModalProps } from "../modals/BasicModal";
+import { noop, isNil } from "lodash";
+import { useEthers } from "@usedapp/core";
+import ArrowButton from "./ArrowButton";
+import TwitterIcon from "../../assets/svg/twitter.svg";
+import LinkedInIcon from "../../assets/svg/linkedin.svg";
+import FbIcon from "../../assets/svg/facebook.svg";
+import SocialsLink from "./SocialLink";
+import LearnButton from "./LearnButton";
 
-const ClaimButton = ({ firstName, method, refresh, claimed, claim, ...props }: FVFlowProps) => {
-  const { Modal: FirstClaimModal, showModal: showFirstClaimModal } = useModal();
+const ClaimButton = ({
+  firstName,
+  method,
+  refresh,
+  claimed,
+  claiming,
+  claim,
+  chainId,
+  handleConnect,
+  onEvent,
+  redirectUrl,
+  ...props
+}: FVFlowProps) => {
+  const { account } = useEthers();
+  const { Modal: FinalizationModal, showModal: showFinalizationModal } = useModal();
   const { Modal: ActionModal, showModal: showActionModal, hideModal: hideActionModal } = useModal();
-  const { Modal: FVModal, showModal: showFVModal, hideModal: hideFVModal } = useModal();
-  const { loading, verify } = useFVModalAction({ firstName, method, onClose: hideFVModal });
+  const [claimConfirming, setClaimConfirming] = useState<boolean | undefined>(undefined);
+  const [whitelistLoading, setWhitelistLoading] = useState(false);
+
+  const { loading, verify } = useFVModalAction({
+    firstName,
+    method,
+    chainId,
+    onClose: hideActionModal,
+    redirectUrl
+  });
+
   const { isWhitelisted, claimAmount } = useClaim(refresh);
   const [firstClaim, setFirstClaim] = useState(false);
   const isVerified = useQueryParam("verified", true);
-  const textColor = useColorModeValue("paragraph", "white");
+  const textColor = useColorModeValue("goodGrey.500", "white");
+  const { chainId: defaultChainId, defaultEnv } = useGetEnvChainId();
+  const { fuseWhitelisted, syncStatus } = useWhitelistSync();
+
+  const actionModalBody = useMemo(
+    () => ({
+      verify: {
+        header: (
+          <>
+            <Title fontSize="xl" mb="2" lineHeight="43px">
+              Verify Uniqueness
+            </Title>
+            <Text color={textColor} fontSize="sm" fontFamily="subheading">
+              You're almost there! To claim G$, you need to be a unique human and prove it with your camera.
+            </Text>
+            <Link
+              _text={{ color: "main" }}
+              mt="10"
+              href="https://www.notion.so/gooddollar/Get-G-873391f31aee4a18ab5ad7fb7467acb3"
+            >
+              Learn more about the identification process.
+            </Link>
+          </>
+        ),
+        body:
+          loading || claimConfirming || claiming ? (
+            <LearnButton source={claiming ? "transactions" : "signing"} />
+          ) : (
+            <>
+              <Text color={textColor} mb="2" fontFamily="subheading" fontSize="sm">
+                Verifying your identity is easy. You'll be asked to sign with your wallet.
+              </Text>
+              <Text color={textColor} mb="2" fontFamily="subheading" fontSize="sm">
+                Don't worry, no link is kept between your identity record and your wallet address.
+              </Text>
+            </>
+          ),
+        footer: (
+          <View justifyContent="center" width="full" flexDirection="row">
+            <ArrowButton
+              px="6px"
+              text={"VERIFY I'M HUMAN"}
+              onPress={verify}
+              textInteraction={{ hover: { color: "white" } }}
+            />
+          </View>
+        )
+      }
+    }),
+    [textColor, verify, loading, claimConfirming, claiming]
+  );
 
   const claimModalProps: Omit<BasicModalProps, "modalVisible"> = useMemo(
     () =>
@@ -30,146 +108,208 @@ const ClaimButton = ({ firstName, method, refresh, claimed, claim, ...props }: F
         ? {
             header: (
               <>
-                <Title mb="2">Your first claim is ready!</Title>
-                <Text color={textColor} fontSize="md">
-                  To complete it, sign in your wallet
+                <Title fontSize="2xl" mb="2" lineHeight="43px">
+                  Your G$ tokens are ready!
+                </Title>
+                <Text color={textColor} fontSize="sm">
+                  To claim, confirm the transaction in your wallet
                 </Text>
               </>
             ),
-            // body: <Image source={ClaimImage} w="full" h="auto" />,
-            body: <></>,
+            body: (
+              <Box display="flex" justifyContent="center" alignItems="center">
+                <Image source={FirstClaimYay} w="220px" h="180px" />
+              </Box>
+            ),
             closeText: "",
+            hasTopBorder: false,
+            hasBottomBorder: false
+          }
+        : {
+            header:
+              loading || claimConfirming ? (
+                <Box backgroundColor={"white"}>
+                  <Title fontSize="xl" mb="2" fontWeight="bold" lineHeight="36px">
+                    Action Required
+                  </Title>
+                  <Text color={textColor} fontFamily="subheading" fontWeight="normal" fontSize="md">
+                    To complete this action, continue in your wallet.
+                  </Text>
+                </Box>
+              ) : (
+                actionModalBody.verify.header
+              ),
+            body: actionModalBody.verify.body,
+            footer: isWhitelisted || loading || claimConfirming ? undefined : actionModalBody.verify.footer,
+            closeText: "x",
+            hasBottomBorder: false
+          },
+    [firstClaim, textColor, loading, isWhitelisted, claimConfirming, actionModalBody]
+  );
+
+  const finalModalProps: Omit<BasicModalProps, "modalVisible"> = useMemo(
+    () =>
+      claimed && isWhitelisted
+        ? {
+            header: (
+              <>
+                <Title mb="2" fontSize="xl" lineHeight="36px">
+                  Congrats! You claimed G$ today
+                </Title>
+                <Text color={textColor} fontSize="sm">
+                  Why not tell your friends on social media?
+                </Text>
+                <Text color="primary" fontSize="sm">
+                  Don't forget to tag us.
+                </Text>
+                <Box display="flex" flexDir="row" justifyContent="center" alignItems="center" mt="5">
+                  <HStack space={10}>
+                    <SocialsLink network="facebook" logo={FbIcon} url="https://facebook.com" />
+                    <SocialsLink network="twitter" logo={TwitterIcon} url="https://twitter.com/gooddollarorg" />
+                    <SocialsLink network="linkedin" logo={LinkedInIcon} url="https://linkedin.com/" />
+                  </HStack>
+                </Box>
+              </>
+            ),
+            body: (
+              <Box display="flex" justifyContent="center" alignItems="center">
+                <Image source={SocialShare} w="100px" h="100px" style={{ resizeMode: "contain" }} />
+              </Box>
+            ),
+            closeText: "x",
             hasTopBorder: false,
             hasBottomBorder: false
           }
         : {
             header: (
               <>
-                <Title mb="2">Action Required</Title>
-                <Text color={textColor} fontSize="md">
-                  To complete this action, sign in your wallet.
+                <Title mb="2" color="main" fontSize="xl" lineHeight="36px">
+                  Waiting for confirmation
+                </Title>
+                <Text color={textColor} fontSize="sm">
+                  Please wait for the transaction to be validated.
                 </Text>
               </>
             ),
-            body: (
-              <>
-                <Text color={textColor} fontSize="sm" fontWeight="medium">
-                  Watch this video to learn more about signing transactions.
-                </Text>
-                <Image source={ClaimImage} w="full" h="auto" />
-              </>
-            ),
-            closeText: "",
+            body: actionModalBody.verify.body,
+            closeText: "x",
+            hasTopBorder: false,
             hasBottomBorder: false
           },
-    [firstClaim, textColor]
-  );
-
-  const handleClaimCall = useCallback(
-    async (first = false) => {
-      setFirstClaim(first);
-      showActionModal();
-
-      try {
-        const success = await claim();
-        if (success !== true || first === false) return;
-
-        showFirstClaimModal();
-      } finally {
-        hideActionModal();
-      }
-    },
-    [claim, hideActionModal, showFirstClaimModal]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [claimed, isWhitelisted, claiming, textColor]
   );
 
   const handleClaim = useCallback(async () => {
-    if (isWhitelisted) {
-      await handleClaimCall();
-      return;
+    try {
+      const success = await claim();
+      if (success !== true) {
+        return;
+      }
+    } finally {
+      hideActionModal();
     }
+  }, [claim, hideActionModal]);
 
-    showFVModal();
-  }, [isWhitelisted, handleClaimCall, showFVModal]);
+  const handleModalOpen = useCallback(
+    async (first = false) => {
+      if (isNil(isWhitelisted)) {
+        // no value for isWhitelisted means we are not having a established connection to bc yet but should expect soon, handled by useEffect
+        setWhitelistLoading(true);
+        return;
+      }
+
+      setFirstClaim(first);
+      // we set claimLoading here because it only updates state-vars after current callback or effect has completed
+      // which is why it cannot be set in the handleClaim callback as it would be set too late
+      setClaimConfirming(true);
+      showActionModal();
+
+      if (isWhitelisted) {
+        await handleClaim();
+        return;
+      } else {
+        // means we no longer are expecting a claimCall and actionModal should show default verify uniqueness message
+        setClaimConfirming(false);
+      }
+
+      if (fuseWhitelisted && syncStatus) {
+        const success = await syncStatus;
+
+        if (!success) {
+          return;
+        }
+
+        await handleClaim();
+      }
+    },
+    [isWhitelisted, fuseWhitelisted, syncStatus, setWhitelistLoading, handleClaim, showActionModal]
+  );
 
   const buttonTitle = useMemo(() => {
-    if (!isWhitelisted) {
-      return "VERIFY UNIQUENESS";
+    if (!isWhitelisted || !claimAmount) {
+      return "CLAIM NOW";
     }
 
-    return "CLAIM NOW";
-  }, [isWhitelisted]);
+    const amount = G$Amount("G$", claimAmount, chainId ?? defaultChainId, defaultEnv);
 
+    return "CLAIM NOW " + amount.format({ fixedPrecisionDigits: 2, useFixedPrecision: true, significantDigits: 2 });
+  }, [isWhitelisted, chainId, claimAmount, defaultChainId, defaultEnv]);
+
+  // handles a delay in fetching isWhitelisted after just being connected
   useEffect(() => {
-    if (isVerified !== true || claimed || isWhitelisted === false || claimAmount.toNumber() <= 0) {
-      return;
+    if (whitelistLoading) {
+      // making sure it only runs once (is set after useEffect completes)
+      setWhitelistLoading(false);
+      handleModalOpen().catch(noop);
     }
+  }, [/* used */ isWhitelisted, whitelistLoading, setWhitelistLoading, handleModalOpen]);
 
-    handleClaimCall(true).catch(noop);
-  }, [isVerified, claimed, isWhitelisted, claimAmount, handleClaimCall]);
+  // temporary transaction status check, to trigger final 2 modals: Awaiting validation + Social Share
+  // will be replaced with solution to issue: https://github.com/GoodDollar/GoodProtocolUI/issues/365
+  // which should handle tx-statuses and confirm modals more globally
+  useEffect(() => {
+    if (claiming) {
+      hideActionModal();
+      showFinalizationModal();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [claiming]);
 
-  if (isWhitelisted && claimed) {
-    return (
-      <FirstClaimModal
-        header={
-          <>
-            <Title mb="2">Yay! You've made your first claim.</Title>
-            <Text color={textColor}>Check out how you can use your GoodDollars:</Text>
-          </>
-        }
-        body={<Image source={ClaimImage} w="full" h="auto" />}
-        closeText=""
-        hasTopBorder={false}
-        hasBottomBorder={false}
-      />
-    );
+  // trigger claim when user succesfully has verified through FV
+  // uses the first claimer flow
+  useEffect(() => {
+    const doClaim = async () => {
+      if (isVerified && account) {
+        setFirstClaim(true);
+        showActionModal();
+        setClaimConfirming(true);
+        await handleClaim();
+      }
+    };
+
+    if (claimed === false && claimConfirming === undefined) doClaim().catch(noop);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isVerified, account, claimed, showActionModal, claimConfirming]);
+
+  if (isWhitelisted && (claimed || claiming)) {
+    return <FinalizationModal {...finalModalProps} />;
   }
 
   return (
     <View flex={1} w="full" {...props}>
-      <View w="full" alignItems="center" pt="12" pb="12">
+      <View w="full" alignItems="center" pt="8" pb="8">
         <Web3ActionButton
           text={buttonTitle}
-          requiredChain={SupportedChains.FUSE}
-          web3Action={handleClaim}
-          w="56"
-          h="56"
-          px="2.5"
-          borderRadius="50%"
-          bg="buttonBackground"
+          web3Action={handleModalOpen}
           disabled={claimed}
-          innerText={{style: {fontWeight: "bold"}, fontFamily: "body"}}
+          variant="round"
+          supportedChains={[SupportedChains.CELO, SupportedChains.FUSE]}
+          handleConnect={handleConnect}
+          onEvent={onEvent}
         />
+        <Text variant="shadowed" fontSize="md" />
       </View>
-
-      <FVModal
-        header={<Title>Verify Uniqueness</Title>}
-        body={
-          <>
-            <Text color={textColor} mb="2">
-              To verify your identity you need to sign TWICE with your wallet.
-            </Text>
-            <Text color={textColor} mb="2">
-              First sign your address to be whitelisted
-            </Text>
-            <Text color={textColor} mb="2">
-              Second sign your self sovereign anonymized identifier, so no link is kept between your identity record and
-              your address.
-            </Text>
-          </>
-        }
-        footer={
-          loading ? (
-            <Spinner />
-          ) : (
-            <View justifyContent="space-between" width="full" flexDirection="row">
-              <ActionButton text={"Verify Uniqueness"} onPress={verify} bg="main" />
-            </View>
-          )
-        }
-        closeText=""
-        hasTopBorder={false}
-        hasBottomBorder={false}
-      />
       <ActionModal {...claimModalProps} />
     </View>
   );

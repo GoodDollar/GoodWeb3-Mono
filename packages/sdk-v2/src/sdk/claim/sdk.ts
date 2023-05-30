@@ -1,5 +1,5 @@
 import { BigNumber } from "ethers";
-import { invokeMap, pickBy } from "lodash";
+import { invokeMap, forIn } from "lodash";
 import { BaseSDK } from "../base/sdk";
 
 const DAY = 1000 * 60 * 60 * 24;
@@ -13,16 +13,17 @@ You can use this identifier in the future to delete this anonymized record.
 WARNING: do not sign this message unless you trust the website/application requesting this signature.`;
 
 export class ClaimSDK extends BaseSDK {
-  async generateFVLink(firstName: string, callbackUrl?: string, popupMode = false) {
-    const steps = this.getFVLink();
+  async generateFVLink(firstName: string, callbackUrl?: string, popupMode = false, chainId?: number) {
+    const steps = this.getFVLink(chainId);
 
-    await steps.getLoginSig();
     await steps.getFvSig();
+
     return steps.getLink(firstName, callbackUrl, popupMode);
   }
 
-  getFVLink() {
+  getFVLink(chainId?: number) {
     let loginSig: string, fvSig: string, nonce: string, account: string;
+    const defaultChainId = chainId;
     const { env, provider } = this;
     const signer = provider.getSigner();
     const { identityUrl } = env;
@@ -41,35 +42,45 @@ export class ClaimSDK extends BaseSDK {
       return fvSig;
     };
 
-    const getLink = (firstName: string, callbackUrl?: string, popupMode = false) => {
+    const getLink = (
+      firstName: string,
+      callbackUrl?: string,
+      popupMode = false,
+      chainId: number | undefined = defaultChainId
+    ) => {
       if (!fvSig) {
         throw new Error("missing login or identifier signature");
       }
-
-      const params = new URLSearchParams(
-        pickBy({
-          account,
-          nonce,
-          fvsig: fvSig,
-          firstname: firstName,
-          sg: loginSig
-        })
-      );
 
       if (popupMode === false && !callbackUrl) {
         throw new Error("redirect url is missing for redirect mode");
       }
 
+      const url = new URL(identityUrl);
+      const { searchParams } = url;
+
+      const params = {
+        account,
+        nonce,
+        fvsig: fvSig,
+        firstname: firstName,
+        sg: loginSig,
+        chain: chainId
+      };
+
+      forIn(params, (value, param) => {
+        if (!value) {
+          return;
+        }
+
+        searchParams.append(param, String(value));
+      });
+
       if (callbackUrl) {
-        params.append(popupMode ? "cbu" : "rdu", callbackUrl);
+        searchParams.append(popupMode ? "cbu" : "rdu", callbackUrl);
       }
 
-      const url = new URL(identityUrl);
-      console.log("fv url test", { url, params });
-      url.search = params.toString();
-      const decodeTest = decodeURIComponent(url.href);
-      console.log("decoding test", { decodeTest });
-      return decodeURIComponent(url.href);
+      return url.toString();
     };
 
     return { getLoginSig, getFvSig, getLink };
@@ -110,9 +121,9 @@ export class ClaimSDK extends BaseSDK {
     return startRef;
   }
 
-  async claim() {
+  async claim(txOverrides?: object) {
     const ubi = this.getContract("UBIScheme");
 
-    return ubi.claim();
+    return ubi.claim(txOverrides);
   }
 }

@@ -50,7 +50,7 @@ jobs:
       - name: "build"
         run: |
           yarn workspace @gooddollar/good-design install --immutable
-          yarn workspace @gooddollar/good-design build
+          yarn workspace @gooddollar/good-design build:release
 
       - name: "npm publish"
         working-directory: ./packages/good-design

@@ -1,15 +1,15 @@
-import { useContext, useState } from "react";
-import { Signer, providers } from "ethers";
+import { useContext, useMemo, useState } from "react";
+import { Signer, providers, BigNumber } from "ethers";
 import { BaseSDK, EnvKey, EnvValue } from "./sdk";
-import { Web3Context } from "../../contexts";
-import { QueryParams, useCalls, useEthers, CurrencyValue, Currency, Token, ChainId } from "@usedapp/core";
+import { TokenContext, Web3Context } from "../../contexts";
+import { QueryParams, useCalls, useEthers, ChainId, CurrencyValue } from "@usedapp/core";
 import { ClaimSDK } from "../claim/sdk";
 import { SavingsSDK } from "../savings/sdk";
 import Contracts from "@gooddollar/goodprotocol/releases/deployment.json";
 import { useReadOnlyProvider } from "../../hooks/useMulticallAtChain";
 import useUpdateEffect from "../../hooks/useUpdateEffect";
 import { useRefreshOrNever } from "../../hooks";
-import { SupportedChains, G$ContractAddresses, G$Balances } from "../constants";
+import { SupportedChains, G$Balances, G$Tokens, G$Token, G$Amount } from "../constants";
 import { GoodReserveCDai, GReputation, IGoodDollar } from "@gooddollar/goodprotocol/types";
 
 export const NAME_TO_SDK: { [key: string]: typeof ClaimSDK | typeof SavingsSDK | typeof BaseSDK } = {
@@ -45,7 +45,7 @@ export const useGetEnvChainId = (requiredChainId?: number) => {
   }
 
   const defaultEnv = connectedEnv;
-  
+
   return {
     chainId: Number((Contracts[defaultEnv as keyof typeof Contracts] as EnvValue)?.networkId),
     defaultEnv,
@@ -98,8 +98,14 @@ function sdkFactory(
     provider = roLibrary;
   }
 
-  if (!provider) {
-    console.error("Error detecting readonly urls from config");
+  if (!provider && readOnly) {
+    // the only reason why there is no provider when a read-only one is requested is because there
+    // are no read-only urls set for the chain data is requested from
+    console.error("No read-only provider could be found", { type });
+  }
+
+  if (!provider && !readOnly) {
+    console.warn("Need a connected wallet for non-readonly sdk initializations", { type });
     return;
   }
 
@@ -140,31 +146,59 @@ export const useSDK = (
   return sdk;
 };
 
-/* Not sure about placement of this hook, use base for now */
+export function useG$Tokens(requiredChainId?: number) {
+  const { chainId, defaultEnv } = useGetEnvChainId(requiredChainId);
+  const decimals = useContext(TokenContext);
 
-export function useG$Tokens() {
-  const { chainId, defaultEnv, baseEnv } = useGetEnvChainId();
-  const g$ = G$ContractAddresses("GoodDollar", defaultEnv) as string;
-  const good = G$ContractAddresses("GReputation", defaultEnv) as string;
-  const gdx = G$ContractAddresses("GoodReserveCDai", baseEnv + "-mainnet") as string;
+  const tokens = useMemo(
+    () => G$Tokens.map(token => G$Token(token, chainId, defaultEnv, decimals)),
+    [chainId, defaultEnv, decimals]
+  );
 
-  return {
-    g$: new Token("GoodDollar", "G$", chainId, g$, 2),
-    good: new Token("GDAO", "GOOD", chainId, good, 18),
-    gdx: new Token("GoodDollar X", "G$X", SupportedChains.MAINNET, gdx, 2)
-  };
+  return tokens;
 }
 
-export function useG$Balance(refresh: QueryParams["refresh"] = "never") {
+export function useG$Amount(value?: BigNumber, token: G$Token = "G$", requiredChainId?: number): CurrencyValue {
+  const { chainId, defaultEnv } = useGetEnvChainId(requiredChainId);
+  const decimals = useContext(TokenContext);
+
+  return G$Amount(token, value || BigNumber.from("0"), chainId, defaultEnv, decimals);
+}
+
+export function useG$Formatted(
+  value?: BigNumber,
+  token: G$Token = "G$",
+  requiredChainId?: number,
+  formatOptions?: any
+): string {
+  const { chainId, defaultEnv } = useGetEnvChainId(requiredChainId);
+  const decimals = useContext(TokenContext);
+
+  return G$Amount(token, value || BigNumber.from("0"), chainId, defaultEnv, decimals).format(formatOptions);
+}
+
+export function useG$Decimals(token: G$Token = "G$", requiredChainId?: number): number {
+  const { chainId } = useGetEnvChainId(requiredChainId);
+  const decimals = useContext(TokenContext)[token];
+
+  switch (token) {
+    case "GDX":
+      return decimals[SupportedChains.MAINNET] || 2;
+    default:
+      return decimals[chainId];
+  }
+}
+
+export function useG$Balance(refresh: QueryParams["refresh"] = "never", requiredChainId?: number) {
   const refreshOrNever = useRefreshOrNever(refresh);
   const { account } = useEthers();
-
-  const { chainId } = useGetEnvChainId();
-  const { g$, good, gdx } = useG$Tokens();
+  const { chainId } = useGetEnvChainId(requiredChainId);
 
   const g$Contract = useGetContract("GoodDollar", true, "base") as IGoodDollar;
   const goodContract = useGetContract("GReputation", true, "base") as GReputation;
   const gdxContract = useGetContract("GoodReserveCDai", true, "base", 1) as GoodReserveCDai;
+
+  const { MAINNET } = SupportedChains;
 
   const results = useCalls(
     [
@@ -192,38 +226,23 @@ export function useG$Balance(refresh: QueryParams["refresh"] = "never") {
         method: "balanceOf",
         args: [account]
       }
-    ].filter(_ => _.contract && chainId == SupportedChains.MAINNET),
-    { refresh: refreshOrNever, chainId: SupportedChains.MAINNET as unknown as ChainId }
+    ].filter(_ => _.contract && chainId == MAINNET),
+    { refresh: refreshOrNever, chainId: MAINNET as unknown as ChainId }
   );
 
+  const [g$Value, goodValue, gdxValue] = [...results, mainnetGdx].map(
+    result => result?.value?.[0] as BigNumber | undefined
+  );
+
+  const g$Balance = useG$Amount(g$Value) as CurrencyValue;
+  const goodBalance = useG$Amount(goodValue, "GOOD") as CurrencyValue;
+  const gdxBalance = useG$Amount(gdxValue, "GDX") as CurrencyValue;
+
   const balances: G$Balances = {
-    G$: undefined,
-    GOOD: undefined,
-    GDX: undefined
+    G$: g$Balance,
+    GOOD: goodBalance,
+    GDX: gdxBalance
   };
-
-  if (!results.includes(undefined) && !results[0]?.error) {
-    const g$Balance = {
-      amount: CurrencyValue.fromString(g$, results[0]?.value[0].toString()),
-      token: new Currency("GoodDollar", "G$", 2)
-    };
-
-    const goodBalance = {
-      amount: CurrencyValue.fromString(good, results[1]?.value[0].toString()),
-      token: new Currency("GDAO", "GOOD", 18)
-    };
-    balances.G$ = g$Balance;
-    balances.GOOD = goodBalance;
-  }
-
-  if (mainnetGdx) {
-    const gdxBalance = {
-      amount: CurrencyValue.fromString(gdx, mainnetGdx.value[0].toString()),
-      token: new Currency("G$X", "GDX", 2)
-    };
-
-    balances.GDX = gdxBalance;
-  }
 
   return balances;
 }

@@ -1,32 +1,31 @@
 import {
-  G$,
-  SupportedChains, useBridge,
-  useBridgeHistory, useGetBridgeData, useGetEnvChainId,
-  useRefreshOrNever, useRelayTx,
+  SupportedChains,
+  useBridge,
+  useBridgeHistory,
+  useG$Balance,
+  useGetBridgeData,
+  useGetEnvChainId,
+  useRefreshOrNever,
+  useRelayTx,
   useWithinBridgeLimits
 } from "@gooddollar/web3sdk-v2";
-import { useEthers, useTokenBalance } from "@usedapp/core";
-import { sortBy } from "lodash";
+
+import { useEthers } from "@usedapp/core";
+import { noop, sortBy } from "lodash";
 import { ArrowForwardIcon, Box, Button, Flex, Heading, HStack, Stack, Text } from "native-base";
-import React, { useCallback, useState } from "react";
+import React, { FC, useCallback, useState } from "react";
 import { ExplorerLink } from "../../core/web3/ExplorerLink";
 import { useSignWalletModal } from "../../hooks/useSignWalletModal";
 import { MicroBridge } from "./MicroBridge";
 
-export const useBalanceHook = (chain: string) => {
-  const env = useGetEnvChainId(chain === "fuse" ? SupportedChains.FUSE : SupportedChains.CELO);
-
+export const useBalanceHook = (chain: "fuse" | "celo") => {
   const refresh = useRefreshOrNever(12);
-  const { account } = useEthers();
-  const gdBalance = useTokenBalance(G$(env.chainId, env.defaultEnv).address, account, {
-    refresh,
-    chainId: env.chainId
-  });
+  const { G$ } = useG$Balance(refresh, chain === "fuse" ? SupportedChains.FUSE : SupportedChains.CELO);
 
-  return gdBalance?.toString() || "0";
+  return G$?.toString() ?? "0";
 };
 
-const useCanBridge = (chain: string, amountWei: string) => {
+const useCanBridge = (chain: "fuse" | "celo", amountWei: string) => {
   const { chainId } = useGetEnvChainId(chain === "fuse" ? SupportedChains.FUSE : SupportedChains.CELO);
   const { account } = useEthers();
   const canBridge = useWithinBridgeLimits(chainId, account || "", amountWei);
@@ -37,10 +36,7 @@ const useCanBridge = (chain: string, amountWei: string) => {
 const MicroBridgeHistory = () => {
   const { fuseHistory, celoHistory } = useBridgeHistory();
 
-  const historySorted = sortBy(
-    (fuseHistory?.value || []).concat(celoHistory?.value || []),
-    _ => _.data.from === "account"
-  );
+  const historySorted = sortBy((fuseHistory || []).concat(celoHistory || []), _ => _.data.from === "account");
 
   const relayTx = useRelayTx();
   const [relaying, setRelaying] = useState<{ [key: string]: boolean }>({});
@@ -122,7 +118,7 @@ const MicroBridgeHistory = () => {
             <ExplorerLink chainId={i.data.targetChainId.toNumber() === 122 ? 42220 : 122} addressOrTx={i.data.to} />
           </Flex>
           <Flex flex={["1 1", "1 1", "1 0"]} maxWidth="100%">
-            <Text>{i.data.amount.toNumber() / 100} G$</Text>
+            <Text>{i.amount} G$</Text>
           </Flex>
           <Flex flex={["1 1", "1 1", "1 0"]} maxWidth="100%">
             {(i as any).relayEvent ? (
@@ -143,7 +139,19 @@ const MicroBridgeHistory = () => {
   );
 };
 
-export const MicroBridgeController = ({ withRelay = false }) => {
+interface IMicroBridgeControllerProps {
+  withRelay?: boolean;
+  onBridgeStart?: () => void;
+  onBridgeSuccess?: () => void;
+  onBridgeFailed?: (e: Error) => void;
+}
+
+export const MicroBridgeController: FC<IMicroBridgeControllerProps> = ({
+  withRelay = false,
+  onBridgeStart = noop,
+  onBridgeSuccess = noop,
+  onBridgeFailed = noop
+}: IMicroBridgeControllerProps) => {
   const { sendBridgeRequest, bridgeRequestStatus, relayStatus, selfRelayStatus } = useBridge();
   const { bridgeFees: fuseBridgeFees, bridgeLimits: fuseBridgeLimits } = useGetBridgeData(SupportedChains.FUSE, "");
   const { bridgeFees: celoBridgeFees, bridgeLimits: celoBridgeLimits } = useGetBridgeData(SupportedChains.CELO, "");
@@ -160,6 +168,9 @@ export const MicroBridgeController = ({ withRelay = false }) => {
         selfRelayStatus={selfRelayStatus}
         limits={{ fuse: fuseBridgeLimits, celo: celoBridgeLimits }}
         fees={{ fuse: fuseBridgeFees, celo: celoBridgeFees }}
+        onBridgeStart={onBridgeStart}
+        onBridgeSuccess={onBridgeSuccess}
+        onBridgeFailed={onBridgeFailed}
       />
       {withRelay && <MicroBridgeHistory />}
       <SignWalletModal txStatus={bridgeRequestStatus.status} />

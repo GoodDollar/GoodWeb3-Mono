@@ -10,7 +10,7 @@ export interface BaseButtonProps extends IButtonProps {
    * a text to be rendered in the component.
    */
   text: string;
-  onPress: () => void;
+  onPress?: () => void;
   innerText?: ITextProps;
   innerView?: IViewProps;
   children?: any;
@@ -19,7 +19,7 @@ export interface BaseButtonProps extends IButtonProps {
 
 const BaseButton = withTheme({ name: "BaseButton" })(
   ({ text, innerText, innerView, onPress, children, ...props }: BaseButtonProps) => (
-    <Button onPress={onPress} maxWidth="750px" px={100} {...props}>
+    <Button onPress={onPress} px={100} {...props}>
       <View {...innerView}>
         <Text {...innerText}>{text}</Text>
         {children}
@@ -35,6 +35,7 @@ export const theme = {
     const [bg, bgHover] = colorModeValue(colors, [...colors].reverse());
 
     return {
+      maxWidth: 750,
       bg,
       _hover: {
         bg: bgHover

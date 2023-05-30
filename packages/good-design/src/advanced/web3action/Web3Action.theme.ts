@@ -1,8 +1,13 @@
 export const StepIndicator = {
   baseStyle: {
-    color: "primary.500",
+    color: "primary",
     fontSize: "md"
   }
+};
+
+const interactionStyles = {
+  backgroundColor: "primaryHoverDark",
+  transition: "background 0.25s"
 };
 
 export const Web3ActionButton = {
@@ -14,7 +19,65 @@ export const Web3ActionButton = {
     },
     innerIndicatorText: {
       color: "white",
-      fontSize: "sm"
+      fontSize: "sm",
+      fontWeight: "bold"
     }
+  },
+  variants: {
+    round: () => ({
+      // return {
+      shadow: 2,
+      w: "220px",
+      h: "220px",
+      px: 2.5,
+      borderRadius: "50%",
+      bg: "main",
+      innerText: {
+        variant: "shadowed",
+        fontFamily: "body",
+        fontSize: "l",
+        width: 175,
+        lineHeight: 26.4
+      },
+      _hover: interactionStyles
+    }),
+    mobile: () => ({
+      backgroundColor: "primary",
+      width: "100%",
+      maxWidth: "none",
+      height: 75,
+      textAlign: "center",
+      justifyContent: "center",
+      alignItems: "center",
+      borderTopLeftRadius: 4,
+      borderTopRightRadius: 4,
+      py: 17,
+      pt: "20px",
+      transition: "background 0.25s",
+      _focus: interactionStyles,
+      _hover: interactionStyles,
+      innerText: {
+        fontSize: "md",
+        fontFamily: "subheading",
+        lineHeight: 25
+      }
+    }),
+    outlined: () => ({
+      backgroundColor: "white",
+      borderRadius: 15,
+      borderWidth: 1,
+      borderColor: "borderBlue",
+      width: 170,
+      height: 43,
+      padding: "12px 16px",
+      _focus: interactionStyles,
+      _hover: interactionStyles,
+      innerText: {
+        color: "main",
+        fontSize: "sm",
+        fontFamily: "subheading",
+        lineHeight: 19
+      }
+    })
   }
 };

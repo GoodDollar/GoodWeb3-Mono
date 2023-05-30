@@ -1,11 +1,13 @@
-import { FlatList, View, Box } from "native-base";
-import React, { FC, memo, useCallback, useState } from "react";
+import { FlatList, View, Box, useBreakpointValue, Pressable } from "native-base";
+import React, { FC, memo, useCallback, useState, useMemo, useRef, useEffect } from "react";
 import { LayoutChangeEvent, NativeScrollEvent, NativeSyntheticEvent } from "react-native";
 import { IClaimCard } from "../buttons";
 import ClaimCard from "./ClaimCard";
+import { isMobile } from "react-device-detect";
 
 interface ClaimCarouselProps {
   cards: Array<IClaimCard>;
+  claimed?: boolean;
 }
 
 interface SlideMarkProps {
@@ -18,61 +20,76 @@ const SlideMark: FC<SlideMarkProps> = memo(({ isActive, isLast }) => (
 ));
 
 const ClaimCardItem: FC<{ item: IClaimCard; index: number }> = ({ item, index }) => {
-  const isOdd = index % 2 === 0;
-  const backgroundColor = isOdd ? "greyCard" : "main";
-  const titleColor = isOdd ? "main" : "white";
-  const descriptionColor = isOdd ? "lightGrey" : "white";
-  return (
-    <ClaimCard
-      key={index}
-      titleColor={titleColor}
-      descriptionColor={descriptionColor}
-      backgroundColor={backgroundColor}
-      {...item}
-    />
-  );
+  return <ClaimCard key={index} {...item} />;
 };
 
-const SlidesComponent = memo(({ activeSlide, slidesNumber }: { activeSlide: number, slidesNumber: number }) => <>
-  {Array(slidesNumber)
-    .fill(0)
-    .map((_, index, arr) => (
-      <SlideMark key={index} isActive={index === activeSlide} isLast={index === arr.length - 1} />
-    ))}
-  </>
+const SlidesComponent = memo(
+  ({ activeSlide, slidesNumber, data }: { activeSlide: number; slidesNumber: number; data: IClaimCard[] }) => (
+    <>
+      {Array(slidesNumber)
+        .fill(0)
+        .map((_, index, arr) => (
+          <SlideMark key={data[index]?.id} isActive={index === activeSlide} isLast={index === arr.length - 1} />
+        ))}
+    </>
+  )
 );
-
 
 const getItemLayout = (_: IClaimCard[] | null | undefined, index: number) => ({
   index,
   length: 275,
-  offset: (275 + 20) * index
+  offset: (275 - 20) * index
 });
 
 const Separator = () => <View w="5" />;
 
-const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards }) => {
-  const [slidesNumber, setSlidesNumber] = useState(0);
+const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards, claimed }) => {
+  const [slidesNumber, setSlidesNumber] = useState(1);
   const [activeSlide, setActiveSlide] = useState(0);
+  const [activeContentWidth, setActiveContentWidth] = useState<string | number>("auto");
+  const flatListRef = useRef<any>();
+  const [layoutOffset, setLayoutOffset] = useState(0);
+
+  const activeCards = useMemo(() => cards.filter(card => !card.hide), [cards, claimed]);
+
+  const contentWidth = useBreakpointValue({
+    base: activeContentWidth,
+    xl: claimed ? "auto" : activeContentWidth
+  });
+
+  //start-hotfix: on mobile flatListLayout only updates on initial mount
+  // so we need to handle the slidesnumber change after claim sets manually
+  const updateSlidesNumber = useCallback(() => {
+    setSlidesNumber(activeCards.length);
+  }, [activeCards, claimed, slidesNumber]);
+
+  useEffect(() => {
+    if (isMobile) {
+      updateSlidesNumber();
+    }
+  }, [/* used */ claimed]);
+  // end-of-hotfix
 
   const onFlatListLayoutChange = useCallback(
     (event: LayoutChangeEvent) => {
-      const contentWidth = cards.length * 275 + (cards.length - 1) * 20;
-
-      if (event.nativeEvent.layout.width >= contentWidth) {
+      const contentWidth = activeCards.length * 275 + (activeCards.length - 1) * 20;
+      const layoutWidth = event.nativeEvent.layout.width;
+      setActiveContentWidth(contentWidth);
+      if (layoutWidth >= contentWidth) {
         setSlidesNumber(0);
         return;
       }
-
-      setSlidesNumber(Math.ceil(((contentWidth - event.nativeEvent.layout.width) + 36) / (275 + 20)));
+      const slides = isMobile ? activeCards.length : Math.ceil((contentWidth - layoutWidth + 36) / (275 + 20));
+      setSlidesNumber(slides);
     },
-    [cards, setSlidesNumber]
+    [activeCards, setSlidesNumber]
   );
 
   const onScroll = useCallback(
     (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-      const offSetX = event.nativeEvent.contentOffset.x
+      const offSetX = event.nativeEvent.contentOffset.x;
       const currentSlide = Math.floor(offSetX / (275 + (offSetX === 0 ? 20 : -20)));
+      setLayoutOffset(offSetX);
 
       if (activeSlide === currentSlide) return;
 
@@ -81,14 +98,41 @@ const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards }) => {
     [activeSlide, setActiveSlide]
   );
 
+  const clickAndSlide = useCallback(() => {
+    if (!flatListRef.current) {
+      return;
+    }
+
+    const isLast = activeSlide === slidesNumber - 1;
+    flatListRef.current.scrollToOffset({
+      animated: true,
+      index: isLast ? 0 : activeSlide + 1,
+      offset: isLast ? 0 : layoutOffset + 275
+    });
+  }, [activeSlide, flatListRef, onScroll, slidesNumber, layoutOffset, activeCards]);
+
+  const getFlatListRef = useCallback(
+    flatList => {
+      flatListRef.current = flatList;
+    },
+    [activeSlide, onScroll, clickAndSlide]
+  );
+
   return (
-    <Box w="310px">
+    <Box>
       <FlatList
-        data={cards}
+        _contentContainerStyle={{
+          width: contentWidth
+        }}
+        // @ts-ignore
+        ref={getFlatListRef}
+        data={activeCards}
         horizontal
         onScroll={onScroll}
         scrollEventThrottle={16}
-        mt="8"
+        initialScrollIndex={0}
+        h="425"
+        w="auto"
         showsHorizontalScrollIndicator={false}
         onLayout={onFlatListLayoutChange}
         getItemLayout={getItemLayout}
@@ -97,8 +141,17 @@ const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards }) => {
         pagingEnabled
       />
 
-      <View flexDirection="row" w="full" pt="5" justifyContent="center">
-        <SlidesComponent activeSlide={activeSlide} slidesNumber={slidesNumber} />
+      <View flexDirection="row" pt="5" justifyContent="center">
+        <Pressable
+          onPress={clickAndSlide}
+          flexDir="row"
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          height="15px"
+        >
+          <SlidesComponent data={activeCards} activeSlide={activeSlide} slidesNumber={slidesNumber} />
+        </Pressable>
       </View>
     </Box>
   );
