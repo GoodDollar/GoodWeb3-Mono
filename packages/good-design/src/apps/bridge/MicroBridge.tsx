@@ -206,6 +206,8 @@ export const MicroBridge = ({
   }, [relayStatus, bridgeStatus, selfRelayStatus, onBridgeSuccess, onBridgeFailed]);
 
   const { minAmountWei, expectedToReceive } = useBridgeEstimate({ limits, fees, inputWei, sourceChain });
+  const reasonMinAmount =
+    reason === "minAmount" ? " Minimum amount is " + Number(minAmountWei) / 1e2 + "G$" : undefined;
 
   return (
     <Box>
@@ -221,7 +223,7 @@ export const MicroBridge = ({
         </Flex>
         <FormControl isInvalid={!!reasonOf}>
           <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon variant="outline" />}>
-            {reasonOf}
+            {reasonMinAmount ?? reasonOf}
           </FormControl.ErrorMessage>
         </FormControl>
         <Flex mt="4" direction="column" alignItems="flex-start" justifyContent="flex-start" width="100%">
