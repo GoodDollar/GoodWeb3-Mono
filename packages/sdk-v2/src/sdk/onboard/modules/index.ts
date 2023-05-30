@@ -1,2 +1,2 @@
-export * from './customwalletconnect';
-export * from './torus';
+export * from "./customwalletconnect";
+export * from "./torus";

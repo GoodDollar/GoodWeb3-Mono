@@ -24,44 +24,45 @@ export function getClient(uri: string): ApolloClient<NormalizedCacheObject> {
  * @returns {Fraction}
  * @throws {UnsupportedChainId}
  */
-export const g$Price = memoize<() => Promise<{ DAI: Fraction; cDAI: Fraction }>>(
-  async (): Promise<{ DAI: Fraction; cDAI: Fraction }> => {
-    const client = getClient(G$PRICE);
+export const g$Price = memoize<() => Promise<{ DAI: Fraction; cDAI: Fraction }>>(async (): Promise<{
+  DAI: Fraction;
+  cDAI: Fraction;
+}> => {
+  const client = getClient(G$PRICE);
 
-    const {
-      data: {
-        reserveHistories: [{ openPriceDAI, openPriceCDAI }] = [
-          {
-            openPriceDAI: null,
-            openPriceCDAI: null
-          }
-        ] as [{ openPriceDAI: string | null; openPriceCDAI: string | null }]
-      } = {}
-    } = await client.query({
-      query: gql`
+  const {
+    data: {
+      reserveHistories: [{ openPriceDAI, openPriceCDAI }] = [
         {
-          reserveHistories(first: 1, orderBy: block, orderDirection: desc) {
-            openPriceDAI
-            openPriceCDAI
-          }
+          openPriceDAI: null,
+          openPriceCDAI: null
         }
-      `
-    });
-    if (!openPriceDAI || !openPriceCDAI) {
-      throw new Error("Invalid CDAI or DAI price for G$");
-    }
-
-    const result = {
-      DAI: decimalToFraction(openPriceDAI),
-      cDAI: decimalToFraction(openPriceCDAI)
-    };
-    debug("G$ to DAI ratio", result.DAI.toSignificant(6));
-    debug("G$ to cDAI ratio", result.cDAI.toSignificant(6));
-    delayedCacheClear(g$Price);
-
-    return result;
+      ] as [{ openPriceDAI: string | null; openPriceCDAI: string | null }]
+    } = {}
+  } = await client.query({
+    query: gql`
+      {
+        reserveHistories(first: 1, orderBy: block, orderDirection: desc) {
+          openPriceDAI
+          openPriceCDAI
+        }
+      }
+    `
+  });
+  if (!openPriceDAI || !openPriceCDAI) {
+    throw new Error("Invalid CDAI or DAI price for G$");
   }
-);
+
+  const result = {
+    DAI: decimalToFraction(openPriceDAI),
+    cDAI: decimalToFraction(openPriceCDAI)
+  };
+  debug("G$ to DAI ratio", result.DAI.toSignificant(6));
+  debug("G$ to cDAI ratio", result.cDAI.toSignificant(6));
+  delayedCacheClear(g$Price);
+
+  return result;
+});
 
 type StakingAPY = {
   supplyAPY: Fraction;

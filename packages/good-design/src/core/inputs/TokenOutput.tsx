@@ -12,9 +12,9 @@ export const TokenOutput = ({
   ...props
 }: {
   outputValue: string;
-  token?: G$Token,
+  token?: G$Token;
   requiredChainId?: number;
-  decimals?: number,
+  decimals?: number;
   _numericformat?: any;
   _button?: any;
   _text?: any;
@@ -35,4 +35,4 @@ export const TokenOutput = ({
       />
     </Box>
   );
-}
+};

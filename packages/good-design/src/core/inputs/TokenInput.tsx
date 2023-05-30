@@ -47,7 +47,7 @@ export const TokenInput = ({
         onChangeText={handleChange}
         InputRightElement={
           <Button rounded="xl" variant="outline" h="0.5" mr="1" onPress={setMax} {..._button}>
-            Max 
+            Max
           </Button>
         }
         size="xl"
@@ -58,9 +58,9 @@ export const TokenInput = ({
         color="lightGrey"
         {..._numericformat}
       />
-        <Text bold color="lightGrey:alpha.80" alignSelf={"flex-end"} {..._text}>
-          Balance: {balance}
-        </Text>
+      <Text bold color="lightGrey:alpha.80" alignSelf={"flex-end"} {..._text}>
+        Balance: {balance}
+      </Text>
     </Box>
   );
 };
