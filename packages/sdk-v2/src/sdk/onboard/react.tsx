@@ -88,7 +88,8 @@ export const wc2InitOptions = {
       gooddollar: icons["gooddollar"].webp,
       celosafe: icons["celosafe"].webp,
       safe: icons["safe"].webp,
-      fusesafe: icons["fusesafe"].webp
+      fusesafe: icons["fusesafe"].webp,
+      metamask: icons["metamask"].webp
     },
     desktopWallets: [
       {
