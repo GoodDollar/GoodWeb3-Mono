@@ -175,11 +175,17 @@ const zengo = customwc({
 const valora = customwc({
   label: "valora",
   ...(wc2InitOptions as any),
-  handleUri: uri =>
-    new Promise(res => {
-      isMobile() && window.open(`celo://wallet/wc?uri=${encodeURIComponent(uri)}`, "_blank");
-      res(true);
-    })
+  handleUri: async uri => {
+    switch (getDevice().os.name) {
+      case "Android":
+        window.open(`celo://wallet/wc?uri=${encodeURIComponent(uri)}`, "_blank");
+        break;
+      case "iOS":
+        window.open(`https://valoraapp.com/wc?uri=${encodeURIComponent(uri)}`, "_blank");
+        break;
+    }
+    return true;
+  }
 });
 
 const gd = customwc({
