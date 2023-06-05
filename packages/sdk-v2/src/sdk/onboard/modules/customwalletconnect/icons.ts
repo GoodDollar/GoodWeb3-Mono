@@ -3,6 +3,8 @@ import GnosisIconWebp from "../../../../assets/icons/webp/Gnosis.webp";
 import ValoraIconWebp from "../../../../assets/icons/webp/valora.webp";
 import CeloSafeWebp from "../../../../assets/icons/webp/Celo.webp";
 import FuseSafeWebp from "../../../../assets/icons/webp/Fuse.webp";
+import ZengoWebp from "../../../../assets/icons/webp/zengo.webp";
+import MetaWebp from "../../../../assets/icons/webp/metamask.webp";
 
 import ValoraIconSvg from "../../../../assets/icons/svg/valora.svg";
 import GdWalletSvg from "../../../../assets/icons/svg/GdWallet.svg";
@@ -15,7 +17,11 @@ export const icons = {
   },
   zengo: {
     svg: ZengoSvg,
-    webp: undefined
+    webp: ZengoWebp
+  },
+  metamask: {
+    svg: undefined,
+    webp: MetaWebp
   },
   valora: {
     svg: ValoraIconSvg,
