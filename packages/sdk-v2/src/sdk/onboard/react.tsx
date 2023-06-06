@@ -127,15 +127,15 @@ export const wc2InitOptions = {
         name: "GoodDollar",
         links: {
           universal: "https://wallet.gooddollar.org",
-          native: "gooddollar:"
+          native: "gooddollar://"
         }
       },
       {
         id: "valora",
         name: "Valora",
         links: {
-          universal: "celo:",
-          native: "celo:"
+          universal: "https://valoraapp.com/",
+          native: "celo://wallet"
         }
       },
       {
