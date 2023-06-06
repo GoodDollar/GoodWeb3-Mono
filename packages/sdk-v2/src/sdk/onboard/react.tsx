@@ -185,8 +185,25 @@ const valora = customwc({
         // from workaround fix found in rainbowkit: https://github.com/rainbow-me/rainbowkit/blob/42472774f79309ccd114fe26bf1418d057865a1f/packages/rainbowkit/src/components/ConnectOptions/MobileOptions.tsx#LL72C13-L89C14
         // ios wallet-connect reference: https://docs.walletconnect.com/2.0/ios/guides/mobile-linking#ios-app-link-constraints
         {
-          const link = `https://valoraapp.com/wc?uri=${encodeURIComponent(uri)}`;
-          window.location.href = link;
+          const mobileUri = `https://valoraapp.com/wc?uri=${encodeURIComponent(uri)}`;
+          if (mobileUri.startsWith("http")) {
+            // Workaround for https://github.com/rainbow-me/rainbowkit/issues/524.
+            // Using 'window.open' causes issues on iOS in non-Safari browsers and
+            // WebViews where a blank tab is left behind after connecting.
+            // This is especially bad in some WebView scenarios (e.g. following a
+            // link from Twitter) where the user doesn't have any mechanism for
+            // closing the blank tab.
+            // For whatever reason, links with a target of "_blank" don't suffer
+            // from this problem, and programmatically clicking a detached link
+            // element with the same attributes also avoids the issue.
+            const el = document.createElement("a");
+            el.href = mobileUri;
+            el.target = "_blank";
+            el.rel = "noreferrer noopener";
+            el.click();
+          } else {
+            window.location.href = mobileUri;
+          }
         }
         break;
     }
