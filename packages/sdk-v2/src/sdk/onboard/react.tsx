@@ -134,7 +134,7 @@ export const wc2InitOptions = {
         id: "valora",
         name: "Valora",
         links: {
-          universal: "https://valoraapp.com/", // likely should be based on OS
+          universal: "https://valoraapp.com", // likely should be based on OS
           native: "celo://wallet"
         }
       },
