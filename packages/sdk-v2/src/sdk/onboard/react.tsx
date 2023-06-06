@@ -186,11 +186,7 @@ const valora = customwc({
         // ios wallet-connect reference: https://docs.walletconnect.com/2.0/ios/guides/mobile-linking#ios-app-link-constraints
         {
           const link = `https://valoraapp.com/wc?uri=${encodeURIComponent(uri)}`;
-          const el = document.createElement("a");
-          el.href = link;
-          el.target = "_blank";
-          el.rel = "noreferrer noopener";
-          el.click();
+          window.location.href = link;
         }
         break;
     }
