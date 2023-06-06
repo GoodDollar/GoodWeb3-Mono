@@ -134,7 +134,7 @@ export const wc2InitOptions = {
         id: "valora",
         name: "Valora",
         links: {
-          universal: "https://valoraapp.com/",
+          universal: "https://valoraapp.com/", // likely should be based on OS
           native: "celo://wallet"
         }
       },
@@ -182,7 +182,16 @@ const valora = customwc({
         window.open(`celo://wallet/wc?uri=${encodeURIComponent(uri)}`, "_blank");
         break;
       case "iOS":
-        window.open(`https://valoraapp.com/wc?uri=${encodeURIComponent(uri)}`, "_blank");
+        // from workaround fix found in rainbowkit: https://github.com/rainbow-me/rainbowkit/blob/42472774f79309ccd114fe26bf1418d057865a1f/packages/rainbowkit/src/components/ConnectOptions/MobileOptions.tsx#LL72C13-L89C14
+        // ios wallet-connect reference: https://docs.walletconnect.com/2.0/ios/guides/mobile-linking#ios-app-link-constraints
+        {
+          const link = `https://valoraapp.com/wc?uri=${encodeURIComponent(uri)}`;
+          const el = document.createElement("a");
+          el.href = link;
+          el.target = "_blank";
+          el.rel = "noreferrer noopener";
+          el.click();
+        }
         break;
     }
     return true;
