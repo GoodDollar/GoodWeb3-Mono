@@ -1,3 +1,3 @@
-export * from "./json";
-export * from "./linking";
-export * from "./platform";
+export * from './json';
+export * from './linking';
+export * from './platform';
