@@ -16,13 +16,13 @@ const writeFileAsync = promisify(writeFile)
 
 const run = (cmd, opts = {}) => execAsync(cmd, opts).then(({ stdout }) => stdout)
 const updateVersion = (version, suffix) => {
-  const match = version.match(/^(\d+\.\d+\.)(\d+)(-beta)?$/);
-  const majorMinor = match[1];
-  let updatePatch = parseInt(match[2]);
-  if (!match[3]) {
-    updatePatch = updatePatch + 1;
+  let [major, minor, patch, flags] = version.match(/^(\d+)\.(\d+)\.(\d+)(-beta)?$/);
+
+  if (!flags) {
+    patch = Number(patch) + 1;
   }
-  return `${majorMinor}${updatePatch}${suffix}`;
+    
+  return [major, minor, patch].join('.') + suffix;
 };
 
 const writePkg = async (pkg, json) => {
