@@ -25,6 +25,8 @@ export interface IOnboardProviderProps {
   children?: React.ReactNode;
 }
 
+const currentDevice = getDevice().os.name;
+
 const injected = injectedModule({
   filter: {
     ["Binance Smart Wallet"]: false,
@@ -173,6 +175,7 @@ const zengo = customwc({
     })
 });
 
+// ios might be enabled later when proper support for v2 and fix for handling uri
 const valora = customwc({
   label: "valora",
   ...(wc2InitOptions as any),
@@ -181,9 +184,9 @@ const valora = customwc({
       case "Android":
         window.open(`celo://wallet/wc?uri=${encodeURIComponent(uri)}`, "_blank");
         break;
-      case "iOS":
-        window.open(`https://valoraapp.com/wc?uri=${encodeURIComponent(uri)}`, "_blank");
-        break;
+      // case "iOS":
+      //   window.open(`https://valoraapp.com/wc?uri=${encodeURIComponent(uri)}`, "_blank");
+      //   break;
     }
     return true;
   }
@@ -225,7 +228,7 @@ const defaultOptions: IOnboardProviderProps["options"] = {
 const defaultWalletsFlags: IOnboardWallets = {
   gd: true,
   walletconnect: true,
-  valora: true,
+  valora: currentDevice === "Android" ? true : false,
   metamask: true,
   coinbase: true,
   zengo: true,
