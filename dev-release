@@ -16,7 +16,7 @@ const writeFileAsync = promisify(writeFile)
 
 const run = (cmd, opts = {}) => execAsync(cmd, opts).then(({ stdout }) => stdout)
 const updateVersion = (version, suffix) => {
-  let [major, minor, patch, flags] = version.match(/^(\d+)\.(\d+)\.(\d+)(-beta)?$/);
+  let [full, major, minor, patch, flags] = version.match(/^(\d+)\.(\d+)\.(\d+)(-beta)?.*$/);
 
   if (!flags) {
     patch = Number(patch) + 1;
