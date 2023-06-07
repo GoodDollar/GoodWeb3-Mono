@@ -10,7 +10,7 @@ import { keys, pickBy } from "lodash";
 import { getDevice, isMobile } from "../base";
 
 export interface IOnboardWallets {
-  valora?: boolean;
+  // valora?: boolean;
   gd?: boolean;
   metamask?: boolean;
   walletconnect?: boolean;
@@ -173,21 +173,22 @@ const zengo = customwc({
     })
 });
 
-const valora = customwc({
-  label: "valora",
-  ...(wc2InitOptions as any),
-  handleUri: async uri => {
-    switch (getDevice().os.name) {
-      case "Android":
-        window.open(`celo://wallet/wc?uri=${encodeURIComponent(uri)}`, "_blank");
-        break;
-      case "iOS":
-        window.open(`https://valoraapp.com/wc?uri=${encodeURIComponent(uri)}`, "_blank");
-        break;
-    }
-    return true;
-  }
-});
+// might be enabled later when proper support for v2 and fix for handling uri
+// const valora = customwc({
+//   label: "valora",
+//   ...(wc2InitOptions as any),
+//   handleUri: async uri => {
+//     switch (getDevice().os.name) {
+//       case "Android":
+//         window.open(`celo://wallet/wc?uri=${encodeURIComponent(uri)}`, "_blank");
+//         break;
+//       case "iOS":
+//         window.open(`https://valoraapp.com/wc?uri=${encodeURIComponent(uri)}`, "_blank");
+//         break;
+//     }
+//     return true;
+//   }
+// });
 
 const gd = customwc({
   label: "gooddollar",
@@ -225,7 +226,7 @@ const defaultOptions: IOnboardProviderProps["options"] = {
 const defaultWalletsFlags: IOnboardWallets = {
   gd: true,
   walletconnect: true,
-  valora: true,
+  // valora: true,
   metamask: true,
   coinbase: true,
   zengo: true,
@@ -235,7 +236,7 @@ const defaultWalletsFlags: IOnboardWallets = {
 const walletsMap: Record<keyof Omit<IOnboardWallets, "custom">, any> = {
   gd,
   walletconnect: defaultWc,
-  valora,
+  // valora,
   metamask: injected,
   coinbase: coinbaseWalletSdk,
   zengo
