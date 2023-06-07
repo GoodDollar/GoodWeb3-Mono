@@ -1,6 +1,6 @@
 {
   "name": "@gooddollar/goodlogin-sdk",
-  "version": "1.1.25-beta.c38fc8d",
+  "version": "1.1.25-beta.eaddafb",
   "description": "Login SDK for login with Gooddollar wallet",
   "scripts": {
     "build": "tsc",
@@ -19,7 +19,7 @@
   "devDependencies": {
     "@babel/core": "^7.17.5",
     "@babel/preset-env": "^7.16.11",
-    "@gooddollar/web3sdk-v2": "0.1.99-beta.c38fc8d",
+    "@gooddollar/web3sdk-v2": "0.1.99-beta.eaddafb",
     "@testing-library/react": "^12.1.4",
     "@types/jest": "^27.4.1",
     "@types/node": "^17.0.21",
