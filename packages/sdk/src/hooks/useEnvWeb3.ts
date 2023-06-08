@@ -11,16 +11,8 @@ export interface RPC {
 }
 
 export const defaultRPC = {
-  [SupportedChainId.MAINNET]: sample([
-    "https://cloudflare-eth.com",
-    "https://rpc.ankr.com/eth",
-    "https://eth-rpc.gateway.pokt.network"
-  ]),
-  [SupportedChainId.FUSE]: sample([
-    "https://rpc.fuse.io",
-    "https://fuse-rpc.gateway.pokt.network",
-    "https://fuse-mainnet.chainstacklabs.com"
-  ])
+  [SupportedChainId.MAINNET]: sample(["https://cloudflare-eth.com", "https://rpc.ankr.com/eth"]),
+  [SupportedChainId.FUSE]: sample(["https://rpc.fuse.io", "https://fuse-mainnet.chainstacklabs.com"])
 };
 
 export const getRpc = (chainId: number): string => {
@@ -29,7 +21,7 @@ export const getRpc = (chainId: number): string => {
       return defaultRPC[chainId];
     default:
     case 1:
-      return "https://eth-rpc.gateway.pokt.network";
+      return "https://rpc.ankr.com/eth";
   }
 };
 
@@ -42,7 +34,7 @@ export const useEnvWeb3 = (
   activeWeb3?: any | undefined,
   activeChainId?: number
 ): [Web3 | null, SupportedChainId] => {
-  const [web3, setWeb3] = useState<[any, SupportedChainId]>([null, 0]);
+  const [web3, setWeb3] = useState<[any, SupportedChainId]>([null, 42220]);
   const { contractsEnv } = useContext(GdSdkContext);
 
   useEffect(() => {
