@@ -4,7 +4,7 @@ import TokenBridgeABI from "@gooddollar/bridge-contracts/artifacts/contracts/bri
 import bridgeContracts from "@gooddollar/bridge-contracts/release/deployment.json";
 import { TokenBridge } from "@gooddollar/bridge-contracts/typechain-types";
 import { IGoodDollar } from "@gooddollar/goodprotocol/types";
-import { TransactionStatus, useCalls, useEthers, useLogs } from "@usedapp/core";
+import { ChainId, TransactionStatus, useCalls, useEthers, useLogs } from "@usedapp/core";
 import { BigNumber, Contract, ethers } from "ethers";
 import { first, groupBy, mapValues } from "lodash";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -109,7 +109,9 @@ export const useBridge = (withRelay = false) => {
   const [selfRelayStatus, setSelfRelay] = useState<Partial<TransactionStatus> | undefined>();
 
   // const bridgeTo = useContractFunction(bridgeContract, "bridgeTo", {});
-  const transferAndCall = useContractFunctionWithDefaultGasFees(g$Contract, "transferAndCall");
+  const transferAndCall = useContractFunctionWithDefaultGasFees(g$Contract, "transferAndCall", {
+    transactionName: "BridgeTransfer"
+  });
   const bridgeRequestId = (transferAndCall.state?.receipt?.logs || [])
     .filter(log => log.address === bridgeContract.address)
     .map(log => bridgeContract.interface.parseLog(log))?.[0]?.args?.id;
@@ -280,6 +282,7 @@ export const useRelayTx = () => {
 export const useBridgeHistory = () => {
   const bridgeContracts = useGetBridgeContracts();
   const refresh = useRefreshOrNever(12);
+  const fuseChainId = 122 as ChainId;
   const fuseOut = useLogs(
     {
       contract: bridgeContracts[122] as TokenBridge,
@@ -287,7 +290,7 @@ export const useBridgeHistory = () => {
       args: []
     },
     {
-      chainId: 122,
+      chainId: fuseChainId,
       fromBlock: -2e5,
       refresh
     }
@@ -300,7 +303,7 @@ export const useBridgeHistory = () => {
       args: []
     },
     {
-      chainId: 122,
+      chainId: fuseChainId,
       fromBlock: -2e5,
       refresh
     }
