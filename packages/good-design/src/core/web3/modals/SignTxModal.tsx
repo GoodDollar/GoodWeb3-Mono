@@ -3,11 +3,11 @@ import React, { useEffect, useState } from "react";
 import { useConfig } from "@usedapp/core";
 import { useSwitchNetwork } from "@gooddollar/web3sdk-v2";
 import { find } from "lodash";
-import { useModal } from "../../hooks/useModal";
-import { ActionHeader } from "../layout";
-import { LearnButton } from "../buttons";
+import { useModal } from "../../../hooks/useModal";
+import { ActionHeader } from "../../layout";
+import { LearnButton } from "../../buttons";
 
-export interface SwitchChainProps {
+export interface SignTxProps {
   children?: any;
 }
 
@@ -18,7 +18,7 @@ export interface SwitchChainProps {
  * @param children
  * @returns JSX.Element
  */
-export const SwitchChainModal = ({ children }: SwitchChainProps) => {
+export const SignTxModal = ({ children }: SignTxProps) => {
   const config = useConfig();
   const [requestedChain, setRequestedChain] = useState(0);
   const { setOnSwitchNetwork } = useSwitchNetwork();
@@ -37,7 +37,6 @@ export const SwitchChainModal = ({ children }: SwitchChainProps) => {
         }
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setOnSwitchNetwork]);
 
   const networkName = find(config.networks, _ => _.chainId === requestedChain)?.chainName;

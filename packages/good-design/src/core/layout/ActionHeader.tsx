@@ -4,7 +4,7 @@ import { Title } from "./";
 
 interface ActionHeaderProps {
   textColor: any;
-  /** text to complete the 'To complete this action, ...' sentence */
+  /** text to complete the 'To complete this action, ...' copy */
   actionText: string;
 }
 

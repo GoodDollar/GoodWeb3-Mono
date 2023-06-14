@@ -1,4 +1,3 @@
 export * from "./WalletAndChainGuard";
-export * from "./SwitchChainModal";
+export * from "./modals";
 export * from "./ExplorerLink";
-export * from "./KimaModal";
