@@ -14,7 +14,6 @@ export interface SwitchChainProps {
 /**
  * A modal to wrap your component or page with and show a modal re-active to switchChain requests
  * it assumes you have already wrapped your app with the Web3Provider out of the @gooddollar/sdk-v2 package
- * @param {boolean} switching indicating if there is a pending switch request triggered
  * @param children
  * @returns JSX.Element
  */
