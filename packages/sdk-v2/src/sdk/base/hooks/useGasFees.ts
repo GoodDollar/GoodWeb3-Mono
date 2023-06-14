@@ -30,8 +30,9 @@ export const useGasFees = () => {
 export function useContractFunctionWithDefaultGasFees<T extends TypedContract, FN extends ContractFunctionNames<T>>(
   contract: T | Falsy,
   functionName: FN,
-  options?: TransactionOptions
+  customOptions?: TransactionOptions
 ) {
+  const options = { enablePendingSignatureNotification: true, ...customOptions };
   const { send, ...rest } = useContractFunction(contract, functionName, options);
   const gasFees = useGasFees();
   const newSend = useCallback(
