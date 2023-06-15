@@ -19,6 +19,9 @@ const config: Config = {
   readOnlyUrls: {
     122: "https://rpc.fuse.io",
     42220: "https://forno.celo.org"
+  },
+  notifications: {
+    expirationPeriod: 0
   }
 };
 
@@ -30,7 +33,7 @@ export const W3Wrapper = ({ children, withMetaMask, env = "fuse" }: PageProps) =
 
   if (!withMetaMask) {
     const rpc = new ethers.providers.JsonRpcProvider("https://rpc.fuse.io");
-    
+
     rpc.getSigner = () => w as any;
     setProvider(rpc);
   }
