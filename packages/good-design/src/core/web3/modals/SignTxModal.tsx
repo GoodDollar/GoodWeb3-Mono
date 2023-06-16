@@ -1,13 +1,44 @@
 import React, { useEffect } from "react";
-import { useColorModeValue } from "native-base";
+import { Box, Heading, useColorModeValue, useToast, Text } from "native-base";
 import { useNotifications } from "@usedapp/core";
+import type { TransactionReceipt, TransactionRequest, TransactionResponse } from "@ethersproject/abstract-provider";
 import { useModal } from "../../../hooks/useModal";
 import { ActionHeader } from "../../layout";
 import { LearnButton } from "../../buttons";
 
-export interface SignTxProps {
+// usedapp type definitions without walletConnected
+type NotificationPayload = { submittedAt: number } & (
+  | { type: "transactionPendingSignature"; transactionName?: string; transactionRequest?: TransactionRequest }
+  | { type: "transactionStarted"; transaction: TransactionResponse; transactionName?: string }
+  | {
+      type: "transactionSucceed";
+      transaction: TransactionResponse;
+      receipt: TransactionReceipt;
+      transactionName?: string;
+      originalTransaction?: TransactionResponse;
+    }
+  | {
+      type: "transactionFailed";
+      transaction: TransactionResponse;
+      receipt: TransactionReceipt;
+      transactionName?: string;
+      originalTransaction?: TransactionResponse;
+    }
+);
+
+export type Notification = { id: string } & NotificationPayload;
+
+//todo: add proper (customizable) styles
+const SimpleTxToast = ({ title, desc }: { title: string; desc: string }) => (
+  <Box backgroundColor="main" px={2} py={2}>
+    <Heading>{title}</Heading>
+    <Text> txName: {desc} </Text>
+  </Box>
+);
+
+export type SignTxProps = {
   children?: any;
-}
+} & ({ withToast: boolean; onSubmitted?: never } | { withToast?: never; onSubmitted: () => void });
 
 /**
  * A modal to wrap your component or page with and show a modal re-active to calls from usedapp's useContractFunction
@@ -15,17 +46,37 @@ export interface SignTxProps {
  * @param children
  * @returns JSX.Element
  */
-export const SignTxModal = ({ children }: SignTxProps) => {
+export const SignTxModal = ({ children, withToast, onSubmitted }: SignTxProps) => {
+  const doWithToast = withToast;
   const { notifications } = useNotifications();
+  const toast = useToast();
   const textColor = useColorModeValue("goodGrey.500", "white");
 
   const { Modal, showModal, hideModal } = useModal();
 
   useEffect(() => {
-    if (notifications.length > 0 && notifications[0].type === "transactionPendingSignature") {
-      showModal();
-    } else {
-      hideModal();
+    const localNotif = notifications as Notification[];
+    if (localNotif[0]?.type.includes("transaction")) {
+      const { type, transactionName = "" } = localNotif[0];
+      switch (type) {
+        case "transactionPendingSignature":
+          showModal();
+          break;
+        case "transactionStarted":
+          hideModal();
+          if (doWithToast) {
+            toast.show({
+              render: () => <SimpleTxToast title="Transaction submitted" desc={transactionName} />,
+              placement: "top-right"
+            });
+          } else if (onSubmitted) {
+            onSubmitted();
+          }
+          break;
+        default:
+          hideModal();
+          break;
+      }
     }
   }, [notifications]);
 
