@@ -38,15 +38,18 @@ const SimpleTxToast = ({ title, desc }: { title: string; desc: string }) => (
 
 export type SignTxProps = {
   children?: any;
-} & ({ withToast: boolean; onSubmitted?: never } | { withToast?: never; onSubmitted: () => void });
+} & ({ withToast: boolean; onSubmit?: never } | { withToast?: never; onSubmit: () => void });
 
 /**
- * A modal to wrap your component or page with and show a modal re-active to calls from usedapp's useContractFunction
+ * A modal to wrap your component or page with and show a modal re-active to a
+ * pending signature for a usedapp useContractFunction call
  * it assumes you have already wrapped your app with the Web3Provider out of the @gooddollar/sdk-v2 package
  * @param children
+ * @param withToast - if true, will show a simple toast
+ * @param onSubmitted - if withToast false, provide a callback to handle what happens after tx is submitted
  * @returns JSX.Element
  */
-export const SignTxModal = ({ children, withToast, onSubmitted }: SignTxProps) => {
+export const SignTxModal = ({ children, withToast, onSubmit }: SignTxProps) => {
   const doWithToast = withToast;
   const { notifications } = useNotifications();
   const toast = useToast();
@@ -69,8 +72,8 @@ export const SignTxModal = ({ children, withToast, onSubmitted }: SignTxProps) =
               render: () => <SimpleTxToast title="Transaction submitted" desc={transactionName} />,
               placement: "top-right"
             });
-          } else if (onSubmitted) {
-            onSubmitted();
+          } else {
+            onSubmit?.();
           }
           break;
         default:

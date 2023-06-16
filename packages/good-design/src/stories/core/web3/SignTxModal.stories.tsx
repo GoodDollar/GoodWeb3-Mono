@@ -32,7 +32,7 @@ const SignTxModalExample = () => {
   }, [notifications, transferState]);
 
   return (
-    <SignTxModal>
+    <SignTxModal withToast>
       <Box w="50%" h="50%" display="flex" flexDir="row" justifyContent="center" alignItems="center">
         {!connected ? (
           <BaseButton
