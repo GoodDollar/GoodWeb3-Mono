@@ -1,5 +1,6 @@
+import React, { useEffect } from "react";
 import { useColorModeValue } from "native-base";
-import React from "react";
+import { useNotifications } from "@usedapp/core";
 import { useModal } from "../../../hooks/useModal";
 import { ActionHeader } from "../../layout";
 import { LearnButton } from "../../buttons";
@@ -15,20 +16,23 @@ export interface SignTxProps {
  * @returns JSX.Element
  */
 export const SignTxModal = ({ children }: SignTxProps) => {
+  const { notifications } = useNotifications();
   const textColor = useColorModeValue("goodGrey.500", "white");
 
-  const {
-    Modal
-    //showModal,
-    //hideModal
-  } = useModal();
+  const { Modal, showModal, hideModal } = useModal();
 
-  // todo: add trigger to show modal on any useDapp contract function execution
+  useEffect(() => {
+    if (notifications.length > 0 && notifications[0].type === "transactionPendingSignature") {
+      showModal();
+    } else {
+      hideModal();
+    }
+  }, [notifications]);
 
   return (
     <React.Fragment>
       <Modal
-        header={<ActionHeader textColor={textColor} actionText={`continue in your wallet.`} />}
+        header={<ActionHeader textColor={textColor} actionText={`continue in your wallet`} />}
         body={<LearnButton source="signing" />}
         closeText="x"
       />

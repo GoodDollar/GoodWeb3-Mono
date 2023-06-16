@@ -62,34 +62,34 @@ const SignTxModalExample = () => {
         {notifications.map(notification => {
           // this first if check is needed because of a weird type inference
           if (notification.type === "walletConnected") return;
-          else notification.type.includes("transaction");
-          return (
-            <Box key={notification.id}>
-              <Heading>Notifications</Heading>
-              <HStack
-                key={notification.id}
-                space={1}
-                alignItems="center"
-                borderWidth="1"
-                borderColor="black"
-                py="1"
-                px="1"
-              >
-                <Center px="1" borderWidth="1" borderColor="blue">
-                  id: {notification.id}{" "}
-                </Center>
-                <Center px="1" borderWidth="1" borderColor="blue">
-                  type: {notification.type}{" "}
-                </Center>
-                <Center px="1" borderWidth="1" borderColor="blue">
-                  transactionName: {notification.transactionName}{" "}
-                </Center>
-                <Center px="1" borderWidth="1" borderColor="blue">
-                  submittedAt: {notification.submittedAt}{" "}
-                </Center>
-              </HStack>
-            </Box>
-          );
+          else if (notification.type.includes("transaction"))
+            return (
+              <Box key={notification.id}>
+                <Heading>Notifications</Heading>
+                <HStack
+                  key={notification.id}
+                  space={1}
+                  alignItems="center"
+                  borderWidth="1"
+                  borderColor="black"
+                  py="1"
+                  px="1"
+                >
+                  <Center px="1" borderWidth="1" borderColor="blue">
+                    id: {notification.id}{" "}
+                  </Center>
+                  <Center px="1" borderWidth="1" borderColor="blue">
+                    type: {notification.type}{" "}
+                  </Center>
+                  <Center px="1" borderWidth="1" borderColor="blue">
+                    transactionName: {notification.transactionName}{" "}
+                  </Center>
+                  <Center px="1" borderWidth="1" borderColor="blue">
+                    submittedAt: {notification.submittedAt}{" "}
+                  </Center>
+                </HStack>
+              </Box>
+            );
         })}
       </Box>
     </SignTxModal>
