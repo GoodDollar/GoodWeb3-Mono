@@ -95,13 +95,6 @@ export const wc2InitOptions = {
     },
     desktopWallets: [
       {
-        id: "gooddollar",
-        name: "GoodDollar",
-        links: {
-          universal: "https://wallet.gooddollar.org"
-        }
-      },
-      {
         id: "celosafe",
         name: "CeloSafe",
         links: {
