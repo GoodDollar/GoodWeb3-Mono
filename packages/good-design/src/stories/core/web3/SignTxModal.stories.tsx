@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { SignTxModal } from "../../../core";
 import { W3Wrapper } from "../../W3Wrapper";
 import BaseButton from "../../../core/buttons/BaseButton";
-import { Box, Button, VStack, Center } from "native-base";
+import { Box, Button, HStack, Center } from "native-base";
 import { useNotifications, useEthers } from "@usedapp/core";
 import { ethers } from "ethers";
 import { JsonRpcSigner } from "@ethersproject/providers";
@@ -22,23 +22,10 @@ const SignTxModalExample = () => {
 
   useEffect(() => {
     if (library && !signer && account) {
-      console.log("library -->", { library, account });
       const signer = (library as ethers.providers.JsonRpcProvider)?.getSigner();
-      console.log("signer set -->", { addr: signer.getAddress() });
       setSigner(signer);
     }
   }, [library, connected]);
-
-  useEffect(() => {
-    console.log("signer -->", { signer });
-  }, [signer]);
-
-  const sign = useCallback(async () => {
-    if (signer) {
-      const signedMessage = await signer.signMessage("Test");
-      console.log("signedMessage -->", { signedMessage });
-    }
-  }, [signer]);
 
   useEffect(() => {
     console.log("notifications -->", { notifications, transferState });
@@ -50,7 +37,7 @@ const SignTxModalExample = () => {
         {!connected ? (
           <BaseButton
             onPress={connect}
-            bg={"blue.200"}
+            backgroundColor="main"
             px="2"
             py="2"
             _hover={{ bg: "blue.200" }}
@@ -60,17 +47,8 @@ const SignTxModalExample = () => {
         ) : (
           <>
             <BaseButton
-              onPress={connect}
-              bg={"blue.200"}
-              px="2"
-              py="2"
-              _hover={{ bg: "blue.200" }}
-              innerText={{ color: "black" }}
-              text={"Sign Message"}
-            />
-            <BaseButton
-              onPress={connect}
-              bg={"blue.200"}
+              onPress={send}
+              backgroundColor="main"
               px="2"
               py="2"
               _hover={{ bg: "blue.200" }}
@@ -84,12 +62,28 @@ const SignTxModalExample = () => {
         {notifications.map(notification => {
           if ("transaction" in notification)
             return (
-              <VStack key={notification.id} space={4} alignItems="center">
-                <Center>id: {notification.id} </Center>
-                <Center>type: {notification.type} </Center>
-                <Center>transactionName: {notification.transactionName} </Center>
-                <Center>submittedAt: {notification.submittedAt} </Center>
-              </VStack>
+              <HStack
+                key={notification.id}
+                space={1}
+                alignItems="center"
+                borderWidth="1"
+                borderColor="black"
+                py="1"
+                px="1"
+              >
+                <Center px="1" borderWidth="1" borderColor="blue">
+                  id: {notification.id}{" "}
+                </Center>
+                <Center px="1" borderWidth="1" borderColor="blue">
+                  type: {notification.type}{" "}
+                </Center>
+                <Center px="1" borderWidth="1" borderColor="blue">
+                  transactionName: {notification.transactionName}{" "}
+                </Center>
+                <Center px="1" borderWidth="1" borderColor="blue">
+                  submittedAt: {notification.submittedAt}{" "}
+                </Center>
+              </HStack>
             );
         })}
       </Box>

@@ -28,8 +28,7 @@ const useTestContractFunction = (params: CustomProps) => {
 
   const send = useCallback(async () => {
     const callData = ethers.constants.HashZero;
-    const sendTen = await sendTransfer(account, "10000", callData);
-    console.log("sending 10.... -->", { sendTen });
+    await sendTransfer(account, "10000", callData);
   }, [account, sendTransfer, signer]);
 
   return { send, transferState };
