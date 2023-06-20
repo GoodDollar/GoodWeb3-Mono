@@ -3395,8 +3395,8 @@ __metadata:
   linkType: hard
 
 "@gooddollar/web3sdk-v2@npm:latest":
-  version: 0.1.102
-  resolution: "@gooddollar/web3sdk-v2@npm:0.1.102"
+  version: 0.1.104
+  resolution: "@gooddollar/web3sdk-v2@npm:0.1.104"
   dependencies:
     "@amplitude/analytics-browser": ^1.6.4
     "@amplitude/analytics-react-native": ^0.7.0
@@ -3422,6 +3422,7 @@ __metadata:
     eventemitter3: ^4.0.7
     mixpanel-browser: ^2.45.0
     mixpanel-react-native: ^2.1.0
+    moment: 2.29.4
     posthog-react-native: ^2.4.0
     react-native-indicative: ^0.2.1
     react-native-restart: ^0.0.24
@@ -3433,7 +3434,7 @@ __metadata:
     react: "*"
     react-native: "*"
     react-native-web: "*"
-  checksum: 48d56a2ea32adc55bebb35e64c67ff23ccd4a5645a8baf1720c50925df742c8ae90b3d0f150bdc7e2873706cde50c7b73c79bc0637cb0b0b99026a9714b5265b
+  checksum: 48751d7ae0cf31460af7e80a18c8109acc25d431ef88879e414097328cc4b012bd4a930095c0495896541ba79804a6a7bdeca617eed3c32a14494c903a8f3307
   languageName: node
   linkType: hard
 
