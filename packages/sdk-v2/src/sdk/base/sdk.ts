@@ -70,18 +70,12 @@ export class BaseSDK {
       })
       .catch(noop);
 
-    try {
-      const signer = provider.getSigner();
+    const signer = provider.getSigner();
 
-      signer
-        .getAddress()
-        .then(async () => void (this.signer = signer))
-        .catch(e => {
-          console.warn("BaseSDK: provider has no signer", { signer, provider, e });
-        });
-    } catch (e) {
-      console.warn("BaseSDK: provider has no signer", { provider, e });
-    }
+    signer
+      .getAddress()
+      .then(async () => void (this.signer = signer))
+      .catch(noop);
   }
 
   getContract(contractName: "UBIScheme"): UBIScheme;
