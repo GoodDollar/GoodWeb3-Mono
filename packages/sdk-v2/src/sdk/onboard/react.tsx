@@ -93,36 +93,6 @@ export const wc2InitOptions = {
       fusesafe: icons["fusesafe"].webp,
       metamask: icons["metamask"].webp
     },
-    desktopWallets: [
-      {
-        id: "gooddollar",
-        name: "GoodDollar",
-        links: {
-          universal: "https://wallet.gooddollar.org"
-        }
-      },
-      {
-        id: "celosafe",
-        name: "CeloSafe",
-        links: {
-          universal: "https://safe.celo.org"
-        }
-      },
-      {
-        id: "fusesafe",
-        name: "FuseSafe",
-        links: {
-          universal: "https://safe.fuse.io"
-        }
-      },
-      {
-        id: "safe",
-        name: "Safe",
-        links: {
-          universal: "https://app.safe.global"
-        }
-      }
-    ],
     mobileWallets: [
       {
         id: "gooddollar",

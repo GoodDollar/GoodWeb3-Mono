@@ -38,6 +38,7 @@ type IWeb3Context = {
   connectWallet?: () => void;
   txEmitter: TxEmitter;
   env: EnvKey;
+  web3Provider?: JsonRpcProvider | W3Provider;
 };
 
 const ee = new EventEmitter<string>();
@@ -51,8 +52,11 @@ export const Web3Context = createContext<IWeb3Context>({
   setSwitchNetwork: (_cb: SwitchNetwork) => undefined, // eslint-disable-line @typescript-eslint/no-unused-vars
   connectWallet: () => undefined,
   txEmitter,
-  env: "production"
+  env: "production",
+  web3Provider: undefined
 });
+
+export const useWeb3Context = () => useContext(Web3Context);
 
 export const TokenContext = createContext<typeof G$Decimals>(defaultsDeep(G$Decimals));
 
@@ -210,7 +214,7 @@ export const Web3Provider = ({ children, config, web3Provider, env = "production
   config.multicallVersion = config.multicallVersion ? config.multicallVersion : 1;
   config.gasLimitBufferPercentage = 10;
   config.readOnlyUrls = {
-    122: sample(["https://rpc.fuse.io", "https://fuse-mainnet.chainstacklabs.com"]) as string,
+    122: sample(["https://rpc.fuse.io", "https://fuse-rpc.gateway.pokt.network"]) as string,
     42220: sample(["https://forno.celo.org"]) as string,
     1: sample(["https://cloudflare-eth.com", "https://rpc.ankr.com/eth"]) as string,
     5: "https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
@@ -238,7 +242,8 @@ export const Web3Provider = ({ children, config, web3Provider, env = "production
           onSwitchNetwork,
           setOnSwitchNetwork,
           txEmitter,
-          env
+          env,
+          web3Provider
         }}
       >
         <TokenProvider>{children}</TokenProvider>
@@ -252,7 +257,7 @@ const onSwitchNetworkNoop = async (_chainId: number, _status?: boolean) => {};
 
 export const useSwitchNetwork = () => {
   const { switchNetwork: ethersSwitchNetwork } = useEthers();
-  const { switchNetwork, setSwitchNetwork, onSwitchNetwork, setOnSwitchNetwork } = useContext(Web3Context);
+  const { switchNetwork, setSwitchNetwork, onSwitchNetwork, setOnSwitchNetwork } = useWeb3Context();
   const _onSwitchNetwork = onSwitchNetwork || onSwitchNetworkNoop;
   const _switchNetwork = switchNetwork || ethersSwitchNetwork;
 

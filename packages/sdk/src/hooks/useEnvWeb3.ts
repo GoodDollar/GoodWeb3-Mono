@@ -12,7 +12,7 @@ export interface RPC {
 
 export const defaultRPC = {
   [SupportedChainId.MAINNET]: sample(["https://cloudflare-eth.com", "https://rpc.ankr.com/eth"]),
-  [SupportedChainId.FUSE]: sample(["https://rpc.fuse.io", "https://fuse-mainnet.chainstacklabs.com"])
+  [SupportedChainId.FUSE]: sample(["https://rpc.fuse.io", "https://fuse-rpc.gateway.pokt.network"])
 };
 
 export const getRpc = (chainId: number): string => {
