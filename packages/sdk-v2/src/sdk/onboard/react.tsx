@@ -59,17 +59,6 @@ const injected = injectedModule({
   }
 });
 
-const wc1InitOptions = {
-  version: 1,
-  projectId: "095eb531a0c00781cb45644be58b065e",
-  bridge: "https://bridge.walletconnect.org",
-  qrcodeModalOptions: {
-    mobileLinks: ["valora", "fuse.cash", "zengo", "metamask", "coinbasewallet", "safe"] // TODO: has to be tested on IOS, android does not show list
-  },
-  connectFirstChainId: false,
-  handleUri: undefined
-};
-
 export const wc2InitOptions = {
   projectId: "095eb531a0c00781cb45644be58b065e",
   version: 2,
@@ -93,36 +82,6 @@ export const wc2InitOptions = {
       fusesafe: icons["fusesafe"].webp,
       metamask: icons["metamask"].webp
     },
-    desktopWallets: [
-      {
-        id: "gooddollar",
-        name: "GoodDollar",
-        links: {
-          universal: "https://wallet.gooddollar.org"
-        }
-      },
-      {
-        id: "celosafe",
-        name: "CeloSafe",
-        links: {
-          universal: "https://safe.celo.org"
-        }
-      },
-      {
-        id: "fusesafe",
-        name: "FuseSafe",
-        links: {
-          universal: "https://safe.fuse.io"
-        }
-      },
-      {
-        id: "safe",
-        name: "Safe",
-        links: {
-          universal: "https://app.safe.global"
-        }
-      }
-    ],
     mobileWallets: [
       {
         id: "gooddollar",
@@ -160,14 +119,14 @@ export const wc2InitOptions = {
 };
 
 const defaultWc = walletConnectModule({
-  ...(wc1InitOptions as any)
+  ...(wc2InitOptions as any)
 });
 
 const coinbaseWalletSdk = coinbaseWalletModule();
 
 const zengo = customwc({
   label: "zengo",
-  ...(wc1InitOptions as any),
+  ...(wc2InitOptions as any),
   handleUri: uri =>
     new Promise(res => {
       isMobile() && window.open(`https://get.zengo.com/wc?uri=${encodeURIComponent(uri)}`, "_blank");
