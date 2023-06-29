@@ -120,7 +120,8 @@ export const wc2InitOptions = {
 
 const defaultWc = walletConnectModule({
   ...(wc2InitOptions as any),
-  requiredChains: [] // only way to not have metamask deny connection
+  requiredChains: [1], // required for metamask to be able to connect
+  optionalChains: [42220, 122]
 });
 
 const coinbaseWalletSdk = coinbaseWalletModule();
