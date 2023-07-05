@@ -3,7 +3,7 @@ import { omit, clone, defaults } from "lodash";
 import { IAbstractProvider, IAnalyticsProvider, IAppProps } from "../types";
 import { getUserProps } from "../utils";
 import { IndicativeAPIWebSdk as apiSdk } from "./api";
-import { IIndicativeConfig, defaultConfig } from "./types";
+import { IIndicativeConfig, defaultIndicativeConfig } from "./types";
 
 const api = apiSdk && new apiSdk();
 
@@ -11,7 +11,7 @@ export class Indicative implements IAbstractProvider, IAnalyticsProvider {
   private config: IIndicativeConfig;
 
   constructor(config: IIndicativeConfig) {
-    this.config = defaults(clone(config), defaultConfig);
+    this.config = defaults(clone(config), defaultIndicativeConfig);
   }
 
   async initialize(appProps: IAppProps): Promise<boolean> {
@@ -35,7 +35,7 @@ export class Indicative implements IAbstractProvider, IAnalyticsProvider {
     const { userProperty } = this.config;
 
     if (!api) {
-      throw new Error('Indicative analytics not initialized!');
+      throw new Error("Indicative analytics not initialized!");
     }
 
     api.setUniqueID(id);
@@ -44,7 +44,7 @@ export class Indicative implements IAbstractProvider, IAnalyticsProvider {
 
   send(event: string, data?: object): void {
     if (!api) {
-      throw new Error('Indicative analytics not initialized!');
+      throw new Error("Indicative analytics not initialized!");
     }
 
     api.buildEvent(event, data);
