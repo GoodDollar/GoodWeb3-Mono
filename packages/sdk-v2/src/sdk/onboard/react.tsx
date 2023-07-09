@@ -152,7 +152,6 @@ const getWallets = (wc2Options: WalletConnectOptions) => {
   const defaultWc = walletConnectModule({
     ...(mergedOptions as any)
   });
-  console.log({ mergedOptions }, "");
   const coinbaseWalletSdk = coinbaseWalletModule();
 
   const zengo = customwc({
