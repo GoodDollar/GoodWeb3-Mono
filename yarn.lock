@@ -3255,7 +3255,7 @@ __metadata:
     "@babel/preset-typescript": ^7.16.0
     "@babel/runtime": ^7.18.9
     "@gooddollar/goodprotocol": ^2.0.3
-    "@gooddollar/web3sdk-v2": "file:.yalc/@gooddollar/web3sdk-v2"
+    "@gooddollar/web3sdk-v2": latest
     "@lingui/macro": ^3.14.0
     "@lingui/react": ^3.14.0
     "@magiklabs/react-sdk": ^1.0.8
@@ -3334,7 +3334,7 @@ __metadata:
     "@babel/core": ^7.17.5
     "@babel/preset-env": ^7.16.11
     "@gooddollar/goodprotocol": ^2.0.4
-    "@gooddollar/web3sdk-v2": "file:.yalc/@gooddollar/web3sdk-v2"
+    "@gooddollar/web3sdk-v2": latest
     "@testing-library/react": ^12.1.4
     "@types/jest": ^27.4.1
     "@types/node": ^17.0.21
@@ -3394,9 +3394,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2::locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design":
+"@gooddollar/web3sdk-v2@npm:latest":
   version: 0.1.107
-  resolution: "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2#.yalc/@gooddollar/web3sdk-v2::hash=0bbaee&locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design"
+  resolution: "@gooddollar/web3sdk-v2@npm:0.1.107"
   dependencies:
     "@amplitude/analytics-browser": ^1.6.4
     "@amplitude/analytics-react-native": ^0.7.0
@@ -3410,11 +3410,11 @@ __metadata:
     "@walletconnect/client": ^1.8.0
     "@walletconnect/qrcode-modal": ^1.8.0
     "@web3-onboard/coinbase": ^2.2.4
-    "@web3-onboard/core": ^2.20.3
+    "@web3-onboard/core": ^2.20.2
     "@web3-onboard/injected-wallets": ^2.10.1
-    "@web3-onboard/react": ^2.8.8
+    "@web3-onboard/react": ^2.8.7
     "@web3-onboard/torus": ^2.2.5
-    "@web3-onboard/walletconnect": 2.4.2-alpha.1
+    "@web3-onboard/walletconnect": ^2.3.9
     "@web3auth/base": ^4.0.0
     "@web3auth/core": ^4.0.0
     "@web3auth/openlogin-adapter": ^4.1.0
@@ -3434,51 +3434,7 @@ __metadata:
     react: "*"
     react-native: "*"
     react-native-web: "*"
-  checksum: 0b734cd55e4fc3afc2ab312e0f0df50f9be6bebcb3b842b2ef1d3d5adb04cd173741ff0ee7ebd5242ca8f65628db9362f4d2437f1daeae8dfd3073f17f299fde
-  languageName: node
-  linkType: hard
-
-"@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2::locator=%40gooddollar%2Fgoodlogin-sdk%40workspace%3Apackages%2Flogin-sdk":
-  version: 0.1.107
-  resolution: "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2#.yalc/@gooddollar/web3sdk-v2::hash=0bbaee&locator=%40gooddollar%2Fgoodlogin-sdk%40workspace%3Apackages%2Flogin-sdk"
-  dependencies:
-    "@amplitude/analytics-browser": ^1.6.4
-    "@amplitude/analytics-react-native": ^0.7.0
-    "@gooddollar/bridge-app": ^1.5.0
-    "@gooddollar/bridge-contracts": ^1.0.14
-    "@gooddollar/goodprotocol": ^2.0.3
-    "@react-native-firebase/analytics": ^16.4.6
-    "@sentry/browser": 7.16.0
-    "@sentry/react-native": ^4.8.0
-    "@solana/web3.js": ^1.72.0
-    "@walletconnect/client": ^1.8.0
-    "@walletconnect/qrcode-modal": ^1.8.0
-    "@web3-onboard/coinbase": ^2.2.4
-    "@web3-onboard/core": ^2.20.3
-    "@web3-onboard/injected-wallets": ^2.10.1
-    "@web3-onboard/react": ^2.8.8
-    "@web3-onboard/torus": ^2.2.5
-    "@web3-onboard/walletconnect": 2.4.2-alpha.1
-    "@web3auth/base": ^4.0.0
-    "@web3auth/core": ^4.0.0
-    "@web3auth/openlogin-adapter": ^4.1.0
-    "@web3auth/torus-wallet-connector-plugin": ^4.0.0
-    eventemitter3: ^4.0.7
-    mixpanel-browser: ^2.45.0
-    mixpanel-react-native: ^2.1.0
-    moment: 2.29.4
-    posthog-react-native: ^2.4.0
-    react-native-indicative: ^0.2.1
-    react-native-restart: ^0.0.24
-    react-use-promise: ^0.5.0
-  peerDependencies:
-    "@react-native-async-storage/async-storage": 1.17.10
-    "@usedapp/core": ^1.2.6
-    ethers: 5.*
-    react: "*"
-    react-native: "*"
-    react-native-web: "*"
-  checksum: 0b734cd55e4fc3afc2ab312e0f0df50f9be6bebcb3b842b2ef1d3d5adb04cd173741ff0ee7ebd5242ca8f65628db9362f4d2437f1daeae8dfd3073f17f299fde
+  checksum: 3a263af0d946484ea6476a4694997648442f23b20ef8dd5b0828d670187c5275ebb3804b424b7d6fe8d740a63c7a517b86f4c30f523359da46d1d89c6f72c5a4
   languageName: node
   linkType: hard
 
@@ -10435,27 +10391,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@web3-onboard/core@npm:^2.20.3":
-  version: 2.20.3
-  resolution: "@web3-onboard/core@npm:2.20.3"
-  dependencies:
-    "@web3-onboard/common": ^2.3.3
-    bignumber.js: ^9.0.0
-    bnc-sdk: ^4.6.7
-    bowser: ^2.11.0
-    ethers: 5.5.3
-    eventemitter3: ^4.0.7
-    joi: 17.9.1
-    lodash.merge: ^4.6.2
-    lodash.partition: ^4.6.0
-    nanoid: ^4.0.0
-    rxjs: ^7.5.5
-    svelte: ^3.49.0
-    svelte-i18n: ^3.3.13
-  checksum: 8f0a8de69b753354cd837f22eac686da2f6d370925184481b96e7812632c1a82062c5872586ea9495149f1fd67e7e448885e493f64ca5411b8a1ea99a2b7f26d
-  languageName: node
-  linkType: hard
-
 "@web3-onboard/core@npm:^2.20.4":
   version: 2.20.4
   resolution: "@web3-onboard/core@npm:2.20.4"
@@ -10501,19 +10436,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@web3-onboard/react@npm:^2.8.8":
-  version: 2.8.8
-  resolution: "@web3-onboard/react@npm:2.8.8"
-  dependencies:
-    "@web3-onboard/common": ^2.3.3
-    "@web3-onboard/core": ^2.20.3
-    use-sync-external-store: 1.0.0
-  peerDependencies:
-    react: ">=16.8"
-  checksum: 065327e0596c75a86b3a4730dd2b440dabf719e583cc0e5ddaf419acdfd2a3910556708f98e6864392a002abb09354a510ab9ef6867fbb958efd475fbdfb310f
-  languageName: node
-  linkType: hard
-
 "@web3-onboard/react@npm:^2.8.9":
   version: 2.8.9
   resolution: "@web3-onboard/react@npm:2.8.9"
@@ -10550,6 +10472,21 @@ __metadata:
     joi: 17.9.1
     rxjs: ^7.5.2
   checksum: 06d1f76fd0fb9cc7efbfba2e7f0f90477f83e8dca9672f74a43aed2c8ff173e03a41f912bbdb1028a15591cccdd6cca8cf6b374a07a55d19eed9b02c11785190
+  languageName: node
+  linkType: hard
+
+"@web3-onboard/walletconnect@npm:^2.3.9":
+  version: 2.4.1
+  resolution: "@web3-onboard/walletconnect@npm:2.4.1"
+  dependencies:
+    "@ethersproject/providers": 5.5.0
+    "@walletconnect/client": ^1.8.0
+    "@walletconnect/ethereum-provider": 2.9.0
+    "@walletconnect/modal": 2.5.9
+    "@walletconnect/qrcode-modal": ^1.8.0
+    "@web3-onboard/common": ^2.3.3
+    rxjs: ^7.5.2
+  checksum: a71a92796b36c8918daf60011e4fc0af97e7782826ceec9939885cac85347e7b28a5fdba26c428212d57d493cf0f7386985ec03be86022f801ccbea018cb0903
   languageName: node
   linkType: hard
 
