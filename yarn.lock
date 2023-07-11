@@ -3474,11 +3474,11 @@ __metadata:
     "@walletconnect/client": ^1.8.0
     "@walletconnect/qrcode-modal": ^1.8.0
     "@web3-onboard/coinbase": ^2.2.4
-    "@web3-onboard/core": ^2.20.2
+    "@web3-onboard/core": ^2.20.3
     "@web3-onboard/injected-wallets": ^2.10.1
-    "@web3-onboard/react": ^2.8.7
+    "@web3-onboard/react": ^2.8.8
     "@web3-onboard/torus": ^2.2.5
-    "@web3-onboard/walletconnect": ^2.3.9
+    "@web3-onboard/walletconnect": 2.4.2-alpha.1
     "@web3auth/base": ^4.0.0
     "@web3auth/core": ^4.0.0
     "@web3auth/openlogin-adapter": ^4.1.0
@@ -10635,9 +10635,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@web3-onboard/walletconnect@npm:^2.3.9":
-  version: 2.4.1
-  resolution: "@web3-onboard/walletconnect@npm:2.4.1"
+"@web3-onboard/walletconnect@npm:2.4.2-alpha.1":
+  version: 2.4.2-alpha.1
+  resolution: "@web3-onboard/walletconnect@npm:2.4.2-alpha.1"
   dependencies:
     "@ethersproject/providers": 5.5.0
     "@walletconnect/client": ^1.8.0
@@ -10645,8 +10645,9 @@ __metadata:
     "@walletconnect/modal": 2.5.9
     "@walletconnect/qrcode-modal": ^1.8.0
     "@web3-onboard/common": ^2.3.3
+    joi: 17.9.1
     rxjs: ^7.5.2
-  checksum: a71a92796b36c8918daf60011e4fc0af97e7782826ceec9939885cac85347e7b28a5fdba26c428212d57d493cf0f7386985ec03be86022f801ccbea018cb0903
+  checksum: 06d1f76fd0fb9cc7efbfba2e7f0f90477f83e8dca9672f74a43aed2c8ff173e03a41f912bbdb1028a15591cccdd6cca8cf6b374a07a55d19eed9b02c11785190
   languageName: node
   linkType: hard
 
