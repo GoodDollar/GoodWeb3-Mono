@@ -147,7 +147,7 @@ const defaultWalletsFlags: IOnboardWallets = {
   custom: []
 };
 
-const getWallets = (wc2Options: WalletConnectOptions) => {
+const getWallets = (wc2Options: WalletConnectOptions | object) => {
   const mergedOptions = defaultsDeep({}, wc2Options, wc2InitOptions);
   const defaultWc = walletConnectModule({
     ...(mergedOptions as any)
