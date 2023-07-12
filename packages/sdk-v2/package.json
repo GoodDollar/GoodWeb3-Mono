@@ -108,10 +108,5 @@
   },
   "resolutions": {
     "ethers": "^5.7.2"
-  },
-  "lint-staged": {
-    "*.ts": [
-      "tsc"
-    ]
   }
 }

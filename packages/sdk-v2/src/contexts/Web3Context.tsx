@@ -60,9 +60,9 @@ export const useWeb3Context = () => useContext(Web3Context);
 
 export const TokenContext = createContext<typeof G$Decimals>(defaultsDeep(G$Decimals));
 
-type Props = {
+export type Props = {
   children: React.ReactNode;
-  config: Config;
+  config?: Config;
   web3Provider?: JsonRpcProvider | W3Provider;
   env?: EnvKey;
   switchNetworkRequest?: SwitchNetwork;
@@ -185,7 +185,19 @@ const TokenProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
   return <TokenContext.Provider value={value}>{children}</TokenContext.Provider>;
 };
 
-export const Web3Provider = ({ children, config, web3Provider, env = "production" }: Props) => {
+const defaultConfig: Config = {
+  networks: [Goerli, Mainnet, Fuse, Celo],
+  readOnlyChainId: Celo.chainId,
+  pollingInterval: 15000,
+  readOnlyUrls: {
+    122: "https://rpc.fuse.io",
+    42220: "https://forno.celo.org",
+    1: "https://cloudflare-eth.com"
+  }
+};
+
+export const Web3Provider = ({ children, config: inConfig, web3Provider, env = "production" }: Props) => {
+  const config = defaultsDeep(inConfig, defaultConfig);
   const [switchNetwork, setSwitchNetwork] = useState<SwitchNetwork>();
   const [onSwitchNetwork, setOnSwitchNetwork] = useState<SwitchCallback>();
 
