@@ -8,10 +8,14 @@ import {
   ProviderType
 } from "./types";
 import { supportsAnalytics, supportsMonitoring } from "./utils";
-import { Amplitude, IAmplitudeConfig } from "./amplitude";
-import { GoogleAnalytics, IGoogleConfig } from "./google";
-import { Sentry, ISentryConfig } from "./sentry";
-import { IIndicativeConfig, Indicative } from "./indicative";
+import { Amplitude } from "./amplitude/Amplitude";
+import { IAmplitudeConfig } from "./amplitude/types";
+import { GoogleAnalytics } from "./google/GoogleAnalytics";
+import { IGoogleConfig } from "./google/types";
+import { Sentry } from "./sentry/Sentry";
+import { ISentryConfig } from "./sentry/types";
+import { Indicative } from "./indicative/Indicative";
+import { IIndicativeConfig } from "./indicative/types";
 import { IMixpanelConfig, Mixpanel } from "./mixpanel/mixpanel";
 import { IPostHogConfig, PostHog } from "./posthog/posthog";
 
