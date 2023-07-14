@@ -1,12 +1,11 @@
 import React from "react";
-import { InitOptions, OnboardAPI } from "@web3-onboard/core";
+import { InitOptions } from "@web3-onboard/core";
 import { init, Web3OnboardProvider } from "@web3-onboard/react";
 import injectedModule from "@web3-onboard/injected-wallets";
-import walletConnectModule from "@web3-onboard/walletconnect";
+import walletConnectModule, { WalletConnectOptions } from "@web3-onboard/walletconnect";
 import coinbaseWalletModule from "@web3-onboard/coinbase";
-import { useRef } from "react";
 import { customwc, icons } from "./modules/customwalletconnect";
-import { keys, pickBy } from "lodash";
+import { defaultsDeep, keys, pickBy } from "lodash";
 import { getDevice, isMobile } from "../base";
 
 export interface IOnboardWallets {
@@ -22,6 +21,7 @@ export interface IOnboardWallets {
 export interface IOnboardProviderProps {
   options?: Omit<InitOptions, "wallets">;
   wallets?: IOnboardWallets | null;
+  wc2Options?: WalletConnectOptions | object;
   children?: React.ReactNode;
 }
 
@@ -62,8 +62,9 @@ const injected = injectedModule({
 export const wc2InitOptions = {
   projectId: "095eb531a0c00781cb45644be58b065e",
   version: 2,
-  requiredChains: [42220, 122, 1],
+  requiredChains: [42220],
   qrModalOptions: {
+    optionalChains: [122, 1, 42220],
     themeVariables: [],
     chainImages: [],
     enableExplorer: true,
@@ -118,54 +119,6 @@ export const wc2InitOptions = {
   }
 };
 
-const defaultWc = walletConnectModule({
-  ...(wc2InitOptions as any)
-});
-
-const coinbaseWalletSdk = coinbaseWalletModule();
-
-const zengo = customwc({
-  label: "zengo",
-  ...(wc2InitOptions as any),
-  handleUri: uri =>
-    new Promise(res => {
-      isMobile() && window.open(`https://get.zengo.com/wc?uri=${encodeURIComponent(uri)}`, "_blank");
-      res(true);
-    })
-});
-
-// ios might be enabled later when proper support for v2 and fix for handling uri
-const valora = customwc({
-  label: "valora",
-  ...(wc2InitOptions as any),
-  handleUri: async uri => {
-    switch (getDevice().os.name) {
-      case "Android":
-        window.open(`celo://wallet/wc?uri=${encodeURIComponent(uri)}`, "_blank");
-        break;
-      // case "iOS":
-      //   window.open(`https://valoraapp.com/wc?uri=${encodeURIComponent(uri)}`, "_blank");
-      //   break;
-    }
-    return true;
-  }
-});
-
-const gd = customwc({
-  label: "gooddollar",
-  ...(wc2InitOptions as any),
-  handleUri: async uri => {
-    switch (getDevice().os.name) {
-      case "Android":
-        window.open(`gooddollar://wc?uri=${encodeURIComponent(uri)}`, "_blank");
-        break;
-      default:
-        window.open(`http://dev.gooddollar.org/wc?uri=${encodeURIComponent(uri)}`, "_blank");
-    }
-    return true;
-  }
-});
-
 const defaultOptions: IOnboardProviderProps["options"] = {
   chains: [
     {
@@ -194,37 +147,82 @@ const defaultWalletsFlags: IOnboardWallets = {
   custom: []
 };
 
-const walletsMap: Record<keyof Omit<IOnboardWallets, "custom">, any> = {
-  gd,
-  walletconnect: defaultWc,
-  valora,
-  metamask: injected,
-  coinbase: coinbaseWalletSdk,
-  zengo
-};
+const getWallets = (wc2Options: WalletConnectOptions | object) => {
+  const mergedOptions = defaultsDeep({}, wc2Options, wc2InitOptions);
+  const defaultWc = walletConnectModule({
+    ...(mergedOptions as any)
+  });
+  const coinbaseWalletSdk = coinbaseWalletModule();
 
-export const OnboardProvider = ({
-  options = defaultOptions,
-  wallets = null,
-  children
-}: IOnboardProviderProps): JSX.Element => {
-  const onboardRef = useRef<OnboardAPI>();
+  const zengo = customwc({
+    label: "zengo",
+    ...(mergedOptions as any),
+    handleUri: uri =>
+      new Promise(res => {
+        isMobile() && window.open(`https://get.zengo.com/wc?uri=${encodeURIComponent(uri)}`, "_blank");
+        res(true);
+      })
+  });
 
-  // initialise once at first render
-  (() => {
-    if (onboardRef.current) {
-      return;
+  // ios might be enabled later when proper support for v2 and fix for handling uri
+  const valora = customwc({
+    label: "valora",
+    ...(mergedOptions as any),
+    handleUri: async uri => {
+      switch (getDevice().os.name) {
+        case "Android":
+          window.open(`celo://wallet/wc?uri=${encodeURIComponent(uri)}`, "_blank");
+          break;
+        // case "iOS":
+        //   window.open(`https://valoraapp.com/wc?uri=${encodeURIComponent(uri)}`, "_blank");
+        //   break;
+      }
+      return true;
     }
+  });
 
-    const { custom = [], ...flags } = { ...defaultWalletsFlags, ...(wallets || {}) };
-    const selectedWallets = keys(pickBy(flags));
+  const gd = customwc({
+    label: "gooddollar",
+    ...(mergedOptions as any),
+    handleUri: async uri => {
+      switch (getDevice().os.name) {
+        case "Android":
+          window.open(`gooddollar://wc?uri=${encodeURIComponent(uri)}`, "_blank");
+          break;
+        default:
+          window.open(`http://dev.gooddollar.org/wc?uri=${encodeURIComponent(uri)}`, "_blank");
+      }
+      return true;
+    }
+  });
 
-    // TODO: add option to define order when custom wallets are added
-    onboardRef.current = init({
-      ...options,
-      wallets: [...custom, ...selectedWallets.map(key => walletsMap[key])]
-    });
-  })();
-
-  return <Web3OnboardProvider web3Onboard={onboardRef.current}>{children}</Web3OnboardProvider>;
+  const walletsMap: Record<keyof Omit<IOnboardWallets, "custom">, any> = {
+    gd,
+    walletconnect: defaultWc,
+    valora,
+    metamask: injected,
+    coinbase: coinbaseWalletSdk,
+    zengo
+  };
+  return walletsMap;
 };
+
+export const OnboardProvider = React.memo(
+  ({ options = defaultOptions, wallets = null, wc2Options = {}, children }: IOnboardProviderProps): JSX.Element => {
+    let onboard;
+    // initialise once at first render
+    (() => {
+      const walletsMap = getWallets(wc2Options);
+      const { custom = [], ...flags } = { ...defaultWalletsFlags, ...(wallets || {}) };
+      const selectedWallets = keys(pickBy(flags));
+
+      // TODO: add option to define order when custom wallets are added
+      onboard = init({
+        ...options,
+        wallets: [...custom, ...selectedWallets.map(key => walletsMap[key])]
+      });
+    })();
+
+    return <Web3OnboardProvider web3Onboard={onboard}>{children}</Web3OnboardProvider>;
+  }
+);

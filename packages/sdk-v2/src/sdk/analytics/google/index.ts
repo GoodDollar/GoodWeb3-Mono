@@ -1,3 +1,3 @@
-export * from "./api";
+export { default as GoogleAPIFactory } from "./api";
 export * from "./GoogleAnalytics";
-export type { IGoogleConfig, IGoogleAPI } from "./types";
+export * from "./types";
