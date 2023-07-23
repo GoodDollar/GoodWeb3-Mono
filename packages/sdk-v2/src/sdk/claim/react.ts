@@ -42,7 +42,7 @@ export const useClaim = (refresh: QueryParams["refresh"] = "never") => {
 
   const ubi = useGetContract("UBIScheme", true, "claim", chainId) as UBIScheme;
   const identity = useGetContract("Identity", true, "claim", chainId) as IIdentity;
-  const claimCall = useContractFunctionWithDefaultGasFees(ubi, "claim");
+  const claimCall = useContractFunctionWithDefaultGasFees(ubi, "claim", { transactionName: "Claimed Daily UBI" });
 
   const results = useCalls(
     [

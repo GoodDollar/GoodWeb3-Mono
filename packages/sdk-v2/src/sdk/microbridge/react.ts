@@ -109,7 +109,9 @@ export const useBridge = (withRelay = false) => {
   const [selfRelayStatus, setSelfRelay] = useState<Partial<TransactionStatus> | undefined>();
 
   // const bridgeTo = useContractFunction(bridgeContract, "bridgeTo", {});
-  const transferAndCall = useContractFunctionWithDefaultGasFees(g$Contract, "transferAndCall");
+  const transferAndCall = useContractFunctionWithDefaultGasFees(g$Contract, "transferAndCall", {
+    transactionName: "BridgeTransfer"
+  });
   const bridgeRequestId = (transferAndCall.state?.receipt?.logs || [])
     .filter(log => log.address === bridgeContract.address)
     .map(log => bridgeContract.interface.parseLog(log))?.[0]?.args?.id;
