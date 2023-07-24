@@ -7,6 +7,7 @@ import coinbaseWalletModule from "@web3-onboard/coinbase";
 import { customwc, icons } from "./modules/customwalletconnect";
 import { defaultsDeep, keys, pickBy } from "lodash";
 import { getDevice, isMobile } from "../base";
+import { Envs } from "../constants";
 
 export interface IOnboardWallets {
   valora?: boolean;
@@ -22,6 +23,7 @@ export interface IOnboardProviderProps {
   options?: Omit<InitOptions, "wallets">;
   wallets?: IOnboardWallets | null;
   wc2Options?: WalletConnectOptions | object;
+  gdEnv?: string;
   children?: React.ReactNode;
 }
 
@@ -147,7 +149,7 @@ const defaultWalletsFlags: IOnboardWallets = {
   custom: []
 };
 
-const getWallets = (wc2Options: WalletConnectOptions | object) => {
+const getWallets = (wc2Options: WalletConnectOptions | object, gdEnv = "development-celo") => {
   const mergedOptions = defaultsDeep({}, wc2Options, wc2InitOptions);
   const defaultWc = walletConnectModule({
     ...(mergedOptions as any)
@@ -181,6 +183,19 @@ const getWallets = (wc2Options: WalletConnectOptions | object) => {
     }
   });
 
+  const getWalletUrl = (gdEnv: string) => {
+    let walletUrl = Envs.development.dappUrl;
+    switch (true) {
+      case gdEnv.includes("production"):
+        walletUrl = Envs.production.dappUrl;
+        break;
+      case gdEnv.includes("staging"):
+        walletUrl = Envs.staging.dappUrl;
+        break;
+    }
+    return `${walletUrl}/wc?uri=`;
+  };
+
   const gd = customwc({
     label: "gooddollar",
     ...(mergedOptions as any),
@@ -190,7 +205,7 @@ const getWallets = (wc2Options: WalletConnectOptions | object) => {
           window.open(`gooddollar://wc?uri=${encodeURIComponent(uri)}`, "_blank");
           break;
         default:
-          window.open(`http://dev.gooddollar.org/wc?uri=${encodeURIComponent(uri)}`, "_blank");
+          window.open(`${getWalletUrl(gdEnv)}${encodeURIComponent(uri)}`, "_blank");
       }
       return true;
     }
@@ -208,11 +223,17 @@ const getWallets = (wc2Options: WalletConnectOptions | object) => {
 };
 
 export const OnboardProvider = React.memo(
-  ({ options = defaultOptions, wallets = null, wc2Options = {}, children }: IOnboardProviderProps): JSX.Element => {
+  ({
+    options = defaultOptions,
+    wallets = null,
+    wc2Options = {},
+    gdEnv,
+    children
+  }: IOnboardProviderProps): JSX.Element => {
     let onboard;
     // initialise once at first render
     (() => {
-      const walletsMap = getWallets(wc2Options);
+      const walletsMap = getWallets(wc2Options, gdEnv);
       const { custom = [], ...flags } = { ...defaultWalletsFlags, ...(wallets || {}) };
       const selectedWallets = keys(pickBy(flags));
 

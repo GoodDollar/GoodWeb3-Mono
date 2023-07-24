@@ -61,12 +61,12 @@ export const Envs: { [key: EnvKey]: { [key: string]: string } } = {
     backend: "https://goodserver.gooddollar.org"
   },
   staging: {
-    dappUrl: "https://goodqa.netlify.app",
+    dappUrl: "https://qa.gooddollar.org",
     identityUrl: "https://goodid-qa.vercel.app",
     backend: "https://goodserver-qa.herokuapp.com"
   },
   development: {
-    dappUrl: "https://gooddev.netlify.app",
+    dappUrl: "https://dev.gooddollar.org",
     identityUrl: "https://goodid-dev.vercel.app",
     backend: "https://good-server.herokuapp.com"
   }
