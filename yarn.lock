@@ -10444,12 +10444,34 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@walletconnect/modal-core@npm:2.5.9":
+  version: 2.5.9
+  resolution: "@walletconnect/modal-core@npm:2.5.9"
+  dependencies:
+    buffer: 6.0.3
+    valtio: 1.10.6
+  checksum: dfcb0b7a50febafe08fd80fec2b31b86722a27aedad8ee0656af895e2c8b1a2c8a91c7bb5f968bea5b8de9ab7fc908c6f52cef194f949e37da597acd0f1a263b
+  languageName: node
+  linkType: hard
+
 "@walletconnect/modal-core@npm:2.6.0":
   version: 2.6.0
   resolution: "@walletconnect/modal-core@npm:2.6.0"
   dependencies:
     valtio: 1.10.7
   checksum: b1b9373a4f3a8fdacd5c59666a0fd4d3c55b4fc2e33f2f805fa32214cc74c7ccaf693d1fa4b10974a521d9d15dd4a01b86ee3324ca787db281d2a602c322c220
+  languageName: node
+  linkType: hard
+
+"@walletconnect/modal-ui@npm:2.5.9":
+  version: 2.5.9
+  resolution: "@walletconnect/modal-ui@npm:2.5.9"
+  dependencies:
+    "@walletconnect/modal-core": 2.5.9
+    lit: 2.7.5
+    motion: 10.16.2
+    qrcode: 1.5.3
+  checksum: c0050715734b532f75b81c3abb75c6cce513b1481c9cec66f648aa698ddd3af4ec70978a0976b06843229e6f7ea14cc927432dc66cfe53967db7d96c9437f692
   languageName: node
   linkType: hard
 
@@ -10462,6 +10484,16 @@ __metadata:
     motion: 10.16.2
     qrcode: 1.5.3
   checksum: 62e8893683aa76425c775924cfb559e28f4a711467d92c65f1e9318d290c5892d14c0298622862d52841d8e0f6e31f2e16213d7a58365364940da504c59291ab
+  languageName: node
+  linkType: hard
+
+"@walletconnect/modal@npm:2.5.9":
+  version: 2.5.9
+  resolution: "@walletconnect/modal@npm:2.5.9"
+  dependencies:
+    "@walletconnect/modal-core": 2.5.9
+    "@walletconnect/modal-ui": 2.5.9
+  checksum: ba52f4210c238644a2c4d6fbfc1692d7f49e4fa4a85e793aa79c299e9e4d16c0555fcf08bb94726186256aec1e43abb3d7297a61020abe7211f6faac1163dddd
   languageName: node
   linkType: hard
 
@@ -23477,14 +23509,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lit@npm:2.7.6":
-  version: 2.7.6
-  resolution: "lit@npm:2.7.6"
+"lit@npm:2.7.5":
+  version: 2.7.5
+  resolution: "lit@npm:2.7.5"
   dependencies:
     "@lit/reactive-element": ^1.6.0
     lit-element: ^3.3.0
     lit-html: ^2.7.0
-  checksum: 984a7fb9c0fa387f20177a07de22ea1c9cdc01a7dc7cb1c400d1df5b43a8956908460482a3259ea173555c6f0f13457d2ddc5c84d4c365007afd86e7ca58b384
+  checksum: 61a3f87c57136618f47a30b36cdfb592fcba42dcfbdb104d2b5ca291148c2d9a32fcb713bb91090bd08d6897a00e73f8425da6e3626aa080eaf410a32397ae69
   languageName: node
   linkType: hard
 
@@ -33299,9 +33331,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"valtio@npm:1.10.7":
-  version: 1.10.7
-  resolution: "valtio@npm:1.10.7"
+"valtio@npm:1.10.6":
+  version: 1.10.6
+  resolution: "valtio@npm:1.10.6"
   dependencies:
     proxy-compare: 2.5.1
     use-sync-external-store: 1.2.0
@@ -33310,7 +33342,7 @@ __metadata:
   peerDependenciesMeta:
     react:
       optional: true
-  checksum: fec3aa06e494d8230e5074a2da1077835c0940e383a411935f92e27db2d75ca28d53b63cb815b07dca0edb4bb4c3b6beabd6bec475be70bf26c03b04bd201058
+  checksum: 0e738aa204c479c8f8c89c0a7478d6784c28ddd712be529fdc5c421d3ec28157fec2fb022a75cd4f45b8c4b470fbc64a27032adba6ed9936bdad989256222adf
   languageName: node
   linkType: hard
 
