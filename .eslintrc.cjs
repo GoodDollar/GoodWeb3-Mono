@@ -32,7 +32,8 @@ module.exports = {
     "@typescript-eslint/no-unnecessary-type-assertion": "off",
     "@typescript-eslint/ban-ts-comment": "off",
     "@typescript-eslint/no-misused-promises": "off",
-    "react-hooks-addons/no-unused-deps": ["warn", { effectComment: "used" }]
+    "react-hooks-addons/no-unused-deps": ["warn", { effectComment: "used" }],
+    "@typescript-eslint/no-unused-vars": ["warn", { vars: "local", args: "after-used", ignoreRestSiblings: true }]
   },
   globals: {
     JSX: true,

@@ -3,9 +3,9 @@ import React, { useEffect, useState } from "react";
 import { useConfig } from "@usedapp/core";
 import { useSwitchNetwork } from "@gooddollar/web3sdk-v2";
 import { find } from "lodash";
-import { useModal } from "../../hooks/useModal";
-import { ActionHeader } from "../layout";
-import { LearnButton } from "../buttons";
+import { useModal } from "../../../hooks/useModal";
+import { ActionHeader } from "../../layout";
+import { LearnButton } from "../../buttons";
 
 export interface SwitchChainProps {
   children?: any;
@@ -14,7 +14,6 @@ export interface SwitchChainProps {
 /**
  * A modal to wrap your component or page with and show a modal re-active to switchChain requests
  * it assumes you have already wrapped your app with the Web3Provider out of the @gooddollar/sdk-v2 package
- * @param {boolean} switching indicating if there is a pending switch request triggered
  * @param children
  * @returns JSX.Element
  */
@@ -37,7 +36,6 @@ export const SwitchChainModal = ({ children }: SwitchChainProps) => {
         }
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setOnSwitchNetwork]);
 
   const networkName = find(config.networks, _ => _.chainId === requestedChain)?.chainName;
