@@ -1,1 +1,1 @@
-export * as SentryWeb from "@sentry/browser";
+export * as api from "@sentry/browser";

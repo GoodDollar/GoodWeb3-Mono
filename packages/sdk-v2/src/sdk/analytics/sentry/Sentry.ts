@@ -2,7 +2,7 @@ import { get, omit, forOwn } from "lodash";
 
 import { IAbstractProvider, IAppProps, IMonitoringProvider } from "../types";
 import { getUserProps } from "../utils";
-import { SentryWeb as api } from "./api";
+import { api } from "./api";
 import { ISentryConfig } from "./types";
 
 export class Sentry implements IAbstractProvider, IMonitoringProvider {

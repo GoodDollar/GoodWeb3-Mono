@@ -1,3 +1,1 @@
-import * as sentry from '@sentry/react-native'
-
-export default sentry
+export * as api from "@sentry/react-native";
