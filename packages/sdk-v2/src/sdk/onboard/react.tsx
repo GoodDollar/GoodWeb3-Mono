@@ -29,37 +29,7 @@ export interface IOnboardProviderProps {
 
 const currentDevice = getDevice().os.name;
 
-const injected = injectedModule({
-  filter: {
-    ["Binance Smart Wallet"]: false,
-    ["MetaMask"]: true,
-    ["Coinbase Wallet"]: true,
-    ["detected"]: true,
-    ["trust"]: false,
-    ["opera"]: false,
-    ["status"]: false,
-    ["alphawallet"]: false,
-    ["atoken"]: false,
-    ["bitpie"]: false,
-    ["blockwallet"]: false,
-    ["Brave"]: false,
-    ["dcent"]: false,
-    ["frame"]: false,
-    ["huobiwallet"]: false,
-    ["hyperpay"]: false,
-    ["imtoken"]: false,
-    ["liquality"]: false,
-    ["meetone"]: false,
-    ["ownbit"]: false,
-    ["mykey"]: false,
-    ["tokenpocket"]: false,
-    ["tp"]: false,
-    ["xdefi"]: false,
-    ["oneInch"]: false,
-    ["tokenary"]: false,
-    ["tally"]: false
-  }
-});
+const injected = injectedModule();
 
 export const wc2InitOptions = {
   projectId: "095eb531a0c00781cb45644be58b065e",
