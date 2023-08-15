@@ -29,7 +29,11 @@ export interface IOnboardProviderProps {
 
 const currentDevice = getDevice().os.name;
 
-const injected = injectedModule();
+const injected = injectedModule({
+  filter: {
+    ["detected"]: true
+  }
+});
 
 export const wc2InitOptions = {
   projectId: "095eb531a0c00781cb45644be58b065e",
