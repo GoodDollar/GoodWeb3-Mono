@@ -1,5 +1,6 @@
 import React from "react";
-import { Onramper } from "../../../apps/onramp/Onramper";
+import { OnramperController } from "../../../apps/onramp/OnramperController";
+import { W3Wrapper } from "../../W3Wrapper";
 
 export const OnramperWidget = {
   args: {
@@ -13,13 +14,10 @@ export const OnramperWidget = {
 export default {
   title: "Apps/Onramper",
   component: props => (
-    <div style={{ height: "600px" }}>
-      <Onramper
-        onSuccess={() => {
-          console.log("success");
-        }}
-        {...props}
-      />
-    </div>
+    <W3Wrapper withMetaMask={true} env="fuse">
+      <div style={{ height: "600px" }}>
+        <OnramperController />
+      </div>
+    </W3Wrapper>
   )
 };

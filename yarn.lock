@@ -3254,7 +3254,7 @@ __metadata:
     "@babel/preset-react": ^7.16.0
     "@babel/preset-typescript": ^7.16.0
     "@babel/runtime": ^7.18.9
-    "@gooddollar/goodprotocol": ^2.0.3
+    "@gooddollar/goodprotocol": ^2.0.10
     "@gooddollar/web3sdk-v2": latest
     "@lingui/macro": ^3.14.0
     "@lingui/react": ^3.14.0
@@ -3376,6 +3376,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@gooddollar/goodprotocol@npm:^2.0.10":
+  version: 2.0.10
+  resolution: "@gooddollar/goodprotocol@npm:2.0.10"
+  dependencies:
+    "@gooddollar/goodcontracts": ^2.6.6
+    "@jsier/retrier": ^1.2.4
+    "@openzeppelin/contracts": ^4.8.0
+    "@openzeppelin/contracts-upgradeable": ^4.8.0
+    "@openzeppelin/upgrades-core": 1.18.0
+    "@superfluid-finance/ethereum-contracts": ^1.4.3
+    "@superfluid-finance/sdk-core": ^0.5.8
+    "@typechain/hardhat": ^6.1.5
+    async-promise-pool: ^1.0.4
+    openzeppelin-solidity: ^4.3.2
+    patch-package: latest
+    press-any-key: ^0.1.1
+    truffle-plugin-verify: ^0.6.1
+    truffle-source-verify: ^0.0.6
+  checksum: 97c55c1b82d38d69f9982e7cf7c504e0eb5a92077de8946c9b5fdeec5868a0b890ee54bad31918213731b19e0c27ee2c78df13b17db2357cdcad23fee7ecc9c1
+  languageName: node
+  linkType: hard
+
 "@gooddollar/goodprotocol@npm:^2.0.3, @gooddollar/goodprotocol@npm:^2.0.4":
   version: 2.0.4
   resolution: "@gooddollar/goodprotocol@npm:2.0.4"
@@ -3454,7 +3476,7 @@ __metadata:
     "@babel/preset-typescript": ^7.16.0
     "@gooddollar/bridge-app": ^1.5.0
     "@gooddollar/bridge-contracts": ^1.0.14
-    "@gooddollar/goodprotocol": ^2.0.3
+    "@gooddollar/goodprotocol": ^2.0.10
     "@react-native-async-storage/async-storage": 1.17.10
     "@react-native-firebase/analytics": ^16.4.6
     "@sentry/browser": 7.16.0
@@ -4637,6 +4659,21 @@ __metadata:
   version: 4.8.1
   resolution: "@openzeppelin/contracts@npm:4.8.1"
   checksum: 99acefde1ae42c2d935ec9b4ebd327e786c499a4ec76b9582eb9adb0ff94a77c48047332fba44fb97b82b5a46d80e74d3e5d8cf73d5defa7f746f2a67f070281
+  languageName: node
+  linkType: hard
+
+"@openzeppelin/upgrades-core@npm:1.18.0":
+  version: 1.18.0
+  resolution: "@openzeppelin/upgrades-core@npm:1.18.0"
+  dependencies:
+    cbor: ^8.0.0
+    chalk: ^4.1.0
+    compare-versions: ^4.0.0
+    debug: ^4.1.1
+    ethereumjs-util: ^7.0.3
+    proper-lockfile: ^4.1.1
+    solidity-ast: ^0.4.15
+  checksum: 004be35ea9ef851a6fe8347fd4338d9859e2096bb0b83620fc2b877617ef6674b7a23adda5029768e77f1c137053e49a045aa07c255e76642fe98b0ef9f1d237
   languageName: node
   linkType: hard
 
@@ -8905,6 +8942,22 @@ __metadata:
     hardhat: ^2.9.9
     typechain: ^8.1.1
   checksum: ccb4df6eae69d6560125d6eb014989d0097213818d0fdf91a077bacee746f39356de6d11b3f582d55df7d6924bcfffc31e412502bbbe3a5be8e3310197ce4f61
+  languageName: node
+  linkType: hard
+
+"@typechain/hardhat@npm:^6.1.5":
+  version: 6.1.6
+  resolution: "@typechain/hardhat@npm:6.1.6"
+  dependencies:
+    fs-extra: ^9.1.0
+  peerDependencies:
+    "@ethersproject/abi": ^5.4.7
+    "@ethersproject/providers": ^5.4.7
+    "@typechain/ethers-v5": ^10.2.1
+    ethers: ^5.4.7
+    hardhat: ^2.9.9
+    typechain: ^8.1.1
+  checksum: f214bebf7860956230478cb92696ba757829cfd9dc65ac99c3bc7e539378310318d92b009054186f446595c8ffc1a81e9c6d028da0eb04253253049ea1b6e8d3
   languageName: node
   linkType: hard
 
@@ -13873,6 +13926,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"cbor@npm:^8.0.0":
+  version: 8.1.0
+  resolution: "cbor@npm:8.1.0"
+  dependencies:
+    nofilter: ^3.1.0
+  checksum: a90338435dc7b45cc01461af979e3bb6ddd4f2a08584c437586039cd5f2235014c06e49d664295debbfb3514d87b2f06728092ab6aa6175e2e85e9cd7dc0c1fd
+  languageName: node
+  linkType: hard
+
 "ccount@npm:^1.0.0":
   version: 1.1.0
   resolution: "ccount@npm:1.1.0"
@@ -14650,6 +14712,13 @@ __metadata:
   version: 1.0.1
   resolution: "commondir@npm:1.0.1"
   checksum: 59715f2fc456a73f68826285718503340b9f0dd89bfffc42749906c5cf3d4277ef11ef1cca0350d0e79204f00f1f6d83851ececc9095dc88512a697ac0b9bdcb
+  languageName: node
+  linkType: hard
+
+"compare-versions@npm:^4.0.0":
+  version: 4.1.4
+  resolution: "compare-versions@npm:4.1.4"
+  checksum: c1617544b79c2f36a1d543c50efd0da1a994040294c8923218080bc0df46da83ca414e3378282e93cab073744995124946417d130d8987e8efb5d1a73c0c4ba6
   languageName: node
   linkType: hard
 
@@ -17520,7 +17589,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ethereumjs-util@npm:7.1.5, ethereumjs-util@npm:^7.0.10, ethereumjs-util@npm:^7.1.0, ethereumjs-util@npm:^7.1.1, ethereumjs-util@npm:^7.1.2, ethereumjs-util@npm:^7.1.5":
+"ethereumjs-util@npm:7.1.5, ethereumjs-util@npm:^7.0.10, ethereumjs-util@npm:^7.0.3, ethereumjs-util@npm:^7.1.0, ethereumjs-util@npm:^7.1.1, ethereumjs-util@npm:^7.1.2, ethereumjs-util@npm:^7.1.5":
   version: 7.1.5
   resolution: "ethereumjs-util@npm:7.1.5"
   dependencies:
@@ -25301,6 +25370,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"nofilter@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "nofilter@npm:3.1.0"
+  checksum: 58aa85a5b4b35cbb6e42de8a8591c5e338061edc9f3e7286f2c335e9e9b9b8fa7c335ae45daa8a1f3433164dc0b9a3d187fa96f9516e04a17a1f9ce722becc4f
+  languageName: node
+  linkType: hard
+
 "nopt@npm:^6.0.0":
   version: 6.0.0
   resolution: "nopt@npm:6.0.0"
@@ -27444,6 +27520,17 @@ __metadata:
     object-assign: ^4.1.1
     react-is: ^16.13.1
   checksum: c056d3f1c057cb7ff8344c645450e14f088a915d078dcda795041765047fa080d38e5d626560ccaac94a4e16e3aa15f3557c1a9a8d1174530955e992c675e459
+  languageName: node
+  linkType: hard
+
+"proper-lockfile@npm:^4.1.1":
+  version: 4.1.2
+  resolution: "proper-lockfile@npm:4.1.2"
+  dependencies:
+    graceful-fs: ^4.2.4
+    retry: ^0.12.0
+    signal-exit: ^3.0.2
+  checksum: 00078ee6a61c216a56a6140c7d2a98c6c733b3678503002dc073ab8beca5d50ca271de4c85fca13b9b8ee2ff546c36674d1850509b84a04a5d0363bcb8638939
   languageName: node
   linkType: hard
 
@@ -30110,6 +30197,13 @@ __metadata:
   bin:
     solcjs: solcjs
   checksum: 041da7ff725c19023ef34a17f83b3303971d2e62bcea9d0fd3c7af728d6f40ff7cdf2b806d0208a3336d3c9be18c321955e1712ab39ee57390ba00d512def946
+  languageName: node
+  linkType: hard
+
+"solidity-ast@npm:^0.4.15":
+  version: 0.4.49
+  resolution: "solidity-ast@npm:0.4.49"
+  checksum: f5b0354ddfa882346cf12d33f79c6123796a07637b248ceb9cfeec9f81540e270407f6fca660cf75666e1ba1866270319ab3fbe54b01491dbd35adffd1405243
   languageName: node
   linkType: hard
 
