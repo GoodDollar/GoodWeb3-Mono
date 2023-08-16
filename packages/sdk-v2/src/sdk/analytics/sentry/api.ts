@@ -1,3 +1,1 @@
-import * as SentryWeb from '@sentry/browser'
-
-export default SentryWeb
+export * as api from "@sentry/browser";

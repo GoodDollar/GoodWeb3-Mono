@@ -1,6 +1,14 @@
 const webpack = require("webpack");
 module.exports = {
-  typescript: {
+  //https://stackoverflow.com/a/70413514
+  babel: async options => {
+    return {
+      ...options,
+      plugins: options.plugins.filter(x => !(typeof x === "string" && x.includes("plugin-transform-classes")))
+    };
+  },
+  //fix docgen error
+  typescript: {ß
     reactDocgen: "react-docgen-typescript-plugin"
   },
   stories: ["../src/**/*.stories.mdx", "../src/**/*.stories.@(js|jsx|ts|tsx)"],
