@@ -126,4 +126,27 @@ export class ClaimSDK extends BaseSDK {
 
     return ubi.claim(txOverrides);
   }
+
+  async deleteFVRecord() {
+    const { env, provider } = this;
+    const signer = provider.getSigner();
+    const { backend } = env;
+
+    const account = await signer.getAddress();
+    const signature = await signer.signMessage(FV_IDENTIFIER_MSG2.replace("<account>", account));
+    const enrollmentIdentifier = signature.slice(0, 42);
+    const endpoint = `${backend}/verify/face/${encodeURIComponent(enrollmentIdentifier)}`;
+    const authEndpoint = `${backend}/auth/fv2`;
+    const { token } = await fetch(authEndpoint, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ fvsig: signature, account })
+    }).then(_ => _.json());
+
+    return fetch(endpoint, {
+      method: "DELETE",
+      headers: { "content-type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ signature })
+    }).then(_ => _.json());
+  }
 }
