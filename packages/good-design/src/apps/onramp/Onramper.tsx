@@ -38,7 +38,7 @@ const Stepper = ({ step = -1 }) => (
 export const Onramper = ({
   onEvent,
   step,
-  widgetParams = { onlyCryptos: "CELO_CELO", isAddressEditable: false },
+  widgetParams = { onlyCryptos: "CELO_CELO,CUSD_CELO", isAddressEditable: false },
   targetNetwork = "CELO",
   targetWallet
 }: {
@@ -56,6 +56,11 @@ export const Onramper = ({
   if (!targetWallet) {
     return <></>;
   }
+  const uri = `https://buy.onramper.com/?networkWallets=${targetNetwork}:${targetWallet}&${Object.entries(widgetParams)
+    .map(([k, v]) => `${k}=${v}`)
+    .join("&")}`;
+
+  // console.log({ targetNetwork, targetWallet, uri });
   return (
     <Box height={630} width={420}>
       <WebView
@@ -66,11 +71,7 @@ export const Onramper = ({
           borderStyle: "solid",
           margin: "auto"
         }}
-        source={{
-          uri: `https://buy.onramper.com/?wallets=${targetNetwork}:${targetWallet}&${Object.entries(widgetParams)
-            .map(([k, v]) => `${k}=${v}`)
-            .join("&")}`
-        }}
+        source={{ uri }}
         onMessage={handleEvents}
         height="630px"
         width="420px"

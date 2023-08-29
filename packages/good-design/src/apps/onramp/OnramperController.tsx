@@ -7,23 +7,29 @@ import * as ethers from "ethers";
 import { Contract } from "ethers";
 import { useModal } from "../../hooks/useModal";
 import { View, Text } from "native-base";
+import { WalletAndChainGuard } from "../../core";
+import { useSignWalletModal } from "../../hooks/useSignWalletModal";
 
 export const OnramperController = () => {
-  const cdai = "";
+  const cusd = "0x765de816845861e75a25fca122bb6898b8b1282a";
   const { account, chainId, library } = useEthers();
   const swapLock = useRef(false);
-  // const buygdFactory = useGetContract("BuyGDFactory", false, "base") as BuyGDCloneFactory;
-  const buygdFactory = new Contract("0xd34CC10b2846992970354B601105Dbf5654bdE95", [
+
+  const { SignWalletModal } = useSignWalletModal();
+
+  // const buygdFactory = useGetContract("BuyGDFactory", false, "base");
+  const buygdFactory = new Contract("0x00e533B7d6255D05b7f15034B1c989c21F51b91C", [
     "function createAndSwap(address owner,uint256 minAmount) external returns(address)",
     "function predict(address owner) external view returns(address)"
   ]);
 
   const targetGDHelper = useCall(
-    account && {
-      contract: buygdFactory,
-      method: "predict",
-      args: [account]
-    },
+    account &&
+      buygdFactory && {
+        contract: buygdFactory,
+        method: "predict",
+        args: [account]
+      },
 
     { refresh: "never", chainId }
   );
@@ -34,22 +40,26 @@ export const OnramperController = () => {
   const celoBalance = useEtherBalance(gdHelperAddress, { refresh: 1 });
   const accountCeloBalance = useEtherBalance(account, { refresh: 1 }) || ethers.constants.Zero;
 
-  const cdaiBalance = useTokenBalance(cdai, gdHelperAddress, { refresh: 1 });
+  const cusdBalance = useTokenBalance(cusd, gdHelperAddress, { refresh: 1 });
 
   const { showModal, Modal } = useModal();
-  const { send: swap } = useContractFunctionWithDefaultGasFees(buygdInstance, "swap", {
+  const { send: swap, state: swapState } = useContractFunctionWithDefaultGasFees(buygdInstance, "swap", {
     transactionName: "Exchange bought tokens to G$"
   });
 
-  const { send: createAndSwap } = useContractFunctionWithDefaultGasFees(buygdFactory, "createAndSwap", {
-    transactionName: "Deploy secure swap helper"
-  });
+  const { send: createAndSwap, state: createState } = useContractFunctionWithDefaultGasFees(
+    buygdFactory,
+    "createAndSwap",
+    {
+      transactionName: "Deploy secure swap helper"
+    }
+  );
 
-  const selfSwap = accountCeloBalance.gt(ethers.utils.parseUnits("5", 9).mul(300000)); //300000 gas for swap * 5gwei gas price
+  const selfSwap = false; //accountCeloBalance.gt(ethers.utils.parseUnits("5", 9).mul(400000)); //400000 gas for swap * 5gwei gas price
 
   const [step, setStep] = useState(-1);
 
-  console.log({ selfSwap, account, gdHelperAddress, accountCeloBalance, cdaiBalance, celoBalance });
+  console.log({ selfSwap, account, gdHelperAddress, accountCeloBalance, cusdBalance, celoBalance });
   /**
    * callback to get event from onramper iframe
    */
@@ -75,7 +85,7 @@ export const OnramperController = () => {
           console.log("deploying helper...");
           swapTx = createAndSwap(account, minAmount);
         } else {
-          swapTx = swap(minAmount);
+          swapTx = swap(minAmount, account);
         }
         setStep(2);
         // after tx sent progress the stepper
@@ -84,29 +94,33 @@ export const OnramperController = () => {
         if (res?.status !== 1) throw Error("reverted");
       } else {
         //or sbackends sends swap tx
-        const tx = fetch(`/swap/${gdHelperAddress}`);
+        const tx = fetch(`https://good-server.herokuapp.com/verify/swaphelper`, {
+          method: "POST",
+          headers: { "Content-type": "application/json" },
+          body: JSON.stringify({ account })
+        });
         setStep(2);
         await tx;
       }
       // when done set stepper at final step
       setStep(3);
+      swapLock.current = false;
     } catch (e: any) {
       console.log("swap error:", e.message, e);
       showModal();
       setStep(-1);
-    } finally {
-      swapLock.current = false;
     }
   };
 
   // when the helper contract has some balance we trigger the swap
   useEffect(() => {
-    if (cdaiBalance?.gt(0) || celoBalance?.gt(0)) {
+    if (cusdBalance?.gt(0) || celoBalance?.gt(0)) {
+      console.log("starting swap:", cusdBalance?.toString(), celoBalance?.toString());
       triggerSwap().catch(e => {
         console.log(e);
       });
     }
-  }, [celoBalance, cdaiBalance]);
+  }, [celoBalance, cusdBalance]);
 
   const ErrorModal = () => (
     <View>
@@ -117,13 +131,17 @@ export const OnramperController = () => {
   return (
     <>
       <Modal body={<ErrorModal />} />
-      <Onramper
-        onEvent={callback}
-        targetWallet={gdHelperAddress || "0x0"}
-        step={step}
-        targetNetwork="CELO"
-        widgetParams={undefined}
-      />
+      <WalletAndChainGuard validChains={[42220]}>
+        <Onramper
+          onEvent={callback}
+          targetWallet={gdHelperAddress || ""}
+          step={step}
+          targetNetwork="CELO"
+          widgetParams={undefined}
+        />
+      </WalletAndChainGuard>
+      <SignWalletModal txStatus={swapState?.status} />
+      <SignWalletModal txStatus={createState?.status} />
     </>
   );
 };
