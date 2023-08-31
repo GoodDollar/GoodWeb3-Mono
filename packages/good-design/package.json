@@ -27,7 +27,7 @@
     "@babel/preset-react": "^7.16.0",
     "@babel/preset-typescript": "^7.16.0",
     "@babel/runtime": "^7.18.9",
-    "@gooddollar/web3sdk-v2": "latest",
+    "@gooddollar/web3sdk-v2": "file:.yalc/@gooddollar/web3sdk-v2",
     "@storybook/addon-actions": "^6.5.12",
     "@storybook/addon-essentials": "^6.5.12",
     "@storybook/addon-links": "^6.5.12",
@@ -62,7 +62,7 @@
     "sass-loader": "^13.0.2",
     "style-loader": "^3.3.1",
     "ts-loader": "^9.3.1",
-    "typescript": "4.7.4",
+    "typescript": "^5.1.3",
     "webpack": "^5.74.0"
   },
   "peerDepedencies": {
