@@ -7,7 +7,6 @@ import { useModal } from "../../hooks/useModal";
 import { Title } from "../layout";
 
 interface GoodIdModal {
-  children: any;
   account: string;
 }
 
@@ -52,7 +51,7 @@ const GoodId = ({ account }: { account: string }) => {
   );
 };
 
-export const GoodIdModal = ({ children, account }: GoodIdModal) => {
+export const GoodIdModal = ({ account }: GoodIdModal) => {
   const { Modal, showModal } = useModal();
 
   useEffect(() => {
@@ -62,7 +61,6 @@ export const GoodIdModal = ({ children, account }: GoodIdModal) => {
   return (
     <React.Fragment>
       <Modal header={<GoodIdHeader />} body={<GoodId account={account} />} onClose={noop} closeText="x" />
-      {children}
     </React.Fragment>
   );
 };
