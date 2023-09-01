@@ -26,7 +26,7 @@ const GoodIdHeader = () => (
   </CentreBox>
 );
 
-const GoodId = ({ account }: { account: string }) => {
+export const GoodIdDetails = ({ account }: { account: string }) => {
   const { getFvSig, deleteFvId } = useFVLink();
 
   const [fvId, setFvId] = useState<string | undefined>(undefined);
@@ -42,7 +42,10 @@ const GoodId = ({ account }: { account: string }) => {
   }, [fvId, deleteFvId]);
 
   return (
-    <Box flexDir="column">
+    <CentreBox backgroundColor="white" mt="100" borderColor="borderGrey" borderWidth="1" padding="10" borderRadius="20">
+      <Title mb="2" color="main" fontSize="xl" lineHeight="36px">
+        {`GoodID`}
+      </Title>
       <Text>Wallet: {account}</Text>
       <CentreBox flexDir="row" justifyContent="flex-start">
         <Text>Face-Id:</Text>
@@ -57,7 +60,7 @@ const GoodId = ({ account }: { account: string }) => {
         ) : (
           <CentreBox flexDir="row">
             <Text px="2">{fvId}</Text>
-            <Button onPress={deleteFaceId}>
+            <Button onPress={deleteFaceId} padding="0">
               <Text fontWeight="bold" fontSize="24">
                 X
               </Text>
@@ -65,7 +68,7 @@ const GoodId = ({ account }: { account: string }) => {
           </CentreBox>
         )}
       </CentreBox>
-    </Box>
+    </CentreBox>
   );
 };
 
@@ -81,7 +84,7 @@ export const GoodIdModal = ({ account, onClose }: GoodIdModal) => {
       <Modal
         _modalContainer={{ maxWidth: 600 }}
         header={<GoodIdHeader />}
-        body={<GoodId account={account} />}
+        body={<GoodIdDetails account={account} />}
         onClose={onClose}
         closeText="x"
       />
