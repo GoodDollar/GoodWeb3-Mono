@@ -2,7 +2,6 @@ import React, { useState, useCallback } from "react";
 import { Pressable, Icon, View, Box } from "native-base";
 import { first } from "lodash";
 import SelectBox from "./SelectBox";
-// import SwitchIcon from ' ../../assets/svg/arrow-swap.svg'
 
 const SwitchIcon = () => (
   <g strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5">
@@ -25,7 +24,9 @@ const SelectListItem = ({
   isLeft: boolean;
 }) => {
   const type = isListItem ? "list" : "button";
+
   const onItemPress = useCallback(() => onPress(isLeft, chain ?? ""), [chain, onPress]);
+
   return (
     <SelectBox variant={type} text={chain ?? ""} press={onItemPress} isListItem={isListItem} isListOpen={isListOpen} />
   );
@@ -45,6 +46,7 @@ export const CustomSwitch = ({ list, switchListCb }: { list: string[]; switchLis
         show: left ? showListLeft : showListRight,
         dispatch: left ? setShowListLeft : setShowListRight
       };
+
       side.dispatch(!side.show);
     },
     [showListLeft, showListRight]
@@ -62,11 +64,14 @@ export const CustomSwitch = ({ list, switchListCb }: { list: string[]; switchLis
     const altSide = sides[0];
     const listNumber = selectedSide.indexOf(chain);
     const selected = selectedSide.splice(listNumber, listNumber)[0];
+
     selectedSide.unshift(selected);
+
     if (altSide.indexOf(chain) === 0) {
       const altSelected = altSide.splice(listNumber, listNumber)[0];
       altSide.unshift(altSelected);
     }
+
     toggleList(isLeft);
     switchListCb(); //Todo: refactor to handle list with more then 2 values
   };

@@ -84,7 +84,7 @@ export class ClaimSDK extends BaseSDK {
     };
 
     const deleteFvId = async () => {
-      return await this.deleteFVRecord();
+      await this.deleteFVRecord();
     };
 
     return { getLoginSig, getFvSig, getLink, deleteFvId };
