@@ -8,7 +8,7 @@ const pkgDir = pkg => `./packages/${pkg}`;
 const pkgPath = pkg => `${pkgDir(pkg)}/package.json`;
 
 const v2pkg = require(pkgPath("sdk-v2"));
-// const loginpkg = require(pkgPath('login-sdk'))
+const loginpkg = require(pkgPath("login-sdk"));
 const designpkg = require(pkgPath("good-design"));
 
 const execAsync = promisify(exec);
@@ -32,6 +32,8 @@ const writePkg = async (pkg, json) => {
   await writeFileAsync(path, contents);
 };
 
+const args = process.argv.slice(2);
+
 (async () => {
   const commit = await run("git rev-parse --short HEAD");
   const suffix = `-beta.${commit.trimEnd()}`;
@@ -47,26 +49,38 @@ const writePkg = async (pkg, json) => {
   console.log("3. Publish sdk-v2");
   await run("npm publish --access public --tag beta", { cwd: pkgDir("sdk-v2") });
 
+  const skipLogin = args.includes("--skip-login");
+
   console.log("4. Update design/login versions & deps");
-  [
-    designpkg
-    // loginpkg
-  ].forEach(pkg => {
+  const pkgToUpdate = [designpkg];
+
+  if (!skipLogin) {
+    pkgToUpdate.push(loginpkg);
+  }
+
+  pkgToUpdate.forEach(pkg => {
     pkg.version = updateVersion(pkg.version, suffix);
     pkg.devDependencies["@gooddollar/web3sdk-v2"] = v2pkg.version;
   });
+
+  console.log("4.1. Write updated package.json");
+
   await writePkg("good-design", designpkg);
-  // await writePkg("login-sdk", loginpkg);
+  if (!skipLogin) await writePkg("login-sdk", loginpkg);
 
   console.log("5. Build design & login SDKs");
   await run("yarn workspace @gooddollar/good-design install");
   await run("yarn workspace @gooddollar/good-design build");
-  // await run("yarn workspace @gooddollar/goodlogin-sdk install");
-  // await run("yarn workspace @gooddollar/goodlogin-sdk build");
+
+  if (!skipLogin) {
+    await run("yarn workspace @gooddollar/goodlogin-sdk install");
+    await run("yarn workspace @gooddollar/goodlogin-sdk build");
+  }
 
   console.log("6. Publish design & login SDKs");
   await run("npm publish --access public --tag beta", { cwd: pkgDir("good-design") });
-  // await run("npm publish --access public --tag beta", { cwd: pkgDir("login-sdk") });
+
+  if (!skipLogin) await run("npm publish --access public --tag beta", { cwd: pkgDir("login-sdk") });
 
   console.log("7. Commit changes");
   const msg = `Dev version ${suffix.substring(1)} released`;
