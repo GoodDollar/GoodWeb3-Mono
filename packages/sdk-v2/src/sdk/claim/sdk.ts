@@ -83,7 +83,11 @@ export class ClaimSDK extends BaseSDK {
       return url.toString();
     };
 
-    return { getLoginSig, getFvSig, getLink };
+    const deleteFvId = async () => {
+      await this.deleteFVRecord();
+    };
+
+    return { getLoginSig, getFvSig, getLink, deleteFvId };
   }
 
   async isAddressVerified(address: string): Promise<boolean> {
