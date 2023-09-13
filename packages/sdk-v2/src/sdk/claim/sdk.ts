@@ -138,8 +138,8 @@ export class ClaimSDK extends BaseSDK {
 
     const account = await signer.getAddress();
     const signature = await signer.signMessage(FV_IDENTIFIER_MSG2.replace("<account>", account));
-    const enrollmentIdentifier = signature.slice(0, 42);
-    const endpoint = `${backend}/verify/face/${encodeURIComponent(enrollmentIdentifier)}`;
+
+    const endpoint = `${backend}/verify/face/${encodeURIComponent(signature)}`;
     const authEndpoint = `${backend}/auth/fv2`;
     const { token } = await fetch(authEndpoint, {
       method: "POST",
