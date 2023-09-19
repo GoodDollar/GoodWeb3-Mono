@@ -98,6 +98,11 @@ export const GoodIdDetails = ({ account }: { account: string }) => {
           </CentreBox>
         )}
       </CentreBox>
+      <CentreBox textAlign="center">
+        <Text fontStyle="italic" fontSize={fontSize} mt="4" width="75%">
+          Attention: GoodDollar-verifying a new wallet address can only be done 24h after deleting your old face-id.
+        </Text>
+      </CentreBox>
     </CentreBox>
   );
 };
