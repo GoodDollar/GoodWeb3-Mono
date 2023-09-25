@@ -4,12 +4,21 @@ import { View, Text } from "react-native";
 
 import { W3Wrapper } from "../W3Wrapper";
 
-import NewsFeed, { FeedItems } from "../../sdk/newsfeed/sdk";
+import createCeramicFeed, { FeedItems } from "../../sdk/newsfeed/sdk";
+import type { CeramicFeed } from "../../sdk/newsfeed/sdk";
 
 // export interface PageProps {}
 
+const devConfig = {
+  devCeramicNodeURL: "https://ceramic-clay.3boxlabs.com",
+  ceramicIndex: "k2t6wyfsu4pg10xd3qcu4lfbgk6u2r1uwdyggfchpk77hxormr4wvqkitqvkce",
+  ceramicLiveIndex: "k2t6wyfsu4pg26i4h73gc5kdjis5rtfxg62wd93su31ldxfeacl6rx5cs1nix5"
+};
+
 const Web3Component = (params: object) => {
   const [initialFeed, setInitialFeed] = useState<FeedItems[] | null>(null);
+  const { devCeramicNodeURL, ceramicIndex, ceramicLiveIndex } = devConfig;
+  const NewsFeed: CeramicFeed = new createCeramicFeed(devCeramicNodeURL, ceramicIndex, ceramicLiveIndex);
 
   const getPosts = async () => {
     const test = await NewsFeed.getPosts();
@@ -19,8 +28,9 @@ const Web3Component = (params: object) => {
   useEffect(async () => {
     console.log({ params });
     if (!initialFeed) {
-      const latestNewFeed = await getPosts();
-      setInitialFeed(latestNewFeed);
+      const latestNewsFeed = await getPosts();
+
+      setInitialFeed(latestNewsFeed);
     }
   }, [getPosts, initialFeed]);
 
@@ -30,13 +40,18 @@ const Web3Component = (params: object) => {
       {initialFeed &&
         initialFeed.map(item => (
           <View
+            key={item.id}
             style={{ display: "flex", justifyContent: "center", alignItems: "center", padding: 20, marginBottom: 16 }}
           >
             <Text>id: {item.id}</Text>
             <Text>title: {item.title}</Text>
             <Text>link: {item.link}</Text>
             <Text>content: {item.content}</Text>
-            <Text>picture: {item.picture}</Text>
+            {item.picture && (
+              <Text>
+                picture: <img width="100" height="50" src={item.picture} alt="Image" />
+              </Text>
+            )}
             <Text>published: {item.published}</Text>
             {item.sponsored_link && <Text>sponsored_link: {item.sponsored_link}</Text>}
             <Text>hasSponsoredLogo: {!!item.sponsored_logo}</Text>

@@ -3,6 +3,7 @@ export * from "./base";
 export * from "./claim";
 export * from "./constants";
 export * from "./faucet";
+export * from "./ipfs";
 export * from "./microbridge";
 export * from "./newsfeed";
 export * from "./onboard";

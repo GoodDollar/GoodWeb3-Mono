@@ -1,18 +1,12 @@
 import { isArray } from "lodash";
 import { CID } from "multiformats/cid";
 
-import { CeramicModel } from "./client";
-import { batch, serializeCollection, serializeDocument } from "./utils";
+import { CeramicModel as Post } from "./client";
+import { batch, isValidCID, serializeCollection, serializeDocument } from "./utils";
+import createIpfsStorage from "../ipfs/sdk";
 
 // move configs to constructor
-const ceramicIndex = "k2t6wyfsu4pg10xd3qcu4lfbgk6u2r1uwdyggfchpk77hxormr4wvqkitqvkce";
-const ceramicLiveIndex = "k2t6wyfsu4pg26i4h73gc5kdjis5rtfxg62wd93su31ldxfeacl6rx5cs1nix5";
 const ceramicBatchSize = 5;
-
-class Post extends CeramicModel {
-  static index = ceramicIndex;
-  static liveIndex = ceramicLiveIndex;
-}
 
 export interface FeedItems {
   id: string;
@@ -25,22 +19,28 @@ export interface FeedItems {
   sponsored_logo: string;
 }
 
-// interface DocumentOrFeed {
-//   document: FeedItems[];
-//   picture: any;
-// }
+interface DocumentOrFeed {
+  document: FeedItems[];
+  picture: any;
+}
 
-class CeramicFeed {
+export class CeramicFeed {
+  Post: Post;
+  IPFS: any;
+  constructor(ceramicNodeUrl, ceramicIndex, ceramicLiveIndex) {
+    this.Post = new Post({ ceramicNodeUrl, ceramicIndex, ceramicLiveIndex });
+    this.IPFS = createIpfsStorage(fetch);
+  }
   async getPost(postId: string) {
-    const post = await Post.find(postId);
+    const post = await this.Post.find(postId);
     const serialized = serializeDocument(post);
 
     console.log("get ceramic post", { serialized });
     return this._loadPostPictures(serialized);
   }
 
-  async getPosts(): Promise<FeedItems[]> {
-    const feedPosts = await Post.all();
+  async getPosts(): Promise<DocumentOrFeed> {
+    const feedPosts = await this.Post.all();
     const serialized = serializeCollection(feedPosts);
 
     console.log("get ceramic posts collection", { serialized, feedPosts });
@@ -158,16 +158,18 @@ class CeramicFeed {
     }
 
     const document = documentOrFeed;
-    // let { picture } = document;
+    let { picture } = document;
 
-    // if (isValidCID(picture)) {
-    //   picture = await IPFS.load(picture);
-    // }
+    if (isValidCID(picture)) {
+      picture = await this.IPFS.load(picture);
+    }
     return {
-      ...document
-      // picture
+      ...document,
+      picture
     };
   }
 }
 
-export default new CeramicFeed();
+export default function createCeramicFeed(ceramicNodeUrl, ceramicIndex, ceramicLiveIndex): CeramicFeed {
+  return new CeramicFeed(ceramicNodeUrl, ceramicIndex, ceramicLiveIndex);
+}

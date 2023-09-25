@@ -11,16 +11,28 @@ export const getCeramicClient = once(() => new CeramicClient(devCeramicNodeURL))
 const syncOptions = { syncTimeoutSeconds: 5000 / 1000 };
 const ceramicBatchSize = 5;
 
+interface CeramicModelConfig {
+  ceramicNodeUrl: null | string;
+  ceramicIndex: null | string;
+  ceramicLiveIndex: null | string;
+}
+
 export class CeramicModel {
-  static index: null | string = null;
+  ceramicNodeUrl: null | string;
+  ceramicIndex: null | string;
+  ceramicLiveIndex: null | string;
 
-  static liveIndex: null | string = null;
+  constructor({ ceramicNodeUrl = null, ceramicIndex = null, ceramicLiveIndex = null }: CeramicModelConfig) {
+    this.ceramicNodeUrl = ceramicNodeUrl || devCeramicNodeURL;
+    this.ceramicIndex = ceramicIndex;
+    this.ceramicLiveIndex = ceramicLiveIndex;
+  }
 
-  static get ceramic() {
+  get ceramic() {
     return getCeramicClient();
   }
 
-  static async all(): Promise<TileDocument[]> {
+  async all(): Promise<TileDocument[]> {
     const {
       content: { items = [] }
     } = await this._getIndex();
@@ -28,7 +40,7 @@ export class CeramicModel {
     return this._loadEntities(items);
   }
 
-  static async find(id: any): Promise<TileDocument> {
+  async find(id: any): Promise<TileDocument> {
     const { content } = await this._getIndex();
     const documentId = String(id);
 
@@ -46,17 +58,17 @@ export class CeramicModel {
     return this.loadDocument(id);
   }
 
-  static async getLiveIndex(): Promise<TileDocument> {
+  async getLiveIndex(): Promise<TileDocument> {
     return this._getIndex(true);
   }
 
-  static async loadDocument(id: any): Promise<TileDocument> {
+  async loadDocument(id: any): Promise<TileDocument> {
     return TileDocument.load(this.ceramic, id, syncOptions);
   }
 
   /** @private */
-  static async _getIndex(forLiveUpdates = false): Promise<TileDocument> {
-    const indexID = forLiveUpdates ? this.liveIndex : this.index;
+  async _getIndex(forLiveUpdates = false): Promise<TileDocument> {
+    const indexID = forLiveUpdates ? this.ceramicLiveIndex : this.ceramicIndex;
 
     if (!indexID) {
       throw new Error(`${forLiveUpdates ? "Primary" : "Live"} index isn't defined`);
@@ -66,7 +78,7 @@ export class CeramicModel {
   }
 
   /** @private */
-  static async _loadEntities(ids: string[]): Promise<TileDocument[]> {
+  async _loadEntities(ids: string[]): Promise<TileDocument[]> {
     return batch(ids, ceramicBatchSize, async id => this.loadDocument(id));
   }
 }
