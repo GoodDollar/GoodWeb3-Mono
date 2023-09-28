@@ -3684,10 +3684,12 @@ __metadata:
 
 "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2::locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design":
   version: 0.1.118
-  resolution: "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2#.yalc/@gooddollar/web3sdk-v2::hash=d8b97f&locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design"
+  resolution: "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2#.yalc/@gooddollar/web3sdk-v2::hash=6d6e4b&locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design"
   dependencies:
     "@amplitude/analytics-browser": ^1.6.4
     "@amplitude/analytics-react-native": ^0.7.0
+    "@ceramicnetwork/http-client": ^2.32.0
+    "@ceramicnetwork/stream-tile": ^2.31.0
     "@gooddollar/bridge-app": ^1.5.0
     "@gooddollar/bridge-contracts": ^1.0.14
     "@gooddollar/goodprotocol": ^2.0.3
@@ -3709,10 +3711,13 @@ __metadata:
     "@web3auth/torus-wallet-connector-plugin": ^4.0.0
     "@web3modal/ethereum": ^2.6.2
     "@web3modal/react": ^2.6.2
+    base-64: ^1.0.0
+    dexie: ^3.2.4
     eventemitter3: ^4.0.7
     mixpanel-browser: ^2.45.0
     mixpanel-react-native: ^2.1.0
     moment: 2.29.4
+    multiformats: 9.9.0
     posthog-react-native: ^2.4.0
     react-native-indicative: ^0.2.1
     react-native-restart: ^0.0.24
@@ -3726,7 +3731,7 @@ __metadata:
     react: "*"
     react-native: "*"
     react-native-web: "*"
-  checksum: 99d71898870e02836e3e9ee601b525f3c487f8ff12a9283f9111e6afe8546d8833212415fe191023eaca77fdcb5212f1d257128db3b4b0a15a21c73122cdf3a8
+  checksum: 44d535cb7b092d3754191ac84e8c8c40085bf454f5de2dff234f5edf8aac379563135de8df5fc4a5e38f786e42428c484ac2bdcff02e40197479acc54f337fad
   languageName: node
   linkType: hard
 
@@ -3806,6 +3811,8 @@ __metadata:
     cpx: ^1.5.0
     css-loader: ^6.5.1
     ctix: ^1.4.0
+    dexie: ^3.2.4
+    dexie-react-hooks: ^1.1.6
     eventemitter3: ^4.0.7
     html-webpack-plugin: ^5.5.0
     identity-obj-proxy: ^3.0.0
@@ -3813,7 +3820,7 @@ __metadata:
     mixpanel-browser: ^2.45.0
     mixpanel-react-native: ^2.1.0
     moment: 2.29.4
-    multiformats: ^12.1.1
+    multiformats: 9.9.0
     posthog-react-native: ^2.4.0
     promisify-file-reader: ^4.1.0
     react: 17.0.2
@@ -3828,6 +3835,7 @@ __metadata:
     sass: ^1.43.5
     sass-loader: ^12.3.0
     style-loader: ^3.3.1
+    tsconfig-paths-webpack-plugin: ^4.1.0
     typescript: ^5.1.3
     uuid: ^9.0.1
     viem: ^1.2.13
@@ -9926,9 +9934,9 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:^18.0.4":
-  version: 18.17.19
-  resolution: "@types/node@npm:18.17.19"
-  checksum: 6ab47127cd7534511aa199550659d56b44e5a6dbec9df054d0cde279926b4d43f0e6438f92c8392b039ab4e2a85aa0f698b95926430aff860e23bfc36c96576c
+  version: 18.18.0
+  resolution: "@types/node@npm:18.18.0"
+  checksum: 61bcffa28eb713e7a4c66fd369df603369c3f834a783faeced95fe3e78903faa25f1a704d49e054f41d71b7915eeb066d10a37cc699421fcf5dd267f96ad5808
   languageName: node
   linkType: hard
 
@@ -16903,6 +16911,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"dexie-react-hooks@npm:^1.1.6":
+  version: 1.1.6
+  resolution: "dexie-react-hooks@npm:1.1.6"
+  peerDependencies:
+    "@types/react": ">=16"
+    dexie: ^3.2 || ^4.0.1-alpha
+    react: ">=16"
+  checksum: 64beabf2929327b14963b92002a395237be081dfa2c1cf1d1884d196950fbee00457960ec3ec866de814433a7729000722d1355352810fb9b5f863a04236a8e3
+  languageName: node
+  linkType: hard
+
+"dexie@npm:^3.2.4":
+  version: 3.2.4
+  resolution: "dexie@npm:3.2.4"
+  checksum: 4e5294a954118b6862c864b8c3970904a1733daebcd919488624520696411e2e81ed1bceeac3634c5c15a21e37ce4b8502ed41c4edfbc5ba3f5925c34d56497b
+  languageName: node
+  linkType: hard
+
 "did-jwt@npm:^7.2.0":
   version: 7.3.0
   resolution: "did-jwt@npm:7.3.0"
@@ -17480,6 +17506,16 @@ __metadata:
     graceful-fs: ^4.2.4
     tapable: ^2.2.0
   checksum: bf3f787facaf4ce3439bef59d148646344e372bef5557f0d37ea8aa02c51f50a925cd1f07b8d338f18992c29f544ec235a8c64bcdb56030196c48832a5494174
+  languageName: node
+  linkType: hard
+
+"enhanced-resolve@npm:^5.7.0":
+  version: 5.15.0
+  resolution: "enhanced-resolve@npm:5.15.0"
+  dependencies:
+    graceful-fs: ^4.2.4
+    tapable: ^2.2.0
+  checksum: fbd8cdc9263be71cc737aa8a7d6c57b43d6aa38f6cc75dde6fcd3598a130cc465f979d2f4d01bb3bf475acb43817749c79f8eef9be048683602ca91ab52e4f11
   languageName: node
   linkType: hard
 
@@ -25974,6 +26010,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"multiformats@npm:9.9.0, multiformats@npm:^9.4.2, multiformats@npm:^9.5.4":
+  version: 9.9.0
+  resolution: "multiformats@npm:9.9.0"
+  checksum: d3e8c1be400c09a014f557ea02251a2710dbc9fca5aa32cc702ff29f636c5471e17979f30bdcb0a9cbb556f162a8591dc2e1219c24fc21394a56115b820bb84e
+  languageName: node
+  linkType: hard
+
 "multiformats@npm:^11.0.0, multiformats@npm:^11.0.1, multiformats@npm:^11.0.2":
   version: 11.0.2
   resolution: "multiformats@npm:11.0.2"
@@ -25981,17 +26024,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"multiformats@npm:^12.0.0, multiformats@npm:^12.0.1, multiformats@npm:^12.1.1":
+"multiformats@npm:^12.0.0, multiformats@npm:^12.0.1":
   version: 12.1.1
   resolution: "multiformats@npm:12.1.1"
   checksum: cdd19168ea110eec37b6c193bd76dea36c1716de68cf1280f701928d00bbba3aa5e32dc71395091254738a11db47f1acf040f8ddf1688bc4b7cda5d6bbf1eb46
-  languageName: node
-  linkType: hard
-
-"multiformats@npm:^9.4.2, multiformats@npm:^9.5.4":
-  version: 9.9.0
-  resolution: "multiformats@npm:9.9.0"
-  checksum: d3e8c1be400c09a014f557ea02251a2710dbc9fca5aa32cc702ff29f636c5471e17979f30bdcb0a9cbb556f162a8591dc2e1219c24fc21394a56115b820bb84e
   languageName: node
   linkType: hard
 
@@ -33050,6 +33086,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"tsconfig-paths-webpack-plugin@npm:^4.1.0":
+  version: 4.1.0
+  resolution: "tsconfig-paths-webpack-plugin@npm:4.1.0"
+  dependencies:
+    chalk: ^4.1.0
+    enhanced-resolve: ^5.7.0
+    tsconfig-paths: ^4.1.2
+  checksum: f6e9a8a407e1a405b0f2531184296d9f033cb4fe5837282b757ab4a2f4cd82a3117e62c4b86d56c7d47749c7f1345aa438ec6417dbf64a0ec74a292fe9eae44d
+  languageName: node
+  linkType: hard
+
 "tsconfig-paths@npm:^3.14.1":
   version: 3.14.2
   resolution: "tsconfig-paths@npm:3.14.2"
@@ -33059,6 +33106,17 @@ __metadata:
     minimist: ^1.2.6
     strip-bom: ^3.0.0
   checksum: a6162eaa1aed680537f93621b82399c7856afd10ec299867b13a0675e981acac4e0ec00896860480efc59fc10fd0b16fdc928c0b885865b52be62cadac692447
+  languageName: node
+  linkType: hard
+
+"tsconfig-paths@npm:^4.1.2":
+  version: 4.2.0
+  resolution: "tsconfig-paths@npm:4.2.0"
+  dependencies:
+    json5: ^2.2.2
+    minimist: ^1.2.6
+    strip-bom: ^3.0.0
+  checksum: 28c5f7bbbcabc9dabd4117e8fdc61483f6872a1c6b02a4b1c4d68c5b79d06896c3cc9547610c4c3ba64658531caa2de13ead1ea1bf321c7b53e969c4752b98c7
   languageName: node
   linkType: hard
 

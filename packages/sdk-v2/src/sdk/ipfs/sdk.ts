@@ -77,7 +77,6 @@ class IpfsStorage {
     try {
       const v1 = toV1(cid);
 
-      console.log("lookup cid:", { cid, v1 });
       // eslint-disable-next-line require-await
       return await fallback(gateways.map(gateway => async () => _requestGateway(cid, v1, gateway)));
     } finally {
@@ -101,7 +100,6 @@ class IpfsStorage {
 
       // reset failing attempts counter on success
       gateway.failed = 0;
-      console.log("try IPFS url: success", { url, cid, response });
 
       return response;
     } catch (exception) {

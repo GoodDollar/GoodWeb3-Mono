@@ -3,41 +3,31 @@ import { ComponentStory, ComponentMeta } from "@storybook/react";
 import { View, Text } from "react-native";
 
 import { W3Wrapper } from "../W3Wrapper";
+import { createNewsFeedStorage } from "../../sdk/storage/newsfeedstorage/sdk";
+import { FeedPost } from "../../sdk";
 
-import createCeramicFeed, { FeedPost } from "../../sdk/newsfeed/sdk";
-import type { CeramicFeed } from "../../sdk/newsfeed/sdk";
-
-const devConfig = {
-  devCeramicNodeURL: "https://ceramic-clay.3boxlabs.com",
-  ceramicIndex: "k2t6wyfsu4pg10xd3qcu4lfbgk6u2r1uwdyggfchpk77hxormr4wvqkitqvkce",
-  ceramicLiveIndex: "k2t6wyfsu4pg26i4h73gc5kdjis5rtfxg62wd93su31ldxfeacl6rx5cs1nix5"
-};
+// export interface PageProps
 
 const Web3Component = (params: object) => {
-  const [initialFeed, setInitialFeed] = useState<FeedPost[] | null>(null);
-  const { devCeramicNodeURL, ceramicIndex, ceramicLiveIndex } = devConfig;
-  const NewsFeed: CeramicFeed = new createCeramicFeed(devCeramicNodeURL, ceramicIndex, ceramicLiveIndex);
+  const [feed, setFeed] = useState<FeedPost[] | null>(null);
 
-  const getPosts = async () => {
-    const test = await NewsFeed.getPosts();
-    return test;
-  };
+  console.log("params -->", { params });
+
+  const { db } = createNewsFeedStorage();
 
   useEffect(async () => {
-    console.log({ params });
-    if (!initialFeed) {
-      const latestNewsFeed = await getPosts();
-      setInitialFeed(latestNewsFeed);
-    }
+    if (!feed && db) {
+      const posts = await db.posts.toArray();
 
-    console.log("initialFeed", { initialFeed });
-  }, [getPosts, initialFeed]);
+      setFeed(posts);
+    }
+  }, [feed]);
 
   return (
     <View>
-      <Text>News feed</Text>
-      {initialFeed &&
-        initialFeed.map(item => (
+      <Text>News feed items taken from storage</Text>
+      {feed &&
+        feed.map(item => (
           <View
             key={item.id}
             style={{ display: "flex", justifyContent: "center", alignItems: "center", padding: 20, marginBottom: 16 }}
@@ -66,7 +56,7 @@ const Page = (params: object) => (
 );
 
 export default {
-  title: "News feed example",
+  title: "News feed with dexie storage",
   component: Page
 } as ComponentMeta<typeof Page>;
 
