@@ -43,6 +43,7 @@ class IpfsStorage {
         };
 
         const response = await httpFactory(url, updatedOptions);
+
         const blob = await response.blob();
         return blob;
       }
@@ -66,8 +67,7 @@ class IpfsStorage {
 
   async load(cid) {
     const blob = await this._lookupGateways(cid);
-    const imageUrl = URL.createObjectURL(blob);
-    return imageUrl;
+    return blob;
   }
 
   async _lookupGateways(cid) {

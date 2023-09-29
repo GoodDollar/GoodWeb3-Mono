@@ -11,6 +11,17 @@ export const serializeDocument = (document: any) => {
   };
 };
 
+export const createFeedWithPictures = (feedPosts: any[]) => {
+  return feedPosts.map((post: any) => {
+    const { picture } = post;
+    if (picture) {
+      const blobUrl = URL.createObjectURL(picture);
+      post.picture = blobUrl;
+    }
+    return { ...post };
+  });
+};
+
 export const serializeCollection = (documents: any[]) => {
   return documents.map(serializeDocument);
 };

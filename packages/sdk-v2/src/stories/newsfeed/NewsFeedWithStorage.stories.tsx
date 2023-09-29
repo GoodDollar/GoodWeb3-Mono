@@ -1,25 +1,27 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ComponentStory, ComponentMeta } from "@storybook/react";
 import { View, Text } from "react-native";
 
 import { W3Wrapper } from "../W3Wrapper";
 import { createNewsFeedStorage } from "../../sdk/storage/newsfeedstorage/sdk";
+import { createFeedWithPictures } from "../../sdk";
 import { FeedPost } from "../../sdk";
 
 // export interface PageProps
 
 const Web3Component = (params: object) => {
   const [feed, setFeed] = useState<FeedPost[] | null>(null);
-
+  const localDb = useRef<any>();
   console.log("params -->", { params });
 
-  const { db } = createNewsFeedStorage();
-
   useEffect(async () => {
-    if (!feed && db) {
+    if (!feed && !localDb.current) {
+      const { db } = createNewsFeedStorage();
       const posts = await db.posts.toArray();
+      const feed = createFeedWithPictures(posts);
 
-      setFeed(posts);
+      setFeed(feed);
+      localDb.current = db;
     }
   }, [feed]);
 
