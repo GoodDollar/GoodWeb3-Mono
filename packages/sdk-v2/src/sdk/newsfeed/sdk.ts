@@ -27,9 +27,10 @@ interface DocumentOrFeed {
 export class CeramicFeed {
   Post: Post;
   IPFS: any;
-  constructor(ceramicNodeUrl, ceramicIndex, ceramicLiveIndex) {
+  constructor(ceramicConfig, ipfsUrls) {
+    const { ceramicNodeUrl, ceramicIndex, ceramicLiveIndex } = ceramicConfig;
     this.Post = new Post({ ceramicNodeUrl, ceramicIndex, ceramicLiveIndex });
-    this.IPFS = createIpfsStorage(fetch);
+    this.IPFS = createIpfsStorage(fetch, ipfsUrls);
   }
   async getPost(postId: string) {
     const post = await this.Post.find(postId);
@@ -158,6 +159,6 @@ export class CeramicFeed {
   }
 }
 
-export default function createCeramicFeed(ceramicNodeUrl, ceramicIndex, ceramicLiveIndex): CeramicFeed {
-  return new CeramicFeed(ceramicNodeUrl, ceramicIndex, ceramicLiveIndex);
+export default function createCeramicFeed(ceramicConfig, ipfsUrls): CeramicFeed {
+  return new CeramicFeed(ceramicConfig, ipfsUrls);
 }

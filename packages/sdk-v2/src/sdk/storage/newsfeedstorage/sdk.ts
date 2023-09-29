@@ -1,22 +1,15 @@
 import { batch, createNewsFeedDb, isValidHistoryId } from "../../newsfeed/utils";
 import { createCeramicFeed, CeramicFeed, FeedPost } from "../../newsfeed";
 
-const devConfig = {
-  devCeramicNodeURL: "https://ceramic-clay.3boxlabs.com",
-  ceramicIndex: "k2t6wyfsu4pg10xd3qcu4lfbgk6u2r1uwdyggfchpk77hxormr4wvqkitqvkce",
-  ceramicLiveIndex: "k2t6wyfsu4pg26i4h73gc5kdjis5rtfxg62wd93su31ldxfeacl6rx5cs1nix5"
-};
-
 class NewsFeedStorage {
   db: any;
   // storage: typeof AsyncStorage;
   Feed: CeramicFeed;
 
-  constructor() {
+  constructor(env: string, ceramicConfig: any, ipfsUrls: any) {
     // todo: add envs, hardcoded qa for testing purposes
-    const { devCeramicNodeURL, ceramicIndex, ceramicLiveIndex } = devConfig;
-    this.db = createNewsFeedDb();
-    this.Feed = createCeramicFeed(devCeramicNodeURL, ceramicIndex, ceramicLiveIndex);
+    this.db = createNewsFeedDb(env);
+    this.Feed = createCeramicFeed(ceramicConfig, ipfsUrls);
     const { db } = this;
 
     db.open()
@@ -172,6 +165,6 @@ class NewsFeedStorage {
   }
 }
 
-export const createNewsFeedStorage = () => {
-  return new NewsFeedStorage();
+export const createNewsFeedStorage = (env: string, ceramicConfig, ipfsUrls) => {
+  return new NewsFeedStorage(env, ceramicConfig, ipfsUrls);
 };

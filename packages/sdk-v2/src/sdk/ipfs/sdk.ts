@@ -2,12 +2,6 @@ import { sortBy } from "lodash";
 
 import { fallback, toV1, withTemporaryFile } from "./utils";
 
-const Config = {
-  ipfsGateways:
-    "https://{cid}.ipfs.nftstorage.link,https://cloudflare-ipfs.com/ipfs/{cid},https://ipfs.io/ipfs/{cid},https://{cid}.ipfs.dweb.link",
-  ipfsUploadGateway: "https://ipfsgateway.goodworker.workers.dev"
-};
-
 interface RequestOptions {
   headers?: any;
   body?: any;
@@ -18,8 +12,8 @@ class IpfsStorage {
   client: any;
   gateways: any;
 
-  constructor(httpFactory, config) {
-    const { ipfsGateways, ipfsUploadGateway } = config;
+  constructor(httpFactory, ipfsUrls) {
+    const { ipfsGateways, ipfsUploadGateway } = ipfsUrls;
 
     // add tpyes
     this.client = {
@@ -112,6 +106,6 @@ class IpfsStorage {
   };
 }
 
-export default function createIpfsStorage(httpFactory) {
-  return new IpfsStorage(httpFactory, Config);
+export default function createIpfsStorage(httpFactory, ipfsUrls) {
+  return new IpfsStorage(httpFactory, ipfsUrls);
 }
