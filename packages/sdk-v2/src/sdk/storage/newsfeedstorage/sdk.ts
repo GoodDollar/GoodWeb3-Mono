@@ -74,7 +74,7 @@ class NewsFeedStorage {
     if (!isNew) {
       try {
         await db.posts.clear();
-        await db.historyCacheId.clear();
+        await db.historyCache.clear();
       } catch (error) {
         console.log("clearing of existing newsfeed db failed", { error });
       }

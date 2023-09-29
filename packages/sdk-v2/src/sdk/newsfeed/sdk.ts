@@ -1,5 +1,4 @@
 import { assign, countBy, filter, get, groupBy, isArray, keys, last, map } from "lodash";
-import { CID } from "multiformats/cid";
 
 import { CeramicModel as Post } from "./client";
 import { batch, isValidCID, serializeCollection, serializeDocument } from "./utils";
@@ -13,7 +12,7 @@ export interface FeedPost {
   link: string;
   title: string;
   content: string;
-  picture: CID;
+  picture: string;
   published: string;
   sponsored_link: string;
   sponsored_logo: string;

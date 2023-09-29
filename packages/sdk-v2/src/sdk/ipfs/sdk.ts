@@ -61,7 +61,15 @@ class IpfsStorage {
 
   async load(cid) {
     const blob = await this._lookupGateways(cid);
-    return blob;
+
+    return new Promise(resolve => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const dataString = reader.result;
+        resolve(dataString);
+      };
+      reader.readAsDataURL(blob);
+    });
   }
 
   async _lookupGateways(cid) {
