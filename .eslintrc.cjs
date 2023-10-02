@@ -18,6 +18,7 @@ module.exports = {
     project: ["./tsconfig.json", "./packages/*/tsconfig.json"]
   },
   rules: {
+    "no-undef": "error",
     "prettier/prettier": "warn",
     "@typescript-eslint/no-unsafe-call": "off",
     "@typescript-eslint/no-unsafe-assignment": "off",

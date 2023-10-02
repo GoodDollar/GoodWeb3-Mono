@@ -8,6 +8,7 @@ import { customwc, icons } from "./modules/customwalletconnect";
 import { defaultsDeep, keys, pickBy } from "lodash";
 import { getDevice, isMobile } from "../base";
 import { Envs } from "../constants";
+import { InjectedNameSpace } from "@web3-onboard/injected-wallets/dist/types";
 
 export interface IOnboardWallets {
   valora?: boolean;
@@ -29,7 +30,26 @@ export interface IOnboardProviderProps {
 
 const currentDevice = getDevice().os.name;
 
-const injected = injectedModule();
+const injected = injectedModule({
+  filter: {
+    ["detected"]: true
+  },
+  custom: [
+    {
+      checkProviderIdentity: ({ provider }) => !!provider && !!provider["isMiniPay"],
+      label: "Mini Pay",
+      injectedNamespace: InjectedNameSpace.Ethereum,
+      platforms: ["mobile"],
+      // A method that returns a string of the wallet icon which will be displayed
+      getIcon: async () => (await import("@web3-onboard/injected-wallets/dist/icons/opera")).default,
+      // Returns a valid EIP1193 provider. In some cases the provider will need to be patched to satisfy the EIP1193 Provider interface
+      getInterface: () =>
+        Promise.resolve({
+          provider: window["ethereum"]
+        })
+    }
+  ]
+});
 
 export const wc2InitOptions = {
   projectId: "095eb531a0c00781cb45644be58b065e",

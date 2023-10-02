@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { View, Button, Modal, Text, StyleSheet, Linking, Platform, ModalProps } from "react-native";
+import { View, Button, Modal, Text, StyleSheet, Linking, ModalProps } from "react-native";
 import { W3Wrapper } from "../W3Wrapper";
 import { ComponentStory, ComponentMeta } from "@storybook/react";
 import { BigNumber, ethers } from "ethers";
@@ -35,11 +35,12 @@ const FVModal = (params: ModalProps & { firstName: string; sdk: ClaimSDK }) => {
         <Button
           onPress={async () => {
             if (method === "popup") {
-              const link = await fvlink?.getLink(params.firstName, undefined, true);
+              const link = fvlink?.getLink(params.firstName, undefined, true);
               const popup = window.open(link, "_blank", "width: '800px', height: 'auto'");
+              console.log("popup", popup);
             } else {
               const link = fvlink?.getLink(params.firstName, document.location.href, false);
-              link && Linking.openURL(link);
+              link && (await Linking.openURL(link));
             }
             params.onRequestClose?.(noop as any);
           }}
@@ -109,7 +110,7 @@ const ClaimButton = ({ firstName }: PageProps) => {
   }, [init, isCheckTimer, claimStatus.isWhitelisted]);
 
   useEffect(() => {
-    init();
+    void init();
   }, []);
 
   const [showModal, setShowModal] = useState(false);
@@ -119,10 +120,17 @@ const ClaimButton = ({ firstName }: PageProps) => {
     if (isWhitelisted) {
       if (claimAmount.gt(0)) {
         await sdk.claim();
-        init(); //force reading claim status again
+        await init(); //force reading claim status again
       }
     } else {
       setShowModal(true);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (isWhitelisted) {
+      const { success, error } = await sdk.deleteFVRecord();
+      console.log("deleteFVRecord result:", { success, error });
     }
   };
   const buttonTitle = () => {
@@ -143,7 +151,12 @@ const ClaimButton = ({ firstName }: PageProps) => {
           firstName={firstName}
         ></FVModal>
       </View>
-      <Button title={buttonTitle()} onPress={handleClaim}></Button>
+      <View>
+        <Button title={buttonTitle()} onPress={handleClaim}></Button>
+      </View>
+      <View>
+        <Button title={"Delete Record"} onPress={handleDelete}></Button>
+      </View>
     </View>
   );
 };

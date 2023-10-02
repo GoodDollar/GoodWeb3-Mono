@@ -16,6 +16,7 @@ export interface BasicModalProps {
   onClose?: () => void;
   onAction?: () => void;
   _modal?: any;
+  _modalContainer?: any;
   _body?: any;
   _footer?: any;
   _header?: any;
@@ -35,6 +36,7 @@ const BasicModal: FC<BasicModalProps> = ({
   onAction = noop,
   bgColor = "white",
   _modal = {},
+  _modalContainer = {},
   _header = {},
   _body = {},
   _footer = {}
@@ -56,7 +58,7 @@ const BasicModal: FC<BasicModalProps> = ({
     /* height 100vh is required so modal always shows in the middle */
     <NBModal isOpen={modalVisible} onClose={onClose} {..._modal} minH="100vh" bgColor={bgOverlay}>
       <Box borderRadius="lg" width={width} bgColor={bgColor}>
-        <NBModal.Content w={"100%"} px="18px" pb="18px" bgColor={bgColor}>
+        <NBModal.Content {..._modalContainer} w={"100%"} px="18px" pb="18px" bgColor={bgColor}>
           {hasCloseButton && <NBModal.CloseButton />}
           {!!header && (
             <NBModal.Header

@@ -83,7 +83,11 @@ export class ClaimSDK extends BaseSDK {
       return url.toString();
     };
 
-    return { getLoginSig, getFvSig, getLink };
+    const deleteFvId = async () => {
+      await this.deleteFVRecord();
+    };
+
+    return { getLoginSig, getFvSig, getLink, deleteFvId };
   }
 
   async isAddressVerified(address: string): Promise<boolean> {
@@ -125,5 +129,28 @@ export class ClaimSDK extends BaseSDK {
     const ubi = this.getContract("UBIScheme");
 
     return ubi.claim(txOverrides);
+  }
+
+  async deleteFVRecord() {
+    const { env, provider } = this;
+    const signer = provider.getSigner();
+    const { backend } = env;
+
+    const account = await signer.getAddress();
+    const signature = await signer.signMessage(FV_IDENTIFIER_MSG2.replace("<account>", account));
+
+    const endpoint = `${backend}/verify/face/${encodeURIComponent(signature)}`;
+    const authEndpoint = `${backend}/auth/fv2`;
+    const { token } = await fetch(authEndpoint, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ fvsig: signature, account })
+    }).then(_ => _.json());
+
+    return fetch(endpoint, {
+      method: "DELETE",
+      headers: { "content-type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ signature })
+    }).then(_ => _.json());
   }
 }
