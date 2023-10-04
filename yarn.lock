@@ -3569,10 +3569,12 @@ __metadata:
     react-docgen-typescript-plugin: ^1.0.1
     react-dom: 17.0.2
     react-helmet: ^6.1.0
+    react-inlinesvg: ^4.0.5
     react-native: 0.70.4
     react-native-mask-input: ^1.2.2
     react-native-safe-area-context: ^3.3.2
     react-native-svg: ^12.1.1
+    react-native-svg-uri: ^1.2.3
     react-native-svg-web: ^1.0.9
     react-native-web: 0.17.7
     react-number-format: ^5.1.1
@@ -3684,7 +3686,7 @@ __metadata:
 
 "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2::locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design":
   version: 0.1.118
-  resolution: "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2#.yalc/@gooddollar/web3sdk-v2::hash=6d6e4b&locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design"
+  resolution: "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2#.yalc/@gooddollar/web3sdk-v2::hash=920c22&locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design"
   dependencies:
     "@amplitude/analytics-browser": ^1.6.4
     "@amplitude/analytics-react-native": ^0.7.0
@@ -3731,7 +3733,7 @@ __metadata:
     react: "*"
     react-native: "*"
     react-native-web: "*"
-  checksum: 44d535cb7b092d3754191ac84e8c8c40085bf454f5de2dff234f5edf8aac379563135de8df5fc4a5e38f786e42428c484ac2bdcff02e40197479acc54f337fad
+  checksum: 410cb16afded939e800a1a9032ee4891c9c550984c9938d02ac047f7df2abdb95131aa24dca7424056a13156bdd98b2a3cebe6d646696b31fe9803b0b7ef5ea7
   languageName: node
   linkType: hard
 
@@ -29122,6 +29124,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-from-dom@npm:^0.6.2":
+  version: 0.6.2
+  resolution: "react-from-dom@npm:0.6.2"
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0
+  checksum: 5d66b0c1eb591247a73bed9487a04e390abb4ad6c65e6cea7bfdd35070685b90a5da720de30915b963aba3f4628135d6db4c93da40cd5114c8bbe34a9725a83e
+  languageName: node
+  linkType: hard
+
 "react-helmet@npm:^6.1.0":
   version: 6.1.0
   resolution: "react-helmet@npm:6.1.0"
@@ -29133,6 +29144,17 @@ __metadata:
   peerDependencies:
     react: ">=16.3.0"
   checksum: a4998479dab7fc1c2799eddefb1870a9d881b5f71cfdf97979a9882e42f4bb50402d55335f308f461e735e01a06f46b16cc7b4e6bcb22c7a4a6f85a753c5c106
+  languageName: node
+  linkType: hard
+
+"react-inlinesvg@npm:^4.0.5":
+  version: 4.0.5
+  resolution: "react-inlinesvg@npm:4.0.5"
+  dependencies:
+    react-from-dom: ^0.6.2
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0
+  checksum: ed0decbeab6229962667bd7c9936dd5f71d4193c063af21ecaea10307d0eabd444a4f781dfedbea1167726827b2741bfd12af9dd85aa5b0eda0fd344ce2e9164
   languageName: node
   linkType: hard
 
