@@ -1,2 +1,2 @@
-export { default as createIpfsStorage } from "./sdk";
+export * from "./sdk";
 export * from "./utils";

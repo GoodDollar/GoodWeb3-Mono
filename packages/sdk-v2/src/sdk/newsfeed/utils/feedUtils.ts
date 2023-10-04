@@ -1,20 +1,5 @@
 import { chunk, isString } from "lodash";
 
-const hexadecimalRe = /^[0-9a-f]+$/i;
-
-export const serializeDocument = (document: any) => {
-  const { id, content } = document;
-
-  return {
-    ...content,
-    id: String(id)
-  };
-};
-
-export const serializeCollection = (documents: any[]) => {
-  return documents.map(serializeDocument);
-};
-
 export const batch = async <T, R>(items: T[], chunkSize: number, onItem: any) =>
   chunk(items, chunkSize).reduce(
     async (promise, itemsChunk) =>
@@ -31,5 +16,3 @@ export const cidRegexp = /^[\w\d]+$/i;
 
 // checks is string a valid CID. it should be at least 40 chars length and contrain only letters & numbers
 export const isValidCID = source => isString(source) && source.length >= 40 && cidRegexp.test(source);
-
-export const isValidHistoryId = id => isString(id) && id.length === 40 && hexadecimalRe.test(id);

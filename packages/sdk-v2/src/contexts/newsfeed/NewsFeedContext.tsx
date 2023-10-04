@@ -1,55 +1,64 @@
-import React, { createContext, useEffect, useRef, useState } from "react";
-import { FeedPost, createNewsFeedStorage } from "../../sdk";
+import React, { createContext, useCallback, useEffect, useState } from "react";
+import { FeedFilter, FeedPost } from "../../sdk/newsfeed/OrbisCachedFeed";
+import { OrbisCachedFeed } from "../../sdk/newsfeed/OrbisCachedFeed";
+import { IPFSUrls } from "src/sdk/ipfs/sdk";
 
 type INewsFeedContext = {
-  env: string;
-  db: any;
-  feed: FeedPost[] | null;
+  feed: FeedPost[];
 };
 
 export const NewsFeedContext = createContext<INewsFeedContext>({
-  env: "qa",
-  db: null,
-  feed: null
+  feed: []
 });
 
 interface INewsFeedProvider {
   children: any;
-  env: string;
-  ipfsUrls: {
-    ipfsGateWays: string;
-    ipfsUploadGateway: string;
-    ceramicNodeUrl: string;
-  };
-  ceramicConfig: {
-    devCeramicNodeURL: string;
-    ceramicIndex: string;
-    ceramicLiveIndex: string;
-  };
+  feedFilter?: FeedFilter;
+  env?: string;
+  ipfsUrls?: IPFSUrls;
+  enablePeriodicSync?: boolean;
+  limit?: number;
 }
 
-export const NewsFeedProvider = ({ children, env, ipfsUrls, ceramicConfig }: INewsFeedProvider) => {
-  const [feed, setFeed] = useState<FeedPost[] | null>(null);
-  const newsFeedDb = useRef<any>();
+const feedConfig = {
+  qa: {
+    feedFilter: {
+      context: "kjzl6cwe1jw147bfd2hn7f3j2sdsq6708xnb3a217iz1m18a35v25kgxna3s0os",
+      tag: "publishDapp"
+    }
+  }
+};
+export const NewsFeedProvider = ({
+  children,
+  feedFilter,
+  env,
+  ipfsUrls,
+  enablePeriodicSync = true,
+  limit = 5
+}: INewsFeedProvider) => {
+  const [feed, setFeed] = useState<FeedPost[]>([]);
+  const newsFeedDb = new OrbisCachedFeed(env ? feedConfig[env].feedFilter : feedFilter, ipfsUrls);
+
+  const fetchFeed = useCallback(async () => {
+    const posts = await newsFeedDb.getPosts(0, limit);
+    setFeed(posts);
+  }, [newsFeedDb]);
 
   useEffect(() => {
-    const fetchFeed = async () => {
-      const { db } = createNewsFeedStorage(env ?? "qa", ceramicConfig, ipfsUrls);
-      const posts = await db.posts.toArray();
-      newsFeedDb.current = db;
-      setFeed(posts);
-    };
+    void fetchFeed();
+  }, []);
 
-    if (!feed) {
-      void fetchFeed();
+  useEffect(() => {
+    if (enablePeriodicSync) {
+      void newsFeedDb.periodicSync(fetchFeed);
+    } else {
+      newsFeedDb.syncPosts().then(fetchFeed);
     }
-  }, [feed]);
+  }, [enablePeriodicSync]);
 
   return (
     <NewsFeedContext.Provider
       value={{
-        env: env ?? "qa",
-        db: newsFeedDb,
         feed: feed
       }}
     >
