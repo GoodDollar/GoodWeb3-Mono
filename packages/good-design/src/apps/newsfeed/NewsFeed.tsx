@@ -54,11 +54,19 @@ export const NewsFeedItem: FC<NewsFeedItemProps> = withTheme({ name: "NewsFeedIt
   }
 );
 
-export const NewsFeed = ({ feed }: FeedPost[]) => {
+export const NewsFeed = ({ feed }: { feed: FeedPost[] }) => {
   return (
     <CentreBox flexDir="column">
       <Stack maxW={400}>
-        <CentreBox variant="shadowedBanner">
+        <CentreBox
+          w="100%"
+          justifyContent="center"
+          alignItems="center"
+          px={4}
+          py={2}
+          marginBottom={4}
+          backgroundColor="rgba(0,175,255,0.1)"
+        >
           <Heading size="sm" fontFamily="subheading" fontWeight="400" lineHeight="130%" color="primary">
             {" "}
             News{" "}

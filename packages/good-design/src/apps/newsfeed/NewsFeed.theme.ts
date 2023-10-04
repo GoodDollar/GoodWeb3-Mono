@@ -2,6 +2,7 @@ export const NewsFeedItem = {
   baseStyle: {
     display: "flex",
     borderRadius: 6,
+    overflow: "hidden",
     shadow: 1,
     marginBottom: 4,
     paddingBottom: 1,
