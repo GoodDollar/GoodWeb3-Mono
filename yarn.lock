@@ -3287,7 +3287,7 @@ __metadata:
     "@babel/preset-typescript": ^7.16.0
     "@babel/runtime": ^7.18.9
     "@gooddollar/goodprotocol": ^2.0.3
-    "@gooddollar/web3sdk-v2": "file:.yalc/@gooddollar/web3sdk-v2"
+    "@gooddollar/web3sdk-v2": latest
     "@lingui/macro": ^3.14.0
     "@lingui/react": ^3.14.0
     "@magiklabs/react-sdk": ^1.0.8
@@ -3445,9 +3445,26 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2::locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design":
+"@gooddollar/web3sdk-v2@npm:0.1.11":
+  version: 0.1.11
+  resolution: "@gooddollar/web3sdk-v2@npm:0.1.11"
+  dependencies:
+    "@gooddollar/goodprotocol": ^1.0.20
+    "@usedapp/core": ^1.0.9
+    eventemitter3: ^4.0.7
+    react-use-promise: ^0.5.0
+  peerDependencies:
+    ethers: 5.*
+    react: ^18.2.0
+    react-dom: ^18.2.0
+    react-native-web: ^0.18.1
+  checksum: 45a221009cf9926cb632246f8f09e2a7406a833d88197e8e71a938efbed18a923eed9b03dafdac0199fa324527a3d5a1d51ccfb2e1a09edded7f5cc7341db025
+  languageName: node
+  linkType: hard
+
+"@gooddollar/web3sdk-v2@npm:latest":
   version: 0.1.118
-  resolution: "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2#.yalc/@gooddollar/web3sdk-v2::hash=9810d1&locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design"
+  resolution: "@gooddollar/web3sdk-v2@npm:0.1.118"
   dependencies:
     "@amplitude/analytics-browser": ^1.6.4
     "@amplitude/analytics-react-native": ^0.7.0
@@ -3465,7 +3482,7 @@ __metadata:
     "@web3-onboard/injected-wallets": ^2.10.1
     "@web3-onboard/react": ^2.8.10
     "@web3-onboard/torus": ^2.2.5
-    "@web3-onboard/walletconnect": ^2.4.7
+    "@web3-onboard/walletconnect": ^2.4.3
     "@web3auth/base": ^4.0.0
     "@web3auth/core": ^4.0.0
     "@web3auth/openlogin-adapter": ^4.1.0
@@ -3489,24 +3506,7 @@ __metadata:
     react: "*"
     react-native: "*"
     react-native-web: "*"
-  checksum: 87654eab31940b65ae56e606a63d221cbb8436945370a9d920c06bad69e43745e508a4b25c47a1d8a40bf017f25fbb2638c1736ff499a6134d705cb5a1385c44
-  languageName: node
-  linkType: hard
-
-"@gooddollar/web3sdk-v2@npm:0.1.11":
-  version: 0.1.11
-  resolution: "@gooddollar/web3sdk-v2@npm:0.1.11"
-  dependencies:
-    "@gooddollar/goodprotocol": ^1.0.20
-    "@usedapp/core": ^1.0.9
-    eventemitter3: ^4.0.7
-    react-use-promise: ^0.5.0
-  peerDependencies:
-    ethers: 5.*
-    react: ^18.2.0
-    react-dom: ^18.2.0
-    react-native-web: ^0.18.1
-  checksum: 45a221009cf9926cb632246f8f09e2a7406a833d88197e8e71a938efbed18a923eed9b03dafdac0199fa324527a3d5a1d51ccfb2e1a09edded7f5cc7341db025
+  checksum: ac24f4f20034fea1ebab160090432061d9330de8a10bfed1d1f71e79bcb0a5b38a9f68f82ae9d581d0499ac70b742557e5394289c66cf0e4be2b946290ab95e3
   languageName: node
   linkType: hard
 
@@ -11032,7 +11032,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@web3-onboard/walletconnect@npm:^2.4.7":
+"@web3-onboard/walletconnect@npm:^2.4.3, @web3-onboard/walletconnect@npm:^2.4.7":
   version: 2.4.7
   resolution: "@web3-onboard/walletconnect@npm:2.4.7"
   dependencies:
