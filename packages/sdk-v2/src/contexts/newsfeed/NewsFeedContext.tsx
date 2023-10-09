@@ -1,7 +1,7 @@
 import React, { createContext, useCallback, useEffect, useState } from "react";
 import { FeedFilter, FeedPost } from "../../sdk/newsfeed/OrbisCachedFeed";
 import { OrbisCachedFeed } from "../../sdk/newsfeed/OrbisCachedFeed";
-import { IPFSUrls } from "../../sdk/ipfs/";
+import { IPFSUrls, IpfsStorage } from "../../sdk/ipfs/";
 
 type INewsFeedContext = {
   feed: FeedPost[];
@@ -37,7 +37,7 @@ export const NewsFeedProvider = ({
   limit = 5
 }: INewsFeedProvider) => {
   const [feed, setFeed] = useState<FeedPost[]>([]);
-  const newsFeedDb = new OrbisCachedFeed(env ? feedConfig[env].feedFilter : feedFilter, ipfsUrls);
+  const newsFeedDb = new OrbisCachedFeed(env ? feedConfig[env].feedFilter : feedFilter, new IpfsStorage(ipfsUrls));
 
   const fetchFeed = useCallback(async () => {
     const posts = await newsFeedDb.getPosts(0, limit);
