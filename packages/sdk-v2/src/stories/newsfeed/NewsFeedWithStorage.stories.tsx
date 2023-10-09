@@ -6,33 +6,12 @@ import { NewsFeedContext, NewsFeedProvider } from "../../contexts/newsfeed/NewsF
 
 // export interface PageProps
 
-const devConfig = {
-  env: "qa",
-  ceramicConfig: {
-    devCeramicNodeURL: "https://ceramic-clay.3boxlabs.com",
-    ceramicIndex: "k2t6wyfsu4pg10xd3qcu4lfbgk6u2r1uwdyggfchpk77hxormr4wvqkitqvkce",
-    ceramicLiveIndex: "k2t6wyfsu4pg26i4h73gc5kdjis5rtfxg62wd93su31ldxfeacl6rx5cs1nix5"
-  },
-  ipfsUrls: {
-    ipfsGateways:
-      "https://{cid}.ipfs.nftstorage.link,https://cloudflare-ipfs.com/ipfs/{cid},https://ipfs.io/ipfs/{cid},https://{cid}.ipfs.dweb.link",
-    ipfsUploadGateway: "https://ipfsgateway.goodworker.workers.dev"
-  }
-};
-
 const NewsFeedStorageWrapper = ({ children }) => {
-  const { env, ceramicConfig, ipfsUrls } = devConfig;
-  return (
-    <NewsFeedProvider env={env} ceramicConfig={ceramicConfig} ipfsUrls={ipfsUrls}>
-      {children}
-    </NewsFeedProvider>
-  );
+  return <NewsFeedProvider env={"qa"}>{children}</NewsFeedProvider>;
 };
 
-const Web3Component = (params: object) => {
+const Web3Component = () => {
   const { feed } = useContext(NewsFeedContext);
-
-  console.log("params -->", { params });
 
   return (
     <View>
@@ -53,6 +32,8 @@ const Web3Component = (params: object) => {
               </Text>
             )}
             <Text>published: {item.published}</Text>
+            <Text>updated: {item.updated}</Text>
+
             {item.sponsored_link && <Text>sponsored_link: {item.sponsored_link}</Text>}
             <Text>hasSponsoredLogo: {!!item.sponsored_logo}</Text>
           </View>

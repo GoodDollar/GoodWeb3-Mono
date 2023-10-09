@@ -1,6 +1,7 @@
-import { sortBy } from "lodash";
+import { isString, sortBy } from "lodash";
+import { CID } from "multiformats/cid";
 
-import { fallback, toV1, withTemporaryFile } from "./utils";
+import { fallback, withTemporaryFile } from "../../utils";
 
 interface RequestOptions {
   headers?: any;
@@ -8,12 +9,28 @@ interface RequestOptions {
   mode?: any;
 }
 
-class IpfsStorage {
+// eslint-disable-next-line
+export const toV1 = cid => CID.parse(cid).toV1().toString();
+//todo: move to utils
+export const cidRegexp = /^[\w\d]+$/i;
+
+// checks is string a valid CID. it should be at least 40 chars length and contrain only letters & numbers
+export const isValidCID = source => isString(source) && source.length >= 40 && cidRegexp.test(source);
+
+export type IPFSUrls = { ipfsGateways: string; ipfsUploadGateway: string };
+
+export const defaulIPFS: IPFSUrls = {
+  ipfsGateways:
+    "https://{cid}.ipfs.nftstorage.link,https://cloudflare-ipfs.com/ipfs/{cid},https://ipfs.io/ipfs/{cid},https://{cid}.ipfs.dweb.link",
+  ipfsUploadGateway: "https://ipfsgateway.goodworker.workers.dev"
+};
+
+export class IpfsStorage {
   client: any;
   gateways: any;
 
-  constructor(httpFactory, ipfsUrls) {
-    const { ipfsGateways, ipfsUploadGateway } = ipfsUrls;
+  constructor(ipfsUrls?: IPFSUrls) {
+    const { ipfsGateways, ipfsUploadGateway } = { ...defaulIPFS, ...ipfsUrls };
 
     // add tpyes
     this.client = {
@@ -22,13 +39,12 @@ class IpfsStorage {
         const updatedOptions = {
           ...options,
           method: method,
-          credentials: "include",
           headers: {
             ...options?.headers
           }
         };
 
-        const response = await httpFactory(baseUrl + url, updatedOptions);
+        const response = await fetch(baseUrl + url, updatedOptions);
         return response;
       },
       get: async url => {
@@ -36,7 +52,7 @@ class IpfsStorage {
           method: "GET"
         };
 
-        const response = await httpFactory(url, updatedOptions);
+        const response = await fetch(url, updatedOptions);
 
         const blob = await response.blob();
         return blob;
@@ -112,8 +128,4 @@ class IpfsStorage {
       throw exception;
     }
   };
-}
-
-export default function createIpfsStorage(httpFactory, ipfsUrls) {
-  return new IpfsStorage(httpFactory, ipfsUrls);
 }

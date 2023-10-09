@@ -1,4 +1,4 @@
-import { first, isFunction, noop } from "lodash";
+import { chunk, first, isFunction, noop } from "lodash";
 
 const defaultOnFallback = error => {
   console.warn("async fallback Error -->", { error });
@@ -32,3 +32,14 @@ export const fallback = async (asyncFns, onFallback = defaultOnFallback) => {
     });
   });
 };
+
+export const batch = async <T, R>(items: T[], chunkSize: number, onItem: any) =>
+  chunk(items, chunkSize).reduce(
+    async (promise, itemsChunk) =>
+      promise.then(async results => {
+        const chunkResults: R[] = await Promise.all(itemsChunk.map(onItem));
+
+        return results.concat(chunkResults);
+      }),
+    Promise.resolve([] as R[])
+  );
