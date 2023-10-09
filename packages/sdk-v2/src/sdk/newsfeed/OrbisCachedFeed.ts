@@ -2,7 +2,7 @@ import { Orbis } from "@orbisclub/orbis-sdk";
 import { isArray } from "lodash";
 import { createNewsFeedDb } from "./utils";
 import { AsyncStorage } from "../storage";
-import { IPFSUrls, IpfsStorage, isValidCID } from "../ipfs/sdk";
+import { IpfsStorage, isValidCID } from "../ipfs/sdk";
 import { batch } from "src/utils";
 
 export type FeedFilter = { context?: string; tag?: string };
@@ -27,12 +27,12 @@ export class OrbisCachedFeed {
   db: any;
   IPFS: any;
 
-  constructor(filter: FeedFilter, ipfsUrls?: IPFSUrls) {
+  constructor(filter: FeedFilter, ipfs: IpfsStorage) {
     this.db = createNewsFeedDb();
     this.db.open();
     this.filter = filter;
     this.sdk = new Orbis();
-    this.IPFS = new IpfsStorage(ipfsUrls);
+    this.IPFS = ipfs;
   }
 
   periodicSync = async (callback?: () => void) => {
