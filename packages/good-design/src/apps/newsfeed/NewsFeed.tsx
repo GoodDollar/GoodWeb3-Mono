@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useMemo } from "react";
 import { FeedPost } from "@gooddollar/web3sdk-v2";
 import { Heading, HStack, Image, Stack, Text, VStack } from "native-base";
 
@@ -30,17 +30,20 @@ export const NewsFeedItem: FC<NewsFeedItemProps> = withTheme({ name: "NewsFeedIt
     ...props
   }) => {
     const { picture, title, content, published, sponsored_logo } = item;
-    const formattedPublished = new Date(published).toLocaleDateString("en", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit"
-    });
+
+    const formattedPublished = useMemo(() => {
+      return new Date(published).toLocaleDateString("en", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+    }, [published]);
 
     return (
       <CentreBox flexDir="column" {...props}>
-        {picture && <Image width="100%" height="190px" src={picture} alt="Image" {...pictureStyles} />}
+        {picture && <Image minW="350" width="100%" height="190px" src={picture} alt="Image" {...pictureStyles} />}
         <CentreBox {...containerStyles}>
           <Text {...titleStyles}>{title}</Text>
           <Text {...contentStyles}>{content}</Text>

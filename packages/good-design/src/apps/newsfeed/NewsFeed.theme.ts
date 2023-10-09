@@ -10,7 +10,9 @@ export const NewsFeedItem = {
     borderLeftColor: "main",
     containerStyles: {
       paddingTop: 2,
-      paddingX: 2
+      paddingX: 2,
+      width: "100%",
+      alignItems: "flex-start"
     },
     titleStyles: {
       fontFamily: "subheading",

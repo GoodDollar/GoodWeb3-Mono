@@ -3,7 +3,7 @@ import { isArray } from "lodash";
 import { createNewsFeedDb } from "./utils";
 import { AsyncStorage } from "../storage";
 import { IPFSUrls, IpfsStorage, isValidCID } from "../ipfs/sdk";
-import { batch } from "src/utils";
+import { batch } from "../../utils";
 
 export type FeedFilter = { context?: string; tag?: string };
 
