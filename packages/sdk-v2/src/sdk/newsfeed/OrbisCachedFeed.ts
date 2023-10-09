@@ -1,9 +1,9 @@
 import { Orbis } from "@orbisclub/orbis-sdk";
 import { isArray } from "lodash";
 import { createNewsFeedDb } from "./utils";
-import { batch, isValidCID } from "./utils";
 import { AsyncStorage } from "../storage";
-import { IPFSUrls, IpfsStorage } from "../ipfs/sdk";
+import { IPFSUrls, IpfsStorage, isValidCID } from "../ipfs/sdk";
+import { batch } from "src/utils";
 
 export type FeedFilter = { context?: string; tag?: string };
 
@@ -37,6 +37,7 @@ export class OrbisCachedFeed {
 
   periodicSync = async (callback?: () => void) => {
     const lastUpdate = new Date((await AsyncStorage.getItem("OrbisCachedFeed")) || 0);
+
     if (lastUpdate > new Date(Date.now() - this.SYNC_PERIOD)) {
       console.log("OrbisCachedFeed: wait 1 hour before next update");
     } else {
@@ -44,6 +45,7 @@ export class OrbisCachedFeed {
       await this.syncPosts();
       callback && callback();
     }
+
     setTimeout(() => this.periodicSync(), this.SYNC_PERIOD);
   };
   /**
@@ -87,8 +89,12 @@ export class OrbisCachedFeed {
 
     //check if we need to fetch more, if all posts are newer we need to fetch next page
     const hasOlder = postsWithId.find(post => new Date(post.updated || post.published) < lastUpdate);
-    if (!hasOlder && posts.length > 0) return this.syncPosts(page + 1);
-    else return AsyncStorage.setItem("OrbisCachedFeed", Date.now());
+
+    if (!hasOlder && posts.length > 0) {
+      return this.syncPosts(page + 1);
+    } else {
+      return AsyncStorage.setItem("OrbisCachedFeed", Date.now());
+    }
   };
 
   /** @private */
@@ -103,6 +109,7 @@ export class OrbisCachedFeed {
     if (isValidCID(picture)) {
       picture = await this.IPFS.load(picture);
     }
+
     return {
       ...document,
       picture

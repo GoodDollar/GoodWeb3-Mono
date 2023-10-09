@@ -1,2 +1,2 @@
-export * from "./sdk";
+export * from "./OrbisCachedFeed";
 export * from "./utils";

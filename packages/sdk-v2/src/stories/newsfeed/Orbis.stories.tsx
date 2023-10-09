@@ -25,8 +25,12 @@ const Web3Component = () => {
   };
 
   const setAccess = async () => {
-    const result = await orbis.updateContext("kjzl6cwe1jw147bfd2hn7f3j2sdsq6708xnb3a217iz1m18a35v25kgxna3s0os", {
-      name: "GoodDollar Feed (Dev)",
+    const {
+      data: { content }
+    } = await orbis.getContext("kjzl6cwe1jw149ao1fmo5ip9866yqmyt2wpf6zaeinam7w02s00pdeitldtmjxc");
+    console.log({ content });
+    const result = await orbis.updateContext("kjzl6cwe1jw149ao1fmo5ip9866yqmyt2wpf6zaeinam7w02s00pdeitldtmjxc", {
+      ...content,
       accessRules: [
         {
           type: "did",
