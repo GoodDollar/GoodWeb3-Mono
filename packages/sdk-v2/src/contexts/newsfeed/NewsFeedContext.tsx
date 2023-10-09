@@ -1,7 +1,7 @@
 import React, { createContext, useCallback, useEffect, useState } from "react";
 import { FeedFilter, FeedPost } from "../../sdk/newsfeed/OrbisCachedFeed";
 import { OrbisCachedFeed } from "../../sdk/newsfeed/OrbisCachedFeed";
-import { IPFSUrls, IpfsStorage } from "src/sdk/ipfs/sdk";
+import { IPFSUrls, IpfsStorage } from "../../sdk/ipfs/sdk";
 
 type INewsFeedContext = {
   feed: FeedPost[];
