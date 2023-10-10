@@ -1,8 +1,10 @@
 {
   "name": "gooddollar",
-  "workspaces": [
-    "packages/**"
-  ],
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ]
+  },
   "private": true,
   "version": "0.0.1",
   "description": "GoodDollar Library",
