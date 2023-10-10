@@ -73,7 +73,7 @@
     "@babel/core": "^7.18.10",
     "@babel/runtime": "^7.18.9",
     "@gooddollar/goodprotocol": "^2.0.3",
-    "@gooddollar/web3sdk-v2": "workspace:^",
+    "@gooddollar/web3sdk-v2": "^0.1.120",
     "@lingui/macro": "^3.14.0",
     "@lingui/react": "^3.14.0",
     "@magiklabs/react-sdk": "^1.0.8",
