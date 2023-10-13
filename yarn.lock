@@ -3752,7 +3752,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/bridge-contracts@npm:^1.0.14, @gooddollar/bridge-contracts@npm:^1.0.17":
+"@gooddollar/bridge-contracts@npm:^1.0.17":
   version: 1.0.17
   resolution: "@gooddollar/bridge-contracts@npm:1.0.17"
   checksum: 5f0a9c9f99cedd09f71e7f67721fb91b39750fa8bcac3aff157aaabbcfbf447a7649b50f1eefce90d2fa9ae2aef65fc842c7dcb0ca94970d4947259a92530419
@@ -3770,7 +3770,7 @@ __metadata:
     "@babel/preset-react": ^7.16.0
     "@babel/preset-typescript": ^7.16.0
     "@babel/runtime": ^7.18.9
-    "@gooddollar/goodprotocol": ^2.0.3
+    "@gooddollar/goodprotocol": ^2.0.15
     "@gooddollar/web3sdk-v2": latest
     "@lingui/macro": ^3.14.0
     "@lingui/react": ^3.14.0
@@ -3805,6 +3805,7 @@ __metadata:
     cpx: ^1.5.0
     css-loader: ^6.7.1
     ctix: ^1.4.0
+    ethers: 5.7.2
     lodash: ^4.17.21
     metro-react-native-babel-preset: ^0.72.0
     moment: ^2.29.4
@@ -3908,7 +3909,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/goodprotocol@npm:^2.0.15, @gooddollar/goodprotocol@npm:^2.0.3, @gooddollar/goodprotocol@npm:^2.0.4":
+"@gooddollar/goodprotocol@npm:^2.0.15":
   version: 2.0.15
   resolution: "@gooddollar/goodprotocol@npm:2.0.15"
   dependencies:
@@ -3927,6 +3928,28 @@ __metadata:
     truffle-plugin-verify: ^0.6.1
     truffle-source-verify: ^0.0.6
   checksum: 3b1ac76cef9038f48034e9e30ecb87485fa6b534142d2c603e4639564df4f0483ab22092b05852064b646ef32e00e62345c6c1f5772fb11ed1ef854a09e929ce
+  languageName: node
+  linkType: hard
+
+"@gooddollar/goodprotocol@npm:^2.0.4":
+  version: 2.0.4
+  resolution: "@gooddollar/goodprotocol@npm:2.0.4"
+  dependencies:
+    "@gooddollar/goodcontracts": ^2.6.6
+    "@jsier/retrier": ^1.2.4
+    "@openzeppelin/contracts": ^4.8.0
+    "@openzeppelin/contracts-upgradeable": ^4.8.0
+    "@openzeppelin/hardhat-upgrades": ^1.22.1
+    "@superfluid-finance/ethereum-contracts": ^1.8.1
+    "@superfluid-finance/sdk-core": ^0.5.8
+    "@typechain/hardhat": ^6.1.5
+    async-promise-pool: ^1.0.4
+    openzeppelin-solidity: ^4.3.2
+    patch-package: latest
+    press-any-key: ^0.1.1
+    truffle-plugin-verify: ^0.6.1
+    truffle-source-verify: ^0.0.6
+  checksum: 5c2b37e117eccf50043b824082a8462c17b9efbf26cb3a324c60ba4f1c2c0f56fcfd3587dc694e93b0a11a723698da1c2630996d4993541a20f8e9782d63b946
   languageName: node
   linkType: hard
 
@@ -4015,8 +4038,8 @@ __metadata:
     "@ceramicnetwork/http-client": ^2.32.0
     "@ceramicnetwork/stream-tile": ^2.31.0
     "@gooddollar/bridge-app": ^1.5.0
-    "@gooddollar/bridge-contracts": ^1.0.14
-    "@gooddollar/goodprotocol": ^2.0.3
+    "@gooddollar/bridge-contracts": ^1.0.17
+    "@gooddollar/goodprotocol": ^2.0.15
     "@orbisclub/orbis-sdk": ^0.4.87
     "@react-native-async-storage/async-storage": 1.17.10
     "@react-native-firebase/analytics": ^16.4.6
@@ -4087,7 +4110,7 @@ __metadata:
     sass-loader: ^12.3.0
     style-loader: ^3.3.1
     tsconfig-paths-webpack-plugin: ^4.1.0
-    typescript: ^5.1.3
+    typescript: ^5.2.2
     uuid: ^9.0.1
     viem: ^1.2.13
     wagmi: ^1.3.8
@@ -5217,10 +5240,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@openzeppelin/contracts@npm:4.9.3, @openzeppelin/contracts@npm:^4.5.0, @openzeppelin/contracts@npm:^4.8.0":
+"@openzeppelin/contracts@npm:4.9.3, @openzeppelin/contracts@npm:^4.5.0":
   version: 4.9.3
   resolution: "@openzeppelin/contracts@npm:4.9.3"
   checksum: 4932063e733b35fa7669b9fe2053f69b062366c5c208b0c6cfa1ac451712100c78acff98120c3a4b88d94154c802be05d160d71f37e7d74cadbe150964458838
+  languageName: node
+  linkType: hard
+
+"@openzeppelin/contracts@npm:^4.8.0":
+  version: 4.8.1
+  resolution: "@openzeppelin/contracts@npm:4.8.1"
+  checksum: 99acefde1ae42c2d935ec9b4ebd327e786c499a4ec76b9582eb9adb0ff94a77c48047332fba44fb97b82b5a46d80e74d3e5d8cf73d5defa7f746f2a67f070281
   languageName: node
   linkType: hard
 
@@ -9532,13 +9562,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@truffle/contract-schema@npm:^3.3.1, @truffle/contract-schema@npm:^3.4.15, @truffle/contract-schema@npm:^3.4.16, @truffle/contract-schema@npm:^3.4.9":
+"@truffle/contract-schema@npm:^3.3.1, @truffle/contract-schema@npm:^3.4.15, @truffle/contract-schema@npm:^3.4.16":
   version: 3.4.16
   resolution: "@truffle/contract-schema@npm:3.4.16"
   dependencies:
     ajv: ^6.10.0
     debug: ^4.3.1
   checksum: e8ccd920c3ca62843f93c75119a94cce3ba434dd08cd6f2ef75ed25a7cddf1617c441e32fb74efcf6124183b1fcc254b6d96d5ab3a7f967ed070df8a262d607b
+  languageName: node
+  linkType: hard
+
+"@truffle/contract-schema@npm:^3.4.9":
+  version: 3.4.12
+  resolution: "@truffle/contract-schema@npm:3.4.12"
+  dependencies:
+    ajv: ^6.10.0
+    debug: ^4.3.1
+  checksum: da34cbeedbe7f4e8c3cc72fc83a5e524f5eb90900851ecbf888500b89997df15da22a699da80de1b29524d9629b4f77bf03ec98c269fc58670e44cbcc9bd47fb
   languageName: node
   linkType: hard
 
@@ -33769,7 +33809,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^5.1.3":
+"typescript@npm:^5.1.3, typescript@npm:^5.2.2":
   version: 5.2.2
   resolution: "typescript@npm:5.2.2"
   bin:
@@ -33789,7 +33829,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@^5.1.3#~builtin<compat/typescript>":
+"typescript@patch:typescript@^5.1.3#~builtin<compat/typescript>, typescript@patch:typescript@^5.2.2#~builtin<compat/typescript>":
   version: 5.2.2
   resolution: "typescript@patch:typescript@npm%3A5.2.2#~builtin<compat/typescript>::version=5.2.2&hash=7ad353"
   bin:
@@ -36225,7 +36265,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"which-typed-array@npm:^1.1.11, which-typed-array@npm:^1.1.2, which-typed-array@npm:^1.1.9":
+"which-typed-array@npm:^1.1.11":
   version: 1.1.11
   resolution: "which-typed-array@npm:1.1.11"
   dependencies:
@@ -36235,6 +36275,19 @@ __metadata:
     gopd: ^1.0.1
     has-tostringtag: ^1.0.0
   checksum: 711ffc8ef891ca6597b19539075ec3e08bb9b4c2ca1f78887e3c07a977ab91ac1421940505a197758fb5939aa9524976d0a5bbcac34d07ed6faa75cedbb17206
+  languageName: node
+  linkType: hard
+
+"which-typed-array@npm:^1.1.2, which-typed-array@npm:^1.1.9":
+  version: 1.1.9
+  resolution: "which-typed-array@npm:1.1.9"
+  dependencies:
+    available-typed-arrays: ^1.0.5
+    call-bind: ^1.0.2
+    for-each: ^0.3.3
+    gopd: ^1.0.1
+    has-tostringtag: ^1.0.0
+  checksum: fe0178ca44c57699ca2c0e657b64eaa8d2db2372a4e2851184f568f98c478ae3dc3fdb5f7e46c384487046b0cf9e23241423242b277e03e8ba3dabc7c84c98ef
   languageName: node
   linkType: hard
 
