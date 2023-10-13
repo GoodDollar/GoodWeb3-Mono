@@ -1,8 +1,10 @@
 {
   "name": "gooddollar",
-  "workspaces": [
-    "packages/**"
-  ],
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ]
+  },
   "private": true,
   "version": "0.0.1",
   "description": "GoodDollar Library",
@@ -31,6 +33,7 @@
     "husky": "^8.0.2",
     "lint-staged": "^13.1.0",
     "pinst": "^3.0.0",
+    "prettier": "2.8.8",
     "typescript": "^4.9.3"
   }
 }

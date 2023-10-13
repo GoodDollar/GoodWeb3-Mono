@@ -76,8 +76,11 @@ export const CustomSwitch = ({ list, switchListCb }: { list: string[]; switchLis
     switchListCb(); //Todo: refactor to handle list with more then 2 values
   };
 
-  const onUncheckList = useCallback(isLeft => toggleList(isLeft), [toggleList]);
-  const onUncheckItem = useCallback((isLeft, chain) => selectFromList(isLeft, chain), [toggleList, selectFromList]);
+  const onUncheckList = useCallback((isLeft: boolean) => toggleList(isLeft), [toggleList]);
+  const onUncheckItem = useCallback(
+    (isLeft: boolean, chain: string) => selectFromList(isLeft, chain),
+    [toggleList, selectFromList]
+  );
 
   return (
     <View height="16" display="flex" flexDirection="row" justifyContent="flex-start" alignItems="flex-start">
