@@ -1,1 +1,1 @@
-export * from "./NewsFeedContext";
+export * from './NewsFeedContext';
