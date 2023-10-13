@@ -112,7 +112,7 @@ const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards, claimed }) => {
   }, [activeSlide, flatListRef, onScroll, slidesNumber, layoutOffset, activeCards]);
 
   const getFlatListRef = useCallback(
-    flatList => {
+    (flatList: any) => {
       flatListRef.current = flatList;
     },
     [activeSlide, onScroll, clickAndSlide]
@@ -136,7 +136,7 @@ const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards, claimed }) => {
         showsHorizontalScrollIndicator={false}
         onLayout={onFlatListLayoutChange}
         getItemLayout={getItemLayout}
-        renderItem={ClaimCardItem}
+        renderItem={ClaimCardItem as any}
         ItemSeparatorComponent={Separator}
         pagingEnabled
       />

@@ -9,7 +9,7 @@ const Title: FC<ITextProps> = withTheme({ name: "Title" })(({ children, ...props
 export const theme = {
   defaultProps: {
     color: "main",
-    size: "lg",
+    size: "lg"
   },
   baseStyle: {
     fontFamily: "heading",

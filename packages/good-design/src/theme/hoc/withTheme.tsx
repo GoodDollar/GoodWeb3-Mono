@@ -1,4 +1,4 @@
-import React from "react";
+import React, { FC } from "react";
 import { useThemeProps } from "native-base";
 import { pick, omit } from "lodash";
 
@@ -9,7 +9,8 @@ interface IWithThemeOpts {
 
 export const withTheme =
   (options?: IWithThemeOpts) =>
-  <T,>(Component: React.ComponentType<T>) => {
+  // @ts-ignore
+  <T,>(Component: React.ComponentType<T & { children?: React.ReactNode }> & { children?: React.ReactNode }) => {
     const { name: defaultName } = Component;
     const { name, skipProps = [] } = options ?? {};
     const id = name ?? defaultName;
@@ -22,7 +23,7 @@ export const withTheme =
       );
     }
 
-    const Wrapped: React.ComponentType<T> = ({ children, ...props }) => {
+    const Wrapped: FC<T> = ({ children, ...props }: any) => {
       // useThemeProps expects themed props,
       // and array props are considered ie. breakpoint values or colormode values,
       // so it only returns a single value from any arrayed prop
