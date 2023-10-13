@@ -11,6 +11,7 @@ export interface IAnalyticsContext
 export interface IAnaliticsProviderProps {
   config: IAnalyticsConfig;
   appProps: IAppProps;
+  children?: any;
 }
 
 /* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function */
@@ -51,8 +52,11 @@ export const AnalyticsProvider: FC<IAnaliticsProviderProps> = ({ config, appProp
 
   useEffect(() => {
     const sdk = new Analytics(configRef.current);
-    
-    sdk.initialize(appPropsRef.current).then(() => setSDK(sdk)).catch(noop);
+
+    sdk
+      .initialize(appPropsRef.current)
+      .then(() => setSDK(sdk))
+      .catch(noop);
   }, [setSDK]);
 
   return !sdk ? null : (
@@ -66,4 +70,4 @@ export const useSendAnalytics = (): IAnalyticsContext["send"] => {
   const { send } = useAnalytics(); // eslint-disable-line @typescript-eslint/unbound-method
 
   return send;
-}
+};
