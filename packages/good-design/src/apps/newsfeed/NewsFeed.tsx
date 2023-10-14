@@ -60,7 +60,7 @@ export const NewsFeedItem: FC<NewsFeedItemProps> = withTheme({ name: "NewsFeedIt
 export const NewsFeed = ({ feed }: { feed: FeedPost[] }) => {
   return (
     <CentreBox flexDir="column">
-      <Stack maxW={400}>
+      <Stack w="100%">
         <CentreBox
           w="100%"
           justifyContent="center"
