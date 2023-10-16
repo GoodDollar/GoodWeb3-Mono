@@ -1,6 +1,6 @@
 import React, { FC, useMemo } from "react";
 import { FeedPost } from "@gooddollar/web3sdk-v2";
-import { Heading, HStack, Image, Stack, Text, VStack } from "native-base";
+import { Heading, HStack, Image, Spinner, Stack, Text, VStack } from "native-base";
 
 import SvgXml from "../../core/images/SvgXml";
 import { withTheme } from "../../theme";
@@ -57,28 +57,30 @@ export const NewsFeedItem: FC<NewsFeedItemProps> = withTheme({ name: "NewsFeedIt
   }
 );
 
-export const NewsFeed = ({ feed }: { feed: FeedPost[] }) => {
-  return (
-    <CentreBox flexDir="column">
-      <Stack w="100%">
-        <CentreBox
-          w="100%"
-          justifyContent="center"
-          alignItems="center"
-          px={4}
-          py={2}
-          marginBottom={4}
-          backgroundColor="rgba(0,175,255,0.1)"
-        >
-          <Heading size="sm" fontFamily="subheading" fontWeight="400" lineHeight="130%" color="primary">
-            {" "}
-            News{" "}
-          </Heading>
-        </CentreBox>
-        <VStack width="95%" ml="auto" mr="auto">
-          {feed && feed.map((item: FeedPost) => <NewsFeedItem item={item} />)}
-        </VStack>
-      </Stack>
-    </CentreBox>
-  );
-};
+export const NewsFeed = ({ feed }: { feed: FeedPost[] }) => (
+  <CentreBox flexDir="column" minWidth="350">
+    <Stack w="100%">
+      <CentreBox
+        w="100%"
+        justifyContent="center"
+        alignItems="center"
+        px={4}
+        py={2}
+        marginBottom={4}
+        backgroundColor="rgba(0,175,255,0.1)"
+      >
+        <Heading size="sm" fontFamily="subheading" fontWeight="400" lineHeight="130%" color="primary">
+          {" "}
+          News{" "}
+        </Heading>
+      </CentreBox>
+      <VStack width="95%" ml="auto" mr="auto">
+        {feed && feed.length > 0 ? (
+          feed.map((item: FeedPost) => <NewsFeedItem item={item} />)
+        ) : (
+          <Spinner color="primary" size="lg" />
+        )}
+      </VStack>
+    </Stack>
+  </CentreBox>
+);
