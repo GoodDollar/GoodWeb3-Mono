@@ -31,15 +31,17 @@ export const NewsFeedItem: FC<NewsFeedItemProps> = withTheme({ name: "NewsFeedIt
   }) => {
     const { picture, title, content, published, sponsored_logo } = item;
 
-    const formattedPublished = useMemo(() => {
-      return new Date(published).toLocaleDateString("en", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit"
-      });
-    }, [published]);
+    const formattedPublished = useMemo(
+      () =>
+        new Date(published).toLocaleDateString("en", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit"
+        }),
+      [published]
+    );
 
     return (
       <CentreBox flexDir="column" {...props}>

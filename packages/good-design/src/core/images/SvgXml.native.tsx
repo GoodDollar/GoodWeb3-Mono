@@ -1,6 +1,1 @@
-import React from "react";
-import { SvgXml as SVG } from "react-native-svg";
-
-const SvgXml = ({ src, width, height }: any) => <SVG xml={src} width={width} height={height} />;
-
-export default SvgXml;
+export { SvgXml as default } from "react-native-svg";
