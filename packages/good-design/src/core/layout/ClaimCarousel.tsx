@@ -3,10 +3,10 @@ import React, { FC, memo, useCallback, useState, useMemo, useRef, useEffect } fr
 import { LayoutChangeEvent, NativeScrollEvent, NativeSyntheticEvent } from "react-native";
 import { IClaimCard } from "../buttons";
 import ClaimCard from "./ClaimCard";
-import { isMobile } from "react-device-detect";
 
 interface ClaimCarouselProps {
   cards: Array<IClaimCard>;
+  isMobile: boolean;
   claimed?: boolean;
 }
 
@@ -41,9 +41,9 @@ const getItemLayout = (_: IClaimCard[] | null | undefined, index: number) => ({
   offset: (275 - 20) * index
 });
 
-const Separator = () => <View w="5" />;
+const Separator = () => <View w="5" h={4} />;
 
-const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards, claimed }) => {
+const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards, claimed, isMobile }) => {
   const [slidesNumber, setSlidesNumber] = useState(1);
   const [activeSlide, setActiveSlide] = useState(0);
   const [activeContentWidth, setActiveContentWidth] = useState<string | number>("auto");
@@ -127,12 +127,12 @@ const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards, claimed }) => {
         // @ts-ignore
         ref={getFlatListRef}
         data={activeCards}
-        horizontal
+        {...(isMobile && { horizontal: true })}
         onScroll={onScroll}
         scrollEventThrottle={16}
         initialScrollIndex={0}
-        h="425"
-        w="auto"
+        h={isMobile ? 425 : "max-content"}
+        w={isMobile ? "auto" : 650}
         showsHorizontalScrollIndicator={false}
         onLayout={onFlatListLayoutChange}
         getItemLayout={getItemLayout}
@@ -140,19 +140,20 @@ const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards, claimed }) => {
         ItemSeparatorComponent={Separator}
         pagingEnabled
       />
-
-      <View flexDirection="row" pt="5" justifyContent="center">
-        <Pressable
-          onPress={clickAndSlide}
-          flexDir="row"
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          height="15px"
-        >
-          <SlidesComponent data={activeCards} activeSlide={activeSlide} slidesNumber={slidesNumber} />
-        </Pressable>
-      </View>
+      {isMobile && (
+        <View flexDirection="row" pt="5" justifyContent="center">
+          <Pressable
+            onPress={clickAndSlide}
+            flexDir="row"
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            height="15px"
+          >
+            <SlidesComponent data={activeCards} activeSlide={activeSlide} slidesNumber={slidesNumber} />
+          </Pressable>
+        </View>
+      )}
     </Box>
   );
 };

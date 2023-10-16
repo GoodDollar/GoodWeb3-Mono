@@ -4,7 +4,8 @@ import { ClaimCardContent, ArrowButton } from "../buttons";
 import { Image } from "../images";
 import Title from "./Title";
 import BasePressable from "../buttons/BasePressable";
-import { openLink } from "@gooddollar/web3sdk-v2";
+import { openLink, isMobile as deviceDetect } from "@gooddollar/web3sdk-v2";
+
 interface ClaimCardProps {
   bgColor: string;
   title: {
@@ -22,10 +23,12 @@ const ClaimCard: FC<ClaimCardProps> = ({ content, title, bgColor, externalLink }
     }
   }, [externalLink]);
 
+  const isMobile = deviceDetect();
+
   return (
     <BasePressable
-      w={240}
-      h={423}
+      w={isMobile ? 240 : 650}
+      h={isMobile ? 423 : "auto"}
       onPress={handlePress}
       innerView={{
         shadow: "1",
