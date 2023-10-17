@@ -30,10 +30,10 @@ jobs:
         with:
           # fetch full history so things like auto-changelog work properly
           fetch-depth: 0
-      - name: Use Node 14
+      - name: Use Node 16
         uses: actions/setup-node@v3
         with:
-          node-version: "14"
+          node-version: "16"
           # setting a registry enables the NODE_AUTH_TOKEN env variable where we can set an npm token.  REQUIRED
           registry-url: "https://registry.npmjs.org/"
       - run: npm install -g yarn
@@ -49,6 +49,9 @@ jobs:
             ${{ runner.os }}-yarn-good-design
       - name: "build"
         run: |
+          # force to take sdk-v2 from npm registry and not install workspace version
+          yarn add -D @gooddollar/web3sdk-v2@latest
+
           yarn workspace @gooddollar/good-design install --immutable
           yarn workspace @gooddollar/good-design build:release
 
