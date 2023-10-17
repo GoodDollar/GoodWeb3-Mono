@@ -1,7 +1,7 @@
 {
   "name": "@gooddollar/web3sdk-v2",
   "repository": "https://github.com/GoodDollar/GoodWeb3-mono/packages/sdk-v2",
-  "version": "0.1.121",
+  "version": "0.2.1-beta.5420890",
   "description": "ethers and react hooks based on usedapp sdk for GoodDollar protocol",
   "scripts": {
     "build": "yarn dev:clean && ctix c && tsc && yarn copy:assets && yalc publish --push",
@@ -40,7 +40,6 @@
     "@testing-library/react": "^12.1.2",
     "@types/jest": "^28.1.3",
     "@types/node": "18.0.0",
-    "@types/react": "17.0.2",
     "@types/react-native": "0.70.4",
     "babel-jest": "^27.3.1",
     "babel-loader": "^8.2.3",
@@ -51,6 +50,7 @@
     "css-loader": "^6.5.1",
     "ctix": "^1.4.0",
     "dexie-react-hooks": "^1.1.6",
+    "ethers": "5.7.2",
     "html-webpack-plugin": "^5.5.0",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^27.3.1",
@@ -81,6 +81,8 @@
     "@sentry/browser": "7.16.0",
     "@sentry/react-native": "^4.8.0",
     "@solana/web3.js": "^1.72.0",
+    "@types/react": "^18.2.28",
+    "@usedapp/core": "^1.2.13",
     "@walletconnect/client": "^1.8.0",
     "@walletconnect/qrcode-modal": "^1.8.0",
     "@web3-onboard/coinbase": "^2.2.4",
@@ -111,9 +113,6 @@
   },
   "peerDependencies": {
     "@react-native-async-storage/async-storage": "1.17.10",
-    "@usedapp/core": "^1.2.6",
-    "ethers": "5.7.2",
-    "react": "*",
     "react-native": "*",
     "react-native-web": "*"
   },

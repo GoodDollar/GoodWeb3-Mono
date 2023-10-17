@@ -1,5 +1,4 @@
-import { IIdentity } from "@gooddollar/goodprotocol/types";
-import { UBIScheme } from "@gooddollar/goodprotocol/types/UBIScheme";
+import { IIdentity, UBIScheme } from "@gooddollar/goodprotocol/types";
 import { ChainId, QueryParams, useCalls, useEthers } from "@usedapp/core";
 import { BigNumber } from "ethers";
 import { first } from "lodash";
