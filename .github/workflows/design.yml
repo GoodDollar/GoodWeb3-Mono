@@ -49,6 +49,9 @@ jobs:
             ${{ runner.os }}-yarn-good-design
       - name: "build"
         run: |
+          # force to take sdk-v2 from npm registry and not install workspace version
+          yarn add -D @gooddollar/web3sdk-v2@latest --ignore-workspace-root-check 
+
           yarn workspace @gooddollar/good-design install --immutable
           yarn workspace @gooddollar/good-design build:release
 
