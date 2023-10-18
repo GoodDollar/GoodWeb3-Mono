@@ -3745,7 +3745,7 @@ __metadata:
     "@babel/preset-typescript": ^7.16.0
     "@babel/runtime": ^7.18.9
     "@gooddollar/goodprotocol": ^2.0.15
-    "@gooddollar/web3sdk-v2": 0.2.1-beta.45b540c
+    "@gooddollar/web3sdk-v2": latest
     "@lingui/macro": ^3.14.0
     "@lingui/react": ^3.14.0
     "@magiklabs/react-sdk": ^1.0.8
@@ -3958,9 +3958,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/web3sdk-v2@npm:0.2.1-beta.45b540c":
-  version: 0.2.1-beta.45b540c
-  resolution: "@gooddollar/web3sdk-v2@npm:0.2.1-beta.45b540c"
+"@gooddollar/web3sdk-v2@npm:latest":
+  version: 0.2.2
+  resolution: "@gooddollar/web3sdk-v2@npm:0.2.2"
   dependencies:
     "@amplitude/analytics-browser": ^1.6.4
     "@amplitude/analytics-react-native": ^0.7.0
@@ -4007,7 +4007,7 @@ __metadata:
     "@react-native-async-storage/async-storage": 1.17.10
     react-native: "*"
     react-native-web: "*"
-  checksum: bc6349bd4df69a5360ee7a5c8c5565d60a88cfbf9e897a8ca5a1096f5df54f705ea36666617c26a794d174f0531859303ec35632d9fb29b28a3ad8e1e49af083
+  checksum: 8bbcde4cb1188227a14c6941e19734ed538ffab9235b339c2ec0a4279f1d53760d5c64f97abd8e301205ac1bcf9c8f8a56de2dc828cf5f5e23b0646d62278e4b
   languageName: node
   linkType: hard
 
