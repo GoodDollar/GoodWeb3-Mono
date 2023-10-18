@@ -1,6 +1,6 @@
 import { Text, View, Box } from "native-base";
 import React, { FC, useCallback } from "react";
-import { ClaimCardContent, ArrowButton } from "../buttons";
+import { ClaimCardContent } from "../buttons";
 import { Image } from "../images";
 import Title from "./Title";
 import BasePressable from "../buttons/BasePressable";
@@ -16,7 +16,9 @@ interface ClaimCardProps {
   externalLink?: string;
 }
 
-const ClaimCard: FC<ClaimCardProps> = ({ content, title, bgColor, externalLink }) => {
+const ClaimCard: FC<ClaimCardProps> = ({ content = [], title, bgColor, externalLink }) => {
+  const { subTitle, description, imageUrl, imgSrc } = content[0] || [];
+
   const handlePress = useCallback(async () => {
     if (externalLink) {
       await openLink(externalLink, "_blank");
@@ -27,8 +29,8 @@ const ClaimCard: FC<ClaimCardProps> = ({ content, title, bgColor, externalLink }
 
   return (
     <BasePressable
-      w={isMobile ? 240 : 650}
-      h={isMobile ? 423 : "auto"}
+      w={isMobile ? 330 : 650}
+      h={isMobile ? 290 : "auto"}
       onPress={handlePress}
       innerView={{
         shadow: "1",
@@ -37,8 +39,7 @@ const ClaimCard: FC<ClaimCardProps> = ({ content, title, bgColor, externalLink }
         flex: 1,
         flexDirection: "column",
         alignItems: "flex-start",
-        px: "17",
-        py: "6"
+        p: 4
       }}
       viewInteraction={{ hover: { shadow: "3" } }}
     >
@@ -46,59 +47,38 @@ const ClaimCard: FC<ClaimCardProps> = ({ content, title, bgColor, externalLink }
         {title.text}
       </Title>
 
-      {content?.map((contentItem, index) => (
-        <Box key={index}>
-          {!!contentItem.subTitle && (
+      <Box>
+        <Box h={isMobile ? 126 : "auto"}>
+          {!!subTitle && (
             <Text
-              color={contentItem.subTitle.color}
+              color={subTitle.color}
               fontSize="md"
               fontFamily="subheading"
               fontWeight="medium"
               lineHeight="25px"
               pb="2"
             >
-              {contentItem.subTitle.text}
+              {subTitle.text}
             </Text>
           )}
-          {!!contentItem.description && (
-            <Text color={contentItem.description.color} fontSize="16" fontFamily="subheading" fontWeight="normal">
-              {contentItem.description.text}
+          {!!description && (
+            <Text color={description.color} fontSize="16" fontFamily="subheading" fontWeight="normal">
+              {description.text}
             </Text>
-          )}
-          {!!contentItem.imageUrl && (
-            <Image source={{ uri: contentItem.imageUrl }} w="208" h="178" borderRadius={10} alt="GoodDollar" />
-          )}
-
-          {!!contentItem.imgSrc && <Image source={contentItem.imgSrc} w="208" h="auto" />}
-
-          {!!contentItem.link && (
-            <ArrowButton
-              text={contentItem.link.linkText}
-              onPress={() => contentItem.link && openLink(contentItem.link.linkUrl)}
-            />
-          )}
-          {!!contentItem.list && (
-            <View textAlign="center">
-              {contentItem.list?.map(({ id, key, value }) => (
-                <Box key={id} borderBottomColor="borderGrey" borderBottomWidth="1px">
-                  <Text
-                    color="goodGrey.500"
-                    bold
-                    fontSize="16"
-                    fontFamily="subheading"
-                    fontWeight="normal"
-                    display="flex"
-                    justifyContent="center"
-                    flexDirection="column"
-                  >
-                    {key} <Text color="primary">{value}</Text>
-                  </Text>
-                </Box>
-              ))}
-            </View>
           )}
         </Box>
-      ))}
+        {imageUrl || imgSrc ? (
+          <Box h="82" ml="auto" mr="auto" mt={2}>
+            {imageUrl ? (
+              <Image source={{ uri: imageUrl }} w="240" h="178" borderRadius={10} alt="GoodDollar" />
+            ) : (
+              <View ml="auto" mr="auto">
+                <Image resizeMode="contain" source={imgSrc} w="240" h="70" />
+              </View>
+            )}
+          </Box>
+        ) : null}
+      </Box>
     </BasePressable>
   );
 };

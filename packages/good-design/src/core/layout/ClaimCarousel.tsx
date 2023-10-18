@@ -3,6 +3,9 @@ import React, { FC, memo, useCallback, useState, useMemo, useRef, useEffect } fr
 import { LayoutChangeEvent, NativeScrollEvent, NativeSyntheticEvent } from "react-native";
 import { IClaimCard } from "../buttons";
 import ClaimCard from "./ClaimCard";
+import ArrowLeft from "../../assets/svg/arrow-left.svg";
+import ArrowRight from "../../assets/svg/arrow-right.svg";
+import SvgXml from "../../core/images/SvgXml";
 
 interface ClaimCarouselProps {
   cards: Array<IClaimCard>;
@@ -131,7 +134,7 @@ const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards, claimed, isMobile }) => 
         onScroll={onScroll}
         scrollEventThrottle={16}
         initialScrollIndex={0}
-        h={isMobile ? 425 : "max-content"}
+        h={isMobile ? 320 : "max-content"}
         w={isMobile ? "auto" : 650}
         showsHorizontalScrollIndicator={false}
         onLayout={onFlatListLayoutChange}
@@ -141,7 +144,7 @@ const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards, claimed, isMobile }) => 
         pagingEnabled
       />
       {isMobile && (
-        <View flexDirection="row" pt="5" justifyContent="center">
+        <View flexDirection="row" pt={4} justifyContent="center">
           <Pressable
             onPress={clickAndSlide}
             flexDir="row"
@@ -150,7 +153,9 @@ const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards, claimed, isMobile }) => 
             alignItems="center"
             height="15px"
           >
+            <SvgXml src={ArrowLeft} height="24" width="24" style={{ marginRight: 12 }} />
             <SlidesComponent data={activeCards} activeSlide={activeSlide} slidesNumber={slidesNumber} />
+            <SvgXml src={ArrowRight} height="24" width="24" style={{ marginLeft: 12 }} />
           </Pressable>
         </View>
       )}
