@@ -30,10 +30,10 @@ jobs:
         with:
           # fetch full history so things like auto-changelog work properly
           fetch-depth: 0
-      - name: Use Node 16
+      - name: Use Node 18
         uses: actions/setup-node@v3
         with:
-          node-version: "16"
+          node-version: "18"
           # setting a registry enables the NODE_AUTH_TOKEN env variable where we can set an npm token.  REQUIRED
           registry-url: "https://registry.npmjs.org/"
       - run: npm install -g yarn
