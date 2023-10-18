@@ -3745,7 +3745,7 @@ __metadata:
     "@babel/preset-typescript": ^7.16.0
     "@babel/runtime": ^7.18.9
     "@gooddollar/goodprotocol": ^2.0.15
-    "@gooddollar/web3sdk-v2": latest
+    "@gooddollar/web3sdk-v2": 0.2.1-beta.45b540c
     "@lingui/macro": ^3.14.0
     "@lingui/react": ^3.14.0
     "@magiklabs/react-sdk": ^1.0.8
@@ -3791,10 +3791,12 @@ __metadata:
     react-docgen-typescript-plugin: ^1.0.1
     react-dom: 17.0.2
     react-helmet: ^6.1.0
+    react-inlinesvg: ^4.0.5
     react-native: 0.70.4
     react-native-mask-input: ^1.2.2
     react-native-safe-area-context: ^3.3.2
     react-native-svg: ^12.1.1
+    react-native-svg-uri: ^1.2.3
     react-native-svg-web: ^1.0.9
     react-native-web: 0.17.7
     react-number-format: ^5.1.1
@@ -3884,7 +3886,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/goodprotocol@npm:^2.0.15, @gooddollar/goodprotocol@npm:^2.0.4":
+"@gooddollar/goodprotocol@npm:^2.0.15":
   version: 2.0.15
   resolution: "@gooddollar/goodprotocol@npm:2.0.15"
   dependencies:
@@ -3903,6 +3905,28 @@ __metadata:
     truffle-plugin-verify: ^0.6.1
     truffle-source-verify: ^0.0.6
   checksum: 3b1ac76cef9038f48034e9e30ecb87485fa6b534142d2c603e4639564df4f0483ab22092b05852064b646ef32e00e62345c6c1f5772fb11ed1ef854a09e929ce
+  languageName: node
+  linkType: hard
+
+"@gooddollar/goodprotocol@npm:^2.0.4":
+  version: 2.0.4
+  resolution: "@gooddollar/goodprotocol@npm:2.0.4"
+  dependencies:
+    "@gooddollar/goodcontracts": ^2.6.6
+    "@jsier/retrier": ^1.2.4
+    "@openzeppelin/contracts": ^4.8.0
+    "@openzeppelin/contracts-upgradeable": ^4.8.0
+    "@openzeppelin/hardhat-upgrades": ^1.22.1
+    "@superfluid-finance/ethereum-contracts": ^1.8.1
+    "@superfluid-finance/sdk-core": ^0.5.8
+    "@typechain/hardhat": ^6.1.5
+    async-promise-pool: ^1.0.4
+    openzeppelin-solidity: ^4.3.2
+    patch-package: latest
+    press-any-key: ^0.1.1
+    truffle-plugin-verify: ^0.6.1
+    truffle-source-verify: ^0.0.6
+  checksum: 5c2b37e117eccf50043b824082a8462c17b9efbf26cb3a324c60ba4f1c2c0f56fcfd3587dc694e93b0a11a723698da1c2630996d4993541a20f8e9782d63b946
   languageName: node
   linkType: hard
 
@@ -3934,9 +3958,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/web3sdk-v2@npm:latest":
-  version: 0.2.1
-  resolution: "@gooddollar/web3sdk-v2@npm:0.2.1"
+"@gooddollar/web3sdk-v2@npm:0.2.1-beta.45b540c":
+  version: 0.2.1-beta.45b540c
+  resolution: "@gooddollar/web3sdk-v2@npm:0.2.1-beta.45b540c"
   dependencies:
     "@amplitude/analytics-browser": ^1.6.4
     "@amplitude/analytics-react-native": ^0.7.0
@@ -3983,7 +4007,7 @@ __metadata:
     "@react-native-async-storage/async-storage": 1.17.10
     react-native: "*"
     react-native-web: "*"
-  checksum: 597ee80f2f81ba8e37032e6f23014ffd659ae8ef63f610e8c8a62165b7a2b7241b822eebbda0464a04e035d74a7370644d41603e4d6f5bdf54861f64aa4e1532
+  checksum: bc6349bd4df69a5360ee7a5c8c5565d60a88cfbf9e897a8ca5a1096f5df54f705ea36666617c26a794d174f0531859303ec35632d9fb29b28a3ad8e1e49af083
   languageName: node
   linkType: hard
 
@@ -5195,10 +5219,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@openzeppelin/contracts@npm:4.9.3, @openzeppelin/contracts@npm:^4.5.0, @openzeppelin/contracts@npm:^4.8.0":
+"@openzeppelin/contracts@npm:4.9.3, @openzeppelin/contracts@npm:^4.5.0":
   version: 4.9.3
   resolution: "@openzeppelin/contracts@npm:4.9.3"
   checksum: 4932063e733b35fa7669b9fe2053f69b062366c5c208b0c6cfa1ac451712100c78acff98120c3a4b88d94154c802be05d160d71f37e7d74cadbe150964458838
+  languageName: node
+  linkType: hard
+
+"@openzeppelin/contracts@npm:^4.8.0":
+  version: 4.8.1
+  resolution: "@openzeppelin/contracts@npm:4.8.1"
+  checksum: 99acefde1ae42c2d935ec9b4ebd327e786c499a4ec76b9582eb9adb0ff94a77c48047332fba44fb97b82b5a46d80e74d3e5d8cf73d5defa7f746f2a67f070281
   languageName: node
   linkType: hard
 
@@ -29456,6 +29487,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-from-dom@npm:^0.6.2":
+  version: 0.6.2
+  resolution: "react-from-dom@npm:0.6.2"
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0
+  checksum: 5d66b0c1eb591247a73bed9487a04e390abb4ad6c65e6cea7bfdd35070685b90a5da720de30915b963aba3f4628135d6db4c93da40cd5114c8bbe34a9725a83e
+  languageName: node
+  linkType: hard
+
 "react-helmet@npm:^6.1.0":
   version: 6.1.0
   resolution: "react-helmet@npm:6.1.0"
@@ -29474,6 +29514,17 @@ __metadata:
   version: 0.4.8
   resolution: "react-image-file-resizer@npm:0.4.8"
   checksum: b8f169bc816dd3c10910868e1049ec356e3cd063a87a0eaaf9801c96560fbf21b71019054da91c757ee85ed1ef7b1987821636c81f4f8eae1f8fe3be088ae2ea
+  languageName: node
+  linkType: hard
+
+"react-inlinesvg@npm:^4.0.5":
+  version: 4.0.5
+  resolution: "react-inlinesvg@npm:4.0.5"
+  dependencies:
+    react-from-dom: ^0.6.2
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0
+  checksum: ed0decbeab6229962667bd7c9936dd5f71d4193c063af21ecaea10307d0eabd444a4f781dfedbea1167726827b2741bfd12af9dd85aa5b0eda0fd344ce2e9164
   languageName: node
   linkType: hard
 
@@ -36118,7 +36169,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"which-typed-array@npm:^1.1.11, which-typed-array@npm:^1.1.2, which-typed-array@npm:^1.1.9":
+"which-typed-array@npm:^1.1.11":
   version: 1.1.11
   resolution: "which-typed-array@npm:1.1.11"
   dependencies:
@@ -36128,6 +36179,19 @@ __metadata:
     gopd: ^1.0.1
     has-tostringtag: ^1.0.0
   checksum: 711ffc8ef891ca6597b19539075ec3e08bb9b4c2ca1f78887e3c07a977ab91ac1421940505a197758fb5939aa9524976d0a5bbcac34d07ed6faa75cedbb17206
+  languageName: node
+  linkType: hard
+
+"which-typed-array@npm:^1.1.2, which-typed-array@npm:^1.1.9":
+  version: 1.1.9
+  resolution: "which-typed-array@npm:1.1.9"
+  dependencies:
+    available-typed-arrays: ^1.0.5
+    call-bind: ^1.0.2
+    for-each: ^0.3.3
+    gopd: ^1.0.1
+    has-tostringtag: ^1.0.0
+  checksum: fe0178ca44c57699ca2c0e657b64eaa8d2db2372a4e2851184f568f98c478ae3dc3fdb5f7e46c384487046b0cf9e23241423242b277e03e8ba3dabc7c84c98ef
   languageName: node
   linkType: hard
 

@@ -1,7 +1,6 @@
-import React, { FC } from "react";
+import React, { FC, PropsWithChildren } from "react";
 import { useThemeProps } from "native-base";
 import { pick, omit } from "lodash";
-
 interface IWithThemeOpts {
   name?: string;
   skipProps?: string | string[];
@@ -10,7 +9,7 @@ interface IWithThemeOpts {
 export const withTheme =
   (options?: IWithThemeOpts) =>
   // @ts-ignore
-  <T,>(Component: React.ComponentType<T & { children?: React.ReactNode }> & { children?: React.ReactNode }) => {
+  <T,>(Component: React.ComponentType<PropsWithChildren<T>>) => {
     const { name: defaultName } = Component;
     const { name, skipProps = [] } = options ?? {};
     const id = name ?? defaultName;

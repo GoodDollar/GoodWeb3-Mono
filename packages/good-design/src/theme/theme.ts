@@ -3,6 +3,7 @@ import * as layout from "../core/layout/theme";
 import * as buttons from "../core/buttons/theme";
 import * as advanced from "../advanced/theme";
 import * as nativebase from "./nativebase";
+import * as apps from "../apps/theme";
 import { fontConfig, getPlatformFamilies } from "./fonts";
 
 export const theme = extendTheme({
@@ -75,6 +76,7 @@ export const theme = extendTheme({
     subheading: "Roboto"
   },
   fontSizes: {
+    "4xs": 10,
     "2xs": 12,
     xs: 14,
     sm: 16,
@@ -83,10 +85,25 @@ export const theme = extendTheme({
     xl: 30,
     "2xl": 36
   },
+  shadow: {
+    //Bug: override shadow does not take effect. defining new one is not used
+    "1": {
+      shadowColor: "black",
+      shadowOffset: {
+        width: 0,
+        height: 3
+      },
+      shadowOpacity: 0.4,
+      shadowRadius: 0,
+      elevation: 8
+    }
+  },
+
   components: {
     ...layout,
     ...buttons,
     ...advanced,
+    ...apps,
     ...nativebase
   }
 });

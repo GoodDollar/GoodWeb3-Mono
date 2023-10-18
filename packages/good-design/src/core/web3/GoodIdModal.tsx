@@ -1,22 +1,16 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Box, Button, Text, useBreakpointValue } from "native-base";
+import { Button, Text, useBreakpointValue } from "native-base";
 import { SupportedChains, useFVLink } from "@gooddollar/web3sdk-v2";
-import { InterfaceBoxProps } from "native-base/lib/typescript/components/primitives/Box";
 
 import { useModal } from "../../hooks/useModal";
 import { Title } from "../layout";
 import { Web3ActionButton } from "../../advanced";
+import { CentreBox } from "../layout/CentreBox";
 
 interface GoodIdModal {
   account: string;
   onClose: () => void;
 }
-
-const CentreBox = ({ children, ...props }: InterfaceBoxProps) => (
-  <Box display="flex" justifyContent="center" alignItems="center" {...props}>
-    {children}
-  </Box>
-);
 
 const GoodIdHeader = () => (
   <CentreBox backgroundColor={"white"}>
