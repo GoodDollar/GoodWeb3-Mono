@@ -18,6 +18,9 @@ export const useFaucet = async (refresh: QueryParams["refresh"] = 12) => {
   const lastNotification = useRef(latest?.submittedAt || 0);
   const { account, chainId } = useEthers();
 
+  const { ethereum } = window as any;
+  const isMinipay = ethereum?.isMiniPay;
+
   // if we connected wallet or did a tx then force a refresh
   if (latest && latest.type !== "transactionStarted" && latest?.submittedAt > lastNotification.current) {
     lastNotification.current = latest?.submittedAt;
@@ -48,7 +51,7 @@ export const useFaucet = async (refresh: QueryParams["refresh"] = 12) => {
   );
 
   useEffect(() => {
-    if (!account) {
+    if (!account || isMinipay) {
       return;
     }
 
