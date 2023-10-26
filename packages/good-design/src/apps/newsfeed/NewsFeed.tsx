@@ -28,7 +28,7 @@ export const NewsFeedItem: FC<NewsFeedItemProps> = withTheme({ name: "NewsFeedIt
     publishedStyles,
     sponsoredStyles,
     ...props
-  }) => {
+  }: NewsFeedItemProps) => {
     const { picture, title, content, published, sponsored_logo } = item;
 
     const formattedPublished = useMemo(
@@ -45,7 +45,7 @@ export const NewsFeedItem: FC<NewsFeedItemProps> = withTheme({ name: "NewsFeedIt
 
     return (
       <CentreBox flexDir="column" {...props}>
-        {picture && <Image minW="350" width="100%" height="190px" src={picture} alt="Image" {...pictureStyles} />}
+        {picture && <Image minW="350" width="100%" pb="56.25%" src={picture} alt="Image" {...pictureStyles} />}
         <CentreBox {...containerStyles}>
           <Text {...titleStyles}>{title}</Text>
           <Text {...contentStyles}>{content}</Text>

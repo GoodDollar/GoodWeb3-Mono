@@ -28,7 +28,8 @@ export const NewsFeedItem = {
       fontSize: "2xs",
       fontWeight: "400",
       lineHeight: "130%",
-      paddingBottom: 2
+      paddingBottom: 2,
+      maxWidth: 400
     },
     footerStyles: {
       gap: "40%",

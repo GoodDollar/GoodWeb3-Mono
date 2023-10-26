@@ -88,7 +88,7 @@
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-helmet": "^6.1.0",
-    "react-inlinesvg": "^4.0.5",
+    "react-inlinesvg": "2.3.0",
     "react-native": "0.70.4",
     "react-native-mask-input": "^1.2.2",
     "react-native-safe-area-context": "^3.3.2",

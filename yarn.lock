@@ -3791,7 +3791,7 @@ __metadata:
     react-docgen-typescript-plugin: ^1.0.1
     react-dom: 17.0.2
     react-helmet: ^6.1.0
-    react-inlinesvg: ^4.0.5
+    react-inlinesvg: 2.3.0
     react-native: 0.70.4
     react-native-mask-input: ^1.2.2
     react-native-safe-area-context: ^3.3.2
@@ -19293,6 +19293,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"exenv@npm:^1.2.2":
+  version: 1.2.2
+  resolution: "exenv@npm:1.2.2"
+  checksum: a894f3b60ab8419e0b6eec99c690a009c8276b4c90655ccaf7d28faba2de3a6b93b3d92210f9dc5efd36058d44f04098f6bbccef99859151104bfd49939904dc
+  languageName: node
+  linkType: hard
+
 "exit@npm:^0.1.2":
   version: 0.1.2
   resolution: "exit@npm:0.1.2"
@@ -29487,7 +29494,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-from-dom@npm:^0.6.2":
+"react-from-dom@npm:^0.6.0":
   version: 0.6.2
   resolution: "react-from-dom@npm:0.6.2"
   peerDependencies:
@@ -29517,14 +29524,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-inlinesvg@npm:^4.0.5":
-  version: 4.0.5
-  resolution: "react-inlinesvg@npm:4.0.5"
+"react-inlinesvg@npm:2.3.0":
+  version: 2.3.0
+  resolution: "react-inlinesvg@npm:2.3.0"
   dependencies:
-    react-from-dom: ^0.6.2
+    exenv: ^1.2.2
+    react-from-dom: ^0.6.0
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0
-  checksum: ed0decbeab6229962667bd7c9936dd5f71d4193c063af21ecaea10307d0eabd444a4f781dfedbea1167726827b2741bfd12af9dd85aa5b0eda0fd344ce2e9164
+    react: ^16.8.0 || ^17.0.0
+  checksum: ea43f6ec069ae6ef5be65fe587bf3fbaae0668124ddf7ec7b4f569cd4b6a32654897065019611d3a068e69275727f5918b9218d1b3f368f2a8d5198aaaf93a17
   languageName: node
   linkType: hard
 
