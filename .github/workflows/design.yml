@@ -50,7 +50,7 @@ jobs:
       - name: "build"
         run: |
           # build sdk-v2 so that good-design has the latest workspace version
-          yarn workspace @gooddollar/sdk-v2 build:release
+          yarn workspace @gooddollar/web3sdk-v2 build:release
 
           yarn workspace @gooddollar/good-design install --immutable
           yarn workspace @gooddollar/good-design build:release
