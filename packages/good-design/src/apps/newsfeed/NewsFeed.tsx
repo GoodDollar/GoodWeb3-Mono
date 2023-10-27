@@ -1,10 +1,12 @@
-import React, { FC, useMemo } from "react";
+import React, { FC, useCallback, useMemo } from "react";
 import { FeedPost } from "@gooddollar/web3sdk-v2";
 import { Heading, HStack, Image, Spinner, Stack, Text, VStack } from "native-base";
 
+import { BasePressable } from "../../core";
 import SvgXml from "../../core/images/SvgXml";
 import { withTheme } from "../../theme";
 import { CentreBox } from "../../core/layout/CentreBox";
+import { openLink } from "@gooddollar/web3sdk-v2";
 
 interface NewsFeedItemProps {
   item: FeedPost;
@@ -29,7 +31,7 @@ export const NewsFeedItem: FC<NewsFeedItemProps> = withTheme({ name: "NewsFeedIt
     sponsoredStyles,
     ...props
   }: NewsFeedItemProps) => {
-    const { picture, title, content, published, sponsored_logo } = item;
+    const { picture, title, content, published, sponsored_logo, link } = item;
 
     const formattedPublished = useMemo(
       () =>
@@ -43,18 +45,24 @@ export const NewsFeedItem: FC<NewsFeedItemProps> = withTheme({ name: "NewsFeedIt
       [published]
     );
 
+    const handlePress = useCallback(async () => {
+      await openLink(link, "_blank");
+    }, [link]);
+
     return (
-      <CentreBox flexDir="column" {...props}>
-        {picture && <Image minW="350" width="100%" pb="56.25%" src={picture} alt="Image" {...pictureStyles} />}
-        <CentreBox {...containerStyles}>
-          <Text {...titleStyles}>{title}</Text>
-          <Text {...contentStyles}>{content}</Text>
-          <HStack {...footerStyles}>
-            <Text {...publishedStyles}>{formattedPublished}</Text>
-            {sponsored_logo && <SvgXml src={sponsored_logo} height="28" width="45" {...sponsoredStyles} />}
-          </HStack>
+      <BasePressable onPress={handlePress}>
+        <CentreBox flexDir="column" {...props}>
+          {picture && <Image minW="350" width="100%" pb="56.25%" src={picture} alt="Image" {...pictureStyles} />}
+          <CentreBox {...containerStyles}>
+            <Text {...titleStyles}>{title}</Text>
+            <Text {...contentStyles}>{content}</Text>
+            <HStack {...footerStyles}>
+              <Text {...publishedStyles}>{formattedPublished}</Text>
+              {sponsored_logo && <SvgXml src={sponsored_logo} height="28" width="45" {...sponsoredStyles} />}
+            </HStack>
+          </CentreBox>
         </CentreBox>
-      </CentreBox>
+      </BasePressable>
     );
   }
 );
