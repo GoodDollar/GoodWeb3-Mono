@@ -3,10 +3,13 @@ import React, { FC, memo, useCallback, useState, useMemo, useRef, useEffect } fr
 import { LayoutChangeEvent, NativeScrollEvent, NativeSyntheticEvent } from "react-native";
 import { IClaimCard } from "../buttons";
 import ClaimCard from "./ClaimCard";
-import { isMobile } from "react-device-detect";
+import ArrowLeft from "../../assets/svg/arrow-left.svg";
+import ArrowRight from "../../assets/svg/arrow-right.svg";
+import SvgXml from "../../core/images/SvgXml";
 
 interface ClaimCarouselProps {
   cards: Array<IClaimCard>;
+  isMobile: boolean;
   claimed?: boolean;
 }
 
@@ -41,9 +44,9 @@ const getItemLayout = (_: IClaimCard[] | null | undefined, index: number) => ({
   offset: (275 - 20) * index
 });
 
-const Separator = () => <View w="5" />;
+const Separator = () => <View w="5" h={4} />;
 
-const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards, claimed }) => {
+const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards, claimed, isMobile }) => {
   const [slidesNumber, setSlidesNumber] = useState(1);
   const [activeSlide, setActiveSlide] = useState(0);
   const [activeContentWidth, setActiveContentWidth] = useState<string | number>("auto");
@@ -112,7 +115,7 @@ const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards, claimed }) => {
   }, [activeSlide, flatListRef, onScroll, slidesNumber, layoutOffset, activeCards]);
 
   const getFlatListRef = useCallback(
-    flatList => {
+    (flatList: any) => {
       flatListRef.current = flatList;
     },
     [activeSlide, onScroll, clickAndSlide]
@@ -127,32 +130,35 @@ const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards, claimed }) => {
         // @ts-ignore
         ref={getFlatListRef}
         data={activeCards}
-        horizontal
+        {...(isMobile && { horizontal: true })}
         onScroll={onScroll}
         scrollEventThrottle={16}
         initialScrollIndex={0}
-        h="425"
-        w="auto"
+        h={isMobile ? 320 : "max-content"}
+        w={isMobile ? "auto" : 650}
         showsHorizontalScrollIndicator={false}
         onLayout={onFlatListLayoutChange}
         getItemLayout={getItemLayout}
-        renderItem={ClaimCardItem}
+        renderItem={ClaimCardItem as any}
         ItemSeparatorComponent={Separator}
         pagingEnabled
       />
-
-      <View flexDirection="row" pt="5" justifyContent="center">
-        <Pressable
-          onPress={clickAndSlide}
-          flexDir="row"
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          height="15px"
-        >
-          <SlidesComponent data={activeCards} activeSlide={activeSlide} slidesNumber={slidesNumber} />
-        </Pressable>
-      </View>
+      {isMobile && (
+        <View flexDirection="row" pt={4} justifyContent="center">
+          <Pressable
+            onPress={clickAndSlide}
+            flexDir="row"
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            height="15px"
+          >
+            <SvgXml src={ArrowLeft} height="24" width="24" style={{ marginRight: 12 }} />
+            <SlidesComponent data={activeCards} activeSlide={activeSlide} slidesNumber={slidesNumber} />
+            <SvgXml src={ArrowRight} height="24" width="24" style={{ marginLeft: 12 }} />
+          </Pressable>
+        </View>
+      )}
     </Box>
   );
 };

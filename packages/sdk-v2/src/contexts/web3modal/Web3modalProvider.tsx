@@ -24,7 +24,6 @@ export const fuse: Chain = {
     default: { http: ["https://rpc.fuse.io"] }
   },
   blockExplorers: {
-    fuseexplorer: { name: "Fuse Explorer", url: "https://explorer.fuse.io" },
     default: { name: "Fuse Explore", url: "https://explorer.fuse.io" }
   },
   contracts: {
