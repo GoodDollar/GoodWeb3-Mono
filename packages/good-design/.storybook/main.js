@@ -66,8 +66,7 @@ module.exports = {
 
     config.resolve.alias = {
       ...config.resolve.alias,
-      "react-native-webview": "react-native-web-webview",
-      "@usedapp/core": require.resolve("../../../node_modules/@usedapp/core")
+      "react-native-webview": "react-native-web-webview"
     };
     return config;
   }
