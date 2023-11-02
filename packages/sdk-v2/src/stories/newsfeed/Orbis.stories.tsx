@@ -8,10 +8,10 @@ import { Orbis } from "@orbisclub/orbis-sdk";
 import { OrbisCachedFeed } from "../../sdk/newsfeed/OrbisCachedFeed";
 import { IpfsStorage } from "../../sdk";
 
-/** Initialize the Orbis class object */
-const orbis = new Orbis();
-
 const Web3Component = () => {
+  /** Initialize the Orbis class object */
+  const orbis = new Orbis();
+
   const feed = new OrbisCachedFeed(
     { context: "kjzl6cwe1jw147bfd2hn7f3j2sdsq6708xnb3a217iz1m18a35v25kgxna3s0os" },
     new IpfsStorage()

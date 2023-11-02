@@ -27,16 +27,18 @@ export class OrbisCachedFeed {
   filter: FeedFilter = {};
   db: any;
   IPFS: any;
+  ready: Promise<void>;
 
   constructor(filter: FeedFilter, ipfs: IpfsStorage) {
     this.db = createNewsFeedDb();
-    this.db.open();
+    this.ready = this.db.open();
     this.filter = filter;
     this.sdk = new Orbis();
     this.IPFS = ipfs;
   }
 
   periodicSync = async (callback?: () => void) => {
+    await this.ready;
     const lastUpdate = new Date((await AsyncStorage.getItem("OrbisCachedFeed")) || 0);
 
     if (lastUpdate > new Date(Date.now() - this.SYNC_PERIOD)) {
@@ -56,7 +58,7 @@ export class OrbisCachedFeed {
    *  */
   syncPosts = async (page = 0) => {
     const lastUpdate = new Date((await AsyncStorage.getItem("OrbisCachedFeed")) || 0);
-    await this.db.open();
+    await this.ready;
     const { data: posts } = await this.sdk.getPosts(this.filter, page);
 
     //get the relevant fields from orbis post
@@ -118,6 +120,7 @@ export class OrbisCachedFeed {
   }
 
   async getPosts(offset = 0, limit = 10): Promise<Array<FeedPost>> {
+    await this.ready;
     const posts = await this.db.posts.orderBy("published").reverse().offset(offset).limit(limit).toArray();
     return posts as Array<FeedPost>;
   }
