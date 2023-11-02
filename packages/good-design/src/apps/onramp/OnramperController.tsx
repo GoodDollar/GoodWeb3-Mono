@@ -76,7 +76,7 @@ export const OnramperController = () => {
     swapLock.current = true;
 
     try {
-      setStep(1);
+      setStep(2);
       //user sends swap tx
       if (selfSwap && gdHelperAddress && library && account) {
         const minAmount = 0; // we let contract use oracle for minamount, we might calculate it for more precision in the future
@@ -88,7 +88,7 @@ export const OnramperController = () => {
         } else {
           swapTx = swap(minAmount, account);
         }
-        setStep(2);
+        setStep(3);
         // after tx sent progress the stepper
         const res = await swapTx;
         console.log("swap tx res:", res);
@@ -100,11 +100,11 @@ export const OnramperController = () => {
           headers: { "Content-type": "application/json" },
           body: JSON.stringify({ account })
         });
-        setStep(2);
+        setStep(3);
         await tx;
       }
       // when done set stepper at final step
-      setStep(3);
+      setStep(4);
       swapLock.current = false;
     } catch (e: any) {
       console.log("swap error:", e.message, e);

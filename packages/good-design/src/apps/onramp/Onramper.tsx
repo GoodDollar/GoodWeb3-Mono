@@ -8,7 +8,6 @@ import { Divider } from "native-base";
 
 export type OnramperCallback = (event: WebViewMessageEvent) => void;
 
-// reminder: should be default 0
 const StepsProgress = ({ step }: { step: number }) => {
   const stepPercentages: { [key: number]: number } = {
     1: 50, // succesfully bought
@@ -75,7 +74,7 @@ export const Onramper = ({
   targetNetwork?: string;
 }) => {
   const handleEvents = useCallback((event: WebViewMessageEvent) => {
-    console.log("onramper event from webview:", event);
+    // console.log("onramper event from webview:", event); // excessive messaging by mm contentscript
     onEvent && onEvent(event);
   }, []);
 
