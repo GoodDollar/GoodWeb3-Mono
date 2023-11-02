@@ -18,20 +18,40 @@ const ConverterCircle = () => (
 );
 
 const Converter = memo(({ gdPrice }: { gdPrice?: number }) => {
-  const [gdAmount, setGdAmount] = useState("100");
+  const [gdAmount, setGdAmount] = useState<string | undefined>("100");
+  const [usdAmount, setUsdAmount] = useState<string | undefined>("100");
 
-  const calcGd = useCallback(
-    (usdAmount: string) => {
-      const amount = Number(usdAmount);
+  const calcAmount = useCallback(
+    (inputType: string, amount: string) => {
+      const numAmount = Number(amount);
       if (gdPrice) {
-        const gdAmount = (amount / gdPrice).toFixed(6);
-        setGdAmount(gdAmount);
+        let calculatedAmount;
+        if (inputType === "usd") {
+          calculatedAmount = (numAmount / gdPrice).toFixed(2);
+          setGdAmount(calculatedAmount);
+        } else if (inputType === "gd") {
+          calculatedAmount = (numAmount * gdPrice).toFixed(2);
+          setUsdAmount(calculatedAmount);
+        }
       }
-
-      console.log("calc gd");
     },
-    [gdPrice]
+    [gdPrice, usdAmount, gdAmount]
   );
+
+  const calcGd = (usdAmount: string) => {
+    setUsdAmount(usdAmount);
+    calcAmount("usd", usdAmount);
+  };
+
+  const calcUsd = (gdAmount: string) => {
+    setGdAmount(gdAmount);
+    calcAmount("gd", gdAmount);
+  };
+
+  // clearing input where it will show placeholder as value just typed in
+  const clearInput = (e: any) => {
+    e.target.value = "";
+  };
 
   return (
     <CentreBox w="100%">
@@ -41,11 +61,11 @@ const Converter = memo(({ gdPrice }: { gdPrice?: number }) => {
           <Divider orientation="horizontal" w="100%" bg="goodGrey.400" mb={2} mt={2} />
           <CentreBox flexDirection="row" justifyContent="space-between">
             <CentreBox>
-              <Input placeholder="100" onChangeText={calcGd} borderWidth="0" />
+              <Input placeholder={usdAmount} onBlur={clearInput} onChangeText={calcGd} borderWidth="0" />
               <Text>cUSD</Text>
             </CentreBox>
             <CentreBox>
-              <Text>cUSD symbol here</Text>
+              <Text>cUSD symbol here</Text> {/* todo: add cUsd icon */}
             </CentreBox>
           </CentreBox>
         </Box>
@@ -55,11 +75,11 @@ const Converter = memo(({ gdPrice }: { gdPrice?: number }) => {
           <Divider orientation="horizontal" w="100%" bg="goodGrey.400" mb={2} mt={2} />
           <CentreBox flexDirection="row" justifyContent="space-between">
             <CentreBox>
-              <Input placeholder={gdAmount} borderWidth="0" />
+              <Input placeholder={gdAmount} onBlur={clearInput} onChangeText={calcUsd} borderWidth="0" />
               <Text>G$</Text>
             </CentreBox>
             <CentreBox>
-              <Text>G$ Symbol here</Text>
+              <Text>G$ Symbol here</Text> {/* todo: add G$ icon */}
             </CentreBox>
           </CentreBox>
         </Box>

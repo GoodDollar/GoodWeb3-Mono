@@ -5,6 +5,7 @@ import { Box, Circle, HStack, Stack, Text, VStack } from "native-base";
 import { CentreBox } from "../../core/layout/CentreBox";
 import { AnimatedProgress } from "../../core/animated";
 import { Divider } from "native-base";
+import { BaseButton } from "../../core";
 
 export type OnramperCallback = (event: WebViewMessageEvent) => void;
 
@@ -31,7 +32,7 @@ const Stepper = ({ step = -1 }) => (
     <StepsProgress step={step} />
     <HStack alignItems="center" h="70px" justifyContent="space-between" w="300">
       <Stack width={"1/3"} alignItems={"center"}>
-        <Circle size="40px" bgColor={step >= 0 ? "primary" : "goodGrey.300"}>
+        <Circle size="10" bgColor={step >= 0 ? "primary" : "goodGrey.300"}>
           <Text color={step >= 0 ? "white" : "goodGrey.700"}> 1 </Text>
         </Circle>
         <Text color="goodGrey.700" fontFamily="subheading" fontWeight={400} fontSize="2xs">
@@ -39,7 +40,7 @@ const Stepper = ({ step = -1 }) => (
         </Text>
       </Stack>
       <Stack width={"1/3"} alignItems={"center"}>
-        <Circle size="40px" bgColor={step < 2 ? "goodGrey.300" : "primary"}>
+        <Circle size="10" bgColor={step < 2 ? "goodGrey.300" : "primary"}>
           <Text color={step < 2 ? "goodGrey.700" : "white"}> 2 </Text>
         </Circle>
         <Text w="112px" color="goodGrey.700" fontFamily="subheading" fontWeight={400} fontSize="2xs">
@@ -47,7 +48,7 @@ const Stepper = ({ step = -1 }) => (
         </Text>
       </Stack>
       <Stack width={"1/3"} alignItems={"center"}>
-        <Circle size="40px" bgColor={step <= 3 ? "goodGrey.300" : "primary"}>
+        <Circle size="10" bgColor={step <= 3 ? "goodGrey.300" : "primary"}>
           <Text color={step <= 3 ? "goodGrey.700" : "white"}> 3 </Text>
         </Circle>
         <Text color="goodGrey.700" fontFamily="subheading" fontWeight={400} fontSize="2xs">
@@ -149,7 +150,7 @@ export const Onramper = ({
         ></WebView>
       </CentreBox>
       {/* Comment out below for testing in onramp story */}
-      {/* <Box w="200" h="40" bg="primary" display="flex">
+      <Box w="200" h="40" bg="primary" display="flex">
         <BaseButton
           bg="primary"
           _focus={{ bg: "primary" }}
@@ -168,7 +169,7 @@ export const Onramper = ({
           onPress={resetStep}
           text="Reset step"
         />
-      </Box> */}
+      </Box>
       <Divider orientation="horizontal" w="100%" bg="borderGrey" mb={6} />
     </Box>
   );

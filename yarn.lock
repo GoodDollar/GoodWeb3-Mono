@@ -3745,7 +3745,7 @@ __metadata:
     "@babel/preset-typescript": ^7.16.0
     "@babel/runtime": ^7.18.9
     "@gooddollar/goodprotocol": ^2.0.15
-    "@gooddollar/web3sdk-v2": 0.2.4-beta.31cca00
+    "@gooddollar/web3sdk-v2": "file:.yalc/@gooddollar/web3sdk-v2"
     "@lingui/macro": ^3.14.0
     "@lingui/react": ^3.14.0
     "@magiklabs/react-sdk": ^1.0.8
@@ -3889,7 +3889,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/goodprotocol@npm:^2.0.15":
+"@gooddollar/goodprotocol@npm:^2.0.15, @gooddollar/goodprotocol@npm:^2.0.4":
   version: 2.0.15
   resolution: "@gooddollar/goodprotocol@npm:2.0.15"
   dependencies:
@@ -3911,29 +3911,87 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/goodprotocol@npm:^2.0.4":
-  version: 2.0.4
-  resolution: "@gooddollar/goodprotocol@npm:2.0.4"
+"@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2::locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design":
+  version: 0.2.4-beta.31cca00
+  resolution: "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2#.yalc/@gooddollar/web3sdk-v2::hash=cd7186&locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design"
   dependencies:
-    "@gooddollar/goodcontracts": ^2.6.6
-    "@jsier/retrier": ^1.2.4
-    "@openzeppelin/contracts": ^4.8.0
-    "@openzeppelin/contracts-upgradeable": ^4.8.0
-    "@openzeppelin/hardhat-upgrades": ^1.22.1
-    "@superfluid-finance/ethereum-contracts": ^1.8.1
-    "@superfluid-finance/sdk-core": ^0.5.8
-    "@typechain/hardhat": ^6.1.5
-    async-promise-pool: ^1.0.4
-    openzeppelin-solidity: ^4.3.2
-    patch-package: latest
-    press-any-key: ^0.1.1
-    truffle-plugin-verify: ^0.6.1
-    truffle-source-verify: ^0.0.6
-  checksum: 5c2b37e117eccf50043b824082a8462c17b9efbf26cb3a324c60ba4f1c2c0f56fcfd3587dc694e93b0a11a723698da1c2630996d4993541a20f8e9782d63b946
+    "@amplitude/analytics-browser": ^1.6.4
+    "@amplitude/analytics-react-native": ^0.7.0
+    "@ceramicnetwork/http-client": ^2.32.0
+    "@ceramicnetwork/stream-tile": ^2.31.0
+    "@gooddollar/bridge-app": ^1.5.0
+    "@gooddollar/bridge-contracts": ^1.0.17
+    "@gooddollar/goodprotocol": ^2.0.15
+    "@orbisclub/orbis-sdk": ^0.4.87
+    "@react-native-firebase/analytics": ^16.4.6
+    "@sentry/browser": 7.16.0
+    "@sentry/react-native": ^4.8.0
+    "@solana/web3.js": ^1.72.0
+    "@types/react": ^18.2.28
+    "@walletconnect/client": ^1.8.0
+    "@walletconnect/qrcode-modal": ^1.8.0
+    "@web3-onboard/coinbase": ^2.2.4
+    "@web3-onboard/core": ^2.20.5
+    "@web3-onboard/injected-wallets": ^2.10.1
+    "@web3-onboard/react": ^2.8.10
+    "@web3-onboard/torus": ^2.2.5
+    "@web3-onboard/walletconnect": ^2.4.7
+    "@web3auth/base": ^4.0.0
+    "@web3auth/core": ^4.0.0
+    "@web3auth/openlogin-adapter": ^4.1.0
+    "@web3auth/torus-wallet-connector-plugin": ^4.0.0
+    "@web3modal/ethereum": ^2.6.2
+    "@web3modal/react": ^2.6.2
+    base-64: ^1.0.0
+    dexie: ^3.2.4
+    eventemitter3: ^4.0.7
+    mixpanel-browser: ^2.45.0
+    mixpanel-react-native: ^2.1.0
+    moment: 2.29.4
+    multiformats: 9.9.0
+    posthog-react-native: ^2.4.0
+    react-native-indicative: ^0.2.1
+    react-native-restart: ^0.0.24
+    react-use-promise: ^0.5.0
+    viem: ^1.2.13
+    wagmi: ^1.3.8
+  peerDependencies:
+    "@react-native-async-storage/async-storage": 1.17.10
+    react-native: "*"
+    react-native-web: "*"
+  checksum: 5f87a1c66952bd9044e64958ad87e339cd2c749355502e70276d129f05adec24a66489939da2a01813a9c679937471f45801022047a171cca27635bab106070d
   languageName: node
   linkType: hard
 
-"@gooddollar/web3sdk-v2@0.2.4-beta.31cca00, @gooddollar/web3sdk-v2@workspace:packages/sdk-v2":
+"@gooddollar/web3sdk-v2@npm:0.1.55":
+  version: 0.1.55
+  resolution: "@gooddollar/web3sdk-v2@npm:0.1.55"
+  dependencies:
+    "@amplitude/analytics-browser": ^1.6.4
+    "@amplitude/analytics-react-native": ^0.7.0
+    "@gooddollar/bridge-app": ^1.2.2
+    "@gooddollar/bridge-contracts": ^1.0.10
+    "@gooddollar/goodprotocol": 1.0.29-beta.5
+    "@react-native-firebase/analytics": ^16.4.6
+    "@sentry/browser": 7.16.0
+    "@sentry/react-native": ^4.8.0
+    "@usedapp/core": 1.*
+    eventemitter3: ^4.0.7
+    react-native: ^0.70.2
+    react-native-indicative: ^0.2.1
+    react-native-restart: ^0.0.24
+    react-use-promise: ^0.5.0
+  peerDependencies:
+    "@react-native-async-storage/async-storage": 1.17.10
+    ethers: 5.*
+    react: "*"
+    react-native: "*"
+    react-native-web: "*"
+  checksum: ddf7f4babfd0a73d74c6c07a62cf28e8dd16b029d4963dcbc1957b01c5f7a07fb8c6d77e06d72dccff33b4d14c18b191379745d4da9c0adbcdb91b3605a193bc
+  languageName: node
+  linkType: hard
+
+"@gooddollar/web3sdk-v2@workspace:packages/sdk-v2":
   version: 0.0.0-use.local
   resolution: "@gooddollar/web3sdk-v2@workspace:packages/sdk-v2"
   dependencies:
@@ -4029,34 +4087,6 @@ __metadata:
     react-native-web: "*"
   languageName: unknown
   linkType: soft
-
-"@gooddollar/web3sdk-v2@npm:0.1.55":
-  version: 0.1.55
-  resolution: "@gooddollar/web3sdk-v2@npm:0.1.55"
-  dependencies:
-    "@amplitude/analytics-browser": ^1.6.4
-    "@amplitude/analytics-react-native": ^0.7.0
-    "@gooddollar/bridge-app": ^1.2.2
-    "@gooddollar/bridge-contracts": ^1.0.10
-    "@gooddollar/goodprotocol": 1.0.29-beta.5
-    "@react-native-firebase/analytics": ^16.4.6
-    "@sentry/browser": 7.16.0
-    "@sentry/react-native": ^4.8.0
-    "@usedapp/core": 1.*
-    eventemitter3: ^4.0.7
-    react-native: ^0.70.2
-    react-native-indicative: ^0.2.1
-    react-native-restart: ^0.0.24
-    react-use-promise: ^0.5.0
-  peerDependencies:
-    "@react-native-async-storage/async-storage": 1.17.10
-    ethers: 5.*
-    react: "*"
-    react-native: "*"
-    react-native-web: "*"
-  checksum: ddf7f4babfd0a73d74c6c07a62cf28e8dd16b029d4963dcbc1957b01c5f7a07fb8c6d77e06d72dccff33b4d14c18b191379745d4da9c0adbcdb91b3605a193bc
-  languageName: node
-  linkType: hard
 
 "@gooddollar/web3sdk@workspace:packages/sdk":
   version: 0.0.0-use.local
@@ -5169,17 +5199,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@openzeppelin/contracts@npm:4.9.3, @openzeppelin/contracts@npm:^4.5.0":
+"@openzeppelin/contracts@npm:4.9.3, @openzeppelin/contracts@npm:^4.5.0, @openzeppelin/contracts@npm:^4.8.0":
   version: 4.9.3
   resolution: "@openzeppelin/contracts@npm:4.9.3"
   checksum: 4932063e733b35fa7669b9fe2053f69b062366c5c208b0c6cfa1ac451712100c78acff98120c3a4b88d94154c802be05d160d71f37e7d74cadbe150964458838
-  languageName: node
-  linkType: hard
-
-"@openzeppelin/contracts@npm:^4.8.0":
-  version: 4.8.1
-  resolution: "@openzeppelin/contracts@npm:4.8.1"
-  checksum: 99acefde1ae42c2d935ec9b4ebd327e786c499a4ec76b9582eb9adb0ff94a77c48047332fba44fb97b82b5a46d80e74d3e5d8cf73d5defa7f746f2a67f070281
   languageName: node
   linkType: hard
 
@@ -36152,7 +36175,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"which-typed-array@npm:^1.1.11":
+"which-typed-array@npm:^1.1.11, which-typed-array@npm:^1.1.2, which-typed-array@npm:^1.1.9":
   version: 1.1.11
   resolution: "which-typed-array@npm:1.1.11"
   dependencies:
@@ -36162,19 +36185,6 @@ __metadata:
     gopd: ^1.0.1
     has-tostringtag: ^1.0.0
   checksum: 711ffc8ef891ca6597b19539075ec3e08bb9b4c2ca1f78887e3c07a977ab91ac1421940505a197758fb5939aa9524976d0a5bbcac34d07ed6faa75cedbb17206
-  languageName: node
-  linkType: hard
-
-"which-typed-array@npm:^1.1.2, which-typed-array@npm:^1.1.9":
-  version: 1.1.9
-  resolution: "which-typed-array@npm:1.1.9"
-  dependencies:
-    available-typed-arrays: ^1.0.5
-    call-bind: ^1.0.2
-    for-each: ^0.3.3
-    gopd: ^1.0.1
-    has-tostringtag: ^1.0.0
-  checksum: fe0178ca44c57699ca2c0e657b64eaa8d2db2372a4e2851184f568f98c478ae3dc3fdb5f7e46c384487046b0cf9e23241423242b277e03e8ba3dabc7c84c98ef
   languageName: node
   linkType: hard
 
