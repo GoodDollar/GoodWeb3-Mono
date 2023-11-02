@@ -38,7 +38,7 @@ export const OnramperController = () => {
     "function swap(uint256 minAmount,address gasRefund) external"
   ]);
   const celoBalance = useEtherBalance(gdHelperAddress, { refresh: 1 });
-  const accountCeloBalance = useEtherBalance(account, { refresh: 1 }) || ethers.constants.Zero;
+  // const accountCeloBalance = useEtherBalance(account, { refresh: 1 }) || ethers.constants.Zero;
 
   const cusdBalance = useTokenBalance(cusd, gdHelperAddress, { refresh: 1 });
 
@@ -59,14 +59,15 @@ export const OnramperController = () => {
 
   const [step, setStep] = useState(-1);
 
-  console.log({ selfSwap, account, gdHelperAddress, accountCeloBalance, cusdBalance, celoBalance });
+  // console.log({ selfSwap, account, gdHelperAddress, accountCeloBalance, cusdBalance, celoBalance });
   /**
    * callback to get event from onramper iframe
    */
   const callback = useCallback((event: WebViewMessageEvent) => {
     if ((event.nativeEvent.data as any).title === "success") {
+      console.log("User succesfully bought CELO/CUSD -- awaiting arrival in sc wallet...");
       //start the stepper
-      setStep(0);
+      setStep(1);
     }
   }, []);
 
@@ -136,6 +137,7 @@ export const OnramperController = () => {
           onEvent={callback}
           targetWallet={gdHelperAddress || ""}
           step={step}
+          setStep={setStep}
           targetNetwork="CELO"
           widgetParams={undefined}
         />
