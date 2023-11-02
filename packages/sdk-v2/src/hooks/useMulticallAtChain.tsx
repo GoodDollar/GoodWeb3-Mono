@@ -151,11 +151,9 @@ export const useMulticallAtChain = (chainId: number) => {
 
   const _resolve = useCallback(
     async (calls: Call[], blockNumber?: number) => {
-      const multiAddr =
-        multicallAddresses && Object.entries(multicallAddresses).find(([k]) => k === String(chainId));
+      const multiAddr = multicallAddresses && Object.entries(multicallAddresses).find(([k]) => k === String(chainId));
 
       if (provider && multiAddr) {
-        
         const method = multicallVersion === 1 ? multicall : multicall2;
         const address = multiAddr[1];
         const rawcalls = calls.map(call => encodeCallData(call, chainId)).filter(Boolean) as RawCall[];
@@ -182,7 +180,7 @@ export const useMulticallAtChain = (chainId: number) => {
 
         return p;
       }
-      
+
       return _resolve(calls, blockNumber);
     },
     [provider]
