@@ -1,1 +1,1 @@
-export * from "./Web3modalProvider";
+export * from './Web3modalProvider';
