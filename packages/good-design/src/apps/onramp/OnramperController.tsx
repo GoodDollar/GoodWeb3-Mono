@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Onramper } from "./Onramper";
 import { useEthers, useEtherBalance, useTokenBalance, useCall } from "@usedapp/core";
 import { WebViewMessageEvent } from "react-native-webview";
-import { useContractFunctionWithDefaultGasFees, useGetContract } from "@gooddollar/web3sdk-v2";
+import { useContractFunctionWithDefaultGasFees } from "@gooddollar/web3sdk-v2";
 import * as ethers from "ethers";
 import { Contract } from "ethers";
 import { useModal } from "../../hooks/useModal";
