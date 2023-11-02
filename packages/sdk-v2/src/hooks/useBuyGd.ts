@@ -2,7 +2,7 @@ import { Contract } from "ethers";
 import * as ethers from "ethers";
 import { useCall, useEthers } from "@usedapp/core";
 
-import { useContractFunctionWithDefaultGasFees } from "src/sdk";
+import { useContractFunctionWithDefaultGasFees } from "../sdk";
 
 export const useBuyGd = () => {
   const { account, chainId } = useEthers();
