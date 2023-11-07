@@ -1,5 +1,5 @@
 import React from "react";
-import { OnramperController } from "../../../apps/onramp/OnramperController";
+import { OnramperController } from "../../../apps/onramp/GdOnramperWidget";
 import { W3Wrapper } from "../../W3Wrapper";
 
 export const OnramperWidget = {

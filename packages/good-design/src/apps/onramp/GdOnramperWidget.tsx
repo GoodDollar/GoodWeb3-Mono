@@ -8,7 +8,13 @@ import { View, Text } from "native-base";
 import { WalletAndChainGuard } from "../../core";
 import { useSignWalletModal } from "../../hooks/useSignWalletModal";
 
-export const OnramperController = () => {
+const ErrorModal = () => (
+  <View>
+    <Text>Error</Text>
+  </View>
+);
+
+export const GdOnramperWidget = () => {
   const cusd = "0x765de816845861e75a25fca122bb6898b8b1282a";
   const { account, library } = useEthers();
   const swapLock = useRef(false);
@@ -89,12 +95,6 @@ export const OnramperController = () => {
       });
     }
   }, [celoBalance, cusdBalance]);
-
-  const ErrorModal = () => (
-    <View>
-      <Text>Error</Text>
-    </View>
-  );
 
   return (
     <>

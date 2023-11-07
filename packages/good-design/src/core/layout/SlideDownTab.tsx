@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { Box, Text } from "native-base";
 
 import { CentreBox } from "./CentreBox";
@@ -18,12 +18,10 @@ interface ISlideDownTabProps {
   children: React.ReactNode;
 }
 
-const SlideDownTab = memo(({ tabTitle, children }: ISlideDownTabProps) => {
+const SlideDownTab = ({ tabTitle, children }: ISlideDownTabProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const toggleContent = useCallback(() => {
-    setIsOpen(!isOpen);
-  }, [isOpen]);
+  const toggleContent = useCallback(() => setIsOpen(isOpen => !isOpen), [setIsOpen]);
 
   return (
     <Box w="100%">
@@ -38,6 +36,6 @@ const SlideDownTab = memo(({ tabTitle, children }: ISlideDownTabProps) => {
       {isOpen && <CentreBox w="100%">{children}</CentreBox>}
     </Box>
   );
-});
+};
 
 export default SlideDownTab;

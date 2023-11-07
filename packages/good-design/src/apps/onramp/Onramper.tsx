@@ -10,18 +10,18 @@ import { BaseButton } from "../../core";
 export type OnramperCallback = (event: WebViewMessageEvent) => void;
 
 const StepsProgress = ({ step }: { step: number }) => {
-  const stepPercentages: { [key: number]: number } = {
-    1: 50, // succesfully bought
-    2: 50, // amount received in sc-wallet
-    3: 100 // swapping to GD
-  };
+  // const stepPercentages: { [key: number]: number } = {
+  //   1: 50, // succesfully bought
+  //   2: 50, // amount received in sc-wallet
+  //   3: 100 // swapping to GD
+  // };
 
-  const value = stepPercentages[step];
+  // const value = stepPercentages[step];
 
   return (
-    <HStack w="90%" position="absolute" left="30px" display="flex" justifyContent="center">
-      <CentreBox h="50px" w="238" position="absolute">
-        <AnimatedProgress value={value} step={step} />
+    <HStack w="90%" position="absolute" left="30" display="flex" justifyContent="center">
+      <CentreBox h="50" w="238" position="absolute">
+        <AnimatedProgress value={step < 1 ? 0 : step < 3 ? 50 : 100} step={step} />
       </CentreBox>
     </HStack>
   );
@@ -30,7 +30,7 @@ const StepsProgress = ({ step }: { step: number }) => {
 const Stepper = ({ step = -1 }) => (
   <VStack direction={"row"} mb={6} justifyContent="center" justifyItems="center" position="relative">
     <StepsProgress step={step} />
-    <HStack alignItems="center" h="70px" justifyContent="space-between" w="300">
+    <HStack alignItems="center" h="70" justifyContent="space-between" w="300">
       <Stack width={"1/3"} alignItems={"center"}>
         <Circle size="10" bgColor={step >= 0 ? "primary" : "goodGrey.300"}>
           <Text color={step >= 0 ? "white" : "goodGrey.700"}> 1 </Text>
@@ -43,7 +43,7 @@ const Stepper = ({ step = -1 }) => (
         <Circle size="10" bgColor={step < 2 ? "goodGrey.300" : "primary"}>
           <Text color={step < 2 ? "goodGrey.700" : "white"}> 2 </Text>
         </Circle>
-        <Text w="112px" color="goodGrey.700" fontFamily="subheading" fontWeight={400} fontSize="2xs">
+        <Text w="112" color="goodGrey.700" fontFamily="subheading" fontWeight={400} fontSize="2xs">
           We swap CELO to G$
         </Text>
       </Stack>
@@ -74,20 +74,9 @@ export const Onramper = ({
   targetWallet?: string;
   targetNetwork?: string;
 }) => {
-  const handleEvents = useCallback((event: WebViewMessageEvent) => {
-    // console.log("onramper event from webview:", event); // excessive messaging by mm contentscript
-    onEvent && onEvent(event);
-  }, []);
-
   const uri = `https://buy.onramper.com/?networkWallets=${targetNetwork}:${targetWallet}&${Object.entries(widgetParams)
     .map(([k, v]) => `${k}=${v}`)
     .join("&")}`;
-
-  const startStepper = useCallback(() => {
-    if (step === -1) {
-      setStep(0);
-    }
-  }, [step]);
 
   useEffect(() => {
     window.focus(); // first force  focus for the step animation to start properly
@@ -97,8 +86,8 @@ export const Onramper = ({
   useEffect(() => {
     const checkFocus = (e: any) => {
       console.log("checkFocus", { e, step });
-      if (document.activeElement === document.querySelector("iframe")) {
-        startStepper();
+      if (document.activeElement === document.querySelector("iframe") && step === -1) {
+        setStep(0);
       } else if (step === 0) {
         setStep(-1);
       }
@@ -142,21 +131,21 @@ export const Onramper = ({
           // injectedJavaScript={jsCode} // todo: add native/web webview implementation
           webviewDebuggingEnabled={true}
           source={{ uri }}
-          onMessage={handleEvents}
-          height="630px"
-          width="420px"
+          onMessage={onEvent}
+          height={630}
+          width={420}
           title="Onramper widget"
           allow="accelerometer; autoplay; camera; gyroscope; payment"
         ></WebView>
       </CentreBox>
       {/* Comment out below for testing in onramp story */}
-      <Box w="200" h="40" bg="primary" display="flex">
+      <Box w={200} h={40} bg="primary" display="flex">
         <BaseButton
           bg="primary"
           _focus={{ bg: "primary" }}
           _hover={{ bg: "primary" }}
-          w="200"
-          h="20"
+          w={200}
+          h={20}
           onPress={devNextStep}
           text="Next step"
         />

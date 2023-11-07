@@ -1,2 +1,2 @@
 export * from "./Onramper";
-export * from "./OnramperController";
+export * from "./GdOnramperWidget";

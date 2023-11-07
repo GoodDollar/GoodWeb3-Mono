@@ -4,12 +4,13 @@ import { useCall, useEthers } from "@usedapp/core";
 
 import { useContractFunctionWithDefaultGasFees } from "../sdk";
 
+const buygdFactory = new Contract("0x00e533B7d6255D05b7f15034B1c989c21F51b91C", [
+  "function createAndSwap(address owner,uint256 minAmount) external returns(address)",
+  "function predict(address owner) external view returns(address)"
+]);
+
 export const useBuyGd = () => {
   const { account, chainId } = useEthers();
-  const buygdFactory = new Contract("0x00e533B7d6255D05b7f15034B1c989c21F51b91C", [
-    "function createAndSwap(address owner,uint256 minAmount) external returns(address)",
-    "function predict(address owner) external view returns(address)"
-  ]);
 
   const targetGDHelper = useCall(
     account &&
