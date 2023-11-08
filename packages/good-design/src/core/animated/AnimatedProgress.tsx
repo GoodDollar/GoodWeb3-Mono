@@ -8,8 +8,8 @@ interface ITestAnimatedProps {
   containerStyles?: object;
   progressStyles?: object;
   progressBar?: object;
-  value: number;
-  step: number;
+  animatedValue: number;
+  startValue: number;
 }
 
 export const theme = {
@@ -37,21 +37,13 @@ export const theme = {
 
 // based on 3 steps progress bar
 const AnimatedProgress = withTheme({ name: "AnimatedProgress" })(
-  ({ containerStyles, progressStyles, progressBar, value, step, ...props }: ITestAnimatedProps) => {
-    const progressSteps: { [key: number]: number } = {
-      1: 0,
-      2: 50,
-      3: 50,
-      4: 100
-    };
-
-    const startValue = progressSteps[step] ?? 0;
+  ({ containerStyles, progressStyles, progressBar, animatedValue, startValue, ...props }: ITestAnimatedProps) => {
     const progressAnim = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
       const progressBlock = Animated.sequence([
         Animated.timing(progressAnim, {
-          toValue: value ?? 0,
+          toValue: animatedValue ?? 0,
           duration: 1000,
           useNativeDriver: Platform.OS !== "web"
         }),
@@ -63,7 +55,7 @@ const AnimatedProgress = withTheme({ name: "AnimatedProgress" })(
       ]);
 
       Animated.loop(progressBlock).start();
-    }, [value]);
+    }, [animatedValue]);
 
     const progressWidth = progressAnim.interpolate({
       inputRange: [startValue, 100],

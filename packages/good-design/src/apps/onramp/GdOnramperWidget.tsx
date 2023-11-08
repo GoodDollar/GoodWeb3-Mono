@@ -14,7 +14,7 @@ const ErrorModal = () => (
   </View>
 );
 
-export const GdOnramperWidget = () => {
+export const GdOnramperWidget = ({ isTesting = false }) => {
   const cusd = "0x765de816845861e75a25fca122bb6898b8b1282a";
   const { account, library } = useEthers();
   const swapLock = useRef(false);
@@ -107,6 +107,7 @@ export const GdOnramperWidget = () => {
           setStep={setStep}
           targetNetwork="CELO"
           widgetParams={undefined}
+          isTesting={isTesting}
         />
       </WalletAndChainGuard>
       <SignWalletModal txStatus={swapState?.status} />

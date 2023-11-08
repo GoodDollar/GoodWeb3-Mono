@@ -15,3 +15,5 @@ export const theme = {
 export const CentreBox: FC<IBoxProps> = withTheme({ name: "CentreBox" })(({ children, ...props }) => (
   <Box {...props}>{children}</Box>
 ));
+
+export default CentreBox;

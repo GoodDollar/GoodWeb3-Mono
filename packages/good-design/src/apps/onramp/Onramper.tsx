@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect } from "react";
 import { WebView, WebViewMessageEvent } from "react-native-webview";
 import { Box, Circle, HStack, Stack, Text, VStack } from "native-base";
+import { isMobile as deviceDetect } from "@gooddollar/web3sdk-v2";
 
 import { CentreBox } from "../../core/layout/CentreBox";
 import { AnimatedProgress } from "../../core/animated";
@@ -10,18 +11,17 @@ import { BaseButton } from "../../core";
 export type OnramperCallback = (event: WebViewMessageEvent) => void;
 
 const StepsProgress = ({ step }: { step: number }) => {
-  // const stepPercentages: { [key: number]: number } = {
-  //   1: 50, // succesfully bought
-  //   2: 50, // amount received in sc-wallet
-  //   3: 100 // swapping to GD
-  // };
-
-  // const value = stepPercentages[step];
+  const startValue: { [key: number]: number } = {
+    1: 0,
+    2: 50,
+    3: 50,
+    4: 100
+  };
 
   return (
     <HStack w="90%" position="absolute" left="30" display="flex" justifyContent="center">
       <CentreBox h="50" w="238" position="absolute">
-        <AnimatedProgress value={step < 1 ? 0 : step < 3 ? 50 : 100} step={step} />
+        <AnimatedProgress animatedValue={step < 1 ? 0 : step < 3 ? 50 : 100} startValue={startValue[step] ?? 0} />
       </CentreBox>
     </HStack>
   );
@@ -63,6 +63,7 @@ export const Onramper = ({
   onEvent,
   step,
   setStep,
+  isTesting,
   widgetParams = { onlyCryptos: "CUSD_CELO", isAddressEditable: false },
   targetNetwork = "CELO",
   targetWallet
@@ -70,13 +71,20 @@ export const Onramper = ({
   onEvent?: OnramperCallback;
   step: number;
   setStep: (step: number) => void;
+  isTesting: boolean;
   widgetParams?: any;
   targetWallet?: string;
   targetNetwork?: string;
 }) => {
-  const uri = `https://buy.onramper.com/?networkWallets=${targetNetwork}:${targetWallet}&${Object.entries(widgetParams)
-    .map(([k, v]) => `${k}=${v}`)
-    .join("&")}`;
+  const url = new URL("https://buy.onramper.com/");
+  url.searchParams.set("networkWallets", `${targetNetwork}:${targetWallet}`);
+  Object.entries(widgetParams).forEach(([k, v]: [string, any]) => {
+    url.searchParams.append(k, v);
+  });
+
+  const uri = url.toString();
+
+  const isMobile = deviceDetect();
 
   useEffect(() => {
     window.focus(); // first force  focus for the step animation to start properly
@@ -114,7 +122,7 @@ export const Onramper = ({
   }
 
   return (
-    <Box mb={6}>
+    <Box mb={6} alignItems="center">
       <Divider orientation="horizontal" w="100%" bg="borderGrey" mb={6} />
       <Stepper step={step} />
       <CentreBox maxWidth={420} w="100%" h={630} mb={6}>
@@ -138,28 +146,29 @@ export const Onramper = ({
           allow="accelerometer; autoplay; camera; gyroscope; payment"
         ></WebView>
       </CentreBox>
-      {/* Comment out below for testing in onramp story */}
-      <Box w={200} h={40} bg="primary" display="flex">
-        <BaseButton
-          bg="primary"
-          _focus={{ bg: "primary" }}
-          _hover={{ bg: "primary" }}
-          w={200}
-          h={20}
-          onPress={devNextStep}
-          text="Next step"
-        />
-        <BaseButton
-          bg="primary"
-          _focus={{ bg: "primary" }}
-          _hover={{ bg: "primary" }}
-          w="200"
-          h="20"
-          onPress={resetStep}
-          text="Reset step"
-        />
-      </Box>
-      <Divider orientation="horizontal" w="100%" bg="borderGrey" mb={6} />
+      {isTesting && (
+        <Box w={200} h={40} bg="primary" display="flex">
+          <BaseButton
+            bg="primary"
+            _focus={{ bg: "primary" }}
+            _hover={{ bg: "primary" }}
+            w={200}
+            h={20}
+            onPress={devNextStep}
+            text="Next step"
+          />
+          <BaseButton
+            bg="primary"
+            _focus={{ bg: "primary" }}
+            _hover={{ bg: "primary" }}
+            w="200"
+            h="20"
+            onPress={resetStep}
+            text="Reset step"
+          />
+        </Box>
+      )}
+      {isMobile && <Divider orientation="horizontal" w="100%" bg="borderGrey" mb={6} />}
     </Box>
   );
 };

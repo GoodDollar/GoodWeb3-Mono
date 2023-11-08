@@ -2,8 +2,11 @@ import React, { memo, useCallback, useState } from "react";
 import { Box, Divider, Input, Text, VStack } from "native-base";
 
 import { CentreBox } from "../layout/CentreBox";
-import ConverterCircle from "../../assets/svg/converter-circle.svg";
 import { Image } from "../images";
+
+import ConverterCircle from "../../assets/svg/converter-circle.svg";
+import cUsdLogo from "../../assets/svg/cusd.svg";
+import gdLogo from "../../assets/svg/gdLogo.svg";
 
 const Converter = memo(({ gdPrice }: { gdPrice?: number }) => {
   const [gdAmount, setGdAmount] = useState<string | undefined>("100");
@@ -14,7 +17,7 @@ const Converter = memo(({ gdPrice }: { gdPrice?: number }) => {
       const numAmount = Number(amount);
       if (gdPrice) {
         const koeff = inputType === "gd" ? gdPrice : 1 / gdPrice;
-        const setter = inputType === "gd" ? setGdAmount : setUsdAmount;
+        const setter = inputType === "usd" ? setGdAmount : setUsdAmount;
         setter((numAmount * koeff).toFixed(2));
       }
     },
@@ -39,30 +42,68 @@ const Converter = memo(({ gdPrice }: { gdPrice?: number }) => {
   return (
     <CentreBox w="100%">
       <VStack w="100%">
-        <Box bg="goodWhite.100" p={4} borderRadius={2} justifyContent="flex-start" justifyItems="flex-start">
+        <Image
+          src={ConverterCircle}
+          w="12"
+          h="12"
+          style={{ resizeMode: "contain" }}
+          zIndex={1}
+          maxW="100%"
+          position="absolute"
+          left="45%"
+          top="40%"
+        />
+        <Box bg="goodWhite.100" p={4} borderRadius={2} mb={6} justifyContent="flex-start" justifyItems="flex-start">
           <Text>With</Text>
           <Divider orientation="horizontal" w="100%" bg="goodGrey.400" mb={2} mt={2} />
           <CentreBox flexDirection="row" justifyContent="space-between">
-            <CentreBox>
-              <Input placeholder={usdAmount} onBlur={clearInput} onChangeText={calcGd} borderWidth="0" />
+            <CentreBox alignItems="flex-start">
+              <Input
+                fontSize={6}
+                maxW={220}
+                ml={0}
+                _focus={{ backgroundColor: "none" }}
+                pl={0}
+                fontWeight={700}
+                placeholder={usdAmount}
+                variant="unstyled"
+                onBlur={clearInput}
+                onChangeText={calcGd}
+              />
               <Text>cUSD</Text>
             </CentreBox>
-            <CentreBox>
-              <Text>cUSD symbol here</Text> {/* todo: add cUsd icon */}
+            <CentreBox w="100" h="50" backgroundColor="white" flexDirection="row" justifyContent="space-around">
+              <Image src={cUsdLogo} w="8" h="8" style={{ resizeMode: "contain" }} borderRadius="md" />
+              <Text fontFamily="subheading" fontSize="sm" fontWeight="400" color="goodGrey.700">
+                cUSD
+              </Text>
             </CentreBox>
           </CentreBox>
         </Box>
-        <Image src={ConverterCircle} w="12" h="12" style={{ resizeMode: "contain" }} />
         <Box bg="goodWhite.100" p={4} borderRadius={2} justifyContent="flex-start" justifyItems="flex-start">
           <Text>You'll get</Text>
           <Divider orientation="horizontal" w="100%" bg="goodGrey.400" mb={2} mt={2} />
           <CentreBox flexDirection="row" justifyContent="space-between">
-            <CentreBox>
-              <Input placeholder={gdAmount} onBlur={clearInput} onChangeText={calcUsd} borderWidth="0" />
+            <CentreBox alignItems="flex-start">
+              <Input
+                fontSize={6}
+                maxW={220}
+                ml={0}
+                _focus={{ backgroundColor: "none" }}
+                pl={0}
+                fontWeight={700}
+                placeholder={gdAmount}
+                variant="unstyled"
+                onBlur={clearInput}
+                onChangeText={calcUsd}
+              />
               <Text>G$</Text>
             </CentreBox>
-            <CentreBox>
-              <Text>G$ Symbol here</Text> {/* todo: add G$ icon */}
+            <CentreBox w="100" h="50" backgroundColor="white" flexDirection="row" justifyContent="space-around">
+              <Image src={gdLogo} w="8" h="8" style={{ resizeMode: "contain" }} borderRadius="md" />
+              <Text fontFamily="subheading" fontSize="sm" fontWeight="400" color="goodGrey.700">
+                G$
+              </Text>{" "}
             </CentreBox>
           </CentreBox>
         </Box>
