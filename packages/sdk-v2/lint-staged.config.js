@@ -1,3 +1,3 @@
 module.exports = {
-  "src/**/*.{ts,tsx,js,jsx}": [() => "tsc", "eslint --no-ignore --max-warnings=0 --fix"]
+  "src/**/*.{ts,js,tsx,jsx}": ["eslint --no-ignore --fix --max-warnings=0", () => "tsc --noEmit"]
 };

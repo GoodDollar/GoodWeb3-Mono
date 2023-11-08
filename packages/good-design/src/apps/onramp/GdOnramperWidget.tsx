@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Onramper } from "./Onramper";
 import { useEthers, useEtherBalance, useTokenBalance } from "@usedapp/core";
 import { WebViewMessageEvent } from "react-native-webview";
-import { swapHelper, useBuyGd } from "@gooddollar/web3sdk-v2";
+import { useBuyGd } from "@gooddollar/web3sdk-v2";
 import { noop } from "lodash";
 
 import { useModal } from "../../hooks/useModal";
@@ -19,14 +19,32 @@ const ErrorModal = () => (
 interface IGdOnramperProps {
   isTesting?: boolean;
   onEvents: (action: string, error?: string) => void;
+  selfSwap?: boolean;
+  withSwap?: boolean;
+  backendSwapUrl?: string;
+  donateOrExecTo?: string;
+  callData?: string;
 }
 
-export const GdOnramperWidget = ({ isTesting = false, onEvents = noop }: IGdOnramperProps) => {
+export const GdOnramperWidget = ({
+  isTesting = false,
+  onEvents = noop,
+  selfSwap = false,
+  withSwap = true,
+  backendSwapUrl = undefined,
+  donateOrExecTo = undefined,
+  callData = "0x"
+}: IGdOnramperProps) => {
   const cusd = "0x765de816845861e75a25fca122bb6898b8b1282a";
   const { account, library } = useEthers();
   const swapLock = useRef(false);
 
-  const { createAndSwap, swap, swapState, createState, gdHelperAddress } = useBuyGd();
+  const { createAndSwap, swap, swapState, createState, gdHelperAddress, triggerSwapTx } = useBuyGd({
+    donateOrExecTo,
+    callData,
+    backendSwapUrl,
+    withSwap
+  });
 
   const { SignWalletModal } = useSignWalletModal();
 
@@ -36,8 +54,6 @@ export const GdOnramperWidget = ({ isTesting = false, onEvents = noop }: IGdOnra
   const cusdBalance = useTokenBalance(cusd, gdHelperAddress, { refresh: 1 });
 
   const { showModal, Modal } = useModal();
-
-  const selfSwap = false; //accountCeloBalance.gt(ethers.utils.parseUnits("5", 9).mul(400000)); //400000 gas for swap * 5gwei gas price
 
   const [step, setStep] = useState(-1);
 
@@ -65,10 +81,11 @@ export const GdOnramperWidget = ({ isTesting = false, onEvents = noop }: IGdOnra
         let swapTx;
         if (code.length <= 2) {
           console.log("deploying helper...");
-          swapTx = createAndSwap(account, minAmount);
+          swapTx = createAndSwap(minAmount);
         } else {
-          swapTx = swap(minAmount, account);
+          swapTx = swap(minAmount);
         }
+
         setStep(3);
         // after tx sent progress the stepper
         const res = await swapTx;
@@ -76,8 +93,8 @@ export const GdOnramperWidget = ({ isTesting = false, onEvents = noop }: IGdOnra
         if (res?.status !== 1) throw Error("reverted");
       } else {
         if (account) {
-          //or sbackends sends swap tx
-          const tx = swapHelper(account);
+          //or backends sends swap tx
+          const tx = triggerSwapTx();
           setStep(3);
           await tx;
         }
