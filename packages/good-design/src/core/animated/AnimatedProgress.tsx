@@ -23,7 +23,7 @@ export const theme = {
     },
     progressStyles: {
       width: "80%",
-      height: "4px",
+      height: 1,
       backgroundColor: "goodGrey.300",
       borderRadius: 5,
       overflow: "hidden"

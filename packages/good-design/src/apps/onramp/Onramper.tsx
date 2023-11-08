@@ -95,7 +95,6 @@ export const Onramper = ({
   // SO fiddle: http://jsfiddle.net/wk1yv6q3/
   useEffect(() => {
     const checkFocus = (e: any) => {
-      console.log("checkFocus", { e, step });
       if (document.activeElement === document.querySelector("iframe") && step === -1) {
         onGdEvent("buy_start");
         setStep(0);
@@ -112,7 +111,6 @@ export const Onramper = ({
   }, [step]);
 
   const devNextStep = useCallback(() => {
-    console.log("devNextStep", { step });
     setStep(step + 1);
   }, [step]);
 

@@ -12,13 +12,13 @@ import { useSignWalletModal } from "../../hooks/useSignWalletModal";
 
 const ErrorModal = () => (
   <View>
-    <Text>Error</Text>
+    <Text>Something went wrong.</Text>
   </View>
 );
 
 interface IGdOnramperProps {
   isTesting?: boolean;
-  onEvents: (action: string) => void;
+  onEvents: (action: string, error?: string) => void;
 }
 
 export const GdOnramperWidget = ({ isTesting = false, onEvents = noop }: IGdOnramperProps) => {
@@ -47,7 +47,6 @@ export const GdOnramperWidget = ({ isTesting = false, onEvents = noop }: IGdOnra
    */
   const callback = useCallback((event: WebViewMessageEvent) => {
     if ((event.nativeEvent.data as any).title === "success") {
-      console.log("User succesfully bought CELO/CUSD -- awaiting arrival in sc wallet...");
       //start the stepper
       setStep(1);
     }
@@ -90,6 +89,7 @@ export const GdOnramperWidget = ({ isTesting = false, onEvents = noop }: IGdOnra
     } catch (e: any) {
       console.log("swap error:", e.message, e);
       showModal();
+      onEvents("buygd_swap_failed", e.message);
       setStep(-1);
     }
   };
@@ -99,7 +99,8 @@ export const GdOnramperWidget = ({ isTesting = false, onEvents = noop }: IGdOnra
     if (cusdBalance?.gt(0) || celoBalance?.gt(0)) {
       console.log("starting swap:", cusdBalance?.toString(), celoBalance?.toString());
       triggerSwap().catch(e => {
-        console.log(e);
+        showModal();
+        onEvents("buygd_swap_failed", e.message);
       });
     }
   }, [celoBalance, cusdBalance]);
