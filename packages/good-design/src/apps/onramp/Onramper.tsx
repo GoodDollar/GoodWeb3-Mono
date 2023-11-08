@@ -89,25 +89,27 @@ export const Onramper = ({
   const isMobile = deviceDetect();
 
   useEffect(() => {
-    window.focus(); // first force  focus for the step animation to start properly
+    window && window.focus(); // first force  focus for the step animation to start properly
   }, []);
 
   // SO fiddle: http://jsfiddle.net/wk1yv6q3/
   useEffect(() => {
-    const checkFocus = (e: any) => {
-      if (document.activeElement === document.querySelector("iframe") && step === -1) {
-        onGdEvent("buy_start");
-        setStep(0);
-      } else if (step === 0) {
-        setStep(-1);
-      }
-    };
-    window.addEventListener("focus", checkFocus);
-    window.addEventListener("blur", checkFocus);
-    return () => {
-      window.removeEventListener("blur", checkFocus);
-      window.removeEventListener("focus", checkFocus);
-    };
+    if (window) {
+      const checkFocus = (e: any) => {
+        if (document.activeElement === document.querySelector("iframe") && step === -1) {
+          onGdEvent("buy_start");
+          setStep(0);
+        } else if (step === 0) {
+          setStep(-1);
+        }
+      };
+      window.addEventListener("focus", checkFocus);
+      window.addEventListener("blur", checkFocus);
+      return () => {
+        window.removeEventListener("blur", checkFocus);
+        window.removeEventListener("focus", checkFocus);
+      };
+    }
   }, [step]);
 
   const devNextStep = useCallback(() => {
