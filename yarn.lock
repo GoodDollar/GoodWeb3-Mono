@@ -3745,7 +3745,7 @@ __metadata:
     "@babel/preset-typescript": ^7.16.0
     "@babel/runtime": ^7.18.9
     "@gooddollar/goodprotocol": ^2.0.15
-    "@gooddollar/web3sdk-v2": "file:.yalc/@gooddollar/web3sdk-v2"
+    "@gooddollar/web3sdk-v2": 0.2.4-beta.cca0090
     "@lingui/macro": ^3.14.0
     "@lingui/react": ^3.14.0
     "@magiklabs/react-sdk": ^1.0.8
@@ -3911,87 +3911,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2::locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design":
-  version: 0.2.4-beta.4e0fc5d
-  resolution: "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2#.yalc/@gooddollar/web3sdk-v2::hash=7c2168&locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design"
-  dependencies:
-    "@amplitude/analytics-browser": ^1.6.4
-    "@amplitude/analytics-react-native": ^0.7.0
-    "@ceramicnetwork/http-client": ^2.32.0
-    "@ceramicnetwork/stream-tile": ^2.31.0
-    "@gooddollar/bridge-app": ^1.5.0
-    "@gooddollar/bridge-contracts": ^1.0.17
-    "@gooddollar/goodprotocol": ^2.0.15
-    "@orbisclub/orbis-sdk": ^0.4.87
-    "@react-native-firebase/analytics": ^16.4.6
-    "@sentry/browser": 7.16.0
-    "@sentry/react-native": ^4.8.0
-    "@solana/web3.js": ^1.72.0
-    "@types/react": ^18.2.28
-    "@walletconnect/client": ^1.8.0
-    "@walletconnect/qrcode-modal": ^1.8.0
-    "@web3-onboard/coinbase": ^2.2.4
-    "@web3-onboard/core": ^2.20.5
-    "@web3-onboard/injected-wallets": ^2.10.1
-    "@web3-onboard/react": ^2.8.10
-    "@web3-onboard/torus": ^2.2.5
-    "@web3-onboard/walletconnect": ^2.4.7
-    "@web3auth/base": ^4.0.0
-    "@web3auth/core": ^4.0.0
-    "@web3auth/openlogin-adapter": ^4.1.0
-    "@web3auth/torus-wallet-connector-plugin": ^4.0.0
-    "@web3modal/ethereum": ^2.6.2
-    "@web3modal/react": ^2.6.2
-    base-64: ^1.0.0
-    dexie: ^3.2.4
-    eventemitter3: ^4.0.7
-    mixpanel-browser: ^2.45.0
-    mixpanel-react-native: ^2.1.0
-    moment: 2.29.4
-    multiformats: 9.9.0
-    posthog-react-native: ^2.4.0
-    react-native-indicative: ^0.2.1
-    react-native-restart: ^0.0.24
-    react-use-promise: ^0.5.0
-    viem: ^1.2.13
-    wagmi: ^1.3.8
-  peerDependencies:
-    "@react-native-async-storage/async-storage": 1.17.10
-    react-native: "*"
-    react-native-web: "*"
-  checksum: cf48b8cec6fbf418d939f6c58bcb9d286b07694b254f19c2bb4e83117ea482e52874001f64b5154333ca879d5288751126b7bfd2489a686e44d20403b0e271e8
-  languageName: node
-  linkType: hard
-
-"@gooddollar/web3sdk-v2@npm:0.1.55":
-  version: 0.1.55
-  resolution: "@gooddollar/web3sdk-v2@npm:0.1.55"
-  dependencies:
-    "@amplitude/analytics-browser": ^1.6.4
-    "@amplitude/analytics-react-native": ^0.7.0
-    "@gooddollar/bridge-app": ^1.2.2
-    "@gooddollar/bridge-contracts": ^1.0.10
-    "@gooddollar/goodprotocol": 1.0.29-beta.5
-    "@react-native-firebase/analytics": ^16.4.6
-    "@sentry/browser": 7.16.0
-    "@sentry/react-native": ^4.8.0
-    "@usedapp/core": 1.*
-    eventemitter3: ^4.0.7
-    react-native: ^0.70.2
-    react-native-indicative: ^0.2.1
-    react-native-restart: ^0.0.24
-    react-use-promise: ^0.5.0
-  peerDependencies:
-    "@react-native-async-storage/async-storage": 1.17.10
-    ethers: 5.*
-    react: "*"
-    react-native: "*"
-    react-native-web: "*"
-  checksum: ddf7f4babfd0a73d74c6c07a62cf28e8dd16b029d4963dcbc1957b01c5f7a07fb8c6d77e06d72dccff33b4d14c18b191379745d4da9c0adbcdb91b3605a193bc
-  languageName: node
-  linkType: hard
-
-"@gooddollar/web3sdk-v2@workspace:packages/sdk-v2":
+"@gooddollar/web3sdk-v2@0.2.4-beta.cca0090, @gooddollar/web3sdk-v2@workspace:packages/sdk-v2":
   version: 0.0.0-use.local
   resolution: "@gooddollar/web3sdk-v2@workspace:packages/sdk-v2"
   dependencies:
@@ -4087,6 +4007,34 @@ __metadata:
     react-native-web: "*"
   languageName: unknown
   linkType: soft
+
+"@gooddollar/web3sdk-v2@npm:0.1.55":
+  version: 0.1.55
+  resolution: "@gooddollar/web3sdk-v2@npm:0.1.55"
+  dependencies:
+    "@amplitude/analytics-browser": ^1.6.4
+    "@amplitude/analytics-react-native": ^0.7.0
+    "@gooddollar/bridge-app": ^1.2.2
+    "@gooddollar/bridge-contracts": ^1.0.10
+    "@gooddollar/goodprotocol": 1.0.29-beta.5
+    "@react-native-firebase/analytics": ^16.4.6
+    "@sentry/browser": 7.16.0
+    "@sentry/react-native": ^4.8.0
+    "@usedapp/core": 1.*
+    eventemitter3: ^4.0.7
+    react-native: ^0.70.2
+    react-native-indicative: ^0.2.1
+    react-native-restart: ^0.0.24
+    react-use-promise: ^0.5.0
+  peerDependencies:
+    "@react-native-async-storage/async-storage": 1.17.10
+    ethers: 5.*
+    react: "*"
+    react-native: "*"
+    react-native-web: "*"
+  checksum: ddf7f4babfd0a73d74c6c07a62cf28e8dd16b029d4963dcbc1957b01c5f7a07fb8c6d77e06d72dccff33b4d14c18b191379745d4da9c0adbcdb91b3605a193bc
+  languageName: node
+  linkType: hard
 
 "@gooddollar/web3sdk@workspace:packages/sdk":
   version: 0.0.0-use.local
