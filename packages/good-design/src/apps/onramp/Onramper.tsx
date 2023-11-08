@@ -61,6 +61,7 @@ const Stepper = ({ step = -1 }) => (
 
 export const Onramper = ({
   onEvent,
+  onGdEvent,
   step,
   setStep,
   isTesting,
@@ -69,6 +70,7 @@ export const Onramper = ({
   targetWallet
 }: {
   onEvent?: OnramperCallback;
+  onGdEvent: (action: string) => void;
   step: number;
   setStep: (step: number) => void;
   isTesting: boolean;
@@ -95,6 +97,7 @@ export const Onramper = ({
     const checkFocus = (e: any) => {
       console.log("checkFocus", { e, step });
       if (document.activeElement === document.querySelector("iframe") && step === -1) {
+        onGdEvent("buy_start");
         setStep(0);
       } else if (step === 0) {
         setStep(-1);

@@ -3,6 +3,8 @@ import { Onramper } from "./Onramper";
 import { useEthers, useEtherBalance, useTokenBalance } from "@usedapp/core";
 import { WebViewMessageEvent } from "react-native-webview";
 import { swapHelper, useBuyGd } from "@gooddollar/web3sdk-v2";
+import { noop } from "lodash";
+
 import { useModal } from "../../hooks/useModal";
 import { View, Text } from "native-base";
 import { WalletAndChainGuard } from "../../core";
@@ -14,7 +16,12 @@ const ErrorModal = () => (
   </View>
 );
 
-export const GdOnramperWidget = ({ isTesting = false }) => {
+interface IGdOnramperProps {
+  isTesting?: boolean;
+  onEvents: (action: string) => void;
+}
+
+export const GdOnramperWidget = ({ isTesting = false, onEvents = noop }: IGdOnramperProps) => {
   const cusd = "0x765de816845861e75a25fca122bb6898b8b1282a";
   const { account, library } = useEthers();
   const swapLock = useRef(false);
@@ -79,6 +86,7 @@ export const GdOnramperWidget = ({ isTesting = false }) => {
       // when done set stepper at final step
       setStep(4);
       swapLock.current = false;
+      onEvents("buy_success");
     } catch (e: any) {
       console.log("swap error:", e.message, e);
       showModal();
@@ -108,6 +116,7 @@ export const GdOnramperWidget = ({ isTesting = false }) => {
           targetNetwork="CELO"
           widgetParams={undefined}
           isTesting={isTesting}
+          onGdEvent={onEvents}
         />
       </WalletAndChainGuard>
       <SignWalletModal txStatus={swapState?.status} />
