@@ -45,7 +45,7 @@ import {
   useLogin,
   createLoginLink,
   parseLoginResponse,
-} from "client-sdk-gooddollar";
+} from "@gooddollar/goodlogin-sdk";
 
 const App() {
   const gooddollarLink = createLoginLink({
@@ -82,7 +82,7 @@ import {
   LoginButton,
   createLoginLink,
   parseLoginResponse,
-} from "client-sdk-gooddollar";
+} from "@gooddollar/goodlogin-sdk";
 
 function App() {
   const gooddollarLink = createLoginLink({
