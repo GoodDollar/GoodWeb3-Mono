@@ -7,6 +7,7 @@ import { CentreBox } from "../../core/layout/CentreBox";
 import { AnimatedProgress } from "../../core/animated";
 import { Divider } from "native-base";
 import { BaseButton } from "../../core";
+import { useWindowFocus } from "../../hooks";
 
 export type OnramperCallback = (event: WebViewMessageEvent) => void;
 
@@ -109,33 +110,18 @@ export const Onramper = ({
     url.searchParams.append(k, v);
   });
 
+  const { title } = useWindowFocus();
+
   const uri = url.toString();
 
   const isMobile = deviceDetect();
 
   useEffect(() => {
-    window && window.focus(); // first force  focus for the step animation to start properly
-  }, []);
-
-  // SO fiddle: http://jsfiddle.net/wk1yv6q3/
-  useEffect(() => {
-    if (window) {
-      const checkFocus = () => {
-        if (document.activeElement === document.querySelector("iframe") && step === 0) {
-          onGdEvent("buy_start");
-          setStep(1);
-        } else if (step === 1) {
-          setStep(0);
-        }
-      };
-      window.addEventListener("focus", checkFocus);
-      window.addEventListener("blur", checkFocus);
-      return () => {
-        window.removeEventListener("blur", checkFocus);
-        window.removeEventListener("focus", checkFocus);
-      };
+    if (title === "Onramper widget" && step === 0) {
+      onGdEvent("buy_start");
+      setStep(1);
     }
-  }, [step]);
+  }, [title, step]);
 
   const devNextStep = useCallback(() => {
     setStep(step + 1);
