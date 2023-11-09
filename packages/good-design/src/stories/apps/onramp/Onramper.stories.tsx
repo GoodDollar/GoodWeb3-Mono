@@ -1,10 +1,12 @@
 import React from "react";
-import { OnramperController } from "../../../apps/onramp/GdOnramperWidget";
+import { noop } from "lodash";
+
+import { GdOnramperWidget } from "../../../apps/onramp/GdOnramperWidget";
 import { W3Wrapper } from "../../W3Wrapper";
 
 export const OnramperWidget = {
   args: {
-    step: -1,
+    step: 0,
     widgetParams: undefined,
     targetWallet: "0x0",
     targetNetwork: "CELO"
@@ -16,7 +18,7 @@ export default {
   component: props => (
     <W3Wrapper withMetaMask={true} env="fuse">
       <div style={{ height: "600px" }}>
-        <OnramperController />
+        <GdOnramperWidget isTesting={true} onEvents={noop} {...props} />
       </div>
     </W3Wrapper>
   )

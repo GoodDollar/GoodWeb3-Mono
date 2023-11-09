@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { memo, useCallback, useEffect } from "react";
 import { WebView, WebViewMessageEvent } from "react-native-webview";
 import { Box, Circle, HStack, Stack, Text, VStack } from "native-base";
 import { isMobile as deviceDetect } from "@gooddollar/web3sdk-v2";
@@ -10,46 +10,37 @@ import { BaseButton } from "../../core";
 
 export type OnramperCallback = (event: WebViewMessageEvent) => void;
 
-const StepsProgress = ({ step }: { step: number }) => {
-  const startValue: { [key: number]: number } = {
-    1: 0,
-    2: 50,
-    3: 50,
-    4: 100
-  };
+const StepsProgress = ({ step }: { step: number }) => (
+  <HStack w="90%" position="absolute" left="30" display="flex" justifyContent="center">
+    <CentreBox h="50" w="238" position="absolute">
+      <AnimatedProgress startValue={step < 1 ? 0 : step < 2 ? 1 : step <= 3 ? 50 : 100} />
+    </CentreBox>
+  </HStack>
+);
 
-  return (
-    <HStack w="90%" position="absolute" left="30" display="flex" justifyContent="center">
-      <CentreBox h="50" w="238" position="absolute">
-        <AnimatedProgress animatedValue={step < 1 ? 0 : step < 3 ? 50 : 100} startValue={startValue[step] ?? 0} />
-      </CentreBox>
-    </HStack>
-  );
-};
-
-const Stepper = ({ step = -1 }) => (
+const Stepper = memo(({ step = 0 }: { step: number }) => (
   <VStack direction={"row"} mb={6} justifyContent="center" justifyItems="center" position="relative">
     <StepsProgress step={step} />
     <HStack alignItems="center" h="70" justifyContent="space-between" w="300">
       <Stack width={"1/3"} alignItems={"center"}>
-        <Circle size="10" bgColor={step >= 0 ? "primary" : "goodGrey.300"}>
-          <Text color={step >= 0 ? "white" : "goodGrey.700"}> 1 </Text>
+        <Circle size="10" bgColor={step > 0 ? "primary" : "goodGrey.300"}>
+          <Text color={step > 0 ? "white" : "goodGrey.700"}> 1 </Text>
         </Circle>
         <Text color="goodGrey.700" fontFamily="subheading" fontWeight={400} fontSize="2xs">
           Buy CELO
         </Text>
       </Stack>
       <Stack width={"1/3"} alignItems={"center"}>
-        <Circle size="10" bgColor={step < 2 ? "goodGrey.300" : "primary"}>
-          <Text color={step < 2 ? "goodGrey.700" : "white"}> 2 </Text>
+        <Circle size="10" bgColor={step <= 2 ? "goodGrey.300" : "primary"}>
+          <Text color={step <= 2 ? "goodGrey.700" : "white"}> 2 </Text>
         </Circle>
         <Text w="112" color="goodGrey.700" fontFamily="subheading" fontWeight={400} fontSize="2xs">
           We swap CELO to G$
         </Text>
       </Stack>
       <Stack width={"1/3"} alignItems={"center"}>
-        <Circle size="10" bgColor={step <= 3 ? "goodGrey.300" : "primary"}>
-          <Text color={step <= 3 ? "goodGrey.700" : "white"}> 3 </Text>
+        <Circle size="10" bgColor={step < 5 ? "goodGrey.300" : "primary"}>
+          <Text color={step < 5 ? "goodGrey.700" : "white"}> 3 </Text>
         </Circle>
         <Text color="goodGrey.700" fontFamily="subheading" fontWeight={400} fontSize="2xs">
           Done
@@ -57,7 +48,7 @@ const Stepper = ({ step = -1 }) => (
       </Stack>
     </HStack>
   </VStack>
-);
+));
 
 export const Onramper = ({
   onEvent,
@@ -95,12 +86,12 @@ export const Onramper = ({
   // SO fiddle: http://jsfiddle.net/wk1yv6q3/
   useEffect(() => {
     if (window) {
-      const checkFocus = (e: any) => {
-        if (document.activeElement === document.querySelector("iframe") && step === -1) {
+      const checkFocus = () => {
+        if (document.activeElement === document.querySelector("iframe") && step === 0) {
           onGdEvent("buy_start");
+          setStep(1);
+        } else if (step === 1) {
           setStep(0);
-        } else if (step === 0) {
-          setStep(-1);
         }
       };
       window.addEventListener("focus", checkFocus);
@@ -117,7 +108,7 @@ export const Onramper = ({
   }, [step]);
 
   const resetStep = useCallback(() => {
-    setStep(-1);
+    setStep(0);
   }, [step]);
 
   if (!targetWallet) {

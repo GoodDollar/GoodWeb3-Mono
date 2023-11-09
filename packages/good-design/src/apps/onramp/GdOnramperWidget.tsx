@@ -55,7 +55,7 @@ export const GdOnramperWidget = ({
 
   const { showModal, Modal } = useModal();
 
-  const [step, setStep] = useState(-1);
+  const [step, setStep] = useState(0);
 
   // console.log({ selfSwap, account, gdHelperAddress, accountCeloBalance, cusdBalance, celoBalance });
   /**
@@ -73,7 +73,7 @@ export const GdOnramperWidget = ({
     swapLock.current = true;
 
     try {
-      setStep(2);
+      setStep(3);
       //user sends swap tx
       if (selfSwap && gdHelperAddress && library && account) {
         const minAmount = 0; // we let contract use oracle for minamount, we might calculate it for more precision in the future
@@ -86,7 +86,7 @@ export const GdOnramperWidget = ({
           swapTx = swap(minAmount);
         }
 
-        setStep(3);
+        setStep(4);
         // after tx sent progress the stepper
         const res = await swapTx;
         console.log("swap tx res:", res);
@@ -95,19 +95,19 @@ export const GdOnramperWidget = ({
         if (account) {
           //or backends sends swap tx
           const tx = triggerSwapTx();
-          setStep(3);
+          setStep(4);
           await tx;
         }
       }
       // when done set stepper at final step
-      setStep(4);
+      setStep(5);
       swapLock.current = false;
       onEvents("buy_success");
     } catch (e: any) {
       console.log("swap error:", e.message, e);
       showModal();
       onEvents("buygd_swap_failed", e.message);
-      setStep(-1);
+      setStep(0);
     }
   };
 
