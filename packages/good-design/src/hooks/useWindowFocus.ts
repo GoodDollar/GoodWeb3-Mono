@@ -2,9 +2,8 @@
 import React, { useEffect, useState } from "react";
 
 /**
-to catch which iframe is focused
-@param iframeTitle which iframe to watch
-@param cb callback to run when iframe is focused
+to catch which window is focused
+@returns {string} title of the focused window
 */
 export const useWindowFocus = () => {
   const [title, setTitle] = useState("");
