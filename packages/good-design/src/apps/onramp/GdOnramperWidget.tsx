@@ -21,7 +21,6 @@ interface IGdOnramperProps {
   onEvents: (action: string, error?: string) => void;
   selfSwap?: boolean;
   withSwap?: boolean;
-  backendSwapUrl?: string;
   donateOrExecTo?: string;
   callData?: string;
 }
@@ -31,7 +30,6 @@ export const GdOnramperWidget = ({
   onEvents = noop,
   selfSwap = false,
   withSwap = true,
-  backendSwapUrl = undefined,
   donateOrExecTo = undefined,
   callData = "0x"
 }: IGdOnramperProps) => {
@@ -42,7 +40,6 @@ export const GdOnramperWidget = ({
   const { createAndSwap, swap, swapState, createState, gdHelperAddress, triggerSwapTx } = useBuyGd({
     donateOrExecTo,
     callData,
-    backendSwapUrl,
     withSwap
   });
 

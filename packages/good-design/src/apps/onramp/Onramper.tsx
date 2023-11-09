@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useEffect } from "react";
+import React, { memo, useCallback, useEffect, useRef, useState } from "react";
 import { WebView, WebViewMessageEvent } from "react-native-webview";
 import { Box, Circle, HStack, Stack, Text, VStack } from "native-base";
 import { isMobile as deviceDetect } from "@gooddollar/web3sdk-v2";
@@ -10,13 +10,47 @@ import { BaseButton } from "../../core";
 
 export type OnramperCallback = (event: WebViewMessageEvent) => void;
 
-const StepsProgress = ({ step }: { step: number }) => (
-  <HStack w="90%" position="absolute" left="30" display="flex" justifyContent="center">
-    <CentreBox h="50" w="238" position="absolute">
-      <AnimatedProgress startValue={step < 1 ? 0 : step < 2 ? 1 : step <= 3 ? 50 : 100} />
-    </CentreBox>
-  </HStack>
-);
+const useStepValues = (step: number) => {
+  const [endValue, setEndValue] = useState(0);
+  const [startValue, setStartValue] = useState(0);
+  const lastStep = useRef(step);
+
+  const stepValues = [0, 0, 50, 50, 100];
+
+  useEffect(() => {
+    let intervalId: any;
+    if (step > 0) {
+      intervalId = setInterval(() => {
+        setEndValue(stepValues[step]);
+
+        if (lastStep.current < step) {
+          lastStep.current = step;
+          setStartValue(endValue);
+        }
+      }, 1000);
+    } else {
+      setEndValue(0);
+      setStartValue(-1);
+      lastStep.current = 0;
+    }
+
+    return () => clearInterval(intervalId);
+  }, [step, endValue]);
+
+  return { startValue, endValue };
+};
+
+const StepsProgress = ({ step }: { step: number }) => {
+  const { startValue, endValue } = useStepValues(step);
+
+  return (
+    <HStack w="90%" position="absolute" left="30" display="flex" justifyContent="center">
+      <CentreBox h="50" w="238" position="absolute">
+        <AnimatedProgress startValue={startValue} endValue={endValue} />
+      </CentreBox>
+    </HStack>
+  );
+};
 
 const Stepper = memo(({ step = 0 }: { step: number }) => (
   <VStack direction={"row"} mb={6} justifyContent="center" justifyItems="center" position="relative">

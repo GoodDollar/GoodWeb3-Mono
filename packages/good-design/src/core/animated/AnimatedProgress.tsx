@@ -1,14 +1,15 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { Animated, Platform } from "react-native";
 import { View } from "native-base";
 
 import { withTheme } from "../../theme/hoc/withTheme";
 
-interface ITestAnimatedProps {
+interface IAnimatedProps {
   containerStyles?: object;
   progressStyles?: object;
   progressBar?: object;
   startValue: number;
+  endValue: number;
 }
 
 export const theme = {
@@ -35,11 +36,8 @@ export const theme = {
 
 // based on 3 steps progress bar
 const AnimatedProgress = withTheme({ name: "AnimatedProgress" })(
-  ({ containerStyles, progressStyles, progressBar, startValue }: ITestAnimatedProps) => {
+  ({ containerStyles, progressStyles, progressBar, startValue, endValue }: IAnimatedProps) => {
     const progressAnim = useRef(new Animated.Value(0)).current;
-    const animValueRef = useRef(0);
-    // resetValue used for when in progress, and startValue is reset to 0 else the progress width will stay on last startvalue
-    const [resetValue, setResetValue] = useState<number | undefined>(undefined);
 
     useEffect(() => {
       const progressBlock = Animated.sequence([
@@ -49,26 +47,20 @@ const AnimatedProgress = withTheme({ name: "AnimatedProgress" })(
           useNativeDriver: Platform.OS !== "web"
         }),
         Animated.timing(progressAnim, {
-          toValue: startValue ?? 0,
+          toValue: endValue ?? 0,
           duration: 1000,
           useNativeDriver: Platform.OS !== "web"
         })
       ]);
 
-      if (!startValue) {
-        setResetValue(0);
-        Animated.loop(progressBlock).reset();
-      } else if (startValue > animValueRef.current) {
-        setResetValue(undefined);
+      if (endValue > startValue) {
         Animated.loop(progressBlock).start();
       }
-
-      animValueRef.current = startValue;
-    }, [startValue]);
+    }, [startValue, endValue]);
 
     const progressWidth = progressAnim.interpolate({
-      inputRange: [resetValue ?? animValueRef.current, 100],
-      outputRange: [`${resetValue ?? animValueRef.current}%`, "100%"],
+      inputRange: [startValue, 100],
+      outputRange: [`${startValue}%`, "100%"],
       extrapolate: "clamp"
     });
 
