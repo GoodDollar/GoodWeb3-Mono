@@ -1,8 +1,9 @@
 import { Contract } from "ethers";
 import * as ethers from "ethers";
 import { useCall, useEthers } from "@usedapp/core";
-
 import contractAddresses from "@gooddollar/goodprotocol/releases/deployment.json";
+
+import { Envs } from "../../sdk";
 import { useGetEnvChainId } from "../../sdk";
 
 import { useContractFunctionWithDefaultGasFees } from "../../sdk";
@@ -17,16 +18,16 @@ const buygdAbi = [
 export const useBuyGd = ({
   donateOrExecTo,
   callData,
-  backendSwapUrl,
   withSwap
 }: {
   donateOrExecTo?: string;
   callData?: string;
-  backendSwapUrl?: string;
   withSwap?: boolean;
 }) => {
   const { account, chainId } = useEthers();
-  const { connectedEnv } = useGetEnvChainId(42220);
+  const { baseEnv, connectedEnv } = useGetEnvChainId(42220);
+  const devEnv = baseEnv === "fuse" ? "development" : baseEnv;
+  const { backend } = Envs[devEnv];
   const buyGdFactory = new Contract(contractAddresses[connectedEnv].BuyGDFactoryV2, buygdAbi);
 
   const targetGDHelper = useCall(
@@ -74,7 +75,7 @@ export const useBuyGd = ({
   };
 
   const triggerSwapTx = async () =>
-    fetch(backendSwapUrl ?? `https://good-server.herokuapp.com/verify/swaphelper`, {
+    fetch(backend + "/verify/swaphelper", {
       method: "POST",
       headers: { "Content-type": "application/json" },
       body: JSON.stringify({ account })
