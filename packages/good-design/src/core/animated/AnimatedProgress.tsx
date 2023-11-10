@@ -8,8 +8,8 @@ interface IAnimatedProps {
   containerStyles?: object;
   progressStyles?: object;
   progressBar?: object;
-  startValue: number;
-  endValue: number;
+  value: number;
+  animationDuration?: number
 }
 
 export const theme = {
@@ -36,31 +36,36 @@ export const theme = {
 
 // based on 3 steps progress bar
 const AnimatedProgress = withTheme({ name: "AnimatedProgress" })(
-  ({ containerStyles, progressStyles, progressBar, startValue, endValue }: IAnimatedProps) => {
-    const progressAnim = useRef(new Animated.Value(0)).current;
+  ({ containerStyles, progressStyles, progressBar, value = 0, animationDuration = 1000 }: IAnimatedProps) => {
+    const oldValueRef = useRef(value)
+    const animationDurationRef = useRef(animationDuration)
+    const progressAnim = useRef(new Animated.Value(value)).current;
 
     useEffect(() => {
-      const progressBlock = Animated.sequence([
-        Animated.timing(progressAnim, {
-          toValue: 0,
-          duration: 1,
-          useNativeDriver: Platform.OS !== "web"
-        }),
-        Animated.timing(progressAnim, {
-          toValue: endValue ?? 0,
-          duration: 1000,
-          useNativeDriver: Platform.OS !== "web"
-        })
-      ]);
+      const { current: oldValue } = oldValueRef
 
-      if (endValue > startValue) {
-        Animated.loop(progressBlock).start();
+      const animation = {
+        toValue: value,
+        duration: 1,
+        useNativeDriver: Platform.OS !== "web"
       }
-    }, [startValue, endValue]);
+
+      if (value > oldValue) {
+        animation.duration = animationDurationRef.current
+      }
+
+      Animated
+        .sequence([
+          Animated.timing(progressAnim, animation)
+        ])
+        .start()
+
+      oldValueRef.current = value
+    }, [value, animationDuration]);
 
     const progressWidth = progressAnim.interpolate({
-      inputRange: [startValue, 100],
-      outputRange: [`${startValue}%`, "100%"],
+      inputRange: [0, 100],
+      outputRange: [`0%`, `100%`],
       extrapolate: "clamp"
     });
 

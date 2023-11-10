@@ -11,43 +11,41 @@ import { useWindowFocus } from "../../hooks";
 
 export type OnramperCallback = (event: WebViewMessageEvent) => void;
 
-const useStepValues = (step: number) => {
-  const [endValue, setEndValue] = useState(0);
-  const [startValue, setStartValue] = useState(0);
-  const lastStep = useRef(step);
+const stepValues = [0, 50, 100];
 
-  const stepValues = [0, 0, 50, 50, 100];
-
+const useStepValues = (step: number, animationDuration = 1000) => {
+  const [progressValue, setProgressValue] = useState(0);
+  const animationDurationRef = useRef(animationDuration)
+  
   useEffect(() => {
-    let intervalId: any;
+    let intervalId: number;
+
     if (step > 0) {
       intervalId = setInterval(() => {
-        setEndValue(stepValues[step]);
-
-        if (lastStep.current < step) {
-          lastStep.current = step;
-          setStartValue(endValue);
-        }
-      }, 1000);
+        // reset to old step end (current step start) then set to step end again
+        [-1, 0].forEach(shift => setProgressValue(stepValues[step + shift]))
+      }, animationDurationRef.current);
     } else {
-      setEndValue(0);
-      setStartValue(-1);
-      lastStep.current = 0;
+      setProgressValue(0);
     }
 
-    return () => clearInterval(intervalId);
-  }, [step, endValue]);
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    }
+  }, [step]);
 
-  return { startValue, endValue };
+  return progressValue;
 };
 
 const StepsProgress = ({ step }: { step: number }) => {
-  const { startValue, endValue } = useStepValues(step);
+  const progressValue = useStepValues(step);
 
   return (
     <HStack w="90%" position="absolute" left="30" display="flex" justifyContent="center">
       <CentreBox h="50" w="238" position="absolute">
-        <AnimatedProgress startValue={startValue} endValue={endValue} />
+        <AnimatedProgress value={progressValue} />
       </CentreBox>
     </HStack>
   );
