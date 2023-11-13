@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Onramper } from "./Onramper";
 import { useEthers, useEtherBalance, useTokenBalance } from "@usedapp/core";
 import { WebViewMessageEvent } from "react-native-webview";
-import { useBuyGd } from "@gooddollar/web3sdk-v2";
+import { AsyncStorage, useBuyGd } from "@gooddollar/web3sdk-v2";
 import { noop } from "lodash";
 
 import { useModal } from "../../hooks/useModal";
@@ -18,7 +18,7 @@ const ErrorModal = () => (
 
 interface IGdOnramperProps {
   isTesting?: boolean;
-  onEvents: (action: string, error?: string) => void;
+  onEvents: (action: string, data?: any, error?: string) => void;
   selfSwap?: boolean;
   withSwap?: boolean;
   donateOrExecTo?: string;
@@ -58,9 +58,9 @@ export const GdOnramperWidget = ({
   /**
    * callback to get event from onramper iframe
    */
-  const callback = useCallback((event: WebViewMessageEvent) => {
+  const callback = useCallback(async (event: WebViewMessageEvent) => {
     if ((event.nativeEvent.data as any).title === "success") {
-      onEvents("onramp_success");
+      await AsyncStorage.setItem("gdOnrampSuccess", "true");
       //start the stepper
       setStep(2);
     }
@@ -112,6 +112,7 @@ export const GdOnramperWidget = ({
   // when the helper contract has some balance we trigger the swap
   useEffect(() => {
     if (cusdBalance?.gt(0) || celoBalance?.gt(0)) {
+      void AsyncStorage.removeItem("gdOnrampSuccess");
       console.log("starting swap:", cusdBalance?.toString(), celoBalance?.toString());
       triggerSwap().catch(e => {
         showModal();

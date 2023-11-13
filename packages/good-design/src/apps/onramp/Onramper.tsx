@@ -1,7 +1,7 @@
 import React, { memo, useCallback, useEffect, useRef, useState } from "react";
 import { WebView, WebViewMessageEvent } from "react-native-webview";
 import { Box, Circle, HStack, Stack, Text, VStack } from "native-base";
-import { isMobile as deviceDetect } from "@gooddollar/web3sdk-v2";
+import { AsyncStorage, isMobile as deviceDetect } from "@gooddollar/web3sdk-v2";
 
 import { CentreBox } from "../../core/layout/CentreBox";
 import { AnimatedProgress } from "../../core/animated";
@@ -19,6 +19,7 @@ const useStepValues = (step: number, animationDuration = 1000) => {
 
   useEffect(() => {
     let intervalId: any;
+    console.log("isOnramping -->", { step });
     if (step > 0) {
       intervalId = setInterval(() => {
         // reset to old step end (current step start) then set to step end again
@@ -112,6 +113,18 @@ export const Onramper = ({
   const uri = url.toString();
 
   const isMobile = deviceDetect();
+
+  // on page load check if a returning user is awaiting funds
+  useEffect(() => {
+    const isOnramping = async () => {
+      const isOnramping = await AsyncStorage.getItem("gdOnrampSuccess");
+      if (isOnramping === "true") {
+        setStep(2);
+      }
+    };
+
+    void isOnramping();
+  }, []);
 
   useEffect(() => {
     if (title === "Onramper widget" && step === 0) {
