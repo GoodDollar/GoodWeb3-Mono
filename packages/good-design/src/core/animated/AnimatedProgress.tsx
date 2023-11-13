@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Animated, Platform } from "react-native";
 import { View } from "native-base";
 
@@ -9,7 +9,7 @@ interface IAnimatedProps {
   progressStyles?: object;
   progressBar?: object;
   value: number;
-  animationDuration?: number
+  animationDuration?: number;
 }
 
 export const theme = {
@@ -37,35 +37,44 @@ export const theme = {
 // based on 3 steps progress bar
 const AnimatedProgress = withTheme({ name: "AnimatedProgress" })(
   ({ containerStyles, progressStyles, progressBar, value = 0, animationDuration = 1000 }: IAnimatedProps) => {
-    const oldValueRef = useRef(value)
-    const animationDurationRef = useRef(animationDuration)
-    const progressAnim = useRef(new Animated.Value(value)).current;
+    const oldValueRef = useRef(value);
+    const animationDurationRef = useRef(animationDuration);
+    const progressAnim = useRef(new Animated.Value(0)).current;
+
+    const [rangeValue, setRangeValue] = useState(0);
 
     useEffect(() => {
-      const { current: oldValue } = oldValueRef
+      const { current: oldValue } = oldValueRef;
 
       const animation = {
         toValue: value,
-        duration: 1,
+        duration: animationDurationRef.current,
         useNativeDriver: Platform.OS !== "web"
+      };
+      const sequence = Animated.sequence([Animated.timing(progressAnim, animation)]);
+
+      if (value === 0) {
+        progressAnim.setValue(0);
+        setRangeValue(0);
+        return;
+      }
+
+      if (value === 100) {
+        Animated.loop(sequence).start();
       }
 
       if (value > oldValue) {
-        animation.duration = animationDurationRef.current
+        setRangeValue(oldValue);
       }
 
-      Animated
-        .sequence([
-          Animated.timing(progressAnim, animation)
-        ])
-        .start()
+      sequence.start();
 
-      oldValueRef.current = value
-    }, [value, animationDuration]);
+      oldValueRef.current = value;
+    }, [value]);
 
     const progressWidth = progressAnim.interpolate({
       inputRange: [0, 100],
-      outputRange: [`0%`, `100%`],
+      outputRange: [`${rangeValue}%`, `100%`],
       extrapolate: "clamp"
     });
 

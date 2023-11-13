@@ -11,19 +11,18 @@ import { useWindowFocus } from "../../hooks";
 
 export type OnramperCallback = (event: WebViewMessageEvent) => void;
 
-const stepValues = [0, 50, 100];
+const stepValues = [0, 0, 50, 50, 100, 100];
 
 const useStepValues = (step: number, animationDuration = 1000) => {
   const [progressValue, setProgressValue] = useState(0);
-  const animationDurationRef = useRef(animationDuration)
-  
-  useEffect(() => {
-    let intervalId: number;
+  const animationDurationRef = useRef(animationDuration);
 
+  useEffect(() => {
+    let intervalId: any;
     if (step > 0) {
       intervalId = setInterval(() => {
         // reset to old step end (current step start) then set to step end again
-        [-1, 0].forEach(shift => setProgressValue(stepValues[step + shift]))
+        [-1, 0].forEach(shift => setProgressValue(stepValues[step + shift]));
       }, animationDurationRef.current);
     } else {
       setProgressValue(0);
@@ -33,7 +32,7 @@ const useStepValues = (step: number, animationDuration = 1000) => {
       if (intervalId) {
         clearInterval(intervalId);
       }
-    }
+    };
   }, [step]);
 
   return progressValue;
