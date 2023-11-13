@@ -3829,7 +3829,7 @@ __metadata:
   dependencies:
     "@babel/core": ^7.17.5
     "@babel/preset-env": ^7.16.11
-    "@gooddollar/goodprotocol": ^2.0.4
+    "@gooddollar/goodprotocol": ^2.*
     "@gooddollar/web3sdk-v2": 0.1.55
     "@testing-library/react": ^12.1.4
     "@types/jest": ^27.4.1
@@ -3889,7 +3889,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/goodprotocol@npm:^2.0.15":
+"@gooddollar/goodprotocol@npm:^2.*, @gooddollar/goodprotocol@npm:^2.0.15":
   version: 2.0.20
   resolution: "@gooddollar/goodprotocol@npm:2.0.20"
   dependencies:
@@ -3930,28 +3930,6 @@ __metadata:
     truffle-plugin-verify: ^0.6.1
     truffle-source-verify: ^0.0.6
   checksum: bdf770c6b5abd0be5f264c386f0b9ce2e068fda63f7372d96eefebe554194c2345c1351ff0813d1de774bf39087d490d0f68e0ea67a3503bb96358b405b942ff
-  languageName: node
-  linkType: hard
-
-"@gooddollar/goodprotocol@npm:^2.0.4":
-  version: 2.0.15
-  resolution: "@gooddollar/goodprotocol@npm:2.0.15"
-  dependencies:
-    "@gooddollar/goodcontracts": ^2.6.6
-    "@jsier/retrier": ^1.2.4
-    "@openzeppelin/contracts": ^4.8.0
-    "@openzeppelin/contracts-upgradeable": ^4.8.0
-    "@openzeppelin/hardhat-upgrades": ^1.22.1
-    "@superfluid-finance/ethereum-contracts": ^1.8.1
-    "@superfluid-finance/sdk-core": ^0.5.8
-    "@typechain/hardhat": ^6.1.5
-    async-promise-pool: ^1.0.4
-    openzeppelin-solidity: ^4.3.2
-    patch-package: latest
-    press-any-key: ^0.1.1
-    truffle-plugin-verify: ^0.6.1
-    truffle-source-verify: ^0.0.6
-  checksum: 3b1ac76cef9038f48034e9e30ecb87485fa6b534142d2c603e4639564df4f0483ab22092b05852064b646ef32e00e62345c6c1f5772fb11ed1ef854a09e929ce
   languageName: node
   linkType: hard
 
