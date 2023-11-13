@@ -1,7 +1,7 @@
 {
   "name": "@gooddollar/good-design",
   "repository": "https://github.com/GoodDollar/GoodWeb3-mono/packages/good-design",
-  "version": "0.1.7",
+  "version": "0.1.8-beta.cfb84f0",
   "scripts": {
     "build": "yarn install && yarn dev:clean && tsc && yarn copy:assets && yalc publish --push",
     "build:release": "yarn dev:clean && tsc -p tsconfig.release.json && yarn copy:assets",
@@ -27,7 +27,7 @@
     "@babel/preset-react": "^7.16.0",
     "@babel/preset-typescript": "^7.16.0",
     "@babel/runtime": "^7.18.9",
-    "@gooddollar/web3sdk-v2": "latest",
+    "@gooddollar/web3sdk-v2": "file:.yalc/@gooddollar/web3sdk-v2",
     "@storybook/addon-actions": "^6.5.12",
     "@storybook/addon-essentials": "^6.5.12",
     "@storybook/addon-links": "^6.5.12",
@@ -57,6 +57,7 @@
     "css-loader": "^6.7.1",
     "ctix": "^1.4.0",
     "lodash": "^4.17.21",
+    "raw-loader": "^4.0.2",
     "react-device-detect": "^2.2.3",
     "react-docgen-typescript-plugin": "^1.0.1",
     "sass-loader": "^13.0.2",
@@ -73,7 +74,7 @@
   "dependencies": {
     "@babel/core": "^7.18.10",
     "@babel/runtime": "^7.18.9",
-    "@gooddollar/goodprotocol": "^2.0.15",
+    "@gooddollar/goodprotocol": "^2.0.18",
     "@lingui/macro": "^3.14.0",
     "@lingui/react": "^3.14.0",
     "@magiklabs/react-sdk": "^1.0.8",
@@ -96,8 +97,14 @@
     "react-native-svg-uri": "^1.2.3",
     "react-native-svg-web": "^1.0.9",
     "react-native-web": "0.17.7",
+    "react-native-web-webview": "^1.0.2",
+    "react-native-webview": "^13.2.2",
     "react-number-format": "^5.1.1",
     "react-use-promise": "^0.5.0",
     "require-from-string": "^2.0.2"
+  },
+  "resolutions": {
+    "@types/react": "17.0.52",
+    "@types/react-dom": "17.0.52"
   }
 }

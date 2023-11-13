@@ -1,5 +1,8 @@
 const webpack = require("webpack");
-
+const TEST_HTML_RULE = {
+  test: /\.html$/,
+  loader: "raw-loader"
+};
 module.exports = {
   typescript: {
     check: false,
@@ -46,6 +49,8 @@ module.exports = {
     //     process: 'process/browser'
     //   }),
     // ];
+    config.module.rules = [...config.module.rules, TEST_HTML_RULE];
+    config.rewrite;
     config.resolve.fallback = {
       stream: require.resolve("stream-browserify"),
       https: require.resolve("https-browserify"),
@@ -61,7 +66,7 @@ module.exports = {
 
     config.resolve.alias = {
       ...config.resolve.alias,
-      "@usedapp/core": require.resolve("../../../node_modules/@usedapp/core")
+      "react-native-webview": "react-native-web-webview"
     };
     return config;
   }

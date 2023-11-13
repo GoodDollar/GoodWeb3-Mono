@@ -21,7 +21,7 @@
     "declaration": true,
     "emitDeclarationOnly": false,
     "declarationMap": true,
-    "composite": true
+    "composite": true,
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "../../node_modules", "src/stories", "**/*.stories.tsx"]

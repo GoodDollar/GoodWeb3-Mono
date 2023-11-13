@@ -1,6 +1,7 @@
 import { extendTheme } from "native-base";
 import * as layout from "../core/layout/theme";
 import * as buttons from "../core/buttons/theme";
+import * as animated from "../core/animated/theme";
 import * as advanced from "../advanced/theme";
 import * as nativebase from "./nativebase";
 import * as apps from "../apps/theme";
@@ -53,6 +54,9 @@ export const theme = extendTheme({
       500: "#26292F"
     },
 
+    //tabs
+    tabBlue: "#1F86FF",
+
     // borders
     borderBlue: "#00AEFF",
     borderGrey: "#E2E5EA"
@@ -104,6 +108,7 @@ export const theme = extendTheme({
     ...buttons,
     ...advanced,
     ...apps,
+    ...animated,
     ...nativebase
   }
 });
