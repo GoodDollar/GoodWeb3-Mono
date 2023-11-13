@@ -1,4 +1,5 @@
-import { default as defaultWcModule, WalletConnectOptions } from "@web3-onboard/walletconnect";
+import { default as defaultWcModule } from "@web3-onboard/walletconnect";
+import { WalletConnectOptions } from "@web3-onboard/walletconnect/dist/types";
 import { icons } from "./icons";
 import { CustomLabels } from "./types";
 

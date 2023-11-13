@@ -60,8 +60,9 @@ export const GdOnramperWidget = ({
    */
   const callback = useCallback((event: WebViewMessageEvent) => {
     if ((event.nativeEvent.data as any).title === "success") {
+      onEvents("onramp_success");
       //start the stepper
-      setStep(1);
+      setStep(2);
     }
   }, []);
 
