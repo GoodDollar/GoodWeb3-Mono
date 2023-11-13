@@ -19,7 +19,7 @@ const useStepValues = (step: number, animationDuration = 1000) => {
 
   useEffect(() => {
     let intervalId: any;
-    console.log("isOnramping -->", { step });
+
     if (step > 0) {
       intervalId = setInterval(() => {
         // reset to old step end (current step start) then set to step end again
