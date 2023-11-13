@@ -3745,7 +3745,7 @@ __metadata:
     "@babel/preset-typescript": ^7.16.0
     "@babel/runtime": ^7.18.9
     "@gooddollar/goodprotocol": ^2.0.18
-    "@gooddollar/web3sdk-v2": "file:.yalc/@gooddollar/web3sdk-v2"
+    "@gooddollar/web3sdk-v2": latest
     "@lingui/macro": ^3.14.0
     "@lingui/react": ^3.14.0
     "@magiklabs/react-sdk": ^1.0.8
@@ -3889,6 +3889,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@gooddollar/goodprotocol@npm:^2.0.15":
+  version: 2.0.20
+  resolution: "@gooddollar/goodprotocol@npm:2.0.20"
+  dependencies:
+    "@gooddollar/goodcontracts": ^2.6.6
+    "@jsier/retrier": ^1.2.4
+    "@openzeppelin/contracts": ^4.8.0
+    "@openzeppelin/contracts-upgradeable": ^4.8.0
+    "@openzeppelin/hardhat-upgrades": ^1.22.1
+    "@superfluid-finance/ethereum-contracts": ^1.8.1
+    "@superfluid-finance/sdk-core": ^0.5.8
+    "@typechain/hardhat": ^6.1.5
+    async-promise-pool: ^1.0.4
+    openzeppelin-solidity: ^4.3.2
+    patch-package: latest
+    press-any-key: ^0.1.1
+    truffle-plugin-verify: ^0.6.1
+    truffle-source-verify: ^0.0.6
+  checksum: 0831db0f232b6e835901635fc79dc1870a7a1074321b06bcf58231e3a51df872d8bf89989894d7e80b9fb05238a6b8a1669c78a3a9a3ff16b7ee910de7e59415
+  languageName: node
+  linkType: hard
+
 "@gooddollar/goodprotocol@npm:^2.0.18":
   version: 2.0.18
   resolution: "@gooddollar/goodprotocol@npm:2.0.18"
@@ -3933,9 +3955,37 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2::locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design":
-  version: 0.2.4-beta.cfb84f0
-  resolution: "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2#.yalc/@gooddollar/web3sdk-v2::hash=118511&locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design"
+"@gooddollar/web3sdk-v2@npm:0.1.55":
+  version: 0.1.55
+  resolution: "@gooddollar/web3sdk-v2@npm:0.1.55"
+  dependencies:
+    "@amplitude/analytics-browser": ^1.6.4
+    "@amplitude/analytics-react-native": ^0.7.0
+    "@gooddollar/bridge-app": ^1.2.2
+    "@gooddollar/bridge-contracts": ^1.0.10
+    "@gooddollar/goodprotocol": 1.0.29-beta.5
+    "@react-native-firebase/analytics": ^16.4.6
+    "@sentry/browser": 7.16.0
+    "@sentry/react-native": ^4.8.0
+    "@usedapp/core": 1.*
+    eventemitter3: ^4.0.7
+    react-native: ^0.70.2
+    react-native-indicative: ^0.2.1
+    react-native-restart: ^0.0.24
+    react-use-promise: ^0.5.0
+  peerDependencies:
+    "@react-native-async-storage/async-storage": 1.17.10
+    ethers: 5.*
+    react: "*"
+    react-native: "*"
+    react-native-web: "*"
+  checksum: ddf7f4babfd0a73d74c6c07a62cf28e8dd16b029d4963dcbc1957b01c5f7a07fb8c6d77e06d72dccff33b4d14c18b191379745d4da9c0adbcdb91b3605a193bc
+  languageName: node
+  linkType: hard
+
+"@gooddollar/web3sdk-v2@npm:latest":
+  version: 0.2.4
+  resolution: "@gooddollar/web3sdk-v2@npm:0.2.4"
   dependencies:
     "@amplitude/analytics-browser": ^1.6.4
     "@amplitude/analytics-react-native": ^0.7.0
@@ -3943,13 +3993,14 @@ __metadata:
     "@ceramicnetwork/stream-tile": ^2.31.0
     "@gooddollar/bridge-app": ^1.5.0
     "@gooddollar/bridge-contracts": ^1.0.17
-    "@gooddollar/goodprotocol": ^2.0.18
+    "@gooddollar/goodprotocol": ^2.0.15
     "@orbisclub/orbis-sdk": ^0.4.87
     "@react-native-firebase/analytics": ^16.4.6
     "@sentry/browser": 7.16.0
     "@sentry/react-native": ^4.8.0
     "@solana/web3.js": ^1.72.0
     "@types/react": ^18.2.28
+    "@usedapp/core": ^1.2.13
     "@walletconnect/client": ^1.8.0
     "@walletconnect/qrcode-modal": ^1.8.0
     "@web3-onboard/coinbase": ^2.2.4
@@ -3981,35 +4032,7 @@ __metadata:
     "@react-native-async-storage/async-storage": 1.17.10
     react-native: "*"
     react-native-web: "*"
-  checksum: c15969d9c48b9a327d673ebe89e83d97676f8419d79c3de99501235b0c7bfa44a9e3818178c2127c79b04bcb1909ab33dc347a17b59961ef6571219934fbc66d
-  languageName: node
-  linkType: hard
-
-"@gooddollar/web3sdk-v2@npm:0.1.55":
-  version: 0.1.55
-  resolution: "@gooddollar/web3sdk-v2@npm:0.1.55"
-  dependencies:
-    "@amplitude/analytics-browser": ^1.6.4
-    "@amplitude/analytics-react-native": ^0.7.0
-    "@gooddollar/bridge-app": ^1.2.2
-    "@gooddollar/bridge-contracts": ^1.0.10
-    "@gooddollar/goodprotocol": 1.0.29-beta.5
-    "@react-native-firebase/analytics": ^16.4.6
-    "@sentry/browser": 7.16.0
-    "@sentry/react-native": ^4.8.0
-    "@usedapp/core": 1.*
-    eventemitter3: ^4.0.7
-    react-native: ^0.70.2
-    react-native-indicative: ^0.2.1
-    react-native-restart: ^0.0.24
-    react-use-promise: ^0.5.0
-  peerDependencies:
-    "@react-native-async-storage/async-storage": 1.17.10
-    ethers: 5.*
-    react: "*"
-    react-native: "*"
-    react-native-web: "*"
-  checksum: ddf7f4babfd0a73d74c6c07a62cf28e8dd16b029d4963dcbc1957b01c5f7a07fb8c6d77e06d72dccff33b4d14c18b191379745d4da9c0adbcdb91b3605a193bc
+  checksum: af2d2cac61d5c53c905c4bafa515477037acf948251ef03fb408b1abac3566ee785380497aa0287ba1b128d78debd91d36ea41984ace0ca40383201c2df7b946
   languageName: node
   linkType: hard
 
