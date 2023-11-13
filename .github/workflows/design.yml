@@ -49,8 +49,6 @@ jobs:
             ${{ runner.os }}-yarn-good-design
       - name: "build"
         run: |
-          yarn workspace @gooddollar/web3sdk-v2 install
-          yarn workspace @gooddollar/web3sdk-v2 build:release
 
           yarn workspace @gooddollar/good-design install
           yarn workspace @gooddollar/good-design build:release
