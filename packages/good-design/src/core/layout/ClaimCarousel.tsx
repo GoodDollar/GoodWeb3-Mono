@@ -1,6 +1,8 @@
 import { FlatList, View, Box, useBreakpointValue, Pressable } from "native-base";
 import React, { FC, memo, useCallback, useState, useMemo, useRef, useEffect } from "react";
 import { LayoutChangeEvent, NativeScrollEvent, NativeSyntheticEvent } from "react-native";
+
+import { CentreBox } from "./CentreBox";
 import { IClaimCard } from "../buttons";
 import ClaimCard from "./ClaimCard";
 import ArrowLeft from "../../assets/svg/arrow-left.svg";
@@ -101,12 +103,13 @@ const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards, claimed, isMobile }) => 
     [activeSlide, setActiveSlide]
   );
 
-  const clickAndSlide = useCallback(() => {
+  const casRight = useCallback(() => {
     if (!flatListRef.current) {
       return;
     }
 
     const isLast = activeSlide === slidesNumber - 1;
+
     flatListRef.current.scrollToOffset({
       animated: true,
       index: isLast ? 0 : activeSlide + 1,
@@ -114,11 +117,25 @@ const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards, claimed, isMobile }) => 
     });
   }, [activeSlide, flatListRef, onScroll, slidesNumber, layoutOffset, activeCards]);
 
+  const casLeft = useCallback(() => {
+    if (!flatListRef.current) {
+      return;
+    }
+
+    const isFirst = activeSlide === 0;
+
+    flatListRef.current.scrollToOffset({
+      animated: true,
+      index: isFirst ? slidesNumber - 1 : activeSlide - 1,
+      offset: isFirst ? layoutOffset + (slidesNumber - 1) * 275 : layoutOffset - 275
+    });
+  }, [activeSlide, flatListRef, onScroll, slidesNumber, layoutOffset, activeCards]);
+
   const getFlatListRef = useCallback(
     (flatList: any) => {
       flatListRef.current = flatList;
     },
-    [activeSlide, onScroll, clickAndSlide]
+    [activeSlide, onScroll, casLeft, casRight]
   );
 
   return (
@@ -145,18 +162,16 @@ const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards, claimed, isMobile }) => 
       />
       {isMobile && (
         <View flexDirection="row" pt={4} justifyContent="center">
-          <Pressable
-            onPress={clickAndSlide}
-            flexDir="row"
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-            height="15px"
-          >
-            <SvgXml src={ArrowLeft} height="24" width="24" style={{ marginRight: 12 }} />
+          <CentreBox flexDir="row" height="15">
+            <Pressable onPress={casLeft} height="6">
+              <SvgXml src={ArrowLeft} height="24" width="24" style={{ marginRight: 12 }} />
+            </Pressable>
+
             <SlidesComponent data={activeCards} activeSlide={activeSlide} slidesNumber={slidesNumber} />
-            <SvgXml src={ArrowRight} height="24" width="24" style={{ marginLeft: 12 }} />
-          </Pressable>
+            <Pressable onPress={casRight} height="6">
+              <SvgXml src={ArrowRight} height="24" width="24" style={{ marginLeft: 12 }} />
+            </Pressable>
+          </CentreBox>
         </View>
       )}
     </Box>
