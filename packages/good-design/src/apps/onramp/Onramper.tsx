@@ -60,7 +60,7 @@ const Stepper = memo(({ step = 0 }: { step: number }) => (
           <Text color={step > 0 ? "white" : "goodGrey.700"}> 1 </Text>
         </Circle>
         <Text color="goodGrey.700" fontFamily="subheading" fontWeight={400} fontSize="2xs">
-          Buy CELO
+          Buy cUSD
         </Text>
       </Stack>
       <Stack width={"1/3"} alignItems={"center"}>
@@ -68,7 +68,7 @@ const Stepper = memo(({ step = 0 }: { step: number }) => (
           <Text color={step <= 2 ? "goodGrey.700" : "white"}> 2 </Text>
         </Circle>
         <Text w="112" color="goodGrey.700" fontFamily="subheading" fontWeight={400} fontSize="2xs">
-          We swap CELO to G$
+          We swap cUSD to G$
         </Text>
       </Stack>
       <Stack width={"1/3"} alignItems={"center"}>
