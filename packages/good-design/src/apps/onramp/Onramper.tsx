@@ -104,7 +104,7 @@ export const Onramper = ({
   targetNetwork?: string;
   apiKey?: string;
 }) => {
-  const url = new URL("https://buy.onramper.com/apiKey=" + apiKey);
+  const url = new URL("https://buy.onramper.com/?apiKey=" + apiKey);
   url.searchParams.set("networkWallets", `${targetNetwork}:${targetWallet}`);
   Object.entries(widgetParams).forEach(([k, v]: [string, any]) => {
     url.searchParams.append(k, v);
