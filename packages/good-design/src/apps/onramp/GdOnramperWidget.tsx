@@ -23,6 +23,7 @@ interface IGdOnramperProps {
   withSwap?: boolean;
   donateOrExecTo?: string;
   callData?: string;
+  apiKey?: string;
 }
 
 export const GdOnramperWidget = ({
@@ -31,7 +32,8 @@ export const GdOnramperWidget = ({
   selfSwap = false,
   withSwap = true,
   donateOrExecTo = undefined,
-  callData = "0x"
+  callData = "0x",
+  apiKey = undefined
 }: IGdOnramperProps) => {
   const cusd = "0x765de816845861e75a25fca122bb6898b8b1282a";
   const { account, library } = useEthers();
@@ -135,6 +137,7 @@ export const GdOnramperWidget = ({
           widgetParams={undefined}
           isTesting={isTesting}
           onGdEvent={onEvents}
+          apiKey={apiKey}
         />
       </WalletAndChainGuard>
       <SignWalletModal txStatus={swapState?.status} />
