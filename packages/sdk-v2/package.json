@@ -76,7 +76,7 @@
     "@ceramicnetwork/stream-tile": "^2.31.0",
     "@gooddollar/bridge-app": "^1.5.0",
     "@gooddollar/bridge-contracts": "^1.0.17",
-    "@gooddollar/goodprotocol": "^2.0.18",
+    "@gooddollar/goodprotocol": "^2.0.22",
     "@orbisclub/orbis-sdk": "^0.4.87",
     "@react-native-firebase/analytics": "^16.4.6",
     "@sentry/browser": "7.16.0",

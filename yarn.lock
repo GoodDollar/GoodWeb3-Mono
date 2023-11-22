@@ -3729,7 +3729,7 @@ __metadata:
     "@babel/preset-react": ^7.16.0
     "@babel/preset-typescript": ^7.16.0
     "@babel/runtime": ^7.18.9
-    "@gooddollar/goodprotocol": ^2.0.18
+    "@gooddollar/goodprotocol": ^2.0.22
     "@gooddollar/web3sdk-v2": latest
     "@lingui/macro": ^3.14.0
     "@lingui/react": ^3.14.0
@@ -3874,7 +3874,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/goodprotocol@npm:^2.*, @gooddollar/goodprotocol@npm:^2.0.18":
+"@gooddollar/goodprotocol@npm:^2.*":
   version: 2.0.20
   resolution: "@gooddollar/goodprotocol@npm:2.0.20"
   dependencies:
@@ -3893,6 +3893,28 @@ __metadata:
     truffle-plugin-verify: ^0.6.1
     truffle-source-verify: ^0.0.6
   checksum: 0831db0f232b6e835901635fc79dc1870a7a1074321b06bcf58231e3a51df872d8bf89989894d7e80b9fb05238a6b8a1669c78a3a9a3ff16b7ee910de7e59415
+  languageName: node
+  linkType: hard
+
+"@gooddollar/goodprotocol@npm:^2.0.18, @gooddollar/goodprotocol@npm:^2.0.22":
+  version: 2.0.22
+  resolution: "@gooddollar/goodprotocol@npm:2.0.22"
+  dependencies:
+    "@gooddollar/goodcontracts": ^2.6.6
+    "@jsier/retrier": ^1.2.4
+    "@openzeppelin/contracts": ^4.8.0
+    "@openzeppelin/contracts-upgradeable": ^4.8.0
+    "@openzeppelin/hardhat-upgrades": ^1.22.1
+    "@superfluid-finance/ethereum-contracts": ^1.8.1
+    "@superfluid-finance/sdk-core": ^0.5.8
+    "@typechain/hardhat": ^6.1.5
+    async-promise-pool: ^1.0.4
+    openzeppelin-solidity: ^4.3.2
+    patch-package: latest
+    press-any-key: ^0.1.1
+    truffle-plugin-verify: ^0.6.1
+    truffle-source-verify: ^0.0.6
+  checksum: 1884f676faa2bbe4d4a7a0805e47ab247769a88226b0c63d815522dce965de6e2a3d77c9b2eb57f021507f60ffc1dbc03f6590f270a27bd8af0ab9084d7fff8f
   languageName: node
   linkType: hard
 
@@ -3991,7 +4013,7 @@ __metadata:
     "@ceramicnetwork/stream-tile": ^2.31.0
     "@gooddollar/bridge-app": ^1.5.0
     "@gooddollar/bridge-contracts": ^1.0.17
-    "@gooddollar/goodprotocol": ^2.0.18
+    "@gooddollar/goodprotocol": ^2.0.22
     "@orbisclub/orbis-sdk": ^0.4.87
     "@react-native-async-storage/async-storage": 1.17.10
     "@react-native-firebase/analytics": ^16.4.6
