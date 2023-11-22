@@ -92,8 +92,8 @@ export const GdOnramperWidget = ({
       } else {
         if (account) {
           //or backends sends swap tx
-          const tx = await triggerSwapTx();
           setStep(4);
+          const tx = await triggerSwapTx();
 
           if (!tx?.ok) throw Error("reverted");
         }
