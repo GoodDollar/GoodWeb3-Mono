@@ -3853,27 +3853,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/goodprotocol@npm:1.0.30-beta.3":
-  version: 1.0.30-beta.3
-  resolution: "@gooddollar/goodprotocol@npm:1.0.30-beta.3"
-  dependencies:
-    "@gooddollar/goodcontracts": ^2.6.6
-    "@jsier/retrier": ^1.2.4
-    "@openzeppelin/contracts": ^4.8.0
-    "@openzeppelin/contracts-upgradeable": ^4.8.0
-    "@superfluid-finance/ethereum-contracts": ^1.4.3
-    "@superfluid-finance/sdk-core": ^0.5.8
-    "@typechain/hardhat": ^6.1.2
-    async-promise-pool: ^1.0.4
-    openzeppelin-solidity: ^4.3.2
-    patch-package: latest
-    press-any-key: ^0.1.1
-    truffle-plugin-verify: ^0.6.1
-    truffle-source-verify: ^0.0.6
-  checksum: 8f1f31c2d30d36e1c747dba53d6d0c8edb71d76795bdf694f15713cc8e6a2c9bd8598070c284f2ddb1e34e1749f8ff1772f88021763cd6abc859ef818da2c691
-  languageName: node
-  linkType: hard
-
 "@gooddollar/goodprotocol@npm:^2.*":
   version: 2.0.20
   resolution: "@gooddollar/goodprotocol@npm:2.0.20"
@@ -4100,7 +4079,7 @@ __metadata:
   resolution: "@gooddollar/web3sdk@workspace:packages/sdk"
   dependencies:
     "@apollo/client": ^3.2.0
-    "@gooddollar/goodprotocol": 1.0.30-beta.3
+    "@gooddollar/goodprotocol": ^2.0.22
     "@rollup/plugin-alias": ^3.1.9
     "@rollup/plugin-commonjs": ^22.0.0
     "@rollup/plugin-eslint": ^9.0.5
@@ -9088,7 +9067,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@superfluid-finance/ethereum-contracts@npm:^1.4.3, @superfluid-finance/ethereum-contracts@npm:^1.8.1":
+"@superfluid-finance/ethereum-contracts@npm:^1.8.1":
   version: 1.8.1
   resolution: "@superfluid-finance/ethereum-contracts@npm:1.8.1"
   dependencies:

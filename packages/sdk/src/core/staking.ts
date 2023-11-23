@@ -15,7 +15,7 @@ import { goodMarketMakerContract } from "contracts/GoodMarketMakerContract";
 import { getToken, getTokenByAddress } from "methods/tokenLists";
 import { getAccount, getChainId } from "utils/web3";
 import { aaveStaking, g$Price } from "./apollo";
-import { compoundStaking } from "./rest";
+import { compoundDaiStakingAPY } from "./rest";
 import { LIQUIDITY_PROTOCOL } from "constants/protocols";
 import { debug, debugGroup, debugGroupEnd } from "utils/debug";
 import { stakersDistributionContract } from "contracts/StakersDistributionContract";
@@ -78,6 +78,7 @@ export async function getList(web3: Web3): Promise<Stake[]> {
 
   const result: any = [];
   const stakeV3 = simpleStakingReleases.find(releases => releases.release === "v3");
+
   if (stakeV3) {
     for (const address of stakeV3.addresses) {
       result.push(await metaStake(web3, address));
@@ -421,7 +422,7 @@ async function getRewardGDAO(web3: Web3, address: string, account: string): Prom
  * @returns {Promise<Fraction>>}
  */
 const getSocialAPY = memoize<(web3: Web3, protocol: string, token: Token, iToken: Token) => Promise<Fraction>>(
-  async (web3, protocol, token, iToken): Promise<Fraction> => {
+  async (web3, protocol, token): Promise<Fraction> => {
     const chainId = await getChainId(web3);
     const RR = await getReserveRatio(web3, chainId);
 
@@ -429,7 +430,7 @@ const getSocialAPY = memoize<(web3: Web3, protocol: string, token: Token, iToken
     let result = { supplyAPY: socialAPY, incentiveAPY: socialAPY };
     if (!RR.equalTo(0)) {
       if (protocol === LIQUIDITY_PROTOCOL.COMPOUND) {
-        result = await compoundStaking(chainId, iToken.address);
+        result = await compoundDaiStakingAPY();
         debug("compound Social APY", result);
       } else if (protocol === LIQUIDITY_PROTOCOL.AAVE) {
         result = await aaveStaking(chainId, token);
@@ -449,7 +450,7 @@ const getSocialAPY = memoize<(web3: Web3, protocol: string, token: Token, iToken
  * @param {Web3} web3 Web3 instance.
  * @param {LIQUIDITY_PROTOCOL} protocol Liquidity protocol.
  * @param {Token} token Token for calculation price from.
- * @returns {Promise<Fraction>>}
+ * @returns {Promise<Fraction>}
  */
 export const getTokenPriceInUSDC = memoize<
   (web3: Web3, protocol: LIQUIDITY_PROTOCOL, token: Token) => Promise<Fraction | null>
@@ -647,7 +648,7 @@ const getStakedValuev2 = memoize<
     /* eslint-enable */
 
     const USDC = (await getToken(chainId, "USDC")) as Token;
-    const tempOracle = getUsdOracle(protocol, web3);
+    const tempOracle = getUsdOracle(protocol);
 
     const totalProductivity = effectiveStake ? _totalEffectiveStakes : _totalProductivity;
 
