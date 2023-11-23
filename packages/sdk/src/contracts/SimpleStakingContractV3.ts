@@ -3,9 +3,8 @@ import { AbiItem } from "web3-utils";
 import { Contract } from "web3-eth-contract";
 import SimpleStakingV2 from "@gooddollar/goodprotocol/artifacts/contracts/staking/SimpleStakingV2.sol/SimpleStakingV2.json";
 import contractsAddresses from "@gooddollar/goodprotocol/releases/deploy-settings.json";
-import { SupportedChainId } from "constants/chains";
 
-import { G$ContractAddresses, getNetworkEnv } from "constants/addresses";
+import { G$ContractAddresses } from "constants/addresses";
 import { getChainId } from "utils/web3";
 import { LIQUIDITY_PROTOCOL } from "constants/protocols";
 
