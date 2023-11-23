@@ -89,10 +89,10 @@ export const Onramper = ({
   step,
   setStep,
   isTesting,
+  apiKey,
   widgetParams = { onlyCryptos: "CUSD_CELO", isAddressEditable: false },
   targetNetwork = "CELO",
-  targetWallet,
-  apiKey
+  targetWallet
 }: {
   onEvent?: OnramperCallback;
   onGdEvent: (action: string) => void;
@@ -104,11 +104,17 @@ export const Onramper = ({
   targetNetwork?: string;
   apiKey?: string;
 }) => {
-  const url = new URL("https://buy.onramper.com/?apiKey=" + apiKey);
+  const url = new URL("https://buy.onramper.com/");
+
+  if (apiKey) {
+    url.searchParams.set("apiKey", apiKey);
+  }
   url.searchParams.set("networkWallets", `${targetNetwork}:${targetWallet}`);
   Object.entries(widgetParams).forEach(([k, v]: [string, any]) => {
     url.searchParams.append(k, v);
   });
+
+  console.log("urlTesting -->", { url });
 
   const { title } = useWindowFocus();
 
