@@ -1,4 +1,5 @@
 import memoize from "lodash/memoize";
+import last from "lodash/last";
 import { Fraction } from "@uniswap/sdk-core";
 import { NETWORK_LABELS } from "constants/chains";
 import { decimalToFraction } from "utils/converter";
@@ -49,4 +50,32 @@ export const compoundStaking = memoize<(chainId: number, tokenAddress: string) =
     return result;
   },
   (chainId, tokenAddress: string) => chainId + tokenAddress
+);
+
+export const compoundDaiStakingAPY = memoize<() => Promise<StakingAPY>>(
+  async (): Promise<StakingAPY> => {
+    const { data = [] } = await fetch(`https://yields.llama.fi/chart/cc110152-36c2-4e10-9c12-c5b4eb662143`)
+      .then(_ => _.json())
+      .catch(() => ({}));
+
+    const lastRecord = last(data) as { apyReward: number; apyBase: number };
+
+    const compSupplyAPY = lastRecord?.apyReward || 0;
+    const supplyRate = lastRecord?.apyBase || 0;
+
+    const result = {
+      supplyAPY: decimalToFraction(supplyRate),
+      incentiveAPY: decimalToFraction(compSupplyAPY)
+    };
+
+    debugGroup("Compound Staking");
+    debug("Supply Rate", result.supplyAPY.toSignificant(6));
+    debug("Compound Supply APY", result.incentiveAPY.toSignificant(6));
+    debugGroupEnd("Compound Staking");
+
+    delayedCacheClear(compoundStaking);
+
+    return result;
+  },
+  () => "dai"
 );
