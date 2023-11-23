@@ -114,8 +114,6 @@ export const Onramper = ({
     url.searchParams.append(k, v);
   });
 
-  console.log("urlTesting -->", { url });
-
   const { title } = useWindowFocus();
 
   const uri = url.toString();
