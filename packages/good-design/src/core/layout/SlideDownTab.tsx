@@ -16,14 +16,16 @@ const SlideDownTab = ({ tabTitle, children }: ISlideDownTabProps) => {
 
   const toggleContent = useCallback(() => setIsOpen(isOpen => !isOpen), [setIsOpen]);
 
+  const arrowStyles = isOpen ? { transform: [{ rotateZ: "180deg" }] } : {};
+
   return (
     <Box w="100%" mb="4" maxW="363">
-      <BasePressable bgColor="tabBlue" onPress={toggleContent} borderRadius="6">
+      <BasePressable bgColor={isOpen ? "primary" : "tabBlue"} onPress={toggleContent} borderRadius="6">
         <CentreBox flexDirection="row" w="100%" justifyContent="space-evenly" h="10">
           <Text color="white" w="80%" fontFamily="subheading">
             {tabTitle}
           </Text>
-          <Image src={ArrowTab} w="6" h="6" /> {/* todo: turn arrow around on open */}
+          <Image src={ArrowTab} w="6" h="6" style={arrowStyles} />
         </CentreBox>
       </BasePressable>
       {isOpen && <CentreBox w="100%">{children}</CentreBox>}

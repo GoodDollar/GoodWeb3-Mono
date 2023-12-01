@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useState } from "react";
+import React, { memo, useCallback, useEffect, useState } from "react";
 import { Box, Divider, Input, Text, VStack } from "native-base";
 
 import { CentreBox } from "../layout/CentreBox";
@@ -7,6 +7,45 @@ import { Image } from "../images";
 import ConverterCircle from "../../assets/svg/converter-circle.svg";
 import cUsdLogo from "../../assets/svg/cusd.svg";
 import gdLogo from "../../assets/svg/gdLogo.svg";
+
+interface CurrencyBoxProps {
+  title: string;
+  placeholder: string | undefined;
+  logoSrc: string;
+  currencyUnit: string;
+  onBlur: (e: any) => void;
+  onChangeText: (e: string) => void;
+}
+
+const CurrencyBox = ({ title, placeholder, logoSrc, currencyUnit, onBlur, onChangeText }: CurrencyBoxProps) => (
+  <Box bg="goodWhite.100" p={4} borderRadius={2} mb={2} justifyContent="flex-start" justifyItems="flex-start">
+    <Text>{title}</Text>
+    <Divider orientation="horizontal" w="100%" bg="goodGrey.400" mb={2} mt={2} />
+    <CentreBox flexDirection="row" justifyContent="space-between">
+      <CentreBox alignItems="flex-start">
+        <Input
+          fontSize={6}
+          maxW={220}
+          ml={0}
+          _focus={{ backgroundColor: "none" }}
+          pl={0}
+          fontWeight={700}
+          placeholder={placeholder}
+          variant="unstyled"
+          onBlur={onBlur}
+          onChangeText={onChangeText}
+        />
+        <Text>{currencyUnit}</Text>
+      </CentreBox>
+      <CentreBox w="100" h="50" backgroundColor="white" flexDirection="row" justifyContent="space-around">
+        <Image src={logoSrc} w="8" h="8" style={{ resizeMode: "contain" }} borderRadius="md" />
+        <Text fontFamily="subheading" fontSize="sm" fontWeight="400" color="goodGrey.700">
+          {currencyUnit}
+        </Text>
+      </CentreBox>
+    </CentreBox>
+  </Box>
+);
 
 const Converter = memo(({ gdPrice }: { gdPrice?: number }) => {
   const [gdAmount, setGdAmount] = useState<string | undefined>("100");
@@ -23,6 +62,12 @@ const Converter = memo(({ gdPrice }: { gdPrice?: number }) => {
     },
     [gdPrice, usdAmount, gdAmount]
   );
+
+  useEffect(() => {
+    if (gdPrice) {
+      calcAmount("gd", gdAmount || "100");
+    }
+  }, []);
 
   const calcGd = (usdAmount: string) => {
     setUsdAmount(usdAmount);
@@ -53,60 +98,22 @@ const Converter = memo(({ gdPrice }: { gdPrice?: number }) => {
           left="45%"
           top="40%"
         />
-        <Box bg="goodWhite.100" p={4} borderRadius={2} mb={6} justifyContent="flex-start" justifyItems="flex-start">
-          <Text>With</Text>
-          <Divider orientation="horizontal" w="100%" bg="goodGrey.400" mb={2} mt={2} />
-          <CentreBox flexDirection="row" justifyContent="space-between">
-            <CentreBox alignItems="flex-start">
-              <Input
-                fontSize={6}
-                maxW={220}
-                ml={0}
-                _focus={{ backgroundColor: "none" }}
-                pl={0}
-                fontWeight={700}
-                placeholder={usdAmount}
-                variant="unstyled"
-                onBlur={clearInput}
-                onChangeText={calcGd}
-              />
-              <Text>cUSD</Text>
-            </CentreBox>
-            <CentreBox w="100" h="50" backgroundColor="white" flexDirection="row" justifyContent="space-around">
-              <Image src={cUsdLogo} w="8" h="8" style={{ resizeMode: "contain" }} borderRadius="md" />
-              <Text fontFamily="subheading" fontSize="sm" fontWeight="400" color="goodGrey.700">
-                cUSD
-              </Text>
-            </CentreBox>
-          </CentreBox>
-        </Box>
-        <Box bg="goodWhite.100" p={4} borderRadius={2} justifyContent="flex-start" justifyItems="flex-start">
-          <Text>You'll get</Text>
-          <Divider orientation="horizontal" w="100%" bg="goodGrey.400" mb={2} mt={2} />
-          <CentreBox flexDirection="row" justifyContent="space-between">
-            <CentreBox alignItems="flex-start">
-              <Input
-                fontSize={6}
-                maxW={220}
-                ml={0}
-                _focus={{ backgroundColor: "none" }}
-                pl={0}
-                fontWeight={700}
-                placeholder={gdAmount}
-                variant="unstyled"
-                onBlur={clearInput}
-                onChangeText={calcUsd}
-              />
-              <Text>G$</Text>
-            </CentreBox>
-            <CentreBox w="100" h="50" backgroundColor="white" flexDirection="row" justifyContent="space-around">
-              <Image src={gdLogo} w="8" h="8" style={{ resizeMode: "contain" }} borderRadius="md" />
-              <Text fontFamily="subheading" fontSize="sm" fontWeight="400" color="goodGrey.700">
-                G$
-              </Text>{" "}
-            </CentreBox>
-          </CentreBox>
-        </Box>
+        <CurrencyBox
+          title="With"
+          placeholder={usdAmount}
+          logoSrc={cUsdLogo}
+          currencyUnit="cUSD"
+          onBlur={clearInput}
+          onChangeText={calcGd}
+        />
+        <CurrencyBox
+          title="You'll get"
+          placeholder={gdAmount}
+          logoSrc={gdLogo}
+          currencyUnit="G$"
+          onBlur={clearInput}
+          onChangeText={calcUsd}
+        />
       </VStack>
     </CentreBox>
   );
