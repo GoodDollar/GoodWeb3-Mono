@@ -139,7 +139,7 @@ const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards, claimed, isMobile }) => 
   );
 
   return (
-    <Box {...(isMobile && { style: { alignSelf: "flex-start" } })}>
+    <Box style={{ alignSelf: "flex-start", width: "100%" }}>
       <FlatList
         _contentContainerStyle={{
           width: contentWidth
