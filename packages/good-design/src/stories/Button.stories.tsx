@@ -5,12 +5,19 @@ import { ethers, getDefaultProvider } from "ethers";
 import React, { useEffect, useState } from "react";
 import BaseButton from "../core/buttons/BaseButton";
 import ClaimButton from "../core/buttons/ClaimButton";
-import SelectBox from "../advanced/customswitch/SelectBox";
+// import SelectBox from "../advanced/customswitch/SelectBox";
+import { BasePressable } from "../core";
 
 export const BaseButtonWithThemeExample = () => {
   return (
     <>
-      <BaseButton width="250px" onPress={() => {}} text="RegularBB with default NB Theming" />
+      <BaseButton
+        width="250px"
+        onPress={() => {
+          console.log("clicked");
+        }}
+        text="RegularBB with default NB Theming"
+      />
     </>
   );
 };
@@ -25,6 +32,14 @@ const config: Config = {
     42220: "https://forno.celo.org"
   }
 };
+
+export const BasePressableWithStates = () => (
+  <BasePressable
+    text={"Testing"}
+    viewInteraction={{ hover: { backgroundColor: "primary" } }}
+    textInteraction={{ hover: { color: "white" } }}
+  />
+);
 
 export const ClaimButtonWithThemeExample = () => {
   const ethereum = (window as any).ethereum;
@@ -41,7 +56,7 @@ export const ClaimButtonWithThemeExample = () => {
         }
       });
     }
-  }, [library]);
+  }, [/* used */ library]);
 
   //todo: should not need two providers, current bug with only web3provider and not able to find connected account
   // probably causing the claimCall bug where it doesn't update to web3provider
