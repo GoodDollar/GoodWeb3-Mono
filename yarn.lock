@@ -3926,8 +3926,8 @@ __metadata:
   linkType: hard
 
 "@gooddollar/web3sdk-v2@npm:latest":
-  version: 0.2.8
-  resolution: "@gooddollar/web3sdk-v2@npm:0.2.8"
+  version: 0.2.9
+  resolution: "@gooddollar/web3sdk-v2@npm:0.2.9"
   dependencies:
     "@amplitude/analytics-browser": ^1.6.4
     "@amplitude/analytics-react-native": ^0.7.0
@@ -3949,7 +3949,7 @@ __metadata:
     "@web3-onboard/injected-wallets": ^2.10.1
     "@web3-onboard/react": ^2.8.10
     "@web3-onboard/torus": ^2.2.5
-    "@web3-onboard/walletconnect": ^2.4.7
+    "@web3-onboard/walletconnect": ^2.5.1
     "@web3auth/base": ^4.0.0
     "@web3auth/core": ^4.0.0
     "@web3auth/openlogin-adapter": ^4.1.0
@@ -3973,7 +3973,7 @@ __metadata:
     "@react-native-async-storage/async-storage": 1.17.10
     react-native: "*"
     react-native-web: "*"
-  checksum: 23f1a42dc05149fc98a78f00e1d4f46d331556d58711302a9ac56c674eff4a0eea21f8d30abb2a702b6059cc8264122370494c5a600d46d303d665054bc22b37
+  checksum: 3487d56f5223bedd616dfff16a6d076764b62559b34f1eddd4954394cfe1d074e73f95882e29cac822afdf2903cade94ceba14511f12f66da394dc967f5ba6a4
   languageName: node
   linkType: hard
 
@@ -11703,7 +11703,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@web3-onboard/walletconnect@npm:^2.4.7, @web3-onboard/walletconnect@npm:^2.5.1":
+"@web3-onboard/walletconnect@npm:^2.5.1":
   version: 2.5.1
   resolution: "@web3-onboard/walletconnect@npm:2.5.1"
   dependencies:
