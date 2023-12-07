@@ -55,7 +55,6 @@ const injected = injectedModule({
 export const wc2InitOptions = {
   projectId: "095eb531a0c00781cb45644be58b065e",
   version: 2,
-  requiredChains: [42220],
   qrModalOptions: {
     optionalChains: [122, 1, 42220],
     themeVariables: [],
