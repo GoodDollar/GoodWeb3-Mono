@@ -144,6 +144,7 @@ const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards, claimed, isMobile }) => 
         _contentContainerStyle={{
           width: contentWidth
         }}
+        style={{ alignSelf: "center" }}
         // @ts-ignore
         ref={getFlatListRef}
         data={activeCards}
