@@ -1,4 +1,4 @@
-import { Text, Pressable, ITextProps, View, StyledProps, IPressableProps, IButtonProps } from "native-base";
+import { Text, Pressable, ITextProps, View, StyledProps, IPressableProps } from "native-base";
 import { IViewProps } from "native-base/lib/typescript/components/basic/View/types";
 import React from "react";
 import { withTheme } from "../../theme/hoc/withTheme";
@@ -13,7 +13,7 @@ type InterProps = {
   [key in interactionEvents]?: InteractionStyles;
 };
 
-export interface BasePressableProps extends IPressableProps, Pick<IButtonProps, "variant"> {
+export interface BasePressableProps extends IPressableProps {
   /**
    * a text to be rendered in the component.
    */

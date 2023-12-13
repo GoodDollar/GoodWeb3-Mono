@@ -3769,7 +3769,7 @@ __metadata:
     metro-react-native-babel-preset: ^0.72.0
     moment: ^2.29.4
     moment-duration-format: ^2.3.2
-    native-base: 3.4.11
+    native-base: ^3.4.28
     prop-types: ^15.8.1
     raw-loader: ^4.0.2
     react: 17.0.2
@@ -5555,21 +5555,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-aria/focus@npm:3.2.3":
-  version: 3.2.3
-  resolution: "@react-aria/focus@npm:3.2.3"
-  dependencies:
-    "@babel/runtime": ^7.6.2
-    "@react-aria/interactions": ^3.3.0
-    "@react-aria/utils": ^3.4.0
-    "@react-types/shared": ^3.3.0
-    clsx: ^1.1.1
-  peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1
-  checksum: e207b98c684e977bcd37b9b275140f6adf7dcdd8f08f9414c6370b0d8e7e7d49aedc78594017365295c269e0c580e796f2397d894e011c5d94571923e3a518bc
-  languageName: node
-  linkType: hard
-
 "@react-aria/focus@npm:^3.15.0, @react-aria/focus@npm:^3.2.3":
   version: 3.15.0
   resolution: "@react-aria/focus@npm:3.15.0"
@@ -5618,7 +5603,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-aria/interactions@npm:^3.20.0, @react-aria/interactions@npm:^3.3.0, @react-aria/interactions@npm:^3.3.2":
+"@react-aria/interactions@npm:^3.20.0, @react-aria/interactions@npm:^3.3.2":
   version: 3.20.0
   resolution: "@react-aria/interactions@npm:3.20.0"
   dependencies:
@@ -5842,7 +5827,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-aria/utils@npm:^3.22.0, @react-aria/utils@npm:^3.3.0, @react-aria/utils@npm:^3.4.0, @react-aria/utils@npm:^3.4.1, @react-aria/utils@npm:^3.6.0":
+"@react-aria/utils@npm:^3.22.0, @react-aria/utils@npm:^3.3.0, @react-aria/utils@npm:^3.4.1, @react-aria/utils@npm:^3.6.0":
   version: 3.22.0
   resolution: "@react-aria/utils@npm:3.22.0"
   dependencies:
@@ -5886,9 +5871,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-aria/checkbox@npm:^0.2.2":
-  version: 0.2.6
-  resolution: "@react-native-aria/checkbox@npm:0.2.6"
+"@react-native-aria/checkbox@npm:^0.2.3":
+  version: 0.2.7
+  resolution: "@react-native-aria/checkbox@npm:0.2.7"
   dependencies:
     "@react-aria/checkbox": ^3.2.1
     "@react-aria/utils": ^3.6.0
@@ -5898,7 +5883,7 @@ __metadata:
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: 74cb8aed9e8ea6c6f8c3777dc6b7d14ca3bbbd6aa4fb05ec14b2c0f732ad06951da45f28cfa560fd2fc3c6f5f03a11e6370930e4d3e43793cde60cf748ddcd02
+  checksum: 4d7b2013c6b2cfb23c3355e3a1c90301a347ea786572ad344f3707eb70d096484a5a7d730a360449bf5211ebf81fe44eb9516e0131dd3b96f68ec78c79a96ec1
   languageName: node
   linkType: hard
 
@@ -5965,13 +5950,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-aria/overlays@npm:0.3.3-rc.0":
-  version: 0.3.3-rc.0
-  resolution: "@react-native-aria/overlays@npm:0.3.3-rc.0"
+"@react-native-aria/overlays@npm:^0.3.3":
+  version: 0.3.10
+  resolution: "@react-native-aria/overlays@npm:0.3.10"
   dependencies:
     "@react-aria/interactions": ^3.3.2
     "@react-aria/overlays": ^3.7.0
-    "@react-native-aria/utils": ^0.2.8
+    "@react-native-aria/utils": ^0.2.10
     "@react-stately/overlays": ^3.1.1
     "@react-types/overlays": ^3.4.0
     dom-helpers: ^5.0.0
@@ -5979,7 +5964,7 @@ __metadata:
     react: "*"
     react-dom: "*"
     react-native: "*"
-  checksum: 3f215895305b7230bc3b9f441144a1444404343d8dc909d14c1861f8a2adf339dd7d5d2880922b933fd2c5858d75a3c060ac4c35616d370cd50743ba8e721b5c
+  checksum: 108d402452d848c52f5824a3d3e12b2d55a27f2beee7dc9c3f00a384457d3584052d7ca9f57235c34575ba62d13c20a10f384dfd0da7ed4eedab9afe172237b1
   languageName: node
   linkType: hard
 
@@ -6770,7 +6755,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-types/shared@npm:^3.2.1, @react-types/shared@npm:^3.22.0, @react-types/shared@npm:^3.3.0, @react-types/shared@npm:^3.4.0":
+"@react-types/shared@npm:^3.2.1, @react-types/shared@npm:^3.22.0, @react-types/shared@npm:^3.4.0":
   version: 3.22.0
   resolution: "@react-types/shared@npm:3.22.0"
   peerDependencies:
@@ -10213,26 +10198,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash.has@npm:^4.5.6":
-  version: 4.5.9
-  resolution: "@types/lodash.has@npm:4.5.9"
-  dependencies:
-    "@types/lodash": "*"
-  checksum: fb470ed1254fd7798c7f466ad37bf86e67dffcfb51b40c1dd71a40192c28a6abf51c875029e809975ea142958f603a42fe97a1f74506a57cb615381723edd427
-  languageName: node
-  linkType: hard
-
-"@types/lodash@npm:*, @types/lodash@npm:^4.14.167, @types/lodash@npm:^4.14.186":
-  version: 4.14.201
-  resolution: "@types/lodash@npm:4.14.201"
-  checksum: 484be655298e9b2dc2d218ea934071b2ea31e4a531c561dd220dbda65237e8d08c20dc2d457ac24f29be7fe167415bf7bb9360ea0d80bdb8b0f0ec8d8db92fae
-  languageName: node
-  linkType: hard
-
 "@types/lodash@npm:4.14.182":
   version: 4.14.182
   resolution: "@types/lodash@npm:4.14.182"
   checksum: 7dd137aa9dbabd632408bd37009d984655164fa1ecc3f2b6eb94afe35bf0a5852cbab6183148d883e9c73a958b7fec9a9bcf7c8e45d41195add6a18c34958209
+  languageName: node
+  linkType: hard
+
+"@types/lodash@npm:^4.14.167, @types/lodash@npm:^4.14.186":
+  version: 4.14.201
+  resolution: "@types/lodash@npm:4.14.201"
+  checksum: 484be655298e9b2dc2d218ea934071b2ea31e4a531c561dd220dbda65237e8d08c20dc2d457ac24f29be7fe167415bf7bb9360ea0d80bdb8b0f0ec8d8db92fae
   languageName: node
   linkType: hard
 
@@ -22057,7 +22033,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"inline-style-prefixer@npm:^6.0.0":
+"inline-style-prefixer@npm:^6.0.0, inline-style-prefixer@npm:^6.0.1":
   version: 6.0.4
   resolution: "inline-style-prefixer@npm:6.0.4"
   dependencies:
@@ -25147,6 +25123,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lodash.uniqueid@npm:^4.0.1":
+  version: 4.0.1
+  resolution: "lodash.uniqueid@npm:4.0.1"
+  checksum: f8a66b34c2a8df74aeab22a018c9247c96346dc449506278e6f651030166b74959a4f8e6fae60d392a4c00a40758677547b6e969e4cb6893d8fcd1cb0d2b4ba1
+  languageName: node
+  linkType: hard
+
 "lodash@npm:4.17.21, lodash@npm:^4.17.12, lodash@npm:^4.17.14, lodash@npm:^4.17.15, lodash@npm:^4.17.19, lodash@npm:^4.17.20, lodash@npm:^4.17.21, lodash@npm:^4.17.4, lodash@npm:^4.7.0":
   version: 4.17.21
   resolution: "lodash@npm:4.17.21"
@@ -26959,20 +26942,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"native-base@npm:3.4.11":
-  version: 3.4.11
-  resolution: "native-base@npm:3.4.11"
+"native-base@npm:^3.4.28":
+  version: 3.4.28
+  resolution: "native-base@npm:3.4.28"
   dependencies:
-    "@react-aria/focus": 3.2.3
-    "@react-aria/utils": ^3.6.0
     "@react-aria/visually-hidden": ^3.2.1
     "@react-native-aria/button": ^0.2.4
-    "@react-native-aria/checkbox": ^0.2.2
+    "@react-native-aria/checkbox": ^0.2.3
     "@react-native-aria/combobox": ^0.2.4-alpha.0
     "@react-native-aria/focus": ^0.2.6
     "@react-native-aria/interactions": ^0.2.2
     "@react-native-aria/listbox": ^0.2.4-alpha.3
-    "@react-native-aria/overlays": 0.3.3-rc.0
+    "@react-native-aria/overlays": ^0.3.3
     "@react-native-aria/radio": ^0.2.4
     "@react-native-aria/slider": ^0.2.5-alpha.1
     "@react-native-aria/tabs": ^0.2.7
@@ -26984,7 +26965,7 @@ __metadata:
     "@react-stately/slider": 3.0.1
     "@react-stately/tabs": 3.0.0-alpha.1
     "@react-stately/toggle": 3.2.1
-    "@types/lodash.has": ^4.5.6
+    inline-style-prefixer: ^6.0.1
     lodash.clonedeep: ^4.5.0
     lodash.get: ^4.4.2
     lodash.has: ^4.5.2
@@ -26996,9 +26977,10 @@ __metadata:
     lodash.omit: ^4.5.0
     lodash.omitby: ^4.6.0
     lodash.pick: ^4.4.0
-    react-native-keyboard-aware-scroll-view: ^0.9.5
+    lodash.uniqueid: ^4.0.1
     stable-hash: ^0.0.2
     tinycolor2: ^1.4.2
+    use-sync-external-store: ^1.2.0
   peerDependencies:
     "@types/react": "*"
     "@types/react-native": "*"
@@ -27007,7 +26989,7 @@ __metadata:
     react-native: "*"
     react-native-safe-area-context: "*"
     react-native-svg: "*"
-  checksum: 8c4c0390919bee9d64ab5e1a7115966fa7751ce02a6886228c8956c036197c676b33685393c96cb60f171704751bf2d8e8a4fcbf0d664b75d57ee2381427b0ec
+  checksum: 68d3b2c56c23b2bc25296162dfbd586530df6bc3a3e0a577ab383cdfc014e4e436604edb5aa33312055226c375e170ca942e686d43b23372d075dd7aa613fa8d
   languageName: node
   linkType: hard
 
@@ -29284,7 +29266,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prop-types@npm:^15.0.0, prop-types@npm:^15.6.0, prop-types@npm:^15.6.2, prop-types@npm:^15.7.2, prop-types@npm:^15.8.1":
+"prop-types@npm:^15.0.0, prop-types@npm:^15.6.0, prop-types@npm:^15.7.2, prop-types@npm:^15.8.1":
   version: 15.8.1
   resolution: "prop-types@npm:15.8.1"
   dependencies:
@@ -29886,27 +29868,6 @@ __metadata:
   peerDependencies:
     react-native: ">=0.60.0"
   checksum: 457bb1d86c6eb1e287809e0e32a661cf52521e69093bde6f901ad4f32d506fe6f846896d2da4ef824cfd53b39bf0aba99a0552fc1c4f69ac40b77d211c75b44e
-  languageName: node
-  linkType: hard
-
-"react-native-iphone-x-helper@npm:^1.0.3":
-  version: 1.3.1
-  resolution: "react-native-iphone-x-helper@npm:1.3.1"
-  peerDependencies:
-    react-native: ">=0.42.0"
-  checksum: 024376646009a966e33e12fc2358751830818b0fb73b1c601a64eb5e490d2dc43eec23668991b985a8c412a84d087f20eb45bb9b593567c08b66e741b7bddda5
-  languageName: node
-  linkType: hard
-
-"react-native-keyboard-aware-scroll-view@npm:^0.9.5":
-  version: 0.9.5
-  resolution: "react-native-keyboard-aware-scroll-view@npm:0.9.5"
-  dependencies:
-    prop-types: ^15.6.2
-    react-native-iphone-x-helper: ^1.0.3
-  peerDependencies:
-    react-native: ">=0.48.4"
-  checksum: 5eec2aedb886213dfed4c8428a443b565dce80ba9fcf5897171e4c8829d4dd64c5011ac004d93f29adfc83ad6f88c2838d1a5b45255dc4a49bd1c0a169245800
   languageName: node
   linkType: hard
 
