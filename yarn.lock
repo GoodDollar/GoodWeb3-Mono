@@ -3729,7 +3729,7 @@ __metadata:
     "@babel/preset-react": ^7.16.0
     "@babel/preset-typescript": ^7.16.0
     "@babel/runtime": ^7.18.9
-    "@gooddollar/goodprotocol": ^2.0.22
+    "@gooddollar/goodprotocol": ^2.0.24
     "@gooddollar/web3sdk-v2": latest
     "@lingui/macro": ^3.14.0
     "@lingui/react": ^3.14.0
@@ -3897,6 +3897,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@gooddollar/goodprotocol@npm:^2.0.24":
+  version: 2.0.24
+  resolution: "@gooddollar/goodprotocol@npm:2.0.24"
+  dependencies:
+    "@gooddollar/goodcontracts": ^2.6.6
+    "@jsier/retrier": ^1.2.4
+    "@openzeppelin/contracts": ^4.8.0
+    "@openzeppelin/contracts-upgradeable": ^4.8.0
+    "@openzeppelin/hardhat-upgrades": ^1.22.1
+    "@superfluid-finance/ethereum-contracts": ^1.8.1
+    "@superfluid-finance/sdk-core": ^0.5.8
+    "@typechain/hardhat": ^6.1.5
+    async-promise-pool: ^1.0.4
+    openzeppelin-solidity: ^4.3.2
+    patch-package: latest
+    press-any-key: ^0.1.1
+    truffle-plugin-verify: ^0.6.1
+    truffle-source-verify: ^0.0.6
+  checksum: b1ba09ac716da3eddfe9f841ce540cc7b277a3806415f873605a3d548642eb459abd7acb6a7ac68316696f2e48b1c2ab3b3aa056a40653db5561a00592fb7e24
+  languageName: node
+  linkType: hard
+
 "@gooddollar/web3sdk-v2@npm:0.1.55":
   version: 0.1.55
   resolution: "@gooddollar/web3sdk-v2@npm:0.1.55"
@@ -3992,7 +4014,7 @@ __metadata:
     "@ceramicnetwork/stream-tile": ^2.31.0
     "@gooddollar/bridge-app": ^1.5.0
     "@gooddollar/bridge-contracts": ^1.0.17
-    "@gooddollar/goodprotocol": ^2.0.22
+    "@gooddollar/goodprotocol": ^2.0.24
     "@orbisclub/orbis-sdk": ^0.4.87
     "@react-native-async-storage/async-storage": 1.17.10
     "@react-native-firebase/analytics": ^16.4.6
