@@ -3695,7 +3695,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/bridge-app@npm:^1.2.2, @gooddollar/bridge-app@npm:^1.5.0":
+"@gooddollar/bridge-app@npm:^1.5.0":
   version: 1.5.10
   resolution: "@gooddollar/bridge-app@npm:1.5.10"
   dependencies:
@@ -3711,7 +3711,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/bridge-contracts@npm:^1.0.10, @gooddollar/bridge-contracts@npm:^1.0.17":
+"@gooddollar/bridge-contracts@npm:^1.0.17":
   version: 1.0.17
   resolution: "@gooddollar/bridge-contracts@npm:1.0.17"
   checksum: 5f0a9c9f99cedd09f71e7f67721fb91b39750fa8bcac3aff157aaabbcfbf447a7649b50f1eefce90d2fa9ae2aef65fc842c7dcb0ca94970d4947259a92530419
@@ -3730,7 +3730,7 @@ __metadata:
     "@babel/preset-typescript": ^7.16.0
     "@babel/runtime": ^7.18.9
     "@gooddollar/goodprotocol": ^2.0.24
-    "@gooddollar/web3sdk-v2": latest
+    "@gooddollar/web3sdk-v2": 0.2.10-beta.ed2172c
     "@lingui/macro": ^3.14.0
     "@lingui/react": ^3.14.0
     "@magiklabs/react-sdk": ^1.0.8
@@ -3769,7 +3769,7 @@ __metadata:
     metro-react-native-babel-preset: ^0.72.0
     moment: ^2.29.4
     moment-duration-format: ^2.3.2
-    native-base: 3.4.11
+    native-base: ^3.4.28
     prop-types: ^15.8.1
     raw-loader: ^4.0.2
     react: 17.0.2
@@ -3815,7 +3815,7 @@ __metadata:
     "@babel/core": ^7.17.5
     "@babel/preset-env": ^7.16.11
     "@gooddollar/goodprotocol": ^2.*
-    "@gooddollar/web3sdk-v2": 0.1.55
+    "@gooddollar/web3sdk-v2": 0.2.10-beta.751faa8
     "@testing-library/react": ^12.1.4
     "@types/jest": ^27.4.1
     "@types/node": ^17.0.21
@@ -3832,26 +3832,6 @@ __metadata:
     react: ^17.0.2
   languageName: unknown
   linkType: soft
-
-"@gooddollar/goodprotocol@npm:1.0.29-beta.5":
-  version: 1.0.29-beta.5
-  resolution: "@gooddollar/goodprotocol@npm:1.0.29-beta.5"
-  dependencies:
-    "@gooddollar/goodcontracts": ^2.6.6
-    "@jsier/retrier": ^1.2.4
-    "@openzeppelin/contracts": ^4.5.0
-    "@openzeppelin/contracts-upgradeable": ^4.3.2
-    "@typechain/hardhat": ^6.1.2
-    async-promise-pool: ^1.0.4
-    ethers-multicall: ^0.2.1
-    openzeppelin-solidity: ^4.3.2
-    patch-package: latest
-    press-any-key: ^0.1.1
-    truffle-plugin-verify: ^0.5.11
-    truffle-source-verify: ^0.0.6
-  checksum: 8334b72beb081625b524cb88018c5d88df657d117504baf5be9cb2a53a6acd8ee8ffdf3c23473fc8f727075c9f14d1dc83f01c526341b9c304c883844f3ba669
-  languageName: node
-  linkType: hard
 
 "@gooddollar/goodprotocol@npm:^2.*":
   version: 2.0.20
@@ -3919,37 +3899,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/web3sdk-v2@npm:0.1.55":
-  version: 0.1.55
-  resolution: "@gooddollar/web3sdk-v2@npm:0.1.55"
-  dependencies:
-    "@amplitude/analytics-browser": ^1.6.4
-    "@amplitude/analytics-react-native": ^0.7.0
-    "@gooddollar/bridge-app": ^1.2.2
-    "@gooddollar/bridge-contracts": ^1.0.10
-    "@gooddollar/goodprotocol": 1.0.29-beta.5
-    "@react-native-firebase/analytics": ^16.4.6
-    "@sentry/browser": 7.16.0
-    "@sentry/react-native": ^4.8.0
-    "@usedapp/core": 1.*
-    eventemitter3: ^4.0.7
-    react-native: ^0.70.2
-    react-native-indicative: ^0.2.1
-    react-native-restart: ^0.0.24
-    react-use-promise: ^0.5.0
-  peerDependencies:
-    "@react-native-async-storage/async-storage": 1.17.10
-    ethers: 5.*
-    react: "*"
-    react-native: "*"
-    react-native-web: "*"
-  checksum: ddf7f4babfd0a73d74c6c07a62cf28e8dd16b029d4963dcbc1957b01c5f7a07fb8c6d77e06d72dccff33b4d14c18b191379745d4da9c0adbcdb91b3605a193bc
-  languageName: node
-  linkType: hard
-
-"@gooddollar/web3sdk-v2@npm:latest":
-  version: 0.2.10
-  resolution: "@gooddollar/web3sdk-v2@npm:0.2.10"
+"@gooddollar/web3sdk-v2@npm:0.2.10-beta.751faa8":
+  version: 0.2.10-beta.751faa8
+  resolution: "@gooddollar/web3sdk-v2@npm:0.2.10-beta.751faa8"
   dependencies:
     "@amplitude/analytics-browser": ^1.6.4
     "@amplitude/analytics-react-native": ^0.7.0
@@ -3957,7 +3909,7 @@ __metadata:
     "@ceramicnetwork/stream-tile": ^2.31.0
     "@gooddollar/bridge-app": ^1.5.0
     "@gooddollar/bridge-contracts": ^1.0.17
-    "@gooddollar/goodprotocol": ^2.0.24
+    "@gooddollar/goodprotocol": ^2.0.22
     "@orbisclub/orbis-sdk": ^0.4.87
     "@react-native-firebase/analytics": ^16.4.6
     "@sentry/browser": 7.16.0
@@ -3995,7 +3947,59 @@ __metadata:
     "@react-native-async-storage/async-storage": 1.17.10
     react-native: "*"
     react-native-web: "*"
-  checksum: b1c880502cf387f1974e0565fcdd6d71bcf26ae79b72b1ca61265ba36be0b1e2e891b2073a3e1cc074c0f7a3ee64b32fdf8ce3f59709eea0e0216b2ce6ed7f37
+  checksum: 66dde35a5efad589d006ecccbbc2e516c0079104e4ea0bc21df7a54e48fa4449e12c7e7a0461c0b0128c07ac7aecb3ff4843cc7e1fced6d2e52cb9107fa3b7fe
+  languageName: node
+  linkType: hard
+
+"@gooddollar/web3sdk-v2@npm:0.2.10-beta.ed2172c":
+  version: 0.2.10-beta.ed2172c
+  resolution: "@gooddollar/web3sdk-v2@npm:0.2.10-beta.ed2172c"
+  dependencies:
+    "@amplitude/analytics-browser": ^1.6.4
+    "@amplitude/analytics-react-native": ^0.7.0
+    "@ceramicnetwork/http-client": ^2.32.0
+    "@ceramicnetwork/stream-tile": ^2.31.0
+    "@gooddollar/bridge-app": ^1.5.0
+    "@gooddollar/bridge-contracts": ^1.0.17
+    "@gooddollar/goodprotocol": ^2.0.22
+    "@orbisclub/orbis-sdk": ^0.4.87
+    "@react-native-firebase/analytics": ^16.4.6
+    "@sentry/browser": 7.16.0
+    "@sentry/react-native": ^4.8.0
+    "@solana/web3.js": ^1.72.0
+    "@types/react": ^18.2.28
+    "@walletconnect/client": ^1.8.0
+    "@walletconnect/qrcode-modal": ^1.8.0
+    "@web3-onboard/coinbase": ^2.2.4
+    "@web3-onboard/core": ^2.20.5
+    "@web3-onboard/injected-wallets": ^2.10.1
+    "@web3-onboard/react": ^2.8.10
+    "@web3-onboard/torus": ^2.2.5
+    "@web3-onboard/walletconnect": ^2.5.1
+    "@web3auth/base": ^4.0.0
+    "@web3auth/core": ^4.0.0
+    "@web3auth/openlogin-adapter": ^4.1.0
+    "@web3auth/torus-wallet-connector-plugin": ^4.0.0
+    "@web3modal/ethereum": ^2.6.2
+    "@web3modal/react": ^2.6.2
+    base-64: ^1.0.0
+    dexie: ^3.2.4
+    eventemitter3: ^4.0.7
+    mixpanel-browser: ^2.45.0
+    mixpanel-react-native: ^2.1.0
+    moment: 2.29.4
+    multiformats: 9.9.0
+    posthog-react-native: ^2.4.0
+    react-native-indicative: ^0.2.1
+    react-native-restart: ^0.0.24
+    react-use-promise: ^0.5.0
+    viem: ^1.2.13
+    wagmi: ^1.3.8
+  peerDependencies:
+    "@react-native-async-storage/async-storage": 1.17.10
+    react-native: "*"
+    react-native-web: "*"
+  checksum: a3e975d85568ed9e8a65584a5aa03eeac0f5d7a9361ca1394aa7dc2afdb815f03e8820e9740136257127a5a61e17149a9189d9736e6b3ca94dd4ef252a0525d5
   languageName: node
   linkType: hard
 
@@ -4348,15 +4352,6 @@ __metadata:
     node-notifier:
       optional: true
   checksum: 904a94ad8f1b43cd6b48de3b0226659bff3696150ff8cf7680fc2faffdc8a115203bb9ab6e817c1f79f9d6a81f67953053cbc64d8a4604f2e0c42a04c28cf126
-  languageName: node
-  linkType: hard
-
-"@jest/create-cache-key-function@npm:^27.0.1":
-  version: 27.5.1
-  resolution: "@jest/create-cache-key-function@npm:27.5.1"
-  dependencies:
-    "@jest/types": ^27.5.1
-  checksum: a6c3a8c769aca6f66f5dc80f1c77e66980b4f213a6b2a15a92ba3595f032848a1261c06c9c798dcf2b672b1ffbefad5085af89d130548741c85ddbe0cf4284e7
   languageName: node
   linkType: hard
 
@@ -5220,7 +5215,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@openzeppelin/contracts-upgradeable@npm:^4.3.2, @openzeppelin/contracts-upgradeable@npm:^4.8.0":
+"@openzeppelin/contracts-upgradeable@npm:^4.8.0":
   version: 4.9.3
   resolution: "@openzeppelin/contracts-upgradeable@npm:4.9.3"
   checksum: bda0240b1d44c913ec5a4e109c622f216c2bbd7b468d210822f75782a5f7fe0609d08bf03b78b253333625e99e507cf2f75212f1de3b274bd9fc64ae967aeec3
@@ -5234,7 +5229,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@openzeppelin/contracts@npm:4.9.3, @openzeppelin/contracts@npm:^4.5.0, @openzeppelin/contracts@npm:^4.8.0":
+"@openzeppelin/contracts@npm:4.9.3, @openzeppelin/contracts@npm:^4.8.0":
   version: 4.9.3
   resolution: "@openzeppelin/contracts@npm:4.9.3"
   checksum: 4932063e733b35fa7669b9fe2053f69b062366c5c208b0c6cfa1ac451712100c78acff98120c3a4b88d94154c802be05d160d71f37e7d74cadbe150964458838
@@ -5577,21 +5572,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-aria/focus@npm:3.2.3":
-  version: 3.2.3
-  resolution: "@react-aria/focus@npm:3.2.3"
-  dependencies:
-    "@babel/runtime": ^7.6.2
-    "@react-aria/interactions": ^3.3.0
-    "@react-aria/utils": ^3.4.0
-    "@react-types/shared": ^3.3.0
-    clsx: ^1.1.1
-  peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1
-  checksum: e207b98c684e977bcd37b9b275140f6adf7dcdd8f08f9414c6370b0d8e7e7d49aedc78594017365295c269e0c580e796f2397d894e011c5d94571923e3a518bc
-  languageName: node
-  linkType: hard
-
 "@react-aria/focus@npm:^3.15.0, @react-aria/focus@npm:^3.2.3":
   version: 3.15.0
   resolution: "@react-aria/focus@npm:3.15.0"
@@ -5640,7 +5620,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-aria/interactions@npm:^3.20.0, @react-aria/interactions@npm:^3.3.0, @react-aria/interactions@npm:^3.3.2":
+"@react-aria/interactions@npm:^3.20.0, @react-aria/interactions@npm:^3.3.2":
   version: 3.20.0
   resolution: "@react-aria/interactions@npm:3.20.0"
   dependencies:
@@ -5864,7 +5844,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-aria/utils@npm:^3.22.0, @react-aria/utils@npm:^3.3.0, @react-aria/utils@npm:^3.4.0, @react-aria/utils@npm:^3.4.1, @react-aria/utils@npm:^3.6.0":
+"@react-aria/utils@npm:^3.22.0, @react-aria/utils@npm:^3.3.0, @react-aria/utils@npm:^3.4.1, @react-aria/utils@npm:^3.6.0":
   version: 3.22.0
   resolution: "@react-aria/utils@npm:3.22.0"
   dependencies:
@@ -5908,9 +5888,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-aria/checkbox@npm:^0.2.2":
-  version: 0.2.6
-  resolution: "@react-native-aria/checkbox@npm:0.2.6"
+"@react-native-aria/checkbox@npm:^0.2.3":
+  version: 0.2.7
+  resolution: "@react-native-aria/checkbox@npm:0.2.7"
   dependencies:
     "@react-aria/checkbox": ^3.2.1
     "@react-aria/utils": ^3.6.0
@@ -5920,7 +5900,7 @@ __metadata:
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: 74cb8aed9e8ea6c6f8c3777dc6b7d14ca3bbbd6aa4fb05ec14b2c0f732ad06951da45f28cfa560fd2fc3c6f5f03a11e6370930e4d3e43793cde60cf748ddcd02
+  checksum: 4d7b2013c6b2cfb23c3355e3a1c90301a347ea786572ad344f3707eb70d096484a5a7d730a360449bf5211ebf81fe44eb9516e0131dd3b96f68ec78c79a96ec1
   languageName: node
   linkType: hard
 
@@ -5987,13 +5967,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-aria/overlays@npm:0.3.3-rc.0":
-  version: 0.3.3-rc.0
-  resolution: "@react-native-aria/overlays@npm:0.3.3-rc.0"
+"@react-native-aria/overlays@npm:^0.3.3":
+  version: 0.3.10
+  resolution: "@react-native-aria/overlays@npm:0.3.10"
   dependencies:
     "@react-aria/interactions": ^3.3.2
     "@react-aria/overlays": ^3.7.0
-    "@react-native-aria/utils": ^0.2.8
+    "@react-native-aria/utils": ^0.2.10
     "@react-stately/overlays": ^3.1.1
     "@react-types/overlays": ^3.4.0
     dom-helpers: ^5.0.0
@@ -6001,7 +5981,7 @@ __metadata:
     react: "*"
     react-dom: "*"
     react-native: "*"
-  checksum: 3f215895305b7230bc3b9f441144a1444404343d8dc909d14c1861f8a2adf339dd7d5d2880922b933fd2c5858d75a3c060ac4c35616d370cd50743ba8e721b5c
+  checksum: 108d402452d848c52f5824a3d3e12b2d55a27f2beee7dc9c3f00a384457d3584052d7ca9f57235c34575ba62d13c20a10f384dfd0da7ed4eedab9afe172237b1
   languageName: node
   linkType: hard
 
@@ -6143,7 +6123,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-community/cli-doctor@npm:^9.2.1, @react-native-community/cli-doctor@npm:^9.3.0":
+"@react-native-community/cli-doctor@npm:^9.2.1":
   version: 9.3.0
   resolution: "@react-native-community/cli-doctor@npm:9.3.0"
   dependencies:
@@ -6167,7 +6147,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-community/cli-hermes@npm:^9.2.1, @react-native-community/cli-hermes@npm:^9.3.4":
+"@react-native-community/cli-hermes@npm:^9.2.1":
   version: 9.3.4
   resolution: "@react-native-community/cli-hermes@npm:9.3.4"
   dependencies:
@@ -6195,7 +6175,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-community/cli-platform-android@npm:9.3.4, @react-native-community/cli-platform-android@npm:^9.3.4":
+"@react-native-community/cli-platform-android@npm:^9.3.4":
   version: 9.3.4
   resolution: "@react-native-community/cli-platform-android@npm:9.3.4"
   dependencies:
@@ -6223,7 +6203,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-community/cli-platform-ios@npm:9.3.0, @react-native-community/cli-platform-ios@npm:^9.3.0":
+"@react-native-community/cli-platform-ios@npm:^9.3.0":
   version: 9.3.0
   resolution: "@react-native-community/cli-platform-ios@npm:9.3.0"
   dependencies:
@@ -6236,7 +6216,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-community/cli-plugin-metro@npm:^9.2.1, @react-native-community/cli-plugin-metro@npm:^9.3.3":
+"@react-native-community/cli-plugin-metro@npm:^9.2.1":
   version: 9.3.3
   resolution: "@react-native-community/cli-plugin-metro@npm:9.3.3"
   dependencies:
@@ -6321,33 +6301,6 @@ __metadata:
   bin:
     react-native: build/bin.js
   checksum: 9dfe8d258e9f36d339b8e9ebe22d276003b00a035d20ff4a3328ce3b923cd090e94f6a53aaab9869c9c29d46e5aa12317bae3f806890880a7f0235a01825e5e3
-  languageName: node
-  linkType: hard
-
-"@react-native-community/cli@npm:9.3.4":
-  version: 9.3.4
-  resolution: "@react-native-community/cli@npm:9.3.4"
-  dependencies:
-    "@react-native-community/cli-clean": ^9.2.1
-    "@react-native-community/cli-config": ^9.2.1
-    "@react-native-community/cli-debugger-ui": ^9.0.0
-    "@react-native-community/cli-doctor": ^9.3.0
-    "@react-native-community/cli-hermes": ^9.3.4
-    "@react-native-community/cli-plugin-metro": ^9.3.3
-    "@react-native-community/cli-server-api": ^9.2.1
-    "@react-native-community/cli-tools": ^9.2.1
-    "@react-native-community/cli-types": ^9.1.0
-    chalk: ^4.1.2
-    commander: ^9.4.0
-    execa: ^1.0.0
-    find-up: ^4.1.0
-    fs-extra: ^8.1.0
-    graceful-fs: ^4.1.3
-    prompts: ^2.4.0
-    semver: ^6.3.0
-  bin:
-    react-native: build/bin.js
-  checksum: fac0715ca9a34f1f1aaed048a8dfeffb46394ef1845e0120eae669b5bbbe58b7abee21afd4af3c8f470afb4a538b0f76e9f953537659595ffe148ccc2b154e46
   languageName: node
   linkType: hard
 
@@ -6792,7 +6745,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-types/shared@npm:^3.2.1, @react-types/shared@npm:^3.22.0, @react-types/shared@npm:^3.3.0, @react-types/shared@npm:^3.4.0":
+"@react-types/shared@npm:^3.2.1, @react-types/shared@npm:^3.22.0, @react-types/shared@npm:^3.4.0":
   version: 3.22.0
   resolution: "@react-types/shared@npm:3.22.0"
   peerDependencies:
@@ -9939,7 +9892,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typechain/hardhat@npm:^6.1.2, @typechain/hardhat@npm:^6.1.5":
+"@typechain/hardhat@npm:^6.1.5":
   version: 6.1.6
   resolution: "@typechain/hardhat@npm:6.1.6"
   dependencies:
@@ -10235,26 +10188,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash.has@npm:^4.5.6":
-  version: 4.5.9
-  resolution: "@types/lodash.has@npm:4.5.9"
-  dependencies:
-    "@types/lodash": "*"
-  checksum: fb470ed1254fd7798c7f466ad37bf86e67dffcfb51b40c1dd71a40192c28a6abf51c875029e809975ea142958f603a42fe97a1f74506a57cb615381723edd427
-  languageName: node
-  linkType: hard
-
-"@types/lodash@npm:*, @types/lodash@npm:^4.14.167, @types/lodash@npm:^4.14.186":
-  version: 4.14.201
-  resolution: "@types/lodash@npm:4.14.201"
-  checksum: 484be655298e9b2dc2d218ea934071b2ea31e4a531c561dd220dbda65237e8d08c20dc2d457ac24f29be7fe167415bf7bb9360ea0d80bdb8b0f0ec8d8db92fae
-  languageName: node
-  linkType: hard
-
 "@types/lodash@npm:4.14.182":
   version: 4.14.182
   resolution: "@types/lodash@npm:4.14.182"
   checksum: 7dd137aa9dbabd632408bd37009d984655164fa1ecc3f2b6eb94afe35bf0a5852cbab6183148d883e9c73a958b7fec9a9bcf7c8e45d41195add6a18c34958209
+  languageName: node
+  linkType: hard
+
+"@types/lodash@npm:^4.14.167, @types/lodash@npm:^4.14.186":
+  version: 4.14.201
+  resolution: "@types/lodash@npm:4.14.201"
+  checksum: 484be655298e9b2dc2d218ea934071b2ea31e4a531c561dd220dbda65237e8d08c20dc2d457ac24f29be7fe167415bf7bb9360ea0d80bdb8b0f0ec8d8db92fae
   languageName: node
   linkType: hard
 
@@ -10866,7 +10810,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@usedapp/core@npm:1.*, @usedapp/core@npm:^1.2.13, @usedapp/core@npm:^1.2.6":
+"@usedapp/core@npm:^1.2.13, @usedapp/core@npm:^1.2.6":
   version: 1.2.13
   resolution: "@usedapp/core@npm:1.2.13"
   dependencies:
@@ -19166,7 +19110,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ethers-multicall@npm:^0.2.1, ethers-multicall@npm:^0.2.3":
+"ethers-multicall@npm:^0.2.3":
   version: 0.2.3
   resolution: "ethers-multicall@npm:0.2.3"
   dependencies:
@@ -22079,7 +22023,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"inline-style-prefixer@npm:^6.0.0":
+"inline-style-prefixer@npm:^6.0.0, inline-style-prefixer@npm:^6.0.1":
   version: 6.0.4
   resolution: "inline-style-prefixer@npm:6.0.4"
   dependencies:
@@ -25169,6 +25113,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lodash.uniqueid@npm:^4.0.1":
+  version: 4.0.1
+  resolution: "lodash.uniqueid@npm:4.0.1"
+  checksum: f8a66b34c2a8df74aeab22a018c9247c96346dc449506278e6f651030166b74959a4f8e6fae60d392a4c00a40758677547b6e969e4cb6893d8fcd1cb0d2b4ba1
+  languageName: node
+  linkType: hard
+
 "lodash@npm:4.17.21, lodash@npm:^4.17.12, lodash@npm:^4.17.14, lodash@npm:^4.17.15, lodash@npm:^4.17.19, lodash@npm:^4.17.20, lodash@npm:^4.17.21, lodash@npm:^4.17.4, lodash@npm:^4.7.0":
   version: 4.17.21
   resolution: "lodash@npm:4.17.21"
@@ -26981,20 +26932,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"native-base@npm:3.4.11":
-  version: 3.4.11
-  resolution: "native-base@npm:3.4.11"
+"native-base@npm:^3.4.28":
+  version: 3.4.28
+  resolution: "native-base@npm:3.4.28"
   dependencies:
-    "@react-aria/focus": 3.2.3
-    "@react-aria/utils": ^3.6.0
     "@react-aria/visually-hidden": ^3.2.1
     "@react-native-aria/button": ^0.2.4
-    "@react-native-aria/checkbox": ^0.2.2
+    "@react-native-aria/checkbox": ^0.2.3
     "@react-native-aria/combobox": ^0.2.4-alpha.0
     "@react-native-aria/focus": ^0.2.6
     "@react-native-aria/interactions": ^0.2.2
     "@react-native-aria/listbox": ^0.2.4-alpha.3
-    "@react-native-aria/overlays": 0.3.3-rc.0
+    "@react-native-aria/overlays": ^0.3.3
     "@react-native-aria/radio": ^0.2.4
     "@react-native-aria/slider": ^0.2.5-alpha.1
     "@react-native-aria/tabs": ^0.2.7
@@ -27006,7 +26955,7 @@ __metadata:
     "@react-stately/slider": 3.0.1
     "@react-stately/tabs": 3.0.0-alpha.1
     "@react-stately/toggle": 3.2.1
-    "@types/lodash.has": ^4.5.6
+    inline-style-prefixer: ^6.0.1
     lodash.clonedeep: ^4.5.0
     lodash.get: ^4.4.2
     lodash.has: ^4.5.2
@@ -27018,9 +26967,10 @@ __metadata:
     lodash.omit: ^4.5.0
     lodash.omitby: ^4.6.0
     lodash.pick: ^4.4.0
-    react-native-keyboard-aware-scroll-view: ^0.9.5
+    lodash.uniqueid: ^4.0.1
     stable-hash: ^0.0.2
     tinycolor2: ^1.4.2
+    use-sync-external-store: ^1.2.0
   peerDependencies:
     "@types/react": "*"
     "@types/react-native": "*"
@@ -27029,7 +26979,7 @@ __metadata:
     react-native: "*"
     react-native-safe-area-context: "*"
     react-native-svg: "*"
-  checksum: 8c4c0390919bee9d64ab5e1a7115966fa7751ce02a6886228c8956c036197c676b33685393c96cb60f171704751bf2d8e8a4fcbf0d664b75d57ee2381427b0ec
+  checksum: 68d3b2c56c23b2bc25296162dfbd586530df6bc3a3e0a577ab383cdfc014e4e436604edb5aa33312055226c375e170ca942e686d43b23372d075dd7aa613fa8d
   languageName: node
   linkType: hard
 
@@ -29273,7 +29223,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"promise@npm:^8.0.3, promise@npm:^8.3.0":
+"promise@npm:^8.0.3":
   version: 8.3.0
   resolution: "promise@npm:8.3.0"
   dependencies:
@@ -29306,7 +29256,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prop-types@npm:^15.0.0, prop-types@npm:^15.6.0, prop-types@npm:^15.6.2, prop-types@npm:^15.7.2, prop-types@npm:^15.8.1":
+"prop-types@npm:^15.0.0, prop-types@npm:^15.6.0, prop-types@npm:^15.7.2, prop-types@npm:^15.8.1":
   version: 15.8.1
   resolution: "prop-types@npm:15.8.1"
   dependencies:
@@ -29883,7 +29833,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-codegen@npm:^0.70.6, react-native-codegen@npm:^0.70.7":
+"react-native-codegen@npm:^0.70.6":
   version: 0.70.7
   resolution: "react-native-codegen@npm:0.70.7"
   dependencies:
@@ -29908,27 +29858,6 @@ __metadata:
   peerDependencies:
     react-native: ">=0.60.0"
   checksum: 457bb1d86c6eb1e287809e0e32a661cf52521e69093bde6f901ad4f32d506fe6f846896d2da4ef824cfd53b39bf0aba99a0552fc1c4f69ac40b77d211c75b44e
-  languageName: node
-  linkType: hard
-
-"react-native-iphone-x-helper@npm:^1.0.3":
-  version: 1.3.1
-  resolution: "react-native-iphone-x-helper@npm:1.3.1"
-  peerDependencies:
-    react-native: ">=0.42.0"
-  checksum: 024376646009a966e33e12fc2358751830818b0fb73b1c601a64eb5e490d2dc43eec23668991b985a8c412a84d087f20eb45bb9b593567c08b66e741b7bddda5
-  languageName: node
-  linkType: hard
-
-"react-native-keyboard-aware-scroll-view@npm:^0.9.5":
-  version: 0.9.5
-  resolution: "react-native-keyboard-aware-scroll-view@npm:0.9.5"
-  dependencies:
-    prop-types: ^15.6.2
-    react-native-iphone-x-helper: ^1.0.3
-  peerDependencies:
-    react-native: ">=0.48.4"
-  checksum: 5eec2aedb886213dfed4c8428a443b565dce80ba9fcf5897171e4c8829d4dd64c5011ac004d93f29adfc83ad6f88c2838d1a5b45255dc4a49bd1c0a169245800
   languageName: node
   linkType: hard
 
@@ -30081,50 +30010,6 @@ __metadata:
   bin:
     react-native: cli.js
   checksum: 2782b7811e4c815020b8c60b48b7b4cbb462e75e42a83ae2f80119553cf8317ceffc3bcc0d70df29e1ff1df689faf7a5d5117c593b2f99c23a88358113078051
-  languageName: node
-  linkType: hard
-
-"react-native@npm:^0.70.2":
-  version: 0.70.14
-  resolution: "react-native@npm:0.70.14"
-  dependencies:
-    "@jest/create-cache-key-function": ^27.0.1
-    "@react-native-community/cli": 9.3.4
-    "@react-native-community/cli-platform-android": 9.3.4
-    "@react-native-community/cli-platform-ios": 9.3.0
-    "@react-native/assets": 1.0.0
-    "@react-native/normalize-color": 2.0.0
-    "@react-native/polyfills": 2.0.0
-    abort-controller: ^3.0.0
-    anser: ^1.4.9
-    base64-js: ^1.1.2
-    event-target-shim: ^5.0.1
-    invariant: ^2.2.4
-    jsc-android: ^250230.2.1
-    memoize-one: ^5.0.0
-    metro-react-native-babel-transformer: 0.72.4
-    metro-runtime: 0.72.4
-    metro-source-map: 0.72.4
-    mkdirp: ^0.5.1
-    nullthrows: ^1.1.1
-    pretty-format: ^26.5.2
-    promise: ^8.3.0
-    react-devtools-core: 4.24.0
-    react-native-codegen: ^0.70.7
-    react-native-gradle-plugin: ^0.70.3
-    react-refresh: ^0.4.0
-    react-shallow-renderer: ^16.15.0
-    regenerator-runtime: ^0.13.2
-    scheduler: ^0.22.0
-    stacktrace-parser: ^0.1.3
-    use-sync-external-store: ^1.0.0
-    whatwg-fetch: ^3.0.0
-    ws: ^6.1.4
-  peerDependencies:
-    react: 18.1.0
-  bin:
-    react-native: cli.js
-  checksum: 8b033f9864ff90206b5853da7bad641638df1807899169530ff8e4173299ebf7b3f46d4434f9e3852fdd0914ad143af9cc1316a24a98cc91828504d863d497d2
   languageName: node
   linkType: hard
 
@@ -33608,19 +33493,6 @@ __metadata:
   bin:
     truffle-flattener: index.js
   checksum: 54670aa558d648b46e1bb992e6c672651fd2e25089cae8f1b09f762e36fd470304c5661ad3b20cc0d8e83f3ab5449effe0086c5b97a6537c5aa900ab00f27ad3
-  languageName: node
-  linkType: hard
-
-"truffle-plugin-verify@npm:^0.5.11":
-  version: 0.5.33
-  resolution: "truffle-plugin-verify@npm:0.5.33"
-  dependencies:
-    axios: ^0.26.1
-    cli-logger: ^0.5.40
-    delay: ^5.0.0
-    querystring: ^0.2.1
-    tunnel: 0.0.6
-  checksum: 7d89f70ba47e5fe3599f2a65d6ac8fb3f7e16e486c66d4c00ef268fa3d6ba0cc29d9ab276409ca49012a341d11d075c0b68324652434fa4553d226477541fc2e
   languageName: node
   linkType: hard
 
