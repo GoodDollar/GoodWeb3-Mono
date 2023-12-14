@@ -3730,7 +3730,7 @@ __metadata:
     "@babel/preset-typescript": ^7.16.0
     "@babel/runtime": ^7.18.9
     "@gooddollar/goodprotocol": ^2.0.24
-    "@gooddollar/web3sdk-v2": 0.2.10-beta.ed2172c
+    "@gooddollar/web3sdk-v2": latest
     "@lingui/macro": ^3.14.0
     "@lingui/react": ^3.14.0
     "@magiklabs/react-sdk": ^1.0.8
@@ -3951,9 +3951,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/web3sdk-v2@npm:0.2.10-beta.ed2172c":
-  version: 0.2.10-beta.ed2172c
-  resolution: "@gooddollar/web3sdk-v2@npm:0.2.10-beta.ed2172c"
+"@gooddollar/web3sdk-v2@npm:latest":
+  version: 0.2.11
+  resolution: "@gooddollar/web3sdk-v2@npm:0.2.11"
   dependencies:
     "@amplitude/analytics-browser": ^1.6.4
     "@amplitude/analytics-react-native": ^0.7.0
@@ -3961,7 +3961,7 @@ __metadata:
     "@ceramicnetwork/stream-tile": ^2.31.0
     "@gooddollar/bridge-app": ^1.5.0
     "@gooddollar/bridge-contracts": ^1.0.17
-    "@gooddollar/goodprotocol": ^2.0.22
+    "@gooddollar/goodprotocol": ^2.0.24
     "@orbisclub/orbis-sdk": ^0.4.87
     "@react-native-firebase/analytics": ^16.4.6
     "@sentry/browser": 7.16.0
@@ -3999,7 +3999,7 @@ __metadata:
     "@react-native-async-storage/async-storage": 1.17.10
     react-native: "*"
     react-native-web: "*"
-  checksum: a3e975d85568ed9e8a65584a5aa03eeac0f5d7a9361ca1394aa7dc2afdb815f03e8820e9740136257127a5a61e17149a9189d9736e6b3ca94dd4ef252a0525d5
+  checksum: 0219325ed46162ce31a975acd2737a15891a77ac249adcc33a1edc1cbf4f14f76951ea580e599258430d01d28e346010461b3a656a7154f9a1d1b95695b52780
   languageName: node
   linkType: hard
 
