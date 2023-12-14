@@ -34,6 +34,7 @@ const CurrencyBox = ({ title, placeholder, logoSrc, currencyUnit, onBlur, onChan
           variant="unstyled"
           onBlur={onBlur}
           onChangeText={onChangeText}
+          overflow="hidden"
         />
         <Text>{currencyUnit}</Text>
       </CentreBox>
