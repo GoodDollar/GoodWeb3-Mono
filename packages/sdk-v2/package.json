@@ -80,7 +80,7 @@
     "@orbisclub/orbis-sdk": "^0.4.87",
     "@react-native-firebase/analytics": "^16.4.6",
     "@sentry/browser": "7.16.0",
-    "@sentry/react-native": "^4.8.0",
+    "@sentry/react-native": "^5.15.1",
     "@solana/web3.js": "^1.72.0",
     "@types/react": "^18.2.28",
     "@walletconnect/client": "^1.8.0",
