@@ -3952,8 +3952,8 @@ __metadata:
   linkType: hard
 
 "@gooddollar/web3sdk-v2@npm:latest":
-  version: 0.2.11
-  resolution: "@gooddollar/web3sdk-v2@npm:0.2.11"
+  version: 0.2.12
+  resolution: "@gooddollar/web3sdk-v2@npm:0.2.12"
   dependencies:
     "@amplitude/analytics-browser": ^1.6.4
     "@amplitude/analytics-react-native": ^0.7.0
@@ -3965,7 +3965,7 @@ __metadata:
     "@orbisclub/orbis-sdk": ^0.4.87
     "@react-native-firebase/analytics": ^16.4.6
     "@sentry/browser": 7.16.0
-    "@sentry/react-native": ^4.8.0
+    "@sentry/react-native": ^5.15.1
     "@solana/web3.js": ^1.72.0
     "@types/react": ^18.2.28
     "@walletconnect/client": ^1.8.0
@@ -3999,7 +3999,7 @@ __metadata:
     "@react-native-async-storage/async-storage": 1.17.10
     react-native: "*"
     react-native-web: "*"
-  checksum: 0219325ed46162ce31a975acd2737a15891a77ac249adcc33a1edc1cbf4f14f76951ea580e599258430d01d28e346010461b3a656a7154f9a1d1b95695b52780
+  checksum: c108c962fc2ab3af172aead32371bd1811701938663685e5d218e2e1dd058229d8e2b842b84bec84215d59bfffe009217fad566e68ebd97f22a09d6fb9251489
   languageName: node
   linkType: hard
 
