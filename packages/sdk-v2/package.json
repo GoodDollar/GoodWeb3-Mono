@@ -104,7 +104,7 @@
     "mixpanel-react-native": "^2.1.0",
     "moment": "2.29.4",
     "multiformats": "9.9.0",
-    "posthog-react-native": "^2.4.0",
+    "posthog-react-native": "2.8.1",
     "react-native-indicative": "^0.2.1",
     "react-native-restart": "^0.0.24",
     "react-use-promise": "^0.5.0",

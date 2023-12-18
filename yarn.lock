@@ -4074,7 +4074,7 @@ __metadata:
     mixpanel-react-native: ^2.1.0
     moment: 2.29.4
     multiformats: 9.9.0
-    posthog-react-native: ^2.4.0
+    posthog-react-native: 2.8.1
     promisify-file-reader: ^4.1.0
     react: 17.0.2
     react-docgen-typescript-plugin: ^1.0.5
@@ -29137,7 +29137,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"posthog-react-native@npm:^2.4.0":
+"posthog-react-native@npm:2.8.1, posthog-react-native@npm:^2.4.0":
   version: 2.8.1
   resolution: "posthog-react-native@npm:2.8.1"
   peerDependencies:
