@@ -7,6 +7,7 @@ interface BalanceGDProps {
   gdPrice?: number;
   refresh?: QueryParams["refresh"];
   requiredChainId?: number;
+  showUsd: boolean | undefined;
 }
 
 const BalanceCopy = ({ heading, subHeading }: { heading: string; subHeading: string }) => (
@@ -21,7 +22,7 @@ const BalanceCopy = ({ heading, subHeading }: { heading: string; subHeading: str
 );
 
 const BalanceView: FC<Required<BalanceGDProps> & { amount: CurrencyValue }> = memo(
-  ({ gdPrice, amount, requiredChainId }) => {
+  ({ gdPrice, amount, requiredChainId, showUsd }) => {
     const network = requiredChainId === 122 ? "Fuse" : "Celo";
     const usdValue = ((+amount.value / 10 ** amount.currency.decimals) * gdPrice).toFixed(2);
 
@@ -31,10 +32,11 @@ const BalanceView: FC<Required<BalanceGDProps> & { amount: CurrencyValue }> = me
         heading: "Balance",
         subheading: `on ${network}`
       },
+
       {
         id: "your-balance-value",
         heading: amount.format({ suffix: "", prefix: amount.currency.ticker + " " }),
-        subheading: "(USD " + usdValue + ")"
+        subheading: showUsd ? "(USD " + usdValue + ")" : ""
       }
     ];
 
@@ -48,12 +50,12 @@ const BalanceView: FC<Required<BalanceGDProps> & { amount: CurrencyValue }> = me
   }
 );
 
-const BalanceGD: FC<BalanceGDProps> = ({ gdPrice, requiredChainId, refresh = "never" }) => {
+const BalanceGD: FC<BalanceGDProps> = ({ gdPrice, requiredChainId, refresh = "never", showUsd }) => {
   const { chainId } = useGetEnvChainId(requiredChainId);
   const { G$ } = useG$Balance(refresh, chainId);
 
   return !G$ || !gdPrice ? null : (
-    <BalanceView amount={G$} gdPrice={gdPrice} refresh={refresh} requiredChainId={chainId} />
+    <BalanceView amount={G$} gdPrice={gdPrice} refresh={refresh} requiredChainId={chainId} showUsd={showUsd} />
   );
 };
 
