@@ -3,9 +3,9 @@ import React, { useEffect, useState } from "react";
 import { useConfig } from "@usedapp/core";
 import { useSwitchNetwork } from "@gooddollar/web3sdk-v2";
 import { find } from "lodash";
-import { useModal } from "../../hooks/useModal";
-import { ActionHeader } from "../layout";
-import { LearnButton } from "../buttons";
+import { useModal } from "../../../hooks/useModal";
+import { ActionHeader } from "../../layout";
+import { LearnButton } from "../../buttons";
 
 export interface SwitchChainProps {
   children?: any;
@@ -48,6 +48,7 @@ export const SwitchChainModal = ({ children }: SwitchChainProps) => {
         header={<ActionHeader textColor={textColor} actionText={`switch to ${networkName} in your wallet`} />}
         body={<LearnButton source="network" />}
         closeText="x"
+        _modalContainer={{ paddingBottom: 18, paddingLeft: 18, paddingRight: 18 }}
       />
       {children}
     </React.Fragment>

@@ -2,10 +2,10 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Button, Text, useBreakpointValue } from "native-base";
 import { SupportedChains, useFVLink } from "@gooddollar/web3sdk-v2";
 
-import { useModal } from "../../hooks/useModal";
-import { Title } from "../layout";
-import { Web3ActionButton } from "../../advanced";
-import { CentreBox } from "../layout/CentreBox";
+import { useModal } from "../../../hooks/useModal";
+import { Title } from "../../layout";
+import { Web3ActionButton } from "../../../advanced";
+import { CentreBox } from "../../layout/CentreBox";
 
 interface GoodIdModal {
   account: string;
@@ -101,6 +101,7 @@ export const GoodIdDetails = ({ account }: { account: string }) => {
   );
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const GoodIdModal = ({ account, onClose }: GoodIdModal) => {
   const { Modal, showModal } = useModal();
 

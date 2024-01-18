@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
-import { useModal } from "../../hooks/useModal";
+import { useModal } from "../../../hooks/useModal";
 import { Box, Text } from "native-base";
-import { LearnButton } from "../buttons";
-import { Title } from "../layout";
+import { LearnButton } from "../../buttons";
+import { Title } from "../../layout";
 
 type BridgeNetworks = {
   origin: string;
