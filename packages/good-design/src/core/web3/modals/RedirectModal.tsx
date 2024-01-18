@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import { Link, Text, useBreakpointValue } from "native-base";
-import { noop } from "lodash";
 
 import { useModal } from "../../../hooks/useModal";
 import { Title } from "../../layout";
@@ -22,10 +21,11 @@ const RedirectButton = ({ url }: { url: string }) => (
       color="main"
       bg="primary"
       borderRadius="24"
-      padding="10px"
+      paddingY="10px"
+      justifyContent="center"
       w="100%"
     >
-      <Text textAlign="center" fontFamily="subheading" color="white" fontSize="sm" w="100%">
+      <Text textAlign="center" fontFamily="subheading" color="white" fontSize="sm">
         {`Go to website`}
       </Text>
     </Link>
@@ -59,9 +59,9 @@ export const RedirectContent = () => {
   );
 };
 
-export const RedirectModal = ({ modalProps, onClose = noop, children }: RedirectModalProps) => {
+export const RedirectModal = ({ modalProps, children }: RedirectModalProps) => {
   const { Modal, showModal } = useModal();
-  const { open, url } = modalProps;
+  const { open, url, onClose } = modalProps;
 
   useEffect(() => {
     if (open) {
