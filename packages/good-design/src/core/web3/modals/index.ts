@@ -1,3 +1,3 @@
-export { RedirectModal } from "./RedirectModal";
-export { GoodIdModal } from "./GoodIdModal";
-export { KimaModal } from "./KimaModal";
+export * from "./RedirectModal";
+export * from "./GoodIdModal";
+export * from "./KimaModal";
