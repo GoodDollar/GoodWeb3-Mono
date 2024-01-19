@@ -6,7 +6,8 @@ import { Title } from "../../layout";
 import { CentreBox } from "../../layout/CentreBox";
 
 interface RedirectModalProps {
-  modalProps: any;
+  open: boolean;
+  url: string;
   onClose?: () => void;
   children: any;
 }
@@ -59,9 +60,8 @@ export const RedirectContent = () => {
   );
 };
 
-export const RedirectModal = ({ modalProps, children }: RedirectModalProps) => {
+export const RedirectModal = ({ open, url, onClose, children }: RedirectModalProps) => {
   const { Modal, showModal } = useModal();
-  const { open, url, onClose } = modalProps;
 
   useEffect(() => {
     if (open) {

@@ -3,14 +3,15 @@ import { noop } from "lodash";
 
 type RedirectNoticeContextProps = {
   goToExternal: (e: any, url: string) => void;
-  modalProps: {
-    open: boolean;
-    url: string;
-  };
+  open: boolean;
+  url: string;
+  onClose: () => void;
 };
 const RedirectNoticeContext = createContext<RedirectNoticeContextProps>({
-  goToExternal: () => noop,
-  modalProps: { open: false, url: "" }
+  goToExternal: noop,
+  open: false,
+  url: "",
+  onClose: noop
 });
 
 export const RedirectNoticeProvider = ({ children }: { children: any }) => {
@@ -26,7 +27,7 @@ export const RedirectNoticeProvider = ({ children }: { children: any }) => {
   };
 
   return (
-    <RedirectNoticeContext.Provider value={{ goToExternal, modalProps }}>{children}</RedirectNoticeContext.Provider>
+    <RedirectNoticeContext.Provider value={{ goToExternal, ...modalProps }}>{children}</RedirectNoticeContext.Provider>
   );
 };
 
