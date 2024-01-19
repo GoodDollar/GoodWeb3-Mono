@@ -126,7 +126,7 @@ export const GdOnramperWidget = ({
 
   return (
     <>
-      <Modal body={<ErrorModal />} />
+      <Modal body={<ErrorModal />} _modalContainer={{ paddingBottom: 18, paddingLeft: 18, paddingRight: 18 }} />
       <WalletAndChainGuard validChains={[42220]}>
         <Onramper
           onEvent={callback}

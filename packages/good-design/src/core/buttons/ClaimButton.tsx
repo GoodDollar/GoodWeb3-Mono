@@ -123,7 +123,8 @@ const ClaimButton = ({
             ),
             closeText: "",
             hasTopBorder: false,
-            hasBottomBorder: false
+            hasBottomBorder: false,
+            _modalContainer: { paddingBottom: 18, paddingLeft: 18, paddingRight: 18 }
           }
         : {
             header:
@@ -142,7 +143,8 @@ const ClaimButton = ({
             body: actionModalBody.verify.body,
             footer: isWhitelisted || loading || claimConfirming ? undefined : actionModalBody.verify.footer,
             closeText: "x",
-            hasBottomBorder: false
+            hasBottomBorder: false,
+            _modalContainer: { paddingBottom: 18, paddingLeft: 18, paddingRight: 18 }
           },
     [firstClaim, textColor, loading, isWhitelisted, claimConfirming, actionModalBody]
   );
@@ -178,7 +180,8 @@ const ClaimButton = ({
             ),
             closeText: "x",
             hasTopBorder: false,
-            hasBottomBorder: false
+            hasBottomBorder: false,
+            modalContainer: { paddingBottom: 18, paddingLeft: 18, paddingRight: 18 }
           }
         : {
             header: (
@@ -194,7 +197,8 @@ const ClaimButton = ({
             body: actionModalBody.verify.body,
             closeText: "x",
             hasTopBorder: false,
-            hasBottomBorder: false
+            hasBottomBorder: false,
+            _modalContainer: { paddingBottom: 18, paddingLeft: 18, paddingRight: 18 }
           },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [claimed, isWhitelisted, claiming, textColor]

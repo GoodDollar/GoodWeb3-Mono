@@ -45,6 +45,7 @@ export const WalletAndChainGuard = ({
           isKeyboardDismissable: false,
           closeOnOverlayClick: false
         }}
+        _modalContainer={{ paddingBottom: 18, paddingLeft: 18, paddingRight: 18 }}
       />
       {modalVisible === false && children}
     </React.Fragment>
