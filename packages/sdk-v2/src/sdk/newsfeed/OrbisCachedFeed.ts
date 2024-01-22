@@ -1,10 +1,6 @@
-import { Orbis } from "@orbisclub/orbis-sdk";
-import { isArray } from "lodash";
-
 import { createNewsFeedDb } from "./utils";
 import { AsyncStorage } from "../storage";
-import { IpfsStorage, isValidCID } from "../ipfs/sdk";
-import { batch } from "../../utils";
+import { createG$Fetcher } from "./utils/gdFetcher";
 
 export type FeedFilter = { context?: string; tag?: string };
 
@@ -23,18 +19,16 @@ export interface FeedPost {
 export class OrbisCachedFeed {
   IPFS_BATCH = 10;
   SYNC_PERIOD = 1000 * 60 * 60; //1 hour
-  sdk: Orbis = null;
   filter: FeedFilter = {};
+  fetcher: any; // todo: define type
   db: any;
-  IPFS: any;
   ready: Promise<void>;
 
-  constructor(filter: FeedFilter, ipfs: IpfsStorage) {
+  constructor(filter: FeedFilter, ipfs: { ipfsGateways?: string; ipfsUploadGateway?: string }) {
     this.db = createNewsFeedDb();
     this.ready = this.db.open();
     this.filter = filter;
-    this.sdk = new Orbis();
-    this.IPFS = ipfs;
+    this.fetcher = createG$Fetcher(filter, ipfs);
   }
 
   periodicSync = async (callback?: () => void) => {
@@ -59,65 +53,33 @@ export class OrbisCachedFeed {
   syncPosts = async (page = 0) => {
     const lastUpdate = new Date((await AsyncStorage.getItem("OrbisCachedFeed")) || 0);
     await this.ready;
-    const { data: posts } = await this.sdk.getPosts(this.filter, page);
+    const posts = await this.fetcher.getPosts(page);
 
-    //get the relevant fields from orbis post
-    const postsWithId = posts?.map(post => ({
-      id: post.stream_id,
-      content: post.content.body,
-      title: post.content.title,
-      ...post.content.data
-    }));
-
-    // only refetch images and put in db updated posts
-    const validPosts = postsWithId.filter(post => new Date(post.updated || post.published) > lastUpdate);
-
-    const postsWithPictures = await this._loadPostPictures(validPosts);
-    postsWithPictures.length > 0 && (await this.db.posts.bulkPut(postsWithPictures));
+    posts?.length > 0 && (await this.db.posts.bulkPut(posts));
 
     // remove posts that no longer exists in the top 50
     if (page === 0) {
       const cachedPosts = await this.db.posts.orderBy("published").reverse().offset(0).limit(50).toArray();
       const existing = cachedPosts.map(_ => _.id);
-      const incoming = postsWithId.map(_ => _.id);
+      const incoming = posts.map(_ => _.id);
       const missing = existing.filter(_ => incoming.includes(_) === false);
-      const deleted = (
-        await Promise.all(missing.map(_ => this.sdk.getPost(_).then(postResult => [_, !!postResult.data])))
-      )
-        .filter(_ => !_[1])
-        .map(_ => _[0]);
-
+      const deleted = await Promise.all(
+        missing.map(_ => this.fetcher.getPost(_).then(postResult => [_, !!postResult.content.data]))
+      );
+      // .filter(_ => !_[1])
+      // .map(_ => _[0]);
       deleted.length > 0 && (await this.db.posts.bulkDelete(deleted));
     }
 
-    //check if we need to fetch more, if all posts are newer we need to fetch next page
-    const hasOlder = postsWithId.find(post => new Date(post.updated || post.published) < lastUpdate);
-
+    // check if we need to fetch more, if all posts are newer we need to fetch next page
+    const hasOlder = posts.find(post => new Date(post.updated || post.published) < lastUpdate);
+    console.log("syncPosts", { hasOlder, posts, lastUpdate });
     if (!hasOlder && posts.length > 0) {
       return this.syncPosts(page + 1);
     } else {
       return AsyncStorage.setItem("OrbisCachedFeed", Date.now());
     }
   };
-
-  /** @private */
-  async _loadPostPictures(documentOrFeed: any) {
-    if (isArray(documentOrFeed)) {
-      return batch(documentOrFeed, this.IPFS_BATCH, async document => this._loadPostPictures(document));
-    }
-
-    const document = documentOrFeed;
-    let { picture } = document;
-
-    if (isValidCID(picture)) {
-      picture = await this.IPFS.load(picture);
-    }
-
-    return {
-      ...document,
-      picture
-    };
-  }
 
   async getPosts(offset = 0, limit = 10): Promise<Array<FeedPost>> {
     await this.ready;

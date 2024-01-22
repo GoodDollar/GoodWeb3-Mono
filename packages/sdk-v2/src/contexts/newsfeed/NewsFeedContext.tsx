@@ -1,7 +1,7 @@
 import React, { createContext, useCallback, useEffect, useState } from "react";
 import { FeedFilter, FeedPost } from "../../sdk/newsfeed/OrbisCachedFeed";
 import { OrbisCachedFeed } from "../../sdk/newsfeed/OrbisCachedFeed";
-import { IPFSUrls, IpfsStorage } from "../../sdk/ipfs/sdk";
+import { IPFSUrls } from "../../sdk/ipfs/sdk";
 
 type INewsFeedContext = {
   feed: FeedPost[];
@@ -28,6 +28,13 @@ const feedConfig = {
     }
   }
 };
+
+export const defaultIPFS: IPFSUrls = {
+  ipfsGateways:
+    "https://{cid}.ipfs.nftstorage.link,https://cloudflare-ipfs.com/ipfs/{cid},https://ipfs.io/ipfs/{cid},https://{cid}.ipfs.dweb.link",
+  ipfsUploadGateway: "https://ipfsgateway.goodworker.workers.dev"
+};
+
 export const NewsFeedProvider = ({
   children,
   feedFilter,
@@ -37,7 +44,7 @@ export const NewsFeedProvider = ({
   limit = 5
 }: INewsFeedProvider) => {
   const [feed, setFeed] = useState<FeedPost[]>([]);
-  const newsFeedDb = new OrbisCachedFeed(env ? feedConfig[env].feedFilter : feedFilter, new IpfsStorage(ipfsUrls));
+  const newsFeedDb = new OrbisCachedFeed(env ? feedConfig[env].feedFilter : feedFilter, ipfsUrls ?? defaultIPFS);
 
   const fetchFeed = useCallback(async () => {
     const posts = await newsFeedDb.getPosts(0, limit);

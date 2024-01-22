@@ -1,21 +1,13 @@
-import { isString, sortBy } from "lodash";
-import { CID } from "multiformats/cid";
+import { sortBy } from "lodash";
 
 import { fallback, withTemporaryFile } from "../../utils";
+import { toV1 } from "./utils/";
 
 interface RequestOptions {
   headers?: any;
   body?: any;
   mode?: any;
 }
-
-// eslint-disable-next-line
-export const toV1 = cid => CID.parse(cid).toV1().toString();
-//todo: move to utils
-export const cidRegexp = /^[\w\d]+$/i;
-
-// checks is string a valid CID. it should be at least 40 chars length and contrain only letters & numbers
-export const isValidCID = source => isString(source) && source.length >= 40 && cidRegexp.test(source);
 
 export type IPFSUrls = { ipfsGateways: string; ipfsUploadGateway: string };
 
@@ -28,6 +20,19 @@ export const defaulIPFS: IPFSUrls = {
 export class IpfsStorage {
   client: any;
   gateways: any;
+
+  load = async (cid: string) => {
+    const blob = await this._lookupGateways(cid);
+
+    return new Promise(resolve => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const dataString = reader.result;
+        resolve(dataString);
+      };
+      reader.readAsDataURL(blob);
+    });
+  };
 
   constructor(ipfsUrls?: IPFSUrls) {
     const { ipfsGateways, ipfsUploadGateway } = { ...defaulIPFS, ...ipfsUrls };
@@ -53,7 +58,6 @@ export class IpfsStorage {
         };
 
         const response = await fetch(url, updatedOptions);
-
         const blob = await response.blob();
         return blob;
       }
@@ -73,19 +77,6 @@ export class IpfsStorage {
     });
 
     return toV1(data.cid);
-  }
-
-  async load(cid) {
-    const blob = await this._lookupGateways(cid);
-
-    return new Promise(resolve => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const dataString = reader.result;
-        resolve(dataString);
-      };
-      reader.readAsDataURL(blob);
-    });
   }
 
   async _lookupGateways(cid) {
