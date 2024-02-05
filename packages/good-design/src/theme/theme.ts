@@ -68,8 +68,8 @@ export const theme = extendTheme({
     // custom keys for breakpoints cannot be used in useBreakpoint hook so we override defaults
     base: 0,
     sm: 375,
-    md: 480,
-    lg: 976,
+    md: 650,
+    lg: 1010,
     xl: 1280,
     "2xl": 1440
   },

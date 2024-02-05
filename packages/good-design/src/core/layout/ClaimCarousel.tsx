@@ -59,7 +59,14 @@ const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards, claimed, isMobile }) => 
 
   const contentWidth = useBreakpointValue({
     base: activeContentWidth,
-    xl: claimed ? "auto" : activeContentWidth
+    lg: claimed ? "auto" : "100%",
+    "2xl": claimed ? "auto" : activeContentWidth
+  });
+
+  const listWidth = useBreakpointValue({
+    base: "auto",
+    lg: "100%",
+    "2xl": 650
   });
 
   //start-hotfix: on mobile flatListLayout only updates on initial mount
@@ -153,7 +160,7 @@ const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards, claimed, isMobile }) => 
         scrollEventThrottle={16}
         initialScrollIndex={0}
         h={isMobile ? 320 : "max-content"}
-        w={isMobile ? "auto" : 650}
+        w={listWidth}
         showsHorizontalScrollIndicator={false}
         onLayout={onFlatListLayoutChange}
         getItemLayout={getItemLayout}

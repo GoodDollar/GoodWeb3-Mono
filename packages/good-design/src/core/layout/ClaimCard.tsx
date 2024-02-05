@@ -1,4 +1,4 @@
-import { Text, View, Box } from "native-base";
+import { Text, View, Box, useBreakpointValue } from "native-base";
 import React, { FC, useCallback } from "react";
 import { ClaimCardContent } from "../buttons";
 import { Image } from "../images";
@@ -27,9 +27,15 @@ const ClaimCard: FC<ClaimCardProps> = ({ content = [], title, bgColor, externalL
 
   const isMobile = deviceDetect();
 
+  const cardWidth = useBreakpointValue({
+    base: 330,
+    lg: "100%",
+    "2xl": 650
+  });
+
   return (
     <BasePressable
-      w={isMobile ? 330 : 650}
+      w={cardWidth}
       h={isMobile ? 290 : "auto"}
       onPress={handlePress}
       innerView={{

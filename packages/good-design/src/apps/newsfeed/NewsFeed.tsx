@@ -52,7 +52,7 @@ export const NewsFeedItem: FC<NewsFeedItemProps> = withTheme({ name: "NewsFeedIt
     return (
       <BasePressable onPress={handlePress}>
         <CentreBox flexDir="column" {...props}>
-          {picture && <Image minW="350" width="100%" pb="56.25%" src={picture} alt="Image" {...pictureStyles} />}
+          {picture && <Image minW="325" width="100%" pb="56.25%" src={picture} alt="Image" {...pictureStyles} />}
           <CentreBox {...containerStyles}>
             <Text {...titleStyles}>{title}</Text>
             <Text {...contentStyles}>{content}</Text>
@@ -68,7 +68,7 @@ export const NewsFeedItem: FC<NewsFeedItemProps> = withTheme({ name: "NewsFeedIt
 );
 
 export const NewsFeed = ({ feed }: { feed: FeedPost[] }) => (
-  <CentreBox flexDir="column" minWidth="350">
+  <CentreBox flexDir="column" minWidth="325">
     <Stack w="100%">
       <CentreBox
         w="100%"
