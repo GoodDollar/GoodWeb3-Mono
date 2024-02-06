@@ -4,7 +4,7 @@ import { ClaimCardContent } from "../buttons";
 import { Image } from "../images";
 import Title from "./Title";
 import BasePressable from "../buttons/BasePressable";
-import { openLink, isMobile as deviceDetect } from "@gooddollar/web3sdk-v2";
+import { openLink } from "@gooddollar/web3sdk-v2";
 
 interface ClaimCardProps {
   bgColor: string;
@@ -25,18 +25,35 @@ const ClaimCard: FC<ClaimCardProps> = ({ content = [], title, bgColor, externalL
     }
   }, [externalLink]);
 
-  const isMobile = deviceDetect();
+  const cardStyles = useBreakpointValue({
+    base: {
+      width: 330,
+      height: 290
+    },
+    md: {
+      width: "70%",
+      height: "auto",
+      marginLeft: "auto",
+      marginRight: "auto"
+    },
+    lg: {
+      width: "100%",
+      height: "auto"
+    },
+    "2xl": {
+      width: 650,
+      height: "auto"
+    }
+  });
 
-  const cardWidth = useBreakpointValue({
-    base: 330,
-    lg: "100%",
-    "2xl": 650
+  const descHeight = useBreakpointValue({
+    base: 129,
+    md: "auto"
   });
 
   return (
     <BasePressable
-      w={cardWidth}
-      h={isMobile ? 290 : "auto"}
+      style={cardStyles}
       onPress={handlePress}
       innerView={{
         shadow: "1",
@@ -54,7 +71,7 @@ const ClaimCard: FC<ClaimCardProps> = ({ content = [], title, bgColor, externalL
       </Title>
 
       <Box>
-        <Box h={isMobile ? 126 : "auto"}>
+        <Box h={descHeight}>
           {!!subTitle && (
             <Text
               color={subTitle.color}
