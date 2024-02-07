@@ -62,14 +62,15 @@ export const theme = extendTheme({
     borderGrey: "#E2E5EA"
   },
   sizes: {
+    "56": 56,
     md: "200px"
   },
   breakpoints: {
     // custom keys for breakpoints cannot be used in useBreakpoint hook so we override defaults
     base: 0,
-    sm: 375,
-    md: 480,
-    lg: 976,
+    sm: 450,
+    md: 610,
+    lg: 1010,
     xl: 1280,
     "2xl": 1440
   },

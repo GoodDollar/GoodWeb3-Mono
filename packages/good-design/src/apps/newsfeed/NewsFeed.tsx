@@ -1,6 +1,6 @@
 import React, { FC, useCallback, useMemo } from "react";
 import { FeedPost } from "@gooddollar/web3sdk-v2";
-import { Heading, HStack, Image, Spinner, Stack, Text, VStack } from "native-base";
+import { Heading, HStack, Image, Spinner, Stack, Text, useBreakpointValue, VStack } from "native-base";
 
 import { BasePressable } from "../../core";
 import SvgXml from "../../core/images/SvgXml";
@@ -52,7 +52,7 @@ export const NewsFeedItem: FC<NewsFeedItemProps> = withTheme({ name: "NewsFeedIt
     return (
       <BasePressable onPress={handlePress}>
         <CentreBox flexDir="column" {...props}>
-          {picture && <Image minW="350" width="100%" pb="56.25%" src={picture} alt="Image" {...pictureStyles} />}
+          {picture && <Image minW="325" width="100%" pb="56.25%" src={picture} alt="Image" {...pictureStyles} />}
           <CentreBox {...containerStyles}>
             <Text {...titleStyles}>{title}</Text>
             <Text {...contentStyles}>{content}</Text>
@@ -67,30 +67,42 @@ export const NewsFeedItem: FC<NewsFeedItemProps> = withTheme({ name: "NewsFeedIt
   }
 );
 
-export const NewsFeed = ({ feed }: { feed: FeedPost[] }) => (
-  <CentreBox flexDir="column" minWidth="350">
-    <Stack w="100%">
-      <CentreBox
-        w="100%"
-        justifyContent="center"
-        alignItems="center"
-        px={4}
-        py={2}
-        marginBottom={4}
-        backgroundColor="rgba(0,175,255,0.1)"
-      >
-        <Heading size="sm" fontFamily="subheading" fontWeight="400" lineHeight="130%" color="primary">
-          {" "}
-          News{" "}
-        </Heading>
-      </CentreBox>
-      <VStack width="95%" ml="auto" mr="auto">
-        {feed && feed.length > 0 ? (
-          feed.map((item: FeedPost) => <NewsFeedItem item={item} />)
-        ) : (
-          <Spinner color="primary" size="lg" />
-        )}
-      </VStack>
-    </Stack>
-  </CentreBox>
-);
+export const NewsFeed = ({ feed }: { feed: FeedPost[] }) => {
+  const containerWidth = useBreakpointValue({
+    base: "100%",
+    xl: "auto"
+  });
+
+  const feedWidth = useBreakpointValue({
+    base: "75%",
+    xl: "95%"
+  });
+
+  return (
+    <CentreBox flexDir="column" minWidth="325" width={containerWidth}>
+      <Stack w="100%">
+        <CentreBox
+          w="100%"
+          justifyContent="center"
+          alignItems="center"
+          px={4}
+          py={2}
+          marginBottom={4}
+          backgroundColor="rgba(0,175,255,0.1)"
+        >
+          <Heading size="sm" fontFamily="subheading" fontWeight="400" lineHeight="130%" color="primary">
+            {" "}
+            News{" "}
+          </Heading>
+        </CentreBox>
+        <VStack width={feedWidth} ml="auto" mr="auto">
+          {feed && feed.length > 0 ? (
+            feed.map((item: FeedPost) => <NewsFeedItem key={item.id} item={item} />)
+          ) : (
+            <Spinner color="primary" size="lg" />
+          )}
+        </VStack>
+      </Stack>
+    </CentreBox>
+  );
+};
