@@ -1,12 +1,15 @@
 import { useBreakpointValue } from "native-base";
 
-// ref breakpoints from theme
-// base: 0,
-// sm: 480,
-// md: 610,
-// lg: 1010,
-// xl: 1280,
-// "2xl": 1440
+/**
+* Ref breakpoints from theme
+*
+*   base: 0,
+*   sm: 480,
+*   md: 610,
+*   lg: 1010,
+*   xl: 1280,
+*   2xl: 1440
+*/
 
 const useScreenSize = () => {
   const isDesktopView = useBreakpointValue({ base: false, lg: true });
