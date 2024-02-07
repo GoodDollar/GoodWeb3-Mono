@@ -77,6 +77,7 @@ export const NewsFeed = ({ feed }: { feed: FeedPost[] }) => {
     base: "75%",
     xl: "95%"
   });
+
   return (
     <CentreBox flexDir="column" minWidth="325" width={containerWidth}>
       <Stack w="100%">
