@@ -3952,8 +3952,8 @@ __metadata:
   linkType: hard
 
 "@gooddollar/web3sdk-v2@npm:latest":
-  version: 0.2.15
-  resolution: "@gooddollar/web3sdk-v2@npm:0.2.15"
+  version: 0.2.16
+  resolution: "@gooddollar/web3sdk-v2@npm:0.2.16"
   dependencies:
     "@amplitude/analytics-browser": ^1.6.4
     "@amplitude/analytics-react-native": ^0.7.0
@@ -3970,12 +3970,12 @@ __metadata:
     "@types/react": ^18.2.28
     "@walletconnect/client": ^1.8.0
     "@walletconnect/qrcode-modal": ^1.8.0
-    "@web3-onboard/coinbase": ^2.2.4
-    "@web3-onboard/core": ^2.20.5
-    "@web3-onboard/injected-wallets": ^2.10.1
-    "@web3-onboard/react": ^2.8.10
-    "@web3-onboard/torus": ^2.2.5
-    "@web3-onboard/walletconnect": ^2.5.1
+    "@web3-onboard/coinbase": ^2.2.6
+    "@web3-onboard/core": ^2.21.2
+    "@web3-onboard/injected-wallets": ^2.10.11
+    "@web3-onboard/react": ^2.8.13
+    "@web3-onboard/torus": ^2.2.6
+    "@web3-onboard/walletconnect": ^2.5.3
     "@web3auth/base": ^4.0.0
     "@web3auth/core": ^4.0.0
     "@web3auth/openlogin-adapter": ^4.1.0
@@ -3999,7 +3999,7 @@ __metadata:
     "@react-native-async-storage/async-storage": 1.17.10
     react-native: "*"
     react-native-web: "*"
-  checksum: 39278712958865a2ed46cc536d3a95ae09a9b609a4f76b1ef563df7fd915ccce0bb19b67cb6db88603230b64b38ce3816d68ed7261288dbe3b10f53681105bba
+  checksum: edfa0dd9d5fc0059134870d5cb58119f15f9e7eb9c76e5ee917f827453ea4ab00d1dcbcf93196ba5957aee58e11ad218e18994e5d0a3be529d3e71aebc457ce9
   languageName: node
   linkType: hard
 
