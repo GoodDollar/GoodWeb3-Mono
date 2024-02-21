@@ -38,7 +38,7 @@ const SlideDownTab = ({ tabTitle, styles, children, ...props }: ISlideDownTabPro
         style={button}
         {...props}
       >
-        <CentreBox flexDirection="row" w="100%" justifyContent="stretch" h="10">
+        <CentreBox flexDirection="row" w="100%" justifyContent="space-between" h="10" paddingRight={4}>
           <Text color={isOpen ? "white" : "goodGrey.700"} w="80%" {...titleFont}>
             {tabTitle}
           </Text>
