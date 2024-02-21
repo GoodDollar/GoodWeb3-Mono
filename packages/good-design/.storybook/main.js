@@ -14,6 +14,7 @@ module.exports = {
     }
   },
   stories: ["../src/**/*.stories.mdx", "../src/**/*.stories.@(js|jsx|ts|tsx)"],
+  staticDirs: ["../src/assets", "../src/theme/fonts"],
   addons: [
     "@storybook/addon-links",
     {

@@ -1,7 +1,7 @@
 import React from "react";
 import "./workarounds";
 import { theme } from "../src/theme/theme";
-import { NativeBaseProvider } from "native-base";
+import { NativeBaseProvider } from "../src/";
 
 export const parameters = {
   actions: { argTypesRegex: "^on[A-Z].*" },
