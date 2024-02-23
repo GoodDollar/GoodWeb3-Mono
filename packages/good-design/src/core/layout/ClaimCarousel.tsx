@@ -134,7 +134,7 @@ const ClaimCarousel: FC<ClaimCarouselProps> = ({ cards, claimed, isMobile }) => 
     flatListRef.current.scrollToOffset({
       animated: true,
       index: isFirst ? slidesNumber - 1 : activeSlide - 1,
-      offset: isFirst ? layoutOffset + (slidesNumber - 1) * 275 : layoutOffset - 275
+      offset: isFirst ? layoutOffset + (slidesNumber - 1) * 275 : layoutOffset - 350
     });
   }, [activeSlide, flatListRef, onScroll, slidesNumber, layoutOffset, activeCards]);
 
