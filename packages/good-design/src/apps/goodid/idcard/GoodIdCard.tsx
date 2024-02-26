@@ -9,7 +9,7 @@ import { truncateMiddle } from "../../../utils";
 
 interface GoodIdCardProps {
   credentialsList: { credentialType: string; verifiedValue: any }[];
-  account: string;
+  account?: string;
   avatar?: string;
   fullname?: string;
   expiryDate?: string;
@@ -28,7 +28,8 @@ const CardRowItem = ({ credentialLabel, verifiedValue }: { credentialLabel: stri
 
 const GoodIdCard = withTheme({ name: "GoodIdCard", skipProps: "credentialsList" })(
   ({ credentialsList, account, avatar, fullname, expiryDate, ...props }: GoodIdCardProps) => {
-    const truncatedAccount = truncateMiddle(account, 11);
+    const truncatedAccount = truncateMiddle(account, 13);
+
     return (
       <VStack
         paddingX={4}
@@ -47,7 +48,7 @@ const GoodIdCard = withTheme({ name: "GoodIdCard", skipProps: "credentialsList" 
               GoodID
             </Heading>
             <Text fontFamily="subheading" fontSize="md" fontWeight={600} color="goodGrey.600">
-              {truncatedAccount}
+              {truncatedAccount ?? "0x000...0000"}
             </Text>
             {fullname && (
               <Text fontFamily="subheading" fontSize="sm" color="goodGrey.600">
@@ -70,11 +71,13 @@ const GoodIdCard = withTheme({ name: "GoodIdCard", skipProps: "credentialsList" 
             />
           ))}
         </HStack>
-        <HStack>
-          <Text fontFamily="subheading" fontSize="2xs" color="goodGrey.600">
-            {expiryDate ?? "Expires on February 12, 2099"}
-          </Text>
-        </HStack>
+        {expiryDate && (
+          <HStack>
+            <Text fontFamily="subheading" fontSize="2xs" color="goodGrey.600">
+              Expires on {expiryDate}
+            </Text>
+          </HStack>
+        )}
       </VStack>
     );
   }
