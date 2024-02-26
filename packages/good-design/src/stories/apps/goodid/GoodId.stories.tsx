@@ -1,5 +1,6 @@
 import React from "react";
 import { noop } from "lodash";
+import { useEthers } from "@usedapp/core";
 
 import { GoodIdCard } from "../../../apps/goodid";
 import { OnboardScreen } from "../../../apps/goodid/screens";
@@ -27,7 +28,10 @@ export const GoodIdCardExample = () => (
   />
 );
 
-export const OnboardScreenExample = () => <OnboardScreen navigateTo={noop} />;
+export const OnboardScreenExample = () => {
+  const { account } = useEthers();
+  return <OnboardScreen navigateTo={noop} account={account} />;
+};
 
 export default {
   title: "Apps/GoodId",
