@@ -20,13 +20,13 @@ enum CredentialTypes {
 
 const mockCredential = {
   credentialSubject: {
-    id: "",
+    id: "", // example. Id will be set on server
     countryCode: "US"
   },
   issuer: {
     id: "did:key:p3Ls9vx5d7NDeqHwJG42bBxB2kzMEOgXB3tjVPQHqy1fjZrY"
   },
-  type: ["VerifiableLocationCredential"],
+  type: ["VerifiableCredential", "VerifiableLocationCredential"],
   "@context": ["https://www.w3.org/2018/credentials/v1"],
   issuanceDate: "2024-02-19T08:56:34.000Z",
   proof: {
@@ -44,9 +44,10 @@ const CredentialsView = () => {
     const fetchCredentials = async () => {
       if (getActiveCredentials) {
         const credentials = await getActiveCredentials();
+
         const filteredCredentials = credentials?.filter(
           credential =>
-            credential.credentialSubject.id === account && Object.keys(CredentialTypes).includes(credential.type[0])
+            credential.credentialSubject.id === account && Object.keys(CredentialTypes).includes(credential.type[1])
         );
         console.log("filteredCredentials", filteredCredentials);
         setCredentials(filteredCredentials ?? []);
@@ -56,7 +57,7 @@ const CredentialsView = () => {
     // note: does not yet consider already existing credential
     const createMockCredential = async () => {
       if (createCredential && account) {
-        mockCredential.credentialSubject.id = account;
+        mockCredential.credentialSubject.id = account; //example: only for demo purpose is this needed
         await createCredential(mockCredential).then(() => fetchCredentials());
       }
     };
