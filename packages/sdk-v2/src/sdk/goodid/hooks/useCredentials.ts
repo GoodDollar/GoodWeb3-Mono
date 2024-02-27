@@ -22,7 +22,7 @@ export const useCredentials = (db: any) => {
   const createCredential = async (credential: VerifiableCredential) => {
     try {
       await db.open();
-      await db.credentials.add(credential);
+      await db.credentials.add(credential, [credential.type[1]]);
     } catch (error) {
       console.error("Failed to create credential:", error);
     } finally {
