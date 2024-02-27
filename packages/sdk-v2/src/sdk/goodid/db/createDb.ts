@@ -7,7 +7,7 @@ import Dexie from "dexie";
  */
 
 const schema = {
-  credentials: "type, credentialSubject.id, issuer.id, issuanceDate"
+  credentials: ",type, credentialSubject.id, issuer.id, issuanceDate"
 };
 
 export const createCredentialsDb = () => {
