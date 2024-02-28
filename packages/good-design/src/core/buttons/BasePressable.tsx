@@ -108,6 +108,11 @@ export const theme = {
         alignItems: "center",
         justifyContent: "center",
         style: { flexGrow: 1 }
+      },
+      viewInteraction: {
+        hover: {
+          bgColor: "goodGrey.300:alpha.30"
+        }
       }
     })
   }

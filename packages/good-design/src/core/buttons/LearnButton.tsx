@@ -5,9 +5,10 @@ import { openLink } from "@gooddollar/web3sdk-v2";
 import { Image } from "../images";
 import BackToSchool from "../../assets/images/backtoschool.png";
 
-type learnSources = "transactions" | "bridging" | "network" | "signing";
+export type learnSources = "transactions" | "bridging" | "network" | "signing";
+type links = { link: string; label: string };
 
-const linksNew: Record<learnSources, { link: string; label: string }> = {
+const linksNew: Record<learnSources, links> = {
   transactions: {
     link: "https://gooddollar.notion.site/How-do-transactions-work-in-web3-ccf11b4e16874a1682722a20c4e24742",
     label: "How do transactions work?"
@@ -26,8 +27,13 @@ const linksNew: Record<learnSources, { link: string; label: string }> = {
   }
 };
 
-const LearnButton = ({ source }: { source: learnSources }) => {
-  const { link, label } = linksNew[source];
+type sourceOrAlt = {
+  source?: learnSources;
+  altSource?: links;
+} & ({ source: learnSources } | { altSource: links });
+
+const LearnButton = ({ source, altSource }: sourceOrAlt) => {
+  const { link, label } = source ? linksNew[source] : altSource;
 
   const openNotionTab = useCallback(async () => {
     await openLink(link, "_blank");
