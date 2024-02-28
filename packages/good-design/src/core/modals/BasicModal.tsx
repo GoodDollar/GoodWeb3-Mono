@@ -1,5 +1,5 @@
 import { noop } from "lodash";
-import { Box, Button, Modal as NBModal, useColorModeValue, useBreakpointValue } from "native-base";
+import { Button, Center, Modal as NBModal, useColorModeValue, VStack } from "native-base";
 import React, { FC, ReactNode, useCallback } from "react";
 
 export interface BasicModalProps {
@@ -13,6 +13,8 @@ export interface BasicModalProps {
   hasTopBorder?: boolean;
   hasBottomBorder?: boolean;
   bgColor?: string;
+  type?: string;
+  withOverlay?: string;
   onClose?: () => void;
   onAction?: () => void;
   _modal?: any;
@@ -22,19 +24,37 @@ export interface BasicModalProps {
   _header?: any;
 }
 
+const CloseButton = () => (
+  <NBModal.CloseButton
+    padding={0}
+    width={6}
+    height={6}
+    justifyContent="center"
+    alignItems={"center"}
+    position="relative"
+    top="0"
+    left="0"
+    right="0"
+    bottom="0"
+    _icon={{ size: 5 }}
+  />
+);
+
 const BasicModal: FC<BasicModalProps> = ({
   modalVisible,
   header,
   body,
   footer,
   actionText,
-  closeText = "Cancel",
+  closeText,
   hasCloseButton = !!closeText,
   hasTopBorder = true,
   hasBottomBorder = true,
   onClose = noop,
   onAction = noop,
+  withOverlay,
   bgColor = "white",
+  type,
   _modal = {},
   _modalContainer = {},
   _header = {},
@@ -46,31 +66,25 @@ const BasicModal: FC<BasicModalProps> = ({
     onClose();
   }, [onAction, onClose]);
 
-  const bgOverlay = useColorModeValue("mainDarkContracts:alpha.40", "white:alpha.40");
-  const width = useBreakpointValue({
-    base: "fit-content",
-    md: "initial"
-  });
+  const overlayDark = useColorModeValue("mainDarkContracts:alpha.40", "white:alpha.40");
+  const overlayBlur = "purple.300"; //todo: add blur overlay
+
+  const bgOverlay = withOverlay === "dark" ? overlayDark : withOverlay === "blur" ? overlayBlur : "transparent";
 
   const actionButton = actionText ? <Button onPress={onActionButtonPress}>{actionText}</Button> : <React.Fragment />;
 
   return (
     /* height 100vh is required so modal always shows in the middle */
     <NBModal isOpen={modalVisible} onClose={onClose} {..._modal} minH="100vh" bgColor={bgOverlay}>
-      <Box borderRadius="lg" width={width} bgColor={bgColor}>
-        <NBModal.Content {..._modalContainer} w={"100%"} bgColor={bgColor}>
-          {hasCloseButton && <NBModal.CloseButton />}
+      <NBModal.Content {..._modalContainer} w={"100%"} bgColor={bgColor}>
+        {hasCloseButton && (
+          <Center marginLeft="auto">
+            <CloseButton />
+          </Center>
+        )}
+        <VStack {...(type !== "loader" && { space: 6 })}>
           {!!header && (
-            <NBModal.Header
-              style={{
-                paddingLeft: 18,
-                paddingRight: 18,
-                paddingTop: 24
-              }}
-              backgroundColor={bgColor}
-              borderBottomWidth={hasTopBorder ? "px" : "0"}
-              {..._header}
-            >
+            <NBModal.Header backgroundColor={bgColor} borderBottomWidth={hasTopBorder ? "px" : "0"} {..._header}>
               {header}
             </NBModal.Header>
           )}
@@ -78,14 +92,14 @@ const BasicModal: FC<BasicModalProps> = ({
           <NBModal.Body {..._body} bgColor={bgColor}>
             {body}
           </NBModal.Body>
-          {(!!footer || !!closeText || !!actionText) && (
-            <NBModal.Footer borderTopWidth={hasBottomBorder ? "px" : "0"} {..._footer} bgColor={bgColor}>
+          {(!!footer || !!actionText) && (
+            <NBModal.Footer borderTopWidth={hasBottomBorder ? "px" : "0"} {..._footer} padding="0" bgColor={bgColor}>
               {footer}
               <Button.Group space={2}>{actionButton}</Button.Group>
             </NBModal.Footer>
           )}
-        </NBModal.Content>
-      </Box>
+        </VStack>
+      </NBModal.Content>
     </NBModal>
   );
 };
