@@ -49,15 +49,16 @@ const CredentialsView = () => {
           credential =>
             credential.credentialSubject.id === account && Object.keys(CredentialTypes).includes(credential.type[1])
         );
-        console.log("filteredCredentials", filteredCredentials);
+
         setCredentials(filteredCredentials ?? []);
       }
     };
 
-    // note: does not yet consider already existing credential
     const createMockCredential = async () => {
       if (createCredential && account) {
-        mockCredential.credentialSubject.id = account; //example: only for demo purpose is this needed
+        //example: only for story is this done. in practice its passed down to server for issueCertificate
+        // in practice the format is: 'did:ethr:<wallet-address>
+        mockCredential.credentialSubject.id = account;
         await createCredential(mockCredential).then(() => fetchCredentials());
       }
     };

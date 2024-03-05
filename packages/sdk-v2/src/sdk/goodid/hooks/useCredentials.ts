@@ -10,7 +10,6 @@ export const useCredentials = (db: any) => {
     try {
       await db.open();
       const credentialsList = (await db.credentials.toArray()) as VerifiableCredential[];
-      console.log("credentialsList -->", { credentialsList });
       return credentialsList;
     } catch (error) {
       console.error("Failed to get active credentials:", error);
@@ -22,7 +21,7 @@ export const useCredentials = (db: any) => {
   const createCredential = async (credential: VerifiableCredential) => {
     try {
       await db.open();
-      await db.credentials.add(credential, [credential.type[1]]);
+      await db.credentials.put(credential, [credential.type[1]]);
     } catch (error) {
       console.error("Failed to create credential:", error);
     } finally {
