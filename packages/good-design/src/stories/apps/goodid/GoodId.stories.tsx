@@ -20,6 +20,7 @@ export const GoodIdCardExample = () => (
   <GoodIdCard
     credentialsList={mockCredential}
     account="0x000...0000"
+    isWhitelisted={false}
     fullname="Just a name"
     expiryDate="Expires on April 12, 2023"
   />
