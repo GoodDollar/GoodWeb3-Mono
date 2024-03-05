@@ -29,5 +29,16 @@ export const useCredentials = (db: any) => {
     }
   };
 
-  return { getActiveCredentials, createCredential };
+  const deleteCredential = async (credentialKeys: string[]) => {
+    try {
+      await db.open();
+      await db.credentials.bulkDelete(credentialKeys);
+    } catch (e) {
+      console.error("Failed to delete credential:", e);
+    } finally {
+      await db.close();
+    }
+  };
+
+  return { createCredential, deleteCredential, getActiveCredentials };
 };

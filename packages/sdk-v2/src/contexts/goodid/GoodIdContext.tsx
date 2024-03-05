@@ -5,6 +5,7 @@ import { createCredentialsDb, useCredentials } from "../../sdk/goodid";
 
 type IGoodIdContext = {
   createCredential?: (credential: VerifiableCredential) => Promise<void>;
+  deleteCredential?: (credentialKeys: string[]) => Promise<void>;
   getActiveCredentials?: () => Promise<VerifiableCredential[] | undefined>;
   db: any;
 };
@@ -21,12 +22,13 @@ interface IGoodIdContextProvider {
 export const GoodIdContextProvider = ({ children, localDb }: IGoodIdContextProvider) => {
   const db = localDb ? new localDb() : createCredentialsDb();
 
-  const { createCredential, getActiveCredentials } = useCredentials(db);
+  const { createCredential, deleteCredential, getActiveCredentials } = useCredentials(db);
 
   return (
     <GoodIdContext.Provider
       value={{
         createCredential,
+        deleteCredential,
         getActiveCredentials,
         db
       }}
