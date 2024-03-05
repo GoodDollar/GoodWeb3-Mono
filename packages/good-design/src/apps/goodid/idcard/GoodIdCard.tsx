@@ -1,60 +1,69 @@
 import React from "react";
-import { HStack, Heading, Text, VStack } from "native-base";
+import { Center, HStack, Heading, Text, VStack, IStackProps } from "native-base";
 import { CredentialTypes } from "@gooddollar/web3sdk-v2";
 
 import { withTheme } from "../../../theme";
 import SvgXml from "../../../core/images/SvgXml";
 import UnknownAvatarSvg from "../../../assets/svg/unknown-avatar.svg";
+import GdVerifiedSvg from "../../../assets/svg/gdverified.svg";
 import { truncateMiddle } from "../../../utils";
 
-interface GoodIdCardProps {
+interface GoodIdCardProps extends IStackProps {
   credentialsList: { credentialType: string; verifiedValue: any }[];
-  account?: string;
+  account: string | undefined;
+  isWhitelisted: boolean;
   avatar?: string;
   fullname?: string;
   expiryDate?: string;
+  fontStyles?: any;
 }
 
-const CardRowItem = ({ credentialLabel, verifiedValue }: { credentialLabel: string; verifiedValue?: string }) => (
-  <VStack w="45%">
-    <Text fontFamily="subheading" fontWeight={700} color="goodGrey.600" fontSize="sm">
-      {credentialLabel}
-    </Text>
-    <Text fontFamily="subheading" fontWeight={400} color="goodGrey.450" fontSize="xs">
-      {verifiedValue ?? `Your ${credentialLabel.toLowerCase()}`}
-    </Text>
-  </VStack>
+const CardRowItem = withTheme({ name: "CardRowItem" })(
+  ({
+    credentialLabel,
+    verifiedValue,
+    fontStyles,
+    ...props
+  }: {
+    credentialLabel: string;
+    verifiedValue?: string;
+    fontStyles?: any;
+  }) => {
+    const { subHeading, subContent } = fontStyles ?? {};
+    return (
+      <VStack {...props}>
+        <Text {...subHeading}>{credentialLabel}</Text>
+        <HStack space={1} alignItems="center">
+          <Text {...subContent}>{verifiedValue ?? `Your ${credentialLabel.toLowerCase()}`}</Text>
+          {verifiedValue && (
+            <Center mt="-3px">
+              <SvgXml src={GdVerifiedSvg} height="16" width="16" />
+            </Center>
+          )}
+        </HStack>
+      </VStack>
+    );
+  }
 );
 
 const GoodIdCard = withTheme({ name: "GoodIdCard", skipProps: "credentialsList" })(
-  ({ credentialsList, account, avatar, fullname, expiryDate, ...props }: GoodIdCardProps) => {
-    const truncatedAccount = truncateMiddle(account, 13);
-
+  ({ credentialsList, account, isWhitelisted, avatar, fullname, expiryDate, ...props }: GoodIdCardProps) => {
+    const { title, subHeading, subContent, footer } = props.fontStyles ?? {};
+    const truncatedAccount = account ? truncateMiddle(account, 11) : "0x000...0000";
     return (
-      <VStack
-        paddingX={4}
-        paddingTop={4}
-        paddingBottom={2}
-        space={4}
-        width={343}
-        borderRadius={15}
-        bgColor="greyCard"
-        shadow="1"
-        {...props}
-      >
+      <VStack {...props}>
         <HStack justifyContent="space-between">
           <VStack>
-            <Heading fontFamily="heading" fontSize="xl" fontWeight={700} color="primary">
-              GoodID
-            </Heading>
-            <Text fontFamily="subheading" fontSize="md" fontWeight={600} color="goodGrey.600">
-              {truncatedAccount ?? "0x000...0000"}
-            </Text>
-            {fullname && (
-              <Text fontFamily="subheading" fontSize="sm" color="goodGrey.600">
-                {fullname}
-              </Text>
-            )}
+            <Heading {...title}>GoodID</Heading>
+            <HStack space={1} alignItems="center">
+              <Text {...subHeading}>{truncatedAccount}</Text>
+              {isWhitelisted && (
+                <Center mt="-3px">
+                  <SvgXml src={GdVerifiedSvg} height="16" width="16" />
+                </Center>
+              )}
+            </HStack>
+            {fullname && <Text {...subContent}>{fullname}</Text>}
           </VStack>
           <VStack justifyContent="flex-start">
             <SvgXml src={avatar ?? UnknownAvatarSvg} height="56" width="56" />
@@ -71,13 +80,9 @@ const GoodIdCard = withTheme({ name: "GoodIdCard", skipProps: "credentialsList" 
             />
           ))}
         </HStack>
-        {expiryDate && (
-          <HStack>
-            <Text fontFamily="subheading" fontSize="2xs" color="goodGrey.600">
-              Expires on {expiryDate}
-            </Text>
-          </HStack>
-        )}
+        <HStack>
+          <Text {...footer}>{expiryDate ?? "Expires on February 12, 2099"}</Text>
+        </HStack>
       </VStack>
     );
   }

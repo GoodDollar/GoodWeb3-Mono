@@ -96,7 +96,12 @@ const OnboardScreen = withTheme({ name: "OnboardScreen" })(({ navigateTo, accoun
         <Title fontSize="xl" lineHeight="30" textAlign="center">
           {isWhitelisted ? `Renew` : `Get`} your GoodID to claim UBI
         </Title>
-        <GoodIdCard credentialsList={[]} account={account} expiryDate={formattedExpiryDate} />
+        <GoodIdCard
+          credentialsList={[]}
+          isWhitelisted={isWhitelisted}
+          account={account}
+          expiryDate={formattedExpiryDate}
+        />
         <VStack space={2} alignItems="flex-start">
           <Heading fontSize="md" color="goodGrey.600">
             It unlocks access to:
