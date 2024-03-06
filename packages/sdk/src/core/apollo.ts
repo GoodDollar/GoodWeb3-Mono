@@ -125,3 +125,18 @@ export const aaveStaking = memoize(
   },
   (chainId, token) => chainId + token.address
 );
+
+export const voltagePairData = memoize(async (): Promise<any> => {
+  const client = getClient("https://api.thegraph.com/subgraphs/name/voltfinance/voltage-exchange");
+
+  const { data } = await client.query({
+    query: gql`
+      query GetPairDayDatas {
+        pairDayDatas(orderBy: date, orderDirection: desc, where: { reserveUSD_gt: 1000 }) {
+          pairAddress
+        }
+      }
+    `
+  });
+  return data?.pairDayDatas;
+});
