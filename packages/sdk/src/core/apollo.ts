@@ -132,11 +132,12 @@ export const voltagePairData = memoize(async (): Promise<any> => {
   const { data } = await client.query({
     query: gql`
       query GetPairDayDatas {
-        pairDayDatas(orderBy: date, orderDirection: desc, where: { reserveUSD_gt: 1000 }) {
+        pairDayDatas(orderBy: date, orderDirection: desc, where: { reserveUSD_gt: 100 }) {
           pairAddress
         }
       }
     `
   });
+
   return data?.pairDayDatas;
 });
