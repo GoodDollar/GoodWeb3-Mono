@@ -33,7 +33,11 @@ export async function v2Pairs(
   currencies: Array<[Currency, Currency]>
 ): Promise<[PairState, Pair | null][]> {
   const tokens = currencies.map(([currencyA, currencyB]) => [currencyA.wrapped, currencyB.wrapped]);
-  const pairDayData = await voltagePairData();
+  let pairDayData = JSON.parse(localStorage.getItem("voltage_latest_pair_data"))?.data;
+
+  if (!pairDayData) {
+    pairDayData = await voltagePairData();
+  }
 
   const pairAddresses = tokens.reduce((map, [tokenA, tokenB]) => {
     const address =
