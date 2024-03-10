@@ -2,6 +2,7 @@ export {};
 import { ApolloClient, gql, InMemoryCache } from "@apollo/client";
 import { NormalizedCacheObject } from "@apollo/client/cache/inmemory/types";
 import { Fraction } from "@uniswap/sdk-core";
+import { once } from "lodash";
 import memoize from "lodash/memoize";
 import { AAVE_STAKING, G$PRICE } from "constants/graphql";
 import { decimalToFraction } from "utils/converter";
@@ -126,7 +127,7 @@ export const aaveStaking = memoize(
   (chainId, token) => chainId + token.address
 );
 
-export const voltagePairData = memoize(async (): Promise<any> => {
+export const voltagePairData = once(async (): Promise<any> => {
   const client = getClient("https://api.thegraph.com/subgraphs/name/voltfinance/voltage-exchange");
 
   const { data } = await client.query({
