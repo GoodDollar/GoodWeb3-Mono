@@ -23,7 +23,7 @@ export async function getGovernanceStakingContracts(): Promise<{ address: string
 
   const addressv1 = G$ContractAddresses<string>(SupportedChainId.FUSE, "GovernanceStaking");
   let addressv2 = null;
-  if (networkType === "production")
+  if (networkType.includes("production"))
     addressv2 = G$ContractAddresses<string>(SupportedChainId.FUSE, "GovernanceStakingV2");
 
   return [
