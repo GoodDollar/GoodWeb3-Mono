@@ -1,5 +1,7 @@
 import React, { createContext } from "react";
 
+import type { FC, PropsWithChildren } from "react";
+
 import type { VerifiableCredential } from "../../sdk/goodid/types";
 import { createCredentialsDb, useCredentials } from "../../sdk/goodid";
 
@@ -14,12 +16,11 @@ export const GoodIdContext = createContext<IGoodIdContext>({
   db: undefined
 });
 
-interface IGoodIdContextProvider {
-  children: any;
+interface IGoodIdContextProviderProps {
   localDb?: any; //todo: define db interface for wallet
 }
 
-export const GoodIdContextProvider = ({ children, localDb }: IGoodIdContextProvider) => {
+export const GoodIdContextProvider: FC<PropsWithChildren<IGoodIdContextProviderProps>> = ({ children, localDb }) => {
   const db = localDb ? new localDb() : createCredentialsDb();
 
   const { createCredential, deleteCredential, getActiveCredentials } = useCredentials(db);
