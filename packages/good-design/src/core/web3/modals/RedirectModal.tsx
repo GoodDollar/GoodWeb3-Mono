@@ -1,6 +1,6 @@
 import React from "react";
 
-import { BasicStyledModal } from "./BasicStyledModal";
+import BasicStyledModal from "./BasicStyledModal";
 
 interface RedirectModalProps {
   open: boolean;

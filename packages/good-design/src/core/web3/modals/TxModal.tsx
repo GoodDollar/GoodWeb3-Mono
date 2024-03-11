@@ -1,7 +1,7 @@
 import React from "react";
 import { noop } from "lodash";
 
-import { BasicStyledModal } from "./BasicStyledModal";
+import BasicStyledModal from "./BasicStyledModal";
 
 interface ITxModalProps {
   type: "send" | "sign";

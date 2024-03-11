@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "native-base";
 
 import { useFVModalAction } from "../../../hooks/useFVModalAction";
-import { BasicStyledModal } from "./BasicStyledModal";
+import BasicStyledModal from "./BasicStyledModal";
 import { TxModal } from "./TxModal";
 
 const ModalContent = () => (

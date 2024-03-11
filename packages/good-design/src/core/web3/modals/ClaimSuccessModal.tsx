@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { noop } from "lodash";
 import { Text } from "native-base";
 
-import { BasicStyledModal } from "./BasicStyledModal";
+import BasicStyledModal from "./BasicStyledModal";
 
 const ClaimSuccessContent = () => (
   <>
