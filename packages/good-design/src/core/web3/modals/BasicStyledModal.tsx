@@ -1,13 +1,14 @@
 import React, { useEffect } from "react";
 import { Center, Text } from "native-base";
 
+import { Image } from "../../images";
 import { Title } from "../../layout";
 import { useModal } from "../../../hooks";
 import { LinkButton } from "../../buttons/StyledLinkButton";
 import { LearnButton } from "../../buttons";
 import { learnSources } from "../../buttons/LearnButton";
-import { CtaButton } from "../../buttons/CtaButton";
 import { SpinnerCheckMark } from "../../animated";
+import BillyCelebration from "../../../assets/svg/billy-celebration.svg";
 
 const altModalTypes = ["loader", "other"];
 
@@ -17,12 +18,15 @@ interface BasicModalProps {
   withOverlay?: "blur" | "dark";
   withCloseButton: boolean;
   title: string;
-  content?: string;
+  content?: string | JSX.Element;
   buttonText?: string;
+  buttonAction?: () => void;
+  learnSource?: learnSources;
+  altLearnSource?: { link: string; label: string; icon: any };
 }
 
 interface CtaOrLearnModalProps extends BasicModalProps {
-  type: "cta" | "ctaX" | "learn";
+  type: "cta" | "ctaX" | "learn" | "social";
   extUrl?: string;
   loading?: never;
 }
@@ -37,13 +41,21 @@ type StyledModalProps = CtaOrLearnModalProps | AltModalProps;
 
 const ModalHeader = ({ title }: { title: string }) => (
   <Center backgroundColor="white" textAlign="center">
-    <Title fontFamily="heading" color="primary" fontSize="xl" width="50%" lineHeight="110%">
+    <Title fontFamily="heading" color="primary" fontSize="xl" lineHeight="110%">
       {title}
     </Title>
   </Center>
 );
 
-const ModalBody = ({ content, type, loading }: { content: string | undefined; type: string; loading?: boolean }) => (
+const ModalBody = ({
+  content,
+  type,
+  loading
+}: {
+  content: string | JSX.Element | undefined;
+  type: string;
+  loading?: boolean;
+}) => (
   <Center padding={0}>
     {type === "loader" ? (
       <SpinnerCheckMark loading={loading ?? true} />
@@ -61,20 +73,25 @@ const ModalFooter = ({
   extUrl,
   buttonText,
   source,
-  altSource = { link: "", label: "" }
+  altSource = { link: "", label: "", icon: null }
 }: {
   type: string;
   action?: () => void;
   extUrl?: string;
   buttonText?: string;
   source?: learnSources;
-  altSource?: { link: string; label: string };
+  altSource?: { link: string; label: string; icon: any };
 }) => (
   <Center padding="0" w="100%">
-    {type === "cta" && action && buttonText ? <CtaButton text={buttonText} onPress={action} /> : null}
-    {type === "ctaX" && extUrl && buttonText ? <LinkButton url={extUrl} extButtonText={buttonText} /> : null}
+    {type === "cta" && action && buttonText ? <LinkButton buttonText={buttonText} onPress={action} /> : null}
+    {type === "ctaX" && extUrl && buttonText ? <LinkButton url={extUrl} buttonText={buttonText} /> : null}
     {type === "learn" ? <LearnButton {...(source ? { source: source } : { altSource: altSource })} /> : null}
-    {/* todo: add socials */}
+    {type === "social" ? (
+      <Center>
+        <Image source={BillyCelebration} w={135} h={135} style={{ resizeMode: "contain" }} />
+        {/* todo: add socials share bar */}
+      </Center>
+    ) : null}
   </Center>
 );
 
@@ -88,16 +105,22 @@ export const BasicStyledModal = ({
   title,
   content,
   buttonText,
+  buttonAction,
+  learnSource,
+  altLearnSource,
   loading
 }: StyledModalProps) => {
-  const { Modal, showModal } = useModal();
+  const { Modal, showModal, hideModal } = useModal();
   const isAltModal = altModalTypes.includes(type);
 
   // todo: add handling of open/close modal
   useEffect(() => {
     if (show) {
       showModal();
+      return;
     }
+
+    hideModal();
   }, [showModal, show]);
 
   return (
@@ -114,7 +137,16 @@ export const BasicStyledModal = ({
         header={<ModalHeader title={title} />}
         body={<ModalBody content={content} type={type} loading={loading} />}
         {...(!isAltModal && {
-          footer: <ModalFooter type={type} extUrl={extUrl} buttonText={buttonText} />
+          footer: (
+            <ModalFooter
+              type={type}
+              extUrl={extUrl}
+              buttonText={buttonText}
+              action={buttonAction}
+              source={learnSource}
+              altSource={altLearnSource}
+            />
+          )
         })}
       />
     </React.Fragment>
