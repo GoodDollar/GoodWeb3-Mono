@@ -100,7 +100,6 @@ export const theme = {
     }),
     externalLink: () => ({
       innerView: {
-        w: "300px",
         h: "130px",
         bgColor: "goodWhite.100",
         display: "flex",
