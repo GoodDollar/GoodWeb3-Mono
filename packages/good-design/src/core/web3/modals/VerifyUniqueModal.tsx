@@ -1,0 +1,56 @@
+import React from "react";
+import { Link } from "native-base";
+
+import { useFVModalAction } from "../../../hooks/useFVModalAction";
+import { BasicStyledModal } from "./BasicStyledModal";
+import { TxModal } from "./TxModal";
+
+const ModalContent = () => (
+  <>
+    You're almost there! To claim G$, you need to be a unique human and prove it with your camera.
+    <Link
+      _text={{ color: "main" }}
+      mt="5"
+      href="https://www.notion.so/gooddollar/Get-G-873391f31aee4a18ab5ad7fb7467acb3"
+      isExternal
+    >
+      Learn more about the identification process.
+    </Link>
+    {`
+      
+Verifying your identity is easy. You'll be asked to sign with your wallet.
+
+Don't worry, no link is kept between your identity record and your wallet address.
+      `}
+  </>
+);
+
+export const VerifyUniqueModal = ({ open, url, onClose, chainId, firstName, method }: any) => {
+  const { loading, verify } = useFVModalAction({
+    firstName,
+    method,
+    chainId,
+    onClose: onClose,
+    redirectUrl: url
+  });
+
+  return (
+    <>
+      {!loading ? (
+        <BasicStyledModal
+          type="cta"
+          show={open}
+          onClose={onClose}
+          title={`Verify \n Uniqueness`}
+          content={<ModalContent />}
+          withOverlay="dark"
+          buttonText="VERIFY I'M HUMAN"
+          buttonAction={verify}
+          withCloseButton
+        />
+      ) : (
+        <TxModal type="sign" isPending={loading} />
+      )}
+    </>
+  );
+};
