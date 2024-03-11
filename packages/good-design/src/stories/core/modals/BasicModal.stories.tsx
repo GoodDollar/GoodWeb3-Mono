@@ -1,5 +1,5 @@
-// import React from "react";
-import { BasicStyledModal } from "../../../core/web3/modals";
+import React from "react";
+import { BasicStyledModal, ClaimSuccessModal } from "../../../core/web3/modals";
 
 export default {
   title: "Core/Modals",
@@ -19,7 +19,7 @@ export default {
       description: "type of modal",
       control: {
         type: "inline-radio",
-        options: ["cta", "ctaX", "learn", "loader"]
+        options: ["cta", "ctaX", "learn", "loader", "social"]
       }
     },
     extUrl: {
@@ -49,7 +49,9 @@ export const BasicModal = {
     content:
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
     loading: true,
-    title: "This is a header",
+    title: `This is a \n Header`,
     buttonText: "Click me"
   }
 };
+
+export const SuccessModal = () => <ClaimSuccessModal open={true} />;
