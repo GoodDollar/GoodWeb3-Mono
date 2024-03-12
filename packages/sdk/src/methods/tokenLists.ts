@@ -10,7 +10,7 @@ import { getChainId } from "utils/web3";
 import { ERC20Contract } from "contracts/ERC20Contract";
 
 import UniswapTokenList from "tokens/tokens.uniswap.org.json";
-import FuseTokenList from "tokens/fuseswap-default.tokenlist.json";
+import FuseTokenList from "tokens/voltage-default.tokenlist.json";
 import { debug } from "utils/debug";
 
 const cachedTokens: Map<SupportedChainId, Map<string, Currency>> = new Map();
