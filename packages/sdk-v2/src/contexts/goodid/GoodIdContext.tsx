@@ -8,7 +8,7 @@ import { createCertificatesDb, useCertificates } from "../../sdk/goodid";
 type IGoodIdContext = {
   storeCertificate?: (credential: Certificate) => Promise<void>;
   deleteCertificate?: (credentialKeys: string[]) => Promise<void>;
-  getCertificates?: () => Promise<Certificate[] | undefined>;
+  getCertificates?: (credentialTypes?: string[]) => Promise<Certificate[] | undefined>;
   db: any;
 };
 
