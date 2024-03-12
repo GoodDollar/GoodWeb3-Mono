@@ -4,7 +4,7 @@ import { ComponentStory, ComponentMeta } from "@storybook/react";
 import { View, Text } from "react-native";
 import { useEthers } from "@usedapp/core";
 
-import type { VerifiableCredential } from "../../sdk/goodid/types";
+import type { Certificate } from "../../sdk/goodid/types";
 import { W3Wrapper } from "../W3Wrapper";
 import { GoodIdContext, GoodIdContextProvider } from "../../contexts/goodid/GoodIdContext";
 
@@ -15,10 +15,11 @@ const GoodIdWrapper = ({ children }) => {
 enum CredentialTypes {
   VerifiableLocationCredential = "Location",
   VerifiableAgeCredential = "Age",
-  VerifiableGenderCredential = "Gender"
+  VerifiableGenderCredential = "Gender",
+  VerifiableIdentityCredential = "Identity"
 }
 
-const mockCredential = {
+const mockCertificate = {
   credentialSubject: {
     id: "", // example. Id will be set on server
     countryCode: "US"
@@ -35,45 +36,49 @@ const mockCredential = {
   }
 };
 
-const CredentialsView = () => {
+const CertificatesView = () => {
   const { account } = useEthers();
-  const [credentials, setCredentials] = useState<VerifiableCredential[] | undefined>([]);
-  const { createCredential, getActiveCredentials } = useContext(GoodIdContext);
+  const [certificates, setCertificates] = useState<Certificate[] | undefined>([]);
+  const { storeCertificate, getCertificates } = useContext(GoodIdContext);
 
   useEffect(() => {
-    const fetchCredentials = async () => {
-      if (getActiveCredentials) {
-        const credentials = await getActiveCredentials();
+    const fetchCertificates = async () => {
+      if (getCertificates) {
+        try {
+          const certificates = await getCertificates();
 
-        const filteredCredentials = credentials?.filter(
-          credential =>
-            credential.credentialSubject.id === account && Object.keys(CredentialTypes).includes(credential.type[1])
-        );
+          const filteredCertificates = certificates?.filter(
+            certificate =>
+              certificate.credentialSubject.id === account && Object.keys(CredentialTypes).includes(certificate.type[1])
+          );
 
-        setCredentials(filteredCredentials ?? []);
+          setCertificates(filteredCertificates ?? []);
+        } catch (e) {
+          console.error("Error fetching credentials", e);
+        }
       }
     };
 
-    const createMockCredential = async () => {
-      if (createCredential && account) {
+    const createMockCertificate = async () => {
+      if (storeCertificate && account) {
         //example: only for story is this done. in practice its passed down to server for issueCertificate
-        // in practice the format is: 'did:ethr:<wallet-address>
-        mockCredential.credentialSubject.id = account;
-        await createCredential(mockCredential).then(() => fetchCredentials());
+        // the format would be: 'did:ethr:<wallet-address>
+        mockCertificate.credentialSubject.id = account;
+        await storeCertificate(mockCertificate).then(() => fetchCertificates());
       }
     };
 
-    void createMockCredential();
+    void createMockCertificate();
   }, [account]);
 
   return (
     <View>
       <Text>Which credentials do you have verified?</Text>
-      {credentials?.map((credential, index) => {
+      {certificates?.map((certificate, index) => {
         return (
           <View key={index}>
-            <Text style={{ fontWeight: "bold" }}>{CredentialTypes[credential.type[0]]}</Text>
-            <Text>{credential.credentialSubject.countryCode}</Text>
+            <Text style={{ fontWeight: "bold" }}>{CredentialTypes[certificate.type[0]]}</Text>
+            <Text>{certificate.credentialSubject.countryCode}</Text>
           </View>
         );
       })}
@@ -86,7 +91,7 @@ const Page = (params: object) => {
       {/* @ts-ignore */}
       {/* <VeramoProvider agents={[agent]}> */}
       <GoodIdWrapper>
-        <CredentialsView {...params} />
+        <CertificatesView {...params} />
       </GoodIdWrapper>
       {/* </VeramoProvider> */}
     </W3Wrapper>
@@ -100,4 +105,4 @@ export default {
 
 const Template: ComponentStory<typeof Page> = Page;
 
-export const CredentialsExample = Template.bind({});
+export const CertificatesExample = Template.bind({});
