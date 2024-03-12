@@ -46,6 +46,7 @@ const CertificatesView = () => {
         try {
           const certificates = await getCertificates();
 
+          // example: considering a case where people might have a shared-device and have multiple credentials in the same storage
           const filteredCertificates = certificates?.filter(
             certificate =>
               certificate.credentialSubject.id === account && Object.keys(CredentialTypes).includes(certificate.type[1])

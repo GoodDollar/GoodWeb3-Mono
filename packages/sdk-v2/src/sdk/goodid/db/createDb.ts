@@ -1,16 +1,14 @@
 import Dexie from "dexie";
 
 /**
- * Schema definition for the certificates collection
- * - `id`: incrementing id linked to various verified credentials
  * Schema definition for the certificates collection (A collection of credentials per issuer)
- * - `type`: should indicate the types of the credential
+ * - ',': primary key will be the hash of the credential set when storing it
+ * - field defined below are only the indexed fields
  * - Other fields are according to Veramo's/W3C Credential schema
  */
 
 const schema = {
-  certificates: "++id",
-  certificates_credentials: "++index, certificate_id, credentialSubject_id, issuer_id, type, issuanceDate"
+  certificates: ",certificate,credentialSubject_id, type, issuer, issuanceDate"
 };
 
 export const createCertificatesDb = () => {
