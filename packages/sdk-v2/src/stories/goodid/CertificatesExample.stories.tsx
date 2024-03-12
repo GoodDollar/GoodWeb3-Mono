@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
 import { ComponentStory, ComponentMeta } from "@storybook/react";
-// import { useVeramo, VeramoProvider } from "@veramo-community/veramo-react";
 import { View, Text } from "react-native";
 import { useEthers } from "@usedapp/core";
 
@@ -88,12 +87,9 @@ const CertificatesView = () => {
 const Page = (params: object) => {
   return (
     <W3Wrapper withMetaMask={true}>
-      {/* @ts-ignore */}
-      {/* <VeramoProvider agents={[agent]}> */}
       <GoodIdWrapper>
         <CertificatesView {...params} />
       </GoodIdWrapper>
-      {/* </VeramoProvider> */}
     </W3Wrapper>
   );
 };
