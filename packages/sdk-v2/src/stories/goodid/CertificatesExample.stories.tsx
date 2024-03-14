@@ -1,11 +1,11 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ComponentStory, ComponentMeta } from "@storybook/react";
 import { View, Text } from "react-native";
 import { useEthers } from "@usedapp/core";
 
-import type { Certificate } from "../../sdk/goodid/types";
 import { W3Wrapper } from "../W3Wrapper";
-import { GoodIdContext, GoodIdContextProvider } from "../../contexts/goodid/GoodIdContext";
+import { GoodIdContextProvider } from "../../contexts/goodid/GoodIdContext";
+import { useCertificates } from "../../sdk";
 
 const GoodIdWrapper = ({ children }) => {
   return <GoodIdContextProvider>{children}</GoodIdContextProvider>;
@@ -37,34 +37,22 @@ const mockCertificate = {
 
 const CertificatesView = () => {
   const { account } = useEthers();
-  const [certificates, setCertificates] = useState<Certificate[] | undefined>([]);
-  const { storeCertificate, getCertificates } = useContext(GoodIdContext);
+  const [localCerts, setLocalCert] = useState<any>([]);
+  const { storeCertificate, getCertificate } = useCertificates(account, ["VerifiableLocationCredential"]);
 
   useEffect(() => {
     const fetchCertificates = async () => {
-      if (getCertificates) {
-        try {
-          const certificates = await getCertificates();
-
-          // example: considering a case where people might have a shared-device and have multiple credentials in the same storage
-          const filteredCertificates = certificates?.filter(
-            certificate =>
-              certificate.credentialSubject.id === account && Object.keys(CredentialTypes).includes(certificate.type[1])
-          );
-
-          setCertificates(filteredCertificates ?? []);
-        } catch (e) {
-          console.error("Error fetching credentials", e);
-        }
-      }
+      const certificates = await getCertificate(["VerifiableLocationCredential"]);
+      setLocalCert([certificates]);
     };
 
     const createMockCertificate = async () => {
       if (storeCertificate && account) {
         //example: only for story is this done. in practice its passed down to server for issueCertificate
         // the format would be: 'did:ethr:<wallet-address>
-        mockCertificate.credentialSubject.id = account;
-        await storeCertificate(mockCertificate).then(() => fetchCertificates());
+        mockCertificate.credentialSubject.id = `did:ethr:${account}`;
+
+        await storeCertificate(mockCertificate).then(fetchCertificates);
       }
     };
 
@@ -74,7 +62,7 @@ const CertificatesView = () => {
   return (
     <View>
       <Text>Which credentials do you have verified?</Text>
-      {certificates?.map((certificate, index) => {
+      {localCerts?.map((certificate, index) => {
         return (
           <View key={index}>
             <Text style={{ fontWeight: "bold" }}>{CredentialTypes[certificate.type[0]]}</Text>
