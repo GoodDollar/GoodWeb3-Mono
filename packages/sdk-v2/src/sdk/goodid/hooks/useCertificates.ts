@@ -50,7 +50,7 @@ export const useCertificates = (account: string, types: string[] | false | null 
   };
 
   useEffect(() => {
-    if (types === false) {
+    if (!account || types === false) {
       return;
     }
 
