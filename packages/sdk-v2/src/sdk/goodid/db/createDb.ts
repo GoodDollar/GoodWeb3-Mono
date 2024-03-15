@@ -8,7 +8,7 @@ import Dexie from "dexie";
  */
 
 const schema = {
-  certificates: "++id, *type"
+  certificates: "++primary_idx, *type_subject_idx, credentialSubject.id"
 };
 
 export const createCertificatesDb = () => {
