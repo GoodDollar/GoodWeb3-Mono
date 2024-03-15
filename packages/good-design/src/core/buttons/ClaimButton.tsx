@@ -24,7 +24,7 @@ const ClaimButton = ({
   const { account } = useEthers();
   const [claimConfirming, setClaimConfirming] = useState<boolean | undefined>(undefined);
   const [whitelistLoading, setWhitelistLoading] = useState(false);
-  const [hasStartedFv, sethasStartedFv] = useState(false);
+  const [faceVerifying, setFaceVerifying] = useState(false);
 
   const { isWhitelisted, claimAmount } = useClaim(refresh);
   const isVerified = useQueryParam("verified", true);
@@ -51,7 +51,7 @@ const ClaimButton = ({
     } else {
       // means we no longer are expecting a claimCall and actionModal should show default verify uniqueness message
       setClaimConfirming(false);
-      sethasStartedFv(true);
+      setFaceVerifying(true);
     }
 
     if (fuseWhitelisted && syncStatus) {
@@ -63,7 +63,7 @@ const ClaimButton = ({
 
       await handleClaim();
     }
-  }, [isWhitelisted, fuseWhitelisted, syncStatus, hasStartedFv, setClaimConfirming, setWhitelistLoading, handleClaim]);
+  }, [isWhitelisted, fuseWhitelisted, syncStatus, faceVerifying, setClaimConfirming, setWhitelistLoading, handleClaim]);
 
   useEffect(() => {
     if (claiming?.status === "PendingSignature") {
@@ -121,12 +121,12 @@ const ClaimButton = ({
         />
         <Text variant="shadowed" fontSize="md" />
       </View>
-      {hasStartedFv && !isWhitelisted ? (
+      {faceVerifying && !isWhitelisted ? (
         <VerifyUniqueModal
-          open={hasStartedFv}
+          open={faceVerifying}
           url={redirectUrl}
           onClose={() => {
-            sethasStartedFv(false);
+            setFaceVerifying(false);
           }}
           chainId={chainId}
           firstName={firstName}
