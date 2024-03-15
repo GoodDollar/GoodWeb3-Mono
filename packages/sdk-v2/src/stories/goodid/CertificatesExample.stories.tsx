@@ -38,7 +38,7 @@ const mockCertificate = {
 const CertificatesView = () => {
   const { account } = useEthers();
   const [certificates, setCertificates] = useState<Certificate[] | undefined>([]);
-  const { storeCertificate, getCertificates } = useContext(GoodIdContext);
+  const { certificates, getCertificate, storeCertificate, deleteCertificate } = useCertificates(account, values(CredentialTypes));
 
   useEffect(() => {
     const fetchCertificates = async () => {
