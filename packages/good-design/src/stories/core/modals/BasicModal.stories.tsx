@@ -1,9 +1,35 @@
 import React from "react";
-import { BasicStyledModal, ClaimSuccessModal } from "../../../core/web3/modals";
+import { noop } from "lodash";
+import { Meta } from "@storybook/react";
 
-export default {
+import { BasicStyledModal, ClaimSuccessModal } from "../../../core/web3/modals";
+import {
+  ModalFooterCta,
+  ModalFooterCtaX,
+  ModalFooterLearn,
+  ModalFooterSocial
+} from "../../../core/web3/modals/BasicStyledModal";
+
+type PagePropsAndCustomArgs = React.ComponentProps<typeof BasicStyledModal> & { footer?: string };
+
+const meta: Meta<PagePropsAndCustomArgs> = {
   title: "Core/Modals",
   component: BasicStyledModal,
+  render: args => {
+    const footer =
+      args.type === "cta" ? (
+        <ModalFooterCta buttonText="VERIFY I'M HUMAN" action={noop} />
+      ) : args.type === "ctaX" ? (
+        <ModalFooterCtaX extUrl="https://www.google.com" buttonText="Click me" />
+      ) : args.type === "learn" ? (
+        <ModalFooterLearn source="sign" />
+      ) : args.type === "social" ? (
+        <ModalFooterSocial />
+      ) : (
+        <></>
+      );
+    return <BasicStyledModal {...args} footer={footer} />;
+  },
   argTypes: {
     withCloseButton: {
       description: "should it show a close button"
@@ -22,9 +48,6 @@ export default {
         options: ["cta", "ctaX", "learn", "loader", "social"]
       }
     },
-    extUrl: {
-      description: "url that has to be set for the modal when type is ctaX"
-    },
     title: {
       description: "title of the modal"
     },
@@ -33,12 +56,11 @@ export default {
     },
     loading: {
       description: "loading state of the modal"
-    },
-    buttonText: {
-      description: "copy for the cta(x) button"
     }
   }
 };
+
+export default meta;
 
 export const BasicModal = {
   args: {

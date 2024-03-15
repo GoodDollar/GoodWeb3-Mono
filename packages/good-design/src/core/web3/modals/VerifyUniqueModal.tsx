@@ -3,7 +3,7 @@ import { Link } from "native-base";
 
 import { useFVModalAction } from "../../../hooks/useFVModalAction";
 import { withTheme } from "../../../theme";
-import BasicStyledModal from "./BasicStyledModal";
+import BasicStyledModal, { ModalFooterCta } from "./BasicStyledModal";
 import { TxModal } from "./TxModal";
 
 const ModalContent = () => (
@@ -46,9 +46,8 @@ export const VerifyUniqueModal = withTheme({ name: "BasicStyledModal" })(
             onClose={onClose}
             title={`Verify \n Uniqueness`}
             content={<ModalContent />}
+            footer={<ModalFooterCta buttonText="VERIFY I'M HUMAN" action={verify} />}
             withOverlay="dark"
-            buttonText="VERIFY I'M HUMAN"
-            buttonAction={verify}
             withCloseButton
           />
         ) : (

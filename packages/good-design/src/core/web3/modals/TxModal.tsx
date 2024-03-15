@@ -2,7 +2,7 @@ import React from "react";
 import { noop } from "lodash";
 
 import { withTheme } from "../../../theme";
-import BasicStyledModal from "./BasicStyledModal";
+import BasicStyledModal, { ModalFooterLearn } from "./BasicStyledModal";
 
 interface ITxModalProps {
   type: "send" | "sign";
@@ -28,11 +28,11 @@ export const TxModal = withTheme({ name: "BasicStyledModal" })(
       <BasicStyledModal
         {...props}
         type="learn"
-        learnSource={type}
         show={isPending}
         onClose={onClose}
         title={title}
         content={content}
+        footer={<ModalFooterLearn source={type} />}
         withOverlay="dark"
         withCloseButton
       />

@@ -3,7 +3,7 @@ import { noop } from "lodash";
 import { Text } from "native-base";
 
 import { withTheme } from "../../../theme";
-import BasicStyledModal from "./BasicStyledModal";
+import BasicStyledModal, { ModalFooterSocial } from "./BasicStyledModal";
 
 const ClaimSuccessContent = () => (
   <>
@@ -34,7 +34,7 @@ export const ClaimSuccessModal = withTheme({ name: "BasicStyledModal" })(
         onClose={onClose}
         title={`Congrats! \n You claimed \n G$ today`}
         content={<ClaimSuccessContent />}
-        buttonAction={noop}
+        footer={<ModalFooterSocial />}
         withOverlay="dark"
         withCloseButton
       />

@@ -10,9 +10,7 @@ import { learnSources } from "../../buttons/LearnButton";
 import { SpinnerCheckMark } from "../../animated";
 import BillyCelebration from "../../../assets/svg/billy-celebration.svg";
 
-const altModalTypes = ["loader", "other"];
-
-interface BasicModalProps {
+export interface BasicModalProps {
   show: boolean;
   onClose: () => void;
   withOverlay?: "blur" | "dark";
@@ -23,25 +21,20 @@ interface BasicModalProps {
   bodyStyle?: any;
   footerStyle?: any;
   content?: string | JSX.Element;
-  buttonText?: string;
-  buttonAction?: () => void;
-  learnSource?: learnSources;
-  altLearnSource?: { link: string; label: string; icon: any };
+  footer?: JSX.Element;
 }
 
 interface CtaOrLearnModalProps extends BasicModalProps {
   type: "cta" | "ctaX" | "learn" | "social";
-  extUrl?: string;
   loading?: never;
 }
 
 interface AltModalProps extends BasicModalProps {
   type: "loader";
   loading: boolean;
-  extUrl?: never;
 }
 
-type StyledModalProps = CtaOrLearnModalProps | AltModalProps;
+export type StyledModalProps = CtaOrLearnModalProps | AltModalProps;
 
 const ModalHeader = ({ title }: { title: string }) => (
   <Center backgroundColor="white" textAlign="center">
@@ -71,31 +64,36 @@ const ModalBody = ({
   </Center>
 );
 
-const ModalFooter = ({
-  type,
-  action,
-  extUrl,
-  buttonText,
+export const ModalFooterCta = ({ buttonText, action }: { buttonText: string; action: () => void }) => (
+  <Center padding="0" w="100%">
+    <LinkButton buttonText={buttonText} onPress={action} />
+  </Center>
+);
+
+export const ModalFooterCtaX = ({ extUrl, buttonText }: { extUrl: string; buttonText: string }) => (
+  <Center padding="0" w="100%">
+    <LinkButton buttonText={buttonText} url={extUrl} />
+  </Center>
+);
+
+export const ModalFooterLearn = ({
   source,
   altSource = { link: "", label: "", icon: null }
 }: {
-  type: string;
-  action?: () => void;
-  extUrl?: string;
-  buttonText?: string;
   source?: learnSources;
   altSource?: { link: string; label: string; icon: any };
 }) => (
   <Center padding="0" w="100%">
-    {type === "cta" && action && buttonText ? <LinkButton buttonText={buttonText} onPress={action} /> : null}
-    {type === "ctaX" && extUrl && buttonText ? <LinkButton url={extUrl} buttonText={buttonText} /> : null}
-    {type === "learn" ? <LearnButton {...(source ? { source: source } : { altSource: altSource })} /> : null}
-    {type === "social" ? (
-      <Center>
-        <Image source={BillyCelebration} w={135} h={135} style={{ resizeMode: "contain" }} />
-        {/* todo: add socials share bar */}
-      </Center>
-    ) : null}
+    <LearnButton {...(source ? { source: source } : { altSource: altSource })} />
+  </Center>
+);
+
+export const ModalFooterSocial = () => (
+  <Center padding="0" w="100%">
+    <Center>
+      <Image source={BillyCelebration} w={135} h={135} style={{ resizeMode: "contain" }} />
+      {/* todo: add socials share bar */}
+    </Center>
   </Center>
 );
 
@@ -105,13 +103,9 @@ const BasicStyledModal = ({
   onClose,
   withOverlay,
   withCloseButton,
-  extUrl,
   title,
   content,
-  buttonText,
-  buttonAction,
-  learnSource,
-  altLearnSource,
+  footer,
   loading,
   modalStyle,
   headerStyle,
@@ -119,9 +113,7 @@ const BasicStyledModal = ({
   footerStyle
 }: StyledModalProps) => {
   const { Modal, showModal, hideModal } = useModal();
-  const isAltModal = altModalTypes.includes(type);
 
-  // todo: add handling of open/close modal
   useEffect(() => {
     if (show) {
       showModal();
@@ -144,18 +136,7 @@ const BasicStyledModal = ({
         withOverlay={withOverlay}
         header={<ModalHeader title={title} />}
         body={<ModalBody content={content} type={type} loading={loading} />}
-        {...(!isAltModal && {
-          footer: (
-            <ModalFooter
-              type={type}
-              extUrl={extUrl}
-              buttonText={buttonText}
-              action={buttonAction}
-              source={learnSource}
-              altSource={altLearnSource}
-            />
-          )
-        })}
+        footer={footer}
       />
     </React.Fragment>
   );
