@@ -57,7 +57,7 @@ export const useCertificates = (account: string, types: string[] | false | null 
     void queryCertificates(db, account, types).then(certificates =>
       setCertificates(certificates.map(cleanupCertificate))
     );
-  }, [db, account, types]);
+  }, [db, account, types, setCertificates]);
 
   return { certificates, getCertificate, storeCertificate, deleteCertificate };
 };
