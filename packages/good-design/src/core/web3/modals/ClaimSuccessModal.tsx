@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { noop } from "lodash";
 import { Text } from "native-base";
 
+import { withTheme } from "../../../theme";
 import BasicStyledModal from "./BasicStyledModal";
 
 const ClaimSuccessContent = () => (
@@ -13,27 +14,30 @@ const ClaimSuccessContent = () => (
   </>
 );
 
-export const ClaimSuccessModal = ({ open, onClose = noop }: { open: boolean; onClose?: () => void }) => {
-  const [show, setShow] = useState(false);
+export const ClaimSuccessModal = withTheme({ name: "BasicStyledModal" })(
+  ({ open, onClose = noop, ...props }: { open: boolean; onClose?: () => void }) => {
+    const [show, setShow] = useState(false);
 
-  useEffect(() => {
-    // the open prop is expected to be only true when transaction state is success.
-    // this resets pretty quickly which is why we cannot use it directly for triggering the modal
-    if (open) {
-      setShow(true);
-    }
-  }, [open]);
+    useEffect(() => {
+      // the open prop is expected to be only true when transaction state is success.
+      // this resets pretty quickly which is why we cannot use it directly for triggering the modal
+      if (open) {
+        setShow(true);
+      }
+    }, [open]);
 
-  return (
-    <BasicStyledModal
-      type="social"
-      show={show}
-      onClose={onClose}
-      title={`Congrats! \n You claimed \n G$ today`}
-      content={<ClaimSuccessContent />}
-      buttonAction={noop}
-      withOverlay="dark"
-      withCloseButton
-    />
-  );
-};
+    return (
+      <BasicStyledModal
+        {...props}
+        type="social"
+        show={show}
+        onClose={onClose}
+        title={`Congrats! \n You claimed \n G$ today`}
+        content={<ClaimSuccessContent />}
+        buttonAction={noop}
+        withOverlay="dark"
+        withCloseButton
+      />
+    );
+  }
+);

@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { Center, Text } from "native-base";
 
-import { withTheme } from "../../../theme";
 import { Image } from "../../images";
 import { Title } from "../../layout";
 import { useModal } from "../../../hooks";
@@ -100,68 +99,66 @@ const ModalFooter = ({
   </Center>
 );
 
-const BasicStyledModal = withTheme({ name: "BasicStyledModal" })(
-  ({
-    type,
-    show = true,
-    onClose,
-    withOverlay,
-    withCloseButton,
-    extUrl,
-    title,
-    content,
-    buttonText,
-    buttonAction,
-    learnSource,
-    altLearnSource,
-    loading,
-    modalStyle,
-    headerStyle,
-    bodyStyle,
-    footerStyle
-  }: StyledModalProps) => {
-    const { Modal, showModal, hideModal } = useModal();
-    const isAltModal = altModalTypes.includes(type);
+const BasicStyledModal = ({
+  type,
+  show = true,
+  onClose,
+  withOverlay,
+  withCloseButton,
+  extUrl,
+  title,
+  content,
+  buttonText,
+  buttonAction,
+  learnSource,
+  altLearnSource,
+  loading,
+  modalStyle,
+  headerStyle,
+  bodyStyle,
+  footerStyle
+}: StyledModalProps) => {
+  const { Modal, showModal, hideModal } = useModal();
+  const isAltModal = altModalTypes.includes(type);
 
-    // todo: add handling of open/close modal
-    useEffect(() => {
-      if (show) {
-        showModal();
-        return;
-      }
+  // todo: add handling of open/close modal
+  useEffect(() => {
+    if (show) {
+      showModal();
+      return;
+    }
 
-      hideModal();
-    }, [showModal, show]);
+    hideModal();
+  }, [showModal, show]);
 
-    return (
-      <React.Fragment>
-        <Modal
-          _modalContainer={modalStyle}
-          _header={headerStyle}
-          _body={bodyStyle}
-          _footer={footerStyle}
-          {...(withCloseButton && { closeText: "x" })}
-          type={type}
-          onClose={onClose}
-          withOverlay={withOverlay}
-          header={<ModalHeader title={title} />}
-          body={<ModalBody content={content} type={type} loading={loading} />}
-          {...(!isAltModal && {
-            footer: (
-              <ModalFooter
-                type={type}
-                extUrl={extUrl}
-                buttonText={buttonText}
-                action={buttonAction}
-                source={learnSource}
-                altSource={altLearnSource}
-              />
-            )
-          })}
-        />
-      </React.Fragment>
-    );
-  }
-);
+  return (
+    <React.Fragment>
+      <Modal
+        _modalContainer={modalStyle}
+        _header={headerStyle}
+        _body={bodyStyle}
+        _footer={footerStyle}
+        {...(withCloseButton && { closeText: "x" })}
+        type={type}
+        onClose={onClose}
+        withOverlay={withOverlay}
+        header={<ModalHeader title={title} />}
+        body={<ModalBody content={content} type={type} loading={loading} />}
+        {...(!isAltModal && {
+          footer: (
+            <ModalFooter
+              type={type}
+              extUrl={extUrl}
+              buttonText={buttonText}
+              action={buttonAction}
+              source={learnSource}
+              altSource={altLearnSource}
+            />
+          )
+        })}
+      />
+    </React.Fragment>
+  );
+};
 
 export default BasicStyledModal;
