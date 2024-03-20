@@ -100,7 +100,6 @@ export const theme = {
     }),
     externalLink: () => ({
       innerView: {
-        w: "300px",
         h: "130px",
         bgColor: "goodWhite.100",
         display: "flex",
@@ -108,6 +107,11 @@ export const theme = {
         alignItems: "center",
         justifyContent: "center",
         style: { flexGrow: 1 }
+      },
+      viewInteraction: {
+        hover: {
+          bgColor: "goodGrey.300:alpha.30"
+        }
       }
     })
   }

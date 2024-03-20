@@ -45,6 +45,7 @@ module.exports = {
     "/packages/*/src/types/**/*.d.ts",
     "/packages/*/src/stories/**/*.*",
     "/packages/*/src/**/*.test.[jt]s*",
+    "/packages/*/src/**/*.json",
     "/packages/*/*.config.js",
     "/*.config.js"
   ]
