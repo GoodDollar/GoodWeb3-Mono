@@ -1,6 +1,6 @@
 import React from "react";
 import { Center, HStack, Heading, Text, VStack, IStackProps } from "native-base";
-import { CredentialTypes } from "@gooddollar/web3sdk-v2";
+import { CredentialType } from "@gooddollar/web3sdk-v2";
 
 import { withTheme } from "../../../theme";
 import SvgXml from "../../../core/images/SvgXml";
@@ -70,10 +70,10 @@ const GoodIdCard = withTheme({ name: "GoodIdCard", skipProps: "credentialsList" 
           </VStack>
         </HStack>
         <HStack space={2} flexWrap="wrap">
-          {Object.keys(CredentialTypes).map(credentialType => (
+          {Object.keys(CredentialType).map(credentialType => (
             <CardRowItem
               key={credentialType}
-              credentialLabel={CredentialTypes[credentialType as keyof typeof CredentialTypes]}
+              credentialLabel={CredentialType[credentialType as keyof typeof CredentialType]}
               verifiedValue={
                 credentialsList?.find(credential => credential.credentialType === credentialType)?.verifiedValue
               }

@@ -13,7 +13,7 @@ export interface Issuer {
   id: string;
 }
 
-export interface VerifiableCredential {
+export interface Certificate {
   credentialSubject: CredentialSubject;
   issuer: Issuer;
   type: string[];
@@ -23,8 +23,13 @@ export interface VerifiableCredential {
 }
 
 // Might change
-export enum CredentialTypes {
-  VerifiableAgeCredential = "Age",
-  VerifiableGenderCredential = "Gender",
-  VerifiableLocationCredential = "Location"
+export enum CredentialType {
+  Age = "VerifiableAgeCredential",
+  Gender = "VerifiableGenderCredential",
+  Location = "VerifiableLocationCredential",
+  Identity = "VerifiableIdentityCredential" // identity credential/certificate consists of Age/Gender/FaceVerification
+}
+export interface CertificateRecord extends Certificate {
+  primary_idx: string;
+  type_subject_idx: string[];
 }

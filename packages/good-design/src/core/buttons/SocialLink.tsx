@@ -8,4 +8,6 @@ const SocialsLink: React.FC<{ network: string; logo: string; url: string }> = ({
   </Link>
 );
 
+export const SocialShareBar = () => <></>;
+
 export default SocialsLink;

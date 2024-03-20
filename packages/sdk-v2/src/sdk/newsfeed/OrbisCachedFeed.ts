@@ -33,7 +33,7 @@ export class OrbisCachedFeed {
     this.db = createNewsFeedDb();
     this.ready = this.db.open();
     this.filter = filter;
-    this.sdk = new Orbis();
+    this.sdk = new Orbis({ useLit: false });
     this.IPFS = ipfs;
   }
 
