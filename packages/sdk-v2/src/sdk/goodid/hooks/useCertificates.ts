@@ -3,8 +3,7 @@ import { useCallback, useContext, useEffect, useState, useRef, useMemo, MutableR
 import { isEmpty, size } from "lodash";
 
 import { GoodIdContext } from "../../../contexts/goodid/GoodIdContext";
-import { Certificate, CredentialType } from "../types";
-import { CertificateRecord } from "../db";
+import { Certificate, CertificateRecord, CredentialType } from "../types";
 
 export interface CertificateItem {
   id: string;

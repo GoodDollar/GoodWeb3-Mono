@@ -14,6 +14,6 @@ const schema = {
 export const createCertificatesDb = () => {
   const db = new Dexie("GoodIdCertificates", { autoOpen: true });
   db.version(1).stores(schema);
-  
+
   return db;
 };
