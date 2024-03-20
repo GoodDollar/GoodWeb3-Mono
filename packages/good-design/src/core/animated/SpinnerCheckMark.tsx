@@ -3,7 +3,7 @@ import Lottie from "lottie-react-native";
 import { View } from "react-native-animatable";
 import { Text } from "native-base";
 
-import SpinnerAnimate from "./lottie/spinnercheckmark/data.json";
+import SpinnerAnimate from "../../assets/lottie/spinnercheckmark/data.json";
 
 const SpinnerCheckMark = ({ loading }: { loading: boolean }) => {
   const progress = useRef<Lottie>(null);
