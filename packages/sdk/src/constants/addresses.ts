@@ -22,12 +22,18 @@ type AddressMap = { [chainId: number]: string };
 export function G$ContractAddresses<T = ObjectLike>(chainId: SupportedChainId, name: string): T {
   let deploymentName: string;
   const CURRENT_NETWORK = getNetworkEnv();
+
   switch (chainId) {
     case SupportedChainId.MAINNET:
       deploymentName = "production-mainnet";
       break;
     case SupportedChainId.FUSE:
-      deploymentName = CURRENT_NETWORK;
+      if (CURRENT_NETWORK.includes("celo")) {
+        const network = CURRENT_NETWORK.split("-celo")[0];
+        deploymentName = network === "development" ? "fuse" : network;
+      } else {
+        deploymentName = CURRENT_NETWORK;
+      }
       break;
   }
 

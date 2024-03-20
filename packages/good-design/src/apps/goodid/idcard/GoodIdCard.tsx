@@ -1,6 +1,6 @@
 import React from "react";
 import { Center, HStack, Heading, Text, VStack, IStackProps } from "native-base";
-import { CredentialTypes } from "@gooddollar/web3sdk-v2";
+import { CredentialType } from "@gooddollar/web3sdk-v2";
 
 import { withTheme } from "../../../theme";
 import SvgXml from "../../../core/images/SvgXml";
@@ -10,7 +10,7 @@ import { truncateMiddle } from "../../../utils";
 
 interface GoodIdCardProps extends IStackProps {
   credentialsList: { credentialType: string; verifiedValue: any }[];
-  account: string | undefined;
+  account: string;
   isWhitelisted: boolean;
   avatar?: string;
   fullname?: string;
@@ -49,7 +49,7 @@ const CardRowItem = withTheme({ name: "CardRowItem" })(
 const GoodIdCard = withTheme({ name: "GoodIdCard", skipProps: "credentialsList" })(
   ({ credentialsList, account, isWhitelisted, avatar, fullname, expiryDate, ...props }: GoodIdCardProps) => {
     const { title, subHeading, subContent, footer } = props.fontStyles ?? {};
-    const truncatedAccount = account ? truncateMiddle(account, 11) : "0x000...0000";
+    const truncatedAccount = truncateMiddle(account, 11);
     return (
       <VStack {...props}>
         <HStack justifyContent="space-between">
@@ -70,10 +70,10 @@ const GoodIdCard = withTheme({ name: "GoodIdCard", skipProps: "credentialsList" 
           </VStack>
         </HStack>
         <HStack space={2} flexWrap="wrap">
-          {Object.keys(CredentialTypes).map(credentialType => (
+          {Object.entries(CredentialType).map(([key, credentialType]) => (
             <CardRowItem
-              key={credentialType}
-              credentialLabel={CredentialTypes[credentialType as keyof typeof CredentialTypes]}
+              key={key}
+              credentialLabel={CredentialType[key as keyof typeof CredentialType]}
               verifiedValue={
                 credentialsList?.find(credential => credential.credentialType === credentialType)?.verifiedValue
               }

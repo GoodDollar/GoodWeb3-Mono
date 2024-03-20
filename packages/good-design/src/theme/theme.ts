@@ -2,6 +2,7 @@ import { extendTheme } from "native-base";
 import * as layout from "../core/layout/theme";
 import * as buttons from "../core/buttons/theme";
 import * as animated from "../core/animated/theme";
+import * as web3modals from "../core/web3/modals/theme";
 import * as advanced from "../advanced/theme";
 import * as nativebase from "./nativebase";
 import * as apps from "../apps/theme";
@@ -111,6 +112,7 @@ export const theme = extendTheme({
     ...advanced,
     ...apps,
     ...animated,
+    ...web3modals,
     ...nativebase
   }
 });

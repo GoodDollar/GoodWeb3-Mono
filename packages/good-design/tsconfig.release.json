@@ -4,6 +4,6 @@
     "sourceMap": false,
     "removeComments": true
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "src/**/*.json"],
   "exclude": ["node_modules", "src/stories", "**/*.stories.tsx", "src/types", "**/*.test.*", "__tests__"]
 }

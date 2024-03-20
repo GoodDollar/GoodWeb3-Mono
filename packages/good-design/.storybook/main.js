@@ -67,7 +67,8 @@ module.exports = {
 
     config.resolve.alias = {
       ...config.resolve.alias,
-      "react-native-webview": "react-native-web-webview"
+      "react-native-webview": "react-native-web-webview",
+      "lottie-react-native": "react-native-web-lottie"
     };
     return config;
   }

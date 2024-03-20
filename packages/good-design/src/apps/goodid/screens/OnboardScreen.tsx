@@ -45,6 +45,7 @@ const OnboardScreen = withTheme({ name: "OnboardScreen" })(({ navigateTo, accoun
   const [isWhitelisted] = useIsAddressVerified(account ?? "");
   const [expiryDate] = useIdentityExpiryDate(account ?? "");
   const [formattedExpiryDate, setExpiryDate] = React.useState<string | undefined>();
+  //todo: add fetchCredentials here or passed down from parent
 
   // todo: might be moved to be implemented by external
   const { verify } = useFVModalAction({
@@ -96,12 +97,15 @@ const OnboardScreen = withTheme({ name: "OnboardScreen" })(({ navigateTo, accoun
         <Title fontSize="xl" lineHeight="30" textAlign="center">
           {isWhitelisted ? `Renew` : `Get`} your GoodID to claim UBI
         </Title>
-        <GoodIdCard
-          credentialsList={[]}
-          isWhitelisted={isWhitelisted}
-          account={account}
-          expiryDate={formattedExpiryDate}
-        />
+        {account ? (
+          <GoodIdCard
+            credentialsList={[]}
+            isWhitelisted={isWhitelisted}
+            account={account}
+            expiryDate={formattedExpiryDate}
+          />
+        ) : null}
+
         <VStack space={2} alignItems="flex-start">
           <Heading fontSize="md" color="goodGrey.600">
             It unlocks access to:
