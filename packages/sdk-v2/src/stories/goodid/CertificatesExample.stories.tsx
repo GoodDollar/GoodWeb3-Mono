@@ -1,84 +1,86 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useCallback } from "react";
 import { ComponentStory, ComponentMeta } from "@storybook/react";
-import { View, Text } from "react-native";
+import { View, Text, Button } from "react-native";
 import { useEthers } from "@usedapp/core";
 
-import type { Certificate } from "../../sdk/goodid/types";
+import { Certificate, CredentialType } from "../../sdk/goodid/types";
 import { W3Wrapper } from "../W3Wrapper";
-import { GoodIdContext, GoodIdContextProvider } from "../../contexts/goodid/GoodIdContext";
+import { GoodIdContextProvider } from "../../contexts/goodid/GoodIdContext";
+import { useAggregatedCertificates, useCertificates } from "../../sdk";
+
+const { Location, Identity, Age, Gender } = CredentialType
 
 const GoodIdWrapper = ({ children }) => {
   return <GoodIdContextProvider>{children}</GoodIdContextProvider>;
 };
 
-enum CredentialTypes {
-  VerifiableLocationCredential = "Location",
-  VerifiableAgeCredential = "Age",
-  VerifiableGenderCredential = "Gender",
-  VerifiableIdentityCredential = "Identity"
+const mockCertificate = (account: string, typesSet: 'location' | 'basicidentity') => {
+  const mock: Certificate = {
+    credentialSubject: {
+      id: "", // example. Id will be set on server
+    },
+    issuer: {
+      id: "did:key:p3Ls9vx5d7NDeqHwJG42bBxB2kzMEOgXB3tjVPQHqy1fjZrY"
+    },
+    type: ["VerifiableCredential"],
+    "@context": ["https://www.w3.org/2018/credentials/v1"],
+    issuanceDate: new Date().toISOString(),
+    proof: {
+      type: "JwtProof2020",
+      jwt: "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJ2YyI6eyJAY29udGV4dCI6WyJodHRwczovL3d3dy53My5vcmcvMjAxOC9jcmVkZW50aWFscy92MSJdLCJ0eXBlIjpbIlZlcmlmaWFibGVDcmVkZW50aWFsIl0sImNyZWRlbnRpYWxTdWJqZWN0Ijp7InlvdSI6IlJvY2sifX0sInN1YiI6ImRpZDp3ZWI6ZXhhbXBsZS5jb20iLCJuYmYiOjE3MDgzMzI5OTQsImlzcyI6ImRpZDprZXk6ejZNa3Fuc1BzakRpZnFtaEZLMjlnVmdWN2hqU0FVZlNGN2d1VVFSVHRzM2ViV3Y0In0.ViJUzFSe3l3j7opIgDhgKKx-xtiXP3RpjWckyFsnYiCEm7WOv3WTZAVLkGVNXwAsevJZ6Pg9h1X_nSRytLNJAw"
+    }
+  };
+  
+  // the format would be: 'did:ethr:<wallet-address WITH 0x>                
+  mock.credentialSubject.id = `did:ethr:${account}`
+
+  switch (typesSet) {
+    case 'location':
+      mock.type.push(Location)
+      mock.credentialSubject.countryCode = "US"
+      break
+    case 'basicidentity':
+      mock.type.push(Identity, Age, Gender)
+      mock.credentialSubject.unique = true
+      mock.credentialSubject.gender = "Male"
+      mock.credentialSubject.age = { from: 18, to: 20 }
+  }
+
+  return mock
 }
 
-const mockCertificate = {
-  credentialSubject: {
-    id: "", // example. Id will be set on server
-    countryCode: "US"
-  },
-  issuer: {
-    id: "did:key:p3Ls9vx5d7NDeqHwJG42bBxB2kzMEOgXB3tjVPQHqy1fjZrY"
-  },
-  type: ["VerifiableCredential", "VerifiableLocationCredential"],
-  "@context": ["https://www.w3.org/2018/credentials/v1"],
-  issuanceDate: "2024-02-19T08:56:34.000Z",
-  proof: {
-    type: "JwtProof2020",
-    jwt: "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJ2YyI6eyJAY29udGV4dCI6WyJodHRwczovL3d3dy53My5vcmcvMjAxOC9jcmVkZW50aWFscy92MSJdLCJ0eXBlIjpbIlZlcmlmaWFibGVDcmVkZW50aWFsIl0sImNyZWRlbnRpYWxTdWJqZWN0Ijp7InlvdSI6IlJvY2sifX0sInN1YiI6ImRpZDp3ZWI6ZXhhbXBsZS5jb20iLCJuYmYiOjE3MDgzMzI5OTQsImlzcyI6ImRpZDprZXk6ejZNa3Fuc1BzakRpZnFtaEZLMjlnVmdWN2hqU0FVZlNGN2d1VVFSVHRzM2ViV3Y0In0.ViJUzFSe3l3j7opIgDhgKKx-xtiXP3RpjWckyFsnYiCEm7WOv3WTZAVLkGVNXwAsevJZ6Pg9h1X_nSRytLNJAw"
-  }
-};
 
 const CertificatesView = () => {
   const { account } = useEthers();
-  const [certificates, setCertificates] = useState<Certificate[] | undefined>([]);
-  const { storeCertificate, getCertificates } = useContext(GoodIdContext);
+  const { storeCertificate, deleteCertificate } = useCertificates(account);
+  const certificates = useAggregatedCertificates(account)
+
+  const createMockCertificate = useCallback(async (typeset: Parameters<typeof mockCertificate>[1]) => {
+    if (storeCertificate && account) {
+      await storeCertificate(mockCertificate(account, typeset))
+    }
+  }, [storeCertificate, account]);
 
   useEffect(() => {
-    const fetchCertificates = async () => {
-      if (getCertificates) {
-        try {
-          const certificates = await getCertificates();
+    if (certificates?.length) {
+      return
+    }
 
-          // example: considering a case where people might have a shared-device and have multiple credentials in the same storage
-          const filteredCertificates = certificates?.filter(
-            certificate =>
-              certificate.credentialSubject.id === account && Object.keys(CredentialTypes).includes(certificate.type[1])
-          );
-
-          setCertificates(filteredCertificates ?? []);
-        } catch (e) {
-          console.error("Error fetching credentials", e);
-        }
-      }
-    };
-
-    const createMockCertificate = async () => {
-      if (storeCertificate && account) {
-        //example: only for story is this done. in practice its passed down to server for issueCertificate
-        // the format would be: 'did:ethr:<wallet-address>
-        mockCertificate.credentialSubject.id = account;
-        await storeCertificate(mockCertificate).then(() => fetchCertificates());
-      }
-    };
-
-    void createMockCertificate();
-  }, [account]);
+    // add mocks on mount if nothing exists
+    (['location', 'basicidentity'] as Parameters<typeof mockCertificate>[1][]).forEach(createMockCertificate)    
+  }, [account, storeCertificate, certificates, createMockCertificate]);
 
   return (
     <View>
+      <Button title="Issue location certificate" onPress={() => createMockCertificate('location')} />
+      <Button title="Issue basic identity certificate" onPress={() => createMockCertificate('basicidentity')} />
       <Text>Which credentials do you have verified?</Text>
-      {certificates?.map((certificate, index) => {
+      {certificates?.map(({ id, typeName, key, certificate }) => {
         return (
-          <View key={index}>
-            <Text style={{ fontWeight: "bold" }}>{CredentialTypes[certificate.type[0]]}</Text>
-            <Text>{certificate.credentialSubject.countryCode}</Text>
+          <View key={key}>
+            <Text style={{ fontWeight: "bold" }}>{typeName}</Text>
+            <Text>{JSON.stringify(certificate, null, 2)}</Text>
+            <Button title="Delete" onPress={() => deleteCertificate(id)} />
           </View>
         );
       })}

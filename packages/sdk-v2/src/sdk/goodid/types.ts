@@ -23,9 +23,9 @@ export interface Certificate {
 }
 
 // Might change
-export enum CredentialTypes {
-  VerifiableAgeCredential = "Age",
-  VerifiableGenderCredential = "Gender",
-  VerifiableLocationCredential = "Location",
-  VerifiableIdentityCredential = "Identity" // identity credential/certificate consists of Age/Gender/FaceVerification
+export enum CredentialType {
+  Age = "VerifiableAgeCredential",
+  Gender = "VerifiableGenderCredential",
+  Location = "VerifiableLocationCredential",
+  Identity = "VerifiableIdentityCredential" // identity credential/certificate consists of Age/Gender/FaceVerification
 }
