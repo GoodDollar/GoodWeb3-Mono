@@ -70,10 +70,10 @@ const GoodIdCard = withTheme({ name: "GoodIdCard", skipProps: "credentialsList" 
           </VStack>
         </HStack>
         <HStack space={2} flexWrap="wrap">
-          {Object.keys(CredentialType).map(credentialType => (
+          {Object.entries(CredentialType).map(([key, credentialType]) => (
             <CardRowItem
-              key={credentialType}
-              credentialLabel={CredentialType[credentialType as keyof typeof CredentialType]}
+              key={key}
+              credentialLabel={CredentialType[key as keyof typeof CredentialType]}
               verifiedValue={
                 credentialsList?.find(credential => credential.credentialType === credentialType)?.verifiedValue
               }

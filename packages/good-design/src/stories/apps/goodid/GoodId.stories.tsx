@@ -1,7 +1,6 @@
 import React from "react";
 
 import { GoodIdCard } from "../../../apps/goodid";
-
 import { W3Wrapper } from "../../W3Wrapper";
 
 const mockCredential = [
