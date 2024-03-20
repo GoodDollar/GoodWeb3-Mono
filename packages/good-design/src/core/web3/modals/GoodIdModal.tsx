@@ -1,24 +1,10 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { Button, Text, useBreakpointValue } from "native-base";
 import { SupportedChains, useFVLink } from "@gooddollar/web3sdk-v2";
 
-import { useModal } from "../../../hooks/useModal";
 import { Title } from "../../layout";
 import { Web3ActionButton } from "../../../advanced";
 import { CentreBox } from "../../layout/CentreBox";
-
-interface GoodIdModal {
-  account: string;
-  onClose: () => void;
-}
-
-const GoodIdHeader = () => (
-  <CentreBox backgroundColor={"white"}>
-    <Title mb="2" color="main" fontSize="xl" lineHeight="36px">
-      {`GoodID`}
-    </Title>
-  </CentreBox>
-);
 
 export const GoodIdDetails = ({ account }: { account: string }) => {
   const { getFvSig, deleteFvId } = useFVLink();
@@ -98,26 +84,5 @@ export const GoodIdDetails = ({ account }: { account: string }) => {
         </Text>
       </CentreBox>
     </CentreBox>
-  );
-};
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const GoodIdModal = ({ account, onClose }: GoodIdModal) => {
-  const { Modal, showModal } = useModal();
-
-  useEffect(() => {
-    showModal();
-  }, [showModal]);
-
-  return (
-    <React.Fragment>
-      <Modal
-        _modalContainer={{ maxWidth: 600 }}
-        header={<GoodIdHeader />}
-        body={<GoodIdDetails account={account} />}
-        onClose={onClose}
-        closeText="x"
-      />
-    </React.Fragment>
   );
 };

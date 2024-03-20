@@ -14,6 +14,7 @@ module.exports = {
     }
   },
   stories: ["../src/**/*.stories.mdx", "../src/**/*.stories.@(js|jsx|ts|tsx)"],
+  staticDirs: ["../src/assets"],
   addons: [
     "@storybook/addon-links",
     {
@@ -66,7 +67,8 @@ module.exports = {
 
     config.resolve.alias = {
       ...config.resolve.alias,
-      "react-native-webview": "react-native-web-webview"
+      "react-native-webview": "react-native-web-webview",
+      "lottie-react-native": "react-native-web-lottie"
     };
     return config;
   }
