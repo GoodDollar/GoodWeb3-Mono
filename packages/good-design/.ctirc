@@ -18,7 +18,7 @@
   "useComment": false,
 
   // quote mark
-  "quote": "'",
+  "quote": "\"",
   // overwrite index.ts file also index.ts file already exist that create backup file
   "overwrite": true,
   // keep file extension in export statement path

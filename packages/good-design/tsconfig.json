@@ -23,6 +23,6 @@
     "declarationMap": true,
     "composite": true,
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "src/**/*.json"],
   "exclude": ["node_modules", "../../node_modules", "src/stories", "**/*.stories.tsx"]
 }
