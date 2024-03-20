@@ -3730,7 +3730,7 @@ __metadata:
     "@babel/preset-typescript": ^7.16.0
     "@babel/runtime": ^7.18.9
     "@gooddollar/goodprotocol": ^2.0.24
-    "@gooddollar/web3sdk-v2": 0.2.17-beta.0c5f1a8
+    "@gooddollar/web3sdk-v2": latest
     "@lingui/macro": ^3.14.0
     "@lingui/react": ^3.14.0
     "@lottiefiles/react-lottie-player": ^3.5.3
@@ -3955,9 +3955,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/web3sdk-v2@npm:0.2.17-beta.0c5f1a8":
-  version: 0.2.17-beta.0c5f1a8
-  resolution: "@gooddollar/web3sdk-v2@npm:0.2.17-beta.0c5f1a8"
+"@gooddollar/web3sdk-v2@npm:latest":
+  version: 0.2.18
+  resolution: "@gooddollar/web3sdk-v2@npm:0.2.18"
   dependencies:
     "@amplitude/analytics-browser": ^1.6.4
     "@amplitude/analytics-react-native": ^0.7.0
@@ -4003,7 +4003,7 @@ __metadata:
     "@react-native-async-storage/async-storage": 1.17.10
     react-native: "*"
     react-native-web: "*"
-  checksum: 853f00a2e3f0ea667ad7997344ad968fe290477f06ad131f51d974b9f73c018be8f89a194c40589c7f2d222979e0574cfb75cb5b9b61ec46338cb1d3233301e5
+  checksum: b6097ce42c11a5917d270116647a8be418b21db16a2402df84d79c7881e1edc3ff7f5c909311caf54c6c72c13bd73dfff45780d41818fe150ea4816e85abc29a
   languageName: node
   linkType: hard
 
