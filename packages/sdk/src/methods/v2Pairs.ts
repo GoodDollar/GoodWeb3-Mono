@@ -3,6 +3,7 @@ import { Currency, CurrencyAmount, Token } from "@uniswap/sdk-core";
 import { BigNumber } from "ethers";
 import JSBI from "jsbi";
 
+import { voltagePairData } from "core/apollo";
 import { PairContract } from "contracts/PairContract";
 import { UNISWAP_FACTORY_ADDRESSES } from "constants/addresses";
 import { computePairAddress } from "utils/computePairAddress";
@@ -32,6 +33,7 @@ export async function v2Pairs(
   currencies: Array<[Currency, Currency]>
 ): Promise<[PairState, Pair | null][]> {
   const tokens = currencies.map(([currencyA, currencyB]) => [currencyA.wrapped, currencyB.wrapped]);
+  const pairDayData = await voltagePairData();
 
   const pairAddresses = tokens.reduce((map, [tokenA, tokenB]) => {
     const address =
@@ -46,9 +48,17 @@ export async function v2Pairs(
     return map;
   }, new Map() as Map<string, [Token, Token]>);
 
+  const filteredPairAddresses = new Map();
+
+  for (const { pairAddress } of pairDayData) {
+    if (pairAddresses.has(pairAddress)) {
+      filteredPairAddresses.set(pairAddress, pairAddresses.get(pairAddress));
+    }
+  }
+
   const promises = [];
 
-  for (const address of pairAddresses.keys()) {
+  for (const address of filteredPairAddresses.keys()) {
     promises.push(
       PairContract(chainId, address)
         .getReserves()
