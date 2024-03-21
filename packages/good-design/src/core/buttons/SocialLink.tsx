@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import { Link } from "native-base";
 import { Image } from "../images";
 
@@ -8,6 +8,6 @@ const SocialsLink: React.FC<{ network: string; logo: string; url: string }> = ({
   </Link>
 );
 
-export const SocialShareBar = () => <></>;
+export const SocialShareBar = Fragment;
 
 export default SocialsLink;
