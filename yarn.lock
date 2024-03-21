@@ -3912,7 +3912,7 @@ __metadata:
 
 "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2::locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design":
   version: 0.2.18
-  resolution: "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2#.yalc/@gooddollar/web3sdk-v2::hash=9d50dc&locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design"
+  resolution: "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2#.yalc/@gooddollar/web3sdk-v2::hash=fa0015&locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design"
   dependencies:
     "@amplitude/analytics-browser": ^1.6.4
     "@amplitude/analytics-react-native": ^0.7.0
@@ -3958,7 +3958,7 @@ __metadata:
     "@react-native-async-storage/async-storage": 1.17.10
     react-native: "*"
     react-native-web: "*"
-  checksum: 3839ba1561306fd94e32bfddbef13b81d985e36b4a0cbd925c33eb369993593c8820cf49c397cad69949c9ef608efcbe1bf86e8053953c283ba935f5a54402b7
+  checksum: 4dd4e8f7c975738bb9ff9156391f2bf1011399cad737e34da75fdcf6b415b7143d3e34a6f71c24ca89102e6aa72274af7dfef724d4e28fb73b26200e7778eef7
   languageName: node
   linkType: hard
 
@@ -4076,7 +4076,6 @@ __metadata:
     ctix: ^1.4.0
     dexie: ^3.2.4
     dexie-react-hooks: ^1.1.6
-    did-resolver: ^4.1.0
     ethers: 5.7.2
     ethr-did-resolver: ^10.1.5
     eventemitter3: ^4.0.7
