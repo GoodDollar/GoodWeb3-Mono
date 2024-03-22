@@ -51,7 +51,6 @@
     "css-loader": "^6.5.1",
     "ctix": "^1.4.0",
     "dexie-react-hooks": "^1.1.6",
-    "did-resolver": "^4.1.0",
     "ethers": "5.7.2",
     "ethr-did-resolver": "^10.1.5",
     "html-webpack-plugin": "^5.5.0",

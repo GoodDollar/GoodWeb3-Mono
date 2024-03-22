@@ -39,6 +39,7 @@ export const theme = extendTheme({
     goodGrey: {
       300: "#D4D4D4",
       400: "#A3A3A3",
+      450: "#7A88A5",
       500: "#737373",
       600: "#525252",
       700: "#404040"

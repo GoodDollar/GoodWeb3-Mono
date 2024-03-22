@@ -29,3 +29,7 @@ export enum CredentialType {
   Location = "VerifiableLocationCredential",
   Identity = "VerifiableIdentityCredential" // identity credential/certificate consists of Age/Gender/FaceVerification
 }
+export interface CertificateRecord extends Certificate {
+  primary_idx: string;
+  type_subject_idx: string[];
+}

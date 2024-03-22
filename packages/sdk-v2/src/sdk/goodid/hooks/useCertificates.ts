@@ -1,20 +1,19 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useCallback, useContext, useEffect, useState, useRef, useMemo } from "react";
-import { first, size } from "lodash";
+import { useCallback, useContext, useEffect, useState, useRef, useMemo, MutableRefObject } from "react";
+import { isEmpty, size } from "lodash";
 
 import { GoodIdContext } from "../../../contexts/goodid/GoodIdContext";
-import { Certificate, CredentialType } from "../types";
-import { CertificateRecord } from "../db";
+import { Certificate, CertificateRecord, CredentialType } from "../types";
 
 export interface CertificateItem {
-  id: string
-  certificate: Certificate
+  id: string;
+  certificate: Certificate;
 }
 
 export interface AggregatedCertificate extends CertificateItem {
-  key: string // composite unique key to be used for lists rendering
-  type: CredentialType
-  typeName: keyof typeof CredentialType
+  key: string; // composite unique key to be used for lists rendering
+  type: CredentialType;
+  typeName: keyof typeof CredentialType;
 }
 
 const cleanupCertificate = ({ primary_idx, type_subject_idx, ...certificate }: CertificateRecord) => certificate;
@@ -22,9 +21,13 @@ const cleanupCertificate = ({ primary_idx, type_subject_idx, ...certificate }: C
 const certificateRecordToItem = (record: CertificateRecord): CertificateItem => ({
   id: record.primary_idx,
   certificate: cleanupCertificate(record)
-})
+});
 
-const queryCertificates = async (db: any, account: string, types: CredentialType[] | null = null): Promise<CertificateRecord[]> => {
+const queryCertificates = async (
+  db: any,
+  account: string,
+  types: CredentialType[] | null = null
+): Promise<CertificateRecord[]> => {
   if (!db) {
     throw new Error("Certificates database not initialized");
   }
@@ -38,19 +41,26 @@ const queryCertificates = async (db: any, account: string, types: CredentialType
 };
 
 // core API
+// eslint-disable-next-line @typescript-eslint/no-empty-function
 export const useCertificates = (account: string, onDatabaseUpdated: () => Promise<unknown> = async () => {}) => {
   const { db } = useContext(GoodIdContext);
 
-  const loadCertificates = useCallback(async (types: CredentialType[] | null = null): Promise<CertificateItem[]> => 
-    account ? queryCertificates(db, account, types).then(certificates => certificates.map(certificateRecordToItem)) : [],
+  const loadCertificates = useCallback(
+    async (types: CredentialType[] | null = null): Promise<CertificateItem[]> =>
+      account
+        ? queryCertificates(db, account, types).then(certificates => certificates.map(certificateRecordToItem))
+        : [],
     [db, account]
   );
 
   const getCertificate = useCallback(
-    async (type: CredentialType): Promise<Certificate> =>
-      queryCertificates(db, account, [type])
-        .then(first) // from lodash
-        .then(cleanupCertificate),
+    async (type: CredentialType): Promise<Certificate | undefined> => {
+      const [certificate] = await queryCertificates(db, account, [type]);
+
+      if (certificate) {
+        return cleanupCertificate(certificate);
+      }
+    },
     [account, db]
   );
 
@@ -63,70 +73,78 @@ export const useCertificates = (account: string, onDatabaseUpdated: () => Promis
       // because compound indexes cannot be combined with multi-entry ones
       // that's IndexedDB limitation (
       await db.certificates.add({ ...certificate, type_subject_idx: typeSubjectIdx });
-      await onDatabaseUpdated()
+      await onDatabaseUpdated();
     },
     [db, onDatabaseUpdated]
   );
 
-  const deleteCertificate = useCallback(async (primaryKeys: string[]) => {
-    await db.certificates.bulkDelete(primaryKeys);
-    await onDatabaseUpdated()
-  }, [db, onDatabaseUpdated]);
+  const deleteCertificate = useCallback(
+    async (primaryKeys: string[]) => {
+      await db.certificates.bulkDelete(primaryKeys);
+      await onDatabaseUpdated();
+    },
+    [db, onDatabaseUpdated]
+  );
 
   return { loadCertificates, getCertificate, storeCertificate, deleteCertificate };
 };
 
 // full list
-export const useCertificatesList = (account: string, types: CredentialType[] | null = null): CertificateItem[] => {
-  const [certificates, setCertificates] = useState<CertificateItem[]>([]);
-  const loadCertificatesRef = useRef() // solves circular callback deps issue
-  
-  const fetchCertificates = useCallback(
-    async () => loadCertificatesRef?.current(types).then(setCertificates), 
-    [types, setCertificates]
-  );
+export const useCertificatesList = (
+  account: string,
+  types: CredentialType[] | null = null
+): CertificateItem[] | null => {
+  const [certificates, setCertificates] = useState<CertificateItem[] | null>(null);
+  const loadCertificatesRef = useRef<((types?: CredentialType[] | null) => Promise<CertificateItem[]>) | null>(null); // solves circular callback deps issue
 
-  const { loadCertificates } = useCertificates(account, fetchCertificates)
-  
-  useEffect(() => void (loadCertificatesRef.current = loadCertificates), [loadCertificates])
+  const fetchCertificates = useCallback(async () => {
+    if (loadCertificatesRef?.current) {
+      return loadCertificatesRef?.current(types).then(setCertificates);
+    }
+  }, [types, setCertificates]);
+
+  const { loadCertificates } = useCertificates(account, fetchCertificates);
+
+  useEffect(() => void (loadCertificatesRef.current = loadCertificates), [loadCertificates]);
 
   useEffect(() => {
-    fetchCertificates()
-  }, [fetchCertificates]);
+    void fetchCertificates();
+    // eslint-disable-next-line react-hooks-addons/no-unused-deps
+  }, [fetchCertificates, account]);
 
-  return certificates
+  return certificates;
 };
 
 // aggregated list - one per type
 export const useAggregatedCertificates = (account: string): AggregatedCertificate[] => {
-  const certificates = useCertificatesList(account)
+  const certificates = useCertificatesList(account);
 
   return useMemo(() => {
-    const certificateByType: Partial<{ [type in CredentialType]: CertificateItem }> = {}
-    const typesCount = size(CredentialType)
+    if (!certificates || isEmpty(account)) return [];
+    const certificateByType: Partial<{ [type in CredentialType]: CertificateItem }> = {};
+    const typesCount = size(CredentialType);
 
     for (const item of certificates) {
       if (size(certificateByType) >= typesCount) {
-        break
+        break;
       }
 
-      const [, ...creds] = item.certificate.type
+      const [, ...creds] = item.certificate.type;
 
       for (const type of creds) {
         if (certificateByType[type]) {
           continue;
         }
 
-        certificateByType[type] = item
+        certificateByType[type] = item;
       }
     }
 
     return Object.entries(certificateByType).map(([type, item]) => ({
       key: `${type}_${item.id}`,
       ...item,
-      type,
-      typeName: Object.keys(CredentialType).find(key => CredentialType[key] === type)
-    }))
-
-  }, [certificates])
-}
+      type: type as CredentialType,
+      typeName: Object.keys(CredentialType).find(key => CredentialType[key] === type) as keyof typeof CredentialType
+    }));
+  }, [certificates]);
+};
