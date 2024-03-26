@@ -3905,7 +3905,7 @@ __metadata:
 
 "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2::locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design":
   version: 0.2.18
-  resolution: "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2#.yalc/@gooddollar/web3sdk-v2::hash=71ee4a&locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design"
+  resolution: "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2#.yalc/@gooddollar/web3sdk-v2::hash=986c60&locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design"
   dependencies:
     "@amplitude/analytics-browser": ^1.6.4
     "@amplitude/analytics-react-native": ^0.7.0
@@ -3915,7 +3915,6 @@ __metadata:
     "@gooddollar/bridge-contracts": ^1.0.17
     "@gooddollar/goodprotocol": ^2.0.24
     "@orbisclub/orbis-sdk": ^0.4.87
-    "@react-native-community/geolocation": 3.1.0
     "@react-native-firebase/analytics": ^16.4.6
     "@sentry/browser": 7.16.0
     "@sentry/react-native": ^5.15.1
@@ -3952,7 +3951,7 @@ __metadata:
     "@react-native-async-storage/async-storage": 1.17.10
     react-native: "*"
     react-native-web: "*"
-  checksum: bb5248f9d294bf8867f6ccbf97cb3b6b5eee7121c489caeeb9b95aba0197b6b56e65fdffa672ac807fbd10a1ac339fba4dff1ee5d9fe0792c23023e304312cdb
+  checksum: f9c795461bb84e5c78d8ff010ac706f06992c17e635e4306cf8c1944c0491e3357e49805c947462ef68a70b8d8b88e3d8734959ff093e97e802898f1ec284a82
   languageName: node
   linkType: hard
 
@@ -6317,16 +6316,6 @@ __metadata:
   bin:
     react-native: build/bin.js
   checksum: 9dfe8d258e9f36d339b8e9ebe22d276003b00a035d20ff4a3328ce3b923cd090e94f6a53aaab9869c9c29d46e5aa12317bae3f806890880a7f0235a01825e5e3
-  languageName: node
-  linkType: hard
-
-"@react-native-community/geolocation@npm:3.1.0":
-  version: 3.1.0
-  resolution: "@react-native-community/geolocation@npm:3.1.0"
-  peerDependencies:
-    react: "*"
-    react-native: "*"
-  checksum: defc42ed11d0a3cc697d5db56c17cc19af2ca35b32674dc7323b40a458f5066b051191e5dc58c367f2643a0ed70b47e8eb2ac87ab1566e642ca0cbab1a1f09a9
   languageName: node
   linkType: hard
 
