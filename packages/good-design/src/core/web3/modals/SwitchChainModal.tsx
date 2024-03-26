@@ -1,15 +1,10 @@
-import { useColorModeValue } from "native-base";
-import React, { useEffect, useState } from "react";
+import React, { FC, Fragment, PropsWithChildren, useEffect, useState } from "react";
 import { useConfig } from "@usedapp/core";
 import { useSwitchNetwork } from "@gooddollar/web3sdk-v2";
 import { find } from "lodash";
-import { useModal } from "../../../hooks/useModal";
-import { ActionHeader } from "../../layout";
-import { LearnButton } from "../../buttons";
 
-export interface SwitchChainProps {
-  children?: any;
-}
+import { withTheme } from "../../../theme";
+import BasicStyledModal, { ModalFooterLearn } from "./BasicStyledModal";
 
 /**
  * A modal to wrap your component or page with and show a modal re-active to switchChain requests
@@ -18,39 +13,43 @@ export interface SwitchChainProps {
  * @param children
  * @returns JSX.Element
  */
-export const SwitchChainModal = ({ children }: SwitchChainProps) => {
-  const config = useConfig();
-  const [requestedChain, setRequestedChain] = useState(0);
-  const { setOnSwitchNetwork } = useSwitchNetwork();
-  const textColor = useColorModeValue("goodGrey.500", "white");
+export const SwitchChainModal: FC<PropsWithChildren> = withTheme({ name: "BasicStyledModal" })(
+  ({ children, ...props }) => {
+    const config = useConfig();
+    const [requestedChain, setRequestedChain] = useState(0);
+    const { setOnSwitchNetwork } = useSwitchNetwork();
+    const [show, setShow] = useState(false);
 
-  const { Modal, showModal, hideModal } = useModal();
+    useEffect(() => {
+      if (setOnSwitchNetwork) {
+        setOnSwitchNetwork(() => async (chainId: number, afterSwitch: any) => {
+          if (afterSwitch) {
+            setShow(false);
+          } else {
+            setRequestedChain(chainId);
+            setShow(true);
+          }
+        });
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [setOnSwitchNetwork, setShow]);
 
-  useEffect(() => {
-    if (setOnSwitchNetwork) {
-      setOnSwitchNetwork(() => async (chainId: number, afterSwitch: any) => {
-        if (afterSwitch) {
-          hideModal();
-        } else {
-          setRequestedChain(chainId);
-          showModal();
-        }
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [setOnSwitchNetwork]);
+    const networkName = find(config.networks, _ => _.chainId === requestedChain)?.chainName;
 
-  const networkName = find(config.networks, _ => _.chainId === requestedChain)?.chainName;
-
-  return (
-    <React.Fragment>
-      <Modal
-        header={<ActionHeader textColor={textColor} actionText={`switch to ${networkName} in your wallet`} />}
-        body={<LearnButton source="network" />}
-        closeText="x"
-        _modalContainer={{ paddingBottom: 18, paddingLeft: 18, paddingRight: 18 }}
-      />
-      {children}
-    </React.Fragment>
-  );
-};
+    return (
+      <Fragment>
+        <BasicStyledModal
+          {...props}
+          title="Action Required"
+          content={`To complete this action, switch to ${networkName} in your wallet.`}
+          show={show}
+          onClose={() => setShow(false)}
+          type="learn"
+          footer={<ModalFooterLearn source="network" />}
+          withCloseButton
+        />
+        {children}
+      </Fragment>
+    );
+  }
+);

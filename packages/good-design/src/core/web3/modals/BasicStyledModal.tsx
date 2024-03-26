@@ -97,6 +97,8 @@ export const ModalFooterSocial = () => (
   </Center>
 );
 
+//todo: fix blur overlay
+
 const BasicStyledModal = ({
   type,
   show = true,
