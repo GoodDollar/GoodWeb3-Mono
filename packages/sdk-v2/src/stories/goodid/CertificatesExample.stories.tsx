@@ -102,7 +102,7 @@ const Page = (params: object) => {
 };
 
 export default {
-  title: "Example component for showing credentials from storage",
+  title: "GoodId/Example component for showing credentials from storage",
   component: Page
 } as ComponentMeta<typeof Page>;
 
