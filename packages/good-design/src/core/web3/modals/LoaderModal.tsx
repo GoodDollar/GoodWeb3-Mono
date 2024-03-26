@@ -4,6 +4,7 @@ import { withTheme } from "../../../theme";
 import BasicStyledModal from "./BasicStyledModal";
 
 // todo: add blurred background
+
 export const LoaderModal = withTheme({ name: "BasicStyledModal" })(
   ({ overlay, loading, onClose }: { overlay: "dark" | "blur"; loading: boolean; onClose: () => void }) => (
     <Fragment>

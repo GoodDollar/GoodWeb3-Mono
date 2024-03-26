@@ -1,7 +1,9 @@
 import React from "react";
 
-import { GoodIdCard } from "../../../apps/goodid";
 import { W3Wrapper } from "../../W3Wrapper";
+
+import { GoodIdCard } from "../../../apps/goodid";
+import { SegmentationScreen } from "../../../apps/goodid/screens";
 
 const mockCredential = [
   {
@@ -10,7 +12,7 @@ const mockCredential = [
   },
   {
     credentialType: "VerifiableAgeCredential",
-    verifiedValue: 24
+    verifiedValue: "24-29"
   }
 ];
 
@@ -24,6 +26,14 @@ export const GoodIdCardExample = () => (
     expiryDate="Expires on April 12, 2023"
   />
 );
+
+export const SegmentationFlow = () => {
+  return (
+    <W3Wrapper withMetaMask={true}>
+      <SegmentationScreen />
+    </W3Wrapper>
+  );
+};
 
 export default {
   title: "Apps/GoodId",
