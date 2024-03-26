@@ -55,12 +55,12 @@ const OnboardScreen = withTheme({ name: "OnboardScreen" })(
   ({ navigateTo, account, firstName, innerContainer, fontStyles, ...props }: OnboardScreenProps) => {
     const [isWhitelisted] = useIsAddressVerified(account ?? "");
     const [expiryDate] = useIdentityExpiryDate(account ?? "");
-    const [formattedExpiryDate, setExpiryDate] = React.useState<string | undefined>();
+    const [formattedExpiryDate, setExpiryDate] = useState<string | undefined>();
     const [isPending, setPendingSignTx] = useState(false);
     const { title, listLabel, poweredBy, tos } = fontStyles ?? {};
 
     const { verify } = useFVModalAction({
-      firstName: firstName ?? "", //todo: is this value required or can it be made optional?
+      firstName: firstName ?? "",
       method: "redirect",
       chainId: 42220,
       onClose: noop
