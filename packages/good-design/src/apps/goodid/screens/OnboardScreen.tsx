@@ -19,6 +19,8 @@ import UbiSvg from "../../../assets/svg/goodid/ubi.svg";
 interface OnboardScreenProps {
   account: string | undefined;
   navigateTo?: () => void;
+  innerContainer?: any;
+  fontStyles?: any;
 }
 
 const accessList = [
@@ -40,129 +42,113 @@ const accessList = [
   }
 ];
 
-const OnboardScreen = withTheme({ name: "OnboardScreen" })(({ navigateTo, account }: OnboardScreenProps) => {
-  const [isWhitelisted] = useIsAddressVerified(account ?? "");
-  const [expiryDate] = useIdentityExpiryDate(account ?? "");
-  const [formattedExpiryDate, setExpiryDate] = React.useState<string | undefined>();
-  const [isPending, setPendingSignTx] = useState(false);
+const OnboardScreen = withTheme({ name: "OnboardScreen" })(
+  ({ navigateTo, account, innerContainer, fontStyles, ...props }: OnboardScreenProps) => {
+    const [isWhitelisted] = useIsAddressVerified(account ?? "");
+    const [expiryDate] = useIdentityExpiryDate(account ?? "");
+    const [formattedExpiryDate, setExpiryDate] = React.useState<string | undefined>();
+    const [isPending, setPendingSignTx] = useState(false);
+    const { title, listLabel, poweredBy, tos } = fontStyles ?? {};
 
-  const { verify } = useFVModalAction({
-    firstName: "Test", //todo: is this value required or can it be made optional?
-    method: "redirect",
-    chainId: 42220,
-    onClose: noop
-  });
+    const { verify } = useFVModalAction({
+      firstName: "Test", //todo: is this value required or can it be made optional?
+      method: "redirect",
+      chainId: 42220,
+      onClose: noop
+    });
 
-  const handleShouldFv = useCallback(async () => {
-    const { expiryTimestamp } = expiryDate || {};
+    const handleShouldFv = useCallback(async () => {
+      const { expiryTimestamp } = expiryDate || {};
 
-    if (isWhitelisted && expiryTimestamp) {
-      const expiry = moment(expiryTimestamp.toNumber());
-      const threeMonthsFromNow = moment().clone().add(3, "months");
-      const isWithinThreeMonths = expiry.isBefore(threeMonthsFromNow);
+      if (isWhitelisted && expiryTimestamp) {
+        const expiry = moment(expiryTimestamp.toNumber());
+        const threeMonthsFromNow = moment().clone().add(3, "months");
+        const isWithinThreeMonths = expiry.isBefore(threeMonthsFromNow);
 
-      if (isWithinThreeMonths) {
-        navigateTo ? navigateTo() : await verify();
-      } else {
-        //todo: Need solution for widget-navigation (gooddapp)
-        // nextPage() <-- should navigate to segmentation screen
+        if (isWithinThreeMonths) {
+          navigateTo ? navigateTo() : await verify();
+        } else {
+          //todo: Need solution for widget-navigation (gooddapp)
+          // nextPage() <-- should navigate to segmentation screen
+        }
+        return;
       }
-      return;
-    }
 
-    // Should go to FaceVerificationIntro (wallet) || GoodID server (third parties)
-    if (navigateTo) {
-      navigateTo();
-    } else {
-      setPendingSignTx(true);
-      await verify();
-    }
-  }, [verify, isWhitelisted, expiryDate]);
+      // Should go to FaceVerificationIntro (wallet) || GoodID server (third parties)
+      if (navigateTo) {
+        navigateTo();
+      } else {
+        setPendingSignTx(true);
+        await verify();
+      }
+    }, [verify, isWhitelisted, expiryDate]);
 
-  useEffect(() => {
-    const { expiryTimestamp } = expiryDate || {};
+    useEffect(() => {
+      const { expiryTimestamp } = expiryDate || {};
 
-    if (isWhitelisted && expiryTimestamp) {
-      const timestamp = expiryTimestamp.toNumber();
-      const formattedDate = moment(timestamp).format("MMMM DD, YYYY");
+      if (isWhitelisted && expiryTimestamp) {
+        const timestamp = expiryTimestamp.toNumber();
+        const formattedDate = moment(timestamp).format("MMMM DD, YYYY");
 
-      setExpiryDate(formattedDate);
-    }
-  }, [isWhitelisted, expiryDate]);
+        setExpiryDate(formattedDate);
+      }
+    }, [isWhitelisted, expiryDate]);
 
-  // todo: might want a spinner while waiting for isWhitelisted
-  if (isWhitelisted === undefined) return <></>;
+    // todo: might want a spinner while waiting for isWhitelisted
+    if (isWhitelisted === undefined) return <></>;
 
-  return (
-    <Container width={375} paddingX={4} alignItems="center" maxWidth="100%">
-      <TxModal type="identity" isPending={isPending} />
-      <VStack space={8} maxWidth={"100%"} alignItems="center">
-        <Title fontSize="xl" lineHeight="30" textAlign="center">
-          {isWhitelisted ? `Renew` : `Get`} your GoodID to claim UBI
-        </Title>
-        {account ? (
-          <GoodIdCard
-            credentialsList={[]}
-            isWhitelisted={isWhitelisted}
-            account={account}
-            expiryDate={formattedExpiryDate}
-          />
-        ) : null}
-
-        <VStack space={2} alignItems="flex-start">
-          <Heading fontSize="md" color="goodGrey.600">
-            It unlocks access to:
-          </Heading>
-          {accessList.map(({ label, icon }, index) => (
-            <HStack key={label} space={2}>
-              <SvgXml
-                style={{ backgroundColor: "#00AFFF", borderRadius: "50%", padding: 4 }}
-                key={index}
-                src={icon}
-                width="16"
-                height="16"
-                enableBackground="true"
-              />
-              <Text fontFamily="subheading" fontSize="sm" color="goodGrey.600">
-                {label}
-              </Text>
-            </HStack>
-          ))}
-          <VStack space={10}>
-            <HStack space={2} marginTop={2}>
-              <SvgXml src={StopWatchSvg} width="20" height="20" />
-              <Text fontFamily="subheading" fontSize="sm" color="primary">
-                Verification takes 2 minutes
-              </Text>
-            </HStack>
-            <Text fontFamily="subheading" color="goodGrey.450" fontSize="2xs" textAlign="center">
-              By clicking on ”I accept, verify me”, you are accepting our Terms of Use and Privacy Policy. Per this
-              policy you agree to let us collect information such as your gender and age.
-            </Text>
-          </VStack>
-          <VStack space={4}>
-            <BaseButton
-              onPress={handleShouldFv}
-              text="I ACCEPT, VERIFY ME"
-              maxW={343}
-              innerView={{
-                backgroundColor: "primary",
-                paddingX: 8,
-                paddingY: "10px",
-                borderRadius: 24,
-                width: 343,
-                textAlign: "center"
-              }}
-              innerText={{ fontFamily: "subheading", fontSize: "sm", fontWeight: "bold" }}
+    return (
+      <Container {...props}>
+        <TxModal type="identity" isPending={isPending} />
+        <VStack {...innerContainer}>
+          <Title {...title}>{isWhitelisted ? `Renew` : `Get`} your GoodID to claim UBI</Title>
+          {account ? (
+            <GoodIdCard
+              credentialsList={[]}
+              isWhitelisted={isWhitelisted}
+              account={account}
+              expiryDate={formattedExpiryDate}
             />
-            <Text underline={true} textAlign="center" fontSize="2xs">
-              Powered by GoodDollar
-            </Text>
+          ) : null}
+
+          <VStack space={2} alignItems="flex-start">
+            <Heading fontSize="md" color="goodGrey.600">
+              It unlocks access to:
+            </Heading>
+            {accessList.map(({ label, icon }, index) => (
+              <HStack key={label} space={2}>
+                <SvgXml
+                  style={{ backgroundColor: "#00AFFF", borderRadius: "50%", padding: 4 }}
+                  key={index}
+                  src={icon}
+                  width="16"
+                  height="16"
+                  enableBackground="true"
+                />
+                <Text {...listLabel}>{label}</Text>
+              </HStack>
+            ))}
+            <VStack space={10}>
+              <HStack space={2} marginTop={2}>
+                <SvgXml src={StopWatchSvg} width="20" height="20" />
+                <Text fontFamily="subheading" fontSize="sm" color="primary">
+                  Verification takes 2 minutes
+                </Text>
+              </HStack>
+              <Text {...tos}>
+                By clicking on ”I accept, verify me”, you are accepting our Terms of Use and Privacy Policy. Per this
+                policy you agree to let us collect information such as your gender and age.
+              </Text>
+            </VStack>
+            <VStack space={4}>
+              <BaseButton onPress={handleShouldFv} text="I ACCEPT, VERIFY ME" maxW={343} variant="standard-blue" />
+              <Text {...poweredBy}>Powered by GoodDollar</Text>
+            </VStack>
           </VStack>
         </VStack>
-      </VStack>
-    </Container>
-  );
-});
+      </Container>
+    );
+  }
+);
 
 export default OnboardScreen;
