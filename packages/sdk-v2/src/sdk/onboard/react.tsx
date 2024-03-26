@@ -7,7 +7,7 @@ import { WalletConnectOptions } from "@web3-onboard/walletconnect/dist/types";
 import coinbaseWalletModule from "@web3-onboard/coinbase";
 import { customwc, icons } from "./modules/customwalletconnect";
 import { defaultsDeep, keys, pickBy } from "lodash";
-import { getDevice, isMobile } from "../base";
+import { getDevice, isMobile } from "../base/utils";
 import { Envs } from "../constants";
 import { InjectedNameSpace } from "@web3-onboard/injected-wallets/dist/types";
 
