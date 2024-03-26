@@ -46,7 +46,7 @@ const accessList = [
  * OnboardScreen shown to all users who don't have good-id certificate yet
  * Certificates check should be done before and only show this screen when they don't exist
  * @param {string} account - user's account address
- * @param {function} navigateTo - callback for alternative navigation for third-party apps (eg: the wallet)
+ * @param {function} navigateTo - callback for alternative in-app navigation for the gooddollar wallet
  * @param {object} innerContainer - styles for the inner container
  * @param {object} fontStyles - styles for the text elements
  */
