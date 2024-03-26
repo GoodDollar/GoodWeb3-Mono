@@ -29,7 +29,7 @@ export const useFVModalAction = ({ firstName, method, onClose = noop, chainId, r
 
     switch (method) {
       case "redirect": {
-        const link = fvlink?.getLink(firstName, redirectUri, false);
+        const link = await fvlink?.getLink(firstName, redirectUri, false);
 
         if (link) {
           openLink(link, "_self").catch(noop);
@@ -38,7 +38,7 @@ export const useFVModalAction = ({ firstName, method, onClose = noop, chainId, r
       }
       case "popup":
       default: {
-        const link = fvlink?.getLink(firstName, undefined, true);
+        const link = await fvlink?.getLink(firstName, undefined, true);
 
         if (link) {
           openLink(link, "_blank", { width: "800px", height: "auto" }).catch(noop);
