@@ -75,7 +75,7 @@ const GoodIdCard = withTheme({ name: "GoodIdCard", skipProps: "credentialsList" 
           {Object.entries(CredentialType).map(([key, credentialType]) => (
             <CardRowItem
               key={key}
-              credentialLabel={CredentialType[key as keyof typeof CredentialType]}
+              credentialLabel={key}
               verifiedValue={
                 credentialsList?.find(credential => credential.credentialType === credentialType)?.verifiedValue
               }
