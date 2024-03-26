@@ -1,13 +1,12 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Container, Heading, HStack, Text, VStack } from "native-base";
 import { useIdentityExpiryDate, useIsAddressVerified } from "@gooddollar/web3sdk-v2";
 import { noop } from "lodash";
 import moment from "moment";
 
 import { useFVModalAction } from "../../../hooks/useFVModalAction";
-
 import { withTheme } from "../../../theme";
-import { Title } from "../../../core";
+import { Title, TxModal } from "../../../core";
 import { BaseButton } from "../../../core/buttons";
 import { GoodIdCard } from "../idcard";
 import SvgXml from "../../../core/images/SvgXml";
@@ -45,9 +44,8 @@ const OnboardScreen = withTheme({ name: "OnboardScreen" })(({ navigateTo, accoun
   const [isWhitelisted] = useIsAddressVerified(account ?? "");
   const [expiryDate] = useIdentityExpiryDate(account ?? "");
   const [formattedExpiryDate, setExpiryDate] = React.useState<string | undefined>();
-  //todo: add fetchCredentials here or passed down from parent
+  const [isPending, setPendingSignTx] = useState(false);
 
-  // todo: might be moved to be implemented by external
   const { verify } = useFVModalAction({
     firstName: "Test", //todo: is this value required or can it be made optional?
     method: "redirect",
@@ -73,9 +71,13 @@ const OnboardScreen = withTheme({ name: "OnboardScreen" })(({ navigateTo, accoun
     }
 
     // Should go to FaceVerificationIntro (wallet) || GoodID server (third parties)
-    // todo/gooddapp: add modal for sign request
-    navigateTo ? navigateTo() : await verify();
-  }, [verify]);
+    if (navigateTo) {
+      navigateTo();
+    } else {
+      setPendingSignTx(true);
+      await verify();
+    }
+  }, [verify, isWhitelisted, expiryDate]);
 
   useEffect(() => {
     const { expiryTimestamp } = expiryDate || {};
@@ -93,6 +95,7 @@ const OnboardScreen = withTheme({ name: "OnboardScreen" })(({ navigateTo, accoun
 
   return (
     <Container width={375} paddingX={4} alignItems="center" maxWidth="100%">
+      <TxModal type="identity" isPending={isPending} />
       <VStack space={8} maxWidth={"100%"} alignItems="center">
         <Title fontSize="xl" lineHeight="30" textAlign="center">
           {isWhitelisted ? `Renew` : `Get`} your GoodID to claim UBI
