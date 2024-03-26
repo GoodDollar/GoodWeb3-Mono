@@ -5,11 +5,21 @@ import BasicStyledModal from "./BasicStyledModal";
 
 // todo: add blurred background
 export const LoaderModal = withTheme({ name: "BasicStyledModal" })(
-  ({ overlay, loading, onClose }: { overlay: "dark" | "blur"; loading: boolean; onClose: () => void }) => (
+  ({
+    title,
+    overlay,
+    loading,
+    onClose
+  }: {
+    title: string;
+    overlay: "dark" | "blur";
+    loading: boolean;
+    onClose: () => void;
+  }) => (
     <Fragment>
       <BasicStyledModal
         type="loader"
-        title={`We're checking \n your information...`}
+        title={title}
         show={true}
         loading={loading}
         onClose={onClose}

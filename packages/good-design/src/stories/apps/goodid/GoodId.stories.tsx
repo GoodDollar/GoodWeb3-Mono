@@ -2,6 +2,7 @@ import React from "react";
 
 import { GoodIdCard } from "../../../apps/goodid";
 import { W3Wrapper } from "../../W3Wrapper";
+import { OffersAgreement } from "../../../apps/goodid/screens/OffersAgreement";
 
 const mockCredential = [
   {
@@ -24,6 +25,8 @@ export const GoodIdCardExample = () => (
     expiryDate="Expires on April 12, 2023"
   />
 );
+
+export const OffersAgreementExample = () => <OffersAgreement />;
 
 export default {
   title: "Apps/GoodId",

@@ -45,7 +45,24 @@ export const theme = {
         color: "white"
       }
     };
-  })
+  }),
+  variants: {
+    "standard-blue": () => ({
+      innerView: {
+        backgroundColor: "primary",
+        paddingX: 8,
+        paddingY: "10px",
+        borderRadius: 24,
+        width: 343,
+        textAlign: "center"
+      },
+      innerText: {
+        fontFamily: "subheading",
+        fontSize: "sm",
+        fontWeight: "bold"
+      }
+    })
+  }
 };
 
 export default BaseButton;
