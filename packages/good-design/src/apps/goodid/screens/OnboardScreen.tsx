@@ -42,6 +42,14 @@ const accessList = [
   }
 ];
 
+/**
+ * OnboardScreen shown to all users who don't have good-id certificate yet
+ * Certificates check should be done before and only show this screen when they don't exist
+ * @param {string} account - user's account address
+ * @param {function} navigateTo - callback for alternative navigation for third-party apps (eg: the wallet)
+ * @param {object} innerContainer - styles for the inner container
+ * @param {object} fontStyles - styles for the text elements
+ */
 const OnboardScreen = withTheme({ name: "OnboardScreen" })(
   ({ navigateTo, account, innerContainer, fontStyles, ...props }: OnboardScreenProps) => {
     const [isWhitelisted] = useIsAddressVerified(account ?? "");
@@ -57,23 +65,7 @@ const OnboardScreen = withTheme({ name: "OnboardScreen" })(
       onClose: noop
     });
 
-    const handleShouldFv = useCallback(async () => {
-      const { expiryTimestamp } = expiryDate || {};
-
-      if (isWhitelisted && expiryTimestamp) {
-        const expiry = moment(expiryTimestamp.toNumber());
-        const threeMonthsFromNow = moment().clone().add(3, "months");
-        const isWithinThreeMonths = expiry.isBefore(threeMonthsFromNow);
-
-        if (isWithinThreeMonths) {
-          navigateTo ? navigateTo() : await verify();
-        } else {
-          //todo: Need solution for widget-navigation (gooddapp)
-          // nextPage() <-- should navigate to segmentation screen
-        }
-        return;
-      }
-
+    const handleNext = async () => {
       // Should go to FaceVerificationIntro (wallet) || GoodID server (third parties)
       if (navigateTo) {
         navigateTo();
@@ -81,6 +73,31 @@ const OnboardScreen = withTheme({ name: "OnboardScreen" })(
         setPendingSignTx(true);
         await verify();
       }
+    };
+
+    const handleShouldFv = useCallback(async () => {
+      const { expiryTimestamp } = expiryDate || {};
+
+      // if someone is whitelisted we want to verify their timestamp
+      // to determine if they should re-do the fv-flow
+      if (isWhitelisted && expiryTimestamp) {
+        const expiry = moment(expiryTimestamp.toNumber());
+        const threeMonthsFromNow = moment().clone().add(3, "months");
+        const isWithinThreeMonths = expiry.isBefore(threeMonthsFromNow);
+
+        // if the expiry date is within 3 months, we should re-do the fv-flow
+        if (isWithinThreeMonths) {
+          void handleNext();
+        } else {
+          // if the expiry date is not within 3 months we will use their existing fv data
+          // to run the good-id checks
+          //todo: Need solution for widget-navigation (gooddapp): https://github.com/GoodDollar/GoodWeb3-Mono/issues/131
+          // nextPage() <-- should navigate to segmentation screen
+        }
+        return;
+      }
+
+      void handleNext();
     }, [verify, isWhitelisted, expiryDate]);
 
     useEffect(() => {
@@ -88,8 +105,8 @@ const OnboardScreen = withTheme({ name: "OnboardScreen" })(
 
       if (isWhitelisted && expiryTimestamp) {
         const timestamp = expiryTimestamp.toNumber();
+        // use a human readable format to be displayed in the good-id card
         const formattedDate = moment(timestamp).format("MMMM DD, YYYY");
-
         setExpiryDate(formattedDate);
       }
     }, [isWhitelisted, expiryDate]);
