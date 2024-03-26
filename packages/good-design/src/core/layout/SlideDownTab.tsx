@@ -14,6 +14,7 @@ interface ISlideDownTabProps {
     container?: any;
     button?: any;
     content?: any;
+    innerButton?: any;
     titleFont?: any;
   };
   children: React.ReactNode;
@@ -22,7 +23,7 @@ interface ISlideDownTabProps {
 
 const SlideDownTab = ({ tabTitle, styles, children, ...props }: ISlideDownTabProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const { button, container, content, titleFont } = styles ?? {};
+  const { button, container, content, innerButton, titleFont } = styles ?? {};
 
   const toggleContent = useCallback(() => setIsOpen(isOpen => !isOpen), [setIsOpen]);
 
@@ -38,7 +39,7 @@ const SlideDownTab = ({ tabTitle, styles, children, ...props }: ISlideDownTabPro
         style={button}
         {...props}
       >
-        <CentreBox flexDirection="row" w="100%" justifyContent="space-between" h="10" paddingRight={4}>
+        <CentreBox flexDirection="row" w="100%" justifyContent="space-between" paddingRight={4} {...innerButton}>
           <Text color={isOpen ? "white" : "goodGrey.700"} w="80%" {...titleFont}>
             {tabTitle}
           </Text>
