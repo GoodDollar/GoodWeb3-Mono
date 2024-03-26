@@ -16,8 +16,10 @@ const RedirectNoticeContext = createContext<RedirectNoticeContextProps>({
 
 export const RedirectNoticeProvider = ({ children }: { children: any }) => {
   const [modalProps, setModalProps] = useState({ open: false, url: "", onClose: noop });
+  const gdDomains = /\b(goodid|gooddollar|goodcollective)\b/;
 
   const goToExternal = (e: any, url: string) => {
+    if (gdDomains.test(url)) return;
     e.preventDefault();
     setModalProps({ open: true, url, onClose: closeModal });
   };
