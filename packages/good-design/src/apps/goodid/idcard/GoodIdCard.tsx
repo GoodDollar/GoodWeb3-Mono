@@ -30,6 +30,7 @@ const CardRowItem = withTheme({ name: "CardRowItem" })(
     fontStyles?: any;
   }) => {
     const { subHeading, subContent } = fontStyles ?? {};
+
     return (
       <VStack {...props}>
         <Text {...subHeading}>{credentialLabel}</Text>
@@ -50,6 +51,7 @@ const GoodIdCard = withTheme({ name: "GoodIdCard", skipProps: "credentialsList" 
   ({ credentialsList, account, isWhitelisted, avatar, fullname, expiryDate, ...props }: GoodIdCardProps) => {
     const { title, subHeading, subContent, footer } = props.fontStyles ?? {};
     const truncatedAccount = truncateMiddle(account, 11);
+
     return (
       <VStack {...props}>
         <HStack justifyContent="space-between">

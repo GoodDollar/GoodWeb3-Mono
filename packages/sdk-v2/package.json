@@ -51,9 +51,7 @@
     "css-loader": "^6.5.1",
     "ctix": "^1.4.0",
     "dexie-react-hooks": "^1.1.6",
-    "did-resolver": "^4.1.0",
     "ethers": "5.7.2",
-    "ethr-did-resolver": "^10.1.5",
     "html-webpack-plugin": "^5.5.0",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^27.3.1",
@@ -69,8 +67,7 @@
     "style-loader": "^3.3.1",
     "tsconfig-paths-webpack-plugin": "^4.1.0",
     "typescript": "^5.2.2",
-    "uuid": "^9.0.1",
-    "web-did-resolver": "^2.0.27"
+    "uuid": "^9.0.1"
   },
   "dependencies": {
     "@amplitude/analytics-browser": "^1.6.4",
