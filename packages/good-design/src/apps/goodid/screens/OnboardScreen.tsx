@@ -18,6 +18,7 @@ import UbiSvg from "../../../assets/svg/goodid/ubi.svg";
 
 interface OnboardScreenProps {
   account: string | undefined;
+  firstName?: string | undefined;
   navigateTo?: () => void;
   innerContainer?: any;
   fontStyles?: any;
@@ -51,7 +52,7 @@ const accessList = [
  * @param {object} fontStyles - styles for the text elements
  */
 const OnboardScreen = withTheme({ name: "OnboardScreen" })(
-  ({ navigateTo, account, innerContainer, fontStyles, ...props }: OnboardScreenProps) => {
+  ({ navigateTo, account, firstName, innerContainer, fontStyles, ...props }: OnboardScreenProps) => {
     const [isWhitelisted] = useIsAddressVerified(account ?? "");
     const [expiryDate] = useIdentityExpiryDate(account ?? "");
     const [formattedExpiryDate, setExpiryDate] = React.useState<string | undefined>();
@@ -59,7 +60,7 @@ const OnboardScreen = withTheme({ name: "OnboardScreen" })(
     const { title, listLabel, poweredBy, tos } = fontStyles ?? {};
 
     const { verify } = useFVModalAction({
-      firstName: "Test", //todo: is this value required or can it be made optional?
+      firstName: firstName ?? "", //todo: is this value required or can it be made optional?
       method: "redirect",
       chainId: 42220,
       onClose: noop
