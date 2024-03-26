@@ -3905,7 +3905,7 @@ __metadata:
 
 "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2::locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design":
   version: 0.2.18
-  resolution: "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2#.yalc/@gooddollar/web3sdk-v2::hash=71ee4a&locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design"
+  resolution: "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2#.yalc/@gooddollar/web3sdk-v2::hash=6cc95a&locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design"
   dependencies:
     "@amplitude/analytics-browser": ^1.6.4
     "@amplitude/analytics-react-native": ^0.7.0
@@ -3952,7 +3952,7 @@ __metadata:
     "@react-native-async-storage/async-storage": 1.17.10
     react-native: "*"
     react-native-web: "*"
-  checksum: bb5248f9d294bf8867f6ccbf97cb3b6b5eee7121c489caeeb9b95aba0197b6b56e65fdffa672ac807fbd10a1ac339fba4dff1ee5d9fe0792c23023e304312cdb
+  checksum: 5e58e666aab0fa3aaa5398de03718fd0ac9861a25331088c2359dad23be4745fa13aaffe2b86617a5a0c1f03435db8c6958f58ad50c3b46f00d7a50d0e0489f3
   languageName: node
   linkType: hard
 
@@ -4026,6 +4026,7 @@ __metadata:
     "@gooddollar/goodprotocol": ^2.0.24
     "@orbisclub/orbis-sdk": ^0.4.87
     "@react-native-async-storage/async-storage": 1.17.10
+    "@react-native-community/geolocation": 3.1.0
     "@react-native-firebase/analytics": ^16.4.6
     "@sentry/browser": 7.16.0
     "@sentry/react-native": ^5.15.1
