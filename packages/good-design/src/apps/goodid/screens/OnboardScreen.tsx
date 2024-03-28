@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Container, Heading, HStack, Text, VStack } from "native-base";
-import { useIdentityExpiryDate, useIsAddressVerified } from "@gooddollar/web3sdk-v2";
+import { AsyncStorage, useIdentityExpiryDate, useIsAddressVerified } from "@gooddollar/web3sdk-v2";
 import { noop } from "lodash";
 import moment from "moment";
 
@@ -59,11 +59,19 @@ const OnboardScreen = withTheme({ name: "OnboardScreen" })(
     const [isPending, setPendingSignTx] = useState(false);
     const { title, listLabel, poweredBy, tos } = fontStyles ?? {};
 
+    const storeFvSig = async (fvSig: string) => {
+      // the link will be requested to send a user to the fv-flow
+      // we want to prevent a user to have to sign again when it redirects
+      // so we store the fv-sig locally
+      await AsyncStorage.setItem("fvsig", fvSig);
+    };
+
     const { verify } = useFVModalAction({
       firstName: firstName ?? "",
       method: "redirect",
       chainId: 42220,
-      onClose: noop
+      onClose: noop,
+      onFvSig: storeFvSig
     });
 
     const handleNext = async () => {

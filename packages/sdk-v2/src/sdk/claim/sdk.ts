@@ -1,7 +1,6 @@
 import { BigNumber } from "ethers";
 import { invokeMap, forIn } from "lodash";
 import { BaseSDK } from "../base/sdk";
-import { AsyncStorage } from "../storage";
 
 const DAY = 1000 * 60 * 60 * 24;
 
@@ -43,7 +42,7 @@ export class ClaimSDK extends BaseSDK {
       return fvSig;
     };
 
-    const getLink = async (
+    const getLink = (
       firstName: string,
       callbackUrl?: string,
       popupMode = false,
@@ -59,11 +58,6 @@ export class ClaimSDK extends BaseSDK {
 
       const url = new URL(identityUrl);
       const { searchParams } = url;
-
-      // the link will be requested to send a user to the fv-flow
-      // we want to prevent a user to have to sign again when it redirects
-      // so we store the fv-sig locally
-      await AsyncStorage.setItem("fv-sig", fvSig);
 
       const params = {
         account,

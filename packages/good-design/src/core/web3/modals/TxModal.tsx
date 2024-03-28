@@ -17,7 +17,7 @@ const txModalCopy = {
   },
   identity: {
     title: "Please sign with \n your wallet",
-    content: `We need to know youre you! Please sign\nwith your wallet to verify your identity. You’ll\nbe asked to sign TWICE with your wallet.\n 
+    content: `We need to know youre you! Please sign\nwith your wallet to verify your identity.\n 
 Don’t worry, no link is kept between your\nidentity record and your wallet address.`
   },
   send: {
