@@ -15,7 +15,7 @@ interface PageProps {
 
 const config: Config = {
   networks: [Goerli, Mainnet, Fuse, Celo],
-  readOnlyChainId: undefined,
+  readOnlyChainId: 42220,
   readOnlyUrls: {
     122: "https://rpc.fuse.io",
     42220: "https://forno.celo.org"
@@ -30,7 +30,7 @@ export const W3Wrapper = ({ children, withMetaMask, env = "fuse" }: PageProps) =
 
   if (!withMetaMask) {
     const rpc = new ethers.providers.JsonRpcProvider("https://rpc.fuse.io");
-    
+
     rpc.getSigner = () => w as any;
     setProvider(rpc);
   }
