@@ -52,13 +52,25 @@ export const NewsFeedItem: FC<NewsFeedItemProps> = withTheme({ name: "NewsFeedIt
     return (
       <BasePressable onPress={handlePress}>
         <CentreBox flexDir="column" {...props}>
-          {picture && <Image minW="325" width="100%" pb="56.25%" src={picture} alt="Image" {...pictureStyles} />}
+          {picture && (
+            <Image
+              minW="325"
+              width="100%"
+              pb="56.25%"
+              src={picture}
+              alt="Image"
+              resizeMode="contain"
+              {...pictureStyles}
+            />
+          )}
           <CentreBox {...containerStyles}>
             <Text {...titleStyles}>{title}</Text>
             <Text {...contentStyles}>{content}</Text>
             <HStack {...footerStyles}>
               <Text {...publishedStyles}>{formattedPublished}</Text>
-              {sponsored_logo && <SvgXml src={sponsored_logo} height="28" width="45" {...sponsoredStyles} />}
+              <CentreBox marginLeft="auto">
+                {sponsored_logo && <SvgXml src={sponsored_logo} height="28" width="45" {...sponsoredStyles} />}
+              </CentreBox>
             </HStack>
           </CentreBox>
         </CentreBox>
