@@ -40,9 +40,6 @@ export const NewsFeedItem = {
     publishedStyles: {
       marginRight: "auto",
       fontSize: "4xs"
-    },
-    sponsoredStyles: {
-      marginLeft: "auto"
     }
   }
 };
