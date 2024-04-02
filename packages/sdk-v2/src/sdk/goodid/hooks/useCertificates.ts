@@ -13,7 +13,7 @@ export interface CertificateItem {
 export interface AggregatedCertificate extends Partial<CertificateItem> {
   key: string; // composite unique key to be used for lists rendering
   type: CredentialType;
-  typeName: keyof typeof CredentialType;
+  typeName: keyof CredentialType;
 }
 
 const cleanupCertificate = ({ primary_idx, type_subject_idx, ...certificate }: CertificateRecord) => certificate;
@@ -140,10 +140,10 @@ export const useAggregatedCertificates = (account: string): AggregatedCertificat
     }
 
     return Object.entries(CredentialType).map(([typeName, type]) => {
-      const item = certificateByType[type]
-      const key = filter([type, item?.id]).join('_')
+      const item = certificateByType[type];
+      const key = filter([type, item?.id]).join("_");
 
-      return { ...item, key, type, typeName }
+      return { ...item, key, type, typeName } as AggregatedCertificate;
     });
   }, [certificates]);
 };
