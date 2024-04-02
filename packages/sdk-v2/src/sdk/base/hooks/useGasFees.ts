@@ -41,7 +41,7 @@ export function useContractFunctionWithDefaultGasFees<T extends TypedContract, F
         const hasOpts = args.length > numberOfArgs;
         const opts = hasOpts ? args[args.length - 1] : {};
         const modifiedArgs = hasOpts ? args.slice(0, args.length - 1) : args;
-        modifiedArgs.push({ ...gasFees, ...opts });
+        modifiedArgs.push("maxFeePerGas" in opts ? { ...opts } : { ...gasFees, ...opts });
         return send(...(modifiedArgs as any));
       }
     },
