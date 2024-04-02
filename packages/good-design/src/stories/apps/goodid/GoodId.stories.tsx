@@ -1,9 +1,10 @@
 import React from "react";
+import { useEthers } from "@usedapp/core";
 
 import { W3Wrapper } from "../../W3Wrapper";
 
 import { GoodIdCard } from "../../../apps/goodid";
-import { SegmentationScreen } from "../../../apps/goodid/screens";
+import { OnboardScreen, SegmentationScreen } from "../../../apps/goodid/screens";
 
 const mockCredential = [
   {
@@ -33,6 +34,11 @@ export const SegmentationFlow = () => {
       <SegmentationScreen />
     </W3Wrapper>
   );
+};
+
+export const OnboardScreenExample = () => {
+  const { account } = useEthers();
+  return <OnboardScreen account={account} />;
 };
 
 export default {

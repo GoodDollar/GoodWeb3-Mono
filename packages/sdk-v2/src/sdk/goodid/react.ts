@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useCallback, useContext, useEffect, useState, useRef, useMemo } from "react";
-import { isEmpty, size } from "lodash";
+import { isEmpty, size, filter } from "lodash";
 import { Platform } from "react-native";
 import GeoLocation from "@react-native-community/geolocation";
 
@@ -12,10 +12,10 @@ export interface CertificateItem {
   certificate: Certificate;
 }
 
-export interface AggregatedCertificate extends CertificateItem {
+export interface AggregatedCertificate extends Partial<CertificateItem> {
   key: string; // composite unique key to be used for lists rendering
   type: CredentialType;
-  typeName: keyof typeof CredentialType;
+  typeName: keyof CredentialType;
 }
 
 const cleanupCertificate = ({ primary_idx, type_subject_idx, ...certificate }: CertificateRecord) => certificate;
@@ -122,11 +122,10 @@ export const useAggregatedCertificates = (account: string): AggregatedCertificat
   const certificates = useCertificatesList(account);
 
   return useMemo(() => {
-    if (!certificates || isEmpty(account)) return [];
     const certificateByType: Partial<{ [type in CredentialType]: CertificateItem }> = {};
     const typesCount = size(CredentialType);
 
-    for (const item of certificates) {
+    for (const item of certificates ?? []) {
       if (size(certificateByType) >= typesCount) {
         break;
       }
@@ -142,12 +141,12 @@ export const useAggregatedCertificates = (account: string): AggregatedCertificat
       }
     }
 
-    return Object.entries(certificateByType).map(([type, item]) => ({
-      key: `${type}_${item.id}`,
-      ...item,
-      type: type as CredentialType,
-      typeName: Object.keys(CredentialType).find(key => CredentialType[key] === type) as keyof typeof CredentialType
-    }));
+    return Object.entries(CredentialType).map(([typeName, type]) => {
+      const item = certificateByType[type];
+      const key = filter([type, item?.id]).join("_");
+
+      return { ...item, key, type, typeName } as AggregatedCertificate;
+    });
   }, [certificates]);
 };
 
