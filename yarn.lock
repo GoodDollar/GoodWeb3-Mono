@@ -3956,8 +3956,8 @@ __metadata:
   linkType: hard
 
 "@gooddollar/web3sdk-v2@npm:latest":
-  version: 0.2.18
-  resolution: "@gooddollar/web3sdk-v2@npm:0.2.18"
+  version: 0.2.20
+  resolution: "@gooddollar/web3sdk-v2@npm:0.2.20"
   dependencies:
     "@amplitude/analytics-browser": ^1.6.4
     "@amplitude/analytics-react-native": ^0.7.0
@@ -4003,7 +4003,7 @@ __metadata:
     "@react-native-async-storage/async-storage": 1.17.10
     react-native: "*"
     react-native-web: "*"
-  checksum: b6097ce42c11a5917d270116647a8be418b21db16a2402df84d79c7881e1edc3ff7f5c909311caf54c6c72c13bd73dfff45780d41818fe150ea4816e85abc29a
+  checksum: 1ea0793c3d6c43f60e422885ca9abbf933e339d8bba556620e1fe82374d0946e6efbce4de48e3bcc2eff5b6804f1c251ec4e4bbf68e65189229689a474ae6607
   languageName: node
   linkType: hard
 
