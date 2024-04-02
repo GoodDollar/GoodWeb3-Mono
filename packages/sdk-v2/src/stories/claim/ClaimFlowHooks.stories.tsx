@@ -34,10 +34,10 @@ const FVModal = (params: ModalProps & { firstName: string }) => {
             let link;
             if (method === "popup") {
               link = await fvlink?.getLink(params.firstName, undefined, true);
-              const popup = window.open(link, "_blank", "width: '800px', height: 'auto'");
+              window.open(link, "_blank", "width: '800px', height: 'auto'");
             } else {
-              link = fvlink?.getLink(params.firstName, document.location.href, false);
-              link && Linking.openURL(link);
+              link = await fvlink?.getLink(params.firstName, document.location.href, false);
+              link && void Linking.openURL(link);
             }
             // console.log({ link });
             params.onRequestClose?.(noop as any);
@@ -104,6 +104,7 @@ const ClaimButton = ({ address, firstName }: PageProps) => {
   return (
     <View>
       <View style={styles.container}>
+        <Text>address: {address}</Text>
         <Text>hasClaimed: {String(hasClaimed)}</Text>
         <Text>isWhitelisted: {String(isWhitelisted)}</Text>
         <Text>Claim time: {claimTime?.toString()}</Text>

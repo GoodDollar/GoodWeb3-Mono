@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { W3Wrapper } from "../W3Wrapper";
 import { ComponentStory, ComponentMeta } from "@storybook/react";
 import { useFVLink, useIsAddressVerified } from "../../sdk/claim/react";
-import { useSDK } from "../../sdk/base/react";
 import { useEthers } from "@usedapp/core";
 
 export interface PageProps {
@@ -24,7 +23,7 @@ const Web3Component = (params: PageProps) => {
       <button
         onClick={async () => {
           await fvlink.getFvSig();
-          setLink(fvlink.getLink(params.firstName || "", document.location.href));
+          setLink(await fvlink.getLink(params.firstName || "", document.location.href));
         }}
       >
         Generate FV Link

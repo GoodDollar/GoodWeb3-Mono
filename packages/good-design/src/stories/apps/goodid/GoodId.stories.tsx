@@ -1,6 +1,9 @@
 import React from "react";
+import { useEthers } from "@usedapp/core";
 
 import { GoodIdCard } from "../../../apps/goodid";
+import { OnboardScreen } from "../../../apps/goodid/screens";
+
 import { W3Wrapper } from "../../W3Wrapper";
 
 const mockCredential = [
@@ -24,6 +27,11 @@ export const GoodIdCardExample = () => (
     expiryDate="Expires on April 12, 2023"
   />
 );
+
+export const OnboardScreenExample = () => {
+  const { account } = useEthers();
+  return <OnboardScreen account={account} />;
+};
 
 export default {
   title: "Apps/GoodId",
