@@ -3730,7 +3730,7 @@ __metadata:
     "@babel/preset-typescript": ^7.16.0
     "@babel/runtime": ^7.18.9
     "@gooddollar/goodprotocol": ^2.0.24
-    "@gooddollar/web3sdk-v2": "file:.yalc/@gooddollar/web3sdk-v2"
+    "@gooddollar/web3sdk-v2": latest
     "@lingui/macro": ^3.14.0
     "@lingui/react": ^3.14.0
     "@lottiefiles/react-lottie-player": ^3.5.3
@@ -3903,59 +3903,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2::locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design":
-  version: 0.2.18
-  resolution: "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2#.yalc/@gooddollar/web3sdk-v2::hash=6cc95a&locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design"
-  dependencies:
-    "@amplitude/analytics-browser": ^1.6.4
-    "@amplitude/analytics-react-native": ^0.7.0
-    "@ceramicnetwork/http-client": ^2.32.0
-    "@ceramicnetwork/stream-tile": ^2.31.0
-    "@gooddollar/bridge-app": ^1.5.0
-    "@gooddollar/bridge-contracts": ^1.0.17
-    "@gooddollar/goodprotocol": ^2.0.24
-    "@orbisclub/orbis-sdk": ^0.4.87
-    "@react-native-community/geolocation": 3.1.0
-    "@react-native-firebase/analytics": ^16.4.6
-    "@sentry/browser": 7.16.0
-    "@sentry/react-native": ^5.15.1
-    "@solana/web3.js": ^1.72.0
-    "@types/react": ^18.2.28
-    "@walletconnect/client": ^1.8.0
-    "@walletconnect/qrcode-modal": ^1.8.0
-    "@web3-onboard/coinbase": ^2.2.6
-    "@web3-onboard/core": ^2.21.2
-    "@web3-onboard/injected-wallets": ^2.10.11
-    "@web3-onboard/react": ^2.8.13
-    "@web3-onboard/torus": ^2.2.6
-    "@web3-onboard/walletconnect": ^2.5.3
-    "@web3auth/base": ^4.0.0
-    "@web3auth/core": ^4.0.0
-    "@web3auth/openlogin-adapter": ^4.1.0
-    "@web3auth/torus-wallet-connector-plugin": ^4.0.0
-    "@web3modal/ethereum": ^2.6.2
-    "@web3modal/react": ^2.6.2
-    base-64: ^1.0.0
-    dexie: ^3.2.4
-    eventemitter3: ^4.0.7
-    mixpanel-browser: ^2.45.0
-    mixpanel-react-native: ^2.1.0
-    moment: 2.29.4
-    multiformats: 9.9.0
-    posthog-react-native: 2.8.1
-    react-native-indicative: ^0.2.1
-    react-native-restart: ^0.0.24
-    react-use-promise: ^0.5.0
-    viem: ^1.2.13
-    wagmi: ^1.3.8
-  peerDependencies:
-    "@react-native-async-storage/async-storage": 1.17.10
-    react-native: "*"
-    react-native-web: "*"
-  checksum: 5e58e666aab0fa3aaa5398de03718fd0ac9861a25331088c2359dad23be4745fa13aaffe2b86617a5a0c1f03435db8c6958f58ad50c3b46f00d7a50d0e0489f3
-  languageName: node
-  linkType: hard
-
 "@gooddollar/web3sdk-v2@npm:0.2.10-beta.751faa8":
   version: 0.2.10-beta.751faa8
   resolution: "@gooddollar/web3sdk-v2@npm:0.2.10-beta.751faa8"
@@ -4005,6 +3952,58 @@ __metadata:
     react-native: "*"
     react-native-web: "*"
   checksum: 66dde35a5efad589d006ecccbbc2e516c0079104e4ea0bc21df7a54e48fa4449e12c7e7a0461c0b0128c07ac7aecb3ff4843cc7e1fced6d2e52cb9107fa3b7fe
+  languageName: node
+  linkType: hard
+
+"@gooddollar/web3sdk-v2@npm:latest":
+  version: 0.2.18
+  resolution: "@gooddollar/web3sdk-v2@npm:0.2.18"
+  dependencies:
+    "@amplitude/analytics-browser": ^1.6.4
+    "@amplitude/analytics-react-native": ^0.7.0
+    "@ceramicnetwork/http-client": ^2.32.0
+    "@ceramicnetwork/stream-tile": ^2.31.0
+    "@gooddollar/bridge-app": ^1.5.0
+    "@gooddollar/bridge-contracts": ^1.0.17
+    "@gooddollar/goodprotocol": ^2.0.24
+    "@orbisclub/orbis-sdk": ^0.4.87
+    "@react-native-firebase/analytics": ^16.4.6
+    "@sentry/browser": 7.16.0
+    "@sentry/react-native": ^5.15.1
+    "@solana/web3.js": ^1.72.0
+    "@types/react": ^18.2.28
+    "@walletconnect/client": ^1.8.0
+    "@walletconnect/qrcode-modal": ^1.8.0
+    "@web3-onboard/coinbase": ^2.2.6
+    "@web3-onboard/core": ^2.21.2
+    "@web3-onboard/injected-wallets": ^2.10.11
+    "@web3-onboard/react": ^2.8.13
+    "@web3-onboard/torus": ^2.2.6
+    "@web3-onboard/walletconnect": ^2.5.3
+    "@web3auth/base": ^4.0.0
+    "@web3auth/core": ^4.0.0
+    "@web3auth/openlogin-adapter": ^4.1.0
+    "@web3auth/torus-wallet-connector-plugin": ^4.0.0
+    "@web3modal/ethereum": ^2.6.2
+    "@web3modal/react": ^2.6.2
+    base-64: ^1.0.0
+    dexie: ^3.2.4
+    eventemitter3: ^4.0.7
+    mixpanel-browser: ^2.45.0
+    mixpanel-react-native: ^2.1.0
+    moment: 2.29.4
+    multiformats: 9.9.0
+    posthog-react-native: 2.8.1
+    react-native-indicative: ^0.2.1
+    react-native-restart: ^0.0.24
+    react-use-promise: ^0.5.0
+    viem: ^1.2.13
+    wagmi: ^1.3.8
+  peerDependencies:
+    "@react-native-async-storage/async-storage": 1.17.10
+    react-native: "*"
+    react-native-web: "*"
+  checksum: b6097ce42c11a5917d270116647a8be418b21db16a2402df84d79c7881e1edc3ff7f5c909311caf54c6c72c13bd73dfff45780d41818fe150ea4816e85abc29a
   languageName: node
   linkType: hard
 
@@ -6317,16 +6316,6 @@ __metadata:
   bin:
     react-native: build/bin.js
   checksum: 9dfe8d258e9f36d339b8e9ebe22d276003b00a035d20ff4a3328ce3b923cd090e94f6a53aaab9869c9c29d46e5aa12317bae3f806890880a7f0235a01825e5e3
-  languageName: node
-  linkType: hard
-
-"@react-native-community/geolocation@npm:3.1.0":
-  version: 3.1.0
-  resolution: "@react-native-community/geolocation@npm:3.1.0"
-  peerDependencies:
-    react: "*"
-    react-native: "*"
-  checksum: defc42ed11d0a3cc697d5db56c17cc19af2ca35b32674dc7323b40a458f5066b051191e5dc58c367f2643a0ed70b47e8eb2ac87ab1566e642ca0cbab1a1f09a9
   languageName: node
   linkType: hard
 
