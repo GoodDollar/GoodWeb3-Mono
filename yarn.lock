@@ -3905,7 +3905,7 @@ __metadata:
 
 "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2::locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design":
   version: 0.2.18
-  resolution: "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2#.yalc/@gooddollar/web3sdk-v2::hash=6a8169&locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design"
+  resolution: "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2#.yalc/@gooddollar/web3sdk-v2::hash=6d6f1e&locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design"
   dependencies:
     "@amplitude/analytics-browser": ^1.6.4
     "@amplitude/analytics-react-native": ^0.7.0
@@ -3951,7 +3951,7 @@ __metadata:
     "@react-native-async-storage/async-storage": 1.17.10
     react-native: "*"
     react-native-web: "*"
-  checksum: 07d4e13e6840357b73106a29540ef4d34c71f6d2fab08a67051eb58ba340ac753fc58ccee10bdcc6f1cb1b9c7a16e67d578a8d87667377bff1aa90aa4c7bb7a3
+  checksum: c57026b768d33f8a6baff0a906a499875e53da6c7b5f26a5cd3e93b0740587d782628677a6a3a1b4d442f8b83a4e546049a22b09e8a08a5265d20764e422e02d
   languageName: node
   linkType: hard
 
