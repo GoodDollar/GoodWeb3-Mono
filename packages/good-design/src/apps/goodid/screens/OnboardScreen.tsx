@@ -129,12 +129,7 @@ const OnboardScreen = withTheme({ name: "OnboardScreen" })(
         <VStack {...innerContainer}>
           <Title {...title}>{isWhitelisted ? `Renew` : `Get`} your GoodID to claim UBI</Title>
           {account ? (
-            <GoodIdCard
-              credentialsList={[]}
-              isWhitelisted={isWhitelisted}
-              account={account}
-              expiryDate={formattedExpiryDate}
-            />
+            <GoodIdCard isWhitelisted={isWhitelisted} account={account} expiryDate={formattedExpiryDate} />
           ) : null}
 
           <VStack space={2} alignItems="flex-start">

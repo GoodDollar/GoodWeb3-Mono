@@ -5,7 +5,7 @@ import { View } from "native-base";
 import React, { useState } from "react";
 
 import { Celo, Fuse } from "@gooddollar/web3sdk-v2";
-import { Config, Goerli, Mainnet, useEthers } from "@usedapp/core";
+import { Config, Mainnet, useEthers } from "@usedapp/core";
 
 interface PageProps {
   children: any;
@@ -14,8 +14,8 @@ interface PageProps {
 }
 
 const config: Config = {
-  networks: [Goerli, Mainnet, Fuse, Celo],
-  readOnlyChainId: 42220,
+  networks: [Mainnet, Fuse, Celo],
+  readOnlyChainId: undefined,
   readOnlyUrls: {
     122: "https://rpc.fuse.io",
     42220: "https://forno.celo.org"

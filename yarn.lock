@@ -3904,8 +3904,8 @@ __metadata:
   linkType: hard
 
 "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2::locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design":
-  version: 0.2.18
-  resolution: "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2#.yalc/@gooddollar/web3sdk-v2::hash=38aed1&locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design"
+  version: 0.2.20
+  resolution: "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2#.yalc/@gooddollar/web3sdk-v2::hash=a15062&locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design"
   dependencies:
     "@amplitude/analytics-browser": ^1.6.4
     "@amplitude/analytics-react-native": ^0.7.0
@@ -3952,7 +3952,60 @@ __metadata:
     "@react-native-async-storage/async-storage": 1.17.10
     react-native: "*"
     react-native-web: "*"
-  checksum: f21bb59047c41052cd4a735c8df7dfe0b450147033be717bb0de0c89958e91d23976f79be0f618c8260c9dbfd854dd3483356cd964bdc59f1f288dac2f96e594
+  checksum: fd27b091628fbc046800e4f55163ffd3830f0ec8a268b7b972eca1af55acddce0851bd44a2f61d6d57b41f2ae3226cdd8a12f4a427812acb7878edf7bc3004bc
+  languageName: node
+  linkType: hard
+
+"@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2::locator=%40gooddollar%2Fweb3sdk-v2%40workspace%3Apackages%2Fsdk-v2":
+  version: 0.2.20
+  resolution: "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2#.yalc/@gooddollar/web3sdk-v2::hash=a15062&locator=%40gooddollar%2Fweb3sdk-v2%40workspace%3Apackages%2Fsdk-v2"
+  dependencies:
+    "@amplitude/analytics-browser": ^1.6.4
+    "@amplitude/analytics-react-native": ^0.7.0
+    "@ceramicnetwork/http-client": ^2.32.0
+    "@ceramicnetwork/stream-tile": ^2.31.0
+    "@gooddollar/bridge-app": ^1.5.0
+    "@gooddollar/bridge-contracts": ^1.0.17
+    "@gooddollar/goodprotocol": ^2.0.24
+    "@orbisclub/orbis-sdk": ^0.4.87
+    "@react-native-community/geolocation": 3.1.0
+    "@react-native-firebase/analytics": ^16.4.6
+    "@sentry/browser": 7.16.0
+    "@sentry/react-native": ^5.15.1
+    "@solana/web3.js": ^1.72.0
+    "@types/react": ^18.2.28
+    "@walletconnect/client": ^1.8.0
+    "@walletconnect/qrcode-modal": ^1.8.0
+    "@web3-onboard/coinbase": ^2.2.6
+    "@web3-onboard/core": ^2.21.2
+    "@web3-onboard/injected-wallets": ^2.10.11
+    "@web3-onboard/react": ^2.8.13
+    "@web3-onboard/torus": ^2.2.6
+    "@web3-onboard/walletconnect": ^2.5.3
+    "@web3auth/base": ^4.0.0
+    "@web3auth/core": ^4.0.0
+    "@web3auth/openlogin-adapter": ^4.1.0
+    "@web3auth/torus-wallet-connector-plugin": ^4.0.0
+    "@web3modal/ethereum": ^2.6.2
+    "@web3modal/react": ^2.6.2
+    base-64: ^1.0.0
+    dexie: ^3.2.4
+    eventemitter3: ^4.0.7
+    mixpanel-browser: ^2.45.0
+    mixpanel-react-native: ^2.1.0
+    moment: 2.29.4
+    multiformats: 9.9.0
+    posthog-react-native: 2.8.1
+    react-native-indicative: ^0.2.1
+    react-native-restart: ^0.0.24
+    react-use-promise: ^0.5.0
+    viem: ^1.2.13
+    wagmi: ^1.3.8
+  peerDependencies:
+    "@react-native-async-storage/async-storage": 1.17.10
+    react-native: "*"
+    react-native-web: "*"
+  checksum: fd27b091628fbc046800e4f55163ffd3830f0ec8a268b7b972eca1af55acddce0851bd44a2f61d6d57b41f2ae3226cdd8a12f4a427812acb7878edf7bc3004bc
   languageName: node
   linkType: hard
 
@@ -4024,6 +4077,7 @@ __metadata:
     "@gooddollar/bridge-app": ^1.5.0
     "@gooddollar/bridge-contracts": ^1.0.17
     "@gooddollar/goodprotocol": ^2.0.24
+    "@gooddollar/web3sdk-v2": "file:.yalc/@gooddollar/web3sdk-v2"
     "@orbisclub/orbis-sdk": ^0.4.87
     "@react-native-async-storage/async-storage": 1.17.10
     "@react-native-community/geolocation": 3.1.0
