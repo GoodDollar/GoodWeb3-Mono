@@ -2,7 +2,6 @@ import React, { Fragment } from "react";
 
 import { withTheme } from "../../../theme";
 import BasicStyledModal from "./BasicStyledModal";
-
 // todo: add blurred background
 
 export const LoaderModal = withTheme({ name: "BasicStyledModal" })(
@@ -11,7 +10,7 @@ export const LoaderModal = withTheme({ name: "BasicStyledModal" })(
       <BasicStyledModal
         type="loader"
         title={`We're checking \n your information...`}
-        show={true}
+        show={loading}
         loading={loading}
         onClose={onClose}
         withCloseButton={false}
