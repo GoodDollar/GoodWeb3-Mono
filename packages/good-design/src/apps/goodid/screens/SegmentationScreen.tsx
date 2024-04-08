@@ -1,13 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Center, Text, VStack } from "native-base";
 import { noop } from "lodash";
 import { useEthers } from "@usedapp/core";
+import {
+  AsyncStorage,
+  requestLocationCertificate,
+  useCertificates,
+  useFVLink,
+  useGetEnvChainId,
+  useLocation
+} from "@gooddollar/web3sdk-v2";
 
 import { LoaderModal } from "../../../core";
 
 import { Image } from "../../../core";
 import RoboBilly from "../../../assets/svg/robo-billy.svg";
-import { requestLocationCertificate, useGetEnvChainId, useLocation } from "@gooddollar/web3sdk-v2";
 
 const tempTypes = {
   Gender: "Are you",
@@ -16,35 +23,46 @@ const tempTypes = {
 };
 
 export const SegmentationScreen = ({ types }: { types?: typeof tempTypes }) => {
-  const { account, chainId } = useEthers();
+  const { account } = useEthers();
   const { baseEnv } = useGetEnvChainId();
   const [loading, setLoading] = useState(true);
   const { locationState } = useLocation();
+  const fvLink = useFVLink();
+  const { storeCertificate } = useCertificates(account ?? "");
 
-  console.log("locationState", { locationState, account, chainId });
-
-  useEffect(() => {
-    setLoading(true);
+  const fetchLocationCertificate = useCallback(async () => {
     if (locationState.error || !locationState.location) {
-      console.log("testUseEffect -- shouldThrowError -->", { locationState });
-      // throw error modal (to be added)
-      return;
-    } else if (!account) {
-      console.log("testUseEffect -- shouldKeepLoadingForAccount", { account });
       return;
     }
 
-    console.log("testUseEffect -- shouldRequestCertificate");
-    //todo: where does identity certificate come from?
-    //do we request it here or will it be taken from fvSuccess response
-    requestLocationCertificate(baseEnv, locationState.location)
-      .then(res => {
-        console.log("requestLocationCertificate", res);
-      })
-      .catch(err => {
-        console.log("requestlocationcertificate failed -->", { err });
-      });
-  }, [locationState, account]);
+    if (!account) {
+      return;
+    }
+
+    try {
+      let fvsig = await AsyncStorage.getItem("fvSig");
+      if (!fvsig) {
+        fvsig = await fvLink.getFvSig();
+      }
+      const result = await requestLocationCertificate(baseEnv, locationState.location, fvsig, account);
+      if (result && result.certificate) {
+        await storeCertificate(result.certificate);
+      }
+    } catch (e) {
+      console.error("Failed to get a location certificate:", { e });
+      // should trigger error modal
+    } finally {
+      setLoading(false);
+    }
+  }, [account, baseEnv, fvLink, locationState, storeCertificate]);
+
+  useEffect(() => {
+    void (async () => {
+      // should fetch location and identity certificates
+      // todo: add fetch identity certificate
+      await fetchLocationCertificate();
+    })();
+  }, [fetchLocationCertificate]);
 
   return (
     <>

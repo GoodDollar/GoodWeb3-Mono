@@ -3905,7 +3905,7 @@ __metadata:
 
 "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2::locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design":
   version: 0.2.20
-  resolution: "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2#.yalc/@gooddollar/web3sdk-v2::hash=a15062&locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design"
+  resolution: "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2#.yalc/@gooddollar/web3sdk-v2::hash=490236&locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design"
   dependencies:
     "@amplitude/analytics-browser": ^1.6.4
     "@amplitude/analytics-react-native": ^0.7.0
@@ -3952,13 +3952,13 @@ __metadata:
     "@react-native-async-storage/async-storage": 1.17.10
     react-native: "*"
     react-native-web: "*"
-  checksum: fd27b091628fbc046800e4f55163ffd3830f0ec8a268b7b972eca1af55acddce0851bd44a2f61d6d57b41f2ae3226cdd8a12f4a427812acb7878edf7bc3004bc
+  checksum: 7cc4bdcfada04bbf7936fcdc9bb55511f664c8f17e58b7cd6e276f618ab3e2a22b79ece8181f08774eb4f99dfba85ffff94582145fc3c22f7515bdfc447ee3b2
   languageName: node
   linkType: hard
 
 "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2::locator=%40gooddollar%2Fweb3sdk-v2%40workspace%3Apackages%2Fsdk-v2":
   version: 0.2.20
-  resolution: "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2#.yalc/@gooddollar/web3sdk-v2::hash=a15062&locator=%40gooddollar%2Fweb3sdk-v2%40workspace%3Apackages%2Fsdk-v2"
+  resolution: "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2#.yalc/@gooddollar/web3sdk-v2::hash=490236&locator=%40gooddollar%2Fweb3sdk-v2%40workspace%3Apackages%2Fsdk-v2"
   dependencies:
     "@amplitude/analytics-browser": ^1.6.4
     "@amplitude/analytics-react-native": ^0.7.0
@@ -4005,7 +4005,7 @@ __metadata:
     "@react-native-async-storage/async-storage": 1.17.10
     react-native: "*"
     react-native-web: "*"
-  checksum: fd27b091628fbc046800e4f55163ffd3830f0ec8a268b7b972eca1af55acddce0851bd44a2f61d6d57b41f2ae3226cdd8a12f4a427812acb7878edf7bc3004bc
+  checksum: 7cc4bdcfada04bbf7936fcdc9bb55511f664c8f17e58b7cd6e276f618ab3e2a22b79ece8181f08774eb4f99dfba85ffff94582145fc3c22f7515bdfc447ee3b2
   languageName: node
   linkType: hard
 
