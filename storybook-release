@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# build storybook distros
+yarn workspace @gooddollar/web3sdk-v2 build-storybook
+yarn workspace @gooddollar/good-design build-storybook
+
+# pre-create output folders
+mkdir -p dist/storybook/sdk
+
+# copy bundles. UI goes to the root, sdk-v2 will be at /sdk
+cp -R packages/good-design/storybook-static/* dist/storybook
+cp -R packages/sdk-v2/storybook-static/* dist/storybook/sdk
