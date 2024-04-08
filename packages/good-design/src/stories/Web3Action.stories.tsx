@@ -1,16 +1,15 @@
 import React, { useEffect, useCallback, useState } from "react";
 import { Web3ActionButton } from "../advanced/web3action/Web3Action";
-import { Mainnet, DAppProvider, Config, Goerli, useEthers } from "@usedapp/core";
+import { Mainnet, DAppProvider, Config, useEthers } from "@usedapp/core";
 import { useClaim, Fuse, Celo, Web3Provider } from "@gooddollar/web3sdk-v2";
 import { getDefaultProvider, ethers } from "ethers";
 import { ExternalProvider } from "@ethersproject/providers";
 
 const config: Config = {
-  networks: [Mainnet, Fuse, Celo, Goerli],
+  networks: [Mainnet, Fuse, Celo],
   readOnlyChainId: Mainnet.chainId,
   readOnlyUrls: {
     [Mainnet.chainId]: getDefaultProvider("https://mainnet.infura.io/v3/12207372b62941dfb1efd4fe26b95ccc"),
-    [Goerli.chainId]: getDefaultProvider("https://goerli.infura.io/v3/12207372b62941dfb1efd4fe26b95ccc"),
     122: "https://rpc.fuse.io",
     42220: "https://forno.celo.org"
   }
@@ -31,7 +30,7 @@ export const W3Wrapper = () => {
         }
       });
     }
-  }, [library]);
+  }, [/* used */ library]);
 
   //todo: should not need two providers, current bug with only web3provider and not able to find connected account
   // probably causing the claimCall bug where it doesn't update to web3provider
@@ -66,7 +65,7 @@ const Web3Action = () => {
     }
   }, [claimAmount]);
 
-  return <Web3ActionButton text={claimText} requiredChain={122} web3Action={handleClaim} />;
+  return <Web3ActionButton text={claimText} supportedChains={[122]} web3Action={handleClaim} />;
 };
 
 export default {

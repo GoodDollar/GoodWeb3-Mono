@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { JsonRpcProvider } from "@ethersproject/providers";
 import { Web3Provider } from "../contexts/Web3Context";
 import * as ethers from "ethers";
 import { ExternalProvider } from "@ethersproject/providers";
 
-import { Config, Mainnet, Goerli, useEthers } from "@usedapp/core";
+import { Config, Mainnet, useEthers } from "@usedapp/core";
 import { Fuse, Celo } from "../contexts";
-import { getDefaultProvider } from "ethers";
 
 interface PageProps {
   children: any;
@@ -14,7 +13,7 @@ interface PageProps {
 }
 
 const config: Config = {
-  networks: [Goerli, Mainnet, Fuse, Celo],
+  networks: [Mainnet, Fuse, Celo],
   readOnlyChainId: Fuse.chainId,
   readOnlyUrls: {
     122: "https://rpc.fuse.io",
@@ -29,7 +28,7 @@ export const W3Wrapper = ({ children, withMetaMask }: PageProps) => {
   let newProvider: JsonRpcProvider | undefined = undefined;
   if (!withMetaMask) {
     const rpc = new ethers.providers.JsonRpcProvider("https://rpc.fuse.io");
-    rpc.getSigner = idx => {
+    rpc.getSigner = () => {
       return w as any;
     };
     newProvider = rpc;
