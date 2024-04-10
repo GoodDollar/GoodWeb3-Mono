@@ -3730,7 +3730,7 @@ __metadata:
     "@babel/preset-typescript": ^7.16.0
     "@babel/runtime": ^7.18.9
     "@gooddollar/goodprotocol": ^2.0.24
-    "@gooddollar/web3sdk-v2": 0.2.22-beta.d7a00e6
+    "@gooddollar/web3sdk-v2": 0.2.22-beta.dbe713b
     "@lingui/macro": ^3.14.0
     "@lingui/react": ^3.14.0
     "@lottiefiles/react-lottie-player": ^3.5.3
@@ -3903,7 +3903,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/web3sdk-v2@0.2.22-beta.d7a00e6, @gooddollar/web3sdk-v2@workspace:packages/sdk-v2":
+"@gooddollar/web3sdk-v2@0.2.22-beta.dbe713b, @gooddollar/web3sdk-v2@workspace:packages/sdk-v2":
   version: 0.0.0-use.local
   resolution: "@gooddollar/web3sdk-v2@workspace:packages/sdk-v2"
   dependencies:
