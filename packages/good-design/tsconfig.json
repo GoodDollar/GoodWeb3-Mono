@@ -5,7 +5,7 @@
     "module": "commonjs",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "moduleSuffixes": [".web", ""],
+    "moduleSuffixes": ["",".native",".web"],
     "strict": true,
     "skipLibCheck": true,
     "jsx": "react",
