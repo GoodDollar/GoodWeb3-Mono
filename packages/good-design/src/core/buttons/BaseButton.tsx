@@ -59,7 +59,26 @@ export const theme = {
       innerText: {
         fontFamily: "subheading",
         fontSize: "sm",
-        fontWeight: "bold"
+        fontWeight: "bold",
+        textTransform: "uppercase"
+      }
+    }),
+    "link-like": () => ({
+      innerView: {
+        backgroundColor: "none",
+        paddingY: 0,
+        paddingX: 8,
+        width: 343,
+        textAlign: "center"
+      },
+      innerText: {
+        fontFamily: "subheading",
+        fontSize: "sm",
+        fontWeight: "700",
+        lineHeight: 20.8,
+        color: "goodGrey.450",
+        underline: true,
+        textTransform: "uppercase"
       }
     })
   }

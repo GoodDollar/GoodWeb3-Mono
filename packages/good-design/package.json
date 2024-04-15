@@ -47,7 +47,6 @@
     "@types/react-helmet": "^6.1.6",
     "@types/react-native": "0.70.4",
     "@usedapp/core": "^1.2.6",
-    "@web3-onboard/react": "^2.8.7",
     "babel-jest": "^27.3.1",
     "babel-loader": "^8.2.3",
     "babel-plugin-module-resolver": "^4.1.0",
@@ -94,6 +93,8 @@
     "react-inlinesvg": "2.3.0",
     "react-native": "0.70.4",
     "react-native-animatable": "^1.4.0",
+    "react-native-fs": "^2.20.0",
+    "react-native-image-picker": "^7.1.2",
     "react-native-mask-input": "^1.2.2",
     "react-native-safe-area-context": "^3.3.2",
     "react-native-svg": "^12.1.1",
@@ -105,6 +106,7 @@
     "react-native-webview": "^13.2.2",
     "react-number-format": "^5.1.1",
     "react-use-promise": "^0.5.0",
+    "react-use-wizard": "^2.3.0",
     "require-from-string": "^2.0.2"
   }
 }
