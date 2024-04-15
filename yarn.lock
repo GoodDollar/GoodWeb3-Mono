@@ -4171,10 +4171,11 @@ __metadata:
 
 "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2::locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design":
   version: 0.2.22-beta.dbe713b
-  resolution: "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2#.yalc/@gooddollar/web3sdk-v2::hash=4a2fd7&locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design"
+  resolution: "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2#.yalc/@gooddollar/web3sdk-v2::hash=9dc767&locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design"
   dependencies:
     "@amplitude/analytics-browser": ^1.6.4
     "@amplitude/analytics-react-native": ^0.7.0
+    "@aws-sdk/client-s3": ^3.550.0
     "@ceramicnetwork/http-client": ^2.32.0
     "@ceramicnetwork/stream-tile": ^2.31.0
     "@gooddollar/bridge-app": ^1.5.0
@@ -4218,7 +4219,7 @@ __metadata:
     "@react-native-async-storage/async-storage": 1.17.10
     react-native: "*"
     react-native-web: "*"
-  checksum: 434ba8fa3d587075f5659c28da885b5aec81ee38d78d0bf3b9d08672042271f9a6dca669f1805aab6f2f3d596dcacc8bfdeb1b04c1ccb1efd1d23b21c3aa2876
+  checksum: b2d6100fe611cd4166f5d8da48a230db4d9089c8b41c7e02fa1cb20093e67c2f9874de3f98b182f91dc0a6ee52dc7e460ee97473d98bef86fa438bac7b09cbc3
   languageName: node
   linkType: hard
 
