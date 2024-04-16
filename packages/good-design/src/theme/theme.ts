@@ -92,19 +92,6 @@ export const theme = extendTheme({
     xl: 30,
     "2xl": 36
   },
-  shadow: {
-    //Bug: override shadow does not take effect. defining new one is not used
-    "1": {
-      shadowColor: "black",
-      shadowOffset: {
-        width: 0,
-        height: 3
-      },
-      shadowOpacity: 0.4,
-      shadowRadius: 0,
-      elevation: 8
-    }
-  },
 
   components: {
     ...layout,
@@ -113,7 +100,17 @@ export const theme = extendTheme({
     ...apps,
     ...animated,
     ...web3modals,
-    ...nativebase
+    ...nativebase,
+    Text: {
+      variants: {
+        "sm-grey": () => ({
+          fontFamily: "subheading",
+          fontSize: "sm",
+          fontWeight: "400",
+          color: "goodGrey.600"
+        })
+      }
+    }
   }
 });
 
