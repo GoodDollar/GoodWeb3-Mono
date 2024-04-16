@@ -38,7 +38,7 @@ export type StyledModalProps = CtaOrLearnModalProps | AltModalProps;
 
 const ModalHeader = ({ title }: { title: string }) => (
   <Center backgroundColor="white" textAlign="center">
-    <Title fontFamily="heading" color="primary" fontSize="xl" lineHeight="110%">
+    <Title variant="title-gdblue" fontSize="xl">
       {title}
     </Title>
   </Center>

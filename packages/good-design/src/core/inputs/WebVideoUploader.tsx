@@ -1,6 +1,6 @@
 import { View } from "native-base";
 import React, { useCallback, useRef } from "react";
-import { GoodButton } from "../../core";
+import { GoodButton } from "..";
 
 type Props = {
   onDone: (video?: { base64: string; extension: string }, error?: Error) => Promise<void>;

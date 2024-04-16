@@ -10,12 +10,6 @@ const OnboardScreen = {
       alignItems: "center"
     },
     fontStyles: {
-      title: {
-        fontFamily: "heading",
-        fontSize: "xl",
-        color: "primary",
-        textAlign: "center"
-      },
       listLabel: {
         fontFamily: "subheading",
         fontSize: "sm",
