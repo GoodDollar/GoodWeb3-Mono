@@ -1,7 +1,16 @@
 #!/bin/bash
 
+rm -rf node_modules
+rm -rf packages/good-design/node_modules
+rm -rf packages/sdk-v2/node_modules
+rm -rf packages/good-design/storybook-static
+rm -rf packages/sdk-v2/storybook-static
+rm -rf dist/storybook
+rm -f yarn.lock
+
 # build storybook distros
 cd packages/good-design
+touch yarn.lock
 yarn --check-cache
 
 if ! yarn build-storybook; then
@@ -9,6 +18,7 @@ if ! yarn build-storybook; then
 fi
 
 cd ../sdk-v2
+touch yarn.lock
 yarn --check-cache
 export STORYBOOK_BASEPATH=/sdk/
 
