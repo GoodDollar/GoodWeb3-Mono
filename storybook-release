@@ -1,5 +1,7 @@
 #!/bin/bash
 
+rm -rf .yarn/cache
+rm -rf .yarn/install-state.gz
 rm -rf node_modules
 rm -rf packages/good-design/node_modules
 rm -rf packages/sdk-v2/node_modules
