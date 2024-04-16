@@ -1,21 +1,36 @@
-import { ArrowBackIcon, Checkbox, HStack, Text, View, VStack } from "native-base";
+import { ArrowBackIcon, Checkbox, Center, HStack, Text, View, VStack } from "native-base";
 import React, { FC, PropsWithChildren, useCallback, useState } from "react";
 import { TouchableOpacity } from "react-native";
 import { Wizard, useWizard } from "react-use-wizard";
+
 import { useModal } from "../../hooks";
 import { GoodButton } from "../../core/buttons";
 import ImageCard from "../../core/layout/ImageCard";
+import { Image } from "../../core/images";
 import { WebVideoUploader } from "../../core/inputs/WebVideoUploader";
 import { WizardContextProvider } from "../../utils/WizardContext";
-import { Title } from "../../core/layout";
+import { BulletPointList, Title } from "../../core/layout";
 
 import RedTentCard from "../../assets/images/redtentcard.png";
+import BillyPhone from "../../assets/images/billy-phone.png";
 import { cardShadow } from "../../theme";
 
 export type Props = {
   onVideo: (base64: string, extension: string) => Promise<void>;
   onDone: (error?: Error) => Promise<void>;
 };
+
+const videoRequirements = [
+  "Your first name",
+  "Your age",
+  "Your location",
+  "What you plan to do with the money you receive"
+];
+
+const videoRestrictions = ["Maximum video length 30sec", "Maximum size 20mb"];
+const videoUsagePolicy = [
+  `Your video may be reviewed by the \n GoodLabs or partner teams for \n verification purposes. Your video \n will not be shared or used publicly, \n and will be erased after a period of \n time.`
+];
 
 const WizardHeader = ({ onDone, Modal }: { onDone: Props["onDone"]; Modal: any }) => {
   const { isFirstStep, previousStep, isLastStep, goToStep } = useWizard();
@@ -70,8 +85,6 @@ const CardFooter = ({ linkText }: { linkText: string }) => (
   </Text>
 );
 
-const BlueBullet = () => <Text variant="sm-grey" color="primary">{`\u2022`}</Text>;
-
 const PoolRequirements = () => (
   <VStack space={6}>
     <Title variant="subtitle-grey">To qualify for this pool you need to:</Title>
@@ -92,19 +105,7 @@ const PoolRequirements = () => (
         <Checkbox isDisabled colorScheme="info" value="test" />
         <Text variant="sm-grey">Submit a video selfie saying:</Text>
       </HStack>
-      <VStack space={2} marginLeft={6} marginBottom={4}>
-        {[
-          { text: "Your first name" },
-          { text: "Your age" },
-          { text: "Your location" },
-          { text: "What you plan to do with the money you receive" }
-        ].map((item, index) => (
-          <HStack key={index} space={2}>
-            <BlueBullet />
-            <Text variant="sm-grey">{item.text}</Text>
-          </HStack>
-        ))}
-      </VStack>
+      <BulletPointList bulletPoints={videoRequirements} />
     </VStack>
   </VStack>
 );
@@ -143,12 +144,6 @@ const RedtentOffer = ({ onDone }: { onDone: Props["onDone"] }) => {
   );
 };
 
-const SubTitle = ({ children }: { children: React.ReactNode }) => (
-  <Text color={"goodGrey.600"} textTransform={"capitalize"} fontFamily={"subheading"} fontSize={"md"} lineHeight={25}>
-    {children}
-  </Text>
-);
-
 const RedtentVideoInstructions = ({ onDone, onVideo }: { onDone: Props["onDone"]; onVideo: Props["onVideo"] }) => {
   const { nextStep } = useWizard();
   const [isLoading, setLoading] = useState(false);
@@ -173,25 +168,50 @@ const RedtentVideoInstructions = ({ onDone, onVideo }: { onDone: Props["onDone"]
   );
 
   return (
-    <View>
+    <VStack space={6}>
       <Title variant="title-gdblue">Video instructions</Title>
-      <SubTitle>Submit a video selfie saying:</SubTitle>
+      <Center>
+        <Image source={BillyPhone} width={126} height={156} />
+      </Center>
+
+      {[
+        { title: "Submit a video selfie", pointsList: videoRequirements },
+        { title: "Restrictions", pointsList: videoRestrictions },
+        { title: "How will my video be used?", pointsList: videoUsagePolicy }
+      ].map(({ title, pointsList }) => (
+        <VStack key="title" space={2}>
+          <Title variant="subtitle-grey">{title}</Title>
+          <BulletPointList bulletPoints={pointsList} />
+        </VStack>
+      ))}
+
       <WebVideoUploader onUpload={onUpload} isLoading={isLoading} />
 
       <GoodButton onPress={() => onDone()} padding={0} variant={"link-like"}>
         Nevermind, I don't want the extra UBI
       </GoodButton>
-    </View>
+    </VStack>
   );
 };
 
 const RedtentThanks = ({ onDone }: { onDone: Props["onDone"] }) => (
-  <View>
-    <Title variant="title-gdblue">Thanks you for submitting your video!</Title>
+  <VStack space={200}>
+    <VStack space={6}>
+      <Title variant="title-gdblue">Thanks you for submitting your video!</Title>
+      <HStack paddingBottom={8} borderBottomWidth={1} borderBottomColor="goodGrey.300">
+        <Text variant="sm-grey">
+          You are now in the{" "}
+          <Text fontWeight="bold" color="primary">
+            {`Red Tent Women in Nigeria \n`}
+          </Text>
+          GoodCollective. You can claim this additional UBI daily.
+        </Text>
+      </HStack>
+    </VStack>
     <GoodButton onPress={() => onDone()} variant="standard">
       Next
     </GoodButton>
-  </View>
+  </VStack>
 );
 
 export const RedtentWizard: React.FC<Props> = (props: Props) => {
