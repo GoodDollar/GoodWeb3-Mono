@@ -9,5 +9,6 @@ export * from "./ipfs";
 export * from "./microbridge";
 export * from "./newsfeed";
 export * from "./onboard";
+export * from "./redtent";
 export * from "./savings";
 export * from "./storage";

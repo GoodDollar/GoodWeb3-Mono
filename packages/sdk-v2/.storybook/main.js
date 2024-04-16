@@ -33,7 +33,7 @@ module.exports = {
   core: {
     builder: "webpack5"
   },
-  webpackFinal: async config => {
+  webpackFinal: async (config, { configType }) => {
     config.plugins.push(
       new webpack.ProvidePlugin({
         Buffer: ["buffer", "Buffer"],
@@ -47,6 +47,12 @@ module.exports = {
       stream: require.resolve("stream-browserify"),
       buffer: require.resolve("buffer")
     };
+    // we deploy it in a subfodler
+    if (configType === "PRODUCTION") config.output.publicPath = process.env.STORYBOOK_BASEPATH;
+    return config;
+  },
+  managerWebpack: async (config, { configType }) => {
+    if (configType === "PRODUCTION") config.output.publicPath = process.env.STORYBOOK_BASEPATH;
     return config;
   }
 };

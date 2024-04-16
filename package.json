@@ -13,6 +13,7 @@
   "homepage": "",
   "scripts": {
     "build": "yarn workspaces foreach --topological-dev -v run build",
+    "release:storybook": "./storybook-release",
     "release:beta": "node dev-release",
     "compile": "tsc -p tsconfig.build.json",
     "lint": "eslint .",
@@ -36,5 +37,8 @@
     "pinst": "^3.0.0",
     "prettier": "2.8.8",
     "typescript": "^4.9.3"
+  },
+  "resolutions": {
+    "ethers": "5.7.2"
   }
 }

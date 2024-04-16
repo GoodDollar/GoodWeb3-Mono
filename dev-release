@@ -44,7 +44,7 @@ const args = process.argv.slice(2);
 
   console.log("2. Build sdk-v2");
   await run("yarn workspace @gooddollar/web3sdk-v2 install");
-  await run("yarn workspace @gooddollar/web3sdk-v2 build");
+  await run("yarn workspace @gooddollar/web3sdk-v2 build:release");
 
   console.log("3. Publish sdk-v2");
   await run("npm publish --access public --tag beta", { cwd: pkgDir("sdk-v2") });
