@@ -9,7 +9,8 @@ rm -rf dist/storybook
 rm -f yarn.lock
 
 export YARN_FLAGS=
-export
+export YARN_ENABLE_IMMUTABLE_INSTALLS=false
+yarn config set -H enableImmutableInstalls false
 
 # build storybook distros
 cd packages/good-design
