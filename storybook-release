@@ -2,8 +2,14 @@
 
 # build storybook distros
 export STORYBOOK_BASEPATH=/sdk/
-yarn workspace @gooddollar/web3sdk-v2 build-storybook -- --preview-url=/sdk/iframe.html
-yarn workspace @gooddollar/good-design build-storybook
+
+if ! yarn workspace @gooddollar/web3sdk-v2 build-storybook -- --preview-url=/sdk/iframe.html; then
+  exit 1
+fi
+
+if ! yarn workspace @gooddollar/good-design build-storybook; then
+  exit 1
+fi
 
 # pre-create output folders
 mkdir -p dist/storybook/sdk

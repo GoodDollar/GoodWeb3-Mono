@@ -14,6 +14,7 @@
   "scripts": {
     "build": "yarn workspaces foreach --topological-dev -v run build",
     "release:storybook": "./storybook-release",
+    "release:storybook:clean": "rm -rf dist/storybook packages/good-design/storybook-static packages/sdk-v2/storybook-static",
     "release:beta": "node dev-release",
     "compile": "tsc -p tsconfig.build.json",
     "lint": "eslint .",
