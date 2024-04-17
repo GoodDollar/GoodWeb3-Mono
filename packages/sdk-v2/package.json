@@ -78,6 +78,7 @@
     "@gooddollar/bridge-contracts": "^1.0.17",
     "@gooddollar/goodprotocol": "^2.0.24",
     "@orbisclub/orbis-sdk": "^0.4.87",
+    "@react-native-community/geolocation": "3.1.0",
     "@react-native-firebase/analytics": "^16.4.6",
     "@sentry/browser": "7.16.0",
     "@sentry/react-native": "^5.15.1",

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useRef } from "react";
 import Lottie from "lottie-react-native";
 import { View } from "react-native-animatable";
 import { Text } from "native-base";
@@ -14,24 +14,12 @@ const SpinnerCheckMark = ({ loading }: { loading: boolean }) => {
     console.log("should do something");
   };
 
-  useEffect(() => {
-    if (loading) {
-      progress.current?.play(0, 130);
-      return;
-    }
-
-    //todo: handle speedbump as was done before?
-    progress.current?.play(130, 210);
-    // todo: fix loop
-    // loop.current = false;
-  }, [loading]);
-
   return (
     <View style={{ alignItems: "center" }}>
       <Lottie
         style={{ width: 96 }}
-        // autoPlay={loop.current}
-        // loop={loop.current}
+        autoPlay={false}
+        loop={loading}
         source={SpinnerAnimate}
         ref={progress}
         onAnimationFinish={onAnimationFinish}

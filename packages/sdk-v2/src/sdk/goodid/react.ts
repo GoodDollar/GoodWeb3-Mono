@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useCallback, useContext, useEffect, useState, useRef, useMemo, MutableRefObject } from "react";
+import { useCallback, useContext, useEffect, useState, useRef, useMemo } from "react";
 import { isEmpty, size, filter } from "lodash";
+import { Platform } from "react-native";
+import GeoLocation from "@react-native-community/geolocation";
 
-import { GoodIdContext } from "../../../contexts/goodid/GoodIdContext";
-import { Certificate, CertificateRecord, CredentialType } from "../types";
+import { GoodIdContext } from "../../contexts/goodid/GoodIdContext";
+import { Certificate, CertificateRecord, CredentialType } from "./types";
 
 export interface CertificateItem {
   id: string;
@@ -146,4 +148,53 @@ export const useAggregatedCertificates = (account: string): AggregatedCertificat
       return { ...item, key, type, typeName } as AggregatedCertificate;
     });
   }, [certificates]);
+};
+
+// could be the configuration has to be set on the native side (on root-level)
+// at least the permission android.permission.ACCESS_FINE_LOCATION has to be added
+// in order for below hook to work
+
+// GeoLocation.setRNConfiguration({
+//   skipPermissionRequests: false,
+//   authorizationLevel: "whenInUse",
+//   locationProvider: "auto"
+// });
+
+interface LocationState {
+  location: [number, number] | null;
+  error?: string | null;
+}
+
+export const useLocation = () => {
+  const [locationState, setLocationState] = useState<LocationState>({ location: null, error: null });
+
+  const onError = error => {
+    setLocationState({ location: null, error });
+  };
+
+  const getCurrentPosition = () => {
+    // based on the platform getCurrentPosition will use the appropriate API
+    GeoLocation.getCurrentPosition(
+      (position: any) => {
+        const { latitude, longitude } = position.coords;
+        setLocationState({ location: [latitude, longitude] });
+      },
+      (error: any) => {
+        onError(error);
+      },
+      {} // is optional but not made optional in the type definition
+    );
+  };
+
+  useEffect(() => {
+    console.log("platform", Platform.OS);
+    if (Platform.OS === "web") {
+      getCurrentPosition();
+      return;
+    }
+    // requestAuthorization only is needed on native
+    GeoLocation.requestAuthorization(getCurrentPosition, onError);
+  }, []);
+
+  return { locationState };
 };

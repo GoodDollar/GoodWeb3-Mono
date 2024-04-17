@@ -2,11 +2,11 @@ import React from "react";
 import { useEthers } from "@usedapp/core";
 import { GoodIdContextProvider } from "@gooddollar/web3sdk-v2";
 
-import { GoodIdCard } from "../../../apps/goodid";
-import { OnboardScreen } from "../../../apps/goodid/screens";
-
 import { W3Wrapper } from "../../W3Wrapper";
 import { OffersAgreement } from "../../../apps/goodid/screens/OffersAgreement";
+
+import { GoodIdCard } from "../../../apps/goodid";
+import { OnboardScreen, SegmentationScreen } from "../../../apps/goodid/screens";
 
 const GoodIdWrapper = ({ children }) => {
   return <GoodIdContextProvider>{children}</GoodIdContextProvider>;
@@ -22,6 +22,14 @@ export const GoodIdCardExample = () => {
       fullname="Just a name"
       expiryDate="Expires on April 12, 2023"
     />
+  );
+};
+
+export const SegmentationFlow = () => {
+  return (
+    <W3Wrapper withMetaMask={true}>
+      <SegmentationScreen />
+    </W3Wrapper>
   );
 };
 

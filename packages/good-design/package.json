@@ -7,7 +7,7 @@
     "build:release": "yarn dev:clean && tsc -p tsconfig.release.json && yarn copy:assets",
     "dev:clean": "rm -fr dist types tsconfig.tsbuildinfo tsconfig.release.tsbuildinfo",
     "test": "jest",
-    "storybook": "start-storybook -p 6006",
+    "storybook": "start-storybook -p 3000",
     "build-storybook": "build-storybook",
     "copy:assets": "cpx 'src/assets/**' 'dist/assets'"
   },
@@ -27,7 +27,7 @@
     "@babel/preset-react": "^7.16.0",
     "@babel/preset-typescript": "^7.16.0",
     "@babel/runtime": "^7.18.9",
-    "@gooddollar/web3sdk-v2": "0.2.22-beta.efda7af",
+    "@gooddollar/web3sdk-v2": "file:.yalc/@gooddollar/web3sdk-v2",
     "@storybook/addon-actions": "^6.5.12",
     "@storybook/addon-essentials": "^6.5.12",
     "@storybook/addon-links": "^6.5.12",
