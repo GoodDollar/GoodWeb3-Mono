@@ -14,3 +14,4 @@ packages/**/index.ts.bak
 .DS_Store
 .yalc
 yalc.lock
+/dist/
