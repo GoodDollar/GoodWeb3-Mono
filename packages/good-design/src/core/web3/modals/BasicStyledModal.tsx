@@ -8,7 +8,7 @@ import { LinkButton } from "../../buttons/StyledLinkButton";
 import { LearnButton } from "../../buttons";
 import { learnSources } from "../../buttons/LearnButton";
 import { SpinnerCheckMark } from "../../animated";
-import BillyCelebration from "../../../assets/svg/billy-celebration.svg";
+import BillyCelebration from "../../../assets/images/billy-celebration.png";
 
 export interface BasicModalProps {
   show: boolean;
