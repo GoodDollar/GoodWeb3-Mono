@@ -37,7 +37,7 @@ export const useGetEnvChainId = (requiredChainId?: number) => {
 
   switch (requiredChainId ?? chainId) {
     case 1:
-      connectedEnv = "production-mainnet"; // temp untill dev contracts are released to goerli
+      connectedEnv = "production-mainnet"; // temp untill dev contracts are released to sepolia
       break;
     case 42220:
       connectedEnv = connectedEnv === "fuse" ? "development-celo" : connectedEnv + "-celo";

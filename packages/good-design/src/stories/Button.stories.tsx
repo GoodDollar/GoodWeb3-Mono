@@ -1,6 +1,6 @@
 import { ExternalProvider } from "@ethersproject/providers";
 import { Celo, Fuse, Web3Provider } from "@gooddollar/web3sdk-v2";
-import { Config, DAppProvider, Goerli, Mainnet, useEthers } from "@usedapp/core";
+import { Config, DAppProvider, Mainnet, useEthers } from "@usedapp/core";
 import { ethers, getDefaultProvider } from "ethers";
 import React, { useEffect, useState } from "react";
 import BaseButton from "../core/buttons/BaseButton";
@@ -23,11 +23,10 @@ export const BaseButtonWithThemeExample = () => {
 };
 
 const config: Config = {
-  networks: [Mainnet, Fuse, Celo, Goerli],
+  networks: [Mainnet, Fuse, Celo],
   readOnlyChainId: Mainnet.chainId,
   readOnlyUrls: {
     [Mainnet.chainId]: getDefaultProvider("https://mainnet.infura.io/v3/12207372b62941dfb1efd4fe26b95ccc"),
-    [Goerli.chainId]: getDefaultProvider("https://goerli.infura.io/v3/12207372b62941dfb1efd4fe26b95ccc"),
     122: "https://rpc.fuse.io",
     42220: "https://forno.celo.org"
   }

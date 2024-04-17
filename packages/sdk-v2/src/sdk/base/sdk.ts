@@ -1,10 +1,8 @@
-import { Contract } from "ethers";
-import { providers, Signer } from "ethers";
+import { Contract, providers, Signer } from "ethers";
 import { noop } from "lodash";
-import { Envs } from "../constants";
 
 //@ts-ignore
-import IdentityABI from "@gooddollar/goodprotocol/artifacts/abis/IIdentity.min.json";
+import IdentityV2ABI from "@gooddollar/goodprotocol/artifacts/abis/IdentityV2.min.json";
 //@ts-ignore
 import UBISchemeABI from "@gooddollar/goodprotocol/artifacts/abis/UBIScheme.min.json";
 //@ts-ignore
@@ -16,7 +14,7 @@ import GReputationABI from "@gooddollar/goodprotocol/artifacts/abis/GReputation.
 import GoodReserveCDaiABI from "@gooddollar/goodprotocol/artifacts/abis/GoodReserveCDai.min.json";
 
 import {
-  IIdentity,
+  IdentityV2,
   UBIScheme,
   GoodDollarStaking,
   IGoodDollar,
@@ -27,8 +25,10 @@ import {
 //@ts-ignore
 import Contracts from "@gooddollar/goodprotocol/releases/deployment.json";
 
+import { Envs } from "../constants";
+
 export const CONTRACT_TO_ABI: { [key: string]: any } = {
-  Identity: IdentityABI,
+  Identity: IdentityV2ABI,
   UBIScheme: UBISchemeABI,
   GoodDollarStaking: GoodDollarStakingABI,
   GoodDollar: GoodDollarABI,
@@ -46,7 +46,7 @@ export type EnvValue = any;
 
 export class BaseSDK {
   provider: providers.JsonRpcProvider;
-  env: typeof Envs[EnvKey];
+  env: (typeof Envs)[EnvKey];
   contracts: EnvValue;
   signer: Signer | void = undefined;
   constructor(provider: providers.JsonRpcProvider, contractsEnv: EnvKey = "production") {
@@ -79,7 +79,7 @@ export class BaseSDK {
   }
 
   getContract(contractName: "UBIScheme"): UBIScheme;
-  getContract(contractName: "Identity"): IIdentity;
+  getContract(contractName: "Identity"): IdentityV2;
   getContract(contractName: "GoodDollarStaking"): GoodDollarStaking;
   getContract(contractName: "GoodDollar"): IGoodDollar;
   getContract(contractName: "Faucet"): Faucet;
@@ -101,7 +101,7 @@ export class BaseSDK {
           this.contracts["Identity"],
           CONTRACT_TO_ABI["Identity"].abi,
           this.signer || this.provider
-        ) as IIdentity;
+        ) as IdentityV2;
       case "GoodDollarStaking":
         return new Contract(
           this.contracts["GoodDollarStaking"],

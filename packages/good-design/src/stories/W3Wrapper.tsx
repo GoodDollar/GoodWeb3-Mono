@@ -5,7 +5,7 @@ import { View } from "native-base";
 import React, { useState } from "react";
 
 import { Celo, Fuse } from "@gooddollar/web3sdk-v2";
-import { Config, Goerli, Mainnet, useEthers } from "@usedapp/core";
+import { Config, Mainnet, useEthers } from "@usedapp/core";
 
 interface PageProps {
   children: any;
@@ -14,7 +14,7 @@ interface PageProps {
 }
 
 const config: Config = {
-  networks: [Goerli, Mainnet, Fuse, Celo],
+  networks: [Mainnet, Fuse, Celo],
   readOnlyChainId: undefined,
   readOnlyUrls: {
     122: "https://rpc.fuse.io",
@@ -30,7 +30,7 @@ export const W3Wrapper = ({ children, withMetaMask, env = "fuse" }: PageProps) =
 
   if (!withMetaMask) {
     const rpc = new ethers.providers.JsonRpcProvider("https://rpc.fuse.io");
-    
+
     rpc.getSigner = () => w as any;
     setProvider(rpc);
   }

@@ -1,5 +1,5 @@
 import { JsonRpcProvider, Web3Provider as W3Provider } from "@ethersproject/providers";
-import { Chain, Config, DAppProvider, Goerli, Mainnet, useEthers, useCalls, ChainId } from "@usedapp/core";
+import { Chain, Config, DAppProvider, Mainnet, useEthers, useCalls, ChainId } from "@usedapp/core";
 import EventEmitter from "eventemitter3";
 import React, { createContext, FC, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { defaultsDeep, noop, sample } from "lodash";
@@ -186,7 +186,7 @@ const TokenProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
 };
 
 const defaultConfig: Config = {
-  networks: [Goerli, Mainnet, Fuse, Celo],
+  networks: [Mainnet, Fuse, Celo],
   readOnlyChainId: Celo.chainId,
   pollingInterval: 15000,
   readOnlyUrls: {
@@ -222,14 +222,13 @@ export const Web3Provider = ({ children, config: inConfig, web3Provider, env = "
   );
 
   // make sure we have Fuse and mainnet by default and the relevant multicall available from useConfig for useMulticallAtChain hook
-  config.networks = config.networks || [Fuse, Mainnet, Goerli, Celo];
+  config.networks = config.networks || [Fuse, Mainnet, Celo];
   config.multicallVersion = config.multicallVersion ? config.multicallVersion : 1;
   config.gasLimitBufferPercentage = 10;
   config.readOnlyUrls = {
     122: sample(["https://rpc.fuse.io", "https://fuse-rpc.gateway.pokt.network"]) as string,
     42220: sample(["https://forno.celo.org"]) as string,
     1: sample(["https://cloudflare-eth.com", "https://rpc.ankr.com/eth"]) as string,
-    5: "https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
     ...config.readOnlyUrls
   };
 

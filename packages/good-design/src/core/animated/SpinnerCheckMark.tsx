@@ -6,7 +6,7 @@ import { Text } from "native-base";
 import SpinnerAnimate from "../../assets/lottie/spinnercheckmark/data.json";
 
 const SpinnerCheckMark = ({ loading }: { loading: boolean }) => {
-  const progress = useRef<Lottie>(null);
+  const progress = useRef<any>(null);
   // const loop = useRef(true);
 
   // placeholder
