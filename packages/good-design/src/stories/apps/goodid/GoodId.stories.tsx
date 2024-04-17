@@ -3,6 +3,7 @@ import { useEthers } from "@usedapp/core";
 import { GoodIdContextProvider } from "@gooddollar/web3sdk-v2";
 
 import { W3Wrapper } from "../../W3Wrapper";
+import { OffersAgreement } from "../../../apps/goodid/screens/OffersAgreement";
 
 import { GoodIdCard } from "../../../apps/goodid";
 import { OnboardScreen, SegmentationScreen } from "../../../apps/goodid/screens";
@@ -36,6 +37,8 @@ export const OnboardScreenExample = () => {
   const { account } = useEthers();
   return <OnboardScreen account={account} />;
 };
+
+export const OffersAgreementExample = () => <OffersAgreement />;
 
 export default {
   title: "Apps/GoodId",

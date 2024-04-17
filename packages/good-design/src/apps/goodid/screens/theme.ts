@@ -25,12 +25,6 @@ const OnboardScreen = {
         underline: true,
         textAlign: "center",
         fontSize: "2xs"
-      },
-      tos: {
-        fontFamily: "subheading",
-        color: "goodGrey.450",
-        fontSize: "2xs",
-        textAlign: "center"
       }
     }
   }

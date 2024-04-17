@@ -66,7 +66,7 @@ export const SegmentationScreen = ({ types }: { types?: typeof tempTypes }) => {
 
   return (
     <>
-      <LoaderModal overlay="dark" loading={loading} onClose={noop} />
+      <LoaderModal title={`We're checking \n your information...`} overlay="dark" loading={loading} onClose={noop} />
       <VStack paddingY={6} space={10}>
         <VStack space={6}>
           <Text fontFamily="heading" fontSize="l" fontWeight="700" color="primary">
