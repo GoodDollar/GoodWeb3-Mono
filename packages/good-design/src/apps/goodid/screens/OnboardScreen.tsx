@@ -57,7 +57,7 @@ const OnboardScreen = withTheme({ name: "OnboardScreen" })(
     const [expiryDate] = useIdentityExpiryDate(account ?? "");
     const [formattedExpiryDate, setExpiryDate] = useState<string | undefined>();
     const [isPending, setPendingSignTx] = useState(false);
-    const { title, listLabel, poweredBy, tos } = fontStyles ?? {};
+    const { title, listLabel, poweredBy } = fontStyles ?? {};
 
     const storeFvSig = async (fvSig: string) => {
       // the link will be requested to send a user to the fv-flow
@@ -156,7 +156,7 @@ const OnboardScreen = withTheme({ name: "OnboardScreen" })(
                   Verification takes 2 minutes
                 </Text>
               </HStack>
-              <Text {...tos}>
+              <Text variant="browse-wrap">
                 By clicking on ”I accept, verify me”, you are accepting our Terms of Use and Privacy Policy. Per this
                 policy you agree to let us collect information such as your gender and age.
               </Text>

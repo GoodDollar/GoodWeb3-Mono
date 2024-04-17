@@ -113,7 +113,17 @@ export const theme = extendTheme({
     ...apps,
     ...animated,
     ...web3modals,
-    ...nativebase
+    ...nativebase,
+    Text: {
+      variants: {
+        "browse-wrap": () => ({
+          fontFamily: "subheading",
+          fontSize: "2xs",
+          color: "goodGrey.450",
+          textAlign: "center"
+        })
+      }
+    }
   }
 });
 
