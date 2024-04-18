@@ -8,7 +8,7 @@ import { LinkButton } from "../../buttons/StyledLinkButton";
 import { LearnButton } from "../../buttons";
 import { learnSources } from "../../buttons/LearnButton";
 import { SpinnerCheckMark } from "../../animated";
-import BillyCelebration from "../../../assets/svg/billy-celebration.svg";
+import BillyCelebration from "../../../assets/images/billy-celebration.png";
 
 export interface BasicModalProps {
   show: boolean;
@@ -44,18 +44,10 @@ const ModalHeader = ({ title }: { title: string }) => (
   </Center>
 );
 
-const ModalBody = ({
-  content,
-  type,
-  loading
-}: {
-  content: string | JSX.Element | undefined;
-  type: string;
-  loading?: boolean;
-}) => (
+const ModalBody = ({ content, type }: { content: string | JSX.Element | undefined; type: string }) => (
   <Center padding={0}>
     {type === "loader" ? (
-      <SpinnerCheckMark loading={loading ?? true} />
+      <SpinnerCheckMark />
     ) : (
       <Text color="goodGrey.600" fontFamily="subheading" lineHeight={20} padding={0} fontSize="sm">
         {content}
@@ -108,7 +100,6 @@ const BasicStyledModal = ({
   title,
   content,
   footer,
-  loading,
   modalStyle,
   headerStyle,
   bodyStyle,
@@ -137,7 +128,7 @@ const BasicStyledModal = ({
         onClose={onClose}
         withOverlay={withOverlay}
         header={<ModalHeader title={title} />}
-        body={<ModalBody content={content} type={type} loading={loading} />}
+        body={<ModalBody content={content} type={type} />}
         footer={footer}
       />
     </React.Fragment>
