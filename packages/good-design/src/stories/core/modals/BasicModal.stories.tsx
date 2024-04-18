@@ -41,6 +41,10 @@ const meta: Meta<PagePropsAndCustomArgs> = {
         options: ["dark", "blur", "none"]
       }
     },
+    loading: {
+      description: "show animated spinner",
+      control: "boolean"
+    },
     type: {
       description: "type of modal",
       control: {
@@ -53,9 +57,6 @@ const meta: Meta<PagePropsAndCustomArgs> = {
     },
     content: {
       description: "content of the modal"
-    },
-    loading: {
-      description: "loading state of the modal"
     }
   }
 };
