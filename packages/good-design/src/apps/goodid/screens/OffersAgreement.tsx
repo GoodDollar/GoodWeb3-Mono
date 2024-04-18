@@ -2,7 +2,7 @@ import React from "react";
 import { Center, Container, Text, VStack } from "native-base";
 import { useWizard } from "react-use-wizard";
 
-import { BaseButton, Image, Title } from "../../../core";
+import { GoodButton, Image, Title } from "../../../core";
 
 import BillyGrin from "../../../assets/svg/billy-grin.svg";
 
@@ -33,18 +33,10 @@ our full Privacy Policy, go to http://gooddollar.org/privacy-policy`}
             </Text>
 
             <VStack space={4}>
-              <BaseButton onPress={handleAccept} text="YES, I ACCEPT" maxW={343} variant="standard-blue" padding="0" />
-              <BaseButton
-                onPress={nextStep}
-                text="NO"
-                padding="0"
-                innerView={{
-                  width: 343,
-                  textAlign: "center",
-                  margin: 0
-                }}
-                innerText={{ fontFamily: "subheading", fontSize: "sm", fontWeight: "bold", color: "goodGrey.500" }}
-              />
+              <GoodButton onPress={handleAccept}>yes, i accept</GoodButton>
+              <GoodButton onPress={nextStep} variant="link-like" _text={{ underline: false }}>
+                no
+              </GoodButton>
             </VStack>
           </VStack>
         </VStack>

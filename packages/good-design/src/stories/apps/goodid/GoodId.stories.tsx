@@ -36,7 +36,7 @@ export const SegmentationScreen = () => {
 };
 
 export const SegmentationFlow = () => (
-  <W3Wrapper withMetaMask={true} env="fuse">
+  <W3Wrapper withMetaMask={true} env="staging">
     <SegmentationController />
   </W3Wrapper>
 );

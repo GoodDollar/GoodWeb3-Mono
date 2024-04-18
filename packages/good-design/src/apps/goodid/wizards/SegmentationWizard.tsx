@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useWizard, Wizard } from "react-use-wizard";
-import { Center, Text, VStack } from "native-base";
+import { Center, VStack } from "native-base";
 import { useEthers } from "@usedapp/core";
 import { noop } from "lodash";
-// import OffersScreen from "./OffersScreen";
 // import CompletionScreen from "./CompletionScreen";
 import { GoodButton } from "../../../core";
-import { SegmentationScreen } from "../screens";
+import { OffersAgreement, SegmentationScreen } from "../screens";
 import { LoaderModal } from "../../../core/web3/modals";
 import { WizardContextProvider } from "../../../utils/WizardContext";
 import { useLocation } from "@gooddollar/web3sdk-v2";
@@ -56,21 +55,11 @@ const SegmentationScreenWrapper = (props: Props) => {
   );
 };
 
-export const PlaceholderOfferScreen = () => {
-  return (
-    <VStack>
-      <Text>Offer for Nigeria</Text>
-      <GoodButton>Upload Video Selfie</GoodButton>
-      <GoodButton variant="link-like">I don't want the extra UBI</GoodButton>
-    </VStack>
-  );
-};
-
 export const SegmentationWizard = (props: Props) => (
   <WizardContextProvider>
     <Wizard>
       <SegmentationScreenWrapper onDone={props.onDone} onLocationRequest={props.onLocationRequest} />
-      <PlaceholderOfferScreen />
+      <OffersAgreement />
       {/*  <CompletionScreen /> */}
     </Wizard>
   </WizardContextProvider>
