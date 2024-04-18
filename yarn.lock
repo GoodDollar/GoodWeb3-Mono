@@ -3982,44 +3982,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/good-design@file:.yalc/@gooddollar/good-design::locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design":
-  version: 0.1.45
-  resolution: "@gooddollar/good-design@file:.yalc/@gooddollar/good-design#.yalc/@gooddollar/good-design::hash=c5e4f3&locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design"
-  dependencies:
-    "@babel/core": ^7.18.10
-    "@babel/runtime": ^7.18.9
-    "@gooddollar/goodprotocol": ^2.0.24
-    "@lingui/macro": ^3.14.0
-    "@lingui/react": ^3.14.0
-    "@magiklabs/react-sdk": ^1.0.8
-    "@uniswap/sdk-core": ^3.1.0
-    buffer: ^6.0.3
-    ethers: 5.7.2
-    metro-react-native-babel-preset: ^0.72.0
-    moment: ^2.29.4
-    moment-duration-format: ^2.3.2
-    native-base: ^3.4.28
-    prop-types: ^15.8.1
-    react: 17.0.2
-    react-dom: 17.0.2
-    react-helmet: ^6.1.0
-    react-inlinesvg: 2.3.0
-    react-native: 0.70.4
-    react-native-mask-input: ^1.2.2
-    react-native-safe-area-context: ^3.3.2
-    react-native-svg: ^12.1.1
-    react-native-svg-uri: ^1.2.3
-    react-native-svg-web: ^1.0.9
-    react-native-web: 0.17.7
-    react-native-web-webview: ^1.0.2
-    react-native-webview: ^13.2.2
-    react-number-format: ^5.1.1
-    react-use-promise: ^0.5.0
-    require-from-string: ^2.0.2
-  checksum: 80de024f22af305fb2c1bdfd6bd6a9f79ac256a45c0a970f7b5d8aa143ee2105b6d8998defa40a3ef4d141e242316c40e54e549a6f2d5960dd7aad5e3b1fd04f
-  languageName: node
-  linkType: hard
-
 "@gooddollar/good-design@workspace:packages/good-design":
   version: 0.0.0-use.local
   resolution: "@gooddollar/good-design@workspace:packages/good-design"
@@ -4031,7 +3993,6 @@ __metadata:
     "@babel/preset-react": ^7.16.0
     "@babel/preset-typescript": ^7.16.0
     "@babel/runtime": ^7.18.9
-    "@gooddollar/good-design": "file:.yalc/@gooddollar/good-design"
     "@gooddollar/goodprotocol": ^2.0.24
     "@gooddollar/web3sdk-v2": 0.2.22-beta.efda7af
     "@lingui/macro": ^3.14.0
