@@ -6,7 +6,8 @@ import { W3Wrapper } from "../../W3Wrapper";
 import { OffersAgreement } from "../../../apps/goodid/screens/OffersAgreement";
 
 import { GoodIdCard } from "../../../apps/goodid";
-import { OnboardScreen, SegmentationScreen } from "../../../apps/goodid/screens";
+import { OnboardScreen, SegmentationScreen as SegScreen } from "../../../apps/goodid/screens";
+import { SegmentationController } from "../../../apps/goodid/controllers";
 
 const GoodIdWrapper = ({ children }) => {
   return <GoodIdContextProvider>{children}</GoodIdContextProvider>;
@@ -25,13 +26,20 @@ export const GoodIdCardExample = () => {
   );
 };
 
-export const SegmentationFlow = () => {
+export const SegmentationScreen = () => {
+  const { account } = useEthers();
   return (
     <W3Wrapper withMetaMask={true}>
-      <SegmentationScreen />
+      <SegScreen account={account ?? ""} />
     </W3Wrapper>
   );
 };
+
+export const SegmentationFlow = () => (
+  <W3Wrapper withMetaMask={true} env="fuse">
+    <SegmentationController />
+  </W3Wrapper>
+);
 
 export const OnboardScreenExample = () => {
   const { account } = useEthers();
