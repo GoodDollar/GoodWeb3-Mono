@@ -160,7 +160,7 @@ export const useAggregatedCertificates = (account: string): AggregatedCertificat
 //   locationProvider: "auto"
 // });
 
-interface LocationState {
+export interface LocationState {
   location: [number, number] | null;
   error?: string | null;
 }

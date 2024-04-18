@@ -4,7 +4,7 @@ const getBearerToken = async (baseEnv: string, fvsig: string, account: string, t
   const devEnv = baseEnv === "fuse" ? "development" : baseEnv;
   const { backend } = Envs[devEnv];
 
-  const endpoint = `${backend}/goodid/certificate/${type}}`;
+  const endpoint = `${backend}/goodid/certificate/${type}`;
   const authEndpoint = `${backend}/auth/fv2`;
   const { token } = await fetch(authEndpoint, {
     method: "POST",
@@ -25,8 +25,8 @@ export const requestLocationCertificate = async (
 
   return fetch(endpoint, {
     method: "POST",
-    body: JSON.stringify({ user: {}, geoposition: { coords: { latitude: lat, longitude: long } } }),
-    headers: { "content-type": "application/json", Authorization: `Bearer ${token}` }
+    headers: { "content-type": "application/json", Authorization: `Bearer ${token}` },
+    body: JSON.stringify({ user: {}, geoposition: { coords: { latitude: lat, longitude: long } } })
   })
     .then(res => {
       if (!res.ok) {
@@ -44,8 +44,8 @@ export const requestIdentityCertificate = async (baseEnv: string, fvSig: string,
 
   return fetch(endpoint, {
     method: "POST",
-    body: JSON.stringify({ enrollmentIdentifier: fvSig }),
-    headers: { "content-type": "application/json", Authorization: `Bearer ${token}` }
+    headers: { "content-type": "application/json", Authorization: `Bearer ${token}` },
+    body: JSON.stringify({ enrollmentIdentifier: fvSig, fvSigner: fvSig })
   })
     .then(res => {
       if (!res.ok) {
@@ -54,6 +54,7 @@ export const requestIdentityCertificate = async (baseEnv: string, fvSig: string,
       return res.json();
     })
     .catch(e => {
+      // todo: handle requests for wrong enrollment identifier
       console.error("failed to get a identity certificate:", e.message, e);
     });
 };
