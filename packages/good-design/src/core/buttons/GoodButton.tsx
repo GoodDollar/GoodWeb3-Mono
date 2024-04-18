@@ -21,6 +21,9 @@ export const theme = {
         fontSize: "sm",
         fontFamily: "subheading"
       },
+      _hover: {
+        backgroundColor: "primary:alpha.80"
+      },
       backgroundColor: "primary",
       paddingX: 8,
       paddingY: 10,
@@ -37,6 +40,9 @@ export const theme = {
         fontFamily: "subheading",
         fontSize: "sm",
         fontWeight: "700"
+      },
+      _hover: {
+        backgroundColor: "goodGrey.450:alpha.20"
       },
       backgroundColor: "none",
       paddingY: 0,
