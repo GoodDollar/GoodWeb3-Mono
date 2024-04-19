@@ -6,7 +6,7 @@ import { formatVerifiedValues } from "../../../utils/formatVerifiedValues";
 
 import { Title } from "../../../core/layout";
 import { Image } from "../../../core/images";
-import RoboBilly from "../../../assets/svg/robo-billy.svg";
+import RoboBilly from "../../../assets/svg/robo-billy.png";
 
 const typeLabels = {
   Gender: "Are you",
