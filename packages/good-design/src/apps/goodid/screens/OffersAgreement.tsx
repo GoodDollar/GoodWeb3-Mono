@@ -4,7 +4,7 @@ import { useWizard } from "react-use-wizard";
 
 import { GoodButton, Image, Title } from "../../../core";
 
-import BillyGrin from "../../../assets/svg/billy-grin.png";
+import BillyGrin from "../../../assets/images/billy-grin.png";
 
 export const OffersAgreement = () => {
   const { nextStep } = useWizard();
