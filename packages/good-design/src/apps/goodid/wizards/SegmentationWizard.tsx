@@ -5,49 +5,39 @@ import { useEthers } from "@usedapp/core";
 import { noop } from "lodash";
 import { GoodButton } from "../../../core";
 import { OffersAgreement, SegmentationConfirmation, SegmentationScreen } from "../screens";
-import { ErrorModal, LoaderModal } from "../../../core/web3/modals";
+import { LoaderModal } from "../../../core/web3/modals";
 import { WizardContextProvider } from "../../../utils/WizardContext";
-import { useLocation } from "@gooddollar/web3sdk-v2";
+import { WizardHeader } from "./WizardHeader";
+import { LocationState, useLocation } from "@gooddollar/web3sdk-v2";
 
-export type Props = {
-  onLocationRequest: any;
+export type SegmentationProps = {
+  onLocationRequest: (locationState: LocationState, account: string) => Promise<void>;
   onDone: (error?: Error) => Promise<void>;
 };
 
-const SegmentationScreenWrapper = (props: Props) => {
+const SegmentationScreenWrapper = (props: SegmentationProps) => {
   const { nextStep } = useWizard();
   const [loading, setLoading] = useState(true);
   const { locationState } = useLocation();
   const { account } = useEthers();
-  const [error, setError] = useState<null | string>(null);
 
   const proceed = async () => {
     void nextStep();
   };
 
   useEffect(() => {
+    //todo: handle navigate back, should not run location request / fetching certificates again
     // if neither error or location is set means a user has not given or denied the permission yet
     if ((locationState.error || locationState.location) && account) {
-      props
-        .onLocationRequest(locationState, account)
-        .then(() => {
-          setLoading(false);
-        })
-        .catch((e: any) => {
-          setError(e.message);
-          setLoading(false);
-        });
+      void props.onLocationRequest(locationState, account).then(() => {
+        setLoading(false);
+      });
     }
   }, [locationState, account]);
 
   if (!account || loading) {
     /* todo: fix loader modal */
     return <LoaderModal title={`We're checking \n your information`} overlay="dark" loading={true} onClose={noop} />;
-  }
-
-  if (error) {
-    /* todo: add onClose logic */
-    return <ErrorModal error={error} onClose={noop} overlay="dark" />;
   }
 
   return (
@@ -65,12 +55,32 @@ const SegmentationScreenWrapper = (props: Props) => {
   );
 };
 
-export const SegmentationWizard = (props: Props) => (
-  <WizardContextProvider>
-    <Wizard>
-      <SegmentationScreenWrapper onDone={props.onDone} onLocationRequest={props.onLocationRequest} />
-      <OffersAgreement />
-      <SegmentationConfirmation />
-    </Wizard>
-  </WizardContextProvider>
-);
+export const SegmentationWizard = (props: SegmentationProps) => {
+  const [error, setError] = useState<string | null>(null);
+  // inject show modal on callbacks exceptions
+  const modalOnDone: SegmentationProps["onDone"] = async error => {
+    try {
+      await props.onDone(error);
+    } catch (e: any) {
+      setError(e.message);
+    }
+  };
+
+  const modalOnLocation: SegmentationProps["onLocationRequest"] = async (...args) => {
+    try {
+      await props.onLocationRequest(...args);
+    } catch (e: any) {
+      setError(e.message);
+    }
+  };
+
+  return (
+    <WizardContextProvider>
+      <Wizard header={<WizardHeader onDone={modalOnDone} onError={error} />}>
+        <SegmentationScreenWrapper onDone={props.onDone} onLocationRequest={modalOnLocation} />
+        <OffersAgreement />
+        <SegmentationConfirmation />
+      </Wizard>
+    </WizardContextProvider>
+  );
+};
