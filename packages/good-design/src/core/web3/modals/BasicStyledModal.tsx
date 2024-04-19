@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
-import { Center, Text } from "native-base";
+import { Center, Text, VStack } from "native-base";
 
+import { withTheme } from "../../../theme";
 import { Image } from "../../images";
 import { Title } from "../../layout";
 import { useModal } from "../../../hooks";
@@ -9,6 +10,7 @@ import { LearnButton } from "../../buttons";
 import { learnSources } from "../../buttons/LearnButton";
 import { SpinnerCheckMark } from "../../animated";
 import BillyCelebration from "../../../assets/images/billy-celebration.png";
+import BillyOops from "../../../assets/images/billy-oops.png";
 
 export interface BasicModalProps {
   show: boolean;
@@ -18,9 +20,10 @@ export interface BasicModalProps {
   title: string;
   modalStyle?: any;
   headerStyle?: any;
+  titleVariant?: string;
   bodyStyle?: any;
   footerStyle?: any;
-  content?: string | JSX.Element;
+  body?: JSX.Element;
   footer?: JSX.Element;
 }
 
@@ -36,24 +39,25 @@ interface AltModalProps extends BasicModalProps {
 
 export type StyledModalProps = CtaOrLearnModalProps | AltModalProps;
 
-const ModalHeader = ({ title }: { title: string }) => (
-  <Center backgroundColor="white" textAlign="center">
-    <Title fontFamily="heading" color="primary" fontSize="xl" lineHeight="110%">
-      {title}
-    </Title>
+const ModalHeader = ({ title, variant = "title-gdblue" }: { title: string; variant: any }) => (
+  <Center backgroundColor="white" textAlign="center" paddingBottom={0}>
+    <Title variant={variant}>{title}</Title>
   </Center>
 );
 
-const ModalBody = ({ content, type }: { content: string | JSX.Element | undefined; type: string }) => (
+export const ModalLoaderBody = () => (
   <Center padding={0}>
-    {type === "loader" ? (
-      <SpinnerCheckMark />
-    ) : (
-      <Text color="goodGrey.600" fontFamily="subheading" lineHeight={20} padding={0} fontSize="sm">
-        {content}
-      </Text>
-    )}
+    <SpinnerCheckMark />
   </Center>
+);
+
+export const ModalErrorBody = ({ error }: { error: string }) => (
+  <VStack space={6} justifyContent="center" alignItems="center">
+    <Image source={BillyOops} w={137} h={135} style={{ resizeMode: "contain" }} />
+    <Text variant="sub-grey" color="goodRed.100">
+      {error}
+    </Text>
+  </VStack>
 );
 
 export const ModalFooterCta = ({ buttonText, action }: { buttonText: string; action: () => void }) => (
@@ -91,48 +95,50 @@ export const ModalFooterSocial = () => (
 
 //todo: fix blur overlay
 
-const BasicStyledModal = ({
-  type,
-  show = true,
-  onClose,
-  withOverlay,
-  withCloseButton,
-  title,
-  content,
-  footer,
-  modalStyle,
-  headerStyle,
-  bodyStyle,
-  footerStyle
-}: StyledModalProps) => {
-  const { Modal, showModal, hideModal } = useModal();
+const BasicStyledModal = withTheme({ name: "BasicStyledModal", skipProps: ["body", "footer"] })(
+  ({
+    type,
+    show = true,
+    onClose,
+    withOverlay,
+    withCloseButton,
+    title,
+    body,
+    footer,
+    modalStyle,
+    headerStyle,
+    titleVariant,
+    bodyStyle,
+    footerStyle
+  }: StyledModalProps) => {
+    const { Modal, showModal, hideModal } = useModal();
+    useEffect(() => {
+      if (show) {
+        showModal();
+        return;
+      }
 
-  useEffect(() => {
-    if (show) {
-      showModal();
-      return;
-    }
+      hideModal();
+    }, [showModal, show]);
 
-    hideModal();
-  }, [showModal, show]);
-
-  return (
-    <React.Fragment>
-      <Modal
-        _modalContainer={modalStyle}
-        _header={headerStyle}
-        _body={bodyStyle}
-        _footer={footerStyle}
-        {...(withCloseButton && { closeText: "x" })}
-        type={type}
-        onClose={onClose}
-        withOverlay={withOverlay}
-        header={<ModalHeader title={title} />}
-        body={<ModalBody content={content} type={type} />}
-        footer={footer}
-      />
-    </React.Fragment>
-  );
-};
+    return (
+      <React.Fragment>
+        <Modal
+          _modalContainer={modalStyle}
+          _header={headerStyle}
+          _body={bodyStyle}
+          _footer={footerStyle}
+          {...(withCloseButton && { closeText: "x" })}
+          type={type}
+          onClose={onClose}
+          withOverlay={withOverlay}
+          header={<ModalHeader title={title} variant={titleVariant} />}
+          body={body}
+          footer={footer}
+        />
+      </React.Fragment>
+    );
+  }
+);
 
 export default BasicStyledModal;

@@ -1,13 +1,12 @@
 import React from "react";
-import { Link } from "native-base";
+import { Link, Text } from "native-base";
 
 import { useFVModalAction } from "../../../hooks/useFVModalAction";
-import { withTheme } from "../../../theme";
 import BasicStyledModal, { ModalFooterCta } from "./BasicStyledModal";
 import { TxModal } from "./TxModal";
 
 const ModalContent = () => (
-  <>
+  <Text variant="sub-grey">
     You're almost there! To claim G$, you need to be a unique human and prove it with your camera.
     <Link
       _text={{ color: "main" }}
@@ -23,37 +22,35 @@ Verifying your identity is easy. You'll be asked to sign with your wallet.
 
 Don't worry, no link is kept between your identity record and your wallet address.
       `}
-  </>
+  </Text>
 );
 
-export const VerifyUniqueModal = withTheme({ name: "BasicStyledModal" })(
-  ({ open, url, onClose, chainId, firstName, method, ...props }: any) => {
-    const { loading, verify } = useFVModalAction({
-      firstName,
-      method,
-      chainId,
-      onClose: onClose,
-      redirectUrl: url
-    });
+export const VerifyUniqueModal = ({ open, url, onClose, chainId, firstName, method, ...props }: any) => {
+  const { loading, verify } = useFVModalAction({
+    firstName,
+    method,
+    chainId,
+    onClose: onClose,
+    redirectUrl: url
+  });
 
-    return (
-      <>
-        {!loading ? (
-          <BasicStyledModal
-            {...props}
-            type="cta"
-            show={open}
-            onClose={onClose}
-            title={`Verify \n Uniqueness`}
-            content={<ModalContent />}
-            footer={<ModalFooterCta buttonText="VERIFY I'M HUMAN" action={verify} />}
-            withOverlay="dark"
-            withCloseButton
-          />
-        ) : (
-          <TxModal type="sign" isPending={loading} />
-        )}
-      </>
-    );
-  }
-);
+  return (
+    <>
+      {!loading ? (
+        <BasicStyledModal
+          {...props}
+          type="cta"
+          show={open}
+          onClose={onClose}
+          title={`Verify \n Uniqueness`}
+          body={<ModalContent />}
+          footer={<ModalFooterCta buttonText="VERIFY I'M HUMAN" action={verify} />}
+          withOverlay="dark"
+          withCloseButton
+        />
+      ) : (
+        <TxModal type="sign" isPending={loading} />
+      )}
+    </>
+  );
+};
