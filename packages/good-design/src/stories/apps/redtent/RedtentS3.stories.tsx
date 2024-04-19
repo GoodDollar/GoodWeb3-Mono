@@ -1,5 +1,5 @@
 import React from "react";
-import { RedtentController } from "../../../apps/redtent/RedtentController";
+import { RedtentController } from "../../../apps/goodid/controllers/RedtentController";
 import { W3Wrapper } from "../../W3Wrapper";
 
 export default {

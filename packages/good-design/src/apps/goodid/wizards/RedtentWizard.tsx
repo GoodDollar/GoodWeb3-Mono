@@ -1,52 +1,19 @@
-import { ArrowBackIcon, Text, View } from "native-base";
 import React, { useCallback, useState } from "react";
-import { TouchableOpacity } from "react-native";
 import { Wizard, useWizard } from "react-use-wizard";
-import { useModal } from "../../hooks";
-import { GoodButton } from "../../core";
-import { WebVideoUploader } from "../../core/inputs/WebVideoUploader";
-import { WizardContextProvider } from "../../utils/WizardContext";
+import { Text, View } from "native-base";
 
-export type Props = {
+import { GoodButton } from "../../../core/buttons";
+import { WebVideoUploader } from "../../../core/inputs/WebVideoUploader";
+import { WizardContextProvider } from "../../../utils/WizardContext";
+import { WizardHeader } from ".";
+
+export type RedTentProps = {
   onVideo: (base64: string, extension: string) => Promise<void>;
   onDone: (error?: Error) => Promise<void>;
   country: string;
 };
 
-const WizardHeader = ({ onDone, Modal }: { onDone: Props["onDone"]; Modal: any }) => {
-  const { isFirstStep, previousStep, isLastStep, goToStep } = useWizard();
-
-  const handleBack = useCallback(() => {
-    if (isFirstStep) {
-      void onDone();
-      return;
-    }
-    previousStep();
-  }, [isFirstStep]);
-
-  return (
-    <View flex={"auto"} flexDir={"row"}>
-      <Modal
-        body={
-          <View>
-            <Text>Error Modal</Text>
-          </View>
-        }
-        _modalContainer={{ paddingBottom: 18, paddingLeft: 18, paddingRight: 18 }}
-        onClose={() => goToStep(1)}
-      />
-      <View position={"relative"} display={"inline"} width={15}>
-        <TouchableOpacity onPress={handleBack}>{isLastStep ? null : <ArrowBackIcon />}</TouchableOpacity>
-      </View>
-
-      <View flex={"auto"} flexDirection={"row"} justifyContent={"center"}>
-        <Text>GoodID</Text>
-      </View>
-    </View>
-  );
-};
-
-const RedtentOffer = ({ country, onDone }: { country: string; onDone: Props["onDone"] }) => {
+const RedtentOffer = ({ country, onDone }: { country: string; onDone: RedTentProps["onDone"] }) => {
   const { nextStep } = useWizard();
   return (
     <View>
@@ -79,7 +46,13 @@ const SubTitle = ({ children }: { children: React.ReactNode }) => (
   </Text>
 );
 
-const RedtentVideoInstructions = ({ onDone, onVideo }: { onDone: Props["onDone"]; onVideo: Props["onVideo"] }) => {
+const RedtentVideoInstructions = ({
+  onDone,
+  onVideo
+}: {
+  onDone: RedTentProps["onDone"];
+  onVideo: RedTentProps["onVideo"];
+}) => {
   const { nextStep } = useWizard();
   const [isLoading, setLoading] = useState(false);
 
@@ -115,7 +88,7 @@ const RedtentVideoInstructions = ({ onDone, onVideo }: { onDone: Props["onDone"]
   );
 };
 
-const RedtentThanks = ({ onDone }: { onDone: Props["onDone"] }) => {
+const RedtentThanks = ({ onDone }: { onDone: RedTentProps["onDone"] }) => {
   return (
     <View>
       <Title>Thanks you for submitting your video!</Title>
@@ -126,27 +99,27 @@ const RedtentThanks = ({ onDone }: { onDone: Props["onDone"] }) => {
   );
 };
 
-export const RedtentWizard: React.FC<Props> = (props: Props) => {
-  const { showModal, Modal } = useModal();
+export const RedtentWizard: React.FC<RedTentProps> = (props: RedTentProps) => {
+  const [error, setError] = useState<string | null>(null);
   // inject show modal on callbacks exceptions
-  const modalOnDone: Props["onDone"] = async error => {
+  const modalOnDone: RedTentProps["onDone"] = async error => {
     try {
       await props.onDone(error);
-    } catch (e) {
-      showModal();
+    } catch (e: any) {
+      setError(e.message);
     }
   };
-  const modalOnVideo: Props["onVideo"] = async (...args) => {
+  const modalOnVideo: RedTentProps["onVideo"] = async (...args) => {
     try {
       await props.onVideo(...args);
-    } catch (e) {
-      showModal();
+    } catch (e: any) {
+      setError(e.message);
     }
   };
 
   return (
     <WizardContextProvider>
-      <Wizard header={<WizardHeader onDone={modalOnDone} Modal={Modal} />}>
+      <Wizard header={<WizardHeader onDone={modalOnDone} onError={error} />}>
         <RedtentOffer country={props.country} onDone={modalOnDone} />
         <RedtentVideoInstructions onDone={modalOnDone} onVideo={modalOnVideo} />
         <RedtentThanks onDone={modalOnDone} />
