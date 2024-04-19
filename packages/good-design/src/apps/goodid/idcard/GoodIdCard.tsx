@@ -14,7 +14,7 @@ interface GoodIdCardProps extends IStackProps {
   isWhitelisted: boolean;
   avatar?: string;
   fullname?: string;
-  expiryDate?: string;
+  expiryDate?: string | null;
   fontStyles?: any;
 }
 
@@ -88,7 +88,7 @@ const GoodIdCard = withTheme({ name: "GoodIdCard", skipProps: "credentialsList" 
           })}
         </HStack>
         <HStack>
-          <Text {...footer}>{expiryDate ?? "Expires on February 12, 2099"}</Text>
+          <Text {...footer}>{expiryDate}</Text>
         </HStack>
       </VStack>
     );
