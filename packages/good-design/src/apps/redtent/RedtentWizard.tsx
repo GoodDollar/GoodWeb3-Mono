@@ -3,10 +3,10 @@ import React, { FC, PropsWithChildren, useCallback, useState } from "react";
 import { TouchableOpacity } from "react-native";
 import { Wizard, useWizard } from "react-use-wizard";
 
-import { useModal } from "../../hooks";
 import { GoodButton } from "../../core/buttons";
 import ImageCard from "../../core/layout/ImageCard";
 import { Image } from "../../core/images";
+import { ErrorModal } from "../../core/web3";
 import { WebVideoUploader } from "../../core/inputs/WebVideoUploader";
 import { WizardContextProvider } from "../../utils/WizardContext";
 import { BulletPointList, Title } from "../../core/layout";
@@ -32,7 +32,7 @@ const videoUsagePolicy = [
   `Your video may be reviewed by the \n GoodLabs or partner teams for \n verification purposes. Your video \n will not be shared or used publicly, \n and will be erased after a period of \n time.`
 ];
 
-const WizardHeader = ({ onDone, Modal }: { onDone: Props["onDone"]; Modal: any }) => {
+const WizardHeader = ({ onDone, onError }: { onDone: Props["onDone"]; onError: any }) => {
   const { isFirstStep, previousStep, isLastStep, goToStep } = useWizard();
 
   const handleBack = useCallback(() => {
@@ -43,24 +43,30 @@ const WizardHeader = ({ onDone, Modal }: { onDone: Props["onDone"]; Modal: any }
     previousStep();
   }, [isFirstStep]);
 
+  if (onError) return <ErrorModal error={onError} onClose={() => goToStep(1)} overlay="dark" />;
+
   return (
-    <View flex={"auto"} flexDir={"row"} width={375}>
-      {/* Todo: Replace with styled error modal when design is finished */}
-      <Modal
-        body={
-          <View>
-            <Text>Error Modal</Text>
-          </View>
-        }
-        _modalContainer={{ paddingBottom: 18, paddingLeft: 18, paddingRight: 18 }}
-        onClose={() => goToStep(1)}
-      />
+    <View
+      bg="primary"
+      justifyContent={"center"}
+      alignItems={"center"}
+      height={12}
+      flexDir={"row"}
+      width={375}
+      paddingLeft={isFirstStep || isLastStep ? 0 : 4}
+      paddingRight={4}
+      mb={6}
+    >
       <View position={"relative"} display={"inline"} width={15}>
-        <TouchableOpacity onPress={handleBack}>{isLastStep ? null : <ArrowBackIcon />}</TouchableOpacity>
+        <TouchableOpacity onPress={handleBack}>
+          {isLastStep || isFirstStep ? null : <ArrowBackIcon color="white" />}
+        </TouchableOpacity>
       </View>
 
       <View flex={"auto"} flexDirection={"row"} justifyContent={"center"}>
-        <Text>GoodID</Text>
+        <Text color="white" fontFamily="subheading" fontSize="sm" fontWeight="500" lineHeight={19}>
+          GoodID
+        </Text>
       </View>
     </View>
   );
@@ -114,25 +120,28 @@ const RedtentOffer = ({ onDone }: { onDone: Props["onDone"] }) => {
   const { nextStep } = useWizard();
   return (
     <View>
-      <ImageCard
-        variant="offer-card"
-        title="Red Tent Women in Nigeria"
-        content={<CardContent />}
-        footer={<CardFooter linkText={`Learn more>>`} />}
-        picture={RedTentCard}
-        link="https://www.google.com" // todo: add link to good-collective pool page
-        pictureStyles={{ resizeMode: "cover" }}
-        containerStyles={{ paddingY: 4, paddingX: 4, width: "100%", alignItems: "flex-start" }}
-        titleStyles={{
-          fontFamily: "subheading",
-          fontSize: "md",
-          fontWeight: "500",
-          color: "goodGrey.600",
-          paddingBottom: 2
-        }}
-        style={cardShadow}
-        borderRadius={20}
-      />
+      <VStack space={10}>
+        <Title variant="title-gdblue">{`You are eligible for \n additional UBI!`}</Title>
+        <ImageCard
+          variant="offer-card"
+          title="Red Tent Women in Nigeria"
+          content={<CardContent />}
+          footer={<CardFooter linkText={`Learn more>>`} />}
+          picture={RedTentCard}
+          link="https://www.google.com" // todo: add link to good-collective pool page
+          pictureStyles={{ resizeMode: "cover" }}
+          containerStyles={{ paddingY: 4, paddingX: 4, width: "100%", alignItems: "flex-start" }}
+          titleStyles={{
+            fontFamily: "subheading",
+            fontSize: "md",
+            fontWeight: "500",
+            color: "goodGrey.600",
+            paddingBottom: 2
+          }}
+          style={cardShadow}
+          borderRadius={20}
+        />
+      </VStack>
       <PoolRequirements />
       <VStack space={4}>
         <GoodButton onPress={nextStep}>Upload Video Selfie</GoodButton>
@@ -179,7 +188,7 @@ const RedtentVideoInstructions = ({ onDone, onVideo }: { onDone: Props["onDone"]
         { title: "Restrictions", pointsList: videoRestrictions },
         { title: "How will my video be used?", pointsList: videoUsagePolicy }
       ].map(({ title, pointsList }) => (
-        <VStack key="title" space={2}>
+        <VStack key={title} space={2}>
           <Title variant="subtitle-grey">{title}</Title>
           <BulletPointList bulletPoints={pointsList} />
         </VStack>
@@ -215,26 +224,26 @@ const RedtentThanks = ({ onDone }: { onDone: Props["onDone"] }) => (
 );
 
 export const RedtentWizard: React.FC<Props> = (props: Props) => {
-  const { showModal, Modal } = useModal();
+  const [error, setError] = useState<Error | undefined>(undefined);
   // inject show modal on callbacks exceptions
   const modalOnDone: Props["onDone"] = async error => {
     try {
       await props.onDone(error);
-    } catch (e) {
-      showModal();
+    } catch (e: any) {
+      setError(e.message);
     }
   };
   const modalOnVideo: Props["onVideo"] = async (...args) => {
     try {
       await props.onVideo(...args);
-    } catch (e) {
-      showModal();
+    } catch (e: any) {
+      setError(e.message);
     }
   };
 
   return (
     <WizardContextProvider>
-      <Wizard header={<WizardHeader onDone={modalOnDone} Modal={Modal} />} wrapper={<WizardWrapper />}>
+      <Wizard header={<WizardHeader onDone={modalOnDone} onError={error} />} wrapper={<WizardWrapper />}>
         <RedtentOffer onDone={modalOnDone} />
         <RedtentVideoInstructions onDone={modalOnDone} onVideo={modalOnVideo} />
         <RedtentThanks onDone={modalOnDone} />
