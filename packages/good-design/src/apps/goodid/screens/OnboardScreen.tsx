@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { Container, Heading, HStack, Text, VStack } from "native-base";
 import { AsyncStorage, useIdentityExpiryDate, useIsAddressVerified } from "@gooddollar/web3sdk-v2";
 import { noop } from "lodash";
@@ -55,7 +55,6 @@ const OnboardScreen = withTheme({ name: "OnboardScreen" })(
   ({ navigateTo, account, firstName, innerContainer, fontStyles, ...props }: OnboardScreenProps) => {
     const [isWhitelisted] = useIsAddressVerified(account ?? "");
     const [expiryDate] = useIdentityExpiryDate(account ?? "");
-    const [formattedExpiryDate, setExpiryDate] = useState<string | undefined>();
     const [isPending, setPendingSignTx] = useState(false);
     const { title, listLabel, poweredBy } = fontStyles ?? {};
 
@@ -109,17 +108,6 @@ const OnboardScreen = withTheme({ name: "OnboardScreen" })(
       void handleNext();
     }, [verify, isWhitelisted, expiryDate]);
 
-    useEffect(() => {
-      const { expiryTimestamp } = expiryDate || {};
-
-      if (isWhitelisted && expiryTimestamp) {
-        const timestamp = expiryTimestamp.toNumber();
-        // use a human readable format to be displayed in the good-id card
-        const formattedDate = moment(timestamp).format("MMMM DD, YYYY");
-        setExpiryDate(formattedDate);
-      }
-    }, [isWhitelisted, expiryDate]);
-
     // todo: might want a spinner while waiting for isWhitelisted
     if (isWhitelisted === undefined) return <></>;
 
@@ -129,7 +117,11 @@ const OnboardScreen = withTheme({ name: "OnboardScreen" })(
         <VStack {...innerContainer}>
           <Title {...title}>{isWhitelisted ? `Renew` : `Get`} your GoodID to claim UBI</Title>
           {account ? (
-            <GoodIdCard isWhitelisted={isWhitelisted} account={account} expiryDate={formattedExpiryDate} />
+            <GoodIdCard
+              isWhitelisted={isWhitelisted}
+              account={account}
+              expiryDate={expiryDate?.formattedExpiryTimestamp}
+            />
           ) : null}
 
           <VStack space={2} alignItems="flex-start">
