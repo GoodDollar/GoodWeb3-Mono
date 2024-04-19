@@ -3,7 +3,7 @@ export const formatVerifiedValues = ({ credentialSubject, typeName }: any) => {
 
   switch (typeName) {
     case "Age":
-      return `${credentialSubject.age.from}-${credentialSubject.age.to}`;
+      return `${credentialSubject.age.min}-${credentialSubject.age.max}`;
     case "Gender":
       return credentialSubject.gender;
     case "Location":
