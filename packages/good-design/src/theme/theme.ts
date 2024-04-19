@@ -56,6 +56,10 @@ export const theme = extendTheme({
       500: "#26292F"
     },
 
+    goodRed: {
+      100: "#D03737"
+    },
+
     //tabs
     tabBlue: "#1F86FF",
 
@@ -103,11 +107,18 @@ export const theme = extendTheme({
     ...nativebase,
     Text: {
       variants: {
+        "browse-wrap": () => ({
+          fontFamily: "subheading",
+          fontSize: "2xs",
+          color: "goodGrey.450",
+          textAlign: "center"
+        }),
         "sm-grey": () => ({
           fontFamily: "subheading",
           fontSize: "sm",
-          fontWeight: "400",
-          color: "goodGrey.600"
+          fontWeight: 400,
+          color: "goodGrey.600",
+          lineHeight: 20.8
         })
       }
     }
