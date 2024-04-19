@@ -1,16 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useCallback, useContext, useEffect, useState, useRef, useMemo } from "react";
-import { isEmpty, size, filter } from "lodash";
+import { size, filter } from "lodash";
 import { Platform } from "react-native";
 import GeoLocation from "@react-native-community/geolocation";
 
 import { GoodIdContext } from "../../contexts/goodid/GoodIdContext";
-import { Certificate, CertificateRecord, CredentialType } from "./types";
-
-export interface CertificateItem {
-  id: string;
-  certificate: Certificate;
-}
+import { Certificate, CertificateItem, CertificateRecord, CredentialType } from "./types";
+import { requestIdentityCertificate, requestLocationCertificate } from "./sdk";
 
 export interface AggregatedCertificate extends Partial<CertificateItem> {
   key: string; // composite unique key to be used for lists rendering
@@ -197,4 +193,32 @@ export const useLocation = () => {
   }, []);
 
   return { locationState };
+};
+
+export const useGetCertificates = (account: string | undefined, baseEnv: any) => {
+  const { storeCertificate } = useCertificates(account ?? "");
+
+  const fetchCertificates = useCallback(
+    async (account: string, locationState: LocationState | undefined, fvsig: string) => {
+      try {
+        const promises: Promise<CertificateItem>[] = [];
+        if (locationState && locationState.location) {
+          promises.push(requestLocationCertificate(baseEnv, locationState.location, fvsig, account));
+        }
+        promises.push(requestIdentityCertificate(baseEnv, fvsig, account));
+        const results = await Promise.all(promises);
+        for (const result of results) {
+          if (result && result.certificate) {
+            await storeCertificate(result.certificate);
+          }
+        }
+      } catch (e) {
+        console.error("Failed to get certificates:", e);
+        // should trigger error modal
+      }
+    },
+    [baseEnv, storeCertificate]
+  );
+
+  return { fetchCertificates };
 };

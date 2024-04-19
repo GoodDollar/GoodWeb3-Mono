@@ -33,3 +33,7 @@ export interface CertificateRecord extends Certificate {
   primary_idx: string;
   type_subject_idx: string[];
 }
+export interface CertificateItem {
+  id: string;
+  certificate: Certificate;
+}

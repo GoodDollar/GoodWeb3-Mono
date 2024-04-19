@@ -1,4 +1,5 @@
-import { Envs } from "../../sdk/constants";
+import { Envs } from "../constants";
+import { CertificateItem } from "./types";
 
 const getBearerToken = async (baseEnv: string, fvsig: string, account: string, type: "location" | "identity") => {
   const devEnv = baseEnv === "fuse" ? "development" : baseEnv;
@@ -20,7 +21,7 @@ export const requestLocationCertificate = async (
   [lat, long]: [number, number],
   fvSig: string,
   account: string
-) => {
+): Promise<CertificateItem> => {
   const { endpoint, token } = await getBearerToken(baseEnv, fvSig, account, "location");
 
   return fetch(endpoint, {
@@ -39,13 +40,17 @@ export const requestLocationCertificate = async (
     });
 };
 
-export const requestIdentityCertificate = async (baseEnv: string, fvSig: string, account: string) => {
+export const requestIdentityCertificate = async (
+  baseEnv: string,
+  fvSig: string,
+  account: string
+): Promise<CertificateItem> => {
   const { endpoint, token } = await getBearerToken(baseEnv, fvSig, account, "identity");
 
   return fetch(endpoint, {
     method: "POST",
     headers: { "content-type": "application/json", Authorization: `Bearer ${token}` },
-    body: JSON.stringify({ enrollmentIdentifier: fvSig, fvSigner: fvSig })
+    body: JSON.stringify({ enrollmentIdentifier: fvSig })
   })
     .then(res => {
       if (!res.ok) {
