@@ -1,6 +1,7 @@
 import React from "react";
 import { useEthers } from "@usedapp/core";
-import { GoodIdContextProvider } from "@gooddollar/web3sdk-v2";
+import { GoodIdContextProvider, useIdentityExpiryDate } from "@gooddollar/web3sdk-v2";
+import { Text, VStack } from "native-base";
 
 import { W3Wrapper } from "../../W3Wrapper";
 import { OffersAgreement } from "../../../apps/goodid/screens/OffersAgreement";
@@ -16,13 +17,22 @@ const GoodIdWrapper = ({ children }) => {
 //todo: add expiration date utilty example
 export const GoodIdCardExample = () => {
   const { account } = useEthers();
+  const [expiryDate, , state] = useIdentityExpiryDate(account ?? "");
+
+  console.log("expiryDate", { expiryDate });
+
   return (
-    <GoodIdCard
-      account={account ?? "0x000...0000"}
-      isWhitelisted={false}
-      fullname="Just a name"
-      expiryDate="Expires on April 12, 2023"
-    />
+    <VStack width={375} space={4}>
+      <Text variant="browse-wrap" fontSize="sm">
+        For testing purposes. this card is using dev contracts
+      </Text>
+      <GoodIdCard
+        account={account ?? "0x000...0000"}
+        isWhitelisted={false}
+        fullname="Just a name"
+        expiryDate={state === "pending" ? "-" : expiryDate?.formattedExpiryTimestamp}
+      />
+    </VStack>
   );
 };
 
@@ -37,7 +47,12 @@ export const SegmentationScreen = () => {
 
 export const SegmentationFlow = () => (
   <W3Wrapper withMetaMask={true} env="staging">
-    <SegmentationController />
+    <VStack>
+      <Text variant="browse-wrap" fontSize="sm">
+        For testing purposes. this flow is using staging/QA contracts
+      </Text>
+      <SegmentationController />
+    </VStack>
   </W3Wrapper>
 );
 
@@ -50,7 +65,7 @@ export const OffersAgreementExample = () => <OffersAgreement />;
 
 export default {
   title: "Apps/GoodId",
-  component: GoodIdCardExample,
+  component: GoodIdCard,
   decorators: [
     (Story: any) => (
       <GoodIdWrapper>
