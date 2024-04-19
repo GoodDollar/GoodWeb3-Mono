@@ -3,10 +3,9 @@ import { useWizard, Wizard } from "react-use-wizard";
 import { Center, VStack } from "native-base";
 import { useEthers } from "@usedapp/core";
 import { noop } from "lodash";
-// import CompletionScreen from "./CompletionScreen";
 import { GoodButton } from "../../../core";
-import { OffersAgreement, SegmentationScreen } from "../screens";
-import { LoaderModal } from "../../../core/web3/modals";
+import { OffersAgreement, SegmentationConfirmation, SegmentationScreen } from "../screens";
+import { ErrorModal, LoaderModal } from "../../../core/web3/modals";
 import { WizardContextProvider } from "../../../utils/WizardContext";
 import { useLocation } from "@gooddollar/web3sdk-v2";
 
@@ -20,6 +19,7 @@ const SegmentationScreenWrapper = (props: Props) => {
   const [loading, setLoading] = useState(true);
   const { locationState } = useLocation();
   const { account } = useEthers();
+  const [error, setError] = useState<null | string>(null);
 
   const proceed = async () => {
     void nextStep();
@@ -28,16 +28,26 @@ const SegmentationScreenWrapper = (props: Props) => {
   useEffect(() => {
     // if neither error or location is set means a user has not given or denied the permission yet
     if ((locationState.error || locationState.location) && account) {
-      props.onLocationRequest(locationState, account).then(() => {
-        console.log("finalized storing certificates..");
-        setLoading(false);
-      });
+      props
+        .onLocationRequest(locationState, account)
+        .then(() => {
+          setLoading(false);
+        })
+        .catch((e: any) => {
+          setError(e.message);
+          setLoading(false);
+        });
     }
   }, [locationState, account]);
 
   if (!account || loading) {
     /* todo: fix loader modal */
     return <LoaderModal title={`We're checking \n your information`} overlay="dark" loading={true} onClose={noop} />;
+  }
+
+  if (error) {
+    /* todo: add onClose logic */
+    return <ErrorModal error={error} onClose={noop} overlay="dark" />;
   }
 
   return (
@@ -60,7 +70,7 @@ export const SegmentationWizard = (props: Props) => (
     <Wizard>
       <SegmentationScreenWrapper onDone={props.onDone} onLocationRequest={props.onLocationRequest} />
       <OffersAgreement />
-      {/*  <CompletionScreen /> */}
+      <SegmentationConfirmation />
     </Wizard>
   </WizardContextProvider>
 );
