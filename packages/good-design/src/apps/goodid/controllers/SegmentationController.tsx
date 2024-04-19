@@ -1,5 +1,11 @@
 import React, { useCallback } from "react";
-import { AsyncStorage, useFVLink, useGetCertificates, useGetEnvChainId } from "@gooddollar/web3sdk-v2";
+import {
+  AsyncStorage,
+  useAggregatedCertificates,
+  useFVLink,
+  useGetCertificates,
+  useGetEnvChainId
+} from "@gooddollar/web3sdk-v2";
 import { useEthers } from "@usedapp/core";
 
 import { SegmentationWizard } from "../wizards/SegmentationWizard";
@@ -9,9 +15,16 @@ export const SegmentationController = () => {
   const { baseEnv } = useGetEnvChainId();
   const { fetchCertificates } = useGetCertificates(account ?? "", baseEnv);
   const fvLink = useFVLink();
+  const certificates = useAggregatedCertificates(account ?? "");
 
   const onLocationRequest = useCallback(
     async (locationState: any, account: string) => {
+      // verify if we already have a certificate
+      // this could occur by a user navigating back to the segmentation start screen
+      const hasValidCertificates = certificates.some(cert => cert.certificate);
+      if (hasValidCertificates) {
+        return;
+      }
       let fvSig = await AsyncStorage.getItem("fvSig");
       if (!fvSig) {
         fvSig = await fvLink.getFvSig();
