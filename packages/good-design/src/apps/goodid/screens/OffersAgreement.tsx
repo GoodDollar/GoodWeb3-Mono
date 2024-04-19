@@ -20,6 +20,7 @@ export const OffersAgreement = () => {
           <Title fontSize="l" textAlign="center">
             You might qualify for extra money disbursements
           </Title>
+          <Text variant="sub-grey">{`Would you like to receive offers specific to you, \n such as special rewards offers, humanitarian \n funds, climate relief disbursements, and \n financial services?`}</Text>
 
           <Center>
             <Image source={BillyGrin} w={150} h={113} style={{ resizeMode: "contain" }} />
