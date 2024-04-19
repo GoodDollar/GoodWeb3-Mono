@@ -30,4 +30,15 @@ const OnboardScreen = {
   }
 };
 
-export { OnboardScreen };
+const SegmentationConfirmation = {
+  baseStyle: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    paddingX: 6,
+    paddingY: 4,
+    width: 375
+  }
+};
+
+export { OnboardScreen, SegmentationConfirmation };
