@@ -5,13 +5,13 @@ import { CentreBox } from "../layout/CentreBox";
 import { Image } from "../images";
 
 import ConverterCircle from "../../assets/svg/converter-circle.svg";
-import cUsdLogo from "../../assets/svg/cusd.svg";
-import gdLogo from "../../assets/svg/gdLogo.svg";
+import cUsdLogo from "../../assets/images/cusd.png";
+import gdLogo from "../../assets/images/gdLogo.png";
 
 interface CurrencyBoxProps {
   title: string;
   placeholder: string | undefined;
-  logoSrc: string;
+  logoSrc: any;
   currencyUnit: string;
   onBlur: (e: any) => void;
   onChangeText: (e: string) => void;
@@ -39,7 +39,7 @@ const CurrencyBox = ({ title, placeholder, logoSrc, currencyUnit, onBlur, onChan
         <Text>{currencyUnit}</Text>
       </CentreBox>
       <CentreBox w="100" h="50" backgroundColor="white" flexDirection="row" justifyContent="space-around">
-        <Image src={logoSrc} w="8" h="8" style={{ resizeMode: "contain" }} borderRadius="md" />
+        <Image source={logoSrc} w="8" h="8" style={{ resizeMode: "contain" }} borderRadius="md" />
         <Text fontFamily="subheading" fontSize="sm" fontWeight="400" color="goodGrey.700">
           {currencyUnit}
         </Text>

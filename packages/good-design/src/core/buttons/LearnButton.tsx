@@ -3,8 +3,8 @@ import { Box, Text } from "native-base";
 import BasePressable from "./BasePressable";
 import { openLink } from "@gooddollar/web3sdk-v2";
 import { Image } from "../images";
-import BillyWaiting from "../../assets/svg/billy-waiting.svg";
-import BillySign from "../../assets/svg/billy-sign.svg";
+import BillyWaiting from "../../assets/images/billy-waiting.png";
+import BillySign from "../../assets/images/billy-sign.png";
 
 export type learnSources = "send" | "bridging" | "network" | "sign" | "identity";
 type links = { link: string; label: string; icon: any };
