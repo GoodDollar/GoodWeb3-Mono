@@ -56,6 +56,10 @@ export const theme = extendTheme({
       500: "#26292F"
     },
 
+    goodRed: {
+      100: "#D03737"
+    },
+
     //tabs
     tabBlue: "#1F86FF",
 
@@ -121,6 +125,13 @@ export const theme = extendTheme({
           fontSize: "2xs",
           color: "goodGrey.450",
           textAlign: "center"
+        }),
+        "sub-grey": () => ({
+          fontFamily: "subheading",
+          fontSize: "sm",
+          color: "goodGrey.600",
+          fontWeight: 400,
+          lineHeight: "20.8px"
         })
       }
     }

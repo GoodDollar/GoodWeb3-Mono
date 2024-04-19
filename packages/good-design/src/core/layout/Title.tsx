@@ -28,6 +28,24 @@ export const theme = {
       fontWeight: "500",
       color: "goodGrey.600",
       lineHeight: "125%"
+    }),
+    "title-gdblue": () => ({
+      color: "primary",
+      textTransform: "capitalize",
+      fontWeight: 700,
+      fontFamily: "heading",
+      fontSize: "l",
+      textAlign: "center",
+      lineHeight: 27.6
+    }),
+    "title-gdred": () => ({
+      color: "goodRed.100",
+      textTransform: "capitalize",
+      fontWeight: 900,
+      fontFamily: "heading",
+      fontSize: "xl",
+      textAlign: "center",
+      lineHeight: 27.6
     })
   }
 };
