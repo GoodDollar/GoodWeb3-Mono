@@ -156,16 +156,16 @@ export const useAggregatedCertificates = (account: string): AggregatedCertificat
 //   locationProvider: "auto"
 // });
 
-export interface LocationState {
+export interface GeoLocation {
   location: [number, number] | null;
-  error?: string | null;
 }
 
-export const useLocation = () => {
-  const [locationState, setLocationState] = useState<LocationState>({ location: null, error: null });
+export const useGeoLocation = (): [location: GeoLocation, error: string | null] => {
+  const [geoLocation, setGeoLocation] = useState<GeoLocation>({ location: null });
+  const [error, setError] = useState<string | null>(null);
 
   const onError = error => {
-    setLocationState({ location: null, error });
+    setError(error);
   };
 
   const getCurrentPosition = () => {
@@ -173,7 +173,7 @@ export const useLocation = () => {
     GeoLocation.getCurrentPosition(
       (position: any) => {
         const { latitude, longitude } = position.coords;
-        setLocationState({ location: [latitude, longitude] });
+        setGeoLocation({ location: [latitude, longitude] });
       },
       (error: any) => {
         onError(error);
@@ -183,7 +183,6 @@ export const useLocation = () => {
   };
 
   useEffect(() => {
-    console.log("platform", Platform.OS);
     if (Platform.OS === "web") {
       getCurrentPosition();
       return;
@@ -192,18 +191,20 @@ export const useLocation = () => {
     GeoLocation.requestAuthorization(getCurrentPosition, onError);
   }, []);
 
-  return { locationState };
+  return [geoLocation, error];
 };
 
-export const useGetCertificates = (account: string | undefined, baseEnv: any) => {
+export const useIssueCertificates = (account: string | undefined, baseEnv: any) => {
   const { storeCertificate } = useCertificates(account ?? "");
 
-  const fetchCertificates = useCallback(
-    async (account: string, locationState: LocationState | undefined, fvsig: string) => {
+  const issueCertificate = useCallback(
+    async (account: string, geoLocation: GeoLocation | undefined, fvsig: string) => {
+      const { location } = geoLocation ?? {};
+
       try {
         const promises: Promise<CertificateItem>[] = [];
-        if (locationState && locationState.location) {
-          promises.push(requestLocationCertificate(baseEnv, locationState.location, fvsig, account));
+        if (location) {
+          promises.push(requestLocationCertificate(baseEnv, location, fvsig, account));
         }
         promises.push(requestIdentityCertificate(baseEnv, fvsig, account));
         const results = await Promise.all(promises);
@@ -220,5 +221,5 @@ export const useGetCertificates = (account: string | undefined, baseEnv: any) =>
     [baseEnv, storeCertificate]
   );
 
-  return { fetchCertificates };
+  return { issueCertificate };
 };
