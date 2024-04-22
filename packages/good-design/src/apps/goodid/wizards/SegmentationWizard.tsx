@@ -8,17 +8,17 @@ import { OffersAgreement, SegmentationConfirmation, SegmentationScreen } from ".
 import { LoaderModal } from "../../../core/web3/modals";
 import { WizardContextProvider } from "../../../utils/WizardContext";
 import { WizardHeader } from "./WizardHeader";
-import { LocationState, useLocation } from "@gooddollar/web3sdk-v2";
+import { GeoLocation, useGeoLocation } from "@gooddollar/web3sdk-v2";
 
 export type SegmentationProps = {
-  onLocationRequest: (locationState: LocationState, account: string) => Promise<void>;
+  onLocationRequest: (locationState: GeoLocation, account: string) => Promise<void>;
   onDone: (error?: Error) => Promise<void>;
 };
 
 const SegmentationScreenWrapper = (props: SegmentationProps) => {
   const { nextStep } = useWizard();
   const [loading, setLoading] = useState(true);
-  const { locationState } = useLocation();
+  const [geoLocation, error] = useGeoLocation();
   const { account } = useEthers();
 
   const proceed = async () => {
@@ -28,19 +28,16 @@ const SegmentationScreenWrapper = (props: SegmentationProps) => {
   useEffect(() => {
     //todo: handle navigate back, should not run location request / fetching certificates again
     // if neither error or location is set means a user has not given or denied the permission yet
-    if ((locationState.error || locationState.location) && account) {
-      void props.onLocationRequest(locationState, account).then(() => {
+    if ((error || geoLocation.location) && account) {
+      void props.onLocationRequest(geoLocation, account).then(() => {
         setLoading(false);
       });
     }
-  }, [locationState, account]);
+  }, [geoLocation, account]);
 
-  if (!account || loading) {
-    /* todo: fix loader modal */
-    return <LoaderModal title={`We're checking \n your information`} overlay="dark" loading={true} onClose={noop} />;
-  }
-
-  return (
+  return !account || loading ? (
+    <LoaderModal title={`We're checking \n your information`} overlay="dark" loading={true} onClose={noop} />
+  ) : (
     <Center width={343}>
       <VStack paddingY={6} space={10}>
         <SegmentationScreen account={account} />
@@ -76,7 +73,7 @@ export const SegmentationWizard = (props: SegmentationProps) => {
 
   return (
     <WizardContextProvider>
-      <Wizard header={<WizardHeader onDone={modalOnDone} onError={error} />}>
+      <Wizard header={<WizardHeader onDone={modalOnDone} error={error} />}>
         <SegmentationScreenWrapper onDone={props.onDone} onLocationRequest={modalOnLocation} />
         <OffersAgreement />
         <SegmentationConfirmation />

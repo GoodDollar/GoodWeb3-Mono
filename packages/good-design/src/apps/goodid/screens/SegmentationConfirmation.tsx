@@ -17,10 +17,9 @@ const SegmentationConfirmation = withTheme({ name: "SegmentationConfirmation" })
   const [isWhitelisted] = useIsAddressVerified(account ?? "");
   const [expiryDate, , state] = useIdentityExpiryDate(account ?? "");
 
-  if (isWhitelisted === undefined || !account)
-    return <LoaderModal title={`We are creating \n your GoodID`} overlay="dark" loading={true} onClose={noop} />;
-
-  return (
+  return isWhitelisted === undefined || !account ? (
+    <LoaderModal title={`We are creating \n your GoodID`} overlay="dark" loading={true} onClose={noop} />
+  ) : (
     <VStack space={200} width={375}>
       <VStack space={6} {...props}>
         <Title variant="title-gdblue">Your GoodID is ready!</Title>

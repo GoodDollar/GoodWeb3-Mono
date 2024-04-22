@@ -2,20 +2,20 @@ import React, { useEffect } from "react";
 import { ComponentStory, ComponentMeta } from "@storybook/react";
 import { Text, View } from "react-native";
 
-import { useLocation } from "../../sdk/goodid";
+import { useGeoLocation } from "../../sdk/goodid";
 
 const LocationView = () => {
-  const { locationState } = useLocation();
+  const [geoLocation, error] = useGeoLocation();
 
   useEffect(() => {
-    if (locationState.error) {
+    if (error) {
       // throw error modal (to be added)
     }
-  }, [locationState]);
+  }, [/*used*/ geoLocation]);
 
   return (
     <View>
-      <Text> {`Your location is: ${locationState.location}`} </Text>
+      <Text> {`Your location is: ${geoLocation?.location}`} </Text>
     </View>
   );
 };

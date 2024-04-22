@@ -119,7 +119,7 @@ export const RedtentWizard: React.FC<RedTentProps> = (props: RedTentProps) => {
 
   return (
     <WizardContextProvider>
-      <Wizard header={<WizardHeader onDone={modalOnDone} onError={error} />}>
+      <Wizard header={<WizardHeader onDone={modalOnDone} error={error} />}>
         <RedtentOffer country={props.country} onDone={modalOnDone} />
         <RedtentVideoInstructions onDone={modalOnDone} onVideo={modalOnVideo} />
         <RedtentThanks onDone={modalOnDone} />

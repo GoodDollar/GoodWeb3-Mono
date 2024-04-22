@@ -7,11 +7,11 @@ import { ErrorModal } from "../../../core/web3";
 
 export const WizardHeader = ({
   onDone,
-  onError,
+  error,
   onClose
 }: {
   onDone: (error?: Error) => Promise<void>;
-  onError: any;
+  error: any;
   onClose?: any;
 }) => {
   const { isFirstStep, previousStep, isLastStep, goToStep } = useWizard();
@@ -24,9 +24,9 @@ export const WizardHeader = ({
     previousStep();
   }, [isFirstStep]);
 
-  if (onError) return <ErrorModal error={onError} onClose={onClose ?? (() => goToStep(0))} overlay="dark" />;
-
-  return (
+  return error ? (
+    <ErrorModal error={error} onClose={onClose ?? (() => goToStep(0))} overlay="dark" />
+  ) : (
     <View
       bg="primary"
       justifyContent={"center"}

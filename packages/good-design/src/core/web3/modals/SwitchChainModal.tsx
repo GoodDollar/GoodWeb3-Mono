@@ -1,7 +1,6 @@
 import React, { FC, Fragment, PropsWithChildren, useEffect, useState } from "react";
 import { useConfig } from "@usedapp/core";
 import { useSwitchNetwork } from "@gooddollar/web3sdk-v2";
-import { find } from "lodash";
 import { Text } from "native-base";
 
 import BasicStyledModal, { ModalFooterLearn } from "./BasicStyledModal";
@@ -37,7 +36,7 @@ export const SwitchChainModal: FC<PropsWithChildren> = ({ children, ...props }) 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setOnSwitchNetwork, setShow]);
 
-  const networkName = find(config.networks, _ => _.chainId === requestedChain)?.chainName;
+  const { chainName: networkName } = config.networks?.find(({ chainId }) => chainId === requestedChain) ?? {};
 
   return (
     <Fragment>
