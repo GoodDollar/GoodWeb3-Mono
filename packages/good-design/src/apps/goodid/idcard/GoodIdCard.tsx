@@ -1,13 +1,13 @@
 import React, { useMemo } from "react";
 import { Center, HStack, Heading, Text, VStack, IStackProps } from "native-base";
-import { CredentialSubject, useAggregatedCertificates } from "@gooddollar/web3sdk-v2";
+import { useAggregatedCertificates } from "@gooddollar/web3sdk-v2";
 
 import { withTheme } from "../../../theme";
 import SvgXml from "../../../core/images/SvgXml";
 import UnknownAvatarSvg from "../../../assets/svg/unknown-avatar.svg";
 import GdVerifiedSvg from "../../../assets/svg/gdverified.svg";
 import { truncateMiddle } from "../../../utils";
-import { formatVerifiedValues } from "../../../utils/formatVerifiedValues";
+import { FormattedCertificate, formatVerifiedValues } from "../../../utils/formatVerifiedValues";
 
 interface GoodIdCardProps extends IStackProps {
   account: string;
@@ -26,7 +26,7 @@ const CardRowItem = withTheme({ name: "CardRowItem" })(
     ...props
   }: {
     credentialLabel: string;
-    credential?: { credentialSubject: CredentialSubject | undefined; typeName: string };
+    credential: FormattedCertificate;
     fontStyles?: any;
   }) => {
     const { subHeading, subContent } = fontStyles ?? {};
@@ -75,17 +75,16 @@ const GoodIdCard = withTheme({ name: "GoodIdCard", skipProps: "credentialsList" 
           </VStack>
         </HStack>
         <HStack space={2} flexWrap="wrap">
-          {certificates?.map(({ certificate, typeName }) => {
-            if (typeName === "Identity") return null;
-            return (
+          {certificates
+            ?.filter(({ typeName }) => "Identity" !== typeName)
+            .map(({ certificate, typeName, type }) => (
               <CardRowItem
-                key={typeName}
+                key={type}
                 credentialLabel={typeName}
-                credential={{ credentialSubject: certificate?.credentialSubject, typeName }}
+                credential={{ credentialSubject: certificate?.credentialSubject, typeName: type }}
                 fontStyles={props.fontStyles}
               />
-            );
-          })}
+            ))}
         </HStack>
         <HStack>
           <Text {...footer}>{expiryDate}</Text>

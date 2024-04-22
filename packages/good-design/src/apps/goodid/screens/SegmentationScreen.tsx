@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { Center, Text, VStack } from "native-base";
-import { CredentialSubject, useAggregatedCertificates } from "@gooddollar/web3sdk-v2";
+import { CredentialSubject, CredentialType, useAggregatedCertificates } from "@gooddollar/web3sdk-v2";
 
 import { formatVerifiedValues } from "../../../utils/formatVerifiedValues";
 
@@ -21,7 +21,8 @@ const SegmentationRow = ({
   credentialSubject: CredentialSubject | undefined;
   typeName: keyof typeof typeLabels;
 }) => {
-  const verifiedValue = formatVerifiedValues({ credentialSubject, typeName });
+  const verifiedValue = formatVerifiedValues({ credentialSubject, typeName: CredentialType[typeName] });
+
   return (
     <VStack>
       <Title variant="subtitle-grey">{typeLabels[typeName]}</Title>

@@ -1,12 +1,18 @@
-export const formatVerifiedValues = ({ credentialSubject, typeName }: any) => {
-  if (!credentialSubject) return "Unverified";
+import { CredentialSubject, CredentialType } from "@gooddollar/web3sdk-v2";
 
-  switch (typeName) {
-    case "Age":
-      return `${credentialSubject.age.min}-${credentialSubject.age.max}`;
-    case "Gender":
-      return credentialSubject.gender;
-    case "Location":
-      return credentialSubject.countryCode;
-  }
+export interface FormattedCertificate {
+  credentialSubject: CredentialSubject | undefined;
+  typeName: CredentialType;
+}
+
+const formatCredentialMapper: { [key in CredentialType]: (cred: CredentialSubject) => string } = {
+  [CredentialType.Age]: cred => `${cred.age.min}-${cred.age.max}`,
+  [CredentialType.Gender]: cred => cred.gender,
+  [CredentialType.Location]: cred => cred.countryCode,
+  [CredentialType.Identity]: cred => `ID: ${cred.id}` // Assuming you want an ID prefix or similar formatting
+};
+
+export const formatVerifiedValues = ({ credentialSubject, typeName }: FormattedCertificate) => {
+  if (!credentialSubject) return "Unverified";
+  return formatCredentialMapper[typeName](credentialSubject);
 };
