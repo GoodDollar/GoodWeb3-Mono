@@ -3,7 +3,7 @@ import {
   AsyncStorage,
   useAggregatedCertificates,
   useFVLink,
-  useGetCertificates,
+  useIssueCertificates,
   useGetEnvChainId
 } from "@gooddollar/web3sdk-v2";
 import { useEthers } from "@usedapp/core";
@@ -13,7 +13,7 @@ import { SegmentationWizard } from "../wizards/SegmentationWizard";
 export const SegmentationController = () => {
   const { account } = useEthers();
   const { baseEnv } = useGetEnvChainId();
-  const { fetchCertificates } = useGetCertificates(account ?? "", baseEnv);
+  const { issueCertificate } = useIssueCertificates(account ?? "", baseEnv);
   const fvLink = useFVLink();
   const certificates = useAggregatedCertificates(account ?? "");
 
@@ -25,13 +25,10 @@ export const SegmentationController = () => {
       if (hasValidCertificates) {
         return;
       }
-      let fvSig = await AsyncStorage.getItem("fvSig");
-      if (!fvSig) {
-        fvSig = await fvLink.getFvSig();
-      }
-      await fetchCertificates(account, locationState, fvSig);
+      const fvSig = await AsyncStorage.getItem("fvSig").then(async sig => sig ?? (await fvLink.getFvSig()));
+      await issueCertificate(account, locationState, fvSig);
     },
-    [fetchCertificates, account]
+    [issueCertificate, account]
   );
 
   // Handle the completion of the wizard
