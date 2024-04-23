@@ -22,12 +22,13 @@ const SegmentationRow = ({
   typeName: keyof typeof typeLabels;
 }) => {
   const verifiedValue = formatVerifiedValues({ credentialSubject, typeName: CredentialType[typeName] });
+  const verifiedValueCopy = verifiedValue === "Unverified" ? `${verifiedValue}-${typeName}` : verifiedValue;
 
   return (
     <VStack>
       <Title variant="subtitle-grey">{typeLabels[typeName]}</Title>
       <Text fontFamily="body" fontSize="l" fontWeight="700" color="primary">
-        {verifiedValue}
+        {verifiedValueCopy}
       </Text>
     </VStack>
   );
