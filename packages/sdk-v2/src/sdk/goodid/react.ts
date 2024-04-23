@@ -197,7 +197,7 @@ export const useGeoLocation = (): [location: GeoLocation, error: string | null] 
 export const useIssueCertificates = (account: string | undefined, baseEnv: any) => {
   const { storeCertificate } = useCertificates(account ?? "");
 
-  const issueCertificate = useCallback(
+  return useCallback(
     async (account: string, geoLocation: GeoLocation | undefined, fvsig: string) => {
       const { location } = geoLocation ?? {};
 
@@ -220,6 +220,4 @@ export const useIssueCertificates = (account: string | undefined, baseEnv: any) 
     },
     [baseEnv, storeCertificate]
   );
-
-  return { issueCertificate };
 };
