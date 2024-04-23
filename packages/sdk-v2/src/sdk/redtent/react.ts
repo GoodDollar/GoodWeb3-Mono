@@ -1,24 +1,16 @@
 import { useCallback } from "react";
 import { useGetEnvChainId } from "../base";
 import { Envs } from "../constants";
+import { getDevEnv, g$Response, g$Request } from "../goodid/sdk";
 
 export const useRegisterRedtent = () => {
   const { baseEnv } = useGetEnvChainId();
-  const devEnv = baseEnv === "fuse" ? "development" : baseEnv;
+  const devEnv = getDevEnv(baseEnv);
   const { backend } = Envs[devEnv];
 
   const register = useCallback(
-    async (data: { account: string; videoFilename: string; credentials: Array<any> }) => {
-      const res = await fetch(backend + "/goodid/redtent", {
-        method: "POST",
-        headers: { "Content-type": "application/json" },
-        body: JSON.stringify(data)
-      });
-      if (res.ok) {
-        return res.json();
-      }
-      throw new Error(`Redtent request failed: ${res.statusText} (${res.status})`);
-    },
+    async (data: { account: string; videoFilename: string; credentials: Array<any> }) =>
+      fetch(`${backend}/goodid/redtent`, g$Request(data)).then(g$Response),
     [backend]
   );
   return register;

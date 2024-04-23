@@ -1,19 +1,53 @@
-import { Envs } from "../constants";
+import { providers, Signer } from "ethers";
+import { FV_IDENTIFIER_MSG2, Envs } from "../constants";
+import { EnvKey } from "../base";
 import { CertificateItem } from "./types";
 
-const getBearerToken = async (baseEnv: string, fvsig: string, account: string, type: "location" | "identity") => {
-  const devEnv = baseEnv === "fuse" ? "development" : baseEnv;
-  const { backend } = Envs[devEnv];
+export const getDevEnv = (baseEnv: string) => (baseEnv === "fuse" ? "development" : baseEnv);
 
-  const endpoint = `${backend}/goodid/certificate/${type}`;
+export const g$Response = (fetchResponse: Response) => {
+  if (!fetchResponse.ok) {
+    void fetchResponse.json().then(({ error }) => {
+      const errorMessage = error ?? "Unknown GoodServer error";
+      throw new Error(errorMessage);
+    });
+  }
+
+  return fetchResponse.json();
+};
+
+export const g$Request = (json: any, method = "POST", headers = {}) => ({
+  method,
+  headers: { ...headers, "content-type": "application/json" },
+  body: JSON.stringify(json)
+});
+
+export const g$AuthRequest = (token: string, json: any, method = "POST") =>
+  g$Request(json, method, { Authorization: `Bearer ${token}` });
+
+export type FvAuthWithSigner = {
+  fvSig: never;
+  address: never;
+  signer: Signer | providers.JsonRpcSigner;
+};
+
+export type FvAuthWithAddress = {
+  address: string;
+  fvSig: string;
+  signer: never;
+};
+
+export const fvAuth = async (
+  env: EnvKey,
+  { address, fvSig, signer }: FvAuthWithAddress | FvAuthWithSigner
+): Promise<any> => {
+  const { backend } = Envs[env];
   const authEndpoint = `${backend}/auth/fv2`;
-  const { token } = await fetch(authEndpoint, {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({ fvsig, account })
-  }).then(_ => _.json());
 
-  return { token, endpoint };
+  const account = signer ? await signer.getAddress() : address;
+  const fvsig = signer ? await signer.signMessage(FV_IDENTIFIER_MSG2.replace("<account>", account)) : fvSig;
+  const { token } = await fetch(authEndpoint, g$Request({ fvsig, account })).then(g$Response);
+  return { token, fvsig };
 };
 
 export const requestLocationCertificate = async (
@@ -22,22 +56,14 @@ export const requestLocationCertificate = async (
   fvSig: string,
   account: string
 ): Promise<CertificateItem> => {
-  const { endpoint, token } = await getBearerToken(baseEnv, fvSig, account, "location");
+  const env = getDevEnv(baseEnv);
+  const { backend } = Envs[env];
+  const { token } = await fvAuth(env, { address: account, fvSig } as FvAuthWithAddress);
 
-  return fetch(endpoint, {
-    method: "POST",
-    headers: { "content-type": "application/json", Authorization: `Bearer ${token}` },
-    body: JSON.stringify({ user: {}, geoposition: { coords: { latitude: lat, longitude: long } } })
-  })
-    .then(res => {
-      if (!res.ok) {
-        throw new Error("Failed to get a location certificate");
-      }
-      return res.json();
-    })
-    .catch(e => {
-      console.error("failed to get a location certificate:", e.message, e);
-    });
+  return fetch(
+    `${backend}/goodid/certificate/location`,
+    g$AuthRequest(token, { user: {}, geoposition: { coords: { latitude: lat, longitude: long } } })
+  ).then(g$Response) as Promise<any>;
 };
 
 export const requestIdentityCertificate = async (
@@ -45,21 +71,11 @@ export const requestIdentityCertificate = async (
   fvSig: string,
   account: string
 ): Promise<CertificateItem> => {
-  const { endpoint, token } = await getBearerToken(baseEnv, fvSig, account, "identity");
+  const env = getDevEnv(baseEnv);
+  const { backend } = Envs[env];
+  const { token } = await fvAuth(env, { address: account, fvSig } as FvAuthWithAddress);
 
-  return fetch(endpoint, {
-    method: "POST",
-    headers: { "content-type": "application/json", Authorization: `Bearer ${token}` },
-    body: JSON.stringify({ enrollmentIdentifier: fvSig })
-  })
-    .then(res => {
-      if (!res.ok) {
-        throw new Error("Failed to get a identity certificate");
-      }
-      return res.json();
-    })
-    .catch(e => {
-      // todo: handle requests for wrong enrollment identifier
-      console.error("failed to get a identity certificate:", e.message, e);
-    });
+  return fetch(`${backend}/goodid/certificate/identity`, g$AuthRequest(token, { enrollmentIdentifier: fvSig })).then(
+    g$Response
+  ) as Promise<any>;
 };

@@ -164,3 +164,11 @@ export function G$ContractAddresses<T = ObjectLike>(name: string, env: EnvKey): 
 
   return (contractsAddresses as any)[env][name] as unknown as T;
 }
+
+export const FV_LOGIN_MSG = `Sign this message to login into GoodDollar Unique Identity service.
+WARNING: do not sign this message unless you trust the website/application requesting this signature.
+nonce:`;
+
+export const FV_IDENTIFIER_MSG2 = `Sign this message to request verifying your account <account> and to create your own secret unique identifier for your anonymized record.
+You can use this identifier in the future to delete this anonymized record.
+WARNING: do not sign this message unless you trust the website/application requesting this signature.`;

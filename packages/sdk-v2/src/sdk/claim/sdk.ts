@@ -1,16 +1,10 @@
 import { BigNumber } from "ethers";
 import { invokeMap, forIn } from "lodash";
+import { fvAuth, FvAuthWithSigner, g$Response, g$AuthRequest } from "../goodid/";
 import { BaseSDK } from "../base/sdk";
+import { FV_LOGIN_MSG, FV_IDENTIFIER_MSG2 } from "../constants";
 
 const DAY = 1000 * 60 * 60 * 24;
-
-const FV_LOGIN_MSG = `Sign this message to login into GoodDollar Unique Identity service.
-WARNING: do not sign this message unless you trust the website/application requesting this signature.
-nonce:`;
-
-const FV_IDENTIFIER_MSG2 = `Sign this message to request verifying your account <account> and to create your own secret unique identifier for your anonymized record.
-You can use this identifier in the future to delete this anonymized record.
-WARNING: do not sign this message unless you trust the website/application requesting this signature.`;
 
 export class ClaimSDK extends BaseSDK {
   async generateFVLink(firstName: string, callbackUrl?: string, popupMode = false, chainId?: number) {
@@ -132,25 +126,13 @@ export class ClaimSDK extends BaseSDK {
   }
 
   async deleteFVRecord() {
-    const { env, provider } = this;
-    const signer = provider.getSigner();
+    const { devEnv, env, provider } = this;
     const { backend } = env;
+    const signer = provider.getSigner();
 
-    const account = await signer.getAddress();
-    const signature = await signer.signMessage(FV_IDENTIFIER_MSG2.replace("<account>", account));
+    const { token, fvsig } = await fvAuth(devEnv, { signer } as FvAuthWithSigner);
+    const endpoint = `${backend}/verify/face/${encodeURIComponent(fvsig)}`;
 
-    const endpoint = `${backend}/verify/face/${encodeURIComponent(signature)}`;
-    const authEndpoint = `${backend}/auth/fv2`;
-    const { token } = await fetch(authEndpoint, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ fvsig: signature, account })
-    }).then(_ => _.json());
-
-    return fetch(endpoint, {
-      method: "DELETE",
-      headers: { "content-type": "application/json", Authorization: `Bearer ${token}` },
-      body: JSON.stringify({ signature })
-    }).then(_ => _.json());
+    return fetch(endpoint, g$AuthRequest(token, { fvsig })).then(g$Response);
   }
 }

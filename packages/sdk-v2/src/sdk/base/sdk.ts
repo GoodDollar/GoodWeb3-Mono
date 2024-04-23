@@ -47,12 +47,14 @@ export type EnvValue = any;
 export class BaseSDK {
   provider: providers.JsonRpcProvider;
   env: (typeof Envs)[EnvKey];
+  devEnv: string;
   contracts: EnvValue;
   signer: Signer | void = undefined;
   constructor(provider: providers.JsonRpcProvider, contractsEnv: EnvKey = "production") {
     this.provider = provider;
     let devEnv = contractsEnv.split("-")[0];
     devEnv = devEnv === "fuse" ? "development" : devEnv;
+    this.devEnv = devEnv;
     this.env = Envs[devEnv];
     this.contracts = Contracts[contractsEnv as keyof typeof Contracts] as EnvValue;
 
