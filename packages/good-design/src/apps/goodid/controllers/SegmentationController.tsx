@@ -14,7 +14,7 @@ import { SegmentationWizard } from "../wizards/SegmentationWizard";
 export const SegmentationController = () => {
   const { account } = useEthers();
   const { baseEnv } = useGetEnvChainId();
-  const { issueCertificate } = useIssueCertificates(account ?? "", baseEnv);
+  const issueCertificate = useIssueCertificates(account ?? "", baseEnv);
   const fvLink = useFVLink();
   const certificates = useAggregatedCertificates(account ?? "");
 
