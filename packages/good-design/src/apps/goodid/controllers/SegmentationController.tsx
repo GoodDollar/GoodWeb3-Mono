@@ -7,6 +7,7 @@ import {
   useGetEnvChainId
 } from "@gooddollar/web3sdk-v2";
 import { useEthers } from "@usedapp/core";
+import { isEmpty } from "lodash";
 
 import { SegmentationWizard } from "../wizards/SegmentationWizard";
 
@@ -25,7 +26,10 @@ export const SegmentationController = () => {
       if (hasValidCertificates) {
         return;
       }
-      const fvSig = await AsyncStorage.getItem("fvSig").then(async sig => sig ?? (await fvLink.getFvSig()));
+
+      const fvSig = await AsyncStorage.getItem("fvSig").then(async sig =>
+        !isEmpty(sig) ? sig : await fvLink.getFvSig()
+      );
       await issueCertificate(account, locationState, fvSig);
     },
     [issueCertificate, account]
