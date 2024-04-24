@@ -16,12 +16,26 @@ export const g$Response = (fetchResponse: Response) => {
   return fetchResponse.json();
 };
 
+/**
+ * Use for regular requests to gooddollar server
+ * @param json
+ * @param method
+ * @param headers
+ * @returns
+ */
 export const g$Request = (json: any, method = "POST", headers = {}) => ({
   method,
   headers: { ...headers, "content-type": "application/json" },
   body: JSON.stringify(json)
 });
 
+/**
+ * * Use for requests that require authentication
+ * @param token - obtained from the auth endpoint, see fvAuth
+ * @param json
+ * @param method
+ * @returns
+ */
 export const g$AuthRequest = (token: string, json: any, method = "POST") =>
   g$Request(json, method, { Authorization: `Bearer ${token}` });
 
@@ -37,6 +51,14 @@ export type FvAuthWithAddress = {
   signer: never;
 };
 
+/**
+ * Authenticates a user with the GoodDollar server
+ * @param env production | staging | development
+ * @param address - user address
+ * @param fvSig - signature of the FV_IDENTIFIER_MSG2 message
+ * @param signer - ethers signer when a user has not yet signed a message, does not need address or fvSig
+ * @returns token and fvsig
+ */
 export const fvAuth = async (
   env: EnvKey,
   { address, fvSig, signer }: FvAuthWithAddress | FvAuthWithSigner
@@ -50,6 +72,14 @@ export const fvAuth = async (
   return { token, fvsig };
 };
 
+/**
+ * Request a VerifiableLocationCredential issued by GoodDollar
+ * @param baseEnv
+ * @param [lat, long] as return from GeoLocation
+ * @param fvSig - signature of the FV_IDENTIFIER_MSG2 message
+ * @param account
+ * @returns
+ */
 export const requestLocationCertificate = async (
   baseEnv: string,
   [lat, long]: [number, number],
@@ -66,6 +96,14 @@ export const requestLocationCertificate = async (
   ).then(g$Response) as Promise<any>;
 };
 
+/**
+ * Request a VerifiableIdentityCredential issued by GoodDollar
+ * this includes a VerifiableAgeCredential / VerifiableGenderCredential
+ * @param baseEnv
+ * @param fvSig - signature of the FV_IDENTIFIER_MSG2 message
+ * @param account
+ * @returns
+ */
 export const requestIdentityCertificate = async (
   baseEnv: string,
   fvSig: string,

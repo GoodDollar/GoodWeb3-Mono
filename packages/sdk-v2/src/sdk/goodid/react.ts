@@ -194,6 +194,12 @@ export const useGeoLocation = (): [location: GeoLocation, error: string | null] 
   return [geoLocation, error];
 };
 
+/**
+ * Request VerifiableCredentials from GoodDollar and store them in the local database
+ * @param account - the evm address which was used to pass the FaceVerification of the gooddollar protocol
+ * @param baseEnv
+ * @returns
+ */
 export const useIssueCertificates = (account: string | undefined, baseEnv: any) => {
   const { storeCertificate } = useCertificates(account ?? "");
 
@@ -215,7 +221,6 @@ export const useIssueCertificates = (account: string | undefined, baseEnv: any) 
         }
       } catch (e) {
         console.error("Failed to get certificates:", e);
-        // should trigger error modal
       }
     },
     [baseEnv, storeCertificate]

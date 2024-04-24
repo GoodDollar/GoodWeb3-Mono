@@ -16,6 +16,12 @@ export const WizardContext = React.createContext<WizardContextValues>({
   }
 });
 
+/**
+ * This component provides a context for screens in a wizard flow to share data.
+ * @method updateDataValue - Updates nested data values.
+ * @method setDataValue - Sets data values as root key/value.
+ * @returns The context provider.
+ */
 export const WizardContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [data, setData] = useState({} as { [key: string]: any });
 

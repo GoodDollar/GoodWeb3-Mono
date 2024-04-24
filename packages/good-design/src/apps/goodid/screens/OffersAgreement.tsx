@@ -11,6 +11,7 @@ export const OffersAgreement = () => {
   const { data, updateDataValue } = useContext(WizardContext);
   const { nextStep } = useWizard();
 
+  // we need the offersAgreement acceptance for running checkAvailableOffers
   const handleAccept = () => {
     updateDataValue("segmentation", "offersAgreement", true);
     void nextStep();
@@ -19,6 +20,7 @@ export const OffersAgreement = () => {
   useEffect(() => {
     if (data?.segmentation) {
       // if any of the segmentation data is set to false at this point
+      // or a user has disputed their determined age/gender/location data
       // it means by definition a user does not qualify so we can skip this step
       const mightQualify = Object.values(data.segmentation).every(value => value === true);
       if (!mightQualify || data?.segmentationDispute) {
