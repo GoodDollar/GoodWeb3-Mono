@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useWizard, Wizard } from "react-use-wizard";
 import { Center, VStack } from "native-base";
 import { useEthers } from "@usedapp/core";
@@ -6,7 +6,7 @@ import { noop } from "lodash";
 import { GoodButton } from "../../../core";
 import { OffersAgreement, SegmentationConfirmation, SegmentationScreen } from "../screens";
 import { LoaderModal } from "../../../core/web3/modals";
-import { WizardContextProvider } from "../../../utils/WizardContext";
+import { WizardContext, WizardContextProvider } from "../../../utils/WizardContext";
 import { WizardHeader } from "./WizardHeader";
 import { GeoLocation, useGeoLocation } from "@gooddollar/web3sdk-v2";
 
@@ -17,6 +17,7 @@ export type SegmentationProps = {
 
 const SegmentationScreenWrapper = (props: SegmentationProps) => {
   const { nextStep } = useWizard();
+  const { setDataValue } = useContext(WizardContext);
   const [loading, setLoading] = useState(true);
   const [geoLocation, error] = useGeoLocation();
   const { account } = useEthers();
@@ -26,14 +27,14 @@ const SegmentationScreenWrapper = (props: SegmentationProps) => {
   };
 
   useEffect(() => {
-    //todo: handle navigate back, should not run location request / fetching certificates again
     // if neither error or location is set means a user has not given or denied the permission yet
     if ((error || geoLocation.location) && account) {
+      setDataValue("locationPermission", !error);
       void props.onLocationRequest(geoLocation, account).then(() => {
         setLoading(false);
       });
     }
-  }, [geoLocation, account]);
+  }, [geoLocation, account, error]);
 
   return !account || loading ? (
     <LoaderModal title={`We're checking \n your information`} overlay="dark" loading={true} onClose={noop} />

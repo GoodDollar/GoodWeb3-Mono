@@ -1,7 +1,10 @@
-import React, { useMemo } from "react";
+import React, { useContext, useMemo } from "react";
 import { Center, Text, VStack } from "native-base";
 import { CredentialSubject, CredentialType, useAggregatedCertificates } from "@gooddollar/web3sdk-v2";
+import { noop } from "lodash";
 
+import { BasicStyledModal } from "../../../core/web3/modals";
+import { WizardContext } from "../../../utils/WizardContext";
 import { formatVerifiedValues } from "../../../utils/formatVerifiedValues";
 
 import { Title } from "../../../core/layout";
@@ -34,7 +37,12 @@ const SegmentationRow = ({
   );
 };
 
+const ModalLocationDenied = () => (
+  <Text variant="sub-grey" textAlign="center">{`Your location will show as "Unverified" on \n your GoodID`}</Text>
+);
+
 export const SegmentationScreen = ({ account }: { account: string }) => {
+  const { data } = useContext(WizardContext);
   const certificates = useAggregatedCertificates(account);
 
   const certificateMap = useMemo(() => {
@@ -48,6 +56,15 @@ export const SegmentationScreen = ({ account }: { account: string }) => {
 
   return (
     <>
+      <BasicStyledModal
+        title={`We could not \n confirm your \n location`}
+        body={<ModalLocationDenied />}
+        type={"cta"}
+        show={data?.locationPermission === false}
+        withOverlay={"dark"}
+        onClose={noop}
+        withCloseButton
+      />
       <VStack space={10}>
         <VStack space={6}>
           <Text fontFamily="heading" fontSize="l" fontWeight="700" color="primary" textAlign="center">

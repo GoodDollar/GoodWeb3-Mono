@@ -41,7 +41,9 @@ export type StyledModalProps = CtaOrLearnModalProps | AltModalProps;
 
 const ModalHeader = ({ title, variant = "title-gdblue" }: { title: string; variant: any }) => (
   <Center backgroundColor="white" textAlign="center" paddingBottom={0}>
-    <Title variant={variant}>{title}</Title>
+    <Title variant={variant} fontSize="xl">
+      {title}
+    </Title>
   </Center>
 );
 

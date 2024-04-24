@@ -31,7 +31,6 @@ export const theme = {
     }),
     "title-gdblue": () => ({
       color: "primary",
-      textTransform: "capitalize",
       fontWeight: 700,
       fontFamily: "heading",
       fontSize: "l",
@@ -40,7 +39,6 @@ export const theme = {
     }),
     "title-gdred": () => ({
       color: "goodRed.100",
-      textTransform: "capitalize",
       fontWeight: 900,
       fontFamily: "heading",
       fontSize: "xl",

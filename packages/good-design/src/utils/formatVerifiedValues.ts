@@ -9,7 +9,7 @@ const formatCredentialMapper: { [key in CredentialType]: (cred: CredentialSubjec
   [CredentialType.Age]: cred => `${cred.age.min}-${cred.age.max}`,
   [CredentialType.Gender]: cred => cred.gender,
   [CredentialType.Location]: cred => cred.countryCode,
-  [CredentialType.Identity]: cred => `ID: ${cred.id}` // Assuming you want an ID prefix or similar formatting
+  [CredentialType.Identity]: cred => `ID: ${cred.id}`
 };
 
 export const formatVerifiedValues = ({ credentialSubject, typeName }: FormattedCertificate) => {
