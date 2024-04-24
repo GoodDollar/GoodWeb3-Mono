@@ -42,7 +42,7 @@ const ModalLocationDenied = () => (
 );
 
 export const SegmentationScreen = ({ account }: { account: string }) => {
-  const { data } = useContext(WizardContext);
+  const { data, updateDataValue } = useContext(WizardContext);
   const certificates = useAggregatedCertificates(account);
 
   const certificateMap = useMemo(() => {
@@ -50,6 +50,8 @@ export const SegmentationScreen = ({ account }: { account: string }) => {
       if (certificate) {
         acc[typeName] = certificate.credentialSubject;
       }
+
+      updateDataValue("segmentation", typeName, !!certificate);
       return acc;
     }, {} as Record<string, CredentialSubject | undefined>);
   }, [certificates]);

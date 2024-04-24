@@ -1,17 +1,31 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import { Center, Container, Text, VStack } from "native-base";
 import { useWizard } from "react-use-wizard";
 
+import { WizardContext } from "../../../utils/WizardContext";
 import { GoodButton, Image, Title } from "../../../core";
 
 import BillyGrin from "../../../assets/images/billy-grin.png";
 
 export const OffersAgreement = () => {
+  const { data, updateDataValue } = useContext(WizardContext);
   const { nextStep } = useWizard();
+
   const handleAccept = () => {
-    // Todo: store users decision in wizardcontext
+    updateDataValue("segmentation", "offersAgreement", true);
     void nextStep();
   };
+
+  useEffect(() => {
+    if (data?.segmentation) {
+      // if any of the segmentation data is set to false at this point
+      // it means by definition a user does not qualify so we can skip this step
+      const mightQualify = Object.values(data.segmentation).every(value => value === true);
+      if (!mightQualify || data?.segmentationDispute) {
+        void nextStep();
+      }
+    }
+  }, []);
 
   return (
     <>

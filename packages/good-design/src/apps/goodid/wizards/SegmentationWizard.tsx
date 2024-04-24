@@ -17,7 +17,7 @@ export type SegmentationProps = {
 
 const SegmentationScreenWrapper = (props: SegmentationProps) => {
   const { nextStep } = useWizard();
-  const { setDataValue } = useContext(WizardContext);
+  const { updateDataValue } = useContext(WizardContext);
   const [loading, setLoading] = useState(true);
   const [geoLocation, error] = useGeoLocation();
   const { account } = useEthers();
@@ -29,7 +29,7 @@ const SegmentationScreenWrapper = (props: SegmentationProps) => {
   useEffect(() => {
     // if neither error or location is set means a user has not given or denied the permission yet
     if ((error || geoLocation.location) && account) {
-      setDataValue("locationPermission", !error);
+      updateDataValue("segmentation", "locationPermission", !error);
       void props.onLocationRequest(geoLocation, account).then(() => {
         setLoading(false);
       });
