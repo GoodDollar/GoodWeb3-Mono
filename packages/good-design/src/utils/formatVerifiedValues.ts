@@ -29,6 +29,6 @@ const formatCredentialMapper: { [key in CredentialType]: (cred: CredentialSubjec
 };
 
 export const formatVerifiedValues = ({ credentialSubject, typeName }: FormattedCertificate) => {
-  if (!credentialSubject) return "Unverified";
+  if (!credentialSubject) return `Unverified-${typeName}`;
   return formatCredentialMapper[typeName](credentialSubject);
 };

@@ -32,12 +32,13 @@ const CardRowItem = withTheme({ name: "CardRowItem" })(
     const { subHeading, subContent } = fontStyles ?? {};
     const verifiedValue = useMemo(() => formatVerifiedValues(credential), [credential]);
 
+    //todo: handle copy for onboard/segmentation verified values
     return (
       <VStack {...props}>
         <Text {...subHeading}>{credentialLabel}</Text>
         <HStack space={1} alignItems="center">
           <Text {...subContent}>{verifiedValue === "Unverified" ? "-" : verifiedValue}</Text>
-          {verifiedValue !== "Unverified" && (
+          {!["Unverified"].includes(verifiedValue) && (
             <Center mt="-3px">
               <SvgXml src={GdVerifiedSvg} height="16" width="16" />
             </Center>
