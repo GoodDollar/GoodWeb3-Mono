@@ -52,13 +52,10 @@ export class BaseSDK {
   signer: Signer | void = undefined;
   constructor(provider: providers.JsonRpcProvider, contractsEnv: EnvKey = "production") {
     this.provider = provider;
-    let devEnv = contractsEnv.split("-")[0];
-    devEnv = devEnv === "fuse" ? "development" : devEnv;
-    this.devEnv = devEnv;
+    const devEnv = contractsEnv.split("-")[0];
+    this.devEnv = devEnv === "fuse" ? "development" : devEnv;
     this.env = Envs[devEnv];
     this.contracts = Contracts[contractsEnv as keyof typeof Contracts] as EnvValue;
-
-    // console.log("baseSdk provider", { provider });
 
     provider
       .getNetwork()

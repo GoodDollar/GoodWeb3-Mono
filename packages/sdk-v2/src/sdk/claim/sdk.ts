@@ -1,6 +1,6 @@
 import { BigNumber } from "ethers";
 import { invokeMap, forIn } from "lodash";
-import { fvAuth, FvAuthWithSigner, g$Response, g$AuthRequest } from "../goodid/";
+import { fvAuth, g$Response, g$AuthRequest } from "../goodid/";
 import { BaseSDK } from "../base/sdk";
 import { FV_LOGIN_MSG, FV_IDENTIFIER_MSG2 } from "../constants";
 
@@ -130,7 +130,7 @@ export class ClaimSDK extends BaseSDK {
     const { backend } = env;
     const signer = provider.getSigner();
 
-    const { token, fvsig } = await fvAuth(devEnv, { signer } as FvAuthWithSigner);
+    const { token, fvsig } = await fvAuth(devEnv, signer);
     const endpoint = `${backend}/verify/face/${encodeURIComponent(fvsig)}`;
 
     return fetch(endpoint, g$AuthRequest(token, { fvsig })).then(g$Response);
