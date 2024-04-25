@@ -1,5 +1,15 @@
 import { CredentialSubject, CredentialType } from "@gooddollar/web3sdk-v2";
 
+import isoCountries from "i18n-iso-countries";
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+isoCountries.registerLocale(require("i18n-iso-countries/langs/en.json"));
+
+const getCountryName = (countryCode: string): string => {
+  const countryName = isoCountries.getName(countryCode, "en");
+  return countryName || "Unverified-Location";
+};
+
 export interface FormattedCertificate {
   credentialSubject: CredentialSubject | undefined;
   typeName: CredentialType;
@@ -14,7 +24,7 @@ export interface FormattedCertificate {
 const formatCredentialMapper: { [key in CredentialType]: (cred: CredentialSubject) => string } = {
   [CredentialType.Age]: cred => `${cred.age.min}-${cred.age.max}`,
   [CredentialType.Gender]: cred => cred.gender,
-  [CredentialType.Location]: cred => cred.countryCode,
+  [CredentialType.Location]: cred => getCountryName(cred.countryCode),
   [CredentialType.Identity]: cred => `ID: ${cred.id}`
 };
 
