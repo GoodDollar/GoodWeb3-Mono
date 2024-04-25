@@ -1,7 +1,7 @@
 import React, { Fragment } from "react";
 
 import { withTheme } from "../../../theme";
-import BasicStyledModal from "./BasicStyledModal";
+import BasicStyledModal, { ModalLoaderBody } from "./BasicStyledModal";
 
 // todo: add blurred background
 export const LoaderModal = withTheme({ name: "BasicStyledModal" })(
@@ -15,6 +15,7 @@ export const LoaderModal = withTheme({ name: "BasicStyledModal" })(
         onClose={onClose}
         withCloseButton={false}
         withOverlay={overlay}
+        body={<ModalLoaderBody />}
       />
     </Fragment>
   )

@@ -56,6 +56,10 @@ export const theme = extendTheme({
       500: "#26292F"
     },
 
+    goodRed: {
+      100: "#D03737"
+    },
+
     //tabs
     tabBlue: "#1F86FF",
 
@@ -92,19 +96,6 @@ export const theme = extendTheme({
     xl: 30,
     "2xl": 36
   },
-  shadow: {
-    //Bug: override shadow does not take effect. defining new one is not used
-    "1": {
-      shadowColor: "black",
-      shadowOffset: {
-        width: 0,
-        height: 3
-      },
-      shadowOpacity: 0.4,
-      shadowRadius: 0,
-      elevation: 8
-    }
-  },
 
   components: {
     ...layout,
@@ -113,7 +104,24 @@ export const theme = extendTheme({
     ...apps,
     ...animated,
     ...web3modals,
-    ...nativebase
+    ...nativebase,
+    Text: {
+      variants: {
+        "browse-wrap": () => ({
+          fontFamily: "subheading",
+          fontSize: "2xs",
+          color: "goodGrey.450",
+          textAlign: "center"
+        }),
+        "sm-grey": () => ({
+          fontFamily: "subheading",
+          fontSize: "sm",
+          fontWeight: 400,
+          color: "goodGrey.600",
+          lineHeight: 20.8
+        })
+      }
+    }
   }
 });
 

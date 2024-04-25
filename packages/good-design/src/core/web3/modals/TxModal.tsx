@@ -1,8 +1,8 @@
 import React from "react";
 import { noop } from "lodash";
 
-import { withTheme } from "../../../theme";
 import BasicStyledModal, { ModalFooterLearn } from "./BasicStyledModal";
+import { Text } from "native-base";
 
 interface ITxModalProps {
   type: "send" | "sign" | "identity";
@@ -26,22 +26,22 @@ Don’t worry, no link is kept between your\nidentity record and your wallet add
   }
 };
 
-export const TxModal = withTheme({ name: "BasicStyledModal" })(
-  ({ type, isPending, onClose = noop, ...props }: ITxModalProps) => {
-    const { title, content } = txModalCopy[type];
+const TxModalContent = ({ content }: { content: string }) => <Text variant="sm-grey">{content}</Text>;
 
-    return (
-      <BasicStyledModal
-        {...props}
-        type="learn"
-        show={isPending}
-        onClose={onClose}
-        title={title}
-        content={content}
-        footer={<ModalFooterLearn source={type} />}
-        withOverlay="dark"
-        withCloseButton
-      />
-    );
-  }
-);
+export const TxModal = ({ type, isPending, onClose = noop, ...props }: ITxModalProps) => {
+  const { title, content } = txModalCopy[type];
+
+  return (
+    <BasicStyledModal
+      {...props}
+      type="learn"
+      show={isPending}
+      onClose={onClose}
+      title={title}
+      body={<TxModalContent content={content} />}
+      footer={<ModalFooterLearn source={type} />}
+      withOverlay="dark"
+      withCloseButton
+    />
+  );
+};

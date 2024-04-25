@@ -54,7 +54,6 @@ const BasicModal: FC<BasicModalProps> = ({
   onAction = noop,
   withOverlay,
   bgColor = "white",
-  type,
   _modal = {},
   _modalContainer = {},
   _header = {},
@@ -82,7 +81,7 @@ const BasicModal: FC<BasicModalProps> = ({
             <CloseButton />
           </Center>
         )}
-        <VStack {...(type !== "loader" && { space: 6 })}>
+        <VStack space={6}>
           {!!header && (
             <NBModal.Header backgroundColor={bgColor} borderBottomWidth={hasTopBorder ? "px" : "0"} {..._header}>
               {header}
@@ -92,6 +91,8 @@ const BasicModal: FC<BasicModalProps> = ({
           <NBModal.Body {..._body} bgColor={bgColor}>
             {body}
           </NBModal.Body>
+        </VStack>
+        <VStack paddingTop={6}>
           {(!!footer || !!actionText) && (
             <NBModal.Footer borderTopWidth={hasBottomBorder ? "px" : "0"} {..._footer} padding="0" bgColor={bgColor}>
               {footer}

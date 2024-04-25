@@ -2,9 +2,9 @@ import React, { useCallback, useState } from "react";
 import { Button, Text, useBreakpointValue } from "native-base";
 import { SupportedChains, useFVLink } from "@gooddollar/web3sdk-v2";
 
-import { Title } from "../../layout";
+import { Title } from "../../../core/layout";
 import { Web3ActionButton } from "../../../advanced";
-import { CentreBox } from "../../layout/CentreBox";
+import { CentreBox } from "../../../core/layout/CentreBox";
 
 export const GoodIdDetails = ({ account }: { account: string }) => {
   const { getFvSig, deleteFvId } = useFVLink();
