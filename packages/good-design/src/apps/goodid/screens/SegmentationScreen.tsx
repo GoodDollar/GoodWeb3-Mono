@@ -1,4 +1,4 @@
-import React, { useContext, useMemo } from "react";
+import React, { useContext, useEffect, useMemo } from "react";
 import { Center, Text, VStack } from "native-base";
 import { CredentialSubject, CredentialType, useAggregatedCertificates } from "@gooddollar/web3sdk-v2";
 import { noop } from "lodash";
@@ -51,10 +51,16 @@ export const SegmentationScreen = ({ account }: { account: string }) => {
         acc[typeName] = certificate.credentialSubject;
       }
 
-      updateDataValue("segmentation", typeName, !!certificate);
       return acc;
     }, {} as Record<string, CredentialSubject | undefined>);
   }, [certificates]);
+
+  useEffect(() => {
+    certificates.forEach(({ certificate, typeName }) => {
+      const certExists = !!certificate;
+      updateDataValue("segmentation", typeName, certExists);
+    });
+  }, [certificates, updateDataValue]);
 
   return (
     <>
