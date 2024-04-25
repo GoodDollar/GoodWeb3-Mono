@@ -70,7 +70,7 @@ const args = process.argv.slice(2);
 
   console.log("5. Build design & login SDKs");
   await run("yarn workspace @gooddollar/good-design install");
-  await run("yarn workspace @gooddollar/good-design build");
+  await run("yarn workspace @gooddollar/good-design build:release");
 
   if (!skipLogin) {
     await run("yarn workspace @gooddollar/goodlogin-sdk install");

@@ -20,7 +20,7 @@ export const RedirectModal = ({ open, url, onClose, ...props }: RedirectModalPro
     show={open}
     onClose={onClose}
     title="Redirect Notice"
-    body={<Text variant="sub-grey">{RedirectCopy}</Text>}
+    body={<Text variant="sm-grey">{RedirectCopy}</Text>}
     footer={<ModalFooterCtaX extUrl={url} buttonText="Go to website" />}
     withOverlay="dark"
     withCloseButton

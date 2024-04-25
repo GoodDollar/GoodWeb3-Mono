@@ -2,6 +2,7 @@ import React, { Fragment } from "react";
 
 import { withTheme } from "../../../theme";
 import BasicStyledModal, { ModalLoaderBody } from "./BasicStyledModal";
+
 // todo: add blurred background
 
 export const LoaderModal = withTheme({ name: "BasicStyledModal" })(

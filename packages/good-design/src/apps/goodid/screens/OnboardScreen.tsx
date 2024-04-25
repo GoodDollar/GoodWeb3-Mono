@@ -56,7 +56,7 @@ const OnboardScreen = withTheme({ name: "OnboardScreen" })(
     const [isWhitelisted] = useIsAddressVerified(account ?? "");
     const [expiryDate] = useIdentityExpiryDate(account ?? "");
     const [isPending, setPendingSignTx] = useState(false);
-    const { title, listLabel, poweredBy } = fontStyles ?? {};
+    const { listLabel, poweredBy } = fontStyles ?? {};
 
     const storeFvSig = async (fvSig: string) => {
       // the link will be requested to send a user to the fv-flow
@@ -115,7 +115,9 @@ const OnboardScreen = withTheme({ name: "OnboardScreen" })(
       <Container {...props}>
         <TxModal type="identity" isPending={isPending} />
         <VStack {...innerContainer}>
-          <Title {...title}>{isWhitelisted ? `Renew` : `Get`} your GoodID to claim UBI</Title>
+          <Title variant="title-gdblue" fontSize="xl">
+            {isWhitelisted ? `Renew` : `Get`} your GoodID to claim UBI
+          </Title>
           {account ? (
             <GoodIdCard
               isWhitelisted={isWhitelisted}
