@@ -2,6 +2,7 @@ import React from "react";
 import { useEthers } from "@usedapp/core";
 import { GoodIdContextProvider, useIdentityExpiryDate } from "@gooddollar/web3sdk-v2";
 import { Text, VStack } from "native-base";
+import { Wizard } from "react-use-wizard";
 
 import { W3Wrapper } from "../../W3Wrapper";
 import { OffersAgreement } from "../../../apps/goodid/screens/OffersAgreement";
@@ -18,8 +19,6 @@ const GoodIdWrapper = ({ children }) => {
 export const GoodIdCardExample = () => {
   const { account } = useEthers();
   const [expiryDate, , state] = useIdentityExpiryDate(account ?? "");
-
-  console.log("expiryDate", { expiryDate });
 
   return (
     <VStack width={375} space={4}>
@@ -61,7 +60,11 @@ export const OnboardScreenExample = () => {
   return <OnboardScreen account={account} />;
 };
 
-export const OffersAgreementExample = () => <OffersAgreement />;
+export const OffersAgreementExample = () => (
+  <Wizard>
+    <OffersAgreement />
+  </Wizard>
+);
 
 export default {
   title: "Apps/GoodId",
