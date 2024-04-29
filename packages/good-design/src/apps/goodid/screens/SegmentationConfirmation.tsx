@@ -34,9 +34,11 @@ const SegmentationConfirmation = withTheme({ name: "SegmentationConfirmation" })
             You can always access this GoodID by connecting your current wallet to GoodDapp.
           </Text>
         </VStack>
-        <GoodButton {...button} onPress={nextStep}>
-          Next
-        </GoodButton>
+        <VStack space={4} width={"100%"}>
+          <GoodButton {...button} onPress={nextStep}>
+            Next
+          </GoodButton>
+        </VStack>
       </VStack>
     );
   }

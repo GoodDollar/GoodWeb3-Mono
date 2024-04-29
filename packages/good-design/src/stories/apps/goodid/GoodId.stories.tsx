@@ -8,7 +8,7 @@ import { W3Wrapper } from "../../W3Wrapper";
 import { OffersAgreement } from "../../../apps/goodid/screens/OffersAgreement";
 
 import { GoodIdCard } from "../../../apps/goodid";
-import { OnboardScreen, SegmentationScreen as SegScreen } from "../../../apps/goodid/screens";
+import { OnboardScreen, SegmentationScreen as SegScreen, SegmentationConfirmation } from "../../../apps/goodid/screens";
 import { SegmentationController } from "../../../apps/goodid/controllers";
 
 const GoodIdWrapper = ({ children }) => {
@@ -65,6 +65,16 @@ export const OffersAgreementExample = () => (
     <OffersAgreement />
   </Wizard>
 );
+
+export const SegmentationConfirmationScreen = () => {
+  return (
+    <W3Wrapper withMetaMask={true}>
+      <Wizard>
+        <SegmentationConfirmation />
+      </Wizard>
+    </W3Wrapper>
+  );
+};
 
 export default {
   title: "Apps/GoodId",
