@@ -1,6 +1,7 @@
 import { CredentialSubject, CredentialType } from "@gooddollar/web3sdk-v2";
 
 import isoCountries from "i18n-iso-countries";
+import { getKeyByValue } from "./enum";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 isoCountries.registerLocale(require("i18n-iso-countries/langs/en.json"));
@@ -29,6 +30,10 @@ const formatCredentialMapper: { [key in CredentialType]: (cred: CredentialSubjec
 };
 
 export const formatVerifiedValues = ({ credentialSubject, typeName }: FormattedCertificate) => {
-  if (!credentialSubject) return `Unverified-${typeName}`;
+  if (!credentialSubject) {
+    const typeKey = getKeyByValue(CredentialType, typeName);
+    return `Unverified-${typeKey}`;
+  }
+
   return formatCredentialMapper[typeName](credentialSubject);
 };
