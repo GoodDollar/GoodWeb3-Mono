@@ -30,9 +30,7 @@ const SegmentationRow = ({
   return (
     <VStack>
       <Title variant="subtitle-grey">{typeLabels[typeName]}</Title>
-      <Text fontFamily="body" fontSize="l" fontWeight="700" color="primary">
-        {verifiedValueCopy}
-      </Text>
+      <Title variant="title-gdblue">{verifiedValueCopy}</Title>
     </VStack>
   );
 };
@@ -75,10 +73,8 @@ export const SegmentationScreen = ({ account }: { account: string }) => {
       />
       <VStack space={10}>
         <VStack space={6}>
-          <Text fontFamily="heading" fontSize="l" fontWeight="700" color="primary" textAlign="center">
-            Please confirm
-          </Text>
-          <VStack paddingY={6} space={4} width={343} borderRadius={15} bgColor="greyCard" shadow={1} textAlign="center">
+          <Title variant="title-gdblue">Please confirm</Title>
+          <VStack variant="shadow-card" textAlign="center">
             {Object.entries(typeLabels).map(([key]) => (
               <SegmentationRow
                 key={key}

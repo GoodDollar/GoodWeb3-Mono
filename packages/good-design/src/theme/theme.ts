@@ -121,6 +121,19 @@ export const theme = extendTheme({
           lineHeight: 20.8
         })
       }
+    },
+    VStack: {
+      variants: {
+        "shadow-card": () => ({
+          paddingY: 4,
+          paddingX: 4,
+          space: 4,
+          width: 343,
+          borderRadius: 15,
+          bgColor: "greyCard",
+          shadow: 1
+        })
+      }
     }
   }
 });
