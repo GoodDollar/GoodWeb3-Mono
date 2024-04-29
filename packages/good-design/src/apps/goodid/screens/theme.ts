@@ -19,15 +19,20 @@ const OnboardScreen = {
         underline: true,
         textAlign: "center",
         fontSize: "2xs"
-      },
-      tos: {
-        fontFamily: "subheading",
-        color: "goodGrey.450",
-        fontSize: "2xs",
-        textAlign: "center"
       }
     }
   }
 };
 
-export { OnboardScreen };
+const SegmentationConfirmation = {
+  baseStyle: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    paddingX: 6,
+    paddingY: 4,
+    width: 375
+  }
+};
+
+export { OnboardScreen, SegmentationConfirmation };

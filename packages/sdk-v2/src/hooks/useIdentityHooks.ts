@@ -1,5 +1,6 @@
 import { IdentityV2 } from "@gooddollar/goodprotocol/types";
 import usePromise from "react-use-promise";
+import moment from "moment";
 
 import { useGetContract } from "../sdk";
 
@@ -13,7 +14,13 @@ export const useIdentityExpiryDate = (account: string) => {
       const periodInMs = authPeriod.mul(24 * 60 * 60 * 1000);
       const expiryTimestamp = lastAuthenticated.mul(1000).add(periodInMs);
 
-      return { expiryTimestamp, authPeriod };
+      let formattedExpiryTimestamp: string | null = null;
+      if (!lastAuthenticated.isZero() && expiryTimestamp) {
+        const timestamp = expiryTimestamp.toNumber();
+        formattedExpiryTimestamp = moment(timestamp).format("MMMM DD, YYYY");
+      }
+
+      return { expiryTimestamp, authPeriod, formattedExpiryTimestamp };
     }
 
     return Promise.resolve(undefined);

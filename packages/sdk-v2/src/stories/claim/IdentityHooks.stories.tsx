@@ -23,7 +23,7 @@ const Web3Component = (params: PageProps) => {
       <button
         onClick={async () => {
           await fvlink.getFvSig();
-          setLink(await fvlink.getLink(params.firstName || "", document.location.href));
+          setLink(fvlink.getLink(params.firstName || "", document.location.href));
         }}
       >
         Generate FV Link

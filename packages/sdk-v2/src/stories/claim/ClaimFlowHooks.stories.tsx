@@ -31,12 +31,12 @@ const FVModal = (params: ModalProps & { firstName: string }) => {
         />
         <Button
           onPress={async () => {
-            let link;
+            let link: string;
             if (method === "popup") {
-              link = await fvlink?.getLink(params.firstName, undefined, true);
+              link = fvlink?.getLink(params.firstName, undefined, true);
               window.open(link, "_blank", "width: '800px', height: 'auto'");
             } else {
-              link = await fvlink?.getLink(params.firstName, document.location.href, false);
+              link = fvlink?.getLink(params.firstName, document.location.href, false);
               link && void Linking.openURL(link);
             }
             // console.log({ link });

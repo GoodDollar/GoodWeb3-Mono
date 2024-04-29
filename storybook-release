@@ -1,14 +1,8 @@
 #!/bin/bash
-
-rm -rf .yarn/cache
-rm -rf .yarn/install-state.gz
-rm -rf node_modules
-rm -rf packages/good-design/node_modules
-rm -rf packages/sdk-v2/node_modules
 rm -rf packages/good-design/storybook-static
 rm -rf packages/sdk-v2/storybook-static
 rm -rf dist/storybook
-rm -f yarn.lock
+(cp yarn.lock packages/good-design; cp yarn.lock packages/sdk-v2)
 
 export YARN_FLAGS=
 export YARN_ENABLE_IMMUTABLE_INSTALLS=false
@@ -16,7 +10,6 @@ yarn config set -H enableImmutableInstalls false
 
 # build storybook distros
 cd packages/good-design
-touch yarn.lock
 yarn
 
 if ! yarn build-storybook; then
@@ -24,7 +17,6 @@ if ! yarn build-storybook; then
 fi
 
 cd ../sdk-v2
-touch yarn.lock
 yarn
 export STORYBOOK_BASEPATH=/sdk/
 

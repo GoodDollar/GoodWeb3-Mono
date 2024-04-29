@@ -1,21 +1,21 @@
-import { ArrowBackIcon, Checkbox, Center, HStack, Text, View, VStack } from "native-base";
+import { Checkbox, Center, HStack, Text, View, VStack } from "native-base";
 import React, { FC, PropsWithChildren, useCallback, useState } from "react";
-import { TouchableOpacity } from "react-native";
 import { Wizard, useWizard } from "react-use-wizard";
 
-import { GoodButton } from "../../core/buttons";
-import ImageCard from "../../core/layout/ImageCard";
-import { Image } from "../../core/images";
-import { ErrorModal } from "../../core/web3";
-import { WebVideoUploader } from "../../core/inputs/WebVideoUploader";
-import { WizardContextProvider } from "../../utils/WizardContext";
-import { BulletPointList, Title } from "../../core/layout";
+import { GoodButton } from "../../../core/buttons";
+import ImageCard from "../../../core/layout/ImageCard";
+import { Image } from "../../../core/images";
+import { WebVideoUploader } from "../../../core/inputs/WebVideoUploader";
+import { WizardContextProvider } from "../../../utils/WizardContext";
+import { BulletPointList, Title } from "../../../core/layout";
 
-import RedTentCard from "../../assets/images/redtentcard.png";
-import BillyPhone from "../../assets/images/billy-phone.png";
-import { cardShadow } from "../../theme";
+import RedTentCard from "../../../assets/images/redtentcard.png";
+import BillyPhone from "../../../assets/images/billy-phone.png";
+import { cardShadow } from "../../../theme";
 
-export type Props = {
+import { WizardHeader } from ".";
+
+export type RedTentProps = {
   onVideo: (base64: string, extension: string) => Promise<void>;
   onDone: (error?: Error) => Promise<void>;
 };
@@ -31,46 +31,6 @@ const videoRestrictions = ["Maximum video length 30sec", "Maximum size 20mb"];
 const videoUsagePolicy = [
   `Your video may be reviewed by the \n GoodLabs or partner teams for \n verification purposes. Your video \n will not be shared or used publicly, \n and will be erased after a period of \n time.`
 ];
-
-const WizardHeader = ({ onDone, onError }: { onDone: Props["onDone"]; onError: any }) => {
-  const { isFirstStep, previousStep, isLastStep, goToStep } = useWizard();
-
-  const handleBack = useCallback(() => {
-    if (isFirstStep) {
-      void onDone();
-      return;
-    }
-    previousStep();
-  }, [isFirstStep]);
-
-  if (onError) return <ErrorModal error={onError} onClose={() => goToStep(1)} overlay="dark" />;
-
-  return (
-    <View
-      bg="primary"
-      justifyContent={"center"}
-      alignItems={"center"}
-      height={12}
-      flexDir={"row"}
-      width={375}
-      paddingLeft={isFirstStep || isLastStep ? 0 : 4}
-      paddingRight={4}
-      mb={6}
-    >
-      <View position={"relative"} display={"inline"} width={15}>
-        <TouchableOpacity onPress={handleBack}>
-          {isLastStep || isFirstStep ? null : <ArrowBackIcon color="white" />}
-        </TouchableOpacity>
-      </View>
-
-      <View flex={"auto"} flexDirection={"row"} justifyContent={"center"}>
-        <Text color="white" fontFamily="subheading" fontSize="sm" fontWeight="500" lineHeight={19}>
-          GoodID
-        </Text>
-      </View>
-    </View>
-  );
-};
 
 const WizardWrapper: FC<PropsWithChildren> = ({ children }) => <View width={375}>{children}</View>;
 
@@ -116,7 +76,7 @@ const PoolRequirements = () => (
   </VStack>
 );
 
-const RedtentOffer = ({ onDone }: { onDone: Props["onDone"] }) => {
+const RedtentOffer = ({ onDone }: { onDone: RedTentProps["onDone"] }) => {
   const { nextStep } = useWizard();
   return (
     <View>
@@ -153,7 +113,13 @@ const RedtentOffer = ({ onDone }: { onDone: Props["onDone"] }) => {
   );
 };
 
-const RedtentVideoInstructions = ({ onDone, onVideo }: { onDone: Props["onDone"]; onVideo: Props["onVideo"] }) => {
+const RedtentVideoInstructions = ({
+  onDone,
+  onVideo
+}: {
+  onDone: RedTentProps["onDone"];
+  onVideo: RedTentProps["onVideo"];
+}) => {
   const { nextStep } = useWizard();
   const [isLoading, setLoading] = useState(false);
 
@@ -203,7 +169,7 @@ const RedtentVideoInstructions = ({ onDone, onVideo }: { onDone: Props["onDone"]
   );
 };
 
-const RedtentThanks = ({ onDone }: { onDone: Props["onDone"] }) => (
+const RedtentThanks = ({ onDone }: { onDone: RedTentProps["onDone"] }) => (
   <VStack space={200}>
     <VStack space={6}>
       <Title variant="title-gdblue">Thanks you for submitting your video!</Title>
@@ -223,17 +189,17 @@ const RedtentThanks = ({ onDone }: { onDone: Props["onDone"] }) => (
   </VStack>
 );
 
-export const RedtentWizard: React.FC<Props> = (props: Props) => {
+export const RedtentWizard: React.FC<RedTentProps> = (props: RedTentProps) => {
   const [error, setError] = useState<Error | undefined>(undefined);
   // inject show modal on callbacks exceptions
-  const modalOnDone: Props["onDone"] = async error => {
+  const modalOnDone: RedTentProps["onDone"] = async error => {
     try {
       await props.onDone(error);
     } catch (e: any) {
       setError(e.message);
     }
   };
-  const modalOnVideo: Props["onVideo"] = async (...args) => {
+  const modalOnVideo: RedTentProps["onVideo"] = async (...args) => {
     try {
       await props.onVideo(...args);
     } catch (e: any) {
@@ -243,7 +209,7 @@ export const RedtentWizard: React.FC<Props> = (props: Props) => {
 
   return (
     <WizardContextProvider>
-      <Wizard header={<WizardHeader onDone={modalOnDone} onError={error} />} wrapper={<WizardWrapper />}>
+      <Wizard header={<WizardHeader onDone={modalOnDone} error={error} />} wrapper={<WizardWrapper />}>
         <RedtentOffer onDone={modalOnDone} />
         <RedtentVideoInstructions onDone={modalOnDone} onVideo={modalOnVideo} />
         <RedtentThanks onDone={modalOnDone} />

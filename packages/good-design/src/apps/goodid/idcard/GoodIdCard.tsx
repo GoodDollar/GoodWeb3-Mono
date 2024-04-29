@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { Center, HStack, Heading, Text, VStack, IStackProps } from "native-base";
+import { Center, HStack, Text, VStack, IStackProps } from "native-base";
 import { useAggregatedCertificates } from "@gooddollar/web3sdk-v2";
 
 import { withTheme } from "../../../theme";
@@ -7,35 +7,43 @@ import SvgXml from "../../../core/images/SvgXml";
 import UnknownAvatarSvg from "../../../assets/svg/unknown-avatar.svg";
 import GdVerifiedSvg from "../../../assets/svg/gdverified.svg";
 import { truncateMiddle } from "../../../utils";
+import { FormattedCertificate, formatVerifiedValues } from "../../../utils/formatVerifiedValues";
+import { Title } from "../../../core/layout";
 
 interface GoodIdCardProps extends IStackProps {
   account: string;
   isWhitelisted: boolean;
   avatar?: string;
   fullname?: string;
-  expiryDate?: string;
+  expiryDate?: string | null;
   fontStyles?: any;
 }
 
 const CardRowItem = withTheme({ name: "CardRowItem" })(
   ({
     credentialLabel,
-    verifiedValue,
+    credential,
     fontStyles,
     ...props
   }: {
     credentialLabel: string;
-    verifiedValue?: string;
+    credential: FormattedCertificate;
     fontStyles?: any;
   }) => {
     const { subHeading, subContent } = fontStyles ?? {};
+    const verifiedValue = useMemo(() => formatVerifiedValues(credential), [credential]);
 
+    //todo: handle copy for onboard/segmentation verified values
     return (
       <VStack {...props}>
-        <Text {...subHeading}>{credentialLabel}</Text>
+        <Text variant="sm-grey" fontWeight="600" {...subHeading}>
+          {credentialLabel}
+        </Text>
         <HStack space={1} alignItems="center">
-          <Text {...subContent}>{verifiedValue ?? `Your ${credentialLabel.toLowerCase()}`}</Text>
-          {verifiedValue && (
+          <Text variant="sm-grey" {...subContent}>
+            {verifiedValue === "Unverified" ? "-" : verifiedValue}
+          </Text>
+          {!["Unverified"].includes(verifiedValue) && (
             <Center mt="-3px">
               <SvgXml src={GdVerifiedSvg} height="16" width="16" />
             </Center>
@@ -53,58 +61,49 @@ const GoodIdCard = withTheme({ name: "GoodIdCard", skipProps: "credentialsList" 
 
     const certificates = useAggregatedCertificates(account);
 
-    const verifiedValues = useMemo(() => {
-      let Age: string | null = null,
-        Gender: string | null = null,
-        Country: string | null = null;
-
-      const filtered = certificates?.filter(
-        certificate => certificate.typeName === "Identity" || certificate.typeName === "Location"
-      );
-
-      filtered?.forEach(({ certificate, typeName }) => {
-        const { credentialSubject } = certificate ?? {};
-        if (credentialSubject && typeName === "Identity") {
-          const { age: VerifiableAgeCredential, gender: VerifiableGenderCredential } = credentialSubject;
-
-          Age = Age ?? `${VerifiableAgeCredential.from}-${VerifiableAgeCredential.to}`;
-          Gender = Gender ?? VerifiableGenderCredential;
-        }
-
-        if (credentialSubject && typeName === "Location") {
-          Country = Country ?? credentialSubject.countryCode;
-        }
-      });
-
-      return { Age, Gender, Country };
-    }, [certificates]);
-
     return (
-      <VStack {...props}>
+      <VStack variant="shadow-card" paddingBottom={2} {...props}>
         <HStack justifyContent="space-between">
           <VStack>
-            <Heading {...title}>GoodID</Heading>
+            <Title variant="title-gdblue" {...title}>
+              GoodID
+            </Title>
             <HStack space={1} alignItems="center">
-              <Text {...subHeading}>{truncatedAccount}</Text>
+              <Text variant="sm-grey" fontWeight="600" {...subHeading}>
+                {truncatedAccount}
+              </Text>
               {isWhitelisted && (
                 <Center mt="-3px">
                   <SvgXml src={GdVerifiedSvg} height="16" width="16" />
                 </Center>
               )}
             </HStack>
-            {fullname && <Text {...subContent}>{fullname}</Text>}
+            {fullname && (
+              <Text variant="sm-grey" {...subContent}>
+                {fullname}
+              </Text>
+            )}
           </VStack>
           <VStack justifyContent="flex-start">
             <SvgXml src={avatar ?? UnknownAvatarSvg} height="56" width="56" />
           </VStack>
         </HStack>
         <HStack space={2} flexWrap="wrap">
-          {Object.entries(verifiedValues).map(([label, value]) => (
-            <CardRowItem key={label} credentialLabel={label} verifiedValue={value ?? "-"} />
-          ))}
+          {certificates
+            ?.filter(({ typeName }) => "Identity" !== typeName)
+            .map(({ certificate, typeName, type }) => (
+              <CardRowItem
+                key={type}
+                credentialLabel={typeName}
+                credential={{ credentialSubject: certificate?.credentialSubject, typeName: type }}
+                fontStyles={props.fontStyles}
+              />
+            ))}
         </HStack>
         <HStack>
-          <Text {...footer}>{expiryDate ?? "Expires on February 12, 2099"}</Text>
+          <Text variant="sm-grey" fontSize="2xs" {...footer}>
+            {expiryDate}
+          </Text>
         </HStack>
       </VStack>
     );

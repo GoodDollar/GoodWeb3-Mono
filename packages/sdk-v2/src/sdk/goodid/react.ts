@@ -1,14 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useCallback, useContext, useEffect, useState, useRef, useMemo, MutableRefObject } from "react";
-import { isEmpty, size, filter } from "lodash";
+import { useCallback, useContext, useEffect, useState, useRef, useMemo } from "react";
+import { size, filter } from "lodash";
+import { Platform } from "react-native";
+import GeoLocation from "@react-native-community/geolocation";
 
-import { GoodIdContext } from "../../../contexts/goodid/GoodIdContext";
-import { Certificate, CertificateRecord, CredentialType } from "../types";
-
-export interface CertificateItem {
-  id: string;
-  certificate: Certificate;
-}
+import { GoodIdContext } from "../../contexts/goodid/GoodIdContext";
+import { Certificate, CertificateItem, CertificateRecord, CredentialType } from "./types";
+import { requestIdentityCertificate, requestLocationCertificate } from "./sdk";
 
 export interface AggregatedCertificate extends Partial<CertificateItem> {
   key: string; // composite unique key to be used for lists rendering
@@ -146,4 +144,85 @@ export const useAggregatedCertificates = (account: string): AggregatedCertificat
       return { ...item, key, type, typeName } as AggregatedCertificate;
     });
   }, [certificates]);
+};
+
+// could be the configuration has to be set on the native side (on root-level)
+// at least the permission android.permission.ACCESS_FINE_LOCATION has to be added
+// in order for below hook to work
+
+// GeoLocation.setRNConfiguration({
+//   skipPermissionRequests: false,
+//   authorizationLevel: "whenInUse",
+//   locationProvider: "auto"
+// });
+
+export interface GeoLocation {
+  location: [number, number] | null;
+}
+
+export const useGeoLocation = (): [location: GeoLocation, error: string | null] => {
+  const [geoLocation, setGeoLocation] = useState<GeoLocation>({ location: null });
+  const [error, setError] = useState<string | null>(null);
+
+  const onError = error => {
+    setError(error);
+  };
+
+  const getCurrentPosition = () => {
+    // based on the platform getCurrentPosition will use the appropriate API
+    GeoLocation.getCurrentPosition(
+      (position: any) => {
+        const { latitude, longitude } = position.coords;
+        setGeoLocation({ location: [latitude, longitude] });
+      },
+      (error: any) => {
+        onError(error);
+      },
+      {} // is optional but not made optional in the type definition
+    );
+  };
+
+  useEffect(() => {
+    if (Platform.OS === "web") {
+      getCurrentPosition();
+      return;
+    }
+    // requestAuthorization only is needed on native
+    GeoLocation.requestAuthorization(getCurrentPosition, onError);
+  }, []);
+
+  return [geoLocation, error];
+};
+
+/**
+ * Request VerifiableCredentials from GoodDollar and store them in the local database
+ * @param account - the evm address which was used to pass the FaceVerification of the gooddollar protocol
+ * @param baseEnv
+ * @returns
+ */
+export const useIssueCertificates = (account: string | undefined, baseEnv: any) => {
+  const { storeCertificate } = useCertificates(account ?? "");
+
+  return useCallback(
+    async (account: string, geoLocation: GeoLocation | undefined, fvsig: string) => {
+      const { location } = geoLocation ?? {};
+
+      try {
+        const promises: Promise<CertificateItem>[] = [];
+        if (location) {
+          promises.push(requestLocationCertificate(baseEnv, location, fvsig, account));
+        }
+        promises.push(requestIdentityCertificate(baseEnv, fvsig, account));
+        const results = await Promise.all(promises);
+        for (const result of results) {
+          if (result && result.certificate) {
+            await storeCertificate(result.certificate);
+          }
+        }
+      } catch (e) {
+        console.error("Failed to get certificates:", e);
+      }
+    },
+    [baseEnv, storeCertificate]
+  );
 };

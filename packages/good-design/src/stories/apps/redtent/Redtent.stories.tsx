@@ -1,4 +1,4 @@
-import { RedtentWizard } from "../../../apps/redtent/RedtentWizard";
+import { RedtentWizard } from "../../../apps/goodid/wizards/RedtentWizard";
 export default {
   title: "Apps/Redtent Video Wizard",
   component: RedtentWizard

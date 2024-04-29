@@ -3994,7 +3994,7 @@ __metadata:
     "@babel/preset-typescript": ^7.16.0
     "@babel/runtime": ^7.18.9
     "@gooddollar/goodprotocol": ^2.0.24
-    "@gooddollar/web3sdk-v2": 0.2.22-beta.2c55f4c
+    "@gooddollar/web3sdk-v2": 0.2.22-beta.d48c5ea
     "@lingui/macro": ^3.14.0
     "@lingui/react": ^3.14.0
     "@magiklabs/react-sdk": ^1.0.8
@@ -4024,10 +4024,12 @@ __metadata:
     babel-plugin-react-native-web: ^0.17.1
     babel-plugin-transform-class-properties: ^6.24.1
     buffer: ^6.0.3
+    country-data: ^0.0.31
     cpx: ^1.5.0
     css-loader: ^6.7.1
     ctix: ^1.4.0
     ethers: 5.7.2
+    i18n-iso-countries: ^7.11.1
     lodash: ^4.17.21
     metro-react-native-babel-preset: ^0.72.0
     moment: ^2.29.4
@@ -4165,7 +4167,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/web3sdk-v2@0.2.22-beta.2c55f4c, @gooddollar/web3sdk-v2@workspace:packages/sdk-v2":
+"@gooddollar/web3sdk-v2@0.2.22-beta.d48c5ea, @gooddollar/web3sdk-v2@workspace:packages/sdk-v2":
   version: 0.0.0-use.local
   resolution: "@gooddollar/web3sdk-v2@workspace:packages/sdk-v2"
   dependencies:
@@ -4184,6 +4186,7 @@ __metadata:
     "@gooddollar/goodprotocol": ^2.0.24
     "@orbisclub/orbis-sdk": ^0.4.87
     "@react-native-async-storage/async-storage": 1.17.10
+    "@react-native-community/geolocation": 3.1.0
     "@react-native-firebase/analytics": ^16.4.6
     "@sentry/browser": 7.16.0
     "@sentry/react-native": ^5.15.1
@@ -6516,6 +6519,16 @@ __metadata:
   bin:
     react-native: build/bin.js
   checksum: 9dfe8d258e9f36d339b8e9ebe22d276003b00a035d20ff4a3328ce3b923cd090e94f6a53aaab9869c9c29d46e5aa12317bae3f806890880a7f0235a01825e5e3
+  languageName: node
+  linkType: hard
+
+"@react-native-community/geolocation@npm:3.1.0":
+  version: 3.1.0
+  resolution: "@react-native-community/geolocation@npm:3.1.0"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: defc42ed11d0a3cc697d5db56c17cc19af2ca35b32674dc7323b40a458f5066b051191e5dc58c367f2643a0ed70b47e8eb2ac87ab1566e642ca0cbab1a1f09a9
   languageName: node
   linkType: hard
 
@@ -17344,6 +17357,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"country-data@npm:^0.0.31":
+  version: 0.0.31
+  resolution: "country-data@npm:0.0.31"
+  dependencies:
+    currency-symbol-map: ~2
+    underscore: ">1.4.4"
+  checksum: ffc99e36d2015ae031ed3402cc12bc73b90dd4a5cf6d82578f3a37c0e7a9c0ed7857cf480a28e374f896a541ea1f47f156bc350a3abf7f7cd072fc589c3ae27b
+  languageName: node
+  linkType: hard
+
 "cp-file@npm:^7.0.0":
   version: 7.0.0
   resolution: "cp-file@npm:7.0.0"
@@ -17744,6 +17767,13 @@ __metadata:
   bin:
     ctix: dist/cli.js
   checksum: 3bbabf1b735f6e37dbb46d5e6593472d01a8f0d091bf2bcebec20f04aff6da7e6dcb5ac80a35cca17239082de25eff59583556a442ff440de808160c6633c1c8
+  languageName: node
+  linkType: hard
+
+"currency-symbol-map@npm:~2":
+  version: 2.2.0
+  resolution: "currency-symbol-map@npm:2.2.0"
+  checksum: aa5e058962d40a779818ef68864784323f7b1f59806f727dbf0d0925bda239e5b1277cbb5073607e95090a9946c999a8b90dc1a997e4bad412ff201163512020
   languageName: node
   linkType: hard
 
@@ -18345,6 +18375,13 @@ __metadata:
   version: 3.2.4
   resolution: "dexie@npm:3.2.4"
   checksum: 4e5294a954118b6862c864b8c3970904a1733daebcd919488624520696411e2e81ed1bceeac3634c5c15a21e37ce4b8502ed41c4edfbc5ba3f5925c34d56497b
+  languageName: node
+  linkType: hard
+
+"diacritics@npm:1.3.0":
+  version: 1.3.0
+  resolution: "diacritics@npm:1.3.0"
+  checksum: ef7552c36e221879be22bc977281d1ae644f0eb94a24b380d654bf3aeae76c8096e533059732980bb3b5cb77ce7de4178f038f79415ee715f6d3eea7025cadea
   languageName: node
   linkType: hard
 
@@ -22690,6 +22727,15 @@ __metadata:
   version: 1.0.4
   resolution: "hyphenate-style-name@npm:1.0.4"
   checksum: 4f5bf4b055089754924babebaa23c17845937bcca6aee95d5d015f8fa1e6814279002bd6a9e541e3fac2cd02519fc76305396727066c57c8e21a7e73e7a12137
+  languageName: node
+  linkType: hard
+
+"i18n-iso-countries@npm:^7.11.1":
+  version: 7.11.1
+  resolution: "i18n-iso-countries@npm:7.11.1"
+  dependencies:
+    diacritics: 1.3.0
+  checksum: 3ced46ba1d72d2112facce360b4c54cc880d26fa40a854b1fb16f1e8d753b2652585a8f909e599afd562cac840e5c2309f6d35f540359cebcfec572dc7449cd1
   languageName: node
   linkType: hard
 
@@ -35093,6 +35139,13 @@ __metadata:
   bin:
     undeclared-identifiers: bin.js
   checksum: e1f2a18d7bf735ec2b9ee464a621d8db72768e75e59334d34d1f7085e21558c621cc105dfd4cc7a0a219b91c43b71fbdea0508cdbe3b3396ed96902c6d5d590e
+  languageName: node
+  linkType: hard
+
+"underscore@npm:>1.4.4":
+  version: 1.13.6
+  resolution: "underscore@npm:1.13.6"
+  checksum: d5cedd14a9d0d91dd38c1ce6169e4455bb931f0aaf354108e47bd46d3f2da7464d49b2171a5cf786d61963204a42d01ea1332a903b7342ad428deaafaf70ec36
   languageName: node
   linkType: hard
 
