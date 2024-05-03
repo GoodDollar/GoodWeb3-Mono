@@ -8,7 +8,13 @@ import { W3Wrapper } from "../../W3Wrapper";
 import { OffersAgreement } from "../../../apps/goodid/screens/OffersAgreement";
 
 import { GoodIdCard } from "../../../apps/goodid";
-import { OnboardScreen, SegmentationScreen as SegScreen, SegmentationConfirmation } from "../../../apps/goodid/screens";
+import {
+  DisputeThanks,
+  OnboardScreen,
+  SegmentationScreen as SegScreen,
+  SegmentationConfirmation,
+  SegmentationDispute
+} from "../../../apps/goodid/screens";
 import { SegmentationController } from "../../../apps/goodid/controllers";
 
 const GoodIdWrapper = ({ children }) => {
@@ -71,6 +77,39 @@ export const SegmentationConfirmationScreen = () => {
     <W3Wrapper withMetaMask={true}>
       <Wizard>
         <SegmentationConfirmation />
+      </Wizard>
+    </W3Wrapper>
+  );
+};
+
+export const SegmentationDisputeScreen = () => {
+  const { account } = useEthers();
+  return (
+    <W3Wrapper withMetaMask={true} env="staging">
+      <Wizard>
+        <VStack>
+          <Text variant="browse-wrap" fontSize="sm">
+            For testing purposes. this screen is using staging/QA contracts
+          </Text>
+          <SegmentationDispute
+            account={account ?? ""}
+            onDispute={async disputedValues => {
+              console.log("Following is to be reported to ga/amp:", { disputedValues });
+            }}
+          />
+        </VStack>
+      </Wizard>
+    </W3Wrapper>
+  );
+};
+
+export const DisputeThanksScreen = () => {
+  return (
+    <W3Wrapper withMetaMask={true}>
+      <Wizard>
+        <VStack width={343}>
+          <DisputeThanks />
+        </VStack>
       </Wizard>
     </W3Wrapper>
   );
