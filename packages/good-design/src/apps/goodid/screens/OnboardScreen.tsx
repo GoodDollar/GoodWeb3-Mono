@@ -8,7 +8,7 @@ import { useFVModalAction } from "../../../hooks/useFVModalAction";
 import { withTheme } from "../../../theme";
 import { Title, TxModal } from "../../../core";
 import { BaseButton } from "../../../core/buttons";
-import { GoodIdCard } from "../idcard";
+import { GoodIdCard } from "../components";
 import SvgXml from "../../../core/images/SvgXml";
 import DollarSvg from "../../../assets/svg/goodid/dollar.svg";
 import GlobusSvg from "../../../assets/svg/goodid/globus.svg";

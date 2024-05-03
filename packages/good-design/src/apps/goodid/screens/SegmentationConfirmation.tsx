@@ -6,7 +6,7 @@ import { useWizard } from "react-use-wizard";
 import { useEthers } from "@usedapp/core";
 
 import { Title } from "../../../core/layout";
-import GoodIdCard from "../idcard/GoodIdCard";
+import GoodIdCard from "../components/GoodIdCard";
 import { GoodButton } from "../../../core/buttons";
 import { withTheme } from "../../../theme";
 import { LoaderModal } from "../../../core";
@@ -14,9 +14,9 @@ import { LoaderModal } from "../../../core";
 const SegmentationConfirmation = withTheme({ name: "SegmentationConfirmation" })(
   ({ styles, ...props }: { styles?: any }) => {
     const { nextStep } = useWizard();
-    const { account } = useEthers();
-    const [isWhitelisted] = useIsAddressVerified(account ?? "");
-    const [expiryDate, , state] = useIdentityExpiryDate(account ?? "");
+    const { account = "" } = useEthers();
+    const [isWhitelisted] = useIsAddressVerified(account);
+    const [expiryDate, , state] = useIdentityExpiryDate(account);
     const { innerContainer, button } = styles ?? {};
 
     return isWhitelisted === undefined || !account ? (
