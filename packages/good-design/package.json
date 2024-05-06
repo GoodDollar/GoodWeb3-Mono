@@ -27,7 +27,7 @@
     "@babel/preset-react": "^7.16.0",
     "@babel/preset-typescript": "^7.16.0",
     "@babel/runtime": "^7.18.9",
-    "@gooddollar/web3sdk-v2": "0.2.22-beta.c7ba600",
+    "@gooddollar/web3sdk-v2": "0.2.22-beta.5c155ca",
     "@storybook/addon-actions": "^6.5.12",
     "@storybook/addon-essentials": "^6.5.12",
     "@storybook/addon-links": "^6.5.12",
