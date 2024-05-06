@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Container, Heading, HStack, Text, VStack } from "native-base";
 import { AsyncStorage, useIdentityExpiryDate, useIsAddressVerified } from "@gooddollar/web3sdk-v2";
 import { noop } from "lodash";
@@ -19,7 +19,8 @@ import UbiSvg from "../../../assets/svg/goodid/ubi.svg";
 interface OnboardScreenProps {
   account: string | undefined;
   firstName?: string | undefined;
-  navigateTo?: () => void;
+  onFV?: () => void;
+  onSkip: () => void;
   innerContainer?: any;
   fontStyles?: any;
 }
@@ -52,11 +53,18 @@ const accessList = [
  * @param {object} fontStyles - styles for the text elements
  */
 const OnboardScreen = withTheme({ name: "OnboardScreen" })(
-  ({ navigateTo, account, firstName, innerContainer, fontStyles, ...props }: OnboardScreenProps) => {
+  ({ onFV, onSkip, account, firstName, innerContainer, fontStyles, ...props }: OnboardScreenProps) => {
+    const [hasCertificates] = useState(false);
     const [isWhitelisted] = useIsAddressVerified(account ?? "");
     const [expiryDate] = useIdentityExpiryDate(account ?? "");
     const [isPending, setPendingSignTx] = useState(false);
     const { listLabel, poweredBy } = fontStyles ?? {};
+
+    useEffect(() => {
+      if (hasCertificates === true) {
+        onSkip();
+      }
+    }, [hasCertificates]);
 
     const storeFvSig = async (fvSig: string) => {
       // the link will be requested to send a user to the fv-flow
@@ -75,8 +83,8 @@ const OnboardScreen = withTheme({ name: "OnboardScreen" })(
 
     const handleNext = async () => {
       // Should go to FaceVerificationIntro (wallet) || GoodID server (third parties)
-      if (navigateTo) {
-        navigateTo();
+      if (onFV) {
+        onFV();
       } else {
         setPendingSignTx(true);
         await verify();
@@ -109,7 +117,7 @@ const OnboardScreen = withTheme({ name: "OnboardScreen" })(
     }, [verify, isWhitelisted, expiryDate]);
 
     // todo: might want a spinner while waiting for isWhitelisted
-    if (isWhitelisted === undefined) return <></>;
+    if (isWhitelisted === undefined || hasCertificates !== false) return <></>;
 
     return (
       <Container {...props}>
