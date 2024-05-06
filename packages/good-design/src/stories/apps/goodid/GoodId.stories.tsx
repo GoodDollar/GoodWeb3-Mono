@@ -10,6 +10,7 @@ import { OffersAgreement } from "../../../apps/goodid/screens/OffersAgreement";
 import { GoodIdCard } from "../../../apps/goodid";
 import { OnboardScreen, SegmentationScreen as SegScreen, SegmentationConfirmation } from "../../../apps/goodid/screens";
 import { SegmentationController } from "../../../apps/goodid/controllers";
+import { noop } from "lodash";
 
 const GoodIdWrapper = ({ children }) => {
   return <GoodIdContextProvider>{children}</GoodIdContextProvider>;
@@ -57,7 +58,7 @@ export const SegmentationFlow = () => (
 
 export const OnboardScreenExample = () => {
   const { account } = useEthers();
-  return <OnboardScreen account={account} />;
+  return <OnboardScreen onSkip={noop} account={account} />;
 };
 
 export const OffersAgreementExample = () => (

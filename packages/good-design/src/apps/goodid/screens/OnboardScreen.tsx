@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Container, Heading, HStack, Text, VStack } from "native-base";
+import { Container, Heading, HStack, IContainerProps, Text, VStack } from "native-base";
 import { AsyncStorage, useIdentityExpiryDate, useIsAddressVerified } from "@gooddollar/web3sdk-v2";
 import { noop } from "lodash";
 import moment from "moment";
@@ -44,6 +44,7 @@ const accessList = [
   }
 ];
 
+//todo: define component style configuration
 /**
  * OnboardScreen shown to all users who don't have good-id certificate yet
  * Certificates check should be done before and only show this screen when they don't exist
@@ -53,7 +54,15 @@ const accessList = [
  * @param {object} fontStyles - styles for the text elements
  */
 const OnboardScreen = withTheme({ name: "OnboardScreen" })(
-  ({ onFV, onSkip, account, firstName, innerContainer, fontStyles, ...props }: OnboardScreenProps) => {
+  ({
+    onFV,
+    onSkip,
+    account,
+    firstName,
+    innerContainer,
+    fontStyles,
+    ...props
+  }: OnboardScreenProps & IContainerProps) => {
     const [hasCertificates] = useState(false);
     const [isWhitelisted] = useIsAddressVerified(account ?? "");
     const [expiryDate] = useIdentityExpiryDate(account ?? "");
