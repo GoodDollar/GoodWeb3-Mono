@@ -1,33 +1,20 @@
-import React, { useContext, useEffect } from "react";
+import React from "react";
 import { Center, Container, Text, VStack } from "native-base";
 import { useWizard } from "react-use-wizard";
+import { AsyncStorage } from "@gooddollar/web3sdk-v2";
 
-import { WizardContext } from "../../../utils/WizardContext";
 import { GoodButton, Image, Title } from "../../../core";
 
 import BillyGrin from "../../../assets/images/billy-grin.png";
 
 export const OffersAgreement = () => {
-  const { data, updateDataValue } = useContext(WizardContext);
   const { nextStep } = useWizard();
 
   // we need the offersAgreement acceptance for running checkAvailableOffers
-  const handleAccept = () => {
-    updateDataValue("segmentation", "offersAgreement", true);
+  const handleAccept = async () => {
+    await AsyncStorage.setItem("goodid_permission", "true");
     void nextStep();
   };
-
-  useEffect(() => {
-    if (data?.segmentation) {
-      // if any of the segmentation data is set to false at this point
-      // or a user has disputed their determined age/gender/location data
-      // it means by definition a user does not qualify so we can skip this step
-      const mightQualify = Object.values(data.segmentation).every(value => value === true);
-      if (!mightQualify || data?.segmentationDispute) {
-        void nextStep();
-      }
-    }
-  }, []);
 
   return (
     <>
