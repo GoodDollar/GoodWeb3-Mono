@@ -2,12 +2,12 @@ import React, { useCallback, useContext } from "react";
 import { Center, VStack } from "native-base";
 import { useAggregatedCertificates } from "@gooddollar/web3sdk-v2";
 import { useWizard } from "react-use-wizard";
+import { useCertificatesSubject } from "@gooddollar/web3sdk-v2";
 
 import { Title } from "../../../core/layout";
 import { GoodButton } from "../../../core/buttons";
 import { Image } from "../../../core/images";
 import { WizardContext } from "../../../utils/WizardContext";
-import { useCertificatesMap } from "../../../hooks";
 import { SegmentationRow, typeLabelsDispute as typeLabels } from "../components";
 
 import RoboBilly from "../../../assets/images/robo-billy.png";
@@ -23,7 +23,7 @@ export const SegmentationDispute = ({
   const { data, updateDataValue } = useContext(WizardContext);
   const certificates = useAggregatedCertificates(account);
 
-  const certificateMap = useCertificatesMap(certificates);
+  const certificatesSubjects = useCertificatesSubject(certificates);
 
   const handleCheckChange = (typeName: string, checked: boolean) => {
     updateDataValue("segmentationDispute", typeName, checked);
@@ -45,7 +45,7 @@ export const SegmentationDispute = ({
         {Object.entries(typeLabels).map(([key]) => (
           <SegmentationRow
             key={key}
-            credentialSubject={certificateMap[key]}
+            credentialSubject={certificatesSubjects[key]}
             typeName={key as keyof typeof typeLabels}
             onCheck={checked => handleCheckChange(key, checked)}
           />
