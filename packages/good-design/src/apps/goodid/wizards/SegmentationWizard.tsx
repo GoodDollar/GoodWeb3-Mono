@@ -3,13 +3,15 @@ import { useWizard, Wizard } from "react-use-wizard";
 import { Center, VStack } from "native-base";
 import { useEthers } from "@usedapp/core";
 import { noop } from "lodash";
+import { GeoLocation, useGeoLocation } from "@gooddollar/web3sdk-v2";
+
 import { GoodButton } from "../../../core";
 import { DisputeThanks, OffersAgreement, SegmentationConfirmation, SegmentationScreen } from "../screens";
 import { LoaderModal } from "../../../core/web3/modals";
 import { WizardContext, WizardContextProvider } from "../../../utils/WizardContext";
 import { WizardHeader } from "./WizardHeader";
-import { GeoLocation, useGeoLocation } from "@gooddollar/web3sdk-v2";
 import { SegmentationDispute } from "../screens/SegmentationDispute";
+import { CheckAvailableOffers } from "../components";
 
 export type SegmentationProps = {
   onLocationRequest: (locationState: GeoLocation, account: string) => Promise<void>;
@@ -62,7 +64,7 @@ const SegmentationScreenWrapper = (props: SegmentationProps) => {
 export const SegmentationWizard = (props: SegmentationProps) => {
   const [error, setError] = useState<string | null>(null);
   const { account = "" } = useEthers();
-  // inject show modal on callbacks exceptions
+
   const modalOnDone: SegmentationProps["onDone"] = async error => {
     try {
       await props.onDone(error);
@@ -85,16 +87,23 @@ export const SegmentationWizard = (props: SegmentationProps) => {
     console.log("disputedValues", disputedValues);
   };
 
+  const modalOnFinish = async () => {
+    // should report analytics?
+    // should navigate to claim page
+  };
+
   return (
     <WizardContextProvider>
       <Wizard header={<WizardHeader onDone={modalOnDone} error={error} />}>
         <SegmentationScreenWrapper onDone={props.onDone} onLocationRequest={modalOnLocation} account={account} />
-        {/* Optional paths, only shown to users who think there data is wrong */}
+        {/* Optional dispute path, only shown to users who think there data is wrong */}
         <SegmentationDispute account={account} onDispute={onDispute} />
         <DisputeThanks />
-        {/* optional path, only shown to users who has all their data verified */}
+        {/* Ask permission for matching their data against potential pools  */}
         <OffersAgreement />
         <SegmentationConfirmation />
+        {/* if offers available > go to offers, else handle navigating to claim-page */}
+        <CheckAvailableOffers account={account} onDone={modalOnFinish} />
       </Wizard>
     </WizardContextProvider>
   );

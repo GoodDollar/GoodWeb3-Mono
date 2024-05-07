@@ -7,7 +7,7 @@ import { Wizard } from "react-use-wizard";
 import { W3Wrapper } from "../../W3Wrapper";
 import { OffersAgreement } from "../../../apps/goodid/screens/OffersAgreement";
 
-import { GoodIdCard } from "../../../apps/goodid";
+import { CheckAvailableOffers, GoodIdCard } from "../../../apps/goodid";
 import {
   DisputeThanks,
   OnboardScreen,
@@ -99,6 +99,22 @@ export const SegmentationDisputeScreen = () => {
           />
         </VStack>
       </Wizard>
+    </W3Wrapper>
+  );
+};
+
+//todo: add controls for story
+export const checkAVailableOffersExample = () => {
+  const { account = "" } = useEthers();
+
+  return (
+    <W3Wrapper withMetaMask={true} env="staging">
+      <CheckAvailableOffers
+        account={account}
+        onDone={async () => {
+          // console.log("test");
+        }}
+      />
     </W3Wrapper>
   );
 };
