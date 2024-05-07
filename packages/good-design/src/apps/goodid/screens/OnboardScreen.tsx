@@ -74,14 +74,14 @@ export const OnboardScreen = withTheme({ name: "OnboardScreen" })(
       <Container {...props}>
         <TxModal type="identity" isPending={isPending} />
         <VStack {...innerContainer}>
-          <Title variant="title-gdblue" fontSize="xl">
+          <Title variant="title-gdblue" fontSize="xl" alignSelf={"center"}>
             {isWhitelisted ? `Renew` : `Get`} your GoodID to claim UBI
           </Title>
           {account ? (
             <GoodIdCard fullname={name} isWhitelisted={isWhitelisted} account={account} expiryDate={expiryDate} />
           ) : null}
 
-          <VStack space={2} alignItems="flex-start">
+          <VStack space={2}>
             <Heading fontSize="md" color="goodGrey.600">
               It unlocks access to:
             </Heading>
@@ -105,12 +105,12 @@ export const OnboardScreen = withTheme({ name: "OnboardScreen" })(
                   Verification takes 2 minutes
                 </Text>
               </HStack>
-              <Text variant="browse-wrap">
+              <Text variant="browse-wrap" alignSelf={"center"}>
                 By clicking on ”I accept, verify me”, you are accepting our Terms of Use and Privacy Policy. Per this
                 policy you agree to let us collect information such as your gender and age.
               </Text>
             </VStack>
-            <VStack space={4}>
+            <VStack alignSelf={"center"}>
               <BaseButton onPress={onAccept} text="I ACCEPT, VERIFY ME" maxW={343} variant="standard-blue" />
               <Text {...poweredBy}>Powered by GoodDollar</Text>
             </VStack>

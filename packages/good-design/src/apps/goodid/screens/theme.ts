@@ -1,13 +1,12 @@
 const OnboardScreen = {
   baseStyle: {
-    width: 375,
+    width: "100%",
     paddingX: 4,
-    alignItems: "flex-start",
+    alignItems: "center",
     maxWidth: "100%",
     innerContainer: {
       space: 8,
-      width: "100%",
-      alignItems: "flex-start"
+      width: "100%"
     },
     fontStyles: {
       listLabel: {
