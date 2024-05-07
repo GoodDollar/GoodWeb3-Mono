@@ -11,7 +11,7 @@ import { isEmpty } from "lodash";
 
 import { SegmentationWizard } from "../wizards/SegmentationWizard";
 
-export const SegmentationController = () => {
+export const SegmentationController = ({ fvSig }: { fvSig?: string }) => {
   const { account } = useEthers();
   const { baseEnv } = useGetEnvChainId();
   const issueCertificate = useIssueCertificates(account ?? "", baseEnv);
@@ -27,10 +27,13 @@ export const SegmentationController = () => {
         return;
       }
 
-      const fvSig = await AsyncStorage.getItem("fvSig").then(async sig =>
-        !isEmpty(sig) ? sig : await fvLink.getFvSig()
-      );
-      await issueCertificate(account, locationState, fvSig);
+      fvSig =
+        fvSig ||
+        (await AsyncStorage.getItem("fvSig").then(async sig => (!isEmpty(sig) ? sig : await fvLink.getFvSig())));
+      if (fvSig) await issueCertificate(account, locationState, fvSig);
+      else {
+        throw new Error("missing faceid");
+      }
     },
     [issueCertificate, account]
   );
