@@ -9,7 +9,7 @@ export const useRegisterRedtent = () => {
   const { backend } = Envs[devEnv];
 
   const register = useCallback(
-    async (data: { account: string; videoFilename: string; credentials: Array<any> }) =>
+    async (data: { account: string; videoFilename: string; certificates: Array<any> }) =>
       fetch(`${backend}/goodid/redtent`, g$Request(data)).then(g$Response),
     [backend]
   );
