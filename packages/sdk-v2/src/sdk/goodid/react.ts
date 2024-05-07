@@ -261,7 +261,6 @@ export interface CheckAvailableOffersProps {
 
 /**
  * Check if the user is eligible for any of the offers
- * Hook assumes that the user has passed the FaceVerification (meaning at least the existence of identity certificate)
  * @param account - the evm address which was used to pass the FaceVerification of the gooddollar protocol
  * @param pools - the list of offers to check against
  * @returns the list of offers the user is eligible for
@@ -270,7 +269,10 @@ export interface CheckAvailableOffersProps {
 export const useCheckAvailableOffers = ({ account, pools }: CheckAvailableOffersProps) => {
   const certificates = useAggregatedCertificates(account);
   const certificatesSubjects = useCertificatesSubject(certificates);
-  const [hasPermission] = usePromise(() => AsyncStorage.getItem("goodid_permission").then(value => value === true), []);
+  const [hasPermission] = usePromise(
+    () => AsyncStorage.getItem("goodid_permission").then(value => value === "true"),
+    []
+  );
 
   return useMemo(() => {
     // keep null until we have fetched everything
