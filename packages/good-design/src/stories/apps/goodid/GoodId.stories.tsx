@@ -1,4 +1,5 @@
 import React from "react";
+import { Meta } from "@storybook/react";
 import { useEthers } from "@usedapp/core";
 import { GoodIdContextProvider, useIdentityExpiryDate } from "@gooddollar/web3sdk-v2";
 import { Text, VStack } from "native-base";
@@ -9,8 +10,7 @@ import { OffersAgreement } from "../../../apps/goodid/screens/OffersAgreement";
 
 import { GoodIdCard } from "../../../apps/goodid";
 import { OnboardScreen, SegmentationScreen as SegScreen, SegmentationConfirmation } from "../../../apps/goodid/screens";
-import { SegmentationController } from "../../../apps/goodid/controllers";
-import { noop } from "lodash";
+import { SegmentationController, OnboardController } from "../../../apps/goodid/controllers";
 
 const GoodIdWrapper = ({ children }) => {
   return <GoodIdContextProvider>{children}</GoodIdContextProvider>;
@@ -56,9 +56,47 @@ export const SegmentationFlow = () => (
   </W3Wrapper>
 );
 
-export const OnboardScreenExample = () => {
-  const { account } = useEthers();
-  return <OnboardScreen onSkip={noop} account={account} />;
+export const OnboardScreenExample = {
+  render: args => {
+    const { account } = useEthers();
+    console.log({ account });
+    return <OnboardScreen onAccept={() => alert("onAccept")} {...args} />;
+  },
+  args: {
+    name: "test user",
+    isWhitelisted: true,
+    account: "0x066",
+    isPending: false,
+    hasCertificates: false,
+    expiryDate: new Date().toISOString()
+  }
+};
+
+export const OnboardControllerExample: Meta<React.ComponentProps<typeof OnboardController>> = {
+  decorators: [
+    (Story: any) => {
+      console.log("HERE");
+      return (
+        <GoodIdWrapper>
+          <W3Wrapper withMetaMask={true} env="fuse">
+            <Story />
+          </W3Wrapper>
+        </GoodIdWrapper>
+      );
+    }
+  ],
+  render: args => {
+    const { account } = useEthers();
+    console.log({ account });
+    args.account = account || args.account;
+    return <OnboardController {...args} />;
+  },
+  args: {
+    account: "0x5128E3C1f8846724cc1007Af9b4189713922E4BB",
+    name: "testuser",
+    onFV: () => alert("onFV"),
+    onSkip: () => alert("onSkip")
+  }
 };
 
 export const OffersAgreementExample = () => (

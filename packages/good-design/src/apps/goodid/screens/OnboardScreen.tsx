@@ -1,10 +1,6 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { Container, Heading, HStack, IContainerProps, Text, VStack } from "native-base";
-import { AsyncStorage, useIdentityExpiryDate, useIsAddressVerified } from "@gooddollar/web3sdk-v2";
-import { noop } from "lodash";
-import moment from "moment";
+import React from "react";
+import { Container, Heading, HStack, Text, VStack, IContainerProps } from "native-base";
 
-import { useFVModalAction } from "../../../hooks/useFVModalAction";
 import { withTheme } from "../../../theme";
 import { Title, TxModal } from "../../../core";
 import { BaseButton } from "../../../core/buttons";
@@ -16,11 +12,14 @@ import HeartsSvg from "../../../assets/svg/goodid/hearts.svg";
 import StopWatchSvg from "../../../assets/svg/goodid/stopwatch.svg";
 import UbiSvg from "../../../assets/svg/goodid/ubi.svg";
 
-interface OnboardScreenProps {
+export interface OnboardScreenProps {
   account: string | undefined;
-  firstName?: string | undefined;
-  onFV?: () => void;
-  onSkip: () => void;
+  isPending: boolean;
+  isWhitelisted?: boolean;
+  hasCertificates?: boolean;
+  expiryDate?: string;
+  name?: string;
+  onAccept: () => void;
   innerContainer?: any;
   fontStyles?: any;
 }
@@ -49,81 +48,24 @@ const accessList = [
  * OnboardScreen shown to all users who don't have good-id certificate yet
  * Certificates check should be done before and only show this screen when they don't exist
  * @param {string} account - user's account address
- * @param {function} navigateTo - callback for alternative in-app navigation for the gooddollar wallet
+ * @param {function} onAccept - callback for alternative in-app navigation for the gooddollar wallet
  * @param {object} innerContainer - styles for the inner container
  * @param {object} fontStyles - styles for the text elements
  */
-const OnboardScreen = withTheme({ name: "OnboardScreen" })(
+export const OnboardScreen = withTheme({ name: "OnboardScreen" })(
   ({
-    onFV,
-    onSkip,
     account,
-    firstName,
+    isPending,
+    isWhitelisted,
+    hasCertificates,
+    expiryDate,
+    onAccept,
     innerContainer,
     fontStyles,
+    name,
     ...props
   }: OnboardScreenProps & IContainerProps) => {
-    const [hasCertificates] = useState(false);
-    const [isWhitelisted] = useIsAddressVerified(account ?? "");
-    const [expiryDate] = useIdentityExpiryDate(account ?? "");
-    const [isPending, setPendingSignTx] = useState(false);
     const { listLabel, poweredBy } = fontStyles ?? {};
-
-    useEffect(() => {
-      if (hasCertificates === true) {
-        onSkip();
-      }
-    }, [hasCertificates]);
-
-    const storeFvSig = async (fvSig: string) => {
-      // the link will be requested to send a user to the fv-flow
-      // we want to prevent a user to have to sign again when it redirects
-      // so we store the fv-sig locally
-      await AsyncStorage.setItem("fvsig", fvSig);
-    };
-
-    const { verify } = useFVModalAction({
-      firstName: firstName ?? "",
-      method: "redirect",
-      chainId: 42220,
-      onClose: noop,
-      onFvSig: storeFvSig
-    });
-
-    const handleNext = async () => {
-      // Should go to FaceVerificationIntro (wallet) || GoodID server (third parties)
-      if (onFV) {
-        onFV();
-      } else {
-        setPendingSignTx(true);
-        await verify();
-      }
-    };
-
-    const handleShouldFv = useCallback(async () => {
-      const { expiryTimestamp } = expiryDate || {};
-
-      // if someone is whitelisted we want to verify their timestamp
-      // to determine if they should re-do the fv-flow
-      if (isWhitelisted && expiryTimestamp) {
-        const expiry = moment(expiryTimestamp.toNumber());
-        const threeMonthsFromNow = moment().clone().add(3, "months");
-        const isWithinThreeMonths = expiry.isBefore(threeMonthsFromNow);
-
-        // if the expiry date is within 3 months, we should re-do the fv-flow
-        if (isWithinThreeMonths) {
-          void handleNext();
-        } else {
-          // if the expiry date is not within 3 months we will use their existing fv data
-          // to run the good-id checks
-          //todo: Need solution for widget-navigation (gooddapp): https://github.com/GoodDollar/GoodWeb3-Mono/issues/131
-          // nextPage() <-- should navigate to segmentation screen
-        }
-        return;
-      }
-
-      void handleNext();
-    }, [verify, isWhitelisted, expiryDate]);
 
     // todo: might want a spinner while waiting for isWhitelisted
     if (isWhitelisted === undefined || hasCertificates !== false) return <></>;
@@ -136,11 +78,7 @@ const OnboardScreen = withTheme({ name: "OnboardScreen" })(
             {isWhitelisted ? `Renew` : `Get`} your GoodID to claim UBI
           </Title>
           {account ? (
-            <GoodIdCard
-              isWhitelisted={isWhitelisted}
-              account={account}
-              expiryDate={expiryDate?.formattedExpiryTimestamp}
-            />
+            <GoodIdCard fullname={name} isWhitelisted={isWhitelisted} account={account} expiryDate={expiryDate} />
           ) : null}
 
           <VStack space={2} alignItems="flex-start">
@@ -173,7 +111,7 @@ const OnboardScreen = withTheme({ name: "OnboardScreen" })(
               </Text>
             </VStack>
             <VStack space={4}>
-              <BaseButton onPress={handleShouldFv} text="I ACCEPT, VERIFY ME" maxW={343} variant="standard-blue" />
+              <BaseButton onPress={onAccept} text="I ACCEPT, VERIFY ME" maxW={343} variant="standard-blue" />
               <Text {...poweredBy}>Powered by GoodDollar</Text>
             </VStack>
           </VStack>
@@ -182,5 +120,3 @@ const OnboardScreen = withTheme({ name: "OnboardScreen" })(
     );
   }
 );
-
-export default OnboardScreen;

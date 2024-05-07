@@ -11,7 +11,7 @@ import { GoodButton } from "../../../core/buttons";
 import { withTheme } from "../../../theme";
 import { LoaderModal } from "../../../core";
 
-const SegmentationConfirmation = withTheme({ name: "SegmentationConfirmation" })(
+export const SegmentationConfirmation = withTheme({ name: "SegmentationConfirmation" })(
   ({ styles, ...props }: { styles?: any }) => {
     const { nextStep } = useWizard();
     const { account } = useEthers();

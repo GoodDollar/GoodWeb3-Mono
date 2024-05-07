@@ -7,7 +7,7 @@
     "build:release": "yarn dev:clean && tsc -p tsconfig.release.json && yarn copy:assets",
     "dev:clean": "rm -fr dist types tsconfig.tsbuildinfo tsconfig.release.tsbuildinfo",
     "test": "jest",
-    "storybook": "start-storybook -p 3000",
+    "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
     "copy:assets": "cpx 'src/assets/**' 'dist/assets'"
   },
@@ -67,7 +67,8 @@
   },
   "peerDepedencies": {
     "@usedapp/core": "^1.2.6",
-    "ethers": "5.7.2"
+    "ethers": "5.7.2",
+    "@gooddollar/web3sdk-v2": "*"
   },
   "packageManager": "yarn@3.2.1",
   "dependencies": {
