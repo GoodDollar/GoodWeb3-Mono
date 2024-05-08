@@ -1,22 +1,28 @@
 import React from "react";
 import { VStack, Text } from "native-base";
-import { useIdentityExpiryDate, useIsAddressVerified } from "@gooddollar/web3sdk-v2";
+
 import { noop } from "lodash";
 import { useWizard } from "react-use-wizard";
-import { useEthers } from "@usedapp/core";
 
 import { Title } from "../../../core/layout";
 import GoodIdCard from "../components/GoodIdCard";
 import { GoodButton } from "../../../core/buttons";
 import { withTheme } from "../../../theme";
 import { LoaderModal } from "../../../core";
+import { SegmentationProps } from "../wizards";
 
 const SegmentationConfirmation = withTheme({ name: "SegmentationConfirmation" })(
-  ({ styles, ...props }: { styles?: any }) => {
+  ({
+    account,
+    isWhitelisted,
+    idExpiry,
+    styles,
+    ...props
+  }: Omit<SegmentationProps, "onDone" | "onLocationRequest" | "certificateSubjects"> & {
+    styles?: any;
+  }) => {
     const { nextStep } = useWizard();
-    const { account = "" } = useEthers();
-    const [isWhitelisted] = useIsAddressVerified(account);
-    const [expiryDate, , state] = useIdentityExpiryDate(account);
+    const { expiryDate, state } = idExpiry ?? {};
     const { innerContainer, button } = styles ?? {};
 
     return isWhitelisted === undefined || !account ? (

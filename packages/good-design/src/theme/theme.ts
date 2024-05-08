@@ -134,6 +134,15 @@ export const theme = extendTheme({
           shadow: 1
         })
       }
+    },
+    Spinner: {
+      variants: {
+        "page-loader": () => ({
+          borderWidth: "0",
+          color: "primary",
+          paddingBottom: 4
+        })
+      }
     }
   }
 });
