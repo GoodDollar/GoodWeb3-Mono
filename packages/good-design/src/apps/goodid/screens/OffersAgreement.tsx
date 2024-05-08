@@ -12,6 +12,7 @@ export const OffersAgreement = () => {
 
   // we need the offersAgreement acceptance for running checkAvailableOffers
   const handleAccept = async () => {
+    // handle through controller
     await AsyncStorage.setItem("goodid_permission", "true");
     void nextStep();
   };

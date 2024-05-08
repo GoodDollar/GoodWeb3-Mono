@@ -3,8 +3,11 @@ import {
   AsyncStorage,
   useAggregatedCertificates,
   useFVLink,
+  useIdentityExpiryDate,
+  useIsAddressVerified,
   useIssueCertificates,
-  useGetEnvChainId
+  useGetEnvChainId,
+  useCertificatesSubject
 } from "@gooddollar/web3sdk-v2";
 import { useEthers } from "@usedapp/core";
 import { isEmpty } from "lodash";
@@ -12,11 +15,14 @@ import { isEmpty } from "lodash";
 import { SegmentationWizard } from "../wizards/SegmentationWizard";
 
 export const SegmentationController = () => {
-  const { account } = useEthers();
+  const { account = "" } = useEthers();
   const { baseEnv } = useGetEnvChainId();
-  const issueCertificate = useIssueCertificates(account ?? "", baseEnv);
+  const issueCertificate = useIssueCertificates(account, baseEnv);
   const fvLink = useFVLink();
-  const certificates = useAggregatedCertificates(account ?? "");
+  const certificates = useAggregatedCertificates(account);
+  const certificateSubjects = useCertificatesSubject(certificates);
+  const [isWhitelisted] = useIsAddressVerified(account);
+  const [expiryDate, , state] = useIdentityExpiryDate(account);
 
   const onLocationRequest = useCallback(
     async (locationState: any, account: string) => {
@@ -32,7 +38,7 @@ export const SegmentationController = () => {
       );
       await issueCertificate(account, locationState, fvSig);
     },
-    [issueCertificate, account]
+    [issueCertificate, account, certificates]
   );
 
   // Handle the completion of the wizard
@@ -44,5 +50,14 @@ export const SegmentationController = () => {
     }
   };
 
-  return <SegmentationWizard onDone={onDone} onLocationRequest={onLocationRequest} />;
+  return (
+    <SegmentationWizard
+      onDone={onDone}
+      onLocationRequest={onLocationRequest}
+      account={account}
+      certificateSubjects={certificateSubjects}
+      isWhitelisted={isWhitelisted}
+      idExpiry={{ expiryDate, state }}
+    />
+  );
 };

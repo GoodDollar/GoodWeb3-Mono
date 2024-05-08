@@ -1,55 +1,52 @@
-import React, { useCallback, useContext } from "react";
-import { Center, VStack } from "native-base";
-import { useAggregatedCertificates } from "@gooddollar/web3sdk-v2";
+import React, { useCallback, useState } from "react";
+import { Center, Spinner, VStack } from "native-base";
 import { useWizard } from "react-use-wizard";
-import { useCertificatesSubject } from "@gooddollar/web3sdk-v2";
 
 import { Title } from "../../../core/layout";
 import { GoodButton } from "../../../core/buttons";
 import { Image } from "../../../core/images";
-import { WizardContext } from "../../../utils/WizardContext";
 import { SegmentationRow, typeLabelsDispute as typeLabels } from "../components";
+import { SegmentationProps } from "../wizards";
 
 import RoboBilly from "../../../assets/images/robo-billy.png";
+import { isEmpty } from "lodash";
 
 export const SegmentationDispute = ({
-  account,
+  certificateSubjects,
   onDispute
 }: {
-  account: string;
+  certificateSubjects: SegmentationProps["certificateSubjects"];
   onDispute: (disputedValues: string[]) => Promise<void>;
 }) => {
   const { nextStep } = useWizard();
-  const { data, updateDataValue } = useContext(WizardContext);
-  const certificates = useAggregatedCertificates(account);
-
-  const certificatesSubjects = useCertificatesSubject(certificates);
+  const [disputed, setDisputed] = useState<string[]>([]);
 
   const handleCheckChange = (typeName: string, checked: boolean) => {
-    updateDataValue("segmentationDispute", typeName, checked);
+    setDisputed(prev => (checked ? [...prev, typeName] : prev.filter(item => item !== typeName)));
   };
 
   const handleNext = useCallback(async () => {
-    const disputedValues = Object.entries(data.segmentationDispute)
-      .map(([key, isDisputed]) => (isDisputed ? key : ""))
-      .filter(Boolean) as string[];
-
-    await onDispute(disputedValues);
+    await onDispute(disputed);
     void nextStep();
-  }, [data]);
+  }, [disputed]);
+
+  if (isEmpty(certificateSubjects)) {
+    return <Spinner variant="page-loader" size="lg" />;
+  }
 
   return (
     <VStack space={10} width={343}>
       <Title variant="title-gdblue">Please indicate which is incorrect</Title>
       <VStack space={6} variant="shadow-card" textAlign="center">
-        {Object.entries(typeLabels).map(([key]) => (
-          <SegmentationRow
-            key={key}
-            credentialSubject={certificatesSubjects[key]}
-            typeName={key as keyof typeof typeLabels}
-            onCheck={checked => handleCheckChange(key, checked)}
-          />
-        ))}
+        {certificateSubjects &&
+          Object.entries(typeLabels).map(([key]) => (
+            <SegmentationRow
+              key={key}
+              credentialSubject={certificateSubjects[key]}
+              typeName={key as keyof typeof typeLabels}
+              onCheck={checked => handleCheckChange(key, checked)}
+            />
+          ))}
         <Center>
           <Image source={RoboBilly} w="75" h="120" style={{ resizeMode: "contain" }} />
         </Center>

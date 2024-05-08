@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Center, Text, VStack } from "native-base";
 
-import { withTheme } from "../../../theme";
+import { withTheme } from "../../../theme/hoc/withTheme";
 import { Image } from "../../images";
 import { Title } from "../../layout";
 import { useModal } from "../../../hooks";

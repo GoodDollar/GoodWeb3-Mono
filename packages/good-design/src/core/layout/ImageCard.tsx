@@ -4,7 +4,8 @@ import { openLink } from "@gooddollar/web3sdk-v2";
 
 import { BasePressable } from "../buttons";
 import { Image } from "../images";
-import { cardShadow, withTheme } from "../../theme";
+import { cardShadow } from "../../theme";
+import { withTheme } from "../../theme/hoc/withTheme";
 
 interface IImageCard extends ICenterProps {
   picture?: string;

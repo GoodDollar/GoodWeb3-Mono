@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { useWizard, Wizard } from "react-use-wizard";
 import { Center, VStack } from "native-base";
 import { useEthers } from "@usedapp/core";
-import { noop } from "lodash";
+import { isEmpty, noop } from "lodash";
 import { GeoLocation, useGeoLocation } from "@gooddollar/web3sdk-v2";
 
 import { GoodButton } from "../../../core";
@@ -16,7 +16,10 @@ import { CheckAvailableOffers } from "../components";
 export type SegmentationProps = {
   onLocationRequest: (locationState: GeoLocation, account: string) => Promise<void>;
   onDone: (error?: Error) => Promise<void>;
-  account?: string;
+  certificateSubjects: any;
+  account: string;
+  isWhitelisted?: boolean;
+  idExpiry?: { expiryDate: any; state: string };
 };
 
 const SegmentationScreenWrapper = (props: SegmentationProps) => {
@@ -44,12 +47,12 @@ const SegmentationScreenWrapper = (props: SegmentationProps) => {
     }
   }, [geoLocation, account, error]);
 
-  return !account || loading ? (
+  return !account || loading || isEmpty(props.certificateSubjects) ? (
     <LoaderModal title={`We're checking \n your information`} overlay="dark" loading={true} onClose={noop} />
   ) : (
     <Center width={343}>
       <VStack paddingY={6} space={10}>
-        <SegmentationScreen account={account} />
+        <SegmentationScreen certificateSubjects={props.certificateSubjects} />
         <VStack space={3}>
           <GoodButton onPress={proceed}>yes, i am</GoodButton>
           <GoodButton onPress={handleDispute} variant="link-like" _text={{ underline: false }}>
@@ -65,6 +68,7 @@ export const SegmentationWizard = (props: SegmentationProps) => {
   const [error, setError] = useState<string | null>(null);
   const { account = "" } = useEthers();
 
+  // inject show modal on callbacks exceptions
   const modalOnDone: SegmentationProps["onDone"] = async error => {
     try {
       await props.onDone(error);
@@ -95,13 +99,22 @@ export const SegmentationWizard = (props: SegmentationProps) => {
   return (
     <WizardContextProvider>
       <Wizard header={<WizardHeader onDone={modalOnDone} error={error} />}>
-        <SegmentationScreenWrapper onDone={props.onDone} onLocationRequest={modalOnLocation} account={account} />
-        {/* Optional dispute path, only shown to users who think there data is wrong */}
-        <SegmentationDispute account={account} onDispute={onDispute} />
+        <SegmentationScreenWrapper
+          onDone={props.onDone}
+          onLocationRequest={modalOnLocation}
+          account={props.account}
+          certificateSubjects={props.certificateSubjects}
+        />
+        {/* Optional paths, only shown to users who think there data is wrong */}
+        <SegmentationDispute certificateSubjects={props.certificateSubjects} onDispute={onDispute} />
         <DisputeThanks />
         {/* Ask permission for matching their data against potential pools  */}
         <OffersAgreement />
-        <SegmentationConfirmation />
+        <SegmentationConfirmation
+          account={props.account}
+          idExpiry={props.idExpiry}
+          isWhitelisted={props.isWhitelisted}
+        />
         {/* if offers available > go to offers, else handle navigating to claim-page */}
         <CheckAvailableOffers account={account} onDone={modalOnFinish} />
       </Wizard>
