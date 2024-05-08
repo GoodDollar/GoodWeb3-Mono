@@ -1,6 +1,11 @@
 import React from "react";
 import { useEthers } from "@usedapp/core";
-import { GoodIdContextProvider, useIdentityExpiryDate } from "@gooddollar/web3sdk-v2";
+import {
+  GoodIdContextProvider,
+  useAggregatedCertificates,
+  useIdentityExpiryDate,
+  useIsAddressVerified
+} from "@gooddollar/web3sdk-v2";
 import { Text, VStack } from "native-base";
 import { Wizard } from "react-use-wizard";
 
@@ -16,6 +21,7 @@ import {
   SegmentationDispute
 } from "../../../apps/goodid/screens";
 import { SegmentationController } from "../../../apps/goodid/controllers";
+import { useCertificatesMap } from "../../../hooks";
 
 const GoodIdWrapper = ({ children }) => {
   return <GoodIdContextProvider>{children}</GoodIdContextProvider>;
@@ -42,10 +48,13 @@ export const GoodIdCardExample = () => {
 };
 
 export const SegmentationScreen = () => {
-  const { account } = useEthers();
+  const { account = "" } = useEthers();
+  const certificates = useAggregatedCertificates(account);
+  const certificateSubjects = useCertificatesMap(certificates);
+
   return (
     <W3Wrapper withMetaMask={true}>
-      <SegScreen account={account ?? ""} />
+      <SegScreen certificateSubjects={certificateSubjects} />
     </W3Wrapper>
   );
 };
@@ -73,17 +82,24 @@ export const OffersAgreementExample = () => (
 );
 
 export const SegmentationConfirmationScreen = () => {
+  const { account = "" } = useEthers();
+  const [isWhitelisted] = useIsAddressVerified(account);
+  const [expiryDate, , state] = useIdentityExpiryDate(account);
+
   return (
     <W3Wrapper withMetaMask={true}>
       <Wizard>
-        <SegmentationConfirmation />
+        <SegmentationConfirmation account={account} isWhitelisted={isWhitelisted} idExpiry={{ expiryDate, state }} />
       </Wizard>
     </W3Wrapper>
   );
 };
 
 export const SegmentationDisputeScreen = () => {
-  const { account } = useEthers();
+  const { account = "" } = useEthers();
+  const certificates = useAggregatedCertificates(account);
+  const certificateSubjects = useCertificatesMap(certificates);
+
   return (
     <W3Wrapper withMetaMask={true} env="staging">
       <Wizard>
@@ -92,7 +108,7 @@ export const SegmentationDisputeScreen = () => {
             For testing purposes. this screen is using staging/QA contracts
           </Text>
           <SegmentationDispute
-            account={account ?? ""}
+            certificateSubjects={certificateSubjects}
             onDispute={async disputedValues => {
               console.log("Following is to be reported to ga/amp:", { disputedValues });
             }}
