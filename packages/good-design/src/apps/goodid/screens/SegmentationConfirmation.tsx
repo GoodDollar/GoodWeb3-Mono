@@ -18,7 +18,7 @@ const SegmentationConfirmation = withTheme({ name: "SegmentationConfirmation" })
     idExpiry,
     styles,
     ...props
-  }: Omit<SegmentationProps, "onDone" | "onLocationRequest" | "certificateSubjects"> & {
+  }: Omit<SegmentationProps, "onDone" | "onLocationRequest" | "certificateSubjects" | "availableOffers"> & {
     styles?: any;
   }) => {
     const { nextStep } = useWizard();

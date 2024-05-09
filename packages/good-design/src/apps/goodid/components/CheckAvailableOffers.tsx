@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useCheckAvailableOffers } from "@gooddollar/web3sdk-v2";
+import { PoolCriteria } from "@gooddollar/web3sdk-v2";
 import { Spinner } from "native-base";
 
 import { RedtentController } from "../controllers/RedtentController";
@@ -8,34 +8,18 @@ import { isNull } from "lodash";
 interface CheckAvailableOffersProps {
   account: string;
   onDone: (e?: Error) => Promise<void>;
+  availableOffers: false | PoolCriteria[] | null;
+  // pools: any;
 }
 
-//todo: add actual criteria
-const redtentOffer = [
-  {
-    campaign: "RedTent",
-    Location: {
-      countryCode: "JP"
-    },
-    Age: {
-      min: 18,
-      max: 65
-    },
-    Gender: "Male"
-  }
-];
-
-const CheckAvailableOffers: React.FC<CheckAvailableOffersProps> = ({ account, onDone }) => {
-  const availableOffers = useCheckAvailableOffers({ account, pools: redtentOffer });
-
+const CheckAvailableOffers: React.FC<CheckAvailableOffersProps> = ({ account, availableOffers, onDone }) => {
   useEffect(() => {
-    if (availableOffers === false) {
+    if (availableOffers === false || availableOffers?.length === 0) {
       onDone();
     }
   }, [availableOffers]);
 
-  if (isNull(availableOffers))
-    return <Spinner borderWidth="0" size="lg" color="primary" accessibilityLabel="Loading posts" paddingBottom={4} />;
+  if (isNull(availableOffers)) return <Spinner variant="page-loader" size="lg" />;
 
   return availableOffers === false || availableOffers.length === 0 ? (
     <></>

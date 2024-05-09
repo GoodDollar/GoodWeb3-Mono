@@ -2,6 +2,7 @@ import React, { useCallback } from "react";
 import {
   AsyncStorage,
   useAggregatedCertificates,
+  useCheckAvailableOffers,
   useFVLink,
   useIdentityExpiryDate,
   useIsAddressVerified,
@@ -12,9 +13,19 @@ import {
 import { useEthers } from "@usedapp/core";
 import { isEmpty } from "lodash";
 
-import { SegmentationWizard } from "../wizards/SegmentationWizard";
+import { SegmentationProps, SegmentationWizard } from "../wizards/SegmentationWizard";
 
-export const SegmentationController = () => {
+const redtentOffer = [
+  {
+    campaign: "RedTent",
+    Location: {
+      countryCode: "NG"
+    },
+    Gender: "Female"
+  }
+];
+
+export const SegmentationController = ({ onDone }: { onDone: SegmentationProps["onDone"] }) => {
   const { account = "" } = useEthers();
   const { baseEnv } = useGetEnvChainId();
   const issueCertificate = useIssueCertificates(account, baseEnv);
@@ -23,6 +34,7 @@ export const SegmentationController = () => {
   const certificateSubjects = useCertificatesSubject(certificates);
   const [isWhitelisted] = useIsAddressVerified(account);
   const [expiryDate, , state] = useIdentityExpiryDate(account);
+  const availableOffers = useCheckAvailableOffers({ account, pools: redtentOffer });
 
   const onLocationRequest = useCallback(
     async (locationState: any, account: string) => {
@@ -41,15 +53,6 @@ export const SegmentationController = () => {
     [issueCertificate, account, certificates]
   );
 
-  // Handle the completion of the wizard
-  const onDone = async () => {
-    try {
-      console.log("Segmentation details processed successfully.");
-    } catch (error) {
-      console.error("Failed to process segmentation details:", error);
-    }
-  };
-
   return (
     <SegmentationWizard
       onDone={onDone}
@@ -58,6 +61,7 @@ export const SegmentationController = () => {
       certificateSubjects={certificateSubjects}
       isWhitelisted={isWhitelisted}
       idExpiry={{ expiryDate, state }}
+      availableOffers={availableOffers}
     />
   );
 };

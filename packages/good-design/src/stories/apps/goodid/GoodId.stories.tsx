@@ -1,8 +1,11 @@
 import React from "react";
 import { useEthers } from "@usedapp/core";
+import { Meta } from "@storybook/react";
 import {
   GoodIdContextProvider,
   useAggregatedCertificates,
+  useCertificatesSubject,
+  useCheckAvailableOffers,
   useIdentityExpiryDate,
   useIsAddressVerified
 } from "@gooddollar/web3sdk-v2";
@@ -21,7 +24,6 @@ import {
   SegmentationDispute
 } from "../../../apps/goodid/screens";
 import { SegmentationController } from "../../../apps/goodid/controllers";
-import { useCertificatesMap } from "../../../hooks";
 
 const GoodIdWrapper = ({ children }) => {
   return <GoodIdContextProvider>{children}</GoodIdContextProvider>;
@@ -50,7 +52,7 @@ export const GoodIdCardExample = () => {
 export const SegmentationScreen = () => {
   const { account = "" } = useEthers();
   const certificates = useAggregatedCertificates(account);
-  const certificateSubjects = useCertificatesMap(certificates);
+  const certificateSubjects = useCertificatesSubject(certificates);
 
   return (
     <W3Wrapper withMetaMask={true}>
@@ -65,7 +67,11 @@ export const SegmentationFlow = () => (
       <Text variant="browse-wrap" fontSize="sm">
         For testing purposes. this flow is using staging/QA contracts
       </Text>
-      <SegmentationController />
+      <SegmentationController
+        onDone={async () => {
+          alert("Segmentation finished");
+        }}
+      />
     </VStack>
   </W3Wrapper>
 );
@@ -98,7 +104,7 @@ export const SegmentationConfirmationScreen = () => {
 export const SegmentationDisputeScreen = () => {
   const { account = "" } = useEthers();
   const certificates = useAggregatedCertificates(account);
-  const certificateSubjects = useCertificatesMap(certificates);
+  const certificateSubjects = useCertificatesSubject(certificates);
 
   return (
     <W3Wrapper withMetaMask={true} env="staging">
@@ -119,22 +125,6 @@ export const SegmentationDisputeScreen = () => {
   );
 };
 
-//todo: add controls for story
-export const checkAVailableOffersExample = () => {
-  const { account = "" } = useEthers();
-
-  return (
-    <W3Wrapper withMetaMask={true} env="staging">
-      <CheckAvailableOffers
-        account={account}
-        onDone={async () => {
-          // console.log("test");
-        }}
-      />
-    </W3Wrapper>
-  );
-};
-
 export const DisputeThanksScreen = () => {
   return (
     <W3Wrapper withMetaMask={true}>
@@ -145,6 +135,45 @@ export const DisputeThanksScreen = () => {
       </Wizard>
     </W3Wrapper>
   );
+};
+
+type AvailableOffersPropsAndArgs = React.ComponentProps<typeof CheckAvailableOffers> & { countryCode?: string };
+
+export const CheckAvailableOffersExample: Meta<AvailableOffersPropsAndArgs> = {
+  title: "Core/Modals",
+  component: CheckAvailableOffers,
+  render: args => {
+    const { account } = useEthers();
+    const mockPool = [
+      {
+        campaign: "RedTent",
+        Location: {
+          countryCode: args.countryCode ?? "NG"
+        }
+      }
+    ];
+    const availableOffers = useCheckAvailableOffers({ account: account ?? args.account, pools: mockPool });
+    return (
+      <CheckAvailableOffers
+        account={account ?? args.account}
+        onDone={async () => {
+          alert("Finished demo");
+        }}
+        availableOffers={availableOffers}
+      />
+    );
+  },
+  args: {
+    countryCode: "Fill in your two-letter country-code"
+  },
+  argTypes: {
+    account: {
+      description: "User account address, the wallet you currently are connected with."
+    },
+    countryCode: {
+      description: "What country are you located in?"
+    }
+  }
 };
 
 export default {

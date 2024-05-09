@@ -3,7 +3,7 @@ import { useWizard, Wizard } from "react-use-wizard";
 import { Center, VStack } from "native-base";
 import { useEthers } from "@usedapp/core";
 import { isEmpty, noop } from "lodash";
-import { GeoLocation, useGeoLocation } from "@gooddollar/web3sdk-v2";
+import { GeoLocation, PoolCriteria, useGeoLocation } from "@gooddollar/web3sdk-v2";
 
 import { GoodButton } from "../../../core";
 import { DisputeThanks, OffersAgreement, SegmentationConfirmation, SegmentationScreen } from "../screens";
@@ -20,9 +20,10 @@ export type SegmentationProps = {
   account: string;
   isWhitelisted?: boolean;
   idExpiry?: { expiryDate: any; state: string };
+  availableOffers: false | PoolCriteria[] | any;
 };
 
-const SegmentationScreenWrapper = (props: SegmentationProps) => {
+const SegmentationScreenWrapper = (props: Omit<SegmentationProps, "availableOffers">) => {
   const { goToStep } = useWizard();
   const { updateDataValue } = useContext(WizardContext);
   const [loading, setLoading] = useState(true);
@@ -91,16 +92,11 @@ export const SegmentationWizard = (props: SegmentationProps) => {
     console.log("disputedValues", disputedValues);
   };
 
-  const modalOnFinish = async () => {
-    // should report analytics?
-    // should navigate to claim page
-  };
-
   return (
     <WizardContextProvider>
       <Wizard header={<WizardHeader onDone={modalOnDone} error={error} />}>
         <SegmentationScreenWrapper
-          onDone={props.onDone}
+          onDone={modalOnDone}
           onLocationRequest={modalOnLocation}
           account={props.account}
           certificateSubjects={props.certificateSubjects}
@@ -116,7 +112,7 @@ export const SegmentationWizard = (props: SegmentationProps) => {
           isWhitelisted={props.isWhitelisted}
         />
         {/* if offers available > go to offers, else handle navigating to claim-page */}
-        <CheckAvailableOffers account={account} onDone={modalOnFinish} />
+        <CheckAvailableOffers account={account} availableOffers={props.availableOffers} onDone={modalOnDone} />
       </Wizard>
     </WizardContextProvider>
   );
