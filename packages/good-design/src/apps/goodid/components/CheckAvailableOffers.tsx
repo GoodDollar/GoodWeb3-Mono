@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { FC, useEffect } from "react";
 import { PoolCriteria } from "@gooddollar/web3sdk-v2";
 import { Spinner } from "native-base";
 
@@ -12,18 +12,19 @@ interface CheckAvailableOffersProps {
   // pools: any;
 }
 
-const CheckAvailableOffers: React.FC<CheckAvailableOffersProps> = ({ account, availableOffers, onDone }) => {
+const CheckAvailableOffers: FC<CheckAvailableOffersProps> = ({ account, availableOffers, onDone }) => {
   useEffect(() => {
     if (availableOffers === false || availableOffers?.length === 0) {
-      onDone();
+      void onDone();
     }
   }, [availableOffers]);
 
-  if (isNull(availableOffers)) return <Spinner variant="page-loader" size="lg" />;
+  // If isNull means we are still waiting for the availableOffers to be fetched
+  // else we are just waiting on onDone to handle the next step / navigation
+  if (isNull(availableOffers) || availableOffers === false || availableOffers.length === 0)
+    return <Spinner variant="page-loader" size="lg" />;
 
-  return availableOffers === false || availableOffers.length === 0 ? (
-    <></>
-  ) : (
+  return (
     /* todo-next: Currently hardcoded for redtent campaign, this should handle showing list of offers. needs design */
     <RedtentController onDone={onDone} account={account} />
   );

@@ -22,7 +22,21 @@ const redtentOffer = [
       countryCode: "NG"
     },
     Gender: "Female"
+  },
+  {
+    campaign: "RedTent",
+    Location: {
+      countryCode: "CO"
+    },
+    Gender: "Female"
   }
+  // {
+  //   campaign: "RedTent",
+  //   Location: {
+  //     countryCode: "PH" // not confirmed yet
+  //   },
+  //   Gender: "Female"
+  // }
 ];
 
 export const SegmentationController = ({ onDone }: { onDone: SegmentationProps["onDone"] }) => {

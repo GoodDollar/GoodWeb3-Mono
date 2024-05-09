@@ -111,7 +111,8 @@ export const SegmentationWizard = (props: SegmentationProps) => {
           idExpiry={props.idExpiry}
           isWhitelisted={props.isWhitelisted}
         />
-        {/* if offers available > go to offers, else handle navigating to claim-page */}
+        {/* if offers available it will handle the offers flow. 
+        If no offers, or the flow is finished, handle next-step through onDone */}
         <CheckAvailableOffers account={account} availableOffers={props.availableOffers} onDone={modalOnDone} />
       </Wizard>
     </WizardContextProvider>

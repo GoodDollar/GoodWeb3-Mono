@@ -148,7 +148,7 @@ const matchGender: CriteriaMatcher = (certificateSubject, criteria) => certifica
 
 /**
  * Criteria matchers for each criteria type
- * @param certificateSubject
+ * @param certificateSubject can be retrieved from a certificate by using the useCertificatesSubject hook
  * @param criteria
  * @param criteriaType
  * @returns boolean
