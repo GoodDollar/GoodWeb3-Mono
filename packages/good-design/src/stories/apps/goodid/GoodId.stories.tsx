@@ -77,7 +77,7 @@ export const OnboardScreenExample = () => {
 
 export const OffersAgreementExample = () => (
   <Wizard>
-    <OffersAgreement />
+    <OffersAgreement width={375} />
   </Wizard>
 );
 
@@ -89,7 +89,12 @@ export const SegmentationConfirmationScreen = () => {
   return (
     <W3Wrapper withMetaMask={true}>
       <Wizard>
-        <SegmentationConfirmation account={account} isWhitelisted={isWhitelisted} idExpiry={{ expiryDate, state }} />
+        <SegmentationConfirmation
+          width={375}
+          account={account}
+          isWhitelisted={isWhitelisted}
+          idExpiry={{ expiryDate, state }}
+        />
       </Wizard>
     </W3Wrapper>
   );
@@ -108,6 +113,7 @@ export const SegmentationDisputeScreen = () => {
             For testing purposes. this screen is using staging/QA contracts
           </Text>
           <SegmentationDispute
+            width={375}
             certificateSubjects={certificateSubjects}
             onDispute={async disputedValues => {
               console.log("Following is to be reported to ga/amp:", { disputedValues });

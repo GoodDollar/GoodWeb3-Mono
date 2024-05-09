@@ -1,5 +1,5 @@
 import React from "react";
-import { VStack, Text } from "native-base";
+import { IStackProps, VStack, Text } from "native-base";
 
 import { noop } from "lodash";
 import { useWizard } from "react-use-wizard";
@@ -18,9 +18,10 @@ const SegmentationConfirmation = withTheme({ name: "SegmentationConfirmation" })
     idExpiry,
     styles,
     ...props
-  }: Omit<SegmentationProps, "onDone" | "onLocationRequest" | "certificateSubjects"> & {
-    styles?: any;
-  }) => {
+  }: IStackProps &
+    Omit<SegmentationProps, "onDone" | "onLocationRequest" | "certificateSubjects"> & {
+      styles?: any;
+    }) => {
     const { nextStep } = useWizard();
     const { expiryDate, state } = idExpiry ?? {};
     const { innerContainer, button } = styles ?? {};
@@ -28,7 +29,7 @@ const SegmentationConfirmation = withTheme({ name: "SegmentationConfirmation" })
     return isWhitelisted === undefined || !account ? (
       <LoaderModal title={`We are creating \n your GoodID`} overlay="dark" loading={true} onClose={noop} />
     ) : (
-      <VStack space={200} width={375} {...props}>
+      <VStack space={200} width={"100%"} {...props}>
         <VStack space={6} {...innerContainer}>
           <Title variant="title-gdblue">Your GoodID is ready!</Title>
           <GoodIdCard

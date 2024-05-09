@@ -1,5 +1,5 @@
 import React from "react";
-import { Checkbox, Center, HStack, VStack } from "native-base";
+import { Checkbox, HStack, VStack } from "native-base";
 import { CredentialSubject, CredentialType } from "@gooddollar/web3sdk-v2";
 
 import { Title } from "../../../core/layout";
@@ -33,21 +33,19 @@ const SegmentationRow = ({
     <VStack space={onCheck ? 2 : undefined}>
       <Title variant="subtitle-grey">{typeLabels[typeName]}</Title>
       {onCheck ? (
-        <Center>
-          <HStack space={4} width="100%" justifyContent={"flex-start"}>
-            <Checkbox
-              width="100%"
-              value={verifiedValue}
-              onChange={isChecked => onCheck(isChecked)}
-              colorScheme="info"
-              accessibilityLabel={`Dispute ${verifiedValue}`}
-            >
-              <Title variant="title-gdblue" textAlign="center" width="100%" minWidth={260}>
-                {verifiedValue}
-              </Title>
-            </Checkbox>
-          </HStack>
-        </Center>
+        <HStack space={4} width="95%" justifyContent="center">
+          <Checkbox
+            width="100%"
+            value={verifiedValue}
+            onChange={isChecked => onCheck(isChecked)}
+            colorScheme="info"
+            accessibilityLabel={`Dispute ${verifiedValue}`}
+          >
+            <Title variant="title-gdblue" textAlign="center" width="95%" minWidth={150}>
+              {verifiedValue}
+            </Title>
+          </Checkbox>
+        </HStack>
       ) : (
         <Title variant="title-gdblue">{verifiedValue}</Title>
       )}

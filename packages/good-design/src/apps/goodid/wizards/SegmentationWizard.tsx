@@ -48,7 +48,7 @@ const SegmentationScreenWrapper = (props: SegmentationProps) => {
   return !account || loading || isEmpty(props.certificateSubjects) ? (
     <LoaderModal title={`We're checking \n your information`} overlay="dark" loading={true} onClose={noop} />
   ) : (
-    <Center width={343}>
+    <Center width={"100%"}>
       <VStack paddingY={6} space={10}>
         <SegmentationScreen certificateSubjects={props.certificateSubjects} />
         <VStack space={3}>
