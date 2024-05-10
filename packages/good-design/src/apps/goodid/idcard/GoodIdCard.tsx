@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { Center, HStack, Text, VStack, IStackProps } from "native-base";
-import { useAggregatedCertificates } from "@gooddollar/web3sdk-v2";
+import { CredentialType } from "@gooddollar/web3sdk-v2";
 
 import { withTheme } from "../../../theme";
 import SvgXml from "../../../core/images/SvgXml";
@@ -13,9 +13,10 @@ import { Title } from "../../../core/layout";
 interface GoodIdCardProps extends IStackProps {
   account: string;
   isWhitelisted: boolean;
+  certificateSubjects: any;
   avatar?: string;
   fullname?: string;
-  expiryDate?: string | null;
+  expiryDate?: string;
   fontStyles?: any;
 }
 
@@ -54,12 +55,10 @@ const CardRowItem = withTheme({ name: "CardRowItem" })(
   }
 );
 
-const GoodIdCard = withTheme({ name: "GoodIdCard", skipProps: "credentialsList" })(
-  ({ account, isWhitelisted, avatar, fullname, expiryDate, ...props }: GoodIdCardProps) => {
+const GoodIdCard = withTheme({ name: "GoodIdCard", skipProps: "certificates" })(
+  ({ account, isWhitelisted, certificateSubjects, avatar, fullname, expiryDate, ...props }: GoodIdCardProps) => {
     const { title, subHeading, subContent, footer } = props.fontStyles ?? {};
     const truncatedAccount = truncateMiddle(account, 11);
-
-    const certificates = useAggregatedCertificates(account);
 
     return (
       <VStack variant="shadow-card" paddingBottom={2} {...props}>
@@ -89,14 +88,17 @@ const GoodIdCard = withTheme({ name: "GoodIdCard", skipProps: "credentialsList" 
           </VStack>
         </HStack>
         <HStack space={2} flexWrap="wrap">
-          {certificates
-            ?.filter(({ typeName }) => "Identity" !== typeName)
-            .map(({ certificate, typeName, type }) => (
+          {/* subjects can be empty so we use credentialtype for mapping  */}
+          {Object.keys(CredentialType)
+            .filter((typeName): typeName is Exclude<keyof typeof CredentialType, "Identity"> => typeName !== "Identity")
+            .map(typeName => (
               <CardRowItem
-                key={type}
+                key={typeName}
                 credentialLabel={typeName}
-                credential={{ credentialSubject: certificate?.credentialSubject, typeName: type }}
-                fontStyles={props.fontStyles}
+                credential={{
+                  credentialSubject: certificateSubjects?.[typeName],
+                  typeName: CredentialType[typeName]
+                }}
               />
             ))}
         </HStack>

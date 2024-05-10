@@ -25,7 +25,9 @@ export const SegmentationConfirmation = withTheme({ name: "SegmentationConfirmat
       <VStack space={200} width={375} {...props}>
         <VStack space={6} {...innerContainer}>
           <Title variant="title-gdblue">Your GoodID is ready!</Title>
+          {/* Will be fixed in segmentation-dispute PR */}
           <GoodIdCard
+            certificateSubjects={{}}
             account={account}
             isWhitelisted={isWhitelisted}
             expiryDate={state === "pending" ? "-" : expiryDate?.formattedExpiryTimestamp}

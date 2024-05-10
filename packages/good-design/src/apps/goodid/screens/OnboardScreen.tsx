@@ -1,5 +1,5 @@
 import React from "react";
-import { Container, Heading, HStack, Text, VStack, IContainerProps } from "native-base";
+import { Container, Heading, HStack, Text, VStack, IContainerProps, Spinner } from "native-base";
 
 import { withTheme } from "../../../theme";
 import { Title, TxModal } from "../../../core";
@@ -13,10 +13,10 @@ import StopWatchSvg from "../../../assets/svg/goodid/stopwatch.svg";
 import UbiSvg from "../../../assets/svg/goodid/ubi.svg";
 
 export interface OnboardScreenProps {
-  account: string | undefined;
+  account: string;
   isPending: boolean;
   isWhitelisted?: boolean;
-  hasCertificates?: boolean;
+  certificateSubjects: any;
   expiryDate?: string;
   name?: string;
   onAccept: () => void;
@@ -57,7 +57,7 @@ export const OnboardScreen = withTheme({ name: "OnboardScreen" })(
     account,
     isPending,
     isWhitelisted,
-    hasCertificates,
+    certificateSubjects,
     expiryDate,
     onAccept,
     innerContainer,
@@ -68,7 +68,7 @@ export const OnboardScreen = withTheme({ name: "OnboardScreen" })(
     const { listLabel, poweredBy } = fontStyles ?? {};
 
     // todo: might want a spinner while waiting for isWhitelisted
-    if (isWhitelisted === undefined || hasCertificates !== false) return <></>;
+    if (isWhitelisted === undefined) return <Spinner variant="page-loader" size="lg" />;
 
     return (
       <Container {...props}>
@@ -78,7 +78,15 @@ export const OnboardScreen = withTheme({ name: "OnboardScreen" })(
             {isWhitelisted ? `Renew` : `Get`} your GoodID to claim UBI
           </Title>
           {account ? (
-            <GoodIdCard fullname={name} isWhitelisted={isWhitelisted} account={account} expiryDate={expiryDate} />
+            <GoodIdCard
+              {...{
+                isWhitelisted,
+                certificateSubjects,
+                account,
+                expiryDate
+              }}
+              fullname={name}
+            />
           ) : null}
 
           <VStack space={2}>
