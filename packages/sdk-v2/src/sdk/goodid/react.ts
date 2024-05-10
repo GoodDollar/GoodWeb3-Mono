@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useCallback, useContext, useEffect, useState, useRef, useMemo } from "react";
-import { size, filter } from "lodash";
+import { filter, size } from "lodash";
 import { Platform } from "react-native";
 import GeoLocation from "@react-native-community/geolocation";
 
 import { GoodIdContext } from "../../contexts/goodid/GoodIdContext";
-import { Certificate, CertificateItem, CertificateRecord, CredentialType } from "./types";
+import { Certificate, CertificateItem, CertificateRecord, CredentialSubject, CredentialType } from "./types";
 import { requestIdentityCertificate, requestLocationCertificate } from "./sdk";
 
 export interface AggregatedCertificate extends Partial<CertificateItem> {
@@ -118,6 +118,8 @@ export const useAggregatedCertificates = (account: string): AggregatedCertificat
   const certificates = useCertificatesList(account);
 
   return useMemo(() => {
+    // means certificates is not loaded yet, when loaded it is an empty array
+    if (certificates === null) return [];
     const certificateByType: Partial<{ [type in CredentialType]: CertificateItem }> = {};
     const typesCount = size(CredentialType);
 
@@ -225,4 +227,20 @@ export const useIssueCertificates = (account: string | undefined, baseEnv: any) 
     },
     [baseEnv, storeCertificate]
   );
+};
+
+/**
+ * @param certificates
+ * @returns the credential subjects from the certificates
+ */
+export const useCertificatesSubject = (certificates: AggregatedCertificate[]) => {
+  return useMemo(() => {
+    return certificates.reduce((acc, { certificate, typeName }) => {
+      if (certificate) {
+        acc[typeName] = certificate.credentialSubject;
+      }
+
+      return acc;
+    }, {} as Record<string, CredentialSubject | undefined>);
+  }, [certificates]);
 };
