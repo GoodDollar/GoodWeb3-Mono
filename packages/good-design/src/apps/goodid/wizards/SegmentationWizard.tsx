@@ -16,6 +16,7 @@ import { CheckAvailableOffers } from "../components";
 export type SegmentationProps = {
   onLocationRequest: (locationState: GeoLocation, account: string) => Promise<void>;
   onDone: (error?: Error) => Promise<void>;
+  onDataPermission: () => Promise<void>;
   certificateSubjects: any;
   account: string;
   isWhitelisted?: boolean;
@@ -23,7 +24,7 @@ export type SegmentationProps = {
   availableOffers: false | PoolCriteria[] | any;
 };
 
-const SegmentationScreenWrapper = (props: Omit<SegmentationProps, "availableOffers">) => {
+const SegmentationScreenWrapper = (props: Omit<SegmentationProps, "availableOffers" | "onDataPermission">) => {
   const { goToStep } = useWizard();
   const { updateDataValue } = useContext(WizardContext);
   const [loading, setLoading] = useState(true);
@@ -51,7 +52,7 @@ const SegmentationScreenWrapper = (props: Omit<SegmentationProps, "availableOffe
   return !account || loading || isEmpty(props.certificateSubjects) ? (
     <LoaderModal title={`We're checking \n your information`} overlay="dark" loading={true} onClose={noop} />
   ) : (
-    <Center width={343}>
+    <Center width={"100%"}>
       <VStack paddingY={6} space={10}>
         <SegmentationScreen certificateSubjects={props.certificateSubjects} />
         <VStack space={3}>
@@ -105,7 +106,7 @@ export const SegmentationWizard = (props: SegmentationProps) => {
         <SegmentationDispute certificateSubjects={props.certificateSubjects} onDispute={onDispute} />
         <DisputeThanks />
         {/* Ask permission for matching their data against potential pools  */}
-        <OffersAgreement />
+        <OffersAgreement onDataPermission={props.onDataPermission} />
         <SegmentationConfirmation
           account={props.account}
           idExpiry={props.idExpiry}

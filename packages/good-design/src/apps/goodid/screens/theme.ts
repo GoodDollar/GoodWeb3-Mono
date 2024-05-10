@@ -24,15 +24,31 @@ const OnboardScreen = {
   }
 };
 
+const OffersAgreement = {
+  baseStyle: {
+    width: "100%",
+    paddingX: 4,
+    alignItems: "center",
+    styles: {
+      buttonContainer: {
+        space: 4
+      },
+      image: {
+        width: 150,
+        height: 113
+      }
+    }
+  }
+};
+
 const SegmentationConfirmation = {
   baseStyle: {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
     paddingX: 6,
-    paddingY: 4,
-    width: 375
+    paddingY: 4
   }
 };
 
-export { OnboardScreen, SegmentationConfirmation };
+export { OffersAgreement, OnboardScreen, SegmentationConfirmation };

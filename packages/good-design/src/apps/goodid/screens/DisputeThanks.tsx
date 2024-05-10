@@ -11,7 +11,7 @@ export const DisputeThanks = () => {
   const { nextStep } = useWizard();
 
   return (
-    <VStack space={200} width={343}>
+    <VStack space={200} width={"100%"}>
       <VStack space={8}>
         <Title variant="title-gdblue">{`Thanks for letting us \n know!`}</Title>
         <Text variant="sm-grey" textAlign="center">

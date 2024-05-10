@@ -67,15 +67,22 @@ export const SegmentationController = ({ onDone }: { onDone: SegmentationProps["
     [issueCertificate, account, certificates]
   );
 
+  const onDataPermission = async () => {
+    await AsyncStorage.setItem("goodid_permission", "true");
+  };
+
   return (
     <SegmentationWizard
-      onDone={onDone}
-      onLocationRequest={onLocationRequest}
-      account={account}
-      certificateSubjects={certificateSubjects}
-      isWhitelisted={isWhitelisted}
+      {...{
+        onDone,
+        onLocationRequest,
+        account,
+        certificateSubjects,
+        isWhitelisted,
+        availableOffers,
+        onDataPermission
+      }}
       idExpiry={{ expiryDate, state }}
-      availableOffers={availableOffers}
     />
   );
 };
