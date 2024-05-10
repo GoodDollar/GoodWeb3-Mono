@@ -1,31 +1,43 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { OnboardScreen, OnboardScreenProps } from "../screens/OnboardScreen";
-import { AsyncStorage, useIdentityExpiryDate, useIsAddressVerified } from "@gooddollar/web3sdk-v2";
-import { useFVModalAction } from "../../../hooks/useFVModalAction";
-import { noop } from "lodash";
+import {
+  AsyncStorage,
+  useAggregatedCertificates,
+  useCertificatesSubject,
+  useIdentityExpiryDate,
+  useIsAddressVerified
+} from "@gooddollar/web3sdk-v2";
+import { isNull, noop } from "lodash";
 import moment from "moment";
+import { IContainerProps, Spinner } from "native-base";
+
+import { OnboardScreen, OnboardScreenProps } from "../screens/OnboardScreen";
+import { useFVModalAction } from "../../../hooks/useFVModalAction";
 
 export interface OnboardControllerProps {
-  account: string | undefined;
+  account: string;
   name?: string | undefined;
   onFV?: () => void;
   onSkip: () => void;
 }
 
 export const OnboardController = (
-  props: Pick<OnboardScreenProps, "innerContainer" | "fontStyles"> & OnboardControllerProps
+  props: Pick<OnboardScreenProps, "innerContainer" | "fontStyles"> & OnboardControllerProps & IContainerProps
 ) => {
   const { onFV, onSkip, account, name } = props;
-  const [hasCertificates] = useState(false);
   const [isWhitelisted] = useIsAddressVerified(account ?? "");
   const [expiryDate] = useIdentityExpiryDate(account ?? "");
   const [isPending, setPendingSignTx] = useState(false);
+  const certificates = useAggregatedCertificates(account);
+  const certificateSubjects = useCertificatesSubject(certificates);
 
   useEffect(() => {
-    if (hasCertificates === true) {
+    if (isNull(certificates)) return;
+    const hasValidCertificates = certificates.some(cert => cert.certificate);
+    //todo: add check from server: https://github.com/GoodDollar/GoodServer/issues/470
+    if (hasValidCertificates) {
       onSkip();
     }
-  }, [hasCertificates]);
+  }, [certificates]);
 
   const storeFvSig = async (fvSig: string) => {
     // the link will be requested to send a user to the fv-flow
@@ -75,6 +87,8 @@ export const OnboardController = (
     }
   }, [doFV, isWhitelisted, expiryDate]);
 
+  if (isNull(certificates)) return <Spinner variant="page-loader" size="lg" />;
+
   return (
     <OnboardScreen
       {...{
@@ -82,10 +96,10 @@ export const OnboardController = (
         name,
         isPending,
         isWhitelisted,
-        hasCertificates,
+        certificateSubjects,
         expiryDate: expiryDate?.formattedExpiryTimestamp,
         onAccept: handleShouldFV
       }}
-    ></OnboardScreen>
+    />
   );
 };
