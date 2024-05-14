@@ -1,12 +1,14 @@
 import React from "react";
 import { Center, VStack, Text } from "native-base";
+import { useWizard } from "react-use-wizard";
+
 import { Image } from "../../../core/images";
 import { GoodButton } from "../../../core/buttons";
 import { Title } from "../../../core/layout";
-import { useWizard } from "react-use-wizard";
 
 import BillyDispute from "../../../assets/images/billy-dispute.png";
 
+//todo: add theming
 export const DisputeThanks = () => {
   const { nextStep } = useWizard();
 
