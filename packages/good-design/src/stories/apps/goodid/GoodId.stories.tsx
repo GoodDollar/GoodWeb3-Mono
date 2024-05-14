@@ -76,9 +76,9 @@ export const SegmentationScreen = {
 };
 
 export const SegmentationFlow = {
-  render: () => (
+  render: (args: any) => (
     <W3Wrapper withMetaMask={true} env="staging">
-      <VStack>
+      <VStack {...args}>
         <Text variant="browse-wrap" fontSize="sm">
           For testing purposes. this flow is using staging/QA contracts
         </Text>
@@ -86,7 +86,9 @@ export const SegmentationFlow = {
       </VStack>
     </W3Wrapper>
   ),
-  args: {}
+  args: {
+    width: 375
+  }
 };
 
 export const OnboardScreenExample = {
@@ -164,15 +166,18 @@ export const SegmentationDisputeScreenExample = {
 };
 
 export const DisputeThanksScreenExample = {
-  render: (args: any) => (
-    <W3Wrapper withMetaMask={true}>
-      <Wizard>
-        <VStack {...args.containerStyles}>
-          <DisputeThanks {...args.screenStyles} />
-        </VStack>
-      </Wizard>
-    </W3Wrapper>
-  ),
+  render: (args: any) => {
+    const { containerStyles, screenStyles } = args.styles;
+    return (
+      <W3Wrapper withMetaMask={true}>
+        <Wizard>
+          <VStack {...containerStyles}>
+            <DisputeThanks {...screenStyles} />
+          </VStack>
+        </Wizard>
+      </W3Wrapper>
+    );
+  },
   args: {
     styles: {
       containerStyles: {
