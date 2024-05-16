@@ -13,7 +13,7 @@ export const RedtentController = (props: Omit<RedTentProps, "onVideo"> & { accou
     if (base64) {
       const videoFilename = `${props.account}.${extension}`;
       const s3res = await uploadToS3(base64, videoFilename);
-      const registerRes = await registerRedtent({ account, certificates, videoFilename });
+      const registerRes = await registerRedtent({ videoFilename, certificates });
       console.log(s3res, registerRes);
     }
   };

@@ -8,7 +8,7 @@ const Page = () => {
   const upload = async () => {
     console.log({ encoded });
     const res = await uploadToS3(encoded, "test.txt");
-    const registerRes = await register({ account: "", videoFilename: "", credentials: [] });
+    const registerRes = await register({ videoFilename: "", certificates: [] });
     console.log(res, registerRes);
   };
   return (
