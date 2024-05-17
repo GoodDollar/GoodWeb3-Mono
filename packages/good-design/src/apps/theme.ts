@@ -1,2 +1,2 @@
-export * from "./goodid/idcard/GoodIdCard.theme";
+export * from "./goodid/components/theme";
 export * from "./goodid/screens/theme";
