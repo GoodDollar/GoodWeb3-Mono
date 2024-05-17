@@ -30,117 +30,168 @@ const GoodIdWrapper = ({ children }) => {
 };
 
 //todo: add expiration date utilty example
-export const GoodIdCardExample = () => {
-  const { account } = useEthers();
-  const [expiryDate, , state] = useIdentityExpiryDate(account ?? "");
+export const GoodIdCardExample = {
+  render: (args: any) => {
+    const { account } = useEthers();
+    const [expiryDate, , state] = useIdentityExpiryDate(account ?? "");
+    const { containerStyles } = args.styles;
 
-  return (
-    <VStack width={375} space={4}>
-      <Text variant="browse-wrap" fontSize="sm">
-        For testing purposes. this card is using dev contracts
-      </Text>
-      <GoodIdCard
-        account={account ?? "0x000...0000"}
-        isWhitelisted={false}
-        fullname="Just a name"
-        expiryDate={state === "pending" ? "-" : expiryDate?.formattedExpiryTimestamp}
-      />
-    </VStack>
-  );
-};
-
-export const SegmentationScreen = () => {
-  const { account = "" } = useEthers();
-  const certificates = useAggregatedCertificates(account);
-  const certificateSubjects = useCertificatesSubject(certificates);
-
-  return (
-    <W3Wrapper withMetaMask={true}>
-      <SegScreen certificateSubjects={certificateSubjects} />
-    </W3Wrapper>
-  );
-};
-
-export const SegmentationFlow = () => (
-  <W3Wrapper withMetaMask={true} env="staging">
-    <VStack>
-      <Text variant="browse-wrap" fontSize="sm">
-        For testing purposes. this flow is using staging/QA contracts
-      </Text>
-      <SegmentationController
-        onDone={async () => {
-          alert("Segmentation finished");
-        }}
-      />
-    </VStack>
-  </W3Wrapper>
-);
-
-export const OnboardScreenExample = () => {
-  const { account } = useEthers();
-  return <OnboardScreen account={account} />;
-};
-
-export const OffersAgreementExample = () => (
-  <Wizard>
-    <OffersAgreement width={375} />
-  </Wizard>
-);
-
-export const SegmentationConfirmationScreen = () => {
-  const { account = "" } = useEthers();
-  const [isWhitelisted] = useIsAddressVerified(account);
-  const [expiryDate, , state] = useIdentityExpiryDate(account);
-
-  return (
-    <W3Wrapper withMetaMask={true}>
-      <Wizard>
-        <SegmentationConfirmation
-          width={375}
-          account={account}
-          isWhitelisted={isWhitelisted}
-          idExpiry={{ expiryDate, state }}
+    return (
+      <VStack width={375} space={4} {...containerStyles}>
+        <Text variant="browse-wrap" fontSize="sm">
+          For testing purposes. this card is using dev contracts
+        </Text>
+        <GoodIdCard
+          account={account ?? "0x000...0000"}
+          isWhitelisted={args.isWhitelisted}
+          fullname={args.fullname}
+          expiryDate={state === "pending" ? "-" : expiryDate?.formattedExpiryTimestamp}
         />
-      </Wizard>
-    </W3Wrapper>
-  );
+      </VStack>
+    );
+  },
+  args: {
+    styles: {
+      containerStyles: {
+        width: 375,
+        space: 4
+      }
+    },
+    isWhitelisted: false,
+    fullname: "Just a name"
+  }
 };
 
-export const SegmentationDisputeScreen = () => {
-  const { account = "" } = useEthers();
-  const certificates = useAggregatedCertificates(account);
-  const certificateSubjects = useCertificatesSubject(certificates);
+export const SegmentationScreen = {
+  render: (args: any) => {
+    const { account = "" } = useEthers();
+    const certificates = useAggregatedCertificates(args.account ?? account);
+    const certificateSubjects = useCertificatesSubject(certificates);
 
-  return (
+    return (
+      <W3Wrapper withMetaMask={true}>
+        <SegScreen certificateSubjects={certificateSubjects} />
+      </W3Wrapper>
+    );
+  },
+  args: {}
+};
+
+export const SegmentationFlow = {
+  render: (args: any) => (
     <W3Wrapper withMetaMask={true} env="staging">
-      <Wizard>
-        <VStack>
-          <Text variant="browse-wrap" fontSize="sm">
-            For testing purposes. this screen is using staging/QA contracts
-          </Text>
-          <SegmentationDispute
-            width={375}
-            certificateSubjects={certificateSubjects}
-            onDispute={async disputedValues => {
-              console.log("Following is to be reported to ga/amp:", { disputedValues });
-            }}
-          />
-        </VStack>
-      </Wizard>
+      <VStack {...args}>
+        <Text variant="browse-wrap" fontSize="sm">
+          For testing purposes. this flow is using staging/QA contracts
+        </Text>
+        <SegmentationController
+          onDone={async () => {
+            alert("Segmentation finished");
+          }}
+        />
+      </VStack>
     </W3Wrapper>
-  );
+  ),
+  args: {
+    width: 375
+  }
 };
 
-export const DisputeThanksScreen = () => {
-  return (
-    <W3Wrapper withMetaMask={true}>
-      <Wizard>
-        <VStack width={343}>
-          <DisputeThanks />
-        </VStack>
-      </Wizard>
-    </W3Wrapper>
-  );
+export const OnboardScreenExample = {
+  render: () => {
+    const { account } = useEthers();
+    return <OnboardScreen account={account} />;
+  },
+  args: {}
+};
+
+export const OffersAgreementExample = {
+  render: (args: any) => (
+    <Wizard>
+      <OffersAgreement width={375} {...args} />
+    </Wizard>
+  ),
+  args: {
+    width: 375
+  }
+};
+
+export const SegmentationConfirmationScreenExample = {
+  render: (args: any) => {
+    const { account = "" } = useEthers();
+    const [isWhitelisted] = useIsAddressVerified(account);
+    const [expiryDate, , state] = useIdentityExpiryDate(account);
+
+    return (
+      <W3Wrapper withMetaMask={true}>
+        <Wizard>
+          <SegmentationConfirmation
+            account={account}
+            isWhitelisted={isWhitelisted}
+            idExpiry={{ expiryDate, state }}
+            {...args}
+          />
+        </Wizard>
+      </W3Wrapper>
+    );
+  },
+  args: {
+    width: 375
+  }
+};
+
+export const SegmentationDisputeScreenExample = {
+  render: (args: any) => {
+    const { account = "" } = useEthers();
+    const certificates = useAggregatedCertificates(account);
+    const certificateSubjects = useCertificatesSubject(certificates);
+
+    return (
+      <W3Wrapper withMetaMask={true} env="staging">
+        <Wizard>
+          <VStack>
+            <Text variant="browse-wrap" fontSize="sm">
+              For testing purposes, this screen is using staging/QA contracts
+            </Text>
+            <SegmentationDispute
+              width={375}
+              certificateSubjects={certificateSubjects}
+              onDispute={async disputedValues => {
+                console.log("Following is to be reported to ga/amp:", { disputedValues });
+              }}
+              {...args}
+            />
+          </VStack>
+        </Wizard>
+      </W3Wrapper>
+    );
+  },
+  args: {
+    width: 375
+  }
+};
+
+export const DisputeThanksScreenExample = {
+  render: (args: any) => {
+    const { containerStyles, screenStyles } = args.styles;
+    return (
+      <W3Wrapper withMetaMask={true}>
+        <Wizard>
+          <VStack {...containerStyles}>
+            <DisputeThanks {...screenStyles} />
+          </VStack>
+        </Wizard>
+      </W3Wrapper>
+    );
+  },
+  args: {
+    styles: {
+      containerStyles: {
+        width: 375
+      },
+      screenStyles: {}
+    }
+  }
 };
 
 type AvailableOffersPropsAndArgs = React.ComponentProps<typeof CheckAvailableOffers> & { countryCode?: string };
