@@ -1,23 +1,23 @@
-import React, { useContext } from "react";
+import React from "react";
 import { Center, Container, IContainerProps, Text, VStack } from "native-base";
 import { useWizard } from "react-use-wizard";
 
-import { WizardContext } from "../../../utils/WizardContext";
 import { GoodButton, Image, Title } from "../../../core";
 
 import BillyGrin from "../../../assets/images/billy-grin.png";
 import { withTheme } from "../../../theme";
 
 export const OffersAgreement = withTheme({ name: "OffersAgreement" })(
-  ({ styles, ...props }: IContainerProps & { styles?: any }) => {
-    const { updateDataValue } = useContext(WizardContext);
+  ({ styles, ...props }: IContainerProps & { styles?: any; onDataPermission: (accepted: string) => Promise<void> }) => {
     const { nextStep } = useWizard();
     const { buttonContainer, image } = styles ?? {};
     const resizeMode = image.resizeMode ?? "contain";
 
+    const handleNo = () => handleAccept("false");
+    const handleYes = () => handleAccept("true");
     // we need the offersAgreement acceptance for running checkAvailableOffers
-    const handleAccept = () => {
-      updateDataValue("segmentation", "offersAgreement", true);
+    const handleAccept = async (accepted: string) => {
+      await props.onDataPermission(accepted);
       void nextStep();
     };
 
@@ -40,8 +40,8 @@ our full Privacy Policy, go to http://gooddollar.org/privacy-policy`}
               </Text>
 
               <VStack {...buttonContainer}>
-                <GoodButton onPress={handleAccept}>yes, i accept</GoodButton>
-                <GoodButton onPress={nextStep} variant="link-like" _text={{ underline: false }}>
+                <GoodButton onPress={handleYes}>yes, i accept</GoodButton>
+                <GoodButton onPress={handleNo} variant="link-like" _text={{ underline: false }}>
                   no
                 </GoodButton>
               </VStack>

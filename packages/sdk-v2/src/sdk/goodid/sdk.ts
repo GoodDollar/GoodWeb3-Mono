@@ -1,7 +1,9 @@
 import { Signer } from "ethers";
+import { isEqual, omit } from "lodash";
+
 import { FV_IDENTIFIER_MSG2, Envs } from "../constants";
 import { EnvKey } from "../base";
-import { CertificateItem } from "./types";
+import { CertificateItem, CertificateSubject, PoolCriteria } from "./types";
 
 export const getDevEnv = (baseEnv: string) => (baseEnv === "fuse" ? "development" : baseEnv);
 
@@ -130,4 +132,40 @@ export const requestIdentityCertificate = async (
   return fetch(`${backend}/goodid/certificate/identity`, g$AuthRequest(token, { enrollmentIdentifier: fvSig })).then(
     g$Response
   ) as Promise<any>;
+};
+
+type CriteriaMatcher = (certificateSubject: CertificateSubject, criteria: any) => boolean;
+
+const matchLocation: CriteriaMatcher = (certificateSubject, criteria) =>
+  isEqual(omit(certificateSubject, "id"), criteria);
+
+const matchAge: CriteriaMatcher = (certificateSubject, criteria) =>
+  !certificateSubject.age
+    ? false
+    : certificateSubject.age.min >= criteria.min && certificateSubject.age.max <= criteria.max;
+
+const matchGender: CriteriaMatcher = (certificateSubject, criteria) => certificateSubject.gender === criteria;
+
+/**
+ * Criteria matchers for each criteria type
+ * @param certificateSubject can be retrieved from a certificate by using the useCertificatesSubject hook
+ * @param criteria
+ * @param criteriaType
+ * @returns boolean
+ * @example
+ *  checkCriteriaMatch(certificateSubject, { countryCode: "IL" }, "Location")
+ */
+export const criteriaMatchers: Record<string, CriteriaMatcher> = {
+  Location: matchLocation,
+  Age: matchAge,
+  Gender: matchGender
+};
+
+export const checkCriteriaMatch = (
+  certificateSubject: any,
+  criteria: any,
+  criteriaType: keyof PoolCriteria
+): boolean => {
+  const matcher = criteriaMatchers[criteriaType];
+  return matcher ? matcher(certificateSubject, criteria) : false;
 };

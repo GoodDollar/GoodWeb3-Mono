@@ -37,3 +37,19 @@ export interface CertificateItem {
   id: string;
   certificate: Certificate;
 }
+
+/**
+ * Current available criteria for which an good-dollar certificate can be issued
+ */
+export interface PoolCriteria {
+  Location?: { countryCode: string };
+  Age?: { min: number; max: number };
+  Gender?: string;
+  Identity?: { unique: boolean };
+}
+
+export type CertificateSubject = {
+  age?: { min: number; max: number };
+  gender?: string;
+  location?: { countryCode: string };
+};

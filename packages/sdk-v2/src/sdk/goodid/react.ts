@@ -1,12 +1,21 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useCallback, useContext, useEffect, useState, useRef, useMemo } from "react";
-import { size, filter } from "lodash";
+import { filter, isEqual, omit, size } from "lodash";
 import { Platform } from "react-native";
 import GeoLocation from "@react-native-community/geolocation";
+import usePromise from "react-use-promise";
 
+import { AsyncStorage } from "../storage";
 import { GoodIdContext } from "../../contexts/goodid/GoodIdContext";
-import { Certificate, CertificateItem, CertificateRecord, CredentialType } from "./types";
-import { requestIdentityCertificate, requestLocationCertificate } from "./sdk";
+import {
+  Certificate,
+  CertificateItem,
+  CertificateRecord,
+  CredentialSubject,
+  CredentialType,
+  PoolCriteria
+} from "./types";
+import { checkCriteriaMatch, requestIdentityCertificate, requestLocationCertificate } from "./sdk";
 
 export interface AggregatedCertificate extends Partial<CertificateItem> {
   key: string; // composite unique key to be used for lists rendering
@@ -118,6 +127,8 @@ export const useAggregatedCertificates = (account: string): AggregatedCertificat
   const certificates = useCertificatesList(account);
 
   return useMemo(() => {
+    // means certificates is not loaded yet, when loaded it is an empty array
+    if (certificates === null) return [];
     const certificateByType: Partial<{ [type in CredentialType]: CertificateItem }> = {};
     const typesCount = size(CredentialType);
 
@@ -225,4 +236,60 @@ export const useIssueCertificates = (account: string | undefined, baseEnv: any) 
     },
     [baseEnv, storeCertificate]
   );
+};
+
+/**
+ * @param certificates
+ * @returns the credential subjects from the certificates
+ */
+export const useCertificatesSubject = (certificates: AggregatedCertificate[]) => {
+  return useMemo(() => {
+    return certificates.reduce((acc, { certificate, typeName }) => {
+      if (certificate) {
+        acc[typeName] = certificate.credentialSubject;
+      }
+
+      return acc;
+    }, {} as Record<string, CredentialSubject | undefined>);
+  }, [certificates]);
+};
+
+export interface CheckAvailableOffersProps {
+  account: string;
+  pools: PoolCriteria[];
+}
+
+/**
+ * Check if the user is eligible for any of the offers
+ * @param account - the evm address which was used to pass the FaceVerification of the gooddollar protocol
+ * @param pools - the list of offers to check against
+ * @returns the list of offers the user is eligible for
+ * @example
+ */
+export const useCheckAvailableOffers = ({ account, pools }: CheckAvailableOffersProps) => {
+  const certificates = useAggregatedCertificates(account);
+  const certificatesSubjects = useCertificatesSubject(certificates);
+  const [hasPermission] = usePromise(
+    () => AsyncStorage.getItem("goodid_permission").then(value => value === "true"),
+    []
+  );
+
+  return useMemo(() => {
+    // keep null until we have fetched everything
+    if (certificates.length === 0 || hasPermission === undefined) return null;
+
+    if (!hasPermission === false) {
+      return false;
+    }
+
+    return pools.filter(pool => {
+      return Object.entries(omit(pool, "campaign")).every(([key, criteria]) => {
+        const certificateSubject = certificatesSubjects[key];
+
+        if (!certificateSubject) return false;
+
+        return checkCriteriaMatch(certificateSubject, criteria, key as keyof PoolCriteria);
+      });
+    });
+  }, [certificatesSubjects, certificates]);
 };
