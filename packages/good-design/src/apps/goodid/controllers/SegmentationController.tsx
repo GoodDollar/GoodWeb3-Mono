@@ -67,8 +67,8 @@ export const SegmentationController = ({ onDone }: { onDone: SegmentationProps["
     [issueCertificate, account, certificates]
   );
 
-  const onDataPermission = async () => {
-    await AsyncStorage.setItem("goodid_permission", "true");
+  const onDataPermission = async (accepted: string) => {
+    await AsyncStorage.setItem("goodid_permission", accepted);
   };
 
   return (

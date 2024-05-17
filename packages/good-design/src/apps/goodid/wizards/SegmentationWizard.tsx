@@ -16,7 +16,7 @@ import { CheckAvailableOffers } from "../components";
 export type SegmentationProps = {
   onLocationRequest: (locationState: GeoLocation, account: string) => Promise<void>;
   onDone: (error?: Error) => Promise<void>;
-  onDataPermission: () => Promise<void>;
+  onDataPermission: (accepted: string) => Promise<void>;
   certificateSubjects: any;
   account: string;
   isWhitelisted?: boolean;
