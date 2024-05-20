@@ -5,73 +5,105 @@ import {
   GoodIdContextProvider,
   useAggregatedCertificates,
   useCertificatesSubject,
-  useIdentityExpiryDate
+  useCheckAvailableOffers,
+  useIdentityExpiryDate,
+  useIsAddressVerified
 } from "@gooddollar/web3sdk-v2";
-import { Spinner, Text, VStack } from "native-base";
+import { Text, VStack } from "native-base";
 import { Wizard } from "react-use-wizard";
 
 import { W3Wrapper } from "../../W3Wrapper";
 import { OffersAgreement } from "../../../apps/goodid/screens/OffersAgreement";
 
-import { GoodIdCard } from "../../../apps/goodid";
-import { OnboardScreen, SegmentationScreen as SegScreen, SegmentationConfirmation } from "../../../apps/goodid/screens";
+import { CheckAvailableOffers, GoodIdCard } from "../../../apps/goodid";
+import {
+  DisputeThanks,
+  OnboardScreen,
+  SegmentationScreen as SegScreen,
+  SegmentationConfirmation,
+  SegmentationDispute
+} from "../../../apps/goodid/screens";
 import { SegmentationController, OnboardController } from "../../../apps/goodid/controllers";
-import { isNull } from "lodash";
 
 const GoodIdWrapper = ({ children }) => {
   return <GoodIdContextProvider>{children}</GoodIdContextProvider>;
 };
 
 //todo: add expiration date utilty example
+export const GoodIdCardExample = {
+  render: (args: any) => {
+    const { account = "" } = useEthers();
+    const [expiryDate, , state] = useIdentityExpiryDate(account ?? "");
+    const certificates = useAggregatedCertificates(account);
+    const certificateSubjects = useCertificatesSubject(certificates);
 
-export const GoodIdCardExample = () => {
-  const { account = "" } = useEthers();
-  const [expiryDate, , state] = useIdentityExpiryDate(account);
-  const certificates = useAggregatedCertificates(account);
-  const certificateSubjects = useCertificatesSubject(certificates);
-
-  if (isNull(certificates) || !account || state === "pending") return <Spinner variant="page-loader" size="lg" />;
-
-  return (
-    <VStack width={375} space={4}>
-      <Text variant="browse-wrap" fontSize="sm">
-        For testing purposes. this card is using dev contracts
-      </Text>
-      <GoodIdCard
-        certificateSubjects={certificateSubjects}
-        account={account ?? "0x000...0000"}
-        isWhitelisted={false}
-        fullname="Just a name"
-        expiryDate={expiryDate?.formattedExpiryTimestamp}
-      />
-    </VStack>
-  );
+    return (
+      <VStack {...args.styles.containerStyles}>
+        <Text variant="browse-wrap" fontSize="sm">
+          For testing purposes. this card is using dev contracts
+        </Text>
+        <GoodIdCard
+          account={account ?? "0x000...0000"}
+          certificateSubjects={certificateSubjects}
+          isWhitelisted={args.isWhitelisted}
+          fullname={args.fullName}
+          expiryDate={state === "pending" ? "-" : expiryDate?.formattedExpiryTimestamp}
+        />
+      </VStack>
+    );
+  },
+  args: {
+    styles: {
+      containerStyles: {
+        width: "100%",
+        space: 4
+      }
+    },
+    isWhitelisted: false,
+    fullname: "Just a name"
+  }
 };
 
-export const SegmentationScreen = () => {
-  const { account } = useEthers();
-  return (
-    <W3Wrapper withMetaMask={true}>
-      <SegScreen account={account ?? ""} />
+export const SegmentationScreen = {
+  render: (args: any) => {
+    const { account = "" } = useEthers();
+    const certificates = useAggregatedCertificates(args.account ?? account);
+    const certificateSubjects = useCertificatesSubject(certificates);
+
+    return (
+      <W3Wrapper withMetaMask={true}>
+        <SegScreen certificateSubjects={certificateSubjects} />
+      </W3Wrapper>
+    );
+  },
+  args: {}
+};
+
+export const SegmentationFlow = {
+  render: (args: any) => (
+    <W3Wrapper withMetaMask={true} env="staging">
+      <VStack {...args}>
+        <Text variant="browse-wrap" fontSize="sm">
+          For testing purposes. this flow is using staging/QA contracts
+        </Text>
+        <SegmentationController
+          onDone={async () => {
+            alert("Segmentation finished");
+          }}
+        />
+      </VStack>
     </W3Wrapper>
-  );
+  ),
+  args: {
+    width: "100%"
+  }
 };
-
-export const SegmentationFlow = () => (
-  <W3Wrapper withMetaMask={true} env="staging">
-    <VStack>
-      <Text variant="browse-wrap" fontSize="sm">
-        For testing purposes. this flow is using staging/QA contracts
-      </Text>
-      <SegmentationController />
-    </VStack>
-  </W3Wrapper>
-);
 
 export const OnboardScreenExample = {
   render: args => {
     const { account = "" } = useEthers();
-    return <OnboardScreen width={375} account={account} onAccept={() => alert("onAccept")} {...args} />;
+    const { styles } = args;
+    return <OnboardScreen account={account} onAccept={() => alert("onAccept")} {...args} {...styles} />;
   },
   args: {
     name: "test user",
@@ -79,7 +111,10 @@ export const OnboardScreenExample = {
     account: "0x066",
     isPending: false,
     hasCertificates: false,
-    expiryDate: new Date().toISOString()
+    expiryDate: new Date().toISOString(),
+    styles: {
+      width: "100%"
+    }
   }
 };
 
@@ -107,24 +142,135 @@ export const OnboardControllerExample: Meta<React.ComponentProps<typeof OnboardC
     name: "testuser",
     onFV: () => alert("onFV"),
     onSkip: () => alert("Already verified, should go to claim-page"),
-    width: 475
+    width: "100%"
   }
 };
 
-export const OffersAgreementExample = () => (
-  <Wizard>
-    <OffersAgreement />
-  </Wizard>
-);
+export const OffersAgreementExample = {
+  render: (args: any) => (
+    <Wizard>
+      <OffersAgreement {...args} />
+    </Wizard>
+  ),
+  args: {
+    width: "100%"
+  }
+};
 
-export const SegmentationConfirmationScreen = () => {
-  return (
-    <W3Wrapper withMetaMask={true}>
-      <Wizard>
-        <SegmentationConfirmation />
-      </Wizard>
-    </W3Wrapper>
-  );
+export const SegmentationConfirmationScreenExample = {
+  render: (args: any) => {
+    const { account = "" } = useEthers();
+    const [isWhitelisted] = useIsAddressVerified(account);
+    const [expiryDate, , state] = useIdentityExpiryDate(account);
+
+    return (
+      <W3Wrapper withMetaMask={true}>
+        <Wizard>
+          <SegmentationConfirmation
+            account={account}
+            isWhitelisted={isWhitelisted}
+            idExpiry={{ expiryDate, state }}
+            {...args}
+          />
+        </Wizard>
+      </W3Wrapper>
+    );
+  },
+  args: {
+    width: "100%"
+  }
+};
+
+export const SegmentationDisputeScreenExample = {
+  render: (args: any) => {
+    const { account = "" } = useEthers();
+    const certificates = useAggregatedCertificates(account);
+    const certificateSubjects = useCertificatesSubject(certificates);
+
+    return (
+      <W3Wrapper withMetaMask={true} env="staging">
+        <Wizard>
+          <VStack>
+            <Text variant="browse-wrap" fontSize="sm">
+              For testing purposes, this screen is using staging/QA contracts
+            </Text>
+            <SegmentationDispute
+              certificateSubjects={certificateSubjects}
+              onDispute={async disputedValues => {
+                console.log("Following is to be reported to ga/amp:", { disputedValues });
+              }}
+              {...args}
+            />
+          </VStack>
+        </Wizard>
+      </W3Wrapper>
+    );
+  },
+  args: {
+    width: "100%"
+  }
+};
+
+export const DisputeThanksScreenExample = {
+  render: (args: any) => {
+    const { containerStyles, screenStyles } = args.styles;
+    return (
+      <W3Wrapper withMetaMask={true}>
+        <Wizard>
+          <VStack {...containerStyles}>
+            <DisputeThanks {...screenStyles} />
+          </VStack>
+        </Wizard>
+      </W3Wrapper>
+    );
+  },
+  args: {
+    styles: {
+      containerStyles: {
+        width: "100%"
+      },
+      screenStyles: {}
+    }
+  }
+};
+
+type AvailableOffersPropsAndArgs = React.ComponentProps<typeof CheckAvailableOffers> & { countryCode?: string };
+
+export const CheckAvailableOffersExample: Meta<AvailableOffersPropsAndArgs> = {
+  title: "Core/Modals",
+  component: CheckAvailableOffers,
+  render: args => {
+    const { account } = useEthers();
+    const mockPool = [
+      {
+        campaign: "RedTent",
+        Location: {
+          countryCode: args.countryCode ?? "NG"
+        }
+      }
+    ];
+    const availableOffers = useCheckAvailableOffers({ account: account ?? args.account, pools: mockPool });
+    return (
+      <CheckAvailableOffers
+        account={account ?? args.account}
+        onDone={async () => {
+          alert("Finished demo");
+        }}
+        availableOffers={availableOffers}
+      />
+    );
+  },
+  args: {
+    countryCode: "Fill in your two-letter country-code"
+  },
+  argTypes: {
+    account: {
+      description: "User account address, the wallet you currently are connected with."
+    },
+    countryCode: {
+      description: "What country are you located in?"
+    }
+  }
 };
 
 export default {

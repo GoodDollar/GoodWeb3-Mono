@@ -1,28 +1,38 @@
 import React from "react";
-import { VStack, Text } from "native-base";
-import { useIdentityExpiryDate, useIsAddressVerified } from "@gooddollar/web3sdk-v2";
+import { IStackProps, VStack, Text } from "native-base";
+
 import { noop } from "lodash";
 import { useWizard } from "react-use-wizard";
-import { useEthers } from "@usedapp/core";
 
 import { Title } from "../../../core/layout";
-import GoodIdCard from "../idcard/GoodIdCard";
+import GoodIdCard from "../components/GoodIdCard";
 import { GoodButton } from "../../../core/buttons";
 import { withTheme } from "../../../theme";
 import { LoaderModal } from "../../../core";
+import { SegmentationProps } from "../wizards";
 
-export const SegmentationConfirmation = withTheme({ name: "SegmentationConfirmation" })(
-  ({ styles, ...props }: { styles?: any }) => {
+const SegmentationConfirmation = withTheme({ name: "SegmentationConfirmation" })(
+  ({
+    account,
+    isWhitelisted,
+    idExpiry,
+    styles,
+    ...props
+  }: IStackProps &
+    Omit<
+      SegmentationProps,
+      "onDone" | "onLocationRequest" | "certificateSubjects" | "availableOffers" | "onDataPermission"
+    > & {
+      styles?: any;
+    }) => {
     const { nextStep } = useWizard();
-    const { account } = useEthers();
-    const [isWhitelisted] = useIsAddressVerified(account ?? "");
-    const [expiryDate, , state] = useIdentityExpiryDate(account ?? "");
+    const { expiryDate, state } = idExpiry ?? {};
     const { innerContainer, button } = styles ?? {};
 
     return isWhitelisted === undefined || !account ? (
       <LoaderModal title={`We are creating \n your GoodID`} overlay="dark" loading={true} onClose={noop} />
     ) : (
-      <VStack space={200} width={375} {...props}>
+      <VStack space={200} width={"100%"} {...props}>
         <VStack space={6} {...innerContainer}>
           <Title variant="title-gdblue">Your GoodID is ready!</Title>
           {/* Will be fixed in segmentation-dispute PR */}

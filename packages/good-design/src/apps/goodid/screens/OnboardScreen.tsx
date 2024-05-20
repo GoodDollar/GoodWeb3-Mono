@@ -4,7 +4,7 @@ import { Container, Heading, HStack, Text, VStack, IContainerProps, Spinner } fr
 import { withTheme } from "../../../theme";
 import { Title, TxModal } from "../../../core";
 import { BaseButton } from "../../../core/buttons";
-import { GoodIdCard } from "../idcard";
+import { GoodIdCard } from "../components";
 import SvgXml from "../../../core/images/SvgXml";
 import DollarSvg from "../../../assets/svg/goodid/dollar.svg";
 import GlobusSvg from "../../../assets/svg/goodid/globus.svg";
@@ -67,7 +67,6 @@ export const OnboardScreen = withTheme({ name: "OnboardScreen" })(
   }: OnboardScreenProps & IContainerProps) => {
     const { listLabel, poweredBy } = fontStyles ?? {};
 
-    // todo: might want a spinner while waiting for isWhitelisted
     if (isWhitelisted === undefined) return <Spinner variant="page-loader" size="lg" />;
 
     return (

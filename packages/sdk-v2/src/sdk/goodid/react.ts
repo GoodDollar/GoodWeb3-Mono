@@ -1,12 +1,21 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useCallback, useContext, useEffect, useState, useRef, useMemo } from "react";
-import { filter, size } from "lodash";
+import { filter, isEqual, omit, size } from "lodash";
 import { Platform } from "react-native";
 import GeoLocation from "@react-native-community/geolocation";
+import usePromise from "react-use-promise";
 
+import { AsyncStorage } from "../storage";
 import { GoodIdContext } from "../../contexts/goodid/GoodIdContext";
-import { Certificate, CertificateItem, CertificateRecord, CredentialSubject, CredentialType } from "./types";
-import { requestIdentityCertificate, requestLocationCertificate } from "./sdk";
+import {
+  Certificate,
+  CertificateItem,
+  CertificateRecord,
+  CredentialSubject,
+  CredentialType,
+  PoolCriteria
+} from "./types";
+import { checkCriteriaMatch, requestIdentityCertificate, requestLocationCertificate } from "./sdk";
 
 export interface AggregatedCertificate extends Partial<CertificateItem> {
   key: string; // composite unique key to be used for lists rendering
@@ -243,4 +252,44 @@ export const useCertificatesSubject = (certificates: AggregatedCertificate[]) =>
       return acc;
     }, {} as Record<string, CredentialSubject | undefined>);
   }, [certificates]);
+};
+
+export interface CheckAvailableOffersProps {
+  account: string;
+  pools: PoolCriteria[];
+}
+
+/**
+ * Check if the user is eligible for any of the offers
+ * @param account - the evm address which was used to pass the FaceVerification of the gooddollar protocol
+ * @param pools - the list of offers to check against
+ * @returns the list of offers the user is eligible for
+ * @example
+ */
+export const useCheckAvailableOffers = ({ account, pools }: CheckAvailableOffersProps) => {
+  const certificates = useAggregatedCertificates(account);
+  const certificatesSubjects = useCertificatesSubject(certificates);
+  const [hasPermission] = usePromise(
+    () => AsyncStorage.getItem("goodid_permission").then(value => value === "true"),
+    []
+  );
+
+  return useMemo(() => {
+    // keep null until we have fetched everything
+    if (certificates.length === 0 || hasPermission === undefined) return null;
+
+    if (!hasPermission === false) {
+      return false;
+    }
+
+    return pools.filter(pool => {
+      return Object.entries(omit(pool, "campaign")).every(([key, criteria]) => {
+        const certificateSubject = certificatesSubjects[key];
+
+        if (!certificateSubject) return false;
+
+        return checkCriteriaMatch(certificateSubject, criteria, key as keyof PoolCriteria);
+      });
+    });
+  }, [certificatesSubjects, certificates]);
 };
