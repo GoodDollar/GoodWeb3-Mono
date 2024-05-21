@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { Center, HStack, Text, VStack, IStackProps } from "native-base";
+import { Center, IStackProps, HStack, Text, View, VStack } from "native-base";
 import { CredentialType } from "@gooddollar/web3sdk-v2";
 
 import { withTheme } from "../../../theme";
@@ -72,10 +72,10 @@ const GoodIdCard = withTheme({ name: "GoodIdCard", skipProps: "certificates" })(
       <VStack variant="shadow-card" paddingBottom={2} {...props}>
         <HStack justifyContent="space-between">
           <VStack>
-            <Title variant="title-gdblue" {...title}>
-              GoodID
+            <Title variant="title-gdblue" textAlign="left" {...title}>
+              {`GoodID`}
             </Title>
-            <HStack space={1} alignItems="center">
+            <HStack space={1}>
               <Text variant="sm-grey" fontWeight="600" {...subHeading}>
                 {truncatedAccount}
               </Text>
@@ -100,19 +100,21 @@ const GoodIdCard = withTheme({ name: "GoodIdCard", skipProps: "certificates" })(
           {Object.keys(CredentialType)
             .filter((typeName): typeName is Exclude<keyof typeof CredentialType, "Identity"> => typeName !== "Identity")
             .map(typeName => (
-              <CardRowItem
-                key={typeName}
-                credentialLabel={typeName}
-                credential={{
-                  credentialSubject: certificateSubjects?.[typeName],
-                  typeName: CredentialType[typeName]
-                }}
-              />
+              <View mb="2" width="45%">
+                <CardRowItem
+                  key={typeName}
+                  credentialLabel={typeName}
+                  credential={{
+                    credentialSubject: certificateSubjects?.[typeName],
+                    typeName: CredentialType[typeName]
+                  }}
+                />
+              </View>
             ))}
         </HStack>
         <HStack>
           <Text variant="sm-grey" fontSize="2xs" {...footer}>
-            {expiryDate}
+            {`Expires on ` + expiryDate}
           </Text>
         </HStack>
       </VStack>

@@ -128,7 +128,7 @@ export const theme = extendTheme({
           paddingY: 4,
           paddingX: 4,
           space: 4,
-          width: "100%",
+          width: 343,
           borderRadius: 15,
           bgColor: "greyCard",
           shadow: 1
