@@ -3999,49 +3999,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/good-design@file:.yalc/@gooddollar/good-design::locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design":
-  version: 0.1.47-beta.9e9c54e
-  resolution: "@gooddollar/good-design@file:.yalc/@gooddollar/good-design#.yalc/@gooddollar/good-design::hash=71e556&locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design"
-  dependencies:
-    "@babel/core": ^7.18.10
-    "@babel/runtime": ^7.18.9
-    "@gooddollar/goodprotocol": ^2.0.24
-    "@lingui/macro": ^3.14.0
-    "@lingui/react": ^3.14.0
-    "@magiklabs/react-sdk": ^1.0.8
-    "@uniswap/sdk-core": ^3.1.0
-    buffer: ^6.0.3
-    country-data: ^0.0.31
-    ethers: 5.7.2
-    i18n-iso-countries: ^7.11.1
-    metro-react-native-babel-preset: ^0.72.0
-    moment: ^2.29.4
-    moment-duration-format: ^2.3.2
-    native-base: ^3.4.28
-    prop-types: ^15.8.1
-    react: 17.0.2
-    react-dom: 17.0.2
-    react-helmet: ^6.1.0
-    react-inlinesvg: 2.3.0
-    react-native: 0.70.4
-    react-native-fs: ^2.20.0
-    react-native-image-picker: ^7.1.2
-    react-native-mask-input: ^1.2.2
-    react-native-safe-area-context: ^3.3.2
-    react-native-svg: ^12.1.1
-    react-native-svg-uri: ^1.2.3
-    react-native-svg-web: ^1.0.9
-    react-native-web: 0.17.7
-    react-native-web-webview: ^1.0.2
-    react-native-webview: ^13.2.2
-    react-number-format: ^5.1.1
-    react-use-promise: ^0.5.0
-    react-use-wizard: ^2.3.0
-    require-from-string: ^2.0.2
-  checksum: b9fe3673bae4ed9fb40218c0e167564030767af4364a67719b8bdb395e8b4caaf9873118f7229fe486546575059728ca270c64cab22b672eae9f35d70ac2db9d
-  languageName: node
-  linkType: hard
-
 "@gooddollar/good-design@workspace:packages/good-design":
   version: 0.0.0-use.local
   resolution: "@gooddollar/good-design@workspace:packages/good-design"
@@ -4053,7 +4010,6 @@ __metadata:
     "@babel/preset-react": ^7.16.0
     "@babel/preset-typescript": ^7.16.0
     "@babel/runtime": ^7.18.9
-    "@gooddollar/good-design": "file:.yalc/@gooddollar/good-design"
     "@gooddollar/goodprotocol": ^2.0.24
     "@gooddollar/web3sdk-v2": "file:.yalc/@gooddollar/web3sdk-v2"
     "@lingui/macro": ^3.14.0
@@ -4230,7 +4186,7 @@ __metadata:
 
 "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2::locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design":
   version: 0.2.22-beta.6eb0621
-  resolution: "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2#.yalc/@gooddollar/web3sdk-v2::hash=5bb3a5&locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design"
+  resolution: "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2#.yalc/@gooddollar/web3sdk-v2::hash=641411&locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design"
   dependencies:
     "@amplitude/analytics-browser": ^1.6.4
     "@amplitude/analytics-react-native": ^0.7.0
@@ -4263,6 +4219,7 @@ __metadata:
     "@web3modal/react": ^2.6.2
     base-64: ^1.0.0
     dexie: ^3.2.4
+    dexie-react-hooks: ^1.1.7
     ethers: 5.7.2
     eventemitter3: ^4.0.7
     mixpanel-browser: ^2.45.0
@@ -4279,7 +4236,7 @@ __metadata:
     "@react-native-async-storage/async-storage": 1.17.10
     react-native: "*"
     react-native-web: "*"
-  checksum: b54ad4a437414544362d119c632bdadfebab918eac5cae06e65a0b2ac612405d4251e7ef2cfeb62624008512d9a3ac51b8c627e8c6e20af9e37145936a7cb71c
+  checksum: a8c1c444218152229c68e6dfd1744fb86467a5a9578d1e8b74990e720663c312e37001425ed934067e38cf286b5798a4157f5ac0c9662e842461d604cc74d57e
   languageName: node
   linkType: hard
 
@@ -4398,7 +4355,7 @@ __metadata:
     css-loader: ^6.5.1
     ctix: ^1.4.0
     dexie: ^3.2.4
-    dexie-react-hooks: ^1.1.6
+    dexie-react-hooks: ^1.1.7
     ethers: 5.7.2
     eventemitter3: ^4.0.7
     html-webpack-plugin: ^5.5.0
@@ -18786,7 +18743,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dexie-react-hooks@npm:^1.1.6":
+"dexie-react-hooks@npm:^1.1.7":
   version: 1.1.7
   resolution: "dexie-react-hooks@npm:1.1.7"
   peerDependencies:

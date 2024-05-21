@@ -103,12 +103,12 @@ export const OnboardScreenExample = {
   render: args => {
     const { account = "" } = useEthers();
     const { styles } = args;
-    return <OnboardScreen account={account} onAccept={() => alert("onAccept")} {...args} {...styles} />;
+    return <OnboardScreen account={account} onAccept={() => alert("This is just a UI Demo")} {...args} {...styles} />;
   },
   args: {
     name: "test user",
-    isWhitelisted: true,
     account: "0x066",
+    isWhitelisted: true,
     isPending: false,
     hasCertificates: false,
     expiryDate: new Date().toISOString(),
@@ -118,18 +118,15 @@ export const OnboardScreenExample = {
   }
 };
 
-export const OnboardControllerExample: Meta<React.ComponentProps<typeof OnboardController>> = {
+export const OnboardFlowExample: Meta<React.ComponentProps<typeof OnboardController>> = {
   decorators: [
-    (Story: any) => {
-      console.log("HERE");
-      return (
-        <GoodIdWrapper>
-          <W3Wrapper withMetaMask={true} env="fuse">
-            <Story />
-          </W3Wrapper>
-        </GoodIdWrapper>
-      );
-    }
+    (Story: any) => (
+      <GoodIdWrapper>
+        <W3Wrapper withMetaMask={true} env="staging">
+          <Story />
+        </W3Wrapper>
+      </GoodIdWrapper>
+    )
   ],
   render: args => {
     const { account } = useEthers();
@@ -142,6 +139,10 @@ export const OnboardControllerExample: Meta<React.ComponentProps<typeof OnboardC
     name: "testuser",
     onFV: () => alert("onFV"),
     onSkip: () => alert("Already verified, should go to claim-page"),
+    onDone: async (e: any) => {
+      alert("segmentation complemented, should go to claim-page (Available offers not part of this demo-flow)");
+      console.log("onDone", e);
+    },
     width: "100%"
   }
 };
@@ -162,14 +163,19 @@ export const SegmentationConfirmationScreenExample = {
     const { account = "" } = useEthers();
     const [isWhitelisted] = useIsAddressVerified(account);
     const [expiryDate, , state] = useIdentityExpiryDate(account);
+    const certificates = useAggregatedCertificates(args.account ?? account);
+    const certificateSubjects = useCertificatesSubject(certificates);
 
     return (
       <W3Wrapper withMetaMask={true}>
         <Wizard>
           <SegmentationConfirmation
-            account={account}
-            isWhitelisted={isWhitelisted}
-            idExpiry={{ expiryDate, state }}
+            {...{
+              account,
+              isWhitelisted,
+              idExpiry: { expiryDate, state },
+              certificateSubjects
+            }}
             {...args}
           />
         </Wizard>
@@ -250,6 +256,7 @@ export const CheckAvailableOffersExample: Meta<AvailableOffersPropsAndArgs> = {
       }
     ];
     const availableOffers = useCheckAvailableOffers({ account: account ?? args.account, pools: mockPool });
+
     return (
       <CheckAvailableOffers
         account={account ?? args.account}
