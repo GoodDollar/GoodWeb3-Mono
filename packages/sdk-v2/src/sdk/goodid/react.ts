@@ -4,6 +4,7 @@ import { filter, isEqual, omit, size } from "lodash";
 import { Platform } from "react-native";
 import GeoLocation from "@react-native-community/geolocation";
 import usePromise from "react-use-promise";
+import { useLiveQuery } from "dexie-react-hooks";
 
 import { AsyncStorage } from "../storage";
 import { GoodIdContext } from "../../contexts/goodid/GoodIdContext";
@@ -52,7 +53,7 @@ const queryCertificates = async (
 export const useCertificates = (account: string, onDatabaseUpdated: () => Promise<unknown> = async () => {}) => {
   const { db } = useContext(GoodIdContext);
 
-  const loadCertificates = useCallback(
+  const loadCertificates = useLiveQuery(
     async (types: CredentialType[] | null = null): Promise<CertificateItem[]> =>
       account
         ? queryCertificates(db, account, types).then(certificates => certificates.map(certificateRecordToItem))
@@ -96,39 +97,13 @@ export const useCertificates = (account: string, onDatabaseUpdated: () => Promis
   return { loadCertificates, getCertificate, storeCertificate, deleteCertificate };
 };
 
-// full list
-export const useCertificatesList = (
-  account: string,
-  types: CredentialType[] | null = null
-): CertificateItem[] | null => {
-  const [certificates, setCertificates] = useState<CertificateItem[] | null>(null);
-  const loadCertificatesRef = useRef<((types?: CredentialType[] | null) => Promise<CertificateItem[]>) | null>(null); // solves circular callback deps issue
-
-  const fetchCertificates = useCallback(async () => {
-    if (loadCertificatesRef?.current) {
-      return loadCertificatesRef?.current(types).then(setCertificates);
-    }
-  }, [types, setCertificates]);
-
-  const { loadCertificates } = useCertificates(account, fetchCertificates);
-
-  useEffect(() => void (loadCertificatesRef.current = loadCertificates), [loadCertificates]);
-
-  useEffect(() => {
-    void fetchCertificates();
-    // eslint-disable-next-line react-hooks-addons/no-unused-deps
-  }, [fetchCertificates, account]);
-
-  return certificates;
-};
-
 // aggregated list - one per type
 export const useAggregatedCertificates = (account: string): AggregatedCertificate[] => {
-  const certificates = useCertificatesList(account);
+  const { loadCertificates: certificates } = useCertificates(account);
 
   return useMemo(() => {
     // means certificates is not loaded yet, when loaded it is an empty array
-    if (certificates === null) return [];
+    if (!certificates) return [];
     const certificateByType: Partial<{ [type in CredentialType]: CertificateItem }> = {};
     const typesCount = size(CredentialType);
 
@@ -278,7 +253,7 @@ export const useCheckAvailableOffers = ({ account, pools }: CheckAvailableOffers
     // keep null until we have fetched everything
     if (certificates.length === 0 || hasPermission === undefined) return null;
 
-    if (!hasPermission === false) {
+    if (!hasPermission) {
       return false;
     }
 
