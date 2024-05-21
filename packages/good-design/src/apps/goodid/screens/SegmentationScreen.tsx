@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { Center, Spinner, Text, VStack } from "native-base";
-import { isEmpty, noop } from "lodash";
+import { noop } from "lodash";
 
 import { BasicStyledModal } from "../../../core/web3/modals";
 import { WizardContext } from "../../../utils/WizardContext";
@@ -22,7 +22,7 @@ export const SegmentationScreen = ({
 }) => {
   const { data } = useContext(WizardContext);
 
-  if (isEmpty(certificateSubjects)) {
+  if (!certificateSubjects) {
     return <Spinner variant="page-loader" size="lg" />;
   }
 

@@ -19,10 +19,7 @@ const SegmentationConfirmation = withTheme({ name: "SegmentationConfirmation" })
     styles,
     ...props
   }: IStackProps &
-    Omit<
-      SegmentationProps,
-      "onDone" | "onLocationRequest" | "certificateSubjects" | "availableOffers" | "onDataPermission"
-    > & {
+    Omit<SegmentationProps, "onDone" | "onLocationRequest" | "availableOffers" | "onDataPermission"> & {
       styles?: any;
     }) => {
     const { nextStep } = useWizard();
@@ -35,9 +32,8 @@ const SegmentationConfirmation = withTheme({ name: "SegmentationConfirmation" })
       <VStack space={200} width={"100%"} {...props}>
         <VStack space={6} {...innerContainer}>
           <Title variant="title-gdblue">Your GoodID is ready!</Title>
-          {/* Will be fixed in segmentation-dispute PR */}
           <GoodIdCard
-            certificateSubjects={{}}
+            certificateSubjects={props.certificateSubjects}
             account={account}
             isWhitelisted={isWhitelisted}
             expiryDate={state === "pending" ? "-" : expiryDate?.formattedExpiryTimestamp}

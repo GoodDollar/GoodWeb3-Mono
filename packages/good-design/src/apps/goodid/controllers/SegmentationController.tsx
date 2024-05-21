@@ -58,7 +58,6 @@ export const SegmentationController = ({ fvSig, onDone }: { fvSig?: string; onDo
       if (hasValidCertificates) {
         return;
       }
-
       fvSig =
         fvSig ||
         (await AsyncStorage.getItem("fvSig").then(async sig => (!isEmpty(sig) ? sig : await fvLink.getFvSig())));
