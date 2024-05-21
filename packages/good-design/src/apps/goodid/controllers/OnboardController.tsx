@@ -6,37 +6,53 @@ import {
   useIdentityExpiryDate,
   useIsAddressVerified
 } from "@gooddollar/web3sdk-v2";
-import { isNull, noop } from "lodash";
+import { isEmpty, noop } from "lodash";
 import moment from "moment";
 import { IContainerProps, Spinner } from "native-base";
 
 import { OnboardScreen, OnboardScreenProps } from "../screens/OnboardScreen";
 import { useFVModalAction } from "../../../hooks/useFVModalAction";
+import { SegmentationController } from "./SegmentationController";
 
 export interface OnboardControllerProps {
   account: string;
   name?: string | undefined;
+  fvSig?: string;
   onFV?: () => void;
   onSkip: () => void;
+  onDone: (e?: any) => Promise<void>;
 }
 
 export const OnboardController = (
   props: Pick<OnboardScreenProps, "innerContainer" | "fontStyles"> & OnboardControllerProps & IContainerProps
 ) => {
-  const { onFV, onSkip, account, name } = props;
+  const { onFV, onSkip, onDone, account, name, fvSig } = props;
   const [isWhitelisted] = useIsAddressVerified(account ?? "");
   const [expiryDate] = useIdentityExpiryDate(account ?? "");
-  const [isPending, setPendingSignTx] = useState(false);
   const certificates = useAggregatedCertificates(account);
   const certificateSubjects = useCertificatesSubject(certificates);
 
+  const [isPending, setPendingSignTx] = useState(false);
+  const [accepedTos, setAcceptedTos] = useState(false);
+  const [alreadyChecked, setAlreadyChecked] = useState(false);
+
   useEffect(() => {
-    if (isNull(certificates)) return;
+    if (isEmpty(certificates)) return;
     const hasValidCertificates = certificates.some(cert => cert.certificate);
     //todo: add check from server: https://github.com/GoodDollar/GoodServer/issues/470
-    if (hasValidCertificates) {
+    if (hasValidCertificates && !alreadyChecked) {
       onSkip();
+      return;
+    } else {
+      // because of the reactivity of the certificates query,
+      // we need to prevent onSkip being triggered during segmentation flow
+      setAlreadyChecked(true);
     }
+
+    void (async () => {
+      const accepted = await AsyncStorage.getItem("tos-accepted");
+      setAcceptedTos(accepted);
+    })();
   }, [certificates]);
 
   const storeFvSig = async (fvSig: string) => {
@@ -65,6 +81,7 @@ export const OnboardController = (
   };
 
   const handleShouldFV = useCallback(async () => {
+    await AsyncStorage.setItem("tos-accepted", true);
     const { expiryTimestamp } = expiryDate || {};
 
     // if someone is whitelisted we want to verify their timestamp
@@ -78,16 +95,14 @@ export const OnboardController = (
       if (shouldDoFV) {
         void doFV();
       } else {
-        console.log("continue to segmentation here:");
-        // if the expiry date is not within 3 months we will use their existing fv data
-        // to run the good-id checks
-        //todo: Need solution for widget-navigation (gooddapp): https://github.com/GoodDollar/GoodWeb3-Mono/issues/131
-        // nextPage() <-- should navigate to segmentation screen
+        setAcceptedTos(true);
       }
     }
   }, [doFV, isWhitelisted, expiryDate]);
 
-  if (isNull(certificates)) return <Spinner variant="page-loader" size="lg" />;
+  if (isEmpty(certificates)) return <Spinner variant="page-loader" size="lg" />;
+
+  if (accepedTos) return <SegmentationController onDone={onDone} fvSig={fvSig} />;
 
   return (
     <OnboardScreen
