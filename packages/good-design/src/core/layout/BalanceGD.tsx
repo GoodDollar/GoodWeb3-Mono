@@ -1,5 +1,5 @@
 import React, { FC, memo } from "react";
-import { Text, View, Box } from "native-base";
+import { Box, HStack, ITextProps, Text, View } from "native-base";
 import { useG$Balance, useGetEnvChainId } from "@gooddollar/web3sdk-v2";
 import { CurrencyValue, QueryParams } from "@usedapp/core";
 
@@ -56,6 +56,28 @@ const BalanceGD: FC<BalanceGDProps> = ({ gdPrice, requiredChainId, refresh = "ne
 
   return !G$ || !gdPrice ? null : (
     <BalanceView amount={G$} gdPrice={gdPrice} refresh={refresh} requiredChainId={chainId} showUsd={showUsd} />
+  );
+};
+
+export const GdAmount = ({ amount, ...props }: { amount: CurrencyValue; color?: any; options?: any } & ITextProps) => {
+  const { color, options } = props;
+  const formatOptions = {
+    fixedPrecisionDigits: 2,
+    useFixedPrecision: true,
+    significantDigits: 2,
+    suffix: "",
+    ...(options || {})
+  };
+
+  return (
+    <HStack alignItems="flex-end">
+      <Text variant="xl-grey-650" fontFamily="heading" color={color} {...props}>
+        {amount?.format(formatOptions)}
+      </Text>
+      <Text variant="sm-grey-650" color={color} fontWeight="700" {...props}>
+        {"G$"}
+      </Text>
+    </HStack>
   );
 };
 
