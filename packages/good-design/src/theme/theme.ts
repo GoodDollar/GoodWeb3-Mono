@@ -28,6 +28,7 @@ export const theme = extendTheme({
     headingBlack: "#303030",
     headingGrey: "#999",
     lightBlue: "#8499BB",
+    txGreen: "#00C3AE",
 
     // UI
     buttonBackground: "#40C4FFCC",
@@ -42,6 +43,7 @@ export const theme = extendTheme({
       450: "#7A88A5",
       500: "#737373",
       600: "#525252",
+      650: "#5A5A5A",
       700: "#404040"
     },
     // background
@@ -65,7 +67,8 @@ export const theme = extendTheme({
 
     // borders
     borderBlue: "#00AEFF",
-    borderGrey: "#E2E5EA"
+    borderGrey: "#E2E5EA",
+    borderDarkGrey: "#707070"
   },
   sizes: {
     "56": 56,
@@ -96,7 +99,6 @@ export const theme = extendTheme({
     xl: 30,
     "2xl": 36
   },
-
   components: {
     ...layout,
     ...buttons,
@@ -119,6 +121,27 @@ export const theme = extendTheme({
           fontWeight: 400,
           color: "goodGrey.600",
           lineHeight: 20.8
+        }),
+        "sm-grey-650": () => ({
+          fontFamily: "subheading",
+          fontSize: "sm",
+          fontWeight: 400,
+          color: "goodGrey.650",
+          lineHeight: 20.8
+        }),
+        "xl-grey-650": () => ({
+          fontFamily: "subheading",
+          fontSize: "xl",
+          fontWeight: 700,
+          color: "goodGrey.650",
+          lineHeight: 33
+        }),
+        "tx-success": () => ({
+          fontFamily: "heading",
+          fontSize: "l",
+          fontWeight: 700,
+          color: "txGreen",
+          lineHeight: 27.6
         })
       }
     },
