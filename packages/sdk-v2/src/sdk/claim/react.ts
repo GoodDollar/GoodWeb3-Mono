@@ -82,8 +82,11 @@ export const useClaim = (refresh: QueryParams["refresh"] = "never") => {
   return {
     isWhitelisted: first(results[0]?.value) as boolean,
     claimAmount: (first(results[3]?.value) as BigNumber) || undefined,
+    hasClaimed: (first(results[3]?.value) as BigNumber)?.isZero(),
     claimTime: startRef,
-    claimCall
+    claimCall,
+    address: ubi?.address,
+    contractName: "GoodDollar"
   };
 };
 
