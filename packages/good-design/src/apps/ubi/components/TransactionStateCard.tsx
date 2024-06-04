@@ -1,5 +1,6 @@
 import React from "react";
 import { Center, HStack, Text, VStack } from "native-base";
+import { noop } from "lodash";
 
 import { withTheme } from "../../../theme/hoc";
 import { BasePressable } from "../../../core/buttons";
@@ -31,16 +32,17 @@ export type TransactionCardProps = {
 export const TransactionCard = withTheme({ name: "TransactionCard" })(
   ({ transaction, onTxDetails }: TransactionCardProps) => {
     const { tokenValue, type, status, date, displayName } = transaction;
+
     const openTransactionDetails = () => {
       onTxDetails(transaction);
     };
 
     const icon = TransactionStateIcons[status === "pending" ? "pending" : (type as keyof typeof TransactionStateIcons)];
     const amountPrefix = isReceiveTransaction(transaction) ? "+" : "-";
-    const txDate = date ?? "";
+    const txDate = date ? date.format("MM/DD/YYYY, HH:mm") : "";
 
     return (
-      <BasePressable onPress={openTransactionDetails} width="100%">
+      <BasePressable onPress={type !== "claim-start" ? openTransactionDetails : noop} width="100%" marginBottom={2}>
         <VStack
           space={0}
           borderLeftWidth="10px"
