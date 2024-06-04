@@ -1,9 +1,9 @@
 import { Transaction, ReceiveTransaction, SendTransaction } from "../types";
 
-export function isReceiveTransaction(transaction: Transaction): transaction is ReceiveTransaction {
-  return ["bridge-in", "claim-start", "claim-confirmed", "receive"].includes(transaction.type);
-}
+export const isReceiveTransaction = (transaction: Transaction): transaction is ReceiveTransaction =>
+  ["bridge-in", "claim-start", "claim-confirmed", "receive"].includes(transaction.type);
 
-export function isSendTransaction(transaction: Transaction): transaction is SendTransaction {
-  return ["bridge-out", "send"].includes(transaction.type);
-}
+export const isSendTransaction = (transaction: Transaction): transaction is SendTransaction =>
+  ["bridge-out", "send"].includes(transaction.type);
+
+export const isTxReject = (errorMessage: string) => errorMessage === "user rejected transaction";
