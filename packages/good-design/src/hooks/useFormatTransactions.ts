@@ -15,20 +15,15 @@ export const useFormatClaimTransactions = (transactionList: ClaimStats[], chainI
     const formattedTransactions: any = { totalAmount: BigNumber.from("0"), transactionList: [] };
 
     transactionList.map((transaction: ClaimStats) => {
-      const { address, claimAmount = BigNumber.from("0"), contractName, hasClaimed } = transaction;
+      const { address, claimAmount = BigNumber.from("0"), contractName, hasClaimed, date = undefined } = transaction;
 
       console.log({ hasClaimed }); // temp for 'no-unused-vars' eslint rule
 
       const tokenValue = G$Amount("G$", claimAmount, chainId, defaultEnv);
       const trunAddr = truncateMiddle(address, 11);
-      const name = contractName; // ?? getContractName(address)
+      const name = contractName ?? "GoodDollar"; // ?? getContractName(address)
       const network = SupportedChains[chainId];
-      const displayName = `${name} (${trunAddr})`;
-
-      // either this handles pre and post claim where fetch transactions here,
-      // or we need to handle it in the controller
-      // const date = moment.unix(unixTimestamp).format("DD/MM/YY HH:mm");
-      // const { claimAmount, contractAddr, hasClaimed } = transaction;
+      const displayName = `${name} (${trunAddr})`.trim();
 
       formattedTransactions.totalAmount = formattedTransactions.totalAmount.add(claimAmount);
       formattedTransactions.transactionList.push({
@@ -36,7 +31,8 @@ export const useFormatClaimTransactions = (transactionList: ClaimStats[], chainI
         tokenValue,
         displayName,
         network,
-        type: "claim-start"
+        date,
+        type: date ? "claim-confirmed" : "claim-start"
       });
     });
 
