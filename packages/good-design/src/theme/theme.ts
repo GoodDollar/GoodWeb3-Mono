@@ -39,8 +39,7 @@ export const theme = extendTheme({
     // text
     goodGrey: {
       300: "#D4D4D4",
-      400: "#A3A3A3",
-      450: "#7A88A5",
+      400: "#7A88A5",
       500: "#737373",
       600: "#525252",
       650: "#5A5A5A",
@@ -112,7 +111,7 @@ export const theme = extendTheme({
         "browse-wrap": () => ({
           fontFamily: "subheading",
           fontSize: "2xs",
-          color: "goodGrey.450",
+          color: "goodGrey.400",
           textAlign: "center"
         }),
         "sm-grey": () => ({
@@ -128,6 +127,13 @@ export const theme = extendTheme({
           fontWeight: 400,
           color: "goodGrey.650",
           lineHeight: 20.8
+        }),
+        "l-grey-650": () => ({
+          fontFamily: "subheading",
+          fontSize: "l",
+          fontWeight: 700,
+          color: "goodGrey.650",
+          lineHeight: 33
         }),
         "xl-grey-650": () => ({
           fontFamily: "subheading",
