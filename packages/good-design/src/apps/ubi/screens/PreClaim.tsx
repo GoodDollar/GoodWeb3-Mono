@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Center, Spinner, VStack } from "native-base";
 import { noop } from "lodash";
 
@@ -10,44 +10,19 @@ import { Image } from "../../../core/images";
 import { GdAmount, Title } from "../../../core/layout";
 import { TransactionList } from "../components/TransactionStateCard";
 
-import type { ClaimStats, ClaimWizardProps } from "../types";
+import type { ClaimWizardProps } from "../types";
 
 import BillyGrin from "../../../assets/images/billy-grin.png";
 import ClaimFooter from "../../../assets/images/claim-footer.png";
-import { useWizard } from "react-use-wizard";
 
 type PreClaimProps = {
   claimPools: { totalAmount: CurrencyValue; transactionList: any[] }; // <-- todo: define formatted transactionlsit type
-  claimStats: Omit<ClaimStats, "claimCall">;
+  isWhitelisted: boolean | undefined;
   onClaim: ClaimWizardProps["onClaim"];
-  onClaimFailed: (e?: any) => void;
 };
 
-export const PreClaim = ({ claimPools, claimStats, onClaim, onClaimFailed }: PreClaimProps) => {
+export const PreClaim = ({ claimPools, isWhitelisted, onClaim }: PreClaimProps) => {
   const { totalAmount, transactionList } = claimPools ?? {};
-  const { nextStep } = useWizard();
-  const { hasClaimed, isWhitelisted } = claimStats;
-
-  const handleClaim = async () => {
-    // onClaim(transactionList); <-- todo: add claim from multiple pools flow
-    //todo: handle user reject
-    const claimed = await onClaim();
-    if (!claimed) {
-      void onClaimFailed();
-    } else {
-      //trigger succes modal / next-task modal
-      // void onDone();
-      void nextStep();
-    }
-  };
-
-  useEffect(() => {
-    void (async () => {
-      if (hasClaimed) {
-        await nextStep();
-      }
-    })();
-  }, [hasClaimed]);
 
   if ((isWhitelisted as any) === undefined || transactionList?.length === 0 || transactionList === undefined)
     return <Spinner variant="page-loader" size="lg" />;
@@ -70,7 +45,7 @@ export const PreClaim = ({ claimPools, claimStats, onClaim, onClaimFailed }: Pre
         <Center>
           <Web3ActionButton
             text={`Claim Now`}
-            web3Action={handleClaim}
+            web3Action={onClaim}
             variant="round"
             supportedChains={[SupportedChains.CELO, SupportedChains.FUSE]}
             w="160"
