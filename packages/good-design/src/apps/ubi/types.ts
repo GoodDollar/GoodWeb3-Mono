@@ -1,5 +1,6 @@
 import { BigNumber } from "@ethersproject/bignumber";
-import { CurrencyValue } from "@usedapp/core";
+import { CurrencyValue, TransactionStatus } from "@usedapp/core";
+import { Moment } from "moment";
 
 export type ClaimStats = {
   isWhitelisted: boolean;
@@ -9,6 +10,7 @@ export type ClaimStats = {
   claimCall: any;
   address?: string;
   contractName?: string;
+  date?: Moment;
 };
 
 export type Transaction = {
@@ -35,7 +37,9 @@ export interface ClaimWizardProps {
   chainId: number | undefined;
   claimStats: Omit<ClaimStats, "claimCall">;
   claimPools: any;
+  claimStatus: TransactionStatus;
   onTxDetails: (transaction: Transaction) => void;
-  onClaim: () => Promise<boolean>;
+  onClaim: () => Promise<void>;
   handleConnect?: () => Promise<boolean>;
+  onTxUpdate?: (transaction: Transaction) => void;
 }
