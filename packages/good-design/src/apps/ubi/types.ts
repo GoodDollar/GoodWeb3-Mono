@@ -1,4 +1,5 @@
 import { BigNumber } from "@ethersproject/bignumber";
+import { SupportedChains } from "@gooddollar/web3sdk-v2";
 import { CurrencyValue, TransactionStatus } from "@usedapp/core";
 import { Moment } from "moment";
 
@@ -32,14 +33,20 @@ export type SendTransaction = Transaction & {
   type: "bridge-out" | "send";
 };
 
-export interface ClaimWizardProps {
+export interface ClaimContextProps {
   account: string | undefined;
   chainId: number | undefined;
+  withSignModals: boolean;
   claimStats: Omit<ClaimStats, "claimCall">;
   claimPools: any;
   claimStatus: TransactionStatus;
-  onTxDetails: (transaction: Transaction) => void;
+  claimedAlt: { hasClaimed: boolean; altChain: string };
+  error?: string;
+  supportedChains: SupportedChains[];
   onClaim: () => Promise<void>;
-  handleConnect?: () => Promise<boolean>;
-  onTxUpdate?: (transaction: Transaction) => void;
+  onClaimSuccess: () => Promise<void>;
+  onClaimFailed: () => Promise<void>;
+  onConnect?: () => Promise<boolean>;
+  onTxDetails?: (transaction: string) => void;
+  switchChain: () => void;
 }
