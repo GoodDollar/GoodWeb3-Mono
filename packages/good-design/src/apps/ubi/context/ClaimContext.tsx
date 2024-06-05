@@ -50,7 +50,6 @@ export const ClaimProvider: FC<
   const endpoints = explorerEndPoints[activeChain as keyof typeof SupportedChains];
   const [error, setError] = useState<string | undefined>(undefined);
   const { errorMessage } = claimCall?.state ?? {};
-  //todo: handle differently
   const claimedAlt = useClaimedAlt(chainId);
 
   const formattedTransactionList = useFormatClaimTransactions(
