@@ -72,7 +72,7 @@ export const GdAmount = ({ amount, ...props }: { amount: CurrencyValue; color?: 
   return (
     <HStack alignItems="flex-end">
       <Text variant="l-grey-650" fontFamily="heading" color={color} {...props}>
-        {amount?.format(formatOptions)}
+        {amount?.format?.(formatOptions)}
       </Text>
       <Text variant="sm-grey-650" color={color} fontWeight="700" {...props}>
         {"G$"}

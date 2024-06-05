@@ -58,7 +58,8 @@ export const theme = extendTheme({
     },
 
     goodRed: {
-      100: "#D03737"
+      100: "#D03737",
+      200: "#F87171"
     },
 
     //tabs
@@ -133,7 +134,7 @@ export const theme = extendTheme({
           fontSize: "l",
           fontWeight: 700,
           color: "goodGrey.650",
-          lineHeight: 33
+          lineHeight: 27.6
         }),
         "xl-grey-650": () => ({
           fontFamily: "subheading",
