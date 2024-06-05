@@ -1,4 +1,4 @@
-import React, { FC, PropsWithChildren, useCallback, useEffect, useState } from "react";
+import React, { FC, PropsWithChildren, useCallback, useEffect } from "react";
 import { useWizard, Wizard } from "react-use-wizard";
 import { View } from "native-base";
 import { TransactionStatus } from "@usedapp/core";
@@ -7,15 +7,7 @@ import { isTxReject } from "../utils/transactionType";
 import { StartClaim, PreClaim } from "../screens";
 import { PostClaim } from "../screens/PostClaim";
 import { ErrorModal, TxModal } from "../../../core/web3/modals";
-
-import { ClaimWizardProps } from "../types";
-
-type WizardWrapperProps = {
-  error?: any;
-  claimStatus: TransactionStatus;
-  hasClaimed: boolean;
-  onClaimFailed: (e?: any) => Promise<void>;
-};
+import { useClaimContext } from "../context/ClaimContext";
 
 const TxModalStatus = ({ txStatus, onClose }: { txStatus: TransactionStatus; onClose: () => void }) => {
   const { status } = txStatus;
@@ -28,41 +20,45 @@ const TxModalStatus = ({ txStatus, onClose }: { txStatus: TransactionStatus; onC
   ) : null;
 };
 
-const WizardWrapper: FC<PropsWithChildren<WizardWrapperProps>> = ({
-  claimStatus,
-  error,
-  hasClaimed,
-  onClaimFailed,
-  children
-}) => {
+const WizardWrapper: FC<PropsWithChildren> = ({ children }) => {
+  const { claimStats, claimStatus, error, withSignModals, onClaimSuccess, onClaimFailed } = useClaimContext();
   const { goToStep, stepCount } = useWizard();
+  const lastStep = stepCount - 1;
+  const { errorMessage = "", status } = claimStatus;
+  const isReject = isTxReject(errorMessage);
 
   const handleClose = useCallback(() => {
-    if (!isTxReject(error)) {
-      goToStep(2);
+    if (!isTxReject(error ?? "")) {
+      goToStep(lastStep);
     }
   }, [error]);
 
+  const handleNext = useCallback(async () => {
+    if (status === "Success") {
+      await onClaimSuccess();
+    }
+
+    if ((claimStats?.hasClaimed && !isReject) || status === "Success") {
+      goToStep(stepCount - 1);
+    }
+  }, [claimStats, status, isReject]);
+
   useEffect(() => {
     void (async () => {
-      const { errorMessage = "", status } = claimStatus;
-      const isReject = isTxReject(errorMessage);
-
       if (isReject) {
         void onClaimFailed();
-      }
-      console.log("goToStep -- should update modal", { stepCount, hasClaimed, isReject, status });
-      if ((hasClaimed && !isReject) || status === "Success") {
-        goToStep(stepCount - 1);
+      } else {
+        void handleNext();
       }
     })();
-  }, [hasClaimed, claimStatus]);
+  }, [isReject, handleNext, onClaimFailed]);
 
   return (
     <View>
       {error ? <ErrorModal error={error} onClose={handleClose} overlay="dark" /> : null}
 
       {/* This is optional, should be possible to be overriden or handled by app */}
+      {withSignModals ? <TxModalStatus txStatus={claimStatus} onClose={handleClose} /> : null}
       <TxModalStatus txStatus={claimStatus} onClose={handleClose} />
 
       {children}
@@ -70,29 +66,11 @@ const WizardWrapper: FC<PropsWithChildren<WizardWrapperProps>> = ({
   );
 };
 
-export const ClaimWizard = ({
-  account,
-  chainId,
-  claimStats,
-  claimPools,
-  claimStatus,
-  handleConnect,
-  onClaim
-}: //onTxUpdate,
-ClaimWizardProps) => {
-  const [error, setError] = useState<string | undefined>(undefined);
-  const { errorMessage } = claimStatus ?? {};
-
-  const onClaimFailed = useCallback(async () => {
-    setError(errorMessage); //<-- todo: add proper error message
-  }, [errorMessage]);
-
-  return (
-    <Wizard wrapper={<WizardWrapper {...{ claimStatus, error, hasClaimed: claimStats?.hasClaimed, onClaimFailed }} />}>
-      {/* todo-fix: jump over from start claim > pre-claim */}
-      <StartClaim {...{ account, chainId, handleConnect }} />
-      <PreClaim {...{ claimPools, isWhitelisted: claimStats?.isWhitelisted, onClaim }} />
-      <PostClaim {...{ claimPools, claimStats, claimStatus, onClaim, onClaimFailed }} />
-    </Wizard>
-  );
-};
+export const ClaimWizard: FC<any> = () => (
+  <Wizard wrapper={<WizardWrapper />}>
+    {/* todo-fix: jump over from start claim > pre-claim */}
+    <StartClaim />
+    <PreClaim />
+    <PostClaim />
+  </Wizard>
+);
