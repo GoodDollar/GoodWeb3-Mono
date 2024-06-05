@@ -1,22 +1,12 @@
-import React, { useEffect } from "react";
+import React, { FC, useEffect } from "react";
 import { Center, Spinner, Text, VStack } from "native-base";
-import { noop } from "lodash";
-
-import type { CurrencyValue, TransactionStatus } from "@usedapp/core";
+import { isEmpty } from "lodash";
 import { useTimer } from "@gooddollar/web3sdk-v2";
 
 import { Title } from "../../../core/layout";
 import { TransactionList } from "../components/TransactionStateCard";
-
-import type { ClaimStats, ClaimWizardProps } from "../types";
-
-type PostClaimProps = {
-  claimPools: { totalAmount: CurrencyValue; transactionList: any[] }; // <-- todo: define formatted transactionlsit type
-  claimStats: Omit<ClaimStats, "claimCall">;
-  claimStatus?: TransactionStatus;
-  onClaim: ClaimWizardProps["onClaim"];
-  onClaimFailed: (e?: any) => void;
-};
+import { useClaimContext } from "../context";
+import { GoodButton } from "../../../core";
 
 const NextClaim = ({ time }: { time: Date }) => {
   const [nextClaim, , setClaimTime] = useTimer(time);
@@ -39,24 +29,32 @@ const NextClaim = ({ time }: { time: Date }) => {
   );
 };
 
-export const PostClaim = ({ claimPools, claimStats, claimStatus, onClaim, onClaimFailed }: PostClaimProps) => {
+export const PostClaim: FC = () => {
+  const { claimPools, claimStats, claimStatus, claimedAlt, onClaim, onClaimFailed, onTxDetails, switchChain } =
+    useClaimContext();
   const { transactionList } = claimPools ?? {};
   const { claimTime, isWhitelisted } = claimStats;
   const { status, errorMessage } = claimStatus ?? {};
+  const { hasClaimed, altChain } = claimedAlt ?? {};
 
   // temp: lint no-unused-vars
   console.log({ status, errorMessage, onClaimFailed, onClaim });
 
-  if ((isWhitelisted as any) === undefined || transactionList?.length === 0 || transactionList === undefined)
+  if ((isWhitelisted as any) === undefined || isEmpty(transactionList) || hasClaimed === undefined)
     return <Spinner variant="page-loader" size="lg" />;
 
   return (
     <VStack justifyContent="center" alignItems="center">
-      <VStack space={2} marginBottom={8} borderBottomColor="goodGrey.300">
+      <VStack width="100%" space={8} paddingBottom={8} borderBottomWidth={1} borderBottomColor="goodGrey.300">
         <Title variant="title-gdblue" fontSize="xl">
           {`You've claimed today`}
         </Title>
         {claimTime ? <NextClaim time={claimTime} /> : null}
+        {!hasClaimed ? (
+          <Center>
+            <GoodButton onPress={switchChain}>{`CLAIM ON ${altChain}`}</GoodButton>
+          </Center>
+        ) : null}
       </VStack>
       <VStack marginTop={8} space={4} width="375">
         <VStack width="375">
@@ -68,7 +66,7 @@ export const PostClaim = ({ claimPools, claimStats, claimStatus, onClaim, onClai
         {transactionList?.length === 0 ? (
           <Spinner variant="page-loader" size="lg" />
         ) : (
-          <TransactionList transactions={transactionList} onTxDetails={noop} />
+          <TransactionList transactions={transactionList} onTxDetails={onTxDetails} />
         )}
       </VStack>
     </VStack>

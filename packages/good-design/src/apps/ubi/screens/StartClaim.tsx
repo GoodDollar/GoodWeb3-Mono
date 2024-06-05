@@ -1,26 +1,18 @@
-import React, { useEffect } from "react";
+import React, { FC, useEffect } from "react";
 import { Center, Text, VStack } from "native-base";
-import { SupportedChains } from "@gooddollar/web3sdk-v2";
 import { useWizard } from "react-use-wizard";
 
 import { Title } from "../../../core/layout";
 import { Web3ActionButton } from "../../../advanced";
-import { ClaimWizardProps } from "../types";
+import { useClaimContext } from "../context";
 
-export const StartClaim = ({
-  account,
-  chainId,
-  handleConnect
-}: {
-  account: string | undefined;
-  chainId: number | undefined;
-  handleConnect: ClaimWizardProps["handleConnect"];
-}) => {
+export const StartClaim: FC = () => {
+  const { account, chainId, supportedChains, onConnect } = useClaimContext();
   const { nextStep } = useWizard();
 
   useEffect(() => {
     void (async () => {
-      if (account && chainId && [SupportedChains.CELO, SupportedChains.FUSE].includes(chainId)) {
+      if (account && chainId && supportedChains.includes(chainId)) {
         await nextStep();
       }
     })();
@@ -38,8 +30,8 @@ export const StartClaim = ({
       <Center w="100%" h="220">
         <Web3ActionButton
           variant="round"
-          supportedChains={[SupportedChains.CELO, SupportedChains.FUSE]}
-          handleConnect={handleConnect}
+          supportedChains={supportedChains}
+          handleConnect={onConnect}
           web3Action={nextStep}
           text={`Claim G$`}
           w="220"

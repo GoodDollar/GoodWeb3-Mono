@@ -1,30 +1,21 @@
-import React from "react";
+import React, { FC } from "react";
 import { Center, Spinner, VStack } from "native-base";
-import { noop } from "lodash";
-
-import type { CurrencyValue } from "@usedapp/core";
-import { SupportedChains } from "@gooddollar/web3sdk-v2";
+import { isEmpty, noop } from "lodash";
 
 import { Web3ActionButton } from "../../../advanced";
 import { Image } from "../../../core/images";
 import { GdAmount, Title } from "../../../core/layout";
 import { TransactionList } from "../components/TransactionStateCard";
 
-import type { ClaimWizardProps } from "../types";
-
 import BillyGrin from "../../../assets/images/billy-grin.png";
 import ClaimFooter from "../../../assets/images/claim-footer.png";
+import { useClaimContext } from "../context";
 
-type PreClaimProps = {
-  claimPools: { totalAmount: CurrencyValue; transactionList: any[] }; // <-- todo: define formatted transactionlsit type
-  isWhitelisted: boolean | undefined;
-  onClaim: ClaimWizardProps["onClaim"];
-};
-
-export const PreClaim = ({ claimPools, isWhitelisted, onClaim }: PreClaimProps) => {
+export const PreClaim: FC = () => {
+  const { claimPools, claimStats, supportedChains, onClaim } = useClaimContext();
   const { totalAmount, transactionList } = claimPools ?? {};
 
-  if ((isWhitelisted as any) === undefined || transactionList?.length === 0 || transactionList === undefined)
+  if ((claimStats?.isWhitelisted as any) === undefined || isEmpty(transactionList))
     return <Spinner variant="page-loader" size="lg" />;
 
   return (
@@ -47,7 +38,7 @@ export const PreClaim = ({ claimPools, isWhitelisted, onClaim }: PreClaimProps) 
             text={`Claim Now`}
             web3Action={onClaim}
             variant="round"
-            supportedChains={[SupportedChains.CELO, SupportedChains.FUSE]}
+            supportedChains={supportedChains}
             w="160"
             h="160"
             // onEvent={onEvent} <-- todo: add event handling
