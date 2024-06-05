@@ -4,7 +4,14 @@ import { isArray, shuffle } from "lodash";
 
 //todo: add error handler
 
-export const getRecentClaims = async (account: string, endpoint: string, library: any) => {
+export interface RecentClaims {
+  address: any;
+  claimAmount: ethers.BigNumber;
+  date: moment.Moment;
+  transactionHash: any;
+}
+
+export const getRecentClaims = async (account: string, endpoint: string, library: any): Promise<RecentClaims[]> => {
   if (!library) return [];
   const apiEndpoint = shuffle(endpoint.split(","))[0];
   const sender32 = ethers.utils.hexZeroPad(account, 32);
@@ -27,7 +34,7 @@ export const getRecentClaims = async (account: string, endpoint: string, library
     offset: "31",
     topic0: claimHash,
     topic1: sender32,
-    // required for fuse explorer, optional for celoscan
+    // below are required for fuse explorer, optional for <chain>scan.io
     // blocknumber = fuse/blockscout, else we expect a <chain>scan.io aligned response
     fromBlock: blockNoStart.blockNumber ?? blockNoStart,
     toBlock: lastBlockNo,

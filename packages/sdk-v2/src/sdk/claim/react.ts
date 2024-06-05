@@ -108,6 +108,21 @@ export const useHasClaimed = (requiredNetwork: keyof typeof SupportedV2Networks)
   return first(hasClaimed?.value) as boolean;
 };
 
+export const useClaimedAlt = (chainId: number | undefined) => {
+  const claimedCelo = useHasClaimed("CELO");
+  const claimedFuse = useHasClaimed("FUSE");
+
+  const claimedAlt = useMemo(() => {
+    if (chainId === SupportedChains.FUSE) {
+      return { hasClaimed: (claimedCelo as unknown as BigNumber)?.isZero(), altChain: "CELO" };
+    } else {
+      return { hasClaimed: (claimedFuse as unknown as BigNumber)?.isZero(), altChain: "FUSE" };
+    }
+  }, [chainId, claimedCelo, claimedFuse]);
+
+  return claimedAlt;
+};
+
 // if user is verified on fuse and not on current network then send backend request to whitelist
 let syncInProgress = false;
 export const useWhitelistSync = () => {
