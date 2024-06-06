@@ -3525,8 +3525,8 @@ __metadata:
   linkType: hard
 
 "@gooddollar/web3sdk-v2@npm:latest":
-  version: 0.2.20
-  resolution: "@gooddollar/web3sdk-v2@npm:0.2.20"
+  version: 0.2.22
+  resolution: "@gooddollar/web3sdk-v2@npm:0.2.22"
   dependencies:
     "@amplitude/analytics-browser": ^1.6.4
     "@amplitude/analytics-react-native": ^0.7.0
@@ -3557,6 +3557,7 @@ __metadata:
     "@web3modal/react": ^2.6.2
     base-64: ^1.0.0
     dexie: ^3.2.4
+    ethers: 5.7.2
     eventemitter3: ^4.0.7
     mixpanel-browser: ^2.45.0
     mixpanel-react-native: ^2.1.0
@@ -3572,7 +3573,7 @@ __metadata:
     "@react-native-async-storage/async-storage": 1.17.10
     react-native: "*"
     react-native-web: "*"
-  checksum: 1ea0793c3d6c43f60e422885ca9abbf933e339d8bba556620e1fe82374d0946e6efbce4de48e3bcc2eff5b6804f1c251ec4e4bbf68e65189229689a474ae6607
+  checksum: 2f410e624288bedcf90eb1cb7b1e4b0ea700fe4dd735f2bd3558a82643fa39c24408fd2d7747136a250fc478fcfa6bca5640e47fe0d5b5c7f4830493637fe615
   languageName: node
   linkType: hard
 

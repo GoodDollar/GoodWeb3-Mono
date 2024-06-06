@@ -39,6 +39,7 @@ export const theme = extendTheme({
     goodGrey: {
       300: "#D4D4D4",
       400: "#A3A3A3",
+      450: "#7A88A5",
       500: "#737373",
       600: "#525252",
       700: "#404040"
@@ -53,6 +54,10 @@ export const theme = extendTheme({
       200: "#3F444E",
       300: "#2F3338",
       500: "#26292F"
+    },
+
+    goodRed: {
+      100: "#D03737"
     },
 
     //tabs
@@ -91,19 +96,6 @@ export const theme = extendTheme({
     xl: 30,
     "2xl": 36
   },
-  shadow: {
-    //Bug: override shadow does not take effect. defining new one is not used
-    "1": {
-      shadowColor: "black",
-      shadowOffset: {
-        width: 0,
-        height: 3
-      },
-      shadowOpacity: 0.4,
-      shadowRadius: 0,
-      elevation: 8
-    }
-  },
 
   components: {
     ...layout,
@@ -112,7 +104,46 @@ export const theme = extendTheme({
     ...apps,
     ...animated,
     ...web3modals,
-    ...nativebase
+    ...nativebase,
+    Text: {
+      variants: {
+        "browse-wrap": () => ({
+          fontFamily: "subheading",
+          fontSize: "2xs",
+          color: "goodGrey.450",
+          textAlign: "center"
+        }),
+        "sm-grey": () => ({
+          fontFamily: "subheading",
+          fontSize: "sm",
+          fontWeight: 400,
+          color: "goodGrey.600",
+          lineHeight: 20.8
+        })
+      }
+    },
+    VStack: {
+      variants: {
+        "shadow-card": () => ({
+          paddingY: 4,
+          paddingX: 4,
+          space: 4,
+          width: "343",
+          borderRadius: 15,
+          bgColor: "greyCard",
+          shadow: 1
+        })
+      }
+    },
+    Spinner: {
+      variants: {
+        "page-loader": () => ({
+          borderWidth: "0",
+          color: "primary",
+          paddingBottom: 4
+        })
+      }
+    }
   }
 });
 

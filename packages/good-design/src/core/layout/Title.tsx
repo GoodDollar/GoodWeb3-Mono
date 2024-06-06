@@ -20,6 +20,31 @@ export const theme = {
     lg: {
       fontSize: "32px"
     }
+  },
+  variants: {
+    "subtitle-grey": () => ({
+      fontFamily: "subheading",
+      fontSize: "md",
+      fontWeight: "500",
+      color: "goodGrey.600",
+      lineHeight: "125%"
+    }),
+    "title-gdblue": () => ({
+      color: "primary",
+      fontWeight: 700,
+      fontFamily: "heading",
+      fontSize: "l",
+      textAlign: "center",
+      lineHeight: 27.6
+    }),
+    "title-gdred": () => ({
+      color: "goodRed.100",
+      fontWeight: 900,
+      fontFamily: "heading",
+      fontSize: "xl",
+      textAlign: "center",
+      lineHeight: 27.6
+    })
   }
 };
 
