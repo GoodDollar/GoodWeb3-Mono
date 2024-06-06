@@ -10,18 +10,24 @@ import {
   IconButton,
   InfoOutlineIcon,
   Popover,
+  Pressable,
   Spinner,
   Stack,
   Text,
+  VStack,
   WarningOutlineIcon
 } from "native-base";
-import { CurrencyValue, TransactionStatus } from "@usedapp/core";
+import { CurrencyValue, TransactionStatus, useEthers } from "@usedapp/core";
 import { useG$Amount } from "@gooddollar/web3sdk-v2";
+import { isEmpty } from "lodash";
 
-import { TokenInput, TokenOutput } from "../../core";
+import { Image, TokenInput, TokenOutput } from "../../core";
 import { BigNumber } from "ethers";
 import { ExplorerLink } from "../../core/web3/ExplorerLink";
-import { CustomSwitch } from "../../advanced/customswitch/";
+import { GdAmount } from "../../core/layout/BalanceGD";
+import { useBalanceHook } from "./useBalanceHook";
+
+import ArrowTabLightRight from "../../assets/svg/arrow-tab-light-right.svg";
 
 type OnBridge = (amount: string, sourceChain: string, target?: string) => Promise<void>;
 
@@ -122,7 +128,6 @@ const useBridgeEstimate = ({
 };
 
 export const MicroBridge = ({
-  useBalanceHook,
   useCanBridge,
   onBridge,
   onSetChain,
@@ -136,7 +141,6 @@ export const MicroBridge = ({
   onBridgeSuccess
 }: {
   onBridge: OnBridge;
-  useBalanceHook: (chain: "fuse" | "celo") => string;
   useCanBridge: (chain: "fuse" | "celo", amountWei: string) => { isValid: boolean; reason: string };
   onSetChain?: (chain: "fuse" | "celo") => void;
   limits?: ILimits;
@@ -148,16 +152,18 @@ export const MicroBridge = ({
   onBridgeSuccess?: () => void;
   onBridgeFailed?: (e: Error) => void;
 }) => {
+  const { chainId } = useEthers();
   const [isBridging, setBridging] = useState(false);
   const [inputWei, setInput] = useState<string>("0");
 
-  const [sourceChain, setSourceChain] = useState<"fuse" | "celo">("fuse");
+  const [sourceChain, setSourceChain] = useState<"fuse" | "celo">(chainId === 122 ? "fuse" : "celo");
 
   const targetChain = sourceChain === "fuse" ? "celo" : "fuse";
-  const balanceWei = useBalanceHook(sourceChain);
+  const balances = useBalanceHook() ?? {};
+  const { wei, gdValue } = balances[sourceChain] ?? {};
 
   const { isValid, reason } = useCanBridge(sourceChain, inputWei);
-  const hasBalance = Number(inputWei) <= Number(balanceWei);
+  const hasBalance = Number(inputWei) <= Number(wei);
   const isValidInput = isValid && hasBalance;
   const reasonOf = reason || (!hasBalance && "balance") || "";
 
@@ -207,31 +213,52 @@ export const MicroBridge = ({
 
   const { minAmountWei, expectedToReceive } = useBridgeEstimate({ limits, fees, inputWei, sourceChain });
   const reasonMinAmount =
-    reason === "minAmount" ? " Minimum amount is " + Number(minAmountWei) / 1e2 + "G$" : undefined;
+    reason === "minAmount"
+      ? " Minimum amount is " + Number(minAmountWei) / (sourceChain === "fuse" ? 1e2 : 1e18) + "G$"
+      : undefined;
+
+  if (isEmpty(balances)) return <Spinner variant="page-loader" />;
 
   return (
     <Box>
       <Flex direction="column" w="410px" justifyContent="center" alignSelf="center">
-        <Flex direction="row" justifyContent="center" mb="40px" zIndex="100">
-          <CustomSwitch switchListCb={toggleChains} list={["Fuse", "Celo"]} />
-        </Flex>
-        <Flex direction="column" alignItems="flex-start" justifyContent="flex-start" width="100%">
-          <Text fontFamily="subheading" bold color="lightGrey:alpha.80">
-            ENTER AMOUNT
-          </Text>
-          <TokenInput token="G$" balanceWei={balanceWei} onChange={setInput} minAmountWei={minAmountWei?.toString()} />
-        </Flex>
+        <VStack marginBottom={10}>
+          {/* wip: make separate component after testing */}
+          <HStack zIndex="100" justifyContent="space-between">
+            <VStack>
+              <Text color="goodGrey.700" fontSize="l" fontFamily="heading" fontWeight="700">
+                G$ Celo
+              </Text>
+              <GdAmount amount={balances.celo.gdValue} withDefaultSuffix={false} fontSize="sm" />
+            </VStack>
+
+            <Box w="100px" height="64px" pl="3" pr="3" display="flex" justifyContent={"center"} alignItems="center">
+              <Pressable onPress={toggleChains} backgroundColor="primary" borderRadius="50" p="2">
+                <Image source={ArrowTabLightRight} w="6" h="6" />
+              </Pressable>
+            </Box>
+            <VStack>
+              <Text color="goodGrey.700" fontSize="l" fontFamily="heading" fontWeight="700">
+                G$ Fuse
+              </Text>
+              <GdAmount amount={balances.fuse.gdValue} withDefaultSuffix={false} fontSize="sm" />
+            </VStack>
+          </HStack>
+        </VStack>
+        <VStack alignItems="flex-start" justifyContent="flex-start" width="100%">
+          <TokenInput balanceWei={wei} gdValue={gdValue} onChange={setInput} minAmountWei={minAmountWei?.toString()} />
+        </VStack>
         <FormControl isInvalid={!!reasonOf}>
           <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon variant="outline" />}>
             {reasonMinAmount ?? reasonOf}
           </FormControl.ErrorMessage>
         </FormControl>
-        <Flex mt="4" direction="column" alignItems="flex-start" justifyContent="flex-start" width="100%">
+        <VStack mt="4" direction="column" alignItems="flex-start" justifyContent="flex-start" width="100%">
           <Text fontFamily="subheading" color="lightGrey:alpha.80" textTransform="uppercase" bold>
             You will receive on {targetChain}
           </Text>
-          <TokenOutput token="G$" outputValue={expectedToReceive?.format() ?? "0"} />
-        </Flex>
+          <TokenOutput token="G$" outputValue={expectedToReceive.value.toString() ?? "0"} />
+        </VStack>
         <Button
           mt="5"
           onPress={triggerBridge}
