@@ -142,7 +142,16 @@ export const OnboardFlowExample: Meta<React.ComponentProps<typeof OnboardControl
     const { account } = useEthers();
     console.log({ account });
     args.account = account || args.account;
-    return <OnboardController {...args} />;
+    return (
+      <VStack>
+        <Text w="100%" textAlign="center" fontWeight="bold" my="4">
+          {`When demo/testing this story, make sure you cleared your existing certificates and permissions! (clear cache).
+Also reset your location permissions for the domain. 
+If you don't see a onboard screen, this means there is still a permission 'tos-accepted' in your local-storage.`}
+        </Text>
+        <OnboardController {...args} />
+      </VStack>
+    );
   },
   args: {
     account: "0x5128E3C1f8846724cc1007Af9b4189713922E4BB",
@@ -207,7 +216,7 @@ export const SegmentationDisputeScreenExample = {
       <W3Wrapper withMetaMask={true} env="staging">
         <Wizard>
           <VStack>
-            <Text variant="browse-wrap" fontSize="sm">
+            <Text variant="browse-wrap" fontSize="sm" fontWeight="bold">
               For testing purposes, this screen is using staging/QA contracts
             </Text>
             <SegmentationDispute
@@ -268,13 +277,18 @@ export const CheckAvailableOffersExample: Meta<AvailableOffersPropsAndArgs> = {
     const availableOffers = useCheckAvailableOffers({ account: account ?? args.account, pools: mockPool });
 
     return (
-      <CheckAvailableOffers
-        account={account ?? args.account}
-        onDone={async () => {
-          alert("Finished demo");
-        }}
-        availableOffers={availableOffers}
-      />
+      <VStack>
+        <Text fontWeight="bold" my="4" textAlign="center" w="100%">
+          {`If you see finished demo change in the controls the country-code the country of your certificate. \n If you have no certificates, go through the segmentation or onboard flow stories to get one.`}
+        </Text>
+        <CheckAvailableOffers
+          account={account ?? args.account}
+          onDone={async () => {
+            alert("Finished demo");
+          }}
+          availableOffers={availableOffers}
+        />
+      </VStack>
     );
   },
   args: {

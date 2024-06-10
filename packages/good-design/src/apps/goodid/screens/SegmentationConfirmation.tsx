@@ -30,7 +30,7 @@ const SegmentationConfirmation = withTheme({ name: "SegmentationConfirmation" })
       <LoaderModal title={`We are creating \n your GoodID`} overlay="dark" loading={true} onClose={noop} />
     ) : (
       <VStack space={200} width={"100%"} {...props}>
-        <VStack space={6} {...innerContainer}>
+        <VStack space={6} alignItems="center" {...innerContainer}>
           <Title variant="title-gdblue">Your GoodID is ready!</Title>
           <GoodIdCard
             certificateSubjects={props.certificateSubjects}
@@ -42,8 +42,8 @@ const SegmentationConfirmation = withTheme({ name: "SegmentationConfirmation" })
             You can always access this GoodID by connecting your current wallet to GoodDapp.
           </Text>
         </VStack>
-        <VStack space={4} width={"100%"}>
-          <GoodButton {...button} onPress={nextStep}>
+        <VStack space={4} alignItems="center" width={"100%"}>
+          <GoodButton width="343" {...button} onPress={nextStep}>
             Next
           </GoodButton>
         </VStack>
