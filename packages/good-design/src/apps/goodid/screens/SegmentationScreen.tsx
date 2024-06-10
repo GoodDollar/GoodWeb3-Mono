@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { Center, Spinner, Text, VStack } from "native-base";
-import { isEmpty, noop } from "lodash";
+import { noop } from "lodash";
 
 import { BasicStyledModal } from "../../../core/web3/modals";
 import { WizardContext } from "../../../utils/WizardContext";
@@ -22,7 +22,7 @@ export const SegmentationScreen = ({
 }) => {
   const { data } = useContext(WizardContext);
 
-  if (isEmpty(certificateSubjects)) {
+  if (!certificateSubjects) {
     return <Spinner variant="page-loader" size="lg" />;
   }
 
@@ -37,10 +37,10 @@ export const SegmentationScreen = ({
         onClose={noop}
         withCloseButton
       />
-      <VStack space={10}>
+      <VStack space={10} width="100%" justifyContent="center" alignItems="center">
         <VStack space={6}>
           <Title variant="title-gdblue">Please confirm</Title>
-          <VStack variant="shadow-card" textAlign="center">
+          <VStack variant="shadow-card" textAlign="center" paddingY="6" paddingX="0">
             {Object.entries(typeLabels).map(([key]) => (
               <SegmentationRow
                 key={key}
@@ -48,10 +48,10 @@ export const SegmentationScreen = ({
                 typeName={key as keyof typeof typeLabels}
               />
             ))}
-            <Center>
-              <Image source={RoboBilly} w="75" h="120" style={{ resizeMode: "contain" }} />
-            </Center>
           </VStack>
+          <Center>
+            <Image source={RoboBilly} w="75" h="120" style={{ resizeMode: "contain" }} />
+          </Center>
         </VStack>
       </VStack>
     </>

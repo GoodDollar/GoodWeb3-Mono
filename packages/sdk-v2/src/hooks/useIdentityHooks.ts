@@ -14,7 +14,7 @@ export const useIdentityExpiryDate = (account: string) => {
       const periodInMs = authPeriod.mul(24 * 60 * 60 * 1000);
       const expiryTimestamp = lastAuthenticated.mul(1000).add(periodInMs);
 
-      let formattedExpiryTimestamp: string | null = null;
+      let formattedExpiryTimestamp: string | undefined;
       if (!lastAuthenticated.isZero() && expiryTimestamp) {
         const timestamp = expiryTimestamp.toNumber();
         formattedExpiryTimestamp = moment(timestamp).format("MMMM DD, YYYY");

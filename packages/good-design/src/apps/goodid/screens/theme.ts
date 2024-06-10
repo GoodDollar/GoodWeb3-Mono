@@ -1,12 +1,13 @@
 const OnboardScreen = {
   baseStyle: {
-    width: 375,
+    width: "100%",
     paddingX: 4,
     alignItems: "center",
     maxWidth: "100%",
     innerContainer: {
       space: 8,
-      maxWidth: "100%",
+      width: 343,
+      justifyContent: "center",
       alignItems: "center"
     },
     fontStyles: {
@@ -31,7 +32,10 @@ const OffersAgreement = {
     alignItems: "center",
     styles: {
       buttonContainer: {
-        space: 4
+        space: 4,
+        justifyContent: "center",
+        alignItems: "center",
+        width: 343
       },
       image: {
         width: 150,
@@ -51,4 +55,27 @@ const SegmentationConfirmation = {
   }
 };
 
-export { OffersAgreement, OnboardScreen, SegmentationConfirmation };
+const SegmentationDispute = {
+  baseStyle: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    paddingX: 6,
+    paddingY: 4,
+    styles: {
+      buttonContainer: {
+        width: "343"
+      }
+    }
+  }
+};
+
+const RedtentVideoInstructions = {
+  baseStyle: {
+    width: "343",
+    marginLeft: "auto",
+    marginRight: "auto"
+  }
+};
+
+export { OffersAgreement, OnboardScreen, RedtentVideoInstructions, SegmentationConfirmation, SegmentationDispute };

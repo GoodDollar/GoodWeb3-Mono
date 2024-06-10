@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
-import { Center, HStack, Text, VStack, IStackProps } from "native-base";
-import { useAggregatedCertificates } from "@gooddollar/web3sdk-v2";
+import { Center, IStackProps, HStack, Text, View, VStack } from "native-base";
+import { CredentialType } from "@gooddollar/web3sdk-v2";
 
 import { withTheme } from "../../../theme";
 import SvgXml from "../../../core/images/SvgXml";
@@ -15,9 +15,10 @@ import GdUnverifiedSvg from "../../../assets/svg/gdunverified.svg";
 interface GoodIdCardProps extends IStackProps {
   account: string;
   isWhitelisted: boolean;
+  certificateSubjects: any;
   avatar?: string;
   fullname?: string;
-  expiryDate?: string | null;
+  expiryDate?: string;
   fontStyles?: any;
 }
 
@@ -62,21 +63,19 @@ const CardRowItem = withTheme({ name: "CardRowItem" })(
   }
 );
 
-const GoodIdCard = withTheme({ name: "GoodIdCard", skipProps: "credentialsList" })(
-  ({ account, isWhitelisted, avatar, fullname, expiryDate, ...props }: GoodIdCardProps) => {
+const GoodIdCard = withTheme({ name: "GoodIdCard", skipProps: "certificates" })(
+  ({ account, isWhitelisted, certificateSubjects, avatar, fullname, expiryDate, ...props }: GoodIdCardProps) => {
     const { title, subHeading, subContent, footer } = props.fontStyles ?? {};
     const truncatedAccount = truncateMiddle(account, 11);
-
-    const certificates = useAggregatedCertificates(account);
 
     return (
       <VStack variant="shadow-card" paddingBottom={2} {...props}>
         <HStack justifyContent="space-between">
           <VStack>
-            <Title variant="title-gdblue" {...title}>
-              GoodID
+            <Title variant="title-gdblue" textAlign="left" {...title}>
+              {`GoodID`}
             </Title>
-            <HStack space={1} alignItems="center">
+            <HStack space={1}>
               <Text variant="sm-grey" fontWeight="600" {...subHeading}>
                 {truncatedAccount}
               </Text>
@@ -97,20 +96,24 @@ const GoodIdCard = withTheme({ name: "GoodIdCard", skipProps: "credentialsList" 
           </VStack>
         </HStack>
         <HStack space={2} flexWrap="wrap">
-          {certificates
-            ?.filter(({ typeName }) => "Identity" !== typeName)
-            .map(({ certificate, typeName, type }) => (
-              <CardRowItem
-                key={type}
-                credentialLabel={typeName}
-                credential={{ credentialSubject: certificate?.credentialSubject, typeName: type }}
-                fontStyles={props.fontStyles}
-              />
+          {/* subjects can be empty so we use credentialtype for mapping  */}
+          {Object.keys(CredentialType)
+            .filter((typeName): typeName is Exclude<keyof typeof CredentialType, "Identity"> => typeName !== "Identity")
+            .map(typeName => (
+              <View mb="2" width="45%" key={typeName}>
+                <CardRowItem
+                  credentialLabel={typeName}
+                  credential={{
+                    credentialSubject: certificateSubjects?.[typeName],
+                    typeName: CredentialType[typeName]
+                  }}
+                />
+              </View>
             ))}
         </HStack>
         <HStack>
           <Text variant="sm-grey" fontSize="2xs" {...footer}>
-            {expiryDate}
+            {`Expires on ` + expiryDate}
           </Text>
         </HStack>
       </VStack>
