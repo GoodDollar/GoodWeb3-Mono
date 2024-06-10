@@ -33,15 +33,14 @@ const SegmentationRow = ({
     <VStack space={onCheck ? 2 : undefined}>
       <Title variant="subtitle-grey">{typeLabels[typeName]}</Title>
       {onCheck ? (
-        <HStack space={4} paddingRight={25} justifyContent="center">
+        <HStack space={4}>
           <Checkbox
-            width="100%"
             value={verifiedValue}
             onChange={isChecked => onCheck(isChecked)}
             colorScheme="info"
             accessibilityLabel={`Dispute ${verifiedValue}`}
           >
-            <Title variant="title-gdblue" textAlign="center" minWidth={150}>
+            <Title variant="title-gdblue" textAlign="center" minWidth="260">
               {verifiedValue}
             </Title>
           </Checkbox>

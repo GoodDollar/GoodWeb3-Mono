@@ -13,18 +13,18 @@ export const DisputeThanks = () => {
   const { nextStep } = useWizard();
 
   return (
-    <VStack space={200} width={"100%"}>
+    <VStack space={8} width="100%">
       <VStack space={8}>
-        <Title variant="title-gdblue">{`Thanks for letting us \n know!`}</Title>
+        <Title variant="title-gdblue">{`Thanks for letting us know!`}</Title>
         <Text variant="sm-grey" textAlign="center">
-          {`Heads-up that information you’ve corrected may \n show as “Unverified” on your GoodID. \n\n This will not affect your ability to claim UBI!`}
+          {`Heads-up that information you’ve corrected may show as “Unverified” on your GoodID. \n\n This will not affect your ability to claim UBI!`}
         </Text>
         <Center>
           <Image source={BillyDispute} w="265" h="116" style={{ resizeMode: "contain" }} />
         </Center>
       </VStack>
-      <VStack space={6} justifyContent="center" alignItems="center" width="100%">
-        <GoodButton width="100%" onPress={nextStep}>
+      <VStack space={6} justifyContent="center" alignItems="center">
+        <GoodButton width="100%" maxWidth="343" onPress={nextStep}>
           Next
         </GoodButton>
       </VStack>

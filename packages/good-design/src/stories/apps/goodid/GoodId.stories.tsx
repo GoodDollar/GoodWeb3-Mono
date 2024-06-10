@@ -11,6 +11,7 @@ import {
 } from "@gooddollar/web3sdk-v2";
 import { Text, VStack } from "native-base";
 import { Wizard } from "react-use-wizard";
+import moment from "moment";
 
 import { W3Wrapper } from "../../W3Wrapper";
 import { OffersAgreement } from "../../../apps/goodid/screens/OffersAgreement";
@@ -102,8 +103,17 @@ export const SegmentationFlow = {
 export const OnboardScreenExample = {
   render: args => {
     const { account = "" } = useEthers();
-    const { styles } = args;
-    return <OnboardScreen account={account} onAccept={() => alert("This is just a UI Demo")} {...args} {...styles} />;
+    const { expiryDate, styles } = args;
+    const formattedExpiryTimestamp = moment(expiryDate).format("MMMM DD, YYYY");
+    return (
+      <OnboardScreen
+        account={account}
+        onAccept={() => alert("This is just a UI Demo")}
+        {...args}
+        expiryDate={formattedExpiryTimestamp}
+        {...styles}
+      />
+    );
   },
   args: {
     name: "test user",
@@ -111,7 +121,7 @@ export const OnboardScreenExample = {
     isWhitelisted: true,
     isPending: false,
     hasCertificates: false,
-    expiryDate: new Date().toISOString(),
+    expiryDate: new Date().getTime(),
     styles: {
       width: "100%"
     }

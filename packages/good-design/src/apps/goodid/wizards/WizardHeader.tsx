@@ -8,7 +8,8 @@ import { ErrorModal } from "../../../core/web3";
 export const WizardHeader = ({
   onDone,
   error,
-  onClose
+  onClose,
+  ...props
 }: {
   onDone: (error?: Error) => Promise<void>;
   error: any;
@@ -33,10 +34,11 @@ export const WizardHeader = ({
       alignItems={"center"}
       height={12}
       flexDir={"row"}
-      width={375}
+      width="100%"
       paddingLeft={isFirstStep || isLastStep ? 0 : 4}
       paddingRight={4}
       mb={6}
+      {...props}
     >
       <View position={"relative"} display={"inline"} width={15}>
         <TouchableOpacity onPress={handleBack}>
