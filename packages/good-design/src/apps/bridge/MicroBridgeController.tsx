@@ -12,7 +12,7 @@ import {
 
 import { useEthers } from "@usedapp/core";
 import { noop, sortBy } from "lodash";
-import { ArrowForwardIcon, Box, Button, Flex, Heading, HStack, Stack, Text } from "native-base";
+import { ArrowForwardIcon, Box, Button, Flex, Heading, HStack, Spinner, Stack, Text } from "native-base";
 import { ExplorerLink } from "../../core/web3/ExplorerLink";
 import { useSignWalletModal } from "../../hooks/useSignWalletModal";
 import { MicroBridge } from "./MicroBridge";
@@ -148,6 +148,8 @@ export const MicroBridgeController: FC<IMicroBridgeControllerProps> = ({
   const { bridgeFees: fuseBridgeFees, bridgeLimits: fuseBridgeLimits } = useGetBridgeData(SupportedChains.FUSE, "");
   const { bridgeFees: celoBridgeFees, bridgeLimits: celoBridgeLimits } = useGetBridgeData(SupportedChains.CELO, "");
   const { SignWalletModal } = useSignWalletModal();
+
+  if (!fuseBridgeFees || !celoBridgeFees) return <Spinner variant="page-loader" />;
 
   return (
     <>
