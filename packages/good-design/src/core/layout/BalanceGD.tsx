@@ -92,8 +92,15 @@ const abbreviateGd = (numberStr: string, decPlaces = 2) => {
 export const GdAmount = ({
   amount,
   withDefaultSuffix,
+  withFullBalance = true,
   ...props
-}: { amount: CurrencyValue; withDefaultSuffix: boolean; color?: any; options?: any } & ITextProps) => {
+}: {
+  amount: CurrencyValue;
+  withDefaultSuffix: boolean;
+  withFullBalance?: boolean;
+  color?: any;
+  options?: any;
+} & ITextProps) => {
   const { color, options } = props;
   const formatOptions = {
     fixedPrecisionDigits: 2,
@@ -104,14 +111,13 @@ export const GdAmount = ({
   };
 
   const decimals = amount.currency.decimals;
-  const amountValue = abbreviateGd((Number(amount.value) / 10 ** decimals).toString());
+  const amountAbbr = abbreviateGd((Number(amount.value) / 10 ** decimals).toString());
 
   return (
     <HStack alignItems="flex-end">
       <Text variant="l-grey-650" fontFamily="heading" color={color} {...props}>
         {/* todo: awaiting decision on formatting */}
-        {amount?.format?.(formatOptions)} {`\n`}
-        {amountValue}
+        {withFullBalance ? amount?.format?.(formatOptions) : amountAbbr}
       </Text>
       {withDefaultSuffix ? (
         <Text variant="sm-grey-650" color={color} fontWeight="700" {...props}>
