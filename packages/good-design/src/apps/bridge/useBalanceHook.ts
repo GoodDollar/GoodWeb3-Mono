@@ -48,7 +48,7 @@ export const useBalanceHook = () => {
 
   useEffect(() => {
     setBalance(null);
-    if (chainId && account && gdFuse && gdCelo && !balances) {
+    if (chainId && account && gdFuse && gdCelo && (!balances || balances.currentChain !== chainId)) {
       void (async () => {
         const balance = await g$BalanceFromExplorer(account, [gdFuse.address, gdCelo.address]);
         const { fuse, celo } = balance || {};
@@ -63,7 +63,8 @@ export const useBalanceHook = () => {
           celo: {
             wei: celoResult,
             gdValue: G$Amount("G$", balanceValues[1], 42220, defaultEnv)
-          }
+          },
+          currentChain: chainId
         };
 
         setBalance(newBalances);
