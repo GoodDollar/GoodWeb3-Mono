@@ -1,5 +1,5 @@
 import { Box, Button, HStack, Input, Text } from "native-base";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { NumericFormat } from "react-number-format";
 import { CurrencyValue } from "@usedapp/core";
 import { ethers } from "ethers";
@@ -8,6 +8,7 @@ export const TokenInput = ({
   balanceWei,
   gdValue,
   onChange,
+  toggleState,
   _numericformat,
   _button,
   minAmountWei = "0",
@@ -16,7 +17,7 @@ export const TokenInput = ({
   balanceWei: string;
   onChange: (v: string) => void;
   gdValue: CurrencyValue;
-  decimals?: number;
+  toggleState?: any;
   _numericformat?: any;
   _button?: any;
   _text?: any;
@@ -28,18 +29,23 @@ export const TokenInput = ({
   const minAmount = Number(minAmountWei) / 10 ** _decimals;
   const setMax = useCallback(() => setInput(balance), [setInput, balance]);
 
+  useEffect(() => {
+    setInput(0);
+    onChange("0");
+  }, [/* used */ toggleState]);
+
   const handleChange = useCallback(
     (v: string) => {
-      if (/[^0-9]/.test(v)) {
+      console.log("v -->", { v });
+      if (!/^\d+(?:\.\d{1,18})?$/.test(v)) {
         //todo: add error handler/message
         console.error("Invalid input");
         return;
       }
-      ``;
       setInput(Number(v));
       onChange(ethers.utils.parseUnits(v, _decimals).toString());
     },
-    [setInput, onChange]
+    [setInput, onChange, _decimals]
   );
 
   return (

@@ -1,36 +1,29 @@
-import { G$Token, useG$Decimals } from "@gooddollar/web3sdk-v2";
-import { Box, Input } from "native-base";
 import React from "react";
+import { Box, Input } from "native-base";
 import { NumericFormat } from "react-number-format";
+import { CurrencyValue } from "@usedapp/core";
 
 export const TokenOutput = ({
   outputValue,
-  token,
-  requiredChainId,
-  decimals = 2,
   _numericformat,
   ...props
 }: {
-  outputValue: string;
-  token?: G$Token;
-  requiredChainId?: number;
-  decimals?: number;
+  outputValue: CurrencyValue;
   _numericformat?: any;
   _button?: any;
   _text?: any;
 }) => {
-  const tokenDecimals = useG$Decimals(token, requiredChainId);
-  const _decimals = token ? tokenDecimals : decimals;
+  const value = outputValue.value.gt(0) ? outputValue.format({ suffix: "" }) : 0;
 
   return (
     <Box w="container" {...props} width="100%">
       <NumericFormat
         disabled
         size="xl"
-        value={outputValue}
+        value={value}
         customInput={Input}
         color="lightGrey"
-        decimalScale={_decimals}
+        decimalScale={outputValue.currency.decimals}
         {..._numericformat}
       />
     </Box>
