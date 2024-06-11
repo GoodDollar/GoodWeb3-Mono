@@ -110,19 +110,19 @@ const useBridgeEstimate = ({
   maxFee: CurrencyValue;
   minAmountWei: CurrencyValue;
 } => {
-  const minimumAmount = useG$Amount(limits?.[sourceChain]?.minAmount, "G$", Number(sourceChain));
-  const maximumAmount = useG$Amount(limits?.[sourceChain]?.txLimit, "G$", Number(sourceChain));
-  const bridgeFee = useG$Amount(fees?.[sourceChain]?.fee, "G$", Number(sourceChain));
-  const minFee = useG$Amount(fees?.[sourceChain]?.minFee, "G$", Number(sourceChain));
-  const maxFee = useG$Amount(fees?.[sourceChain]?.maxFee, "G$", Number(sourceChain));
-  const input = useG$Amount(BigNumber.from(inputWei), "G$", Number(sourceChain));
+  const chain = sourceChain === "celo" ? 42220 : 122;
+  const minimumAmount = useG$Amount(limits?.[sourceChain]?.minAmount, "G$", chain);
+  const maximumAmount = useG$Amount(limits?.[sourceChain]?.txLimit, "G$", chain);
+  const bridgeFee = useG$Amount(fees?.[sourceChain]?.fee, "G$", chain);
+  const minFee = useG$Amount(fees?.[sourceChain]?.minFee, "G$", chain);
+  const maxFee = useG$Amount(fees?.[sourceChain]?.maxFee, "G$", chain);
+  const input = useG$Amount(BigNumber.from(inputWei), "G$", chain);
+  const minAmountWei = useG$Amount(limits?.[sourceChain]?.minAmount);
 
   //bridge fee is in BPS so divide by 10000
   const expectedFee = bridgeFee.mul(input.value).div(10000);
 
-  const expectedToReceive = input.sub(expectedFee);
-
-  const minAmountWei = useG$Amount(limits?.[sourceChain]?.minAmount);
+  const expectedToReceive = input.sub(expectedFee.gt(minFee) ? expectedFee : minFee);
 
   return { expectedFee, expectedToReceive, minimumAmount, maximumAmount, bridgeFee, minFee, maxFee, minAmountWei };
 };
@@ -157,8 +157,9 @@ export const MicroBridge = ({
   const [inputWei, setInput] = useState<string>("0");
 
   const [sourceChain, setSourceChain] = useState<"fuse" | "celo">(chainId === 122 ? "fuse" : "celo");
-
   const targetChain = sourceChain === "fuse" ? "celo" : "fuse";
+  const [toggleState, setToggleState] = useState<boolean>(false);
+
   const balances = useBalanceHook() ?? {};
   const { wei, gdValue } = balances[sourceChain] ?? {};
 
@@ -169,6 +170,7 @@ export const MicroBridge = ({
 
   const toggleChains = useCallback(() => {
     setSourceChain(targetChain);
+    setToggleState(prevState => !prevState);
     onSetChain?.(targetChain);
   }, [setSourceChain, onSetChain, targetChain]);
 
@@ -217,82 +219,87 @@ export const MicroBridge = ({
       ? " Minimum amount is " + Number(minAmountWei) / (sourceChain === "fuse" ? 1e2 : 1e18) + "G$"
       : undefined;
 
+  console.log("balances -->", { balances });
   if (isEmpty(balances)) return <Spinner variant="page-loader" />;
 
   return (
-    <Box>
-      <Flex direction="column" w="410px" justifyContent="center" alignSelf="center">
-        <VStack marginBottom={10}>
-          {/* wip: make separate component after testing */}
-          <HStack zIndex="100" justifyContent="space-between">
-            <VStack>
-              <Text color="goodGrey.700" fontSize="l" fontFamily="heading" fontWeight="700">
-                G$ Celo
-              </Text>
-              <GdAmount amount={balances.celo.gdValue} withDefaultSuffix={false} fontSize="sm" />
-            </VStack>
+    <VStack padding={4} width="100%" w="410px" alignSelf="center" backgroundColor="goodWhite.100">
+      <VStack marginBottom={10}>
+        {/* wip: make separate component after testing */}
+        <HStack zIndex="100" justifyContent="space-between">
+          <VStack>
+            <Text color="goodGrey.700" fontSize="l" fontFamily="heading" fontWeight="700">
+              G$ Celo
+            </Text>
+            <GdAmount amount={balances.celo.gdValue} withDefaultSuffix={false} withFullBalance fontSize="sm" />
+          </VStack>
 
-            <Box w="100px" height="64px" pl="3" pr="3" display="flex" justifyContent={"center"} alignItems="center">
-              <Pressable onPress={toggleChains} backgroundColor="primary" borderRadius="50" p="2">
-                <Image source={ArrowTabLightRight} w="6" h="6" />
-              </Pressable>
-            </Box>
-            <VStack>
-              <Text color="goodGrey.700" fontSize="l" fontFamily="heading" fontWeight="700">
-                G$ Fuse
-              </Text>
-              <GdAmount amount={balances.fuse.gdValue} withDefaultSuffix={false} fontSize="sm" />
-            </VStack>
-          </HStack>
-        </VStack>
-        <VStack alignItems="flex-start" justifyContent="flex-start" width="100%">
-          <TokenInput balanceWei={wei} gdValue={gdValue} onChange={setInput} minAmountWei={minAmountWei?.toString()} />
-        </VStack>
-        <FormControl isInvalid={!!reasonOf}>
-          <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon variant="outline" />}>
-            {reasonMinAmount ?? reasonOf}
-          </FormControl.ErrorMessage>
-        </FormControl>
-        <VStack mt="4" direction="column" alignItems="flex-start" justifyContent="flex-start" width="100%">
-          <Text fontFamily="subheading" color="lightGrey:alpha.80" textTransform="uppercase" bold>
-            You will receive on {targetChain}
-          </Text>
-          <TokenOutput token="G$" outputValue={expectedToReceive.value.toString() ?? "0"} />
-        </VStack>
-        <Button
-          mt="5"
-          onPress={triggerBridge}
-          backgroundColor="main"
-          isLoading={isBridging}
-          disabled={isBridging || isValidInput === false}
-        >
-          <Text fontFamily="subheading" bold color="white" textTransform="uppercase">
-            {`Bridge to ${targetChain}`}
-          </Text>
-        </Button>
-        {(isBridging || (bridgeStatus && bridgeStatus?.status != "None")) && (
-          <Box borderWidth="1" mt="10" padding="5" rounded="lg">
-            <StatusBox text="Sending funds to bridge" txStatus={bridgeStatus} sourceChain={sourceChain} />
-
-            {bridgeStatus?.status === "Success" && selfRelayStatus && (
-              <StatusBox
-                text="Self relaying to target chain... (Can take a few minutes)"
-                infoText="If you have enough native tokens on the target chain, you will execute the transfer on the target chain yourself and save some bridge fees"
-                txStatus={selfRelayStatus}
-                sourceChain={sourceChain}
-              />
-            )}
-            {bridgeStatus?.status === "Success" && (
-              <StatusBox
-                text="Waiting for bridge relayers to relay to target chain... (Can take a few minutes)"
-                infoText="If you don't have enough native tokens on the target chain, a bridge relay service will execute the transfer for a small G$ fee"
-                txStatus={relayStatus}
-                sourceChain={sourceChain}
-              />
-            )}
+          <Box w="100px" height="64px" pl="3" pr="3" display="flex" justifyContent={"center"} alignItems="center">
+            <Pressable onPress={toggleChains} backgroundColor="primary" borderRadius="50" p="2">
+              <Image source={ArrowTabLightRight} w="6" h="6" />
+            </Pressable>
           </Box>
-        )}
-      </Flex>
-    </Box>
+          <VStack>
+            <Text color="goodGrey.700" fontSize="l" fontFamily="heading" fontWeight="700">
+              G$ Fuse
+            </Text>
+            <GdAmount amount={balances.fuse.gdValue} withDefaultSuffix={false} withFullBalance fontSize="sm" />
+          </VStack>
+        </HStack>
+      </VStack>
+      <VStack alignItems="flex-start" justifyContent="flex-start" width="100%">
+        <TokenInput
+          balanceWei={wei}
+          gdValue={gdValue}
+          onChange={setInput}
+          minAmountWei={minAmountWei?.toString()}
+          toggleState={toggleState}
+        />
+      </VStack>
+      <FormControl isInvalid={!!reasonOf}>
+        <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon variant="outline" />}>
+          {reasonMinAmount ?? reasonOf}
+        </FormControl.ErrorMessage>
+      </FormControl>
+      <VStack mt="4" direction="column" alignItems="flex-start" justifyContent="flex-start" width="100%">
+        <Text fontFamily="subheading" color="lightGrey:alpha.80" textTransform="uppercase" bold>
+          You will receive on {targetChain}
+        </Text>
+        <TokenOutput outputValue={expectedToReceive ?? "0"} />
+      </VStack>
+      <Button
+        mt="5"
+        onPress={triggerBridge}
+        backgroundColor="main"
+        isLoading={isBridging}
+        disabled={isBridging || isValidInput === false}
+      >
+        <Text fontFamily="subheading" bold color="white" textTransform="uppercase">
+          {`Bridge to ${targetChain}`}
+        </Text>
+      </Button>
+      {(isBridging || (bridgeStatus && bridgeStatus?.status != "None")) && (
+        <Box borderWidth="1" mt="10" padding="5" rounded="lg">
+          <StatusBox text="Sending funds to bridge" txStatus={bridgeStatus} sourceChain={sourceChain} />
+
+          {bridgeStatus?.status === "Success" && selfRelayStatus && (
+            <StatusBox
+              text="Self relaying to target chain... (Can take a few minutes)"
+              infoText="If you have enough native tokens on the target chain, you will execute the transfer on the target chain yourself and save some bridge fees"
+              txStatus={selfRelayStatus}
+              sourceChain={sourceChain}
+            />
+          )}
+          {bridgeStatus?.status === "Success" && (
+            <StatusBox
+              text="Waiting for bridge relayers to relay to target chain... (Can take a few minutes)"
+              infoText="If you don't have enough native tokens on the target chain, a bridge relay service will execute the transfer for a small G$ fee"
+              txStatus={relayStatus}
+              sourceChain={sourceChain}
+            />
+          )}
+        </Box>
+      )}
+    </VStack>
   );
 };
