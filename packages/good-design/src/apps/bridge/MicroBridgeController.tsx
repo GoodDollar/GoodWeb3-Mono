@@ -14,8 +14,7 @@ import { useEthers } from "@usedapp/core";
 import { noop, sortBy } from "lodash";
 import { ArrowForwardIcon, Box, Button, Flex, Heading, HStack, Spinner, Stack, Text } from "native-base";
 import { ExplorerLink } from "../../core/web3/ExplorerLink";
-import { useSignWalletModal } from "../../hooks/useSignWalletModal";
-import { MicroBridge } from "./MicroBridge";
+import { BridgeWizard } from "./wizard/BridgeWizard";
 
 const useCanBridge = (chain: "fuse" | "celo", amountWei: string) => {
   const { chainId } = useGetEnvChainId(chain === "fuse" ? SupportedChains.FUSE : SupportedChains.CELO);
@@ -35,6 +34,7 @@ const MicroBridgeHistory = () => {
 
   const triggerRelay = useCallback(
     async (i: any) => {
+      console.log("relay triggered", { i });
       setRelaying({ ...relaying, [i.transactionHash]: true });
       try {
         const relayResult = await relayTx(
@@ -46,6 +46,7 @@ const MicroBridgeHistory = () => {
           setRelaying({ ...relaying, [i.transactionHash]: false });
         }
       } catch (e) {
+        console.log("triggerRelay failed -->", { e });
         setRelaying({ ...relaying, [i.transactionHash]: false });
       }
     },
@@ -140,34 +141,48 @@ interface IMicroBridgeControllerProps {
 
 export const MicroBridgeController: FC<IMicroBridgeControllerProps> = ({
   withRelay = false,
-  onBridgeStart = noop,
+  // onBridgeStart = noop,
   onBridgeSuccess = noop,
   onBridgeFailed = noop
 }: IMicroBridgeControllerProps) => {
+  const { chainId } = useEthers();
   const { sendBridgeRequest, bridgeRequestStatus, relayStatus, selfRelayStatus } = useBridge();
   const { bridgeFees: fuseBridgeFees, bridgeLimits: fuseBridgeLimits } = useGetBridgeData(SupportedChains.FUSE, "");
   const { bridgeFees: celoBridgeFees, bridgeLimits: celoBridgeLimits } = useGetBridgeData(SupportedChains.CELO, "");
-  const { SignWalletModal } = useSignWalletModal();
+  const inputTransaction = useState<string>("0");
+  const pendingTransaction = useState<any>(false);
+  const originChain = useState<"fuse" | "celo">(chainId === 122 ? "fuse" : "celo");
 
-  if (!fuseBridgeFees || !celoBridgeFees) return <Spinner variant="page-loader" />;
+  const onBridgeStart = useCallback(async () => {
+    const [inputWei] = inputTransaction;
+
+    try {
+      await sendBridgeRequest(inputWei, originChain[0]);
+    } catch (e) {
+      console.error("sendBridgeRequest failed", { e });
+      // onBridgeFailed();
+    }
+  }, [inputTransaction, originChain]);
+
+  if (!fuseBridgeFees || !celoBridgeFees) return <Spinner variant="page-loader" size="lg" />;
 
   return (
     <>
-      <MicroBridge
-        onBridge={sendBridgeRequest}
+      <BridgeWizard
         useCanBridge={useCanBridge}
         bridgeStatus={bridgeRequestStatus}
         relayStatus={relayStatus}
         selfRelayStatus={selfRelayStatus}
+        originChain={originChain}
         limits={{ fuse: fuseBridgeLimits, celo: celoBridgeLimits }}
         fees={{ fuse: fuseBridgeFees, celo: celoBridgeFees }}
         onBridgeStart={onBridgeStart}
         onBridgeSuccess={onBridgeSuccess}
         onBridgeFailed={onBridgeFailed}
+        inputTransaction={inputTransaction}
+        pendingTransaction={pendingTransaction}
       />
       {withRelay && <MicroBridgeHistory />}
-      <SignWalletModal txStatus={bridgeRequestStatus.status} />
-      <SignWalletModal txStatus={selfRelayStatus?.status} />
     </>
   );
 };
