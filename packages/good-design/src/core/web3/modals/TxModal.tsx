@@ -1,8 +1,9 @@
 import React from "react";
 import { noop } from "lodash";
+import { Text } from "native-base";
+import { TransactionStatus } from "@usedapp/core";
 
 import BasicStyledModal, { ModalFooterLearn } from "./BasicStyledModal";
-import { Text } from "native-base";
 
 interface ITxModalProps {
   type: "send" | "sign" | "identity";
@@ -44,4 +45,22 @@ export const TxModal = ({ type, isPending, onClose = noop, ...props }: ITxModalP
       withCloseButton
     />
   );
+};
+
+export const TxModalStatus = ({
+  txStatus,
+  onClose
+}: {
+  txStatus: TransactionStatus | Partial<TransactionStatus>;
+  onClose: () => void;
+}) => {
+  const { status } = txStatus;
+
+  //todo: add onSuccess handler
+
+  return status === "PendingSignature" || status === "CollectingSignaturePool" ? (
+    <TxModal type="sign" isPending={status === "PendingSignature" || status === "CollectingSignaturePool"} />
+  ) : status === "Mining" ? (
+    <TxModal type="send" isPending={status === "Mining"} onClose={onClose} />
+  ) : null;
 };

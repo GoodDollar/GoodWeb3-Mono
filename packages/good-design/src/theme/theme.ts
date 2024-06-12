@@ -129,6 +129,20 @@ export const theme = extendTheme({
           color: "goodGrey.650",
           lineHeight: 20.8
         }),
+        "sm-grey-700": () => ({
+          fontFamily: "subheading",
+          fontSize: "sm",
+          fontWeight: 400,
+          color: "goodGrey.700",
+          lineHeight: 20.8
+        }),
+        "md-grey-700": () => ({
+          fontFamily: "heading",
+          fontSize: "md",
+          fontWeight: 700,
+          color: "goodGrey.700",
+          lineHeight: 23
+        }),
         "l-grey-650": () => ({
           fontFamily: "subheading",
           fontSize: "l",
