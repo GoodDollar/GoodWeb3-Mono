@@ -116,7 +116,6 @@ export const GdAmount = ({
   return (
     <HStack alignItems="flex-end">
       <Text variant="l-grey-650" fontFamily="heading" color={color} {...props}>
-        {/* todo: awaiting decision on formatting */}
         {withFullBalance ? amount?.format?.(formatOptions) : amountAbbr}
       </Text>
       {withDefaultSuffix ? (

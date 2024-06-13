@@ -79,7 +79,7 @@ const StatusBox = ({
   </Stack>
 );
 
-const PendingHeader = ({
+const StatusHeader = ({
   sendAmount,
   sourceChain,
   targetChain,
@@ -173,7 +173,7 @@ export const MicroBridgeStatus = ({
       {relayStatus?.status === "Success" ? (
         <Title variant="title-gdblue">{`Congratulations! Your bridging \n transaction has been successfully \n completed.`}</Title>
       ) : null}
-      <PendingHeader
+      <StatusHeader
         {...{
           sendAmount,
           sourceChain,
