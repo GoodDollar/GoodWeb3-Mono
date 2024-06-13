@@ -21,7 +21,6 @@ import { GoodButton } from "../../core/buttons";
 import { ExplorerLink } from "../../core";
 
 import { GdAmount, Title } from "../../core/layout";
-import { capitalizeFirstLetter } from "../../utils";
 
 import { MicroBridgeProps } from "./types";
 import { useWizard } from "react-use-wizard";
@@ -105,7 +104,7 @@ const StatusHeader = ({
           <GdAmount
             amount={sendAmount}
             withDefaultSuffix={false}
-            options={{ prefix: `${capitalizeFirstLetter(sourceChain)} G$ ` }}
+            options={{ prefix: `${sourceChain} G$ ` }}
             variant="md-grey-700"
           />
         </HStack>
@@ -115,7 +114,7 @@ const StatusHeader = ({
           <GdAmount
             amount={expectedToReceive}
             withDefaultSuffix={false}
-            options={{ prefix: `${capitalizeFirstLetter(targetChain)} G$ ` }}
+            options={{ prefix: `${targetChain} G$ ` }}
             variant="md-grey-700"
           />
         </HStack>

@@ -9,7 +9,6 @@ import { Image, TokenInput, TokenOutput } from "../../core";
 import { BigNumber } from "ethers";
 import { GdAmount } from "../../core/layout/BalanceGD";
 import { useBalanceHook } from "./useBalanceHook";
-import { capitalizeFirstLetter } from "../../utils";
 
 import ArrowTabLightRight from "../../assets/svg/arrow-tab-light-right.svg";
 
@@ -138,7 +137,7 @@ export const MicroBridge = ({
   if (isEmpty(balances)) return <Spinner variant="page-loader" size="lg" />;
 
   return (
-    <VStack padding={4} width="100%" w="410px" alignSelf="center" backgroundColor="goodWhite.100">
+    <VStack padding={4} width="100%" alignSelf="center" backgroundColor="goodWhite.100">
       <VStack marginBottom={10}>
         <HStack zIndex="100" justifyContent="space-between">
           <VStack>
@@ -183,7 +182,7 @@ export const MicroBridge = ({
       </VStack>
       <Web3ActionButton
         mt="5"
-        text={`Bridge to ${capitalizeFirstLetter(targetChain)}`}
+        text={`Bridge to ${targetChain}`}
         supportedChains={[SupportedChains[sourceChain.toUpperCase() as keyof typeof SupportedChains]]}
         web3Action={triggerBridge}
         disabled={isBridging}
@@ -193,7 +192,8 @@ export const MicroBridge = ({
         innerText={{
           fontSize: "sm",
           color: "white",
-          fontFamily: "subheading"
+          fontFamily: "subheading",
+          textTransform: "capitalize"
         }}
         innerIndicatorText={{
           fontSize: "sm",
