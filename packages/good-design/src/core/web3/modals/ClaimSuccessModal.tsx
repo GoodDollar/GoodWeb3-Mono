@@ -33,7 +33,7 @@ export const ClaimSuccessModal = withTheme({ name: "BasicStyledModal" })(
         show={show}
         onClose={onClose}
         title={`Congrats! \n You claimed \n G$ today`}
-        content={<ClaimSuccessContent />}
+        body={<ClaimSuccessContent />}
         footer={<ModalFooterSocial />}
         withOverlay="dark"
         withCloseButton

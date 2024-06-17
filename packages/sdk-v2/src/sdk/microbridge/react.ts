@@ -95,23 +95,27 @@ export const useBridge = (withRelay = false) => {
   const lock = useRef(false);
   const { switchNetwork } = useSwitchNetwork();
   const { account, chainId } = useEthers();
-  const g$Contract = useGetContract("GoodDollar") as IGoodDollar;
+  const gdFuseContract = useGetContract("GoodDollar", true, "base", 122) as IGoodDollar;
+  const gdCeloContract = useGetContract("GoodDollar", true, "base", 42220) as IGoodDollar;
   const bridgeContracts = useGetBridgeContracts();
   const bridgeContract = bridgeContracts[chainId || 122] as TokenBridge;
 
   const relayTx = useRelayTx();
 
-  const [bridgeRequest, setBridgeRequest] =
-    useState<
-      { amount: string; sourceChainId: number; targetChainId: number; target?: string; bridging?: boolean } | undefined
-    >();
+  const [bridgeRequest, setBridgeRequest] = useState<
+    { amount: string; sourceChainId: number; targetChainId: number; target?: string; bridging?: boolean } | undefined
+  >();
 
   const [selfRelayStatus, setSelfRelay] = useState<Partial<TransactionStatus> | undefined>();
 
   // const bridgeTo = useContractFunction(bridgeContract, "bridgeTo", {});
-  const transferAndCall = useContractFunctionWithDefaultGasFees(g$Contract, "transferAndCall", {
-    transactionName: "BridgeTransfer"
-  });
+  const transferAndCall = useContractFunctionWithDefaultGasFees(
+    chainId === 122 ? gdFuseContract : gdCeloContract,
+    "transferAndCall",
+    {
+      transactionName: "BridgeTransfer"
+    }
+  );
   const bridgeRequestId = (transferAndCall.state?.receipt?.logs || [])
     .filter(log => log.address === bridgeContract.address)
     .map(log => bridgeContract.interface.parseLog(log))?.[0]?.args?.id;
@@ -213,7 +217,7 @@ export const useBridge = (withRelay = false) => {
         .catch(noop);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [bridgeContract, bridgeRequest, transferAndCall, lock]);
+  }, [chainId, bridgeContract, bridgeRequest, transferAndCall, lock]);
 
   return { sendBridgeRequest, bridgeRequestStatus: transferAndCall?.state, relayStatus, selfRelayStatus };
 };
