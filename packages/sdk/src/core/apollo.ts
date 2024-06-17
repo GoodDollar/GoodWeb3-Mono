@@ -1,13 +1,16 @@
-export {};
 import { ApolloClient, gql, InMemoryCache } from "@apollo/client";
 import { NormalizedCacheObject } from "@apollo/client/cache/inmemory/types";
 import { Fraction } from "@uniswap/sdk-core";
 import { once } from "lodash";
 import memoize from "lodash/memoize";
-import { AAVE_STAKING, VOLTAGE_EXCHANGE } from "constants/graphql";
+import { config } from "constants/graphql";
 import { debug, debugGroup, debugGroupEnd } from "utils/debug";
 import { delayedCacheClear } from "utils/memoize";
 import { Token } from "@uniswap/sdk-core";
+
+import { SupportedChainId } from "constants/chains";
+
+type AddressMap = { [chainId: number]: string };
 
 /**
  * Returns Apollo client to make GraphQL requests.
@@ -32,6 +35,9 @@ type StakingAPY = {
  */
 export const aaveStaking = memoize(
   async (chainId: number, token: Token): Promise<StakingAPY> => {
+    const AAVE_STAKING: AddressMap = {
+      [SupportedChainId.MAINNET]: `https://gateway-arbitrum.network.thegraph.com/api/${config.graphKey}/subgraphs/id/8wR23o1zkS4gpLqLNU4kG3JHYVucqGyopL5utGxP2q1N`
+    };
     const client = getClient(AAVE_STAKING[chainId]);
 
     const {
@@ -79,7 +85,9 @@ export const aaveStaking = memoize(
 );
 
 export const voltagePairData = once(async (): Promise<any> => {
-  const client = getClient(VOLTAGE_EXCHANGE);
+  const client = getClient(
+    `https://gateway-arbitrum.network.thegraph.com/api/${config.graphKey}/subgraphs/id/B4BGk9itvmRXzzNRAzBWwQARHRt3ZvLz11aWNVsZPT4`
+  );
 
   const { data } = await client.query({
     query: gql`

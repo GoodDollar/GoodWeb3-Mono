@@ -15,7 +15,7 @@ import { goodMarketMakerContract } from "contracts/GoodMarketMakerContract";
 import { getToken, getTokenByAddress } from "methods/tokenLists";
 import { getAccount, getChainId } from "utils/web3";
 import { aaveStaking } from "./apollo";
-import { g$ReservePrice } from "methods";
+import { g$ReservePrice } from "methods/g$price";
 import { compoundDaiStakingAPY } from "./rest";
 import { LIQUIDITY_PROTOCOL } from "constants/protocols";
 import { debug, debugGroup, debugGroupEnd } from "utils/debug";
