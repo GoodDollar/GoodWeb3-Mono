@@ -4,8 +4,7 @@ import { NormalizedCacheObject } from "@apollo/client/cache/inmemory/types";
 import { Fraction } from "@uniswap/sdk-core";
 import { once } from "lodash";
 import memoize from "lodash/memoize";
-import { AAVE_STAKING, G$PRICE } from "constants/graphql";
-import { decimalToFraction } from "utils/converter";
+import { AAVE_STAKING, VOLTAGE_EXCHANGE } from "constants/graphql";
 import { debug, debugGroup, debugGroupEnd } from "utils/debug";
 import { delayedCacheClear } from "utils/memoize";
 import { Token } from "@uniswap/sdk-core";
@@ -18,54 +17,6 @@ import { Token } from "@uniswap/sdk-core";
 export function getClient(uri: string): ApolloClient<NormalizedCacheObject> {
   return new ApolloClient({ uri, cache: new InMemoryCache() });
 }
-
-/**
- * Returns G$ price from GraphQL request.
- * @param {number} chainId Chain ID.
- * @returns {Fraction}
- * @throws {UnsupportedChainId}
- */
-export const g$Price = memoize<() => Promise<{ DAI: Fraction; cDAI: Fraction }>>(
-  async (): Promise<{
-    DAI: Fraction;
-    cDAI: Fraction;
-  }> => {
-    const client = getClient(G$PRICE);
-
-    const {
-      data: {
-        reserveHistories: [{ openPriceDAI, openPriceCDAI }] = [
-          {
-            openPriceDAI: null,
-            openPriceCDAI: null
-          }
-        ] as [{ openPriceDAI: string | null; openPriceCDAI: string | null }]
-      } = {}
-    } = await client.query({
-      query: gql`
-        {
-          reserveHistories(first: 1, orderBy: block, orderDirection: desc) {
-            openPriceDAI
-            openPriceCDAI
-          }
-        }
-      `
-    });
-    if (!openPriceDAI || !openPriceCDAI) {
-      throw new Error("Invalid CDAI or DAI price for G$");
-    }
-
-    const result = {
-      DAI: decimalToFraction(openPriceDAI),
-      cDAI: decimalToFraction(openPriceCDAI)
-    };
-    debug("G$ to DAI ratio", result.DAI.toSignificant(6));
-    debug("G$ to cDAI ratio", result.cDAI.toSignificant(6));
-    delayedCacheClear(g$Price);
-
-    return result;
-  }
-);
 
 type StakingAPY = {
   supplyAPY: Fraction;
@@ -128,7 +79,7 @@ export const aaveStaking = memoize(
 );
 
 export const voltagePairData = once(async (): Promise<any> => {
-  const client = getClient("https://api.thegraph.com/subgraphs/name/voltfinance/voltage-exchange");
+  const client = getClient(VOLTAGE_EXCHANGE);
 
   const { data } = await client.query({
     query: gql`
