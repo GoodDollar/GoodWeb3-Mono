@@ -1,10 +1,12 @@
+import { Contract } from "ethers";
 import { BigNumber } from "@ethersproject/bignumber";
-import { SupportedChains } from "@gooddollar/web3sdk-v2";
+import { PoolDetails, SupportedChains } from "@gooddollar/web3sdk-v2";
 import { CurrencyValue, TransactionStatus } from "@usedapp/core";
 import { Moment } from "moment";
 
-export type ClaimStats = {
+export type ClaimDetails = {
   isWhitelisted: boolean;
+  isRegistered?: boolean;
   claimAmount?: BigNumber;
   hasClaimed: boolean;
   claimTime: Date;
@@ -37,9 +39,12 @@ export interface ClaimContextProps {
   account: string | undefined;
   chainId: number | undefined;
   withSignModals: boolean;
-  claimStats: Omit<ClaimStats, "claimCall">;
+  claimDetails: Omit<ClaimDetails, "claimCall">;
+  poolsDetails: PoolDetails[];
+  poolContracts: Contract[];
   claimPools: any;
   claimStatus: TransactionStatus;
+  claimFlowStatus: any;
   claimedAlt: { hasClaimed: boolean; altChain: string };
   error?: string;
   supportedChains: SupportedChains[];

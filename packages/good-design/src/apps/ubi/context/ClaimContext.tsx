@@ -1,5 +1,12 @@
 import React, { createContext, FC, PropsWithChildren, useContext, useCallback, useEffect, useState } from "react";
-import { getRecentClaims, SupportedChains, useClaim, useClaimedAlt } from "@gooddollar/web3sdk-v2";
+import {
+  getRecentClaims,
+  SupportedChains,
+  useClaim,
+  useClaimedAlt,
+  useGetMemberUBIPools,
+  useMultiClaim
+} from "@gooddollar/web3sdk-v2";
 import { QueryParams, useEthers } from "@usedapp/core";
 import { noop } from "lodash";
 import { Lock } from "async-await-mutex-lock";
@@ -43,13 +50,11 @@ export const ClaimProvider: FC<
 }) => {
   const { account, chainId, library, switchNetwork } = useEthers();
   const [refreshRate, setRefreshRate] = useState<QueryParams["refresh"]>(12);
-  const { claimCall, ...claimStats } = useClaim(refreshRate); // <-- rename to useClaimGd? extend to handle daily-ubi + additional pools?
   const [preClaimPools, setClaimPools] = useState<any[]>([]);
   const [postClaimPools, setPostClaimPools] = useState<any[]>([]);
   const activeChain = SupportedChains[chainId as number] ?? "CELO";
   const endpoints = explorerEndPoints[activeChain as keyof typeof SupportedChains];
   const [error, setError] = useState<string | undefined>(undefined);
-  const { errorMessage } = claimCall?.state ?? {};
   const claimedAlt = useClaimedAlt(chainId);
 
   const formattedTransactionList = useFormatClaimTransactions(
@@ -57,24 +62,30 @@ export const ClaimProvider: FC<
     chainId
   );
 
+  const claimDetails = useClaim(refreshRate);
+  const { poolsDetails } = useGetMemberUBIPools();
+
+  const { poolContracts, setContract, transactionState, claimFlowStatus } = useMultiClaim(preClaimPools);
+  const { errorMessage } = transactionState?.state ?? {};
+
   const onClaimFailed = useCallback(async () => {
     setError(errorMessage); //<-- todo: add proper error message
   }, [errorMessage]);
 
   const onClaim = useCallback(async () => {
-    const { send } = claimCall ?? {};
-    if (!send) return;
+    // todo: handle onboard/upgrade flow?
 
-    onSendTx?.();
-
-    await send(); //todo: needs to handle minipay correctly
-  }, [claimCall, onSendTx]);
+    // initializes a cycle of claim transactions for all contracts
+    setContract(poolContracts[0]);
+  }, [poolsDetails, onSendTx, poolContracts]);
 
   const onClaimSuccess = useCallback(async () => {
-    claimCall?.resetState();
+    transactionState?.resetState();
 
+    // should handle what happens after all claims are done
+    // if nothing is done, it will just silently finish
     await onSuccess?.();
-  }, [claimStats, onSuccess]);
+  }, [transactionState, onSuccess]);
 
   const switchChain = useCallback(() => {
     // 4902: Network is not added, and should be done manually
@@ -94,35 +105,55 @@ export const ClaimProvider: FC<
   }, [/* used */ chainId]);
 
   useEffect(() => {
-    if (account && preClaimPools.length === 0 && claimStats.hasClaimed === false) {
-      setClaimPools(prev => [claimStats, ...prev]);
+    if (account && preClaimPools.length === 0 && claimDetails.hasClaimed === false) {
+      let details: any = [];
+      details.push({ GoodDollar: [claimDetails] });
+
+      if (poolsDetails) {
+        details = [...details, ...poolsDetails];
+      }
+
+      setClaimPools(details);
     }
-  }, [account, claimStats, preClaimPools]);
+  }, [account, claimDetails, preClaimPools, poolsDetails]);
 
   useEffect(() => {
     void (async () => {
       if (explorerPollLock.isAcquired("pollLock")) return;
 
-      if (account && postClaimPools.length === 0 && claimStats.hasClaimed === true) {
+      if (account && postClaimPools.length === 0 && claimDetails.hasClaimed === true) {
         await explorerPollLock.acquire("pollLock");
 
-        const claimTransactionList = await getRecentClaims(account, endpoints, provider ?? library).then(res => {
+        const claimTransactionList = await getRecentClaims(
+          account,
+          endpoints,
+          provider ?? library,
+          poolsDetails.length > 0
+        ).then(res => {
           explorerPollLock.release("pollLock");
           return res;
         });
-        setPostClaimPools(claimTransactionList);
+
+        const details: any = [];
+
+        details.push({ GoodDollar: claimTransactionList });
+
+        setPostClaimPools(details);
       }
     })();
-  }, [/* used */ chainId, account, postClaimPools, claimStats, endpoints]);
+  }, [/* used */ chainId, account, postClaimPools, claimDetails, poolsDetails, endpoints]);
 
   return (
     <ClaimContext.Provider
       value={{
         account,
         chainId,
-        claimStats,
+        claimDetails,
+        poolsDetails,
         claimPools: formattedTransactionList,
-        claimStatus: claimCall?.state,
+        claimStatus: transactionState.state,
+        claimFlowStatus,
+        poolContracts,
         claimedAlt,
         error,
         supportedChains: supportedChains ?? [SupportedChains.CELO, SupportedChains.FUSE],
