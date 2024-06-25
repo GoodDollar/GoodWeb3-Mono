@@ -12,10 +12,10 @@ import ClaimFooter from "../../../assets/images/claim-footer.png";
 import { useClaimContext } from "../context";
 
 export const PreClaim: FC = () => {
-  const { claimPools, claimStats, supportedChains, onClaim } = useClaimContext();
+  const { claimPools, claimDetails, supportedChains, onClaim } = useClaimContext();
   const { totalAmount, transactionList } = claimPools ?? {};
 
-  if ((claimStats?.isWhitelisted as any) === undefined || isEmpty(transactionList))
+  if ((claimDetails?.isWhitelisted as any) === undefined || isEmpty(transactionList))
     return <Spinner variant="page-loader" size="lg" />;
 
   return (

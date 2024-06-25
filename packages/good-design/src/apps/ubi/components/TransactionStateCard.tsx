@@ -19,7 +19,7 @@ const TransactionStateIcons = {
   "claim-start": TxGreyIcon,
   pending: PendingIcon,
   receive: TxGreenIcon,
-  send: TxRedIcon // green
+  send: TxRedIcon
 };
 
 export type TransactionCardProps = {

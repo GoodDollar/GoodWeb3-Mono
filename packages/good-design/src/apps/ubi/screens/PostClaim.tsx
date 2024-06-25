@@ -30,10 +30,10 @@ const NextClaim = ({ time }: { time: Date }) => {
 };
 
 export const PostClaim: FC = () => {
-  const { claimPools, claimStats, claimStatus, claimedAlt, onClaim, onClaimFailed, onTxDetails, switchChain } =
+  const { claimPools, claimDetails, claimStatus, claimedAlt, onClaim, onClaimFailed, onTxDetails, switchChain } =
     useClaimContext();
   const { transactionList } = claimPools ?? {};
-  const { claimTime, isWhitelisted } = claimStats;
+  const { claimTime, isWhitelisted } = claimDetails;
   const { status, errorMessage } = claimStatus ?? {};
   const { hasClaimed, altChain } = claimedAlt ?? {};
 
