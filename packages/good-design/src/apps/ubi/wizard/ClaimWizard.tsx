@@ -9,19 +9,32 @@ import { PostClaim } from "../screens/PostClaim";
 import { ErrorModal, TxModal } from "../../../core/web3/modals";
 import { useClaimContext } from "../context/ClaimContext";
 
-const TxModalStatus = ({ txStatus, onClose }: { txStatus: TransactionStatus; onClose: () => void }) => {
+const TxModalStatus = ({
+  remainingClaims,
+  txStatus,
+  onClose
+}: {
+  remainingClaims: any;
+  txStatus: TransactionStatus;
+  onClose: () => void;
+}) => {
   const { status } = txStatus;
+  const customTitle = {
+    title: `Please sign with \n your wallet \n(${remainingClaims} transactions left)`,
+    content: "To complete this action, sign with your wallet."
+  };
 
   return status === "PendingSignature" ? (
-    <TxModal type="sign" isPending={status === "PendingSignature"} />
-  ) : status === "Mining" || status === "Success" ? (
+    <TxModal type="sign" customTitle={customTitle} isPending={status === "PendingSignature"} />
+  ) : status === "Mining" ? (
     //todo: add success modal / handle by app
-    <TxModal type="send" isPending={status === "Mining" || status === "Success"} onClose={onClose} />
+    <TxModal type="send" isPending={status === "Mining"} onClose={onClose} />
   ) : null;
 };
 
 const WizardWrapper: FC<PropsWithChildren> = ({ children }) => {
-  const { claimStats, claimStatus, error, withSignModals, onClaimSuccess, onClaimFailed } = useClaimContext();
+  const { claimDetails, claimStatus, error, claimFlowStatus, withSignModals, onClaimSuccess, onClaimFailed } =
+    useClaimContext();
   const { goToStep, stepCount } = useWizard();
   const lastStep = stepCount - 1;
   const { errorMessage = "", status } = claimStatus;
@@ -34,14 +47,16 @@ const WizardWrapper: FC<PropsWithChildren> = ({ children }) => {
   }, [error]);
 
   const handleNext = useCallback(async () => {
-    if (status === "Success") {
+    const { isClaimingDone } = claimFlowStatus;
+
+    if (status === "Success" && isClaimingDone) {
       await onClaimSuccess();
     }
 
-    if ((claimStats?.hasClaimed && !isReject) || status === "Success") {
-      goToStep(stepCount - 1);
+    if (claimDetails?.hasClaimed && !isReject && isClaimingDone) {
+      goToStep(lastStep);
     }
-  }, [claimStats, status, isReject]);
+  }, [claimDetails, status, isReject, claimFlowStatus]);
 
   useEffect(() => {
     void (async () => {
@@ -58,9 +73,11 @@ const WizardWrapper: FC<PropsWithChildren> = ({ children }) => {
       {error ? <ErrorModal error={error} onClose={handleClose} overlay="dark" /> : null}
 
       {/* This is optional, should be possible to be overriden or handled by app */}
-      {withSignModals ? <TxModalStatus txStatus={claimStatus} onClose={handleClose} /> : null}
-      <TxModalStatus txStatus={claimStatus} onClose={handleClose} />
-
+      {withSignModals ? (
+        <TxModalStatus remainingClaims={claimFlowStatus.remainingClaims} txStatus={claimStatus} onClose={handleClose} />
+      ) : null}
+      {/* {withSignModals ? <TxModalStatus txStatus={poolClaimStatus} onClose={handleClose} /> : null} */}
+      {/* <TxModalStatus txStatus={claimStatus} onClose={handleClose} /> */}
       {children}
     </View>
   );
