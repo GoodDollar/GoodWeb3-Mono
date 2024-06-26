@@ -20,7 +20,7 @@ export const GoodIdDetailsScreen = {
       <View>
         <GoodIdWrapper>
           <W3Wrapper withMetaMask={true} env="fuse">
-            <GoodIdDetails account={account} {...styles} />
+            <GoodIdDetails account={account} withHeader={true} {...styles} />
           </W3Wrapper>
         </GoodIdWrapper>
       </View>

@@ -81,7 +81,18 @@ const FaceId = ({ ...props }) => {
 };
 
 export const GoodIdDetails = withTheme({ name: "GoodIdDetails" })(
-  ({ account, ...props }: { account: string; container?: any; header?: any; innerContainer?: any; section?: any }) => {
+  ({
+    account,
+    withHeader = false,
+    ...props
+  }: {
+    account: string;
+    withHeader?: boolean;
+    container?: any;
+    header?: any;
+    innerContainer?: any;
+    section?: any;
+  }) => {
     const { container, header, innerContainer, section } = props;
     const { certificateSubjects, expiryFormatted, isWhitelisted } = useGoodId(account);
     const truncAccount = truncateMiddle(account, 11);
@@ -95,13 +106,16 @@ export const GoodIdDetails = withTheme({ name: "GoodIdDetails" })(
 
     return (
       <VStack {...container}>
-        <VStack {...header}>
-          <Title variant="title-gdblue" fontSize="2xl">{`GoodID`}</Title>
-          <Text
-            variant="sm-grey-650"
-            textAlign="center"
-          >{`Your GoodID unlocks access to UBI, financial services, humanitarian funds and \n other special offers and opportunities to earn GoodDollars.`}</Text>
-        </VStack>
+        {withHeader ? (
+          <VStack {...header}>
+            <Title variant="title-gdblue" fontSize="2xl">{`GoodID`}</Title>
+            <Text
+              variant="sm-grey-650"
+              textAlign="center"
+            >{`Your GoodID unlocks access to UBI, financial services, humanitarian funds and \n other special offers and opportunities to earn GoodDollars.`}</Text>
+          </VStack>
+        ) : null}
+
         <VStack {...innerContainer}>
           <GoodIdCard
             account={account}
