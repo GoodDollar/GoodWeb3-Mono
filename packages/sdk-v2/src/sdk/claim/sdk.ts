@@ -18,9 +18,9 @@ export class ClaimSDK extends BaseSDK {
   getFVLink(chainId?: number) {
     let loginSig: string, fvSig: string, nonce: string, account: string;
     const defaultChainId = chainId;
-    const { env, provider } = this;
+    const { env, provider } = this ?? {};
     const signer = provider.getSigner();
-    const { identityUrl } = env;
+    const { identityUrl } = env ?? {};
 
     const getLoginSig = async () => {
       nonce = (Date.now() / 1000).toFixed(0);
