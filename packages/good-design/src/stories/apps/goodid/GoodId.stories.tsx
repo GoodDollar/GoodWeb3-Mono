@@ -156,7 +156,7 @@ If you don't see a onboard screen, this means there is still a permission 'tos-a
   args: {
     account: "0x5128E3C1f8846724cc1007Af9b4189713922E4BB",
     name: "testuser",
-    onFV: () => alert("onFV"),
+    // onFV: () => alert("onFV"),
     onSkip: () => alert("Already verified, should go to claim-page"),
     onDone: async (e: any) => {
       alert("segmentation complemented, should go to claim-page (Available offers not part of this demo-flow)");

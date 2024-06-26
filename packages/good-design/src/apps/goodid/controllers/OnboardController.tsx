@@ -72,11 +72,16 @@ export const OnboardController = (
 
   const doFV = async () => {
     // Should go to FaceVerificationIntro (wallet) || GoodID server (third parties)
-    if (onFV) {
-      onFV();
-    } else {
-      setPendingSignTx(true);
-      await verify();
+    try {
+      if (onFV) {
+        onFV();
+      } else {
+        setPendingSignTx(true);
+        await verify();
+      }
+    } catch (e) {
+      setPendingSignTx(false);
+      await AsyncStorage.removeItem("tos-accepted");
     }
   };
 
