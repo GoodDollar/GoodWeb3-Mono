@@ -42,7 +42,8 @@ export const SegmentationController = ({
   expiryFormatted,
   fvSig,
   isWhitelisted,
-  onDone
+  onDone,
+  withNavBar
 }: Omit<SegmentationProps, "onLocationRequest" | "onDataPermission" | "availableOffers"> & {
   fvSig?: string;
   certificates: AggregatedCertificate[];
@@ -85,7 +86,8 @@ export const SegmentationController = ({
         expiryFormatted,
         isWhitelisted,
         availableOffers,
-        onDataPermission
+        onDataPermission,
+        withNavBar
       }}
     />
   );

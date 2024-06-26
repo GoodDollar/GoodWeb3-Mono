@@ -19,6 +19,7 @@ import { WizardHeader } from ".";
 export type RedTentProps = {
   onVideo: (base64: string, extension: string) => Promise<void>;
   onDone: (error?: Error) => Promise<void>;
+  withNavBar: boolean;
   containerStyles?: any;
   headerStyles?: any;
   videoInstructStyles?: any;
@@ -215,7 +216,7 @@ export const RedtentWizard: React.FC<RedTentProps> = (props: RedTentProps) => {
   return (
     <WizardContextProvider>
       <Wizard
-        header={<WizardHeader onDone={modalOnDone} error={error} {...headerStyles} />}
+        header={<WizardHeader withNavBar={props.withNavBar} onDone={modalOnDone} error={error} {...headerStyles} />}
         wrapper={<WizardWrapper {...containerStyles} />}
       >
         <RedtentOffer onDone={modalOnDone} />

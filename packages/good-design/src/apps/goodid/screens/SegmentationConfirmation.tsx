@@ -19,7 +19,7 @@ const SegmentationConfirmation = withTheme({ name: "SegmentationConfirmation" })
     styles,
     ...props
   }: IStackProps &
-    Omit<SegmentationProps, "onDone" | "onLocationRequest" | "availableOffers" | "onDataPermission"> & {
+    Omit<SegmentationProps, "onDone" | "onLocationRequest" | "availableOffers" | "onDataPermission" | "withNavBar"> & {
       styles?: any;
     }) => {
     const { nextStep } = useWizard();

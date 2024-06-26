@@ -111,7 +111,7 @@ export const theme = extendTheme({
         "browse-wrap": () => ({
           fontFamily: "subheading",
           fontSize: "2xs",
-          color: "goodGrey.450",
+          color: "goodGrey.400",
           textAlign: "center"
         }),
         "sm-grey-400": () => ({
