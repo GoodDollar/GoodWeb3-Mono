@@ -5,7 +5,7 @@ import { Text } from "native-base";
 import BasicStyledModal, { ModalFooterSocial } from "./BasicStyledModal";
 
 const ClaimSuccessContent = () => (
-  <Text variant="sm-grey">
+  <Text variant="sm-grey-650">
     Why not tell your friends on social media?
     <Text fontFamily="subheading" fontSize="sm" color="primary">
       Don't forget to tag use

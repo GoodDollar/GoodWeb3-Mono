@@ -26,7 +26,7 @@ export const OffersAgreement = withTheme({ name: "OffersAgreement" })(
         <Container {...props}>
           <VStack width={"100%"} space={8} justifyContent="center" alignItems="center">
             <Title variant="title-gdblue">You might qualify for extra money disbursements</Title>
-            <Text variant="sm-grey">{`Would you like to receive offers specific to you, such as special rewards offers, humanitarian funds, climate relief disbursements, and financial services?`}</Text>
+            <Text variant="sm-grey-650">{`Would you like to receive offers specific to you, such as special rewards offers, humanitarian funds, climate relief disbursements, and financial services?`}</Text>
 
             <Center>
               <Image {...image} source={BillyGrin} style={{ resizeMode: resizeMode }} />

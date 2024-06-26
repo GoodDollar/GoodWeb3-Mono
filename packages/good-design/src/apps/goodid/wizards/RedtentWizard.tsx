@@ -65,19 +65,19 @@ const PoolRequirements = () => (
     <VStack space="4">
       <HStack space={2}>
         <Checkbox variant="styled-blue" isDisabled defaultIsChecked colorScheme="info" value="female" />
-        <Text variant="sm-grey">
+        <Text variant="sm-grey-650">
           Have verified your gender as <Text fontWeight="bold">Female</Text> in your GoodID
         </Text>
       </HStack>
       <HStack space={2}>
         <Checkbox variant="styled-blue" defaultIsChecked colorScheme="info" value="location" />
-        <Text variant="sm-grey">
+        <Text variant="sm-grey-650">
           Have verified your country as <Text fontWeight="bold">Nigeria</Text> in your GoodID
         </Text>
       </HStack>
       <HStack space={2}>
         <Checkbox isDisabled colorScheme="info" value="test" />
-        <Text variant="sm-grey">Submit a video selfie saying:</Text>
+        <Text variant="sm-grey-650">Submit a video selfie saying:</Text>
       </HStack>
       <BulletPointList bulletPoints={videoRequirements} />
     </VStack>
@@ -178,7 +178,7 @@ const RedtentThanks = ({ onDone }: { onDone: RedTentProps["onDone"] }) => (
     <VStack space={6}>
       <Title variant="title-gdblue">Thanks you for submitting your video!</Title>
       <HStack paddingBottom={8} borderBottomWidth={1} borderBottomColor="goodGrey.300">
-        <Text variant="sm-grey">
+        <Text variant="sm-grey-650">
           You are now in the{" "}
           <Text fontWeight="bold" color="primary">
             {`Red Tent Women in Nigeria \n`}
