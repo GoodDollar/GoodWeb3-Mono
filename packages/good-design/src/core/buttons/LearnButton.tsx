@@ -6,7 +6,7 @@ import { Image } from "../images";
 import BillyWaiting from "../../assets/images/billy-waiting.png";
 import BillySign from "../../assets/images/billy-sign.png";
 
-export type learnSources = "send" | "bridging" | "network" | "sign";
+export type learnSources = "send" | "bridging" | "network" | "sign" | "identity";
 type links = { link: string; label: string; icon: any };
 
 const linksNew: Record<learnSources, links> = {
@@ -28,6 +28,11 @@ const linksNew: Record<learnSources, links> = {
   sign: {
     link: "https://gooddollar.notion.site/What-is-signing-b0019fe6c43241068050c9aa16e87ee1",
     label: "What is signing?",
+    icon: BillySign
+  },
+  identity: {
+    link: "https://www.notion.so/gooddollar/Get-G-873391f31aee4a18ab5ad7fb7467acb3",
+    label: "Learn about the identification process",
     icon: BillySign
   }
 };

@@ -1,1 +1,2 @@
-export * from "./newsfeed/NewsFeed.theme";
+export * from "./goodid/components/theme";
+export * from "./goodid/screens/theme";
