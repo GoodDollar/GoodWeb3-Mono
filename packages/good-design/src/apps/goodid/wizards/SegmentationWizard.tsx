@@ -20,11 +20,13 @@ export type SegmentationProps = {
   certificateSubjects: any;
   account: string;
   isWhitelisted?: boolean;
-  idExpiry?: { expiryDate: any; state: string };
+  expiryFormatted: string | undefined;
   availableOffers: false | PoolCriteria[] | any;
 };
 
-const SegmentationScreenWrapper = (props: Omit<SegmentationProps, "availableOffers" | "onDataPermission">) => {
+const SegmentationScreenWrapper = (
+  props: Omit<SegmentationProps, "availableOffers" | "onDataPermission" | "expiryFormatted">
+) => {
   const { goToStep } = useWizard();
   const { updateDataValue } = useContext(WizardContext);
   const [loading, setLoading] = useState(true);
@@ -110,7 +112,7 @@ export const SegmentationWizard = (props: SegmentationProps) => {
         <SegmentationConfirmation
           {...{
             account,
-            idExpiry: props.idExpiry,
+            expiryFormatted: props.expiryFormatted,
             isWhitelisted: props.isWhitelisted,
             certificateSubjects: props.certificateSubjects
           }}
