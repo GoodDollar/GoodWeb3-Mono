@@ -124,12 +124,7 @@ export const ClaimProvider: FC<
       if (account && postClaimPools.length === 0 && claimDetails.hasClaimed === true) {
         await explorerPollLock.acquire("pollLock");
 
-        const claimTransactionList = await getRecentClaims(
-          account,
-          endpoints,
-          provider ?? library,
-          poolsDetails.length > 0
-        ).then(res => {
+        const claimTransactionList = await getRecentClaims(account, endpoints, provider ?? library).then(res => {
           explorerPollLock.release("pollLock");
           return res;
         });
@@ -141,7 +136,7 @@ export const ClaimProvider: FC<
         setPostClaimPools(details);
       }
     })();
-  }, [/* used */ chainId, account, postClaimPools, claimDetails, poolsDetails, endpoints]);
+  }, [/* used */ chainId, /*used*/ poolsDetails, account, postClaimPools, claimDetails, endpoints]);
 
   return (
     <ClaimContext.Provider
