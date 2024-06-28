@@ -1,6 +1,6 @@
 import moment from "moment";
 import { ethers } from "ethers";
-import { isArray, shuffle } from "lodash";
+import { isArray, orderBy, sample } from "lodash";
 
 //todo: add error handler
 
@@ -11,14 +11,19 @@ export interface RecentClaims {
   transactionHash: any;
 }
 
-export const getRecentClaims = async (account: string, endpoint: string, library: any): Promise<RecentClaims[]> => {
+export const getRecentClaims = async (
+  account: string,
+  endpoints: string,
+  library: any,
+  withPools: boolean
+): Promise<RecentClaims[]> => {
   if (!library) return [];
-  const apiEndpoint = shuffle(endpoint.split(","))[0];
+  const apiEndpoint = sample(endpoints.split(","));
   const sender32 = ethers.utils.hexZeroPad(account, 32);
 
-  //todo: add hash for additional pools
   //gd-claim-hash
   const claimHash = "0x89ed24731df6b066e4c5186901fffdba18cd9a10f07494aff900bdee260d1304";
+  const poolClaimHash = "0x1c0764b87f885ff7e1be5f7c06a0cc99c5bdc0f7b4884440e6ebe5b12bfd511d";
 
   const unix30DaysAgo = moment().subtract(30, "days").unix();
   const blockNoUrl = `${apiEndpoint}&module=block&action=getblocknobytime&timestamp=${unix30DaysAgo}&closest=before`;
@@ -32,7 +37,6 @@ export const getRecentClaims = async (account: string, endpoint: string, library
     action: "getLogs",
     page: "1",
     offset: "31",
-    topic0: claimHash,
     topic1: sender32,
     // below are required for fuse explorer, optional for <chain>scan.io
     // blocknumber = fuse/blockscout, else we expect a <chain>scan.io aligned response
@@ -41,20 +45,43 @@ export const getRecentClaims = async (account: string, endpoint: string, library
     topic0_1_opr: "and"
   };
 
-  const queryString = new URLSearchParams(params).toString();
-  const apiUrl = `${apiEndpoint}${queryString}`;
+  const hashes = withPools ? [claimHash, poolClaimHash] : [claimHash];
 
-  //todo: add error handler
-  const { result } = await fetch(apiUrl).then(res => res.json());
+  const fetchLogs = async (hash: string) => {
+    params["topic0"] = hash;
+    const endpoint = sample(endpoints.split(","));
+    const queryString = new URLSearchParams(params).toString();
+    const apiUrl = `${endpoint}${queryString}`;
 
-  if (!isArray(result) || result?.length === 0) return [];
+    return fetch(apiUrl)?.then(res => res.json());
+  };
 
-  const formatted = result.reverse().map((tx: any) => {
-    const { address, data, timeStamp, transactionHash } = tx;
-    const claimAmount = ethers.BigNumber.from(data);
-    const date = moment(ethers.BigNumber.from(timeStamp).toNumber() * 1000).utc();
-    return { address, claimAmount, date, transactionHash };
-  });
+  try {
+    const results = await Promise.all(hashes.map(fetchLogs));
 
-  return formatted;
+    let callResults: any[] = [];
+
+    results.forEach(({ result }) => {
+      if (isArray(result) && result.length > 0) {
+        callResults = callResults.concat(result);
+      }
+    });
+
+    if (callResults.length > 0) {
+      const transactionsSorted = orderBy(callResults, ["timeStamp"], ["desc"]);
+
+      const formatted = transactionsSorted.map((tx: any) => {
+        const { address, data, timeStamp, transactionHash } = tx;
+        const claimAmount = ethers.BigNumber.from(data);
+        const date = moment(ethers.BigNumber.from(timeStamp).toNumber() * 1000).utc();
+        return { address, claimAmount, date, transactionHash };
+      });
+
+      return formatted;
+    }
+
+    return callResults;
+  } catch (e) {
+    throw new Error(`getRecentClaims -- Failed to fetch recent-claims: ${e}`);
+  }
 };

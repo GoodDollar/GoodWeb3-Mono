@@ -8,7 +8,7 @@ import {
   useMultiClaim
 } from "@gooddollar/web3sdk-v2";
 import { QueryParams, useEthers } from "@usedapp/core";
-import { noop } from "lodash";
+import { isArray, noop } from "lodash";
 import { Lock } from "async-await-mutex-lock";
 
 import { ClaimContextProps } from "../types";
@@ -63,7 +63,7 @@ export const ClaimProvider: FC<
   );
 
   const claimDetails = useClaim(refreshRate);
-  const { poolsDetails } = useGetMemberUBIPools();
+  const { poolsDetails, loading } = useGetMemberUBIPools();
 
   const { poolContracts, setContract, transactionState, claimFlowStatus } = useMultiClaim(preClaimPools);
   const { errorMessage } = transactionState?.state ?? {};
@@ -105,12 +105,12 @@ export const ClaimProvider: FC<
   }, [/* used */ chainId]);
 
   useEffect(() => {
-    if (account && preClaimPools.length === 0 && claimDetails.hasClaimed === false) {
+    if (account && preClaimPools.length === 0 && claimDetails.hasClaimed === false && !loading) {
       let details: any = [];
       details.push({ GoodDollar: [claimDetails] });
 
-      if (poolsDetails) {
-        details = [...details, ...poolsDetails];
+      if (isArray(poolsDetails) && poolsDetails.length > 0) {
+        details = details.concat(poolsDetails);
       }
 
       setClaimPools(details);
@@ -121,10 +121,15 @@ export const ClaimProvider: FC<
     void (async () => {
       if (explorerPollLock.isAcquired("pollLock")) return;
 
-      if (account && postClaimPools.length === 0 && claimDetails.hasClaimed === true) {
+      if (account && postClaimPools.length === 0 && claimDetails.hasClaimed === true && !loading) {
         await explorerPollLock.acquire("pollLock");
 
-        const claimTransactionList = await getRecentClaims(account, endpoints, provider ?? library).then(res => {
+        const claimTransactionList = await getRecentClaims(
+          account,
+          endpoints,
+          provider ?? library,
+          isArray(poolsDetails) && poolsDetails?.length > 0
+        ).then(res => {
           explorerPollLock.release("pollLock");
           return res;
         });
