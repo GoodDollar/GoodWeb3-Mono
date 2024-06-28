@@ -5,6 +5,7 @@ import Clipboard from "@react-native-clipboard/clipboard";
 
 import { useGoodId } from "../../../hooks/useGoodId";
 import { GoodIdCard } from "../components";
+import { YouSureModal } from "../../../core/web3/modals";
 
 import { Image } from "../../../core/images";
 import { Title } from "../../../core/layout";
@@ -27,12 +28,18 @@ const ActionButtonRound = ({ ...props }) => (
 const FaceId = ({ ...props }) => {
   const { getFvSig, deleteFvId } = useFVLink();
   const [fvId, setFvId] = useState<string | undefined>(undefined);
+  const [pendingDelete, setPendingDelete] = useState(false);
+
   const truncFaceId = truncateMiddle(fvId, 11);
 
   const retreiveFaceId = useCallback(async () => {
     const sig = await getFvSig();
     setFvId(sig.slice(0, 42));
   }, [getFvSig]);
+
+  const handleDeleteFaceId = useCallback(() => {
+    setPendingDelete(true);
+  }, [deleteFvId]);
 
   const deleteFaceId = useCallback(async () => {
     const deleted = await deleteFvId();
@@ -52,6 +59,13 @@ const FaceId = ({ ...props }) => {
   return (
     <VStack width="100%">
       <HStack {...props}>
+        <YouSureModal
+          open={pendingDelete}
+          type="deleteAccount"
+          action={deleteFaceId}
+          onClose={() => setPendingDelete(false)}
+          styleProps={{ buttonStyle: { backgroundColor: "goodRed.100" } }}
+        />
         <Image source={FaceIcon} w="42" h="42" backgroundColor="goodBlack.400" borderRadius="50" resizeMode="center" />
         <VStack width="100%" flexShrink={1}>
           <Text variant="sm-grey-700">FaceId</Text>
@@ -71,7 +85,7 @@ const FaceId = ({ ...props }) => {
           />
         ) : (
           <HStack space={2}>
-            <ActionButtonRound onPress={deleteFaceId} icon={TrashIcon} color="goodRed.100" />
+            <ActionButtonRound onPress={handleDeleteFaceId} icon={TrashIcon} color="goodRed.100" />
             <ActionButtonRound onPress={copyFvId} icon={CopyIcon} color="primary" />
           </HStack>
         )}

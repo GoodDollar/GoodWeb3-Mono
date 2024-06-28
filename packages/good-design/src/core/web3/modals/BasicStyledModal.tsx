@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { Center, Text, VStack } from "native-base";
+import React, { useEffect, useState } from "react";
+import { Center, Checkbox, HStack, Text, VStack } from "native-base";
 
 import { withTheme } from "../../../theme/hoc/withTheme";
 import { Image } from "../../images";
@@ -11,6 +11,7 @@ import { learnSources } from "../../buttons/LearnButton";
 import { SpinnerCheckMark } from "../../animated";
 import BillyCelebration from "../../../assets/images/billy-celebration.png";
 import BillyOops from "../../../assets/images/billy-oops.png";
+import { AsyncStorage } from "@gooddollar/web3sdk-v2";
 
 export interface BasicModalProps {
   show: boolean;
@@ -62,11 +63,44 @@ export const ModalErrorBody = ({ error }: { error: string }) => (
   </VStack>
 );
 
-export const ModalFooterCta = ({ buttonText, action }: { buttonText: string; action: () => void }) => (
-  <Center padding="0" w="100%">
-    <LinkButton buttonText={buttonText} onPress={action} />
-  </Center>
-);
+export const ModalFooterCta = ({
+  buttonText,
+  withDontShowAgain,
+  action,
+  styleProps
+}: {
+  buttonText: string;
+  withDontShowAgain?: string | undefined;
+  styleProps?: any;
+  action: () => void;
+}) => {
+  const [dontShowAgain, setDontShowAgain] = useState(false);
+
+  const onAction = async () => {
+    if (withDontShowAgain && dontShowAgain) {
+      await AsyncStorage.setItem(withDontShowAgain, "true");
+    }
+
+    action();
+  };
+
+  return (
+    <Center padding="0" w="100%">
+      {withDontShowAgain ? (
+        <HStack space={2}>
+          <Checkbox
+            variant="styled-blue"
+            onChange={() => setDontShowAgain(prev => !prev)}
+            colorScheme="info"
+            value="female"
+          />
+          <Text variant="sm-grey-600"> Don't show this again</Text>
+        </HStack>
+      ) : null}
+      <LinkButton buttonText={buttonText} onPress={onAction} {...styleProps} />
+    </Center>
+  );
+};
 
 export const ModalFooterCtaX = ({ extUrl, buttonText }: { extUrl: string; buttonText: string }) => (
   <Center padding="0" w="100%">
