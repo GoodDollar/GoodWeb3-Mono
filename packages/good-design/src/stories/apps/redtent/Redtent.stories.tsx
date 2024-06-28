@@ -12,7 +12,13 @@ export const RedtentWizardStory = {
     onVideo: async () => {
       alert("got video");
     },
-    country: "nigeria"
+    country: "nigeria",
+    containerStyles: {
+      width: "100%"
+    },
+    headerStyles: {
+      width: "100%"
+    }
   }
 };
 
@@ -27,6 +33,12 @@ export const RedtentWizardError = {
     onVideo: async () => {
       alert("got video");
     },
-    country: "nigeria"
+    country: "nigeria",
+    containerStyles: {
+      width: "100%"
+    },
+    headerStyles: {
+      width: "100%"
+    }
   }
 };

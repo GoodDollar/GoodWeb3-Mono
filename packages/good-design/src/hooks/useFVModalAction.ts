@@ -2,6 +2,7 @@ import { useFVLink, openLink } from "@gooddollar/web3sdk-v2";
 import { noop } from "lodash";
 import { useCallback, useMemo, useState } from "react";
 import { FVFlowProps } from "../core";
+import { isTxReject } from "../utils/transactionType";
 
 interface FVModalActionProps extends Pick<FVFlowProps, "method" | "firstName"> {
   onClose: () => void;
@@ -40,8 +41,10 @@ export const useFVModalAction = ({
     try {
       const fvSig = await fvlink?.getFvSig();
       if (fvSig && onFvSig) void onFvSig(fvSig);
-    } catch {
-      return;
+    } catch (e: any) {
+      if (isTxReject(e)) {
+        throw new Error(e);
+      }
     } finally {
       setLoading(false);
     }

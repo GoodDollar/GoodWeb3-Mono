@@ -39,7 +39,7 @@ const redtentOffer = [
   // }
 ];
 
-export const SegmentationController = ({ onDone }: { onDone: SegmentationProps["onDone"] }) => {
+export const SegmentationController = ({ fvSig, onDone }: { fvSig?: string; onDone: SegmentationProps["onDone"] }) => {
   const { account = "" } = useEthers();
   const { baseEnv } = useGetEnvChainId();
   const issueCertificate = useIssueCertificates(account, baseEnv);
@@ -58,11 +58,13 @@ export const SegmentationController = ({ onDone }: { onDone: SegmentationProps["
       if (hasValidCertificates) {
         return;
       }
-
-      const fvSig = await AsyncStorage.getItem("fvSig").then(async sig =>
-        !isEmpty(sig) ? sig : await fvLink.getFvSig()
-      );
-      await issueCertificate(account, locationState, fvSig);
+      fvSig =
+        fvSig ||
+        (await AsyncStorage.getItem("fvSig").then(async sig => (!isEmpty(sig) ? sig : await fvLink.getFvSig())));
+      if (fvSig) await issueCertificate(account, locationState, fvSig);
+      else {
+        throw new Error("missing faceid");
+      }
     },
     [issueCertificate, account, certificates]
   );

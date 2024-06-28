@@ -14,7 +14,8 @@ import { goodFundManagerContract } from "contracts/GoodFundManagerContract";
 import { goodMarketMakerContract } from "contracts/GoodMarketMakerContract";
 import { getToken, getTokenByAddress } from "methods/tokenLists";
 import { getAccount, getChainId } from "utils/web3";
-import { aaveStaking, g$Price } from "./apollo";
+import { aaveStaking } from "./apollo";
+import { g$ReservePrice } from "methods/g$price";
 import { compoundDaiStakingAPY } from "./rest";
 import { LIQUIDITY_PROTOCOL } from "constants/protocols";
 import { debug, debugGroup, debugGroupEnd } from "utils/debug";
@@ -231,7 +232,8 @@ async function metaMyStake(web3: Web3, address: string, account: string, release
     getRewardGDAO(web3, address, account)
   ]);
 
-  const { cDAI } = await g$Price();
+  const { cDAI: cdaiPrice } = await g$ReservePrice(web3, chainId);
+  const cDAI = cdaiPrice.asFraction;
   const ratio = await cDaiPrice(web3, chainId);
 
   const rewardUSDC = {
@@ -299,14 +301,15 @@ async function metaMyGovStake(
   if (!users || parseInt(users.amount.toString()) === 0) {
     return null;
   }
+  const chainId = await getChainId(web3);
 
   const amount = CurrencyAmount.fromRawAmount(G$Token, users.amount.toString());
 
-  const tokenPrice = await g$Price();
+  const tokenPrice = await g$ReservePrice(web3, chainId);
 
   let amount$ = CurrencyAmount.fromRawAmount(G$Token, 0);
   if (tokenPrice) {
-    const value = amount.multiply(tokenPrice.DAI).multiply(1e4);
+    const value = amount.multiply(tokenPrice.DAI.asFraction).multiply(1e4);
     amount$ = CurrencyAmount.fromFractionalAmount(usdcToken, value.numerator, value.denominator);
   } else {
     amount$ = CurrencyAmount.fromRawAmount(usdcToken, 0);
@@ -576,8 +579,9 @@ export const getReserveRatio = memoize<(web3: Web3, chainId: number) => Promise<
 const getAPY = memoize<(web3: Web3, address: string, protocol: LIQUIDITY_PROTOCOL, token: Token) => Promise<Fraction>>(
   async (web3, address, protocol, token) => {
     debugGroup(`APY of ${protocol} for ${token.symbol}`);
-
-    const { DAI: G$Ratio } = await g$Price();
+    const chainId = await getChainId(web3);
+    const { DAI: price } = await g$ReservePrice(web3, chainId);
+    const G$Ratio = price.asFraction;
 
     const yearlyRewardG$ = await getYearlyRewardG$(web3, address);
     let stakedValue: CurrencyAmount<Currency>;

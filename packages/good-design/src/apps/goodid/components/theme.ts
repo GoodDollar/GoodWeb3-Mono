@@ -17,3 +17,9 @@ export const CardRowItem = {
     }
   }
 };
+
+export const GoodIdCard = {
+  baseStyle: {
+    width: "343"
+  }
+};

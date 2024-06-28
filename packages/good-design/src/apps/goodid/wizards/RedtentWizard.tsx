@@ -2,6 +2,7 @@ import { Checkbox, Center, HStack, Text, View, VStack } from "native-base";
 import React, { FC, PropsWithChildren, useCallback, useState } from "react";
 import { Wizard, useWizard } from "react-use-wizard";
 
+import { withTheme } from "../../../theme";
 import { GoodButton } from "../../../core/buttons";
 import ImageCard from "../../../core/layout/ImageCard";
 import { Image } from "../../../core/images";
@@ -18,6 +19,9 @@ import { WizardHeader } from ".";
 export type RedTentProps = {
   onVideo: (base64: string, extension: string) => Promise<void>;
   onDone: (error?: Error) => Promise<void>;
+  containerStyles?: any;
+  headerStyles?: any;
+  videoInstructStyles?: any;
 };
 
 const videoRequirements = [
@@ -32,7 +36,11 @@ const videoUsagePolicy = [
   `Your video may be reviewed by the \n GoodLabs or partner teams for \n verification purposes. Your video \n will not be shared or used publicly, \n and will be erased after a period of \n time.`
 ];
 
-const WizardWrapper: FC<PropsWithChildren> = ({ children }) => <View width={375}>{children}</View>;
+const WizardWrapper: FC<PropsWithChildren> = ({ children, ...props }) => (
+  <View mr="auto" ml="auto" {...props}>
+    {children}
+  </View>
+);
 
 const CardContent = () => (
   <VStack space="0">
@@ -113,61 +121,57 @@ const RedtentOffer = ({ onDone }: { onDone: RedTentProps["onDone"] }) => {
   );
 };
 
-const RedtentVideoInstructions = ({
-  onDone,
-  onVideo
-}: {
-  onDone: RedTentProps["onDone"];
-  onVideo: RedTentProps["onVideo"];
-}) => {
-  const { nextStep } = useWizard();
-  const [isLoading, setLoading] = useState(false);
+const RedtentVideoInstructions = withTheme({ name: "RedtentVideoInstructions" })(
+  ({ onDone, onVideo, ...props }: { onDone: RedTentProps["onDone"]; onVideo: RedTentProps["onVideo"] }) => {
+    const { nextStep } = useWizard();
+    const [isLoading, setLoading] = useState(false);
 
-  const onUpload = useCallback(
-    async (video?: { base64: string; extension: string }, error?: Error) => {
-      if (!video || error) {
-        void onDone(error || new Error("Video upload failed"));
-        return;
-      }
-      setLoading(true);
-      try {
-        await onVideo(video.base64, video.extension);
-      } catch (e) {
-        void onDone(e as Error);
-      } finally {
-        setLoading(false);
-        void nextStep();
-      }
-    },
-    [onDone]
-  );
+    const onUpload = useCallback(
+      async (video?: { base64: string; extension: string }, error?: Error) => {
+        if (!video || error) {
+          void onDone(error || new Error("Video upload failed"));
+          return;
+        }
+        setLoading(true);
+        try {
+          await onVideo(video.base64, video.extension);
+        } catch (e) {
+          void onDone(e as Error);
+        } finally {
+          setLoading(false);
+          void nextStep();
+        }
+      },
+      [onDone]
+    );
 
-  return (
-    <VStack space={6}>
-      <Title variant="title-gdblue">Video instructions</Title>
-      <Center>
-        <Image source={BillyPhone} width={126} height={156} />
-      </Center>
+    return (
+      <VStack space={6} {...props}>
+        <Title variant="title-gdblue">Video instructions</Title>
+        <Center>
+          <Image source={BillyPhone} width={126} height={156} />
+        </Center>
 
-      {[
-        { title: "Submit a video selfie", pointsList: videoRequirements },
-        { title: "Restrictions", pointsList: videoRestrictions },
-        { title: "How will my video be used?", pointsList: videoUsagePolicy }
-      ].map(({ title, pointsList }) => (
-        <VStack key={title} space={2}>
-          <Title variant="subtitle-grey">{title}</Title>
-          <BulletPointList bulletPoints={pointsList} />
-        </VStack>
-      ))}
+        {[
+          { title: "Submit a video selfie", pointsList: videoRequirements },
+          { title: "Restrictions", pointsList: videoRestrictions },
+          { title: "How will my video be used?", pointsList: videoUsagePolicy }
+        ].map(({ title, pointsList }) => (
+          <VStack key={title} space={2}>
+            <Title variant="subtitle-grey">{title}</Title>
+            <BulletPointList bulletPoints={pointsList} />
+          </VStack>
+        ))}
 
-      <WebVideoUploader onUpload={onUpload} isLoading={isLoading} />
+        <WebVideoUploader onUpload={onUpload} isLoading={isLoading} />
 
-      <GoodButton onPress={() => onDone()} padding={0} variant={"link-like"}>
-        Nevermind, I don't want the extra UBI
-      </GoodButton>
-    </VStack>
-  );
-};
+        <GoodButton onPress={() => onDone()} padding={0} variant={"link-like"}>
+          Nevermind, I don't want the extra UBI
+        </GoodButton>
+      </VStack>
+    );
+  }
+);
 
 const RedtentThanks = ({ onDone }: { onDone: RedTentProps["onDone"] }) => (
   <VStack space={200}>
@@ -191,6 +195,7 @@ const RedtentThanks = ({ onDone }: { onDone: RedTentProps["onDone"] }) => (
 
 export const RedtentWizard: React.FC<RedTentProps> = (props: RedTentProps) => {
   const [error, setError] = useState<Error | undefined>(undefined);
+  const { containerStyles, headerStyles, videoInstructStyles } = props;
   // inject show modal on callbacks exceptions
   const modalOnDone: RedTentProps["onDone"] = async error => {
     try {
@@ -209,9 +214,12 @@ export const RedtentWizard: React.FC<RedTentProps> = (props: RedTentProps) => {
 
   return (
     <WizardContextProvider>
-      <Wizard header={<WizardHeader onDone={modalOnDone} error={error} />} wrapper={<WizardWrapper />}>
+      <Wizard
+        header={<WizardHeader onDone={modalOnDone} error={error} {...headerStyles} />}
+        wrapper={<WizardWrapper {...containerStyles} />}
+      >
         <RedtentOffer onDone={modalOnDone} />
-        <RedtentVideoInstructions onDone={modalOnDone} onVideo={modalOnVideo} />
+        <RedtentVideoInstructions onDone={modalOnDone} onVideo={modalOnVideo} {...videoInstructStyles} />
         <RedtentThanks onDone={modalOnDone} />
       </Wizard>
     </WizardContextProvider>

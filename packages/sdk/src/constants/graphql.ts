@@ -1,10 +1,7 @@
-export {};
-import { SupportedChainId } from "./chains";
+export let config = {
+  graphKey: ""
+};
 
-type AddressMap = { [chainId: number]: string };
-
-export const G$PRICE = "https://api.thegraph.com/subgraphs/name/gooddollar/goodsubgraphs";
-
-export const AAVE_STAKING: AddressMap = {
-  [SupportedChainId.MAINNET]: "https://api.thegraph.com/subgraphs/name/grothem/aave-v2"
+export const setConfig = (newConfig: { graphKey: string }) => {
+  config = { ...newConfig };
 };

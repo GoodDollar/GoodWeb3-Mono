@@ -24,23 +24,22 @@ export const OffersAgreement = withTheme({ name: "OffersAgreement" })(
     return (
       <>
         <Container {...props}>
-          <VStack width={"100%"} space={8}>
+          <VStack width={"100%"} space={8} justifyContent="center" alignItems="center">
             <Title variant="title-gdblue">You might qualify for extra money disbursements</Title>
-            <Text variant="sm-grey">{`Would you like to receive offers specific to you, \nsuch as special rewards offers, humanitarian \nfunds, climate relief disbursements, and \nfinancial services?`}</Text>
+            <Text variant="sm-grey">{`Would you like to receive offers specific to you, such as special rewards offers, humanitarian funds, climate relief disbursements, and financial services?`}</Text>
 
             <Center>
               <Image {...image} source={BillyGrin} style={{ resizeMode: resizeMode }} />
             </Center>
-            <VStack space={6}>
+            <VStack space={6} alignItems="center">
               <Text variant="browse-wrap">
-                {`By tapping “Yes” you’re allowing GoodLabs Ltd to read your 
-GoodID until its expiration date only to show you offers relevant
-to you. We will not share your information with anyone. To read 
-our full Privacy Policy, go to http://gooddollar.org/privacy-policy`}
+                {`By tapping “Yes” you’re allowing GoodLabs Ltd to read your GoodID until its expiration date only to show you offers relevant to you. We will not share your information with anyone. To read  our full Privacy Policy, go to http://gooddollar.org/privacy-policy`}
               </Text>
 
               <VStack {...buttonContainer}>
-                <GoodButton onPress={handleYes}>yes, i accept</GoodButton>
+                <GoodButton onPress={handleYes} width="100%">
+                  yes, i accept
+                </GoodButton>
                 <GoodButton onPress={handleNo} variant="link-like" _text={{ underline: false }}>
                   no
                 </GoodButton>

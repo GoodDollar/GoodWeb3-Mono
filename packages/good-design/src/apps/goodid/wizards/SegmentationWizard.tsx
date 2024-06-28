@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { useWizard, Wizard } from "react-use-wizard";
 import { Center, VStack } from "native-base";
 import { useEthers } from "@usedapp/core";
-import { isEmpty, noop } from "lodash";
+import { noop } from "lodash";
 import { GeoLocation, PoolCriteria, useGeoLocation } from "@gooddollar/web3sdk-v2";
 
 import { GoodButton } from "../../../core";
@@ -49,7 +49,7 @@ const SegmentationScreenWrapper = (props: Omit<SegmentationProps, "availableOffe
     }
   }, [geoLocation, account, error]);
 
-  return !account || loading || isEmpty(props.certificateSubjects) ? (
+  return !account || loading || !props.certificateSubjects ? (
     <LoaderModal title={`We're checking \n your information`} overlay="dark" loading={true} onClose={noop} />
   ) : (
     <Center width={"100%"}>
@@ -108,9 +108,12 @@ export const SegmentationWizard = (props: SegmentationProps) => {
         {/* Ask permission for matching their data against potential pools  */}
         <OffersAgreement onDataPermission={props.onDataPermission} />
         <SegmentationConfirmation
-          account={props.account}
-          idExpiry={props.idExpiry}
-          isWhitelisted={props.isWhitelisted}
+          {...{
+            account,
+            idExpiry: props.idExpiry,
+            isWhitelisted: props.isWhitelisted,
+            certificateSubjects: props.certificateSubjects
+          }}
         />
         {/* if offers available it will handle the offers flow. 
         If no offers, or the flow is finished, handle next-step through onDone */}
