@@ -9,6 +9,7 @@ import { Image } from "../../../core/images";
 import { WebVideoUploader } from "../../../core/inputs/WebVideoUploader";
 import { WizardContextProvider } from "../../../utils/WizardContext";
 import { BulletPointList, Title } from "../../../core/layout";
+import { YouSureModal } from "../../../core/web3/modals";
 
 import RedTentCard from "../../../assets/images/redtentcard.png";
 import BillyPhone from "../../../assets/images/billy-phone.png";
@@ -87,9 +88,22 @@ const PoolRequirements = () => (
 
 const RedtentOffer = ({ onDone }: { onDone: RedTentProps["onDone"] }) => {
   const { nextStep } = useWizard();
+  const [showModal, setShowModal] = useState(false);
+
+  const handleSkip = () => {
+    setShowModal(true);
+  };
+
   return (
     <View>
       <VStack space={10}>
+        <YouSureModal
+          open={showModal}
+          action={() => setShowModal(false)}
+          type="offers"
+          onClose={onDone}
+          withDontShowAgain="Don't show this offer again"
+        />
         <Title variant="title-gdblue">{`You are eligible for \n additional UBI!`}</Title>
         <ImageCard
           variant="offer-card"
@@ -114,8 +128,8 @@ const RedtentOffer = ({ onDone }: { onDone: RedTentProps["onDone"] }) => {
       <PoolRequirements />
       <VStack space={4}>
         <GoodButton onPress={nextStep}>Upload Video Selfie</GoodButton>
-        <GoodButton onPress={() => onDone()} variant={"link-like"} padding={0}>
-          I don't want the extra UBI
+        <GoodButton onPress={handleSkip} variant={"link-like"} padding={0}>
+          Skip for now
         </GoodButton>
       </VStack>
     </View>
