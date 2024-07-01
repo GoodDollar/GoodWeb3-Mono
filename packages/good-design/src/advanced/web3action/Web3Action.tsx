@@ -45,7 +45,7 @@ const StepIndicator: FC<{ text?: string } & ITextProps> = withTheme({ name: "Ste
   ({ text, color, fontSize }) => (
     <HStack space={2} alignItems="center" flexDirection="row">
       <Spinner color={color as string} size="sm" accessibilityLabel="Waiting on wallet confirmation" />
-      <Text color={color} fontSize={fontSize} fontFamily="subheading">
+      <Text color={color} fontSize={fontSize} fontFamily="subheading" alignItems="center">
         {text}
       </Text>
     </HStack>
@@ -89,6 +89,7 @@ export const Web3ActionButton: FC<Web3ActionProps> = withTheme({
       timerRef.current = setTimeout(finishFlow, 60000);
     }, []);
 
+    //todo-fix: flow breaks with local activateBrowserWallet (not async)
     const connectWallet = useCallback(async () => {
       const connectFn = handleConnect || (activateBrowserWallet as any);
       const isConnected = await connectFn().catch(throwIfCancelled);

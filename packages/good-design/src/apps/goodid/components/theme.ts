@@ -11,7 +11,7 @@ export const CardRowItem = {
       subContent: {
         fontFamily: "subheading",
         fontWeight: 400,
-        color: "goodGrey.450",
+        color: "goodGrey.400",
         fontSize: "xs"
       }
     }

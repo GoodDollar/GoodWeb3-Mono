@@ -34,7 +34,7 @@ export const theme = {
   variants: {
     "link-like": () => ({
       _text: {
-        color: "goodGrey.450",
+        color: "goodGrey.400",
         underline: true,
         textTransform: "uppercase",
         fontFamily: "subheading",
@@ -42,7 +42,7 @@ export const theme = {
         fontWeight: "700"
       },
       _hover: {
-        backgroundColor: "goodGrey.450:alpha.20"
+        backgroundColor: "goodGrey.400:alpha.20"
       },
       backgroundColor: "none",
       paddingY: 0,

@@ -76,7 +76,7 @@ export const theme = {
         fontSize: "sm",
         fontWeight: "700",
         lineHeight: 20.8,
-        color: "goodGrey.450",
+        color: "goodGrey.400",
         underline: true,
         textTransform: "uppercase"
       }
