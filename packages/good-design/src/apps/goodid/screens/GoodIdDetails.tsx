@@ -99,9 +99,11 @@ export const GoodIdDetails = withTheme({ name: "GoodIdDetails" })(
   ({
     account,
     withHeader = false,
+    isVerified = false,
     ...props
   }: {
     account: string;
+    isVerified?: boolean;
     withHeader?: boolean;
     container?: any;
     header?: any;
@@ -117,7 +119,7 @@ export const GoodIdDetails = withTheme({ name: "GoodIdDetails" })(
       Clipboard.setString(account);
     }, [account]);
 
-    if (!account || isWhitelisted === undefined) return <Spinner variant="page-loader" size="lg" />;
+    if (!account || (!isVerified && isWhitelisted === undefined)) return <Spinner variant="page-loader" size="lg" />;
 
     return (
       <VStack {...container}>
@@ -134,7 +136,7 @@ export const GoodIdDetails = withTheme({ name: "GoodIdDetails" })(
         <VStack {...innerContainer}>
           <GoodIdCard
             account={account}
-            isWhitelisted={isWhitelisted}
+            isWhitelisted={isWhitelisted ?? isVerified}
             certificateSubjects={certificateSubjects}
             expiryDate={expiryFormatted}
             width="100%"
