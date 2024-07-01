@@ -102,7 +102,7 @@ const RedtentOffer = ({ onDone }: { onDone: RedTentProps["onDone"] }) => {
           action={() => setShowModal(false)}
           type="offers"
           onClose={onDone}
-          withDontShowAgain="Don't show this offer again"
+          dontShowAgainKey="noOffersModalAgain"
         />
         <Title variant="title-gdblue">{`You are eligible for \n additional UBI!`}</Title>
         <ImageCard

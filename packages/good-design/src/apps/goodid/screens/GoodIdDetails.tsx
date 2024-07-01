@@ -42,8 +42,9 @@ const FaceId = ({ ...props }) => {
   }, [deleteFvId]);
 
   const deleteFaceId = useCallback(async () => {
-    const deleted = await deleteFvId();
-    console.log("Fv is Deleted -->", { deleted });
+    setPendingDelete(false);
+
+    await deleteFvId();
   }, [fvId, deleteFvId]);
 
   const margin = useBreakpointValue({
@@ -58,14 +59,14 @@ const FaceId = ({ ...props }) => {
 
   return (
     <VStack width="100%">
+      <YouSureModal
+        open={pendingDelete}
+        type="deleteAccount"
+        action={deleteFaceId}
+        onClose={() => setPendingDelete(false)}
+        styleProps={{ buttonStyle: { backgroundColor: "goodRed.100" } }}
+      />
       <HStack {...props}>
-        <YouSureModal
-          open={pendingDelete}
-          type="deleteAccount"
-          action={deleteFaceId}
-          onClose={() => setPendingDelete(false)}
-          styleProps={{ buttonStyle: { backgroundColor: "goodRed.100" } }}
-        />
         <Image source={FaceIcon} w="42" h="42" backgroundColor="goodBlack.400" borderRadius="50" resizeMode="center" />
         <VStack width="100%" flexShrink={1}>
           <Text variant="sm-grey-700">FaceId</Text>
@@ -98,9 +99,11 @@ export const GoodIdDetails = withTheme({ name: "GoodIdDetails" })(
   ({
     account,
     withHeader = false,
+    isVerified = false,
     ...props
   }: {
     account: string;
+    isVerified?: boolean;
     withHeader?: boolean;
     container?: any;
     header?: any;
@@ -116,7 +119,7 @@ export const GoodIdDetails = withTheme({ name: "GoodIdDetails" })(
       Clipboard.setString(account);
     }, [account]);
 
-    if (!account || isWhitelisted === undefined) return <Spinner variant="page-loader" size="lg" />;
+    if (!account || (!isVerified && isWhitelisted === undefined)) return <Spinner variant="page-loader" size="lg" />;
 
     return (
       <VStack {...container}>
@@ -133,7 +136,7 @@ export const GoodIdDetails = withTheme({ name: "GoodIdDetails" })(
         <VStack {...innerContainer}>
           <GoodIdCard
             account={account}
-            isWhitelisted={isWhitelisted}
+            isWhitelisted={isWhitelisted ?? isVerified}
             certificateSubjects={certificateSubjects}
             expiryDate={expiryFormatted}
             width="100%"

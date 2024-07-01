@@ -13,6 +13,8 @@ import BillyCelebration from "../../../assets/images/billy-celebration.png";
 import BillyOops from "../../../assets/images/billy-oops.png";
 import { AsyncStorage } from "@gooddollar/web3sdk-v2";
 
+const LocalText = ({ ...props }) => <Text {...props} />;
+
 export interface BasicModalProps {
   show: boolean;
   onClose: () => void;
@@ -65,40 +67,44 @@ export const ModalErrorBody = ({ error }: { error: string }) => (
 
 export const ModalFooterCta = ({
   buttonText,
-  withDontShowAgain,
+  dontShowAgainKey,
   action,
   styleProps
 }: {
   buttonText: string;
-  withDontShowAgain?: string | undefined;
+  dontShowAgainKey?: string | undefined;
   styleProps?: any;
   action: () => void;
 }) => {
   const [dontShowAgain, setDontShowAgain] = useState(false);
 
   const onAction = async () => {
-    if (withDontShowAgain && dontShowAgain) {
-      await AsyncStorage.setItem(withDontShowAgain, "true");
+    if (dontShowAgainKey && dontShowAgain) {
+      await AsyncStorage.setItem(dontShowAgainKey, "true");
     }
 
     action();
   };
 
   return (
-    <Center padding="0" w="100%">
-      {withDontShowAgain ? (
-        <HStack space={2}>
+    <VStack padding="0" w="100%">
+      {dontShowAgainKey ? (
+        <HStack space={2} alignItems="flex-start" justifyContent="flex-start">
           <Checkbox
             variant="styled-blue"
             onChange={() => setDontShowAgain(prev => !prev)}
             colorScheme="info"
             value="female"
-          />
-          <Text variant="sm-grey-600"> Don't show this again</Text>
+          >
+            {/* user-select is not supported by native-base, why we use a localized wrapper */}
+            <LocalText variant="sm-grey-650" style={{ userSelect: "none" }}>
+              Don't show this again
+            </LocalText>
+          </Checkbox>
         </HStack>
       ) : null}
-      <LinkButton buttonText={buttonText} onPress={onAction} {...styleProps} />
-    </Center>
+      <LinkButton mt={6} buttonText={buttonText} onPress={onAction} {...styleProps} />
+    </VStack>
   );
 };
 
