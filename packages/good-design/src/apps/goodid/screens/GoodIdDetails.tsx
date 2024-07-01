@@ -42,8 +42,9 @@ const FaceId = ({ ...props }) => {
   }, [deleteFvId]);
 
   const deleteFaceId = useCallback(async () => {
-    const deleted = await deleteFvId();
-    console.log("Fv is Deleted -->", { deleted });
+    setPendingDelete(false);
+
+    await deleteFvId();
   }, [fvId, deleteFvId]);
 
   const margin = useBreakpointValue({
@@ -58,14 +59,14 @@ const FaceId = ({ ...props }) => {
 
   return (
     <VStack width="100%">
+      <YouSureModal
+        open={pendingDelete}
+        type="deleteAccount"
+        action={deleteFaceId}
+        onClose={() => setPendingDelete(false)}
+        styleProps={{ buttonStyle: { backgroundColor: "goodRed.100" } }}
+      />
       <HStack {...props}>
-        <YouSureModal
-          open={pendingDelete}
-          type="deleteAccount"
-          action={deleteFaceId}
-          onClose={() => setPendingDelete(false)}
-          styleProps={{ buttonStyle: { backgroundColor: "goodRed.100" } }}
-        />
         <Image source={FaceIcon} w="42" h="42" backgroundColor="goodBlack.400" borderRadius="50" resizeMode="center" />
         <VStack width="100%" flexShrink={1}>
           <Text variant="sm-grey-700">FaceId</Text>
