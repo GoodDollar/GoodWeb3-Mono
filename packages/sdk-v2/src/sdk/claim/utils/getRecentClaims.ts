@@ -36,7 +36,7 @@ export const getRecentClaims = async (
     module: "logs",
     action: "getLogs",
     page: "1",
-    offset: "31",
+    offset: "100",
     topic1: sender32,
     // below are required for fuse explorer, optional for <chain>scan.io
     // blocknumber = fuse/blockscout, else we expect a <chain>scan.io aligned response
@@ -72,9 +72,17 @@ export const getRecentClaims = async (
 
       const formatted = transactionsSorted.map((tx: any) => {
         const { address, data, timeStamp, transactionHash } = tx;
+
+        const isGdPool = tx.topics[0] === claimHash;
+
         const claimAmount = ethers.BigNumber.from(data);
         const date = moment(ethers.BigNumber.from(timeStamp).toNumber() * 1000).utc();
-        return { address, claimAmount, date, transactionHash };
+
+        // todo: add utilty getContractName(address) to read pool name from registry
+        // for now we assume its either GoodDollar or RedTent
+        const contractName = isGdPool ? "GoodDollar" : "RedTent";
+
+        return { address, claimAmount, contractName, date, transactionHash };
       });
 
       return formatted;

@@ -52,14 +52,7 @@ export const useMultiClaim = (poolsDetails: PoolDetails[]) => {
     await send();
 
     setClaimedContracts((prev: Contract[]) => [contract, ...prev]);
-
     const remainingContracts = poolContracts.find(c => !claimedContracts.includes(c) && c !== contract);
-
-    if (!remainingContracts) {
-      setContract(undefined);
-      return;
-    }
-
     setContract(remainingContracts);
   }, [contract, poolContracts]);
 
