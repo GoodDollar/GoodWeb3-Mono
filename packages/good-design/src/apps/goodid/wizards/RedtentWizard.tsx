@@ -94,12 +94,17 @@ const RedtentOffer = ({ onDone }: { onDone: RedTentProps["onDone"] }) => {
     setShowModal(true);
   };
 
+  const handleOnDone = () => {
+    setShowModal(false);
+    void onDone();
+  };
+
   return (
     <View>
       <VStack space={10}>
         <YouSureModal
           open={showModal}
-          action={() => setShowModal(false)}
+          action={handleOnDone}
           type="offers"
           onClose={onDone}
           dontShowAgainKey="noOffersModalAgain"
@@ -179,10 +184,6 @@ const RedtentVideoInstructions = withTheme({ name: "RedtentVideoInstructions" })
         ))}
 
         <WebVideoUploader onUpload={onUpload} isLoading={isLoading} />
-
-        <GoodButton onPress={() => onDone()} padding={0} variant={"link-like"}>
-          Nevermind, I don't want the extra UBI
-        </GoodButton>
       </VStack>
     );
   }

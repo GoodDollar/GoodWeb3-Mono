@@ -59,7 +59,7 @@ export const ModalLoaderBody = () => (
 export const ModalErrorBody = ({ error }: { error: string }) => (
   <VStack space={6} justifyContent="center" alignItems="center">
     <Image source={BillyOops} w={137} h={135} style={{ resizeMode: "contain" }} />
-    <Text variant="sm-grey-650" color="goodRed.100">
+    <Text variant="sm-grey-650" color="goodRed.100" textAlign="center">
       {error}
     </Text>
   </VStack>
