@@ -42,7 +42,7 @@ export const TxModal = ({ type, isPending, onClose = noop, customTitle, ...props
       body={<TxModalContent content={content} />}
       footer={<ModalFooterLearn source={type} />}
       withOverlay="dark"
-      withCloseButton
+      withCloseButton={false}
     />
   );
 };

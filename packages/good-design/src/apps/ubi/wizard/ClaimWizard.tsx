@@ -60,7 +60,7 @@ const WizardWrapper: FC<PropsWithChildren> = ({ children }) => {
 
   useEffect(() => {
     void (async () => {
-      if (isReject) {
+      if (isReject || status === "Exception") {
         void onClaimFailed();
       } else {
         void handleNext();

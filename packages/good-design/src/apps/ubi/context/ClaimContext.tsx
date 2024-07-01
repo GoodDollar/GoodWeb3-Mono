@@ -15,7 +15,7 @@ import { ClaimContextProps } from "../types";
 import { useFormatClaimTransactions } from "../../../hooks";
 
 const ClaimContext = createContext<ClaimContextProps | undefined>(undefined);
-// Custom hook to use the ClaimContext
+
 export const useClaimContext = () => {
   const context = useContext(ClaimContext);
   if (!context) {
