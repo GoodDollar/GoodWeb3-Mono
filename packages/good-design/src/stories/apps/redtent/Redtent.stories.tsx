@@ -26,7 +26,7 @@ export const RedtentWizardError = {
   args: {
     onDone: async (e?: Error) => {
       if (e) {
-        throw new Error("error");
+        throw e;
       }
       alert("done");
     },
