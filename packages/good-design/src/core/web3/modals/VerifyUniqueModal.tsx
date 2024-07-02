@@ -6,7 +6,7 @@ import BasicStyledModal, { ModalFooterCta } from "./BasicStyledModal";
 import { TxModal } from "./TxModal";
 
 const ModalContent = () => (
-  <Text variant="sm-grey">
+  <Text variant="sm-grey-650">
     You're almost there! To claim G$, you need to be a unique human and prove it with your camera.
     <Link
       _text={{ color: "main" }}

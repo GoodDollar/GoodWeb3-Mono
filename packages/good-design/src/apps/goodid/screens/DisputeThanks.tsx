@@ -16,7 +16,7 @@ export const DisputeThanks = () => {
     <VStack space={8} width="100%">
       <VStack space={8}>
         <Title variant="title-gdblue">{`Thanks for letting us know!`}</Title>
-        <Text variant="sm-grey" textAlign="center">
+        <Text variant="sm-grey-650" textAlign="center">
           {`Heads-up that information you’ve corrected may show as “Unverified” on your GoodID. \n\n This will not affect your ability to claim UBI!`}
         </Text>
         <Center>

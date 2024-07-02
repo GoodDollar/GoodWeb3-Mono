@@ -9,10 +9,11 @@ interface CheckAvailableOffersProps {
   account: string;
   onDone: (e?: Error) => Promise<void>;
   availableOffers: false | PoolCriteria[] | null;
+  withNavBar: boolean;
   // pools: any;
 }
 
-const CheckAvailableOffers: FC<CheckAvailableOffersProps> = ({ account, availableOffers, onDone }) => {
+const CheckAvailableOffers: FC<CheckAvailableOffersProps> = ({ account, availableOffers, withNavBar, onDone }) => {
   useEffect(() => {
     if (availableOffers === false || availableOffers?.length === 0) {
       void onDone();
@@ -26,7 +27,14 @@ const CheckAvailableOffers: FC<CheckAvailableOffersProps> = ({ account, availabl
 
   return (
     /* todo-next: Currently hardcoded for redtent campaign, this should handle showing list of offers. needs design */
-    <RedtentController onDone={onDone} account={account} />
+    <RedtentController
+      {...{
+        withNavBar,
+        account,
+        availableOffers,
+        onDone
+      }}
+    />
   );
 };
 

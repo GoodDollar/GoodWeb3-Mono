@@ -17,14 +17,17 @@ export type SegmentationProps = {
   onLocationRequest: (locationState: GeoLocation, account: string) => Promise<void>;
   onDone: (error?: Error) => Promise<void>;
   onDataPermission: (accepted: string) => Promise<void>;
+  withNavBar: boolean;
   certificateSubjects: any;
   account: string;
   isWhitelisted?: boolean;
-  idExpiry?: { expiryDate: any; state: string };
+  expiryFormatted: string | undefined;
   availableOffers: false | PoolCriteria[] | any;
 };
 
-const SegmentationScreenWrapper = (props: Omit<SegmentationProps, "availableOffers" | "onDataPermission">) => {
+const SegmentationScreenWrapper = (
+  props: Omit<SegmentationProps, "availableOffers" | "onDataPermission" | "expiryFormatted" | "withNavBar">
+) => {
   const { goToStep } = useWizard();
   const { updateDataValue } = useContext(WizardContext);
   const [loading, setLoading] = useState(true);
@@ -95,7 +98,7 @@ export const SegmentationWizard = (props: SegmentationProps) => {
 
   return (
     <WizardContextProvider>
-      <Wizard header={<WizardHeader onDone={modalOnDone} error={error} />}>
+      <Wizard header={<WizardHeader withNavBar={props.withNavBar} onDone={modalOnDone} error={error} />}>
         <SegmentationScreenWrapper
           onDone={modalOnDone}
           onLocationRequest={modalOnLocation}
@@ -110,14 +113,19 @@ export const SegmentationWizard = (props: SegmentationProps) => {
         <SegmentationConfirmation
           {...{
             account,
-            idExpiry: props.idExpiry,
+            expiryFormatted: props.expiryFormatted,
             isWhitelisted: props.isWhitelisted,
             certificateSubjects: props.certificateSubjects
           }}
         />
         {/* if offers available it will handle the offers flow. 
         If no offers, or the flow is finished, handle next-step through onDone */}
-        <CheckAvailableOffers account={account} availableOffers={props.availableOffers} onDone={modalOnDone} />
+        <CheckAvailableOffers
+          withNavBar={props.withNavBar}
+          account={account}
+          availableOffers={props.availableOffers}
+          onDone={modalOnDone}
+        />
       </Wizard>
     </WizardContextProvider>
   );

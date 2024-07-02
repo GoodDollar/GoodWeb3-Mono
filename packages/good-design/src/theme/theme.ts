@@ -38,10 +38,10 @@ export const theme = extendTheme({
     // text
     goodGrey: {
       300: "#D4D4D4",
-      400: "#A3A3A3",
-      450: "#7A88A5",
+      400: "#7A88A5",
       500: "#737373",
       600: "#525252",
+      650: "#5A5A5A",
       700: "#404040"
     },
     // background
@@ -53,6 +53,7 @@ export const theme = extendTheme({
       100: "#505661",
       200: "#3F444E",
       300: "#2F3338",
+      400: "#A5AEC0",
       500: "#26292F"
     },
 
@@ -110,14 +111,28 @@ export const theme = extendTheme({
         "browse-wrap": () => ({
           fontFamily: "subheading",
           fontSize: "2xs",
-          color: "goodGrey.450",
+          color: "goodGrey.400",
           textAlign: "center"
         }),
-        "sm-grey": () => ({
+        "sm-grey-400": () => ({
+          fontFamily: "subheading",
+          fontSize: "sm",
+          fontWeight: 400,
+          color: "goodGrey.400",
+          lineHeight: 17.5
+        }),
+        "sm-grey-650": () => ({
           fontFamily: "subheading",
           fontSize: "sm",
           fontWeight: 400,
           color: "goodGrey.600",
+          lineHeight: 20.8
+        }),
+        "sm-grey-700": () => ({
+          fontFamily: "subheading",
+          fontSize: "sm",
+          fontWeight: 400,
+          color: "goodGrey.700",
           lineHeight: 20.8
         })
       }

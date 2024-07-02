@@ -8,7 +8,7 @@ const BulletPointList = ({ bulletPoints }: { bulletPoints: string[] }) => (
     {bulletPoints.map((copy, index) => (
       <HStack key={index} space={2}>
         <BlueBullet />
-        <Text variant="sm-grey">{copy}</Text>
+        <Text variant="sm-grey-650">{copy}</Text>
       </HStack>
     ))}
   </VStack>

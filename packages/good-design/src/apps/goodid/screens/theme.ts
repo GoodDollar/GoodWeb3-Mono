@@ -78,4 +78,38 @@ const RedtentVideoInstructions = {
   }
 };
 
-export { OffersAgreement, OnboardScreen, RedtentVideoInstructions, SegmentationConfirmation, SegmentationDispute };
+const GoodIdDetails = {
+  baseStyle: {
+    container: {
+      width: "100%",
+      space: 6,
+      alignItems: "center",
+      paddingLeft: 2
+    },
+    header: {
+      width: "100%",
+      space: 2
+    },
+    innerContainer: {
+      space: 8,
+      alignItems: "center",
+      width: "100%"
+    },
+    section: {
+      flexShrink: 1,
+      backgroundColor: "greyCard",
+      space: 2,
+      justifyContent: "space-between",
+      padding: "2"
+    }
+  }
+};
+
+export {
+  GoodIdDetails,
+  OffersAgreement,
+  OnboardScreen,
+  RedtentVideoInstructions,
+  SegmentationConfirmation,
+  SegmentationDispute
+};
