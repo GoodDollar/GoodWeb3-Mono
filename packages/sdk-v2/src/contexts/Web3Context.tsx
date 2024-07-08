@@ -86,8 +86,8 @@ export const Celo: Chain = {
   isLocalChain: false,
   multicallAddress: "0x75F59534dd892c1f8a7B172D639FA854D529ada3",
   multicall2Address: "0xE72f42c64EA3dc05D2D94F541C3a806fa161c49B",
-  getExplorerAddressLink: (address: string) => `https://explorer.celo.org/address/${address}`,
-  getExplorerTransactionLink: (transactionHash: string) => `https://explorer.celo.org/tx/${transactionHash}`
+  getExplorerAddressLink: (address: string) => `https://celoscan.io/address/${address}`,
+  getExplorerTransactionLink: (transactionHash: string) => `https://celoscan.io/tx/${transactionHash}`
 };
 
 const getMulticallAddresses = (networks: Chain[] | undefined) => {
