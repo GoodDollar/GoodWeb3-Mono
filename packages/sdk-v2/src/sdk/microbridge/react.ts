@@ -1,4 +1,4 @@
-import { noop } from "lodash";
+import { noop, sortBy } from "lodash";
 import { BridgeSDK } from "@gooddollar/bridge-app/dist/sdk.js";
 import TokenBridgeABI from "@gooddollar/bridge-contracts/artifacts/contracts/bridge/TokenBridge.sol/TokenBridge.json";
 import bridgeContracts from "@gooddollar/bridge-contracts/release/deployment.json";
@@ -285,7 +285,7 @@ export const useRelayTx = () => {
 
 export const useBridgeHistory = () => {
   const bridgeContracts = useGetBridgeContracts();
-  const refresh = useRefreshOrNever(12);
+  const refresh = useRefreshOrNever(5);
   const fuseChainId = 122 as ChainId;
   const fuseOut = useLogs(
     {
@@ -295,7 +295,7 @@ export const useBridgeHistory = () => {
     },
     {
       chainId: fuseChainId,
-      fromBlock: -2e5,
+      fromBlock: -2e4,
       refresh
     }
   );
@@ -308,7 +308,7 @@ export const useBridgeHistory = () => {
     },
     {
       chainId: fuseChainId,
-      fromBlock: -2e5,
+      fromBlock: -2e4,
       refresh
     }
   );
@@ -321,7 +321,7 @@ export const useBridgeHistory = () => {
     },
     {
       chainId: 42220,
-      fromBlock: -2e5,
+      fromBlock: -2e4,
       refresh
     }
   );
@@ -334,20 +334,24 @@ export const useBridgeHistory = () => {
     },
     {
       chainId: 42220,
-      fromBlock: -2e5,
+      fromBlock: -2e4,
       refresh
     }
   );
 
   const celoExecuted = groupBy(celoIn?.value || [], _ => _.data.id);
+
   const fuseExecuted = groupBy(fuseIn?.value || [], _ => _.data.id);
+
   const fuseHistory = fuseOut?.value?.map(e => {
     type BridgeEvent = typeof e & { relayEvent: any; amount: string };
     const extended = e as BridgeEvent;
     extended.relayEvent = first(celoExecuted[e.data.id]);
+
     extended.amount = formatAmount(e.data.amount, 18); //amount is normalized to 18 decimals in the bridge
     return extended;
   });
+
   const celoHistory = celoOut?.value?.map(e => {
     type BridgeEvent = typeof e & { relayEvent: any; amount: string };
     const extended = e as BridgeEvent;
@@ -356,5 +360,8 @@ export const useBridgeHistory = () => {
     return extended;
   });
 
-  return { fuseHistory, celoHistory };
+  const historyCombined = (fuseHistory || []).concat(celoHistory || []);
+  const historySorted = sortBy(historyCombined, _ => _.data.timestamp).reverse();
+
+  return { fuseHistory, celoHistory, historySorted };
 };
