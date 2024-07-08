@@ -134,29 +134,56 @@ export const MicroBridge = ({
       ? " Minimum amount is " + Number(minAmountWei) / (sourceChain === "fuse" ? 1e2 : 1e18) + "G$"
       : undefined;
 
+  const getActiveColor = useCallback(
+    (chain: string) => {
+      return sourceChain === chain ? "goodGrey.700" : "goodGrey.400";
+    },
+    [sourceChain]
+  );
+
   if (isEmpty(balances)) return <Spinner variant="page-loader" size="lg" />;
+
+  const celoActiveColor = getActiveColor("celo");
+  const fuseActiveColor = getActiveColor("fuse");
 
   return (
     <VStack padding={4} width="100%" alignSelf="center" backgroundColor="goodWhite.100">
       <VStack marginBottom={10}>
         <HStack zIndex="100" justifyContent="space-between">
           <VStack>
-            <Text color="goodGrey.700" fontSize="l" fontFamily="heading" fontWeight="700">
+            <Text color={celoActiveColor} fontSize="l" fontFamily="heading" fontWeight="700">
               G$ Celo
             </Text>
-            <GdAmount amount={balances.celo.gdValue} withDefaultSuffix={false} withFullBalance fontSize="xs" />
+            <GdAmount
+              color={celoActiveColor}
+              amount={balances.celo.gdValue}
+              withDefaultSuffix={false}
+              withFullBalance
+              fontSize="xs"
+            />
           </VStack>
 
           <Box w="100px" height="64px" pl="3" pr="3" display="flex" justifyContent={"center"} alignItems="center">
             <Pressable onPress={toggleChains} backgroundColor="primary" borderRadius="50" p="2">
-              <Image source={ArrowTabLightRight} w="6" h="6" />
+              <Image
+                source={ArrowTabLightRight}
+                w="6"
+                h="6"
+                style={{ transform: [{ rotate: sourceChain === "fuse" ? "180deg" : "0" }] }}
+              />
             </Pressable>
           </Box>
           <VStack>
-            <Text color="goodGrey.700" fontSize="l" fontFamily="heading" fontWeight="700">
+            <Text color={fuseActiveColor} fontSize="l" fontFamily="heading" fontWeight="700">
               G$ Fuse
             </Text>
-            <GdAmount amount={balances.fuse.gdValue} withDefaultSuffix={false} withFullBalance fontSize="xs" />
+            <GdAmount
+              color={fuseActiveColor}
+              amount={balances.fuse.gdValue}
+              withDefaultSuffix={false}
+              withFullBalance
+              fontSize="xs"
+            />
           </VStack>
         </HStack>
       </VStack>

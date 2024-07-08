@@ -1,6 +1,11 @@
-export const capitalizeFirstLetter = (str: string) => {
-  if (str.length === 0) {
-    return str;
+export const truncateMiddle = (string = "", maxLength: null | number = null, ellipsis = "...") => {
+  if (!maxLength || !string) {
+    return string;
   }
-  return str.charAt(0).toUpperCase() + str.slice(1);
+
+  const halfLength = Math.floor((maxLength - ellipsis.length) / 2);
+  const firstHalf = string.slice(0, halfLength);
+  const lastHalf = string.slice(-halfLength);
+
+  return firstHalf + ellipsis + lastHalf;
 };

@@ -11,12 +11,16 @@ export const ExplorerLink = ({
   chainId,
   addressOrTx,
   text,
+  withIcon = true,
+  fontSize = "sm",
   ...props
 }: {
-  _icon?: any;
-  text?: string;
   chainId: number | undefined;
   addressOrTx: string | undefined;
+  _icon?: any;
+  text?: string;
+  withIcon?: boolean;
+  fontSize?: string;
 }) => {
   const { networks } = useConfig();
   const network = (networks || []).find(_ => _.chainId === chainId);
@@ -30,7 +34,7 @@ export const ExplorerLink = ({
   return link ? (
     <HStack flex="2 0" alignItems="center" space="1" maxWidth={"100%"}>
       <Link
-        _text={{ fontSize: "sm", isTruncated: true }}
+        _text={{ fontSize: fontSize, isTruncated: true }}
         href={link}
         isExternal
         alignItems="center"
@@ -40,7 +44,7 @@ export const ExplorerLink = ({
         {text || addressOrTx}
       </Link>
 
-      <LinkIcon flex="auto 0" size="3" />
+      {withIcon ? <LinkIcon flex="auto 0" size="3" /> : null}
     </HStack>
   ) : null;
 };

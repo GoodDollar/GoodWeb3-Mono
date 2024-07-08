@@ -36,7 +36,6 @@ export const TokenInput = ({
 
   const handleChange = useCallback(
     (v: string) => {
-      console.log("v -->", { v });
       if (!/^\d+(?:\.\d{1,18})?$/.test(v)) {
         //todo: add error handler/message
         console.error("Invalid input");
