@@ -152,7 +152,7 @@ const BridgeHistoryWithRelay = () => {
   );
 };
 
-const HistoryRowItem = ({ item, env }: any) => {
+const HistoryRowItem = ({ item, env }: { item: any; env: string }) => {
   const { amount, data, relayEvent, transactionHash } = item;
   const { targetChainId, timestamp } = data || {};
 
@@ -226,12 +226,12 @@ const HistoryRowItem = ({ item, env }: any) => {
   );
 };
 
-const BridgeHistory = ({ env }: { env: any }) => {
+const BridgeHistory = ({ env }: { env: string }) => {
   const { historySorted } = useBridgeHistory();
 
   return (
     <VStack>
-      <Title variant="Title-gdbue" py="6" width="100%">
+      <Title variant="title-gdblue" py="6" width="100%">
         Recent Transactions
       </Title>
       <VStack space="2">
