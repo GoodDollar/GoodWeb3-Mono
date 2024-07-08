@@ -1,6 +1,7 @@
 import React, { FC, useCallback, useState } from "react";
 
 import {
+  G$Amount,
   SupportedChains,
   useBridge,
   useBridgeHistory,
@@ -10,11 +11,30 @@ import {
   useWithinBridgeLimits
 } from "@gooddollar/web3sdk-v2";
 
+import moment from "moment";
+import { ethers } from "ethers";
+
 import { useEthers } from "@usedapp/core";
 import { noop, sortBy } from "lodash";
-import { ArrowForwardIcon, Box, Button, Flex, Heading, HStack, Spinner, Stack, Text } from "native-base";
+import {
+  ArrowForwardIcon,
+  Box,
+  Button,
+  FlatList,
+  Flex,
+  Heading,
+  HStack,
+  Skeleton,
+  Spinner,
+  Stack,
+  VStack,
+  Text
+} from "native-base";
+
+import { GdAmount, Title } from "../../core/layout";
 import { ExplorerLink } from "../../core/web3/ExplorerLink";
 import { BridgeWizard } from "./wizard/BridgeWizard";
+import { truncateMiddle } from "../../utils";
 
 const useCanBridge = (chain: "fuse" | "celo", amountWei: string) => {
   const { chainId } = useGetEnvChainId(chain === "fuse" ? SupportedChains.FUSE : SupportedChains.CELO);
@@ -24,7 +44,7 @@ const useCanBridge = (chain: "fuse" | "celo", amountWei: string) => {
   return canBridge;
 };
 
-const MicroBridgeHistory = () => {
+const BridgeHistoryWithRelay = () => {
   const { fuseHistory, celoHistory } = useBridgeHistory();
 
   const historySorted = sortBy((fuseHistory || []).concat(celoHistory || []), _ => _.data.from === "account");
@@ -132,8 +152,124 @@ const MicroBridgeHistory = () => {
   );
 };
 
+const HistoryRowItem = ({ item, env }: any) => {
+  const { amount, data, relayEvent, transactionHash } = item;
+  const { targetChainId, timestamp } = data || {};
+
+  const { fee } = relayEvent?.data || {};
+
+  const date = moment(ethers.BigNumber.from(timestamp).toNumber() * 1000).utc();
+  const dateFormatted = date.format("DD.MM.YY");
+  const dateHours = date.format("HH:mm");
+
+  const targetChain = parseInt(targetChainId);
+  const sourceChain = targetChain === 122 ? 42220 : 122;
+  const test = 12223;
+
+  const feeFormatted = fee && targetChain ? G$Amount("G$", ethers.BigNumber.from(fee), targetChain, env) : null;
+
+  return (
+    <HStack marginTop="3" space="35" flex="1 1 100%">
+      <VStack>
+        <Text variant="xs-grey">{dateFormatted}</Text>
+        <Text variant="xs-grey">{dateHours}</Text>
+      </VStack>
+      <VStack flex="0 0 15%" alignItems="flex-start">
+        <Text variant="xs-grey">G$ {amount}</Text>
+        {feeFormatted ? (
+          <HStack>
+            <Text variant="xs-grey" fontWeight="700">
+              Fees:{" "}
+            </Text>
+            <Text variant="xs-grey">{`G$ `}</Text>
+            <GdAmount variant="xs-grey" fontFamily="subheading" withDefaultSuffix={false} amount={feeFormatted} />
+          </HStack>
+        ) : (
+          <Skeleton size="3" rounded="full" width="75%" />
+        )}
+      </VStack>
+      <VStack flex="2 2 25%" alignItems="flex-start">
+        {relayEvent?.transactionHash && targetChain && test === 12223 ? (
+          <>
+            <Text variant="xs-green">Completed</Text>
+            <HStack space="2" alignItems="center">
+              <Text variant="xs-grey">{`(Received on ${SupportedChains[targetChain]})`}</Text>
+              <ExplorerLink
+                fontSize="xs"
+                chainId={targetChain}
+                addressOrTx={relayEvent.transactionHash}
+                text={truncateMiddle(relayEvent.transactionHash, 11)}
+                withIcon={false}
+              />
+            </HStack>
+          </>
+        ) : (
+          <>
+            <HStack space="2">
+              <Spinner variant="page-loader" size="sm" />
+              <Text variant="xs-grey">{`Waiting for bridge relayers to relay to target chain... \n (Can take a few minutes)`}</Text>
+            </HStack>
+            <HStack space="2" alignItems="center">
+              <Text variant="xs-grey">{`(Send on ${SupportedChains[sourceChain]})`}</Text>
+              <ExplorerLink
+                fontSize="xs"
+                chainId={sourceChain}
+                addressOrTx={transactionHash}
+                text={truncateMiddle(transactionHash, 11)}
+                withIcon={false}
+              />
+            </HStack>
+          </>
+        )}
+      </VStack>
+    </HStack>
+  );
+};
+
+const BridgeHistory = ({ env }: { env: any }) => {
+  const { historySorted } = useBridgeHistory();
+
+  return (
+    <VStack>
+      <Title variant="Title-gdbue" py="6" width="100%">
+        Recent Transactions
+      </Title>
+      <VStack space="2">
+        <HStack borderBottomWidth="1" borderBottomColor="goodGrey.300:alpha.70">
+          <Text flex="0 0 11%" variant="sm-grey-600" fontWeight="700">
+            Date
+          </Text>
+          <Text flex="1 1 12%" variant="sm-grey-600" fontWeight="700">
+            Amount
+          </Text>
+          <Text flex="2 2 55%" variant="sm-grey-600" fontWeight="700">
+            Status
+          </Text>
+        </HStack>
+        {historySorted.length === 0 ? (
+          <Spinner variant="page-loader" size="lg" />
+        ) : (
+          <FlatList
+            shadow="1"
+            _contentContainerStyle={{
+              flexDirection: "column",
+              width: "100%"
+            }}
+            data={historySorted}
+            renderItem={({ item }) => <HistoryRowItem item={item} env={env} />}
+            maxH="250"
+            scrollEnabled={true}
+            horizontal={false}
+          />
+        )}
+      </VStack>
+    </VStack>
+  );
+};
+
 interface IMicroBridgeControllerProps {
   withRelay?: boolean;
+  withHistory?: boolean;
   onBridgeStart?: () => void;
   onBridgeSuccess?: () => void;
   onBridgeFailed?: (e: Error) => void;
@@ -141,11 +277,13 @@ interface IMicroBridgeControllerProps {
 
 export const MicroBridgeController: FC<IMicroBridgeControllerProps> = ({
   withRelay = false,
+  withHistory = true,
   // onBridgeStart = noop,
   onBridgeSuccess = noop,
   onBridgeFailed = noop
 }: IMicroBridgeControllerProps) => {
   const { chainId } = useEthers();
+  const { defaultEnv } = useGetEnvChainId();
   const { sendBridgeRequest, bridgeRequestStatus, relayStatus, selfRelayStatus } = useBridge();
   const { bridgeFees: fuseBridgeFees, bridgeLimits: fuseBridgeLimits } = useGetBridgeData(SupportedChains.FUSE, "");
   const { bridgeFees: celoBridgeFees, bridgeLimits: celoBridgeLimits } = useGetBridgeData(SupportedChains.CELO, "");
@@ -182,7 +320,8 @@ export const MicroBridgeController: FC<IMicroBridgeControllerProps> = ({
         inputTransaction={inputTransaction}
         pendingTransaction={pendingTransaction}
       />
-      {withRelay && <MicroBridgeHistory />}
+      {withRelay && <BridgeHistoryWithRelay />}
+      {withHistory && <BridgeHistory env={defaultEnv} />}
     </>
   );
 };

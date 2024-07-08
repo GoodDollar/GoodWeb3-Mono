@@ -1,14 +1,14 @@
 import React from "react";
 import {
+  Box,
   CheckIcon,
   CloseIcon,
   Flex,
-  Popover,
   HStack,
-  Stack,
-  Box,
   IconButton,
   InfoOutlineIcon,
+  Popover,
+  Stack,
   Spinner,
   Text,
   VStack
@@ -94,7 +94,7 @@ const StatusHeader = ({
   relayStatus: MicroBridgeProps["relayStatus"];
 }) => {
   const [sendCopy, receiveCopy] =
-    relayStatus?.status === "Success" ? ["You Bridged", "You've Received"] : ["You're Bridging", "You'll Receive"];
+    relayStatus?.status === "Success" ? ["You Bridged", "You've Received"] : ["You Have Bridged", "You Will Receive"];
 
   return (
     <>
@@ -119,6 +119,11 @@ const StatusHeader = ({
           />
         </HStack>
 
+        <HStack justifyContent="space-between">
+          <Text variant="sm-grey-700">{"Fees"}</Text>
+          <GdAmount amount={fee} withDefaultSuffix={false} options={{ prefix: `G$ ` }} variant="md-grey-700" />
+        </HStack>
+
         {relayStatus?.status === "Success" ? (
           <HStack justifyContent="space-between">
             <Text variant="sm-grey-700">{"Fees"}</Text>
@@ -141,18 +146,62 @@ const StatusHeader = ({
   );
 };
 
-export const MicroBridgeStatus = ({
+export const SingleTxStatus = ({
   bridgeStatus,
+  sourceChain,
+  selfRelayStatus,
+  relayStatus,
+  handleFinish
+}: {
+  bridgeStatus: any;
+  sourceChain: any;
+  selfRelayStatus: any;
+  relayStatus: any;
+  handleFinish: any;
+}) => (
+  <VStack>
+    <VStack>
+      {bridgeStatus && bridgeStatus?.status != "None" && (
+        <Box p={2} borderWidth="1" borderColor="primary" rounded="lg" bgColor="white">
+          <StatusBox text="Sending funds to bridge" txStatus={bridgeStatus} sourceChain={sourceChain} />
+
+          {bridgeStatus?.status === "Success" && selfRelayStatus && (
+            <StatusBox
+              text="Self relaying to target chain... (Can take a few minutes)"
+              infoText="If you have enough native tokens on the target chain, you will execute the transfer on the target chain yourself and save some bridge fees"
+              txStatus={selfRelayStatus}
+              sourceChain={sourceChain}
+            />
+          )}
+          {bridgeStatus?.status === "Success" && (
+            <StatusBox
+              text="Waiting for bridge relayers to relay to target chain... (Can take a few minutes)"
+              infoText="If you don't have enough native tokens on the target chain, a bridge relay service will execute the transfer for a small G$ fee"
+              txStatus={relayStatus}
+              sourceChain={sourceChain}
+            />
+          )}
+        </Box>
+      )}
+    </VStack>
+    {relayStatus?.status === "Success" ? (
+      <>
+        <BridgeSuccessModal open={relayStatus.status === "Success"} />
+        <GoodButton onPress={handleFinish}>Done</GoodButton>
+      </>
+    ) : null}
+  </VStack>
+);
+
+export const MicroBridgeStatus = ({
   originChain,
   pendingTransaction,
-  relayStatus,
-  selfRelayStatus
+  relayStatus
 }: {
   bridgeStatus: MicroBridgeProps["bridgeStatus"];
   originChain: MicroBridgeProps["originChain"];
   pendingTransaction: MicroBridgeProps["pendingTransaction"];
   relayStatus: MicroBridgeProps["relayStatus"];
-  selfRelayStatus: MicroBridgeProps["selfRelayStatus"];
 }) => {
   const [pendingTx] = pendingTransaction;
   const [sourceChain] = originChain;
@@ -171,7 +220,9 @@ export const MicroBridgeStatus = ({
     <VStack p={4} space={4} width="100%" bgColor="goodWhite.100">
       {relayStatus?.status === "Success" ? (
         <Title variant="title-gdblue">{`Congratulations! Your bridging \n transaction has been successfully \n completed.`}</Title>
-      ) : null}
+      ) : (
+        <Title variant="title-gdblue">{`Congratulations! Your bridging \n transaction is being processed.`}</Title>
+      )}
       <StatusHeader
         {...{
           sendAmount,
@@ -182,36 +233,7 @@ export const MicroBridgeStatus = ({
           relayStatus
         }}
       />
-      <VStack>
-        {bridgeStatus && bridgeStatus?.status != "None" && (
-          <Box p={2} borderWidth="1" borderColor="primary" rounded="lg" bgColor="white">
-            <StatusBox text="Sending funds to bridge" txStatus={bridgeStatus} sourceChain={sourceChain} />
-
-            {bridgeStatus?.status === "Success" && selfRelayStatus && (
-              <StatusBox
-                text="Self relaying to target chain... (Can take a few minutes)"
-                infoText="If you have enough native tokens on the target chain, you will execute the transfer on the target chain yourself and save some bridge fees"
-                txStatus={selfRelayStatus}
-                sourceChain={sourceChain}
-              />
-            )}
-            {bridgeStatus?.status === "Success" && (
-              <StatusBox
-                text="Waiting for bridge relayers to relay to target chain... (Can take a few minutes)"
-                infoText="If you don't have enough native tokens on the target chain, a bridge relay service will execute the transfer for a small G$ fee"
-                txStatus={relayStatus}
-                sourceChain={sourceChain}
-              />
-            )}
-          </Box>
-        )}
-      </VStack>
-      {relayStatus?.status === "Success" ? (
-        <>
-          <BridgeSuccessModal open={relayStatus.status === "Success"} />
-          <GoodButton onPress={handleFinish}>Done</GoodButton>
-        </>
-      ) : null}
+      <GoodButton onPress={handleFinish}>Done</GoodButton>
     </VStack>
   );
 };
