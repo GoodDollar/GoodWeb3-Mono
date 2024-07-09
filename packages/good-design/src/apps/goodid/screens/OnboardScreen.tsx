@@ -2,7 +2,7 @@ import React from "react";
 import { Container, Heading, HStack, Text, VStack, IContainerProps, Spinner } from "native-base";
 
 import { withTheme } from "../../../theme";
-import { Title, TxModal } from "../../../core";
+import { TransTitle, TxModal } from "../../../core";
 import { BaseButton } from "../../../core/buttons";
 import { GoodIdCard } from "../components";
 import SvgXml from "../../../core/images/SvgXml";
@@ -69,14 +69,15 @@ export const OnboardScreen = withTheme({ name: "OnboardScreen" })(
 
     if (isWhitelisted === undefined) return <Spinner variant="page-loader" size="lg" />;
 
+    const titleCopy = isWhitelisted
+      ? /*i18n*/ "Renew your GoodID to claim UBI"
+      : /*i18n*/ "Get your GoodID to claim UBI";
     return (
       <Container {...props}>
         <TxModal type="identity" isPending={isPending} />
 
         <VStack space="6" justifyContent="center" alignItems="center" width="100%">
-          <Title variant="title-gdblue" fontSize="xl" alignSelf="center">
-            {isWhitelisted ? `Renew` : `Get`} your GoodID to claim UBI
-          </Title>
+          <TransTitle t={titleCopy} variant="title-gdblue" fontSize="xl" alignSelf="center" />
 
           <VStack {...innerContainer}>
             {account ? (

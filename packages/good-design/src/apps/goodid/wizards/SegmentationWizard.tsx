@@ -4,8 +4,9 @@ import { Center, VStack } from "native-base";
 import { useEthers } from "@usedapp/core";
 import { noop } from "lodash";
 import { GeoLocation, PoolCriteria, useGeoLocation } from "@gooddollar/web3sdk-v2";
+import { Trans } from "@lingui/react";
 
-import { GoodButton } from "../../../core";
+import { TransButton } from "../../../core/layout";
 import { DisputeThanks, OffersAgreement, SegmentationConfirmation, SegmentationScreen } from "../screens";
 import { LoaderModal } from "../../../core/web3/modals";
 import { WizardContext, WizardContextProvider } from "../../../utils/WizardContext";
@@ -53,16 +54,25 @@ const SegmentationScreenWrapper = (
   }, [geoLocation, account, error]);
 
   return !account || loading || !props.certificateSubjects ? (
-    <LoaderModal title={`We're checking \n your information`} overlay="dark" loading={true} onClose={noop} />
+    <Trans
+      id={"We're checking \n your information"}
+      render={({ translation }: { translation: any }) => (
+        <LoaderModal title={translation} overlay="dark" loading={true} onClose={noop} />
+      )}
+    />
   ) : (
     <Center width={"100%"}>
       <VStack paddingY={6} space={10}>
         <SegmentationScreen certificateSubjects={props.certificateSubjects} />
         <VStack space={3}>
-          <GoodButton onPress={proceed}>yes, i am</GoodButton>
-          <GoodButton onPress={handleDispute} variant="link-like" _text={{ underline: false }}>
-            no, i am not
-          </GoodButton>
+          <TransButton t={/*i18n*/ "yes, i am"} onPress={proceed} />
+
+          <TransButton
+            t={/*i18n*/ "no, i am not"}
+            onPress={handleDispute}
+            _text={{ underline: false }}
+            variant="link-like"
+          />
         </VStack>
       </VStack>
     </Center>
