@@ -4,9 +4,14 @@ import { Config, DAppProvider, Mainnet, useEthers } from "@usedapp/core";
 import { ethers, getDefaultProvider } from "ethers";
 import React, { useEffect, useState } from "react";
 import BaseButton from "../core/buttons/BaseButton";
+import GoodButton from "../core/buttons/GoodButton";
 import ClaimButton from "../core/buttons/ClaimButton";
-// import SelectBox from "../advanced/customswitch/SelectBox";
+import LearnButton from "../core/buttons/LearnButton";
 import { BasePressable } from "../core";
+
+import { GoodUIi18nProvider, useGoodUILanguage } from "../theme";
+import { VStack } from "native-base";
+import { linksNew } from "../core/constants";
 
 export const BaseButtonWithThemeExample = () => {
   return (
@@ -19,6 +24,38 @@ export const BaseButtonWithThemeExample = () => {
         text="RegularBB with default NB Theming"
       />
     </>
+  );
+};
+
+const LinguiExample = () => {
+  const { setLanguage } = useGoodUILanguage();
+  const { link, label, icon } = linksNew["network"];
+
+  return (
+    <VStack width="343">
+      <GoodButton width="200" onPress={() => setLanguage("en")} backgroundColor="primary" color="white">
+        English
+      </GoodButton>
+      <GoodButton width="200" onPress={() => setLanguage("es-419")} backgroundColor="primary" color="white">
+        Spanish-Latin
+      </GoodButton>
+      <LearnButton
+        {...{
+          link,
+          label,
+          icon,
+          learnTitle: "Learn"
+        }}
+      />
+    </VStack>
+  );
+};
+
+export const LearnButtonWithTranslation = () => {
+  return (
+    <GoodUIi18nProvider>
+      <LinguiExample />
+    </GoodUIi18nProvider>
   );
 };
 
