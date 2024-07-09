@@ -2,7 +2,7 @@ import React from "react";
 import { WalletAndChainGuard } from "../../../core/web3/WalletAndChainGuard";
 import { MicroBridgeController } from "../../../apps/bridge/MicroBridgeController";
 import { W3Wrapper } from "../../W3Wrapper";
-import { SwitchChainModal } from "../../../core/web3/modals/SwitchChainModal";
+import { SwitchChainModalComponent as SwitchChainModal } from "../../../core/web3/modals/SwitchChainModal";
 
 export default {
   title: "Apps/MicroBridgeController",
@@ -10,7 +10,7 @@ export default {
   decorators: [
     (Story: any) => (
       <W3Wrapper withMetaMask={true} env="fuse">
-        <SwitchChainModal>
+        <SwitchChainModal type="network">
           <WalletAndChainGuard validChains={[122, 42220]}>
             <Story />
           </WalletAndChainGuard>

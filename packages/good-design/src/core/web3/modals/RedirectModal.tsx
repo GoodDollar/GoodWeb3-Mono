@@ -16,7 +16,7 @@ interface RedirectModalProps {
 const redirectCopy =
   /*i18n*/ "By accessing this link you are leaving \n gooddapp.org and are being redirected to a \n third-party, independent website.";
 
-export const RedirectModalComponent = ({ open, url, buttonText, content, onClose, ...props }: RedirectModalProps) => (
+export const RedirectModal = ({ open, url, buttonText, content, onClose, ...props }: RedirectModalProps) => (
   <BasicStyledModal
     {...props}
     type="ctaX"
@@ -30,9 +30,9 @@ export const RedirectModalComponent = ({ open, url, buttonText, content, onClose
   />
 );
 
-export const RedirectModal = (props: any) => {
+export const RedirectModalComponent = (props: any) => {
   const translationId = { buttonText: /*i18n*/ "Go to website", redirectCopy };
-  const ModalWithTranslations = withTranslations(RedirectModalComponent, translationId);
+  const ModalWithTranslations = withTranslations(RedirectModal, translationId);
 
   return <ModalWithTranslations {...props} />;
 };

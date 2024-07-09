@@ -6,7 +6,7 @@ import { Web3ActionButton } from "../../advanced";
 import { FVFlowProps } from "./types";
 import { noop, isNil } from "lodash";
 import { useEthers } from "@usedapp/core";
-import { TxModal, VerifyUniqueModal } from "../web3";
+import { TxModalComponent as TxModal, VerifyUniqueModal } from "../web3";
 
 const ClaimButton = ({
   firstName,

@@ -19,7 +19,7 @@ const SwitchChainBody = ({ networkName }: { networkName: string | undefined }) =
  * @param children
  * @returns JSX.Element
  */
-export const SwitchChainModalComponent: FC<
+export const SwitchChainModal: FC<
   PropsWithChildren<{ learnTitle?: string; label?: string; icon?: any; link?: string }>
 > = ({ children, learnTitle = "", label = "", icon, link, ...props }) => {
   const config = useConfig();
@@ -69,14 +69,17 @@ export const SwitchChainModalComponent: FC<
   );
 };
 
-export const SwithChainModal = ({ type }: { type: keyof typeof linksNew }) => {
+export const SwitchChainModalComponent: FC<PropsWithChildren<{ type: keyof typeof linksNew }>> = ({
+  type,
+  children
+}) => {
   const { link, label, icon } = linksNew[type];
 
   const SwitchChainWithTranslations = withTranslations(
-    SwitchChainModalComponent,
+    SwitchChainModal,
     { label, learnTitle: "Learn" },
     { link, label, icon }
   );
 
-  return <SwitchChainWithTranslations />;
+  return <SwitchChainWithTranslations>{children}</SwitchChainWithTranslations>;
 };

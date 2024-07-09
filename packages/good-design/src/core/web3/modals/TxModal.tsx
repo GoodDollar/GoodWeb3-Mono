@@ -37,7 +37,7 @@ const txModalCopy = {
 
 const TxModalContent = ({ content }: { content: string }) => <Text variant="sm-grey-650">{content}</Text>;
 
-const TxModalComponent: React.FC<ITxModalProps> = ({
+const TxModal: React.FC<ITxModalProps> = ({
   isPending,
   onClose = noop,
   title = "",
@@ -70,12 +70,12 @@ const TxModalComponent: React.FC<ITxModalProps> = ({
   />
 );
 
-export const TxModal = (props: ITxModalProps) => {
+export const TxModalComponent = (props: ITxModalProps) => {
   const { title, content } = txModalCopy[props.type];
   const { link, label, icon } = linksNew[props.type];
 
   const translationIds = { title, content, label, learnTitle: /*i18n*/ "Learn" };
-  const TxModalWithTranslations = withTranslations(TxModalComponent, translationIds, { label, icon, link });
+  const TxModalWithTranslations = withTranslations(TxModal, translationIds, { label, icon, link });
 
   return <TxModalWithTranslations {...props} />;
 };

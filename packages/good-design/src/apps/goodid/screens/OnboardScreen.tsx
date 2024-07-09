@@ -2,7 +2,7 @@ import React from "react";
 import { Container, Heading, HStack, Text, VStack, IContainerProps, Spinner } from "native-base";
 
 import { withTheme } from "../../../theme";
-import { TransTitle, TxModal } from "../../../core";
+import { TransTitle, TxModalComponent as TxModal } from "../../../core";
 import { BaseButton } from "../../../core/buttons";
 import { GoodIdCard } from "../components";
 import SvgXml from "../../../core/images/SvgXml";
