@@ -3,7 +3,10 @@ import { useConfig } from "@usedapp/core";
 import { useSwitchNetwork } from "@gooddollar/web3sdk-v2";
 import { Text } from "native-base";
 
-import BasicStyledModal, { ModalFooterLearn } from "./BasicStyledModal";
+import { linksNew } from "../../constants";
+import BasicStyledModal from "./BasicStyledModal";
+import { LearnButton } from "../../buttons";
+import withTranslations from "../../../theme/hoc/withMultiTranslations";
 
 const SwitchChainBody = ({ networkName }: { networkName: string | undefined }) => (
   <Text>To complete this action, switch to {networkName} in your wallet.</Text>
@@ -16,7 +19,9 @@ const SwitchChainBody = ({ networkName }: { networkName: string | undefined }) =
  * @param children
  * @returns JSX.Element
  */
-export const SwitchChainModal: FC<PropsWithChildren> = ({ children, ...props }) => {
+export const SwitchChainModalComponent: FC<
+  PropsWithChildren<{ learnTitle?: string; label?: string; icon?: any; link?: string }>
+> = ({ children, learnTitle = "", label = "", icon, link, ...props }) => {
   const config = useConfig();
   const [requestedChain, setRequestedChain] = useState(0);
   const { setOnSwitchNetwork } = useSwitchNetwork();
@@ -47,10 +52,31 @@ export const SwitchChainModal: FC<PropsWithChildren> = ({ children, ...props }) 
         show={show}
         onClose={() => setShow(false)}
         type="learn"
-        footer={<ModalFooterLearn source="network" />}
+        footer={
+          <LearnButton
+            {...{
+              label: label,
+              icon: icon,
+              learnTitle: learnTitle,
+              link: link
+            }}
+          />
+        }
         withCloseButton
       />
       {children}
     </Fragment>
   );
+};
+
+export const SwithChainModal = ({ type }: { type: keyof typeof linksNew }) => {
+  const { link, label, icon } = linksNew[type];
+
+  const SwitchChainWithTranslations = withTranslations(
+    SwitchChainModalComponent,
+    { label, learnTitle: "Learn" },
+    { link, label, icon }
+  );
+
+  return <SwitchChainWithTranslations />;
 };
