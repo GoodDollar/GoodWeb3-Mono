@@ -32,7 +32,8 @@ module.exports = {
         }
       }
     },
-    "@storybook/addon-react-native-web"
+    "@storybook/addon-react-native-web",
+    "storybook-addon-linguijs/register"
   ],
   framework: "@storybook/react",
   core: {

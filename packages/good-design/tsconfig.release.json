@@ -5,5 +5,13 @@
     "removeComments": true
   },
   "include": ["src/**/*", "src/**/*.json"],
-  "exclude": ["node_modules", "src/stories", "**/*.stories.tsx", "src/types", "**/*.test.*", "__tests__"]
+  "exclude": [
+    "node_modules",
+    "src/stories",
+    "**/*.stories.tsx",
+    "src/types",
+    "src/__tests__",
+    "src/locales/gen_supported_locales.ts",
+    "__tests__"
+  ]
 }
