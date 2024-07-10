@@ -8,6 +8,7 @@ import { ChainId, TransactionStatus, useCalls, useEthers, useLogs } from "@useda
 import { BigNumber, Contract, ethers } from "ethers";
 import { first, groupBy, mapValues } from "lodash";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+
 import { useSwitchNetwork } from "../../contexts";
 import useRefreshOrNever from "../../hooks/useRefreshOrNever";
 import { useGetContract, useGetEnvChainId } from "../base/react";
@@ -321,7 +322,7 @@ export const useBridgeHistory = () => {
     },
     {
       chainId: 42220,
-      fromBlock: -2e4,
+      fromBlock: -6e4,
       refresh
     }
   );
@@ -334,10 +335,14 @@ export const useBridgeHistory = () => {
     },
     {
       chainId: 42220,
-      fromBlock: -2e4,
+      fromBlock: -6e4,
       refresh
     }
   );
+
+  if (!fuseOut || !fuseIn || !celoOut || !celoIn) {
+    return;
+  }
 
   const celoExecuted = groupBy(celoIn?.value || [], _ => _.data.id);
 
