@@ -285,6 +285,7 @@ export const useRelayTx = () => {
 };
 
 export const useBridgeHistory = () => {
+  const { account } = useEthers();
   const bridgeContracts = useGetBridgeContracts();
   const refresh = useRefreshOrNever(5);
   const fuseChainId = 122 as ChainId;
@@ -366,7 +367,9 @@ export const useBridgeHistory = () => {
   });
 
   const historyCombined = (fuseHistory || []).concat(celoHistory || []);
-  const historySorted = sortBy(historyCombined, _ => _.data.timestamp).reverse();
+
+  const historyFiltered = historyCombined.filter(_ => _.data.from === account || _.data.to === account);
+  const historySorted = sortBy(historyFiltered, _ => _.data.timestamp).reverse();
 
   return { fuseHistory, celoHistory, historySorted };
 };

@@ -25,6 +25,14 @@ type RequestedSdk = {
 
 export type SdkTypes = "claim" | "savings" | "base";
 
+type AmountsMap = {
+  [key: string]: BigNumber | undefined;
+};
+
+type CurrencyValuesMap<T extends AmountsMap> = {
+  [K in keyof T]: CurrencyValue;
+};
+
 export const useReadOnlySDK = (type: SdkTypes, requiredChainId?: number): RequestedSdk["sdk"] => {
   return useSDK(true, type, requiredChainId);
 };
@@ -163,6 +171,23 @@ export function useG$Amount(value?: BigNumber, token: G$Token = "G$", requiredCh
   const decimals = useContext(TokenContext);
 
   return G$Amount(token, value || BigNumber.from("0"), chainId, defaultEnv, decimals);
+}
+
+export function useG$Amounts<T extends AmountsMap>(
+  values?: T,
+  token: G$Token = "G$",
+  requiredChainId?: number
+): CurrencyValuesMap<T> {
+  const { chainId, defaultEnv } = useGetEnvChainId(requiredChainId);
+  const decimals = useContext(TokenContext);
+
+  const result: Partial<CurrencyValuesMap<T>> = {};
+
+  for (const key in values) {
+    result[key] = G$Amount(token, values[key] || BigNumber.from("0"), chainId, defaultEnv, decimals);
+  }
+
+  return result as CurrencyValuesMap<T>;
 }
 
 export function useG$Formatted(

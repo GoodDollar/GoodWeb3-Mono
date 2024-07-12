@@ -240,7 +240,7 @@ const BridgeHistory = ({ env }: { env: string }) => {
           Recent Transactions
         </Title>
         <Title fontSize="xs" variant="subtitle-grey" fontStyle="italic">
-          It may take up to 30 seconds to load new transactions.
+          It may take up to 30 seconds to load transactions.
         </Title>
       </VStack>
       <VStack space="2">

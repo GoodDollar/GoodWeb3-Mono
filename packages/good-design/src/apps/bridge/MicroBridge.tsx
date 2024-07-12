@@ -1,7 +1,7 @@
 import React, { useEffect, useCallback, useState } from "react";
 import { Box, FormControl, HStack, Pressable, Spinner, Text, VStack, WarningOutlineIcon } from "native-base";
 import { CurrencyValue } from "@usedapp/core";
-import { SupportedChains, useG$Amount } from "@gooddollar/web3sdk-v2";
+import { SupportedChains, useG$Amounts } from "@gooddollar/web3sdk-v2";
 import { isEmpty } from "lodash";
 
 import { Web3ActionButton } from "../../advanced";
@@ -33,23 +33,29 @@ const useBridgeEstimate = ({
   bridgeFee: CurrencyValue;
   minFee: CurrencyValue;
   maxFee: CurrencyValue;
-  minAmountWei: CurrencyValue;
+  // minAmountWei: CurrencyValue;
 } => {
   const chain = sourceChain === "celo" ? 42220 : 122;
-  const minimumAmount = useG$Amount(limits?.[sourceChain]?.minAmount, "G$", chain);
-  const maximumAmount = useG$Amount(limits?.[sourceChain]?.txLimit, "G$", chain);
-  const bridgeFee = useG$Amount(fees?.[sourceChain]?.fee, "G$", chain);
-  const minFee = useG$Amount(fees?.[sourceChain]?.minFee, "G$", chain);
-  const maxFee = useG$Amount(fees?.[sourceChain]?.maxFee, "G$", chain);
-  const input = useG$Amount(BigNumber.from(inputWei), "G$", chain);
-  const minAmountWei = useG$Amount(limits?.[sourceChain]?.minAmount);
+
+  const { minimumAmount, maximumAmount, bridgeFee, minFee, maxFee, input } = useG$Amounts(
+    {
+      minimumAmount: limits?.[sourceChain]?.minAmount,
+      maximumAmount: limits?.[sourceChain]?.txLimit,
+      bridgeFee: fees?.[sourceChain]?.fee,
+      minFee: fees?.[sourceChain]?.minFee,
+      maxFee: fees?.[sourceChain]?.maxFee,
+      input: BigNumber.from(inputWei)
+    },
+    "G$",
+    chain
+  );
 
   //bridge fee is in BPS so divide by 10000
   const expectedFee = bridgeFee.mul(input.value).div(10000);
 
   const expectedToReceive = input.sub(expectedFee.gt(minFee) ? expectedFee : minFee);
 
-  return { expectedFee, expectedToReceive, minimumAmount, maximumAmount, bridgeFee, minFee, maxFee, minAmountWei };
+  return { expectedFee, expectedToReceive, minimumAmount, maximumAmount, bridgeFee, minFee, maxFee };
 };
 
 export const MicroBridge = ({
@@ -78,7 +84,7 @@ export const MicroBridge = ({
   const [bridgeWeiAmount, setBridgeAmount] = inputTransaction;
   const [, setPendingTransaction] = pendingTransaction;
   const { isValid, reason } = useCanBridge(sourceChain, bridgeWeiAmount);
-  const { minAmountWei, expectedToReceive } = useBridgeEstimate({
+  const { minimumAmount, expectedToReceive } = useBridgeEstimate({
     limits,
     fees,
     inputWei: bridgeWeiAmount,
@@ -131,7 +137,7 @@ export const MicroBridge = ({
 
   const reasonMinAmount =
     reason === "minAmount"
-      ? " Minimum amount is " + Number(minAmountWei) / (sourceChain === "fuse" ? 1e2 : 1e18) + "G$"
+      ? " Minimum amount is " + Number(minimumAmount) / (sourceChain === "fuse" ? 1e2 : 1e18) + "G$"
       : undefined;
 
   const getActiveColor = useCallback(
@@ -192,7 +198,7 @@ export const MicroBridge = ({
           balanceWei={wei}
           gdValue={gdValue}
           onChange={setBridgeAmount}
-          minAmountWei={minAmountWei?.toString()}
+          minAmountWei={minimumAmount?.toString()}
           toggleState={toggleState}
         />
       </VStack>
