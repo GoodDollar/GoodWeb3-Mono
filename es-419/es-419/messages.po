@@ -15,8 +15,8 @@ msgstr ""
 "X-Crowdin-Project: goodui\n"
 "X-Crowdin-Project-ID: 691741\n"
 "X-Crowdin-Language: es-419\n"
-"X-Crowdin-File: /168-gooddesign-localization/packages/good-design/src/locales/en/messages.po\n"
-"X-Crowdin-File-ID: 88\n"
+"X-Crowdin-File: /168-gooddesign-localization/packages/good-design/src/locales/es-419/messages.po\n"
+"X-Crowdin-File-ID: 90\n"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/components/SegmentationRow.tsx:9
