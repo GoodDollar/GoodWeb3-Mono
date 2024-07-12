@@ -1,26 +1,7 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-// import fs from "fs";
-const fs = require('fs');
-const path = require('path');
-/**
- * Usage: rm -rf index.ts && node gen_supported_locales.ts >> index.ts
- */
-const dirPath = path.join(__dirname, '.');
-const getDirectories = source => fs.readdirSync(source).filter(name => fs.statSync(path.join(source, name)).isDirectory());
-const generateImportStatements = dirs => dirs.map(dir => `import { messages as ${ toCamelCase(dir) }Messages } from "./${ dir }/messages";`).join('\n');
-const toCamelCase = str => str.replace(/-./g, x => x[1].toUpperCase());
-const generateDefaultMessages = dirs => dirs.map(dir => `  "${ dir }": ${ toCamelCase(dir) }Messages`).join(',\n');
-const generateLocaleCodes = dirs => dirs.map(dir => `"${ dir }"`).join(',\n');
-const directories = getDirectories(dirPath);
-const indexContent = `
-${ generateImportStatements(directories) }
-
+import { messages as enMessages } from "./en/messages";
+import { messages as es419Messages } from "./es-419/messages";
 export const defaultMessages = {
-${ generateDefaultMessages(directories) }
+  en: enMessages,
+  "es-419": es419Messages
 };
-
-export const localeCodes = [
-${ generateLocaleCodes(directories) }
-];
-`;
-console.log(indexContent);
+export const localeCodes = ["en", "es-419"];
