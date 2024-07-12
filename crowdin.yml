@@ -1,3 +1,3 @@
 files:
-  - source: packages/good-design/src/locales/en/messages.po
+  - source: messages.po
     translation: messages.po
