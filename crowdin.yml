@@ -1,3 +1,3 @@
 files:
-  - source: en/messages.po
-    translation: messages.po
+  - source: messages.po
+    translation: '%two_letters_code%/messages.po'
