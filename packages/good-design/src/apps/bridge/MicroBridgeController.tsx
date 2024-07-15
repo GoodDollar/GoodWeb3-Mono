@@ -52,7 +52,6 @@ const BridgeHistoryWithRelay = () => {
 
   const triggerRelay = useCallback(
     async (i: any) => {
-      console.log("relay triggered", { i });
       setRelaying({ ...relaying, [i.transactionHash]: true });
       try {
         const relayResult = await relayTx(
@@ -64,7 +63,7 @@ const BridgeHistoryWithRelay = () => {
           setRelaying({ ...relaying, [i.transactionHash]: false });
         }
       } catch (e) {
-        console.log("triggerRelay failed -->", { e });
+        //todo: add analytics error log
         setRelaying({ ...relaying, [i.transactionHash]: false });
       }
     },
@@ -306,7 +305,6 @@ export const MicroBridgeController: FC<IMicroBridgeControllerProps> = ({
     try {
       await sendBridgeRequest(inputWei, originChain[0]);
     } catch (e: any) {
-      console.log("sendBridgeRequest failed -->", { e });
       onBridgeFailed(e);
     }
   }, [inputTransaction, originChain]);
