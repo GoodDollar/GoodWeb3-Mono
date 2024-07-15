@@ -6,14 +6,15 @@ import { MicroBridge } from "../MicroBridge";
 import { MicroBridgeStatus } from "../MicroBridgeStatus";
 import type { MicroBridgeProps } from "../types";
 import { isTxReject } from "../../../utils";
-import { TxModalStatus } from "../../../core/web3";
+import { ErrorModal, TxModalStatus } from "../../../core/web3";
 
 const WizardWrapper: FC<
   PropsWithChildren<{
     bridgeRequestStatus: MicroBridgeProps["bridgeStatus"];
     selfRelayStatus: MicroBridgeProps["selfRelayStatus"];
+    error?: string | null;
   }>
-> = ({ bridgeRequestStatus, selfRelayStatus, children }) => {
+> = ({ bridgeRequestStatus, error, selfRelayStatus, children }) => {
   const { goToStep } = useWizard();
   const { errorMessage = "" } = bridgeRequestStatus ?? {};
 
@@ -27,6 +28,7 @@ const WizardWrapper: FC<
 
   return (
     <>
+      {error ? <ErrorModal error={error} overlay="dark" onClose={noop} /> : null}
       {bridgeRequestStatus ? <TxModalStatus txStatus={bridgeRequestStatus} onClose={noop} /> : null}
       {selfRelayStatus ? <TxModalStatus txStatus={selfRelayStatus} onClose={noop} /> : null}
       {children}
@@ -39,6 +41,7 @@ export const BridgeWizard = ({
   onSetChain,
   originChain,
   inputTransaction,
+  error,
   pendingTransaction,
   limits,
   fees,
@@ -49,7 +52,7 @@ export const BridgeWizard = ({
   onBridgeSuccess,
   onBridgeFailed
 }: MicroBridgeProps) => (
-  <Wizard header={<WizardWrapper {...{ bridgeRequestStatus: bridgeStatus, selfRelayStatus }} />}>
+  <Wizard header={<WizardWrapper {...{ bridgeRequestStatus: bridgeStatus, error, selfRelayStatus }} />}>
     <MicroBridge
       {...{
         // onBridge,

@@ -215,7 +215,9 @@ export const useBridge = (withRelay = false) => {
             }
           }
         })
-        .catch(noop);
+        .catch(e => {
+          throw e;
+        });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chainId, bridgeContract, bridgeRequest, transferAndCall, lock]);

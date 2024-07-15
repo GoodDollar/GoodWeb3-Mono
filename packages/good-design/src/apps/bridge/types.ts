@@ -18,6 +18,7 @@ export interface MicroBridgeProps {
   originChain: ["fuse" | "celo", Dispatch<SetStateAction<"fuse" | "celo">>];
   inputTransaction: [string, Dispatch<SetStateAction<string>>];
   pendingTransaction: [any, Dispatch<SetStateAction<any>>];
+  error?: string | null;
   limits?: ILimits;
   fees?: IFees;
   bridgeStatus?: TransactionStatus;

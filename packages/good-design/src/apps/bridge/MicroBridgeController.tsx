@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useState } from "react";
+import React, { FC, useCallback, useEffect, useState } from "react";
 
 import {
   G$Amount,
@@ -298,17 +298,26 @@ export const MicroBridgeController: FC<IMicroBridgeControllerProps> = ({
   const inputTransaction = useState<string>("0");
   const pendingTransaction = useState<any>(false);
   const originChain = useState<"fuse" | "celo">(chainId === 122 ? "fuse" : "celo");
+  const [error, setError] = useState<string | null>(null);
 
   const onBridgeStart = useCallback(async () => {
     const [inputWei] = inputTransaction;
 
     try {
       await sendBridgeRequest(inputWei, originChain[0]);
-    } catch (e) {
-      console.error("sendBridgeRequest failed", { e });
-      // onBridgeFailed();
+    } catch (e: any) {
+      console.log("sendBridgeRequest failed -->", { e });
+      onBridgeFailed(e);
     }
   }, [inputTransaction, originChain]);
+
+  useEffect(() => {
+    void (async () => {
+      if (bridgeRequestStatus.status === "Exception") {
+        setError(bridgeRequestStatus.errorMessage as string);
+      }
+    })();
+  }, [bridgeRequestStatus]);
 
   if (!fuseBridgeFees || !celoBridgeFees) return <Spinner variant="page-loader" size="lg" />;
 
@@ -322,6 +331,7 @@ export const MicroBridgeController: FC<IMicroBridgeControllerProps> = ({
         originChain={originChain}
         limits={{ fuse: fuseBridgeLimits, celo: celoBridgeLimits }}
         fees={{ fuse: fuseBridgeFees, celo: celoBridgeFees }}
+        error={error}
         onBridgeStart={onBridgeStart}
         onBridgeSuccess={onBridgeSuccess}
         onBridgeFailed={onBridgeFailed}
