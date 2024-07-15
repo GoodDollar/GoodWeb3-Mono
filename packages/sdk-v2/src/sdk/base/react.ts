@@ -173,6 +173,15 @@ export function useG$Amount(value?: BigNumber, token: G$Token = "G$", requiredCh
   return G$Amount(token, value || BigNumber.from("0"), chainId, defaultEnv, decimals);
 }
 
+/**
+ * Used to convert multiple amounts to currency values
+ * you can destructure the return based on your input keys in values
+ * @example const { key1, key2 } = useG$Amounts({ key1: BigNumber.from("100"), key2: BigNumber.from("200") })
+ * @param values key value pair of amounts to convert
+ * @param token which token, currently supports: "G%" / "GOOD" / "GDX"
+ * @param requiredChainId
+ * @returns
+ */
 export function useG$Amounts<T extends AmountsMap>(
   values?: T,
   token: G$Token = "G$",
