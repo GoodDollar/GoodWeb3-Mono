@@ -166,7 +166,6 @@ const HistoryRowItem = ({ item, env }: { item: any; env: string }) => {
 
   const targetChain = parseInt(targetChainId);
   const sourceChain = targetChain === 122 ? 42220 : 122;
-  const test = 12223;
 
   const feeFormatted = fee && targetChain ? G$Amount("G$", ethers.BigNumber.from(fee), targetChain, env) : null;
 
@@ -191,7 +190,7 @@ const HistoryRowItem = ({ item, env }: { item: any; env: string }) => {
         )}
       </VStack>
       <VStack flex="2 2 25%" alignItems="flex-start">
-        {relayEvent?.transactionHash && targetChain && test === 12223 ? (
+        {relayEvent?.transactionHash && targetChain ? (
           <>
             <Text variant="xs-green">Completed</Text>
             <HStack space="2" alignItems="center">
