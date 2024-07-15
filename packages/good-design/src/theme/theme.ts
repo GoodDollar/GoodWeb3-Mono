@@ -28,6 +28,7 @@ export const theme = extendTheme({
     headingBlack: "#303030",
     headingGrey: "#999",
     lightBlue: "#8499BB",
+    txGreen: "#00C3AE",
 
     // UI
     buttonBackground: "#40C4FFCC",
@@ -38,9 +39,10 @@ export const theme = extendTheme({
     // text
     goodGrey: {
       300: "#D4D4D4",
-      400: "#A3A3A3",
+      400: "#7A88A5",
       500: "#737373",
       600: "#525252",
+      650: "#5A5A5A",
       700: "#404040"
     },
     // background
@@ -55,12 +57,22 @@ export const theme = extendTheme({
       500: "#26292F"
     },
 
+    goodRed: {
+      100: "#D03737",
+      200: "#F87171"
+    },
+
+    goodGreen: {
+      300: "#5BBAA3"
+    },
+
     //tabs
     tabBlue: "#1F86FF",
 
     // borders
     borderBlue: "#00AEFF",
-    borderGrey: "#E2E5EA"
+    borderGrey: "#E2E5EA",
+    borderDarkGrey: "#707070"
   },
   sizes: {
     "56": 56,
@@ -91,20 +103,6 @@ export const theme = extendTheme({
     xl: 30,
     "2xl": 36
   },
-  shadow: {
-    //Bug: override shadow does not take effect. defining new one is not used
-    "1": {
-      shadowColor: "black",
-      shadowOffset: {
-        width: 0,
-        height: 3
-      },
-      shadowOpacity: 0.4,
-      shadowRadius: 0,
-      elevation: 8
-    }
-  },
-
   components: {
     ...layout,
     ...buttons,
@@ -112,7 +110,102 @@ export const theme = extendTheme({
     ...apps,
     ...animated,
     ...web3modals,
-    ...nativebase
+    ...nativebase,
+    Text: {
+      variants: {
+        "browse-wrap": () => ({
+          fontFamily: "subheading",
+          fontSize: "2xs",
+          color: "goodGrey.400",
+          textAlign: "center"
+        }),
+        "xs-green": () => ({
+          fontFamily: "subheading",
+          fontSize: "xs",
+          fontWeight: 700,
+          color: "goodGreen.300",
+          lineHeight: "18.2"
+        }),
+        "xs-grey": () => ({
+          fontFamily: "subheading",
+          fontSize: "xs",
+          fontWeight: 400,
+          color: "goodGrey.600",
+          lineHeight: 17.5
+        }),
+        "sm-grey": () => ({
+          fontFamily: "subheading",
+          fontSize: "sm",
+          fontWeight: 400,
+          color: "goodGrey.600",
+          lineHeight: 20.8
+        }),
+        "sm-grey-650": () => ({
+          fontFamily: "subheading",
+          fontSize: "sm",
+          fontWeight: 400,
+          color: "goodGrey.650",
+          lineHeight: 20.8
+        }),
+        "sm-grey-700": () => ({
+          fontFamily: "subheading",
+          fontSize: "sm",
+          fontWeight: 400,
+          color: "goodGrey.700",
+          lineHeight: 20.8
+        }),
+        "md-grey-700": () => ({
+          fontFamily: "heading",
+          fontSize: "md",
+          fontWeight: 700,
+          color: "goodGrey.700",
+          lineHeight: 23
+        }),
+        "l-grey-650": () => ({
+          fontFamily: "subheading",
+          fontSize: "l",
+          fontWeight: 700,
+          color: "goodGrey.650",
+          lineHeight: 27.6
+        }),
+        "xl-grey-650": () => ({
+          fontFamily: "subheading",
+          fontSize: "xl",
+          fontWeight: 700,
+          color: "goodGrey.650",
+          lineHeight: 33
+        }),
+        "tx-success": () => ({
+          fontFamily: "heading",
+          fontSize: "l",
+          fontWeight: 700,
+          color: "txGreen",
+          lineHeight: 27.6
+        })
+      }
+    },
+    VStack: {
+      variants: {
+        "shadow-card": () => ({
+          paddingY: 4,
+          paddingX: 4,
+          space: 4,
+          width: 343,
+          borderRadius: 15,
+          bgColor: "greyCard",
+          shadow: 1
+        })
+      }
+    },
+    Spinner: {
+      variants: {
+        "page-loader": () => ({
+          borderWidth: "0",
+          color: "primary",
+          paddingBottom: 4
+        })
+      }
+    }
   }
 });
 

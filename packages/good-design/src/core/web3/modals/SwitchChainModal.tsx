@@ -2,9 +2,14 @@ import React, { FC, Fragment, PropsWithChildren, useEffect, useState } from "rea
 import { useConfig } from "@usedapp/core";
 import { useSwitchNetwork } from "@gooddollar/web3sdk-v2";
 import { find } from "lodash";
+import { Text } from "native-base";
 
 import { withTheme } from "../../../theme";
 import BasicStyledModal, { ModalFooterLearn } from "./BasicStyledModal";
+
+const SwitchChainBody = ({ networkName }: { networkName: string | undefined }) => (
+  <Text>To complete this action, switch to {networkName} in your wallet.</Text>
+);
 
 /**
  * A modal to wrap your component or page with and show a modal re-active to switchChain requests
@@ -41,7 +46,7 @@ export const SwitchChainModal: FC<PropsWithChildren> = withTheme({ name: "BasicS
         <BasicStyledModal
           {...props}
           title="Action Required"
-          content={`To complete this action, switch to ${networkName} in your wallet.`}
+          body={<SwitchChainBody networkName={networkName} />}
           show={show}
           onClose={() => setShow(false)}
           type="learn"
