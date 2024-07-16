@@ -1,43 +1,50 @@
-import { Box, Button, Input, Text } from "native-base";
-import React, { useCallback, useState } from "react";
+import { Box, Button, HStack, Input, Text } from "native-base";
+import React, { useCallback, useEffect, useState } from "react";
 import { NumericFormat } from "react-number-format";
-import { G$Token, useG$Decimals } from "@gooddollar/web3sdk-v2";
+import { CurrencyValue } from "@usedapp/core";
+import { ethers } from "ethers";
 
 export const TokenInput = ({
   balanceWei,
+  gdValue,
   onChange,
-  token,
-  requiredChainId,
-  decimals = 2,
+  toggleState,
   _numericformat,
   _button,
-  _text,
   minAmountWei = "0",
   ...props
 }: {
   balanceWei: string;
   onChange: (v: string) => void;
-  token?: G$Token;
-  decimals?: number;
-  requiredChainId?: number;
+  gdValue: CurrencyValue;
+  toggleState?: any;
   _numericformat?: any;
   _button?: any;
   _text?: any;
   minAmountWei?: string;
 }) => {
-  const tokenDecimals = useG$Decimals(token, requiredChainId);
-  const _decimals = token ? tokenDecimals : decimals;
+  const _decimals = gdValue.currency.decimals;
   const [input, setInput] = useState<number>(0);
   const balance = Number(balanceWei) / 10 ** _decimals;
   const minAmount = Number(minAmountWei) / 10 ** _decimals;
   const setMax = useCallback(() => setInput(balance), [setInput, balance]);
 
+  useEffect(() => {
+    setInput(0);
+    onChange("0");
+  }, [/* used */ toggleState]);
+
   const handleChange = useCallback(
     (v: string) => {
+      if (!/^\d+(?:\.\d{1,18})?$/.test(v)) {
+        //todo: add error handler/message
+        console.error("Invalid input");
+        return;
+      }
       setInput(Number(v));
-      onChange((Number(v) * 10 ** _decimals).toFixed(0));
+      onChange(ethers.utils.parseUnits(v, _decimals).toString());
     },
-    [setInput, onChange]
+    [setInput, onChange, _decimals]
   );
 
   return (
@@ -45,10 +52,15 @@ export const TokenInput = ({
       <NumericFormat
         isInvalid={Number(input) > balance || Number(input) < minAmount}
         onChangeText={handleChange}
-        InputRightElement={
-          <Button rounded="xl" variant="outline" h="0.5" mr="1" onPress={setMax} {..._button}>
-            Max
-          </Button>
+        InputLeftElement={
+          <HStack alignItems="center">
+            <Button mx="2" rounded="xl" variant="outline" h="0.5" mr="1" onPress={setMax} {..._button}>
+              Max
+            </Button>
+            <Text color="goodGrey.600" fontSize="l" fontFamily="heading" fontWeight="700">
+              G$
+            </Text>
+          </HStack>
         }
         size="xl"
         value={input}
@@ -58,9 +70,6 @@ export const TokenInput = ({
         color="lightGrey"
         {..._numericformat}
       />
-      <Text bold color="lightGrey:alpha.80" alignSelf={"flex-end"} {..._text}>
-        Balance: {balance}
-      </Text>
     </Box>
   );
 };

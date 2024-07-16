@@ -1,4 +1,4 @@
-import { noop } from "lodash";
+import { noop, sortBy } from "lodash";
 import { BridgeSDK } from "@gooddollar/bridge-app/dist/sdk.js";
 import TokenBridgeABI from "@gooddollar/bridge-contracts/artifacts/contracts/bridge/TokenBridge.sol/TokenBridge.json";
 import bridgeContracts from "@gooddollar/bridge-contracts/release/deployment.json";
@@ -8,6 +8,7 @@ import { ChainId, TransactionStatus, useCalls, useEthers, useLogs } from "@useda
 import { BigNumber, Contract, ethers } from "ethers";
 import { first, groupBy, mapValues } from "lodash";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+
 import { useSwitchNetwork } from "../../contexts";
 import useRefreshOrNever from "../../hooks/useRefreshOrNever";
 import { useGetContract, useGetEnvChainId } from "../base/react";
@@ -95,23 +96,27 @@ export const useBridge = (withRelay = false) => {
   const lock = useRef(false);
   const { switchNetwork } = useSwitchNetwork();
   const { account, chainId } = useEthers();
-  const g$Contract = useGetContract("GoodDollar") as IGoodDollar;
+  const gdFuseContract = useGetContract("GoodDollar", true, "base", 122) as IGoodDollar;
+  const gdCeloContract = useGetContract("GoodDollar", true, "base", 42220) as IGoodDollar;
   const bridgeContracts = useGetBridgeContracts();
   const bridgeContract = bridgeContracts[chainId || 122] as TokenBridge;
 
   const relayTx = useRelayTx();
 
-  const [bridgeRequest, setBridgeRequest] =
-    useState<
-      { amount: string; sourceChainId: number; targetChainId: number; target?: string; bridging?: boolean } | undefined
-    >();
+  const [bridgeRequest, setBridgeRequest] = useState<
+    { amount: string; sourceChainId: number; targetChainId: number; target?: string; bridging?: boolean } | undefined
+  >();
 
   const [selfRelayStatus, setSelfRelay] = useState<Partial<TransactionStatus> | undefined>();
 
   // const bridgeTo = useContractFunction(bridgeContract, "bridgeTo", {});
-  const transferAndCall = useContractFunctionWithDefaultGasFees(g$Contract, "transferAndCall", {
-    transactionName: "BridgeTransfer"
-  });
+  const transferAndCall = useContractFunctionWithDefaultGasFees(
+    chainId === 122 ? gdFuseContract : gdCeloContract,
+    "transferAndCall",
+    {
+      transactionName: "BridgeTransfer"
+    }
+  );
   const bridgeRequestId = (transferAndCall.state?.receipt?.logs || [])
     .filter(log => log.address === bridgeContract.address)
     .map(log => bridgeContract.interface.parseLog(log))?.[0]?.args?.id;
@@ -210,10 +215,12 @@ export const useBridge = (withRelay = false) => {
             }
           }
         })
-        .catch(noop);
+        .catch(e => {
+          throw e;
+        });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [bridgeContract, bridgeRequest, transferAndCall, lock]);
+  }, [chainId, bridgeContract, bridgeRequest, transferAndCall, lock]);
 
   return { sendBridgeRequest, bridgeRequestStatus: transferAndCall?.state, relayStatus, selfRelayStatus };
 };
@@ -280,8 +287,9 @@ export const useRelayTx = () => {
 };
 
 export const useBridgeHistory = () => {
+  const { account } = useEthers();
   const bridgeContracts = useGetBridgeContracts();
-  const refresh = useRefreshOrNever(12);
+  const refresh = useRefreshOrNever(5);
   const fuseChainId = 122 as ChainId;
   const fuseOut = useLogs(
     {
@@ -291,7 +299,7 @@ export const useBridgeHistory = () => {
     },
     {
       chainId: fuseChainId,
-      fromBlock: -2e5,
+      fromBlock: -2e4,
       refresh
     }
   );
@@ -304,7 +312,7 @@ export const useBridgeHistory = () => {
     },
     {
       chainId: fuseChainId,
-      fromBlock: -2e5,
+      fromBlock: -2e4,
       refresh
     }
   );
@@ -317,7 +325,7 @@ export const useBridgeHistory = () => {
     },
     {
       chainId: 42220,
-      fromBlock: -2e5,
+      fromBlock: -6e4,
       refresh
     }
   );
@@ -330,20 +338,28 @@ export const useBridgeHistory = () => {
     },
     {
       chainId: 42220,
-      fromBlock: -2e5,
+      fromBlock: -6e4,
       refresh
     }
   );
 
+  if (!fuseOut || !fuseIn || !celoOut || !celoIn) {
+    return;
+  }
+
   const celoExecuted = groupBy(celoIn?.value || [], _ => _.data.id);
+
   const fuseExecuted = groupBy(fuseIn?.value || [], _ => _.data.id);
+
   const fuseHistory = fuseOut?.value?.map(e => {
     type BridgeEvent = typeof e & { relayEvent: any; amount: string };
     const extended = e as BridgeEvent;
     extended.relayEvent = first(celoExecuted[e.data.id]);
+
     extended.amount = formatAmount(e.data.amount, 18); //amount is normalized to 18 decimals in the bridge
     return extended;
   });
+
   const celoHistory = celoOut?.value?.map(e => {
     type BridgeEvent = typeof e & { relayEvent: any; amount: string };
     const extended = e as BridgeEvent;
@@ -352,5 +368,10 @@ export const useBridgeHistory = () => {
     return extended;
   });
 
-  return { fuseHistory, celoHistory };
+  const historyCombined = (fuseHistory || []).concat(celoHistory || []);
+
+  const historyFiltered = historyCombined.filter(_ => _.data.from === account || _.data.to === account);
+  const historySorted = sortBy(historyFiltered, _ => _.data.timestamp).reverse();
+
+  return { fuseHistory, celoHistory, historySorted };
 };

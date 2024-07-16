@@ -1,4 +1,5 @@
 export * from "./theme";
+export * from "./BalanceGD";
 export { default as Layout } from "./Layout";
 export { default as Title } from "./Title";
 export { default as ClaimCard } from "./ClaimCard";
