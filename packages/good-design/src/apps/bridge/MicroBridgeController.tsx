@@ -169,12 +169,12 @@ const HistoryRowItem = ({ item, env }: { item: any; env: string }) => {
   const feeFormatted = fee && targetChain ? G$Amount("G$", ethers.BigNumber.from(fee), targetChain, env) : null;
 
   return (
-    <HStack marginTop="3" space="35" flex="1 1 100%">
-      <VStack>
+    <HStack space="3" marginTop="3">
+      <VStack flex="2 0 0%" textAlign="left">
         <Text variant="xs-grey">{dateFormatted}</Text>
         <Text variant="xs-grey">{dateHours}</Text>
       </VStack>
-      <VStack flex="0 0 15%" alignItems="flex-start">
+      <VStack flex="4 0 0%" alignItems="flex-start" textAlign="left">
         <Text variant="xs-grey">G$ {amount}</Text>
         {feeFormatted ? (
           <HStack>
@@ -188,11 +188,11 @@ const HistoryRowItem = ({ item, env }: { item: any; env: string }) => {
           <Skeleton size="3" rounded="full" width="75%" />
         )}
       </VStack>
-      <VStack flex="2 2 25%" alignItems="flex-start">
+      <VStack flex="7 0 0%" alignItems="flex-start">
         {relayEvent?.transactionHash && targetChain ? (
           <>
             <Text variant="xs-green">Completed</Text>
-            <HStack space="2" alignItems="center">
+            <VStack alignItems="flex-start">
               <Text variant="xs-grey">{`(Bridged to ${SupportedChains[targetChain]})`}</Text>
               <ExplorerLink
                 fontSize="xs"
@@ -202,7 +202,7 @@ const HistoryRowItem = ({ item, env }: { item: any; env: string }) => {
                 text={truncateMiddle(relayEvent.transactionHash, 11)}
                 withIcon={false}
               />
-            </HStack>
+            </VStack>
           </>
         ) : (
           <>
@@ -210,7 +210,7 @@ const HistoryRowItem = ({ item, env }: { item: any; env: string }) => {
               <Spinner variant="page-loader" size="sm" />
               <Text variant="xs-grey">{`Waiting for bridge relayers to relay to target chain... \n (Can take a few minutes)`}</Text>
             </HStack>
-            <HStack space="2" alignItems="center">
+            <VStack alignItems="flex-start">
               <Text variant="xs-grey">{`(Bridging from ${SupportedChains[sourceChain]})`}</Text>
               <ExplorerLink
                 fontSize="xs"
@@ -220,7 +220,7 @@ const HistoryRowItem = ({ item, env }: { item: any; env: string }) => {
                 text={truncateMiddle(transactionHash, 11)}
                 withIcon={false}
               />
-            </HStack>
+            </VStack>
           </>
         )}
       </VStack>
@@ -232,7 +232,7 @@ const BridgeHistory = ({ env }: { env: string }) => {
   const { historySorted } = useBridgeHistory() ?? {};
 
   return (
-    <VStack>
+    <VStack minWidth="384" width="100%">
       <VStack paddingTop="6" paddingBottom="4" width="100%" textAlign="left">
         <Title variant="title-gdblue" textAlign="left" paddingBottom="1">
           Recent Transactions
@@ -241,15 +241,15 @@ const BridgeHistory = ({ env }: { env: string }) => {
           It may take up to 30 seconds to load transactions.
         </Title>
       </VStack>
-      <VStack space="2">
-        <HStack borderBottomWidth="1" borderBottomColor="goodGrey.300:alpha.70">
-          <Text fontFamily="subheading" flex="0 0 11%" variant="sm-grey-600" fontWeight="700">
+      <VStack space="2" minWidth="384">
+        <HStack borderBottomWidth={1} space={3} borderBottomColor="goodGrey.300:alpha.70" textAlign="left">
+          <Text fontFamily="subheading" flex="2 0 0%" variant="sm-grey-600" fontWeight="700">
             Date
           </Text>
-          <Text fontFamily="subheading" flex="1 1 12%" variant="sm-grey-600" fontWeight="700">
+          <Text fontFamily="subheading" flex="4 0 0%" variant="sm-grey-600" fontWeight="700">
             Amount
           </Text>
-          <Text fontFamily="subheading" flex="2 2 55%" variant="sm-grey-600" fontWeight="700">
+          <Text fontFamily="subheading" flex="7 0 0%" variant="sm-grey-600" fontWeight="700">
             Status
           </Text>
         </HStack>
@@ -260,7 +260,8 @@ const BridgeHistory = ({ env }: { env: string }) => {
             shadow="1"
             _contentContainerStyle={{
               flexDirection: "column",
-              width: "100%"
+              width: "100%",
+              minWidth: "384"
             }}
             data={historySorted}
             renderItem={({ item }) => <HistoryRowItem item={item} env={env} />}
