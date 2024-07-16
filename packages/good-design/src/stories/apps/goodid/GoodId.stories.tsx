@@ -82,7 +82,7 @@ export const SegmentationScreen = {
 export const SegmentationFlow = {
   render: (args: any) => {
     const { account = "" } = useEthers();
-    const { certificates, certificateSubjects, expiryFormatted, isWhitelisted } = useGoodId(args.account ?? account);
+    const { certificates, certificateSubjects, expiryFormatted, isWhitelisted } = useGoodId(account);
 
     return (
       <W3Wrapper withMetaMask={true} env="staging">
@@ -96,7 +96,8 @@ export const SegmentationFlow = {
               isWhitelisted,
               certificates,
               certificateSubjects,
-              expiryFormatted
+              expiryFormatted,
+              withNavBar: true
             }}
             onDone={async (e: any) => {
               console.log({ e });
