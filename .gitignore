@@ -16,3 +16,4 @@ packages/**/index.ts.bak
 yalc.lock
 /dist/
 .vercel
+.continueignore
