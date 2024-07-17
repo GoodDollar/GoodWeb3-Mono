@@ -39,5 +39,8 @@
   },
   "resolutions": {
     "ethers": "5.7.2"
+  },
+  "dependencies": {
+    "vercel": "^35.0.2"
   }
 }
