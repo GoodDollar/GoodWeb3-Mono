@@ -3,4 +3,4 @@ files:
     ignore:
       - '*.ts'
       - '*.js'
-    translation: packages/good-design/src/locales/%two_letters_code%
+    translation: /packages/good-design/src/locales/%two_letters_code%/messages.po
