@@ -2,280 +2,257 @@ msgid ""
 msgstr ""
 "POT-Creation-Date: 2024-07-05 09:37+0900\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
 "Language: en\n"
-"Project-Id-Version: \n"
+"Project-Id-Version: goodui\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: \n"
+"PO-Revision-Date: 2024-07-17 15:52\n"
 "Last-Translator: \n"
-"Language-Team: \n"
-"Plural-Forms: \n"
+"Language-Team: English\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: goodui\n"
+"X-Crowdin-Project-ID: 691741\n"
+"X-Crowdin-Language: en\n"
+"X-Crowdin-File: /168-gooddesign-localization/packages/good-design/src/locales/en/messages.po\n"
+"X-Crowdin-File-ID: 126\n"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/components/SegmentationRow.tsx:9
 msgid "I am"
-msgstr "I am"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/components/SegmentationRow.tsx:10
 #: src/apps/goodid/components/SegmentationRow.tsx:16
 msgid "Aged"
-msgstr "Aged"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/components/SegmentationRow.tsx:11
 msgid "From"
-msgstr "From"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/components/SegmentationRow.tsx:15
 msgid "Are you"
-msgstr "Are you"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/components/SegmentationRow.tsx:17
 msgid "In"
-msgstr "In"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/DisputeThanks.tsx:20
-msgid ""
-"Heads-up that information you’ve corrected may show as “Unverified” on your GoodID. \n"
-"\n"
+msgid "Heads-up that information you’ve corrected may show as “Unverified” on your GoodID. \n\n"
 " This will not affect your ability to claim UBI!"
 msgstr ""
-"Heads-up that information you’ve corrected may show as “Unverified” on your GoodID. \n"
-"\n"
-" This will not affect your ability to claim UBI!"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/DisputeThanks.tsx:30
 #: src/apps/goodid/screens/SegmentationDispute.tsx:54
 #: src/apps/goodid/wizards/RedtentWizard.tsx:213
 msgid "Next"
-msgstr "Next"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/GoodIdDetails.tsx:72
 msgid "FaceId"
-msgstr "FaceId"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/GoodIdDetails.tsx:131
-msgid ""
-"Your GoodID unlocks access to UBI, financial services, humanitarian funds and \n"
+msgid "Your GoodID unlocks access to UBI, financial services, humanitarian funds and \n"
 " other special offers and opportunities to earn GoodDollars.`"
 msgstr ""
-"Your GoodID unlocks access to UBI, financial services, humanitarian funds and \n"
-" other special offers and opportunities to earn GoodDollars.`"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/GoodIdDetails.tsx:159
 msgid "My Wallet Address"
-msgstr "My Wallet Address"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/GoodIdDetails.tsx:169
-msgid ""
-"Attention: GoodDollar-verifying a new wallet address can only be \n"
+msgid "Attention: GoodDollar-verifying a new wallet address can only be \n"
 " done 24h after deleting your old face-id"
 msgstr ""
-"Attention: GoodDollar-verifying a new wallet address can only be \n"
-" done 24h after deleting your old face-id"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/OnboardScreen.tsx:73
 msgid "Renew your GoodID to claim UBI"
-msgstr "Renew your GoodID to claim UBI"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/OnboardScreen.tsx:74
 msgid "Get your GoodID to claim UBI"
-msgstr "Get your GoodID to claim UBI"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/SegmentationConfirmation.tsx:30
-msgid ""
-"We are creating \n"
+msgid "We are creating \n"
 " your GoodID"
 msgstr ""
-"We are creating \n"
-" your GoodID"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/SegmentationDispute.tsx:39
 msgid "Please indicate which is incorrect"
-msgstr "Please indicate which is incorrect"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/SegmentationScreen.tsx:32
-msgid ""
-"We could not \n"
+msgid "We could not \n"
 " confirm your \n"
 " location"
 msgstr ""
-"We could not \n"
-" confirm your \n"
-" location"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/SegmentationScreen.tsx:48
 msgid "Please confirm"
-msgstr "Please confirm"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:30
 msgid "Your first name"
-msgstr "Your first name"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:31
 msgid "Your age"
-msgstr "Your age"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:32
 msgid "Your location"
-msgstr "Your location"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:33
 msgid "What you plan to do with the money you receive"
-msgstr "What you plan to do with the money you receive"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:36
 msgid "Maximum video length 30sec"
-msgstr "Maximum video length 30sec"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:36
 msgid "Maximum size 20mb"
-msgstr "Maximum size 20mb"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:50
 msgid "Claim weekly:"
-msgstr "Claim weekly:"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:56
 msgid "10.000G$"
-msgstr "10.000G$"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:68
 msgid "To qualify for this pool you need to: "
-msgstr "To qualify for this pool you need to: "
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:73
 msgid "Have verified your gender as"
-msgstr "Have verified your gender as"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:74
 msgid "Female"
-msgstr "Female"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:75
 msgid "in your GoodID"
-msgstr "in your GoodID"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:86
 msgid "Submit a video selfie saying: "
-msgstr "Submit a video selfie saying: "
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:116
-msgid ""
-"You are eligible for \n"
+msgid "You are eligible for \n"
 " additional UBI!"
 msgstr ""
-"You are eligible for \n"
-" additional UBI!"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:119
 msgid "Red Tent Women in Nigeria"
-msgstr "Red Tent Women in Nigeria"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:121
 msgid "Learn more>>"
-msgstr "Learn more>>"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:140
 msgid "Upload Video Selfie"
-msgstr "Upload Video Selfie"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:143
 msgid "Skip for now"
-msgstr "Skip for now"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:176
 msgid "Video instructions"
-msgstr "Video instructions"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:182
 msgid "Submit a video selfie"
-msgstr "Submit a video selfie"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:183
 msgid "Restrictions"
-msgstr "Restrictions"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:184
 msgid "How will my video be used?"
-msgstr "How will my video be used?"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:201
 msgid "Thanks you for submitting your video!"
-msgstr "Thanks you for submitting your video!"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:203
 msgid "You are now in the"
-msgstr "You are now in the"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:205
-msgid ""
-"Red Tent Woman in Nigeria \n"
-""
+msgid "Red Tent Woman in Nigeria \n"
 msgstr ""
-"Red Tent Woman in Nigeria \n"
-""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:210
 msgid "GoodCollective. You can claim this additional UBI daily."
-msgstr "GoodCollective. You can claim this additional UBI daily."
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/SegmentationWizard.tsx:57
-msgid ""
-"We're checking \n"
+msgid "We're checking \n"
 " your information"
 msgstr ""
-"We're checking \n"
-" your information"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/SegmentationWizard.tsx:68
 msgid "yes, i am"
-msgstr "yes, i am"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/SegmentationWizard.tsx:71
@@ -285,137 +262,120 @@ msgstr "No, I am not"
 #. js-lingui-explicit-id
 #: src/apps/newsfeed/NewsFeed.tsx:98
 msgid "News"
-msgstr "News"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/core/constants.ts:10
 msgid "How do transactions work?"
-msgstr "How do transactions work?"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/core/constants.ts:15
 msgid "How does bridging work?"
-msgstr "How does bridging work?"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/core/constants.ts:20
 msgid "What is a web3 network?"
-msgstr "What is a web3 network?"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/core/constants.ts:25
 msgid "What is signing?"
-msgstr "What is signing?"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/core/constants.ts:30
 msgid "Learn about the identification process"
-msgstr "Learn about the identification process"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/core/web3/modals/RedirectModal.tsx:17
-msgid ""
-"By accessing this link you are leaving \n"
+msgid "By accessing this link you are leaving \n"
 " gooddapp.org and are being redirected to a \n"
 " third-party, independent website."
 msgstr ""
-"By accessing this link you are leaving \n"
-" gooddapp.org and are being redirected to a \n"
-" third-party, independent website."
 
 #. js-lingui-explicit-id
 #: src/core/web3/modals/RedirectModal.tsx:34
 msgid "Go to website"
-msgstr "Go to website"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/core/web3/modals/TxModal.tsx:24
 #: src/core/web3/modals/TxModal.tsx:28
-msgid ""
-"Please sign with \n"
+msgid "Please sign with \n"
 " your wallet"
 msgstr ""
-"Please sign with \n"
-" your wallet"
 
 #. js-lingui-explicit-id
 #: src/core/web3/modals/TxModal.tsx:25
 msgid "To complete this action, sign with your wallet."
-msgstr "To complete this action, sign with your wallet."
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/core/web3/modals/TxModal.tsx:30
-msgid ""
-"We need to know you’re you! Please sign\n"
+msgid "We need to know you’re you! Please sign\n"
 "with your wallet to verify your identity.\n"
 " Don’t worry, no link is kept between your\n"
 "identity record and your wallet address."
 msgstr ""
-"We need to know you’re you! Please sign\n"
-"with your wallet to verify your identity.\n"
-" Don’t worry, no link is kept between your\n"
-"identity record and your wallet address."
 
 #. js-lingui-explicit-id
 #: src/core/web3/modals/TxModal.tsx:33
-msgid ""
-"Waiting for \n"
+msgid "Waiting for \n"
 " confirmation"
 msgstr ""
-"Waiting for \n"
-" confirmation"
 
 #. js-lingui-explicit-id
 #: src/core/web3/modals/TxModal.tsx:34
 msgid "Please wait for the transaction to be validated."
-msgstr "Please wait for the transaction to be validated."
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/core/web3/modals/TxModal.tsx:77
 msgid "Learn"
-msgstr "Learn"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/core/web3/modals/YouSureModal.tsx:11
 #: src/core/web3/modals/YouSureModal.tsx:22
 msgid "Are you sure?"
-msgstr "Are you sure?"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/core/web3/modals/YouSureModal.tsx:13
-msgid ""
-"This cannot be undone! \n"
+msgid "This cannot be undone! \n"
 "After deleting your Face ID, you must wait 24 hours before going through the face verification flow again. After 24 hours, you can verify again by pressing the “claim” button."
 msgstr ""
-"This cannot be undone! \n"
-"After deleting your Face ID, you must wait 24 hours before going through the face verification flow again. After 24 hours, you can verify again by pressing the “claim” button."
 
 #. js-lingui-explicit-id
 #: src/core/web3/modals/YouSureModal.tsx:14
 msgid "Delete Account"
-msgstr "Delete Account"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/core/web3/modals/YouSureModal.tsx:17
 msgid "Are you sure you want to skip this offer for now?"
-msgstr "Are you sure you want to skip this offer for now?"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/core/web3/modals/YouSureModal.tsx:19
 msgid "Skip"
-msgstr "Skip"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/core/web3/modals/YouSureModal.tsx:23
 msgid "Keep in mind that even unsuccessful and failed transactions cost you gas. "
-msgstr "Keep in mind that even unsuccessful and failed transactions cost you gas. "
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/core/web3/modals/YouSureModal.tsx:24
 msgid "Yes, try again"
-msgstr "Yes, try again"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/core/web3/modals/YouSureModal.tsx:99
 msgid "Don't show this again"
-msgstr "Don't show this again"
+msgstr ""
+
