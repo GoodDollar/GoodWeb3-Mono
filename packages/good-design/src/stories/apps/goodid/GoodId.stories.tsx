@@ -84,10 +84,10 @@ export const SegmentationScreen = {
 export const SegmentationFlow = {
   render: (args: any) => {
     const { account = "" } = useEthers();
-    const { certificates, certificateSubjects, expiryFormatted, isWhitelisted } = useGoodId(args.account ?? account);
+    const { certificates, certificateSubjects, expiryFormatted, isWhitelisted } = useGoodId(account);
 
     return (
-      <W3Wrapper withMetaMask={true} env="staging">
+      <W3Wrapper withMetaMask={true} env={args.env}>
         <VStack {...args}>
           <Text variant="browse-wrap" fontSize="sm">
             For testing purposes. this flow is using staging/QA contracts
@@ -109,6 +109,11 @@ export const SegmentationFlow = {
         </VStack>
       </W3Wrapper>
     );
+  },
+  args: {
+    width: "100%",
+    account: "0x00",
+    env: "staging"
   }
 };
 

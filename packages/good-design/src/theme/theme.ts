@@ -28,6 +28,7 @@ export const theme = extendTheme({
     headingBlack: "#303030",
     headingGrey: "#999",
     lightBlue: "#8499BB",
+    txGreen: "#00C3AE",
 
     // UI
     buttonBackground: "#40C4FFCC",
@@ -58,7 +59,12 @@ export const theme = extendTheme({
     },
 
     goodRed: {
-      100: "#D03737"
+      100: "#D03737",
+      200: "#F87171"
+    },
+
+    goodGreen: {
+      300: "#5BBAA3"
     },
 
     //tabs
@@ -66,7 +72,8 @@ export const theme = extendTheme({
 
     // borders
     borderBlue: "#00AEFF",
-    borderGrey: "#E2E5EA"
+    borderGrey: "#E2E5EA",
+    borderDarkGrey: "#707070"
   },
   sizes: {
     "56": 56,
@@ -121,11 +128,32 @@ export const theme = extendTheme({
           color: "goodGrey.400",
           lineHeight: 17.5
         }),
-        "sm-grey-650": () => ({
+        "xs-green": () => ({
+          fontFamily: "subheading",
+          fontSize: "xs",
+          fontWeight: 700,
+          color: "goodGreen.300",
+          lineHeight: "18.2"
+        }),
+        "xs-grey": () => ({
+          fontFamily: "subheading",
+          fontSize: "xs",
+          fontWeight: 400,
+          color: "goodGrey.600",
+          lineHeight: 17.5
+        }),
+        "sm-grey": () => ({
           fontFamily: "subheading",
           fontSize: "sm",
           fontWeight: 400,
           color: "goodGrey.600",
+          lineHeight: 20.8
+        }),
+        "sm-grey-650": () => ({
+          fontFamily: "subheading",
+          fontSize: "sm",
+          fontWeight: 400,
+          color: "goodGrey.650",
           lineHeight: 20.8
         }),
         "sm-grey-700": () => ({
@@ -134,6 +162,34 @@ export const theme = extendTheme({
           fontWeight: 400,
           color: "goodGrey.700",
           lineHeight: 20.8
+        }),
+        "md-grey-700": () => ({
+          fontFamily: "heading",
+          fontSize: "md",
+          fontWeight: 700,
+          color: "goodGrey.700",
+          lineHeight: 23
+        }),
+        "l-grey-650": () => ({
+          fontFamily: "subheading",
+          fontSize: "l",
+          fontWeight: 700,
+          color: "goodGrey.650",
+          lineHeight: 27.6
+        }),
+        "xl-grey-650": () => ({
+          fontFamily: "subheading",
+          fontSize: "xl",
+          fontWeight: 700,
+          color: "goodGrey.650",
+          lineHeight: 33
+        }),
+        "tx-success": () => ({
+          fontFamily: "heading",
+          fontSize: "l",
+          fontWeight: 700,
+          color: "txGreen",
+          lineHeight: 27.6
         })
       }
     },

@@ -199,14 +199,17 @@ export const useIssueCertificates = (account: string | undefined, baseEnv: any) 
           promises.push(requestLocationCertificate(baseEnv, location, fvsig, account));
         }
         promises.push(requestIdentityCertificate(baseEnv, fvsig, account));
-        const results = await Promise.all(promises);
+        const results = await Promise.allSettled(promises);
+
         for (const result of results) {
-          if (result && result.certificate) {
-            await storeCertificate(result.certificate);
+          if (result.status === "fulfilled" && result.value && result.value.certificate) {
+            await storeCertificate(result.value.certificate);
+          } else if (result.status === "rejected") {
+            console.error("Failed to get a certificate:", result.reason);
           }
         }
       } catch (e) {
-        console.error("Failed to get certificates:", e);
+        console.error("Unexpected error:", e);
       }
     },
     [baseEnv, storeCertificate]

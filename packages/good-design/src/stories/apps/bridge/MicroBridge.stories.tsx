@@ -1,10 +1,12 @@
+/* eslint-disable @typescript-eslint/no-unused-vars  */
+/* eslint-disable @typescript-eslint/no-empty-function  */
 import React from "react";
-import { MicroBridge } from "../../../apps/bridge/MicroBridge";
+import { BridgeWizard } from "../../../apps/bridge/wizard/BridgeWizard";
 import { W3Wrapper } from "../../W3Wrapper";
 
 export default {
   title: "Apps/MicroBridge",
-  component: MicroBridge,
+  component: BridgeWizard,
   decorators: [
     Story => (
       <W3Wrapper withMetaMask={true} env="fuse">
