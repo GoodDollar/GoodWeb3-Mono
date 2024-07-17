@@ -76,7 +76,7 @@ export const TxModalComponent = (props: ITxModalProps) => {
   const { link, label, icon } = linksNew[props.type];
 
   const translationIds = { title, content, label, learnTitle: /*i18n*/ "Learn" };
-  const TxModalWithTranslations = withTranslations(TxModal, translationIds, { label, icon, link });
+  const TxModalWithTranslations = withTranslations(TxModal, translationIds, { icon, link });
 
   return <TxModalWithTranslations {...props} />;
 };

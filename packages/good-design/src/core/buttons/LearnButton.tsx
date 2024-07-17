@@ -8,9 +8,9 @@ import { Image } from "../images";
 export type learnSources = "send" | "bridging" | "network" | "sign" | "identity";
 
 type LearnButtonType = {
-  icon: any;
+  icon?: any;
   label?: string;
-  learnTitle: string;
+  learnTitle?: string;
   link?: string;
 };
 

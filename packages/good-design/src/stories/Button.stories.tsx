@@ -2,12 +2,13 @@ import { ExternalProvider } from "@ethersproject/providers";
 import { Celo, Fuse, Web3Provider } from "@gooddollar/web3sdk-v2";
 import { Config, DAppProvider, Mainnet, useEthers } from "@usedapp/core";
 import { ethers, getDefaultProvider } from "ethers";
-import React, { useEffect, useState } from "react";
+import React, { FC, PropsWithChildren, useEffect, useState } from "react";
 import BaseButton from "../core/buttons/BaseButton";
 import GoodButton from "../core/buttons/GoodButton";
 import ClaimButton from "../core/buttons/ClaimButton";
 import LearnButton from "../core/buttons/LearnButton";
 import { BasePressable } from "../core";
+import withTranslations from "../theme/hoc/withMultiTranslations";
 
 import { GoodUIi18nProvider, useGoodUILanguage } from "../theme";
 import { VStack } from "native-base";
@@ -27,9 +28,16 @@ export const BaseButtonWithThemeExample = () => {
   );
 };
 
+export const TransLearnButton: FC<PropsWithChildren> = () => {
+  const { link, label, icon } = linksNew["network"];
+
+  const LearnButtonWithTranslations = withTranslations(LearnButton, { label, learnTitle: "Learn" }, { link, icon });
+
+  return <LearnButtonWithTranslations />;
+};
+
 const LinguiExample = () => {
   const { setLanguage } = useGoodUILanguage();
-  const { link, label, icon } = linksNew["network"];
 
   return (
     <VStack width="343">
@@ -39,14 +47,7 @@ const LinguiExample = () => {
       <GoodButton width="200" onPress={() => setLanguage("es-419")} backgroundColor="primary" color="white">
         Spanish-Latin
       </GoodButton>
-      <LearnButton
-        {...{
-          link,
-          label,
-          icon,
-          learnTitle: "Learn"
-        }}
-      />
+      <TransLearnButton />
     </VStack>
   );
 };

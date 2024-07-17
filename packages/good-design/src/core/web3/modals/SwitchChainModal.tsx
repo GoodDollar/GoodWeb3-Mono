@@ -78,7 +78,7 @@ export const SwitchChainModalComponent: FC<PropsWithChildren<{ type: keyof typeo
   const SwitchChainWithTranslations = withTranslations(
     SwitchChainModal,
     { label, learnTitle: "Learn" },
-    { link, label, icon }
+    { link, icon }
   );
 
   return <SwitchChainWithTranslations>{children}</SwitchChainWithTranslations>;
