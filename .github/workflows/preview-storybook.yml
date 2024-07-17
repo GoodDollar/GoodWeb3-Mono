@@ -8,6 +8,7 @@ on:
     types: [opened, synchronize, edited, ready_for_review]
     branches:
       - master
+      - 116-credential-storage
   workflow_dispatch:
 env:
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
