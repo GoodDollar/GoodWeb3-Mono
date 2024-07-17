@@ -1,6 +1,17 @@
 import React from "react";
 import { Trans } from "@lingui/react";
 
+/**
+ * A HOC that wraps a component with translations
+ * mainly used in any context where you cannot use <Trans> (e.g. in fragmented modals)
+ * can be used to simplify larger ui components with multiple translations
+ * @param WrappedComponent  The component to be wrapped
+ * @param translationIds translation ids, key-value pairs. the value to translate should be prefixed with i18n flag.
+ * @param restProps any props of the component which are not translations, but should still be present.
+ * @returns A component with the translations
+ * @example withTranslations(Component, { title: /\*\i18n\*\/ "Title", content: /\*\i18n\*\/ "Content" }, { props })
+ */
+
 const withTranslations = <P extends object>(
   WrappedComponent: React.ComponentType<P>,
   translationIds: { [key: string]: string },
