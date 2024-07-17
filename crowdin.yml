@@ -1,5 +1,5 @@
 files:
-  - source: packages/good-design/src/locales
+  - source: packages/good-design/src/locales/en/
     ignore:
       - '*.ts'
       - '*.js'
