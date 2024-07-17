@@ -1,6 +1,6 @@
 import React from "react";
-
 import { Text } from "native-base";
+
 import BasicStyledModal, { ModalFooterCtaX } from "./BasicStyledModal";
 import withTranslations from "../../../theme/hoc/withMultiTranslations";
 

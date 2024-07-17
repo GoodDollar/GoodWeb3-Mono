@@ -4465,7 +4465,7 @@ __metadata:
     "@formatjs/intl-locale": ^4.0.0
     "@formatjs/intl-pluralrules": ^5.2.14
     "@gooddollar/goodprotocol": ^2.0.24
-    "@gooddollar/web3sdk-v2": 0.2.22-beta.5a2107a7
+    "@gooddollar/web3sdk-v2": 0.2.24-beta.c5783e2f
     "@lingui/cli": ^4.11.2
     "@lingui/core": ^4.11.2
     "@lingui/macro": ^4.11.2
@@ -4492,6 +4492,7 @@ __metadata:
     "@types/react-native": 0.70.4
     "@uniswap/sdk-core": ^3.1.0
     "@usedapp/core": ^1.2.6
+    async-await-mutex-lock: ^1.0.11
     babel-jest: ^27.3.1
     babel-loader: ^8.2.3
     babel-plugin-module-resolver: ^4.1.0
@@ -4643,7 +4644,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/web3sdk-v2@0.2.22-beta.5a2107a7, @gooddollar/web3sdk-v2@workspace:packages/sdk-v2":
+"@gooddollar/web3sdk-v2@0.2.24-beta.c5783e2f, @gooddollar/web3sdk-v2@workspace:packages/sdk-v2":
   version: 0.0.0-use.local
   resolution: "@gooddollar/web3sdk-v2@workspace:packages/sdk-v2"
   dependencies:
@@ -15144,6 +15145,13 @@ __metadata:
   version: 1.0.0
   resolution: "astral-regex@npm:1.0.0"
   checksum: 93417fc0879531cd95ace2560a54df865c9461a3ac0714c60cbbaa5f1f85d2bee85489e78d82f70b911b71ac25c5f05fc5a36017f44c9bb33c701bee229ff848
+  languageName: node
+  linkType: hard
+
+"async-await-mutex-lock@npm:^1.0.11":
+  version: 1.0.11
+  resolution: "async-await-mutex-lock@npm:1.0.11"
+  checksum: 90dcedd4c9846109ac157ddf33087130b90b31d310469cfe19cf0f068497f8aa199196a36d35b8086dcffc44cd8cdb16f7da879141cbc1520f049931711ee20c
   languageName: node
   linkType: hard
 

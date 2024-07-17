@@ -1,5 +1,5 @@
 import React from "react";
-import { WalletAndChainGuard } from "../../../core/web3/WalletAndChainGuard";
+import { VStack } from "native-base";
 import { MicroBridgeController } from "../../../apps/bridge/MicroBridgeController";
 import { W3Wrapper } from "../../W3Wrapper";
 import { SwitchChainModalComponent as SwitchChainModal } from "../../../core/web3/modals/SwitchChainModal";
@@ -11,9 +11,11 @@ export default {
     (Story: any) => (
       <W3Wrapper withMetaMask={true} env="fuse">
         <SwitchChainModal type="network">
-          <WalletAndChainGuard validChains={[122, 42220]}>
-            <Story />
-          </WalletAndChainGuard>
+          <VStack width="100%" alignItems={"center"}>
+            <VStack width="800">
+              <Story />
+            </VStack>
+          </VStack>
         </SwitchChainModal>
       </W3Wrapper>
     )
