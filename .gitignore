@@ -15,3 +15,4 @@ packages/**/index.ts.bak
 .yalc
 yalc.lock
 /dist/
+.vercel
