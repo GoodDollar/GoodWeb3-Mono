@@ -8,7 +8,7 @@ msgstr ""
 "Language: en\n"
 "Project-Id-Version: goodui\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-07-17 15:52\n"
+"PO-Revision-Date: 2024-07-17 16:00\n"
 "Last-Translator: \n"
 "Language-Team: English\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -257,7 +257,7 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/SegmentationWizard.tsx:71
 msgid "no, i am not"
-msgstr "No, I am not"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/apps/newsfeed/NewsFeed.tsx:98
