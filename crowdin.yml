@@ -1,5 +1,6 @@
 files:
-  - source: packages/good-design/src/locales/en
+  - source: packages/good-design/src/locales
     ignore:
       - '*.ts'
-    translation: packages/good-design/src/locales/%two_letters_code%
+      - '*.js'
+    translation: '%two_letters_code%'
