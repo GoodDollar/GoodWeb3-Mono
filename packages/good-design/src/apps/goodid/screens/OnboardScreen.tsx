@@ -120,7 +120,7 @@ export const OnboardScreen = withTheme({ name: "OnboardScreen" })(
           </VStack>
 
           <Text variant="browse-wrap" alignSelf={"center"}>
-            {` By clicking on ”I accept, verify me”, you are accepting our Terms of Use and Privacy Policy.\n Per this policy you agree to let us collect information such as your gender and age.`}
+            {` By clicking on ”I accept, verify me”, you are accepting our Terms of Use and Privacy Policy. Per this policy you agree to let us collect information such as your gender and age.`}
           </Text>
 
           <VStack alignSelf={"center"}>

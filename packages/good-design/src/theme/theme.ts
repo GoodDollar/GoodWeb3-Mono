@@ -54,12 +54,17 @@ export const theme = extendTheme({
       100: "#505661",
       200: "#3F444E",
       300: "#2F3338",
+      400: "#A5AEC0",
       500: "#26292F"
     },
 
     goodRed: {
       100: "#D03737",
       200: "#F87171"
+    },
+
+    goodGreen: {
+      300: "#5BBAA3"
     },
 
     //tabs
@@ -115,6 +120,27 @@ export const theme = extendTheme({
           color: "goodGrey.400",
           textAlign: "center"
         }),
+        "sm-grey-400": () => ({
+          fontFamily: "subheading",
+          fontSize: "sm",
+          fontWeight: 400,
+          color: "goodGrey.400",
+          lineHeight: 17.5
+        }),
+        "xs-green": () => ({
+          fontFamily: "subheading",
+          fontSize: "xs",
+          fontWeight: 700,
+          color: "goodGreen.300",
+          lineHeight: "18.2"
+        }),
+        "xs-grey": () => ({
+          fontFamily: "subheading",
+          fontSize: "xs",
+          fontWeight: 400,
+          color: "goodGrey.600",
+          lineHeight: 17.5
+        }),
         "sm-grey": () => ({
           fontFamily: "subheading",
           fontSize: "sm",
@@ -128,6 +154,20 @@ export const theme = extendTheme({
           fontWeight: 400,
           color: "goodGrey.650",
           lineHeight: 20.8
+        }),
+        "sm-grey-700": () => ({
+          fontFamily: "subheading",
+          fontSize: "sm",
+          fontWeight: 400,
+          color: "goodGrey.700",
+          lineHeight: 20.8
+        }),
+        "md-grey-700": () => ({
+          fontFamily: "heading",
+          fontSize: "md",
+          fontWeight: 700,
+          color: "goodGrey.700",
+          lineHeight: 23
         }),
         "l-grey-650": () => ({
           fontFamily: "subheading",

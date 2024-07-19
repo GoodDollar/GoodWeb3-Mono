@@ -15,15 +15,14 @@ const SegmentationConfirmation = withTheme({ name: "SegmentationConfirmation" })
   ({
     account,
     isWhitelisted,
-    idExpiry,
+    expiryFormatted,
     styles,
     ...props
   }: IStackProps &
-    Omit<SegmentationProps, "onDone" | "onLocationRequest" | "availableOffers" | "onDataPermission"> & {
+    Omit<SegmentationProps, "onDone" | "onLocationRequest" | "availableOffers" | "onDataPermission" | "withNavBar"> & {
       styles?: any;
     }) => {
     const { nextStep } = useWizard();
-    const { expiryDate, state } = idExpiry ?? {};
     const { innerContainer, button } = styles ?? {};
 
     return isWhitelisted === undefined || !account ? (
@@ -36,7 +35,7 @@ const SegmentationConfirmation = withTheme({ name: "SegmentationConfirmation" })
             certificateSubjects={props.certificateSubjects}
             account={account}
             isWhitelisted={isWhitelisted}
-            expiryDate={state === "pending" ? "-" : expiryDate?.formattedExpiryTimestamp}
+            expiryDate={expiryFormatted}
           />
           <Text variant="browse-wrap">
             You can always access this GoodID by connecting your current wallet to GoodDapp.

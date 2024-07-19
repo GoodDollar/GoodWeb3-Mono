@@ -70,7 +70,7 @@ export const TransactionCard = withTheme({ name: "TransactionCard" })(
             </Center>
             <HStack flexShrink={1} justifyContent="space-between" width="100%" alignItems="flex-end">
               <Text fontSize="4xs">{txDate}</Text>
-              <GdAmount amount={tokenValue} options={{ prefix: amountPrefix }} color={colorAmount} />
+              <GdAmount amount={tokenValue} options={{ prefix: amountPrefix }} color={colorAmount} withDefaultSuffix />
             </HStack>
           </HStack>
           <HStack justifyContent="space-between" padding={2} space={22} backgroundColor="white">

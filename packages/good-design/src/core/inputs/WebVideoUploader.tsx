@@ -19,7 +19,7 @@ export const WebVideoUploader = ({ onUpload, isLoading }: { onUpload: Props["onD
       event.preventDefault();
       const [videoFile] = event.target.files;
       if (videoFile.size > maxSize) {
-        void onUpload(undefined, new Error("File size is too large"));
+        void onUpload(undefined, new Error("File size is too large."));
         return;
       }
 
@@ -32,7 +32,13 @@ export const WebVideoUploader = ({ onUpload, isLoading }: { onUpload: Props["onD
             if (["mp4", "webm", "ogg", "mov", "3gp", "m4v", "avi", "mkv"].includes(extension)) {
               void onUpload({ base64, extension });
             } else {
-              void onUpload(undefined, new Error("Invalid file format"));
+              void onUpload(
+                undefined,
+                new Error(`It seems the video format you uploaded is unsupported. 😕
+Supported formats include: MP4, WEBM, OGG, MOV, 3GP, M4V, AVI, and MKV.
+Please upload your video in one of these formats. Thank you!`)
+              );
+              return;
             }
           })
           .catch((error: DOMException) => {

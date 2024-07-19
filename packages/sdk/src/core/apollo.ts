@@ -93,7 +93,9 @@ export const voltagePairData = once(async (): Promise<any> => {
     query: gql`
       query GetPairDayDatas {
         pairDayDatas(orderBy: date, orderDirection: desc, where: { reserveUSD_gt: 100 }) {
-          pairAddress
+          pair {
+            id
+          }
         }
       }
     `

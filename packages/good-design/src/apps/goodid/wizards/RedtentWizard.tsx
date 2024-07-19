@@ -9,6 +9,7 @@ import { Image } from "../../../core/images";
 import { WebVideoUploader } from "../../../core/inputs/WebVideoUploader";
 import { WizardContextProvider } from "../../../utils/WizardContext";
 import { BulletPointList, Title } from "../../../core/layout";
+import { YouSureModal } from "../../../core/web3/modals";
 
 import RedTentCard from "../../../assets/images/redtentcard.png";
 import BillyPhone from "../../../assets/images/billy-phone.png";
@@ -19,6 +20,7 @@ import { WizardHeader } from ".";
 export type RedTentProps = {
   onVideo: (base64: string, extension: string) => Promise<void>;
   onDone: (error?: Error) => Promise<void>;
+  withNavBar: boolean;
   containerStyles?: any;
   headerStyles?: any;
   videoInstructStyles?: any;
@@ -65,19 +67,19 @@ const PoolRequirements = () => (
     <VStack space="4">
       <HStack space={2}>
         <Checkbox variant="styled-blue" isDisabled defaultIsChecked colorScheme="info" value="female" />
-        <Text variant="sm-grey">
+        <Text variant="sm-grey-650">
           Have verified your gender as <Text fontWeight="bold">Female</Text> in your GoodID
         </Text>
       </HStack>
       <HStack space={2}>
         <Checkbox variant="styled-blue" defaultIsChecked colorScheme="info" value="location" />
-        <Text variant="sm-grey">
+        <Text variant="sm-grey-650">
           Have verified your country as <Text fontWeight="bold">Nigeria</Text> in your GoodID
         </Text>
       </HStack>
       <HStack space={2}>
         <Checkbox isDisabled colorScheme="info" value="test" />
-        <Text variant="sm-grey">Submit a video selfie saying:</Text>
+        <Text variant="sm-grey-650">Submit a video selfie saying:</Text>
       </HStack>
       <BulletPointList bulletPoints={videoRequirements} />
     </VStack>
@@ -86,9 +88,27 @@ const PoolRequirements = () => (
 
 const RedtentOffer = ({ onDone }: { onDone: RedTentProps["onDone"] }) => {
   const { nextStep } = useWizard();
+  const [showModal, setShowModal] = useState(false);
+
+  const handleSkip = () => {
+    setShowModal(true);
+  };
+
+  const handleOnDone = () => {
+    setShowModal(false);
+    void onDone();
+  };
+
   return (
     <View>
       <VStack space={10}>
+        <YouSureModal
+          open={showModal}
+          action={handleOnDone}
+          type="offers"
+          onClose={onDone}
+          dontShowAgainKey="noOffersModalAgain"
+        />
         <Title variant="title-gdblue">{`You are eligible for \n additional UBI!`}</Title>
         <ImageCard
           variant="offer-card"
@@ -113,8 +133,8 @@ const RedtentOffer = ({ onDone }: { onDone: RedTentProps["onDone"] }) => {
       <PoolRequirements />
       <VStack space={4}>
         <GoodButton onPress={nextStep}>Upload Video Selfie</GoodButton>
-        <GoodButton onPress={() => onDone()} variant={"link-like"} padding={0}>
-          I don't want the extra UBI
+        <GoodButton onPress={handleSkip} variant={"link-like"} padding={0}>
+          Skip for now
         </GoodButton>
       </VStack>
     </View>
@@ -164,10 +184,6 @@ const RedtentVideoInstructions = withTheme({ name: "RedtentVideoInstructions" })
         ))}
 
         <WebVideoUploader onUpload={onUpload} isLoading={isLoading} />
-
-        <GoodButton onPress={() => onDone()} padding={0} variant={"link-like"}>
-          Nevermind, I don't want the extra UBI
-        </GoodButton>
       </VStack>
     );
   }
@@ -178,7 +194,7 @@ const RedtentThanks = ({ onDone }: { onDone: RedTentProps["onDone"] }) => (
     <VStack space={6}>
       <Title variant="title-gdblue">{`Thank you for submitting your video!`}</Title>
       <HStack paddingBottom={8} borderBottomWidth={1} borderBottomColor="goodGrey.300">
-        <Text variant="sm-grey">
+        <Text variant="sm-grey-650">
           You are now in the{" "}
           <Text fontWeight="bold" color="primary">
             {`Red Tent Women in Nigeria \n`}
@@ -215,7 +231,7 @@ export const RedtentWizard: React.FC<RedTentProps> = (props: RedTentProps) => {
   return (
     <WizardContextProvider>
       <Wizard
-        header={<WizardHeader onDone={modalOnDone} error={error} {...headerStyles} />}
+        header={<WizardHeader withNavBar={props.withNavBar} onDone={modalOnDone} error={error} {...headerStyles} />}
         wrapper={<WizardWrapper {...containerStyles} />}
       >
         <RedtentOffer onDone={modalOnDone} />

@@ -42,13 +42,14 @@ const CardRowItem = withTheme({ name: "CardRowItem" })(
     //todo: handle initial good-id card state (onboard-screen), should show '-' for all values
     return (
       <VStack {...props}>
-        <Text variant="sm-grey" fontWeight="600" {...subHeading}>
+        <Text variant="sm-grey-650" fontWeight="600" {...subHeading}>
           {credentialLabel}
         </Text>
         <HStack space={1} alignItems="center">
-          <Text variant="sm-grey" {...subContent}>
+          <Text variant="sm-grey-650" {...subContent}>
             {verifiedCopy}
           </Text>
+
           <Center mt="-3px">
             <SvgXml
               src={!["Unverified"].includes(verifiedCopy) ? GdVerifiedSvg : GdUnverifiedSvg}
@@ -76,7 +77,7 @@ const GoodIdCard = withTheme({ name: "GoodIdCard", skipProps: "certificates" })(
               {`GoodID`}
             </Title>
             <HStack space={1}>
-              <Text variant="sm-grey" fontWeight="600" {...subHeading}>
+              <Text variant="sm-grey-650" fontWeight="600" {...subHeading}>
                 {truncatedAccount}
               </Text>
               {isWhitelisted && (
@@ -86,7 +87,7 @@ const GoodIdCard = withTheme({ name: "GoodIdCard", skipProps: "certificates" })(
               )}
             </HStack>
             {fullname && (
-              <Text variant="sm-grey" {...subContent}>
+              <Text variant="sm-grey-650" {...subContent}>
                 {fullname}
               </Text>
             )}
@@ -112,7 +113,7 @@ const GoodIdCard = withTheme({ name: "GoodIdCard", skipProps: "certificates" })(
             ))}
         </HStack>
         <HStack>
-          <Text variant="sm-grey" fontSize="2xs" {...footer}>
+          <Text variant="sm-grey-650" fontSize="2xs" {...footer}>
             {`Expires on ` + expiryDate}
           </Text>
         </HStack>

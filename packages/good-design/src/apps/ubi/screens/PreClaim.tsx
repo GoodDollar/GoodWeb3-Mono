@@ -27,7 +27,7 @@ export const PreClaim: FC = () => {
         <VStack space={8}>
           <VStack space={4} alignItems="center">
             <Center borderWidth="2" borderColor="borderDarkGrey" px="56px" py="3" borderRadius="8">
-              <GdAmount amount={totalAmount} />
+              <GdAmount amount={totalAmount} withDefaultSuffix />
             </Center>
             <Image source={BillyGrin} w="93" h="65" style={{ resizeMode: "contain" }} />
           </VStack>

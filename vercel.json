@@ -1,0 +1,6 @@
+{
+  "buildCommand": "./storybook-release",
+  "git": {
+      "deploymentEnabled": false
+  }
+}

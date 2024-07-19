@@ -50,7 +50,9 @@ export async function v2Pairs(
 
   const filteredPairAddresses = new Map();
 
-  for (const { pairAddress } of pairDayData) {
+  for (const {
+    pair: { id: pairAddress }
+  } of pairDayData) {
     if (pairAddresses.has(pairAddress)) {
       filteredPairAddresses.set(pairAddress, pairAddresses.get(pairAddress));
     }

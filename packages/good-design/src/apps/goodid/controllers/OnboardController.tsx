@@ -1,21 +1,16 @@
 import React, { useCallback, useEffect, useState } from "react";
-import {
-  AsyncStorage,
-  useAggregatedCertificates,
-  useCertificatesSubject,
-  useIdentityExpiryDate,
-  useIsAddressVerified
-} from "@gooddollar/web3sdk-v2";
+import { AsyncStorage } from "@gooddollar/web3sdk-v2";
 import { isEmpty, noop } from "lodash";
 import moment from "moment";
 import { IContainerProps, Spinner } from "native-base";
 
 import { OnboardScreen, OnboardScreenProps } from "../screens/OnboardScreen";
-import { useFVModalAction } from "../../../hooks/useFVModalAction";
+import { useFVModalAction, useGoodId } from "../../../hooks";
 import { SegmentationController } from "./SegmentationController";
 
 export interface OnboardControllerProps {
   account: string;
+  withNavBar: boolean;
   name?: string | undefined;
   fvSig?: string;
   onFV?: () => void;
@@ -26,11 +21,8 @@ export interface OnboardControllerProps {
 export const OnboardController = (
   props: Pick<OnboardScreenProps, "innerContainer" | "fontStyles"> & OnboardControllerProps & IContainerProps
 ) => {
-  const { onFV, onSkip, onDone, account, name, fvSig } = props;
-  const [isWhitelisted] = useIsAddressVerified(account ?? "");
-  const [expiryDate] = useIdentityExpiryDate(account ?? "");
-  const certificates = useAggregatedCertificates(account);
-  const certificateSubjects = useCertificatesSubject(certificates);
+  const { onFV, onSkip, onDone, account, name, fvSig, withNavBar } = props;
+  const { certificates, certificateSubjects, expiryDate, expiryFormatted, isWhitelisted } = useGoodId(account);
 
   const [isPending, setPendingSignTx] = useState(false);
   const [accepedTos, setAcceptedTos] = useState(false);
@@ -87,7 +79,7 @@ export const OnboardController = (
 
   const handleShouldFV = useCallback(async () => {
     await AsyncStorage.setItem("tos-accepted", true);
-    const { expiryTimestamp } = expiryDate || {};
+    const { expiryTimestamp } = expiryDate ?? {};
 
     // if someone is whitelisted we want to verify their timestamp
     // to determine if they should re-do the fv-flow
@@ -107,7 +99,12 @@ export const OnboardController = (
 
   if (isEmpty(certificates)) return <Spinner variant="page-loader" size="lg" />;
 
-  if (accepedTos) return <SegmentationController onDone={onDone} fvSig={fvSig} />;
+  if (accepedTos)
+    return (
+      <SegmentationController
+        {...{ account, certificates, certificateSubjects, expiryFormatted, fvSig, isWhitelisted, onDone, withNavBar }}
+      />
+    );
 
   return (
     <OnboardScreen
@@ -117,7 +114,7 @@ export const OnboardController = (
         isPending,
         isWhitelisted,
         certificateSubjects,
-        expiryDate: expiryDate?.formattedExpiryTimestamp,
+        expiryDate: expiryFormatted,
         onAccept: handleShouldFV
       }}
     />

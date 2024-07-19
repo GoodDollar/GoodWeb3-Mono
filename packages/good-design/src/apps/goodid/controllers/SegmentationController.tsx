@@ -1,16 +1,12 @@
 import React, { useCallback } from "react";
 import {
   AsyncStorage,
-  useAggregatedCertificates,
   useCheckAvailableOffers,
   useFVLink,
-  useIdentityExpiryDate,
-  useIsAddressVerified,
   useIssueCertificates,
   useGetEnvChainId,
-  useCertificatesSubject
+  AggregatedCertificate
 } from "@gooddollar/web3sdk-v2";
-import { useEthers } from "@usedapp/core";
 import { isEmpty } from "lodash";
 
 import { SegmentationProps, SegmentationWizard } from "../wizards/SegmentationWizard";
@@ -39,15 +35,22 @@ const redtentOffer = [
   // }
 ];
 
-export const SegmentationController = ({ fvSig, onDone }: { fvSig?: string; onDone: SegmentationProps["onDone"] }) => {
-  const { account = "" } = useEthers();
+export const SegmentationController = ({
+  account,
+  certificates,
+  certificateSubjects,
+  expiryFormatted,
+  fvSig,
+  isWhitelisted,
+  onDone,
+  withNavBar
+}: Omit<SegmentationProps, "onLocationRequest" | "onDataPermission" | "availableOffers"> & {
+  fvSig?: string;
+  certificates: AggregatedCertificate[];
+}) => {
   const { baseEnv } = useGetEnvChainId();
   const issueCertificate = useIssueCertificates(account, baseEnv);
   const fvLink = useFVLink();
-  const certificates = useAggregatedCertificates(account);
-  const certificateSubjects = useCertificatesSubject(certificates);
-  const [isWhitelisted] = useIsAddressVerified(account);
-  const [expiryDate, , state] = useIdentityExpiryDate(account);
   const availableOffers = useCheckAvailableOffers({ account, pools: redtentOffer });
 
   const onLocationRequest = useCallback(
@@ -80,11 +83,12 @@ export const SegmentationController = ({ fvSig, onDone }: { fvSig?: string; onDo
         onLocationRequest,
         account,
         certificateSubjects,
+        expiryFormatted,
         isWhitelisted,
         availableOffers,
-        onDataPermission
+        onDataPermission,
+        withNavBar
       }}
-      idExpiry={{ expiryDate, state }}
     />
   );
 };

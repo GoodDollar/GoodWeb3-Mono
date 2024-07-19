@@ -14,6 +14,7 @@ import { Wizard } from "react-use-wizard";
 import moment from "moment";
 
 import { W3Wrapper } from "../../W3Wrapper";
+import { useGoodId } from "../../../hooks/useGoodId";
 import { OffersAgreement } from "../../../apps/goodid/screens/OffersAgreement";
 
 import { CheckAvailableOffers, GoodIdCard } from "../../../apps/goodid";
@@ -34,9 +35,7 @@ const GoodIdWrapper = ({ children }) => {
 export const GoodIdCardExample = {
   render: (args: any) => {
     const { account = "" } = useEthers();
-    const [expiryDate, , state] = useIdentityExpiryDate(account ?? "");
-    const certificates = useAggregatedCertificates(account);
-    const certificateSubjects = useCertificatesSubject(certificates);
+    const { certificateSubjects, expiryFormatted, isWhitelisted } = useGoodId(account);
 
     return (
       <VStack {...args.styles.containerStyles}>
@@ -46,9 +45,9 @@ export const GoodIdCardExample = {
         <GoodIdCard
           account={account ?? "0x000...0000"}
           certificateSubjects={certificateSubjects}
-          isWhitelisted={args.isWhitelisted}
+          isWhitelisted={args.isWhitelisted || isWhitelisted}
           fullname={args.fullName}
-          expiryDate={state === "pending" ? "-" : expiryDate?.formattedExpiryTimestamp}
+          expiryDate={expiryFormatted}
         />
       </VStack>
     );
@@ -81,22 +80,38 @@ export const SegmentationScreen = {
 };
 
 export const SegmentationFlow = {
-  render: (args: any) => (
-    <W3Wrapper withMetaMask={true} env="staging">
-      <VStack {...args}>
-        <Text variant="browse-wrap" fontSize="sm">
-          For testing purposes. this flow is using staging/QA contracts
-        </Text>
-        <SegmentationController
-          onDone={async () => {
-            alert("Segmentation finished");
-          }}
-        />
-      </VStack>
-    </W3Wrapper>
-  ),
+  render: (args: any) => {
+    const { account = "" } = useEthers();
+    const { certificates, certificateSubjects, expiryFormatted, isWhitelisted } = useGoodId(account);
+
+    return (
+      <W3Wrapper withMetaMask={true} env={args.env}>
+        <VStack {...args}>
+          <Text variant="browse-wrap" fontSize="sm">
+            For testing purposes. this flow is using staging/QA contracts
+          </Text>
+          <SegmentationController
+            {...{
+              account,
+              isWhitelisted,
+              certificates,
+              certificateSubjects,
+              expiryFormatted,
+              withNavBar: true
+            }}
+            onDone={async (e: any) => {
+              console.log({ e });
+              alert("Segmentation finished");
+            }}
+          />
+        </VStack>
+      </W3Wrapper>
+    );
+  },
   args: {
-    width: "100%"
+    width: "100%",
+    account: "0x00",
+    env: "staging"
   }
 };
 

@@ -1,6 +1,6 @@
 import React from "react";
-
 import { Text } from "native-base";
+
 import BasicStyledModal, { ModalFooterCtaX } from "./BasicStyledModal";
 
 interface RedirectModalProps {
@@ -20,7 +20,7 @@ export const RedirectModal = ({ open, url, onClose, ...props }: RedirectModalPro
     show={open}
     onClose={onClose}
     title="Redirect Notice"
-    body={<Text variant="sm-grey">{RedirectCopy}</Text>}
+    body={<Text variant="sm-grey-650">{RedirectCopy}</Text>}
     footer={<ModalFooterCtaX extUrl={url} buttonText="Go to website" />}
     withOverlay="dark"
     withCloseButton
