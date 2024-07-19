@@ -8,6 +8,7 @@ import BasicStyledModal, { ModalFooterLearn } from "./BasicStyledModal";
 interface ITxModalProps {
   type: "send" | "sign" | "identity";
   isPending: boolean;
+  customTitle?: { title: string; content: string };
   onClose?: () => void;
 }
 
@@ -29,8 +30,8 @@ Don’t worry, no link is kept between your\nidentity record and your wallet add
 
 const TxModalContent = ({ content }: { content: string }) => <Text variant="sm-grey-650">{content}</Text>;
 
-export const TxModal = ({ type, isPending, onClose = noop, ...props }: ITxModalProps) => {
-  const { title, content } = txModalCopy[type];
+export const TxModal = ({ type, isPending, onClose = noop, customTitle, ...props }: ITxModalProps) => {
+  const { title, content } = customTitle ?? txModalCopy[type];
 
   return (
     <BasicStyledModal
@@ -42,7 +43,7 @@ export const TxModal = ({ type, isPending, onClose = noop, ...props }: ITxModalP
       body={<TxModalContent content={content} />}
       footer={<ModalFooterLearn source={type} />}
       withOverlay="dark"
-      withCloseButton
+      withCloseButton={false}
     />
   );
 };

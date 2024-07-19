@@ -104,7 +104,6 @@ export const theme = extendTheme({
     xl: 30,
     "2xl": 36
   },
-
   components: {
     ...layout,
     ...buttons,

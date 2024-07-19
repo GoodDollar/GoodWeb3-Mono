@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { View, Button, Modal, Text, StyleSheet, Linking, ModalProps } from "react-native";
 import { W3Wrapper } from "../W3Wrapper";
-import { ComponentStory, ComponentMeta } from "@storybook/react";
-import { useClaim, useFVLink, useHasClaimed } from "../../sdk/claim/react";
+import { useFVLink, useGetMemberUBIPools } from "../../sdk/claim/react";
 import { noop } from "lodash";
 
 export interface PageProps {
@@ -10,7 +9,7 @@ export interface PageProps {
   firstName: string;
 }
 
-const FVModal = (params: ModalProps & { firstName: string }) => {
+export const FVModal = (params: ModalProps & { firstName: string }) => {
   const fvlink = useFVLink();
   const method = "popup";
   return (
@@ -73,70 +72,100 @@ const styles = StyleSheet.create({
   }
 });
 
-const ClaimButton = ({ address, firstName }: PageProps) => {
-  // const library = useSDK(true, "claim");
-  const [showModal, setShowModal] = useState(false);
-  const [refresh, setRefresh] = useState(false);
-  const hasClaimed = useHasClaimed("FUSE");
-  const { isWhitelisted, claimAmount, claimTime, claimCall } = useClaim(refresh ? "everyBlock" : "never");
-  const handleClaim = async () => {
-    if (isWhitelisted) {
-      await claimCall.send();
-    } else {
-      setShowModal(true);
-    }
-  };
+// const ClaimButton = ({ address, firstName }: PageProps) => {
+//   // const library = useSDK(true, "claim");
+//   const [showModal, setShowModal] = useState(false);
+//   const [refresh, setRefresh] = useState(false);
+//   const hasClaimed = useHasClaimed("FUSE");
+//   const { isWhitelisted, claimAmount, claimTime } = useClaim(refresh ? "everyBlock" : "never");
+//   const handleClaim = async () => {
+//     if (isWhitelisted) {
+//       await claimCall.send();
+//     } else {
+//       setShowModal(true);
+//     }
+//   };
 
-  // const onClaim = usePressOrSwitchChain({ chainId: 122, onPress: handleClaim });
-  useEffect(() => {
-    if (!isWhitelisted || claimCall.state.status === "Mining" || claimCall.state.status === "PendingSignature") {
-      setRefresh(true);
-    } else setRefresh(false);
-  }, [isWhitelisted, claimCall.state]);
+//   // const onClaim = usePressOrSwitchChain({ chainId: 122, onPress: handleClaim });
+//   useEffect(() => {
+//     if (!isWhitelisted || claimCall.state.status === "Mining" || claimCall.state.status === "PendingSignature") {
+//       setRefresh(true);
+//     } else setRefresh(false);
+//   }, [isWhitelisted, claimCall.state]);
 
-  const buttonTitle = () => {
-    if (isWhitelisted) {
-      if (claimAmount.gt(0)) return `Claim ${claimAmount}`;
-      else return `Claim at: ${claimTime}`;
-    } else return "Verify Uniqueness";
-  };
+//   const buttonTitle = () => {
+//     if (isWhitelisted) {
+//       if (claimAmount.gt(0)) return `Claim ${claimAmount}`;
+//       else return `Claim at: ${claimTime}`;
+//     } else return "Verify Uniqueness";
+//   };
 
-  return (
-    <View>
-      <View style={styles.container}>
-        <Text>address: {address}</Text>
-        <Text>hasClaimed: {String(hasClaimed)}</Text>
-        <Text>isWhitelisted: {String(isWhitelisted)}</Text>
-        <Text>Claim time: {claimTime?.toString()}</Text>
-        <Text>Claim amount: {claimAmount?.toString()}</Text>
-        <FVModal visible={showModal} onRequestClose={() => setShowModal(false)} firstName={firstName}></FVModal>
+//   return (
+//     <View>
+//       <View style={styles.container}>
+//         <Text>address: {address}</Text>
+//         <Text>hasClaimed: {String(hasClaimed)}</Text>
+//         <Text>isWhitelisted: {String(isWhitelisted)}</Text>
+//         <Text>Claim time: {claimTime?.toString()}</Text>
+//         <Text>Claim amount: {claimAmount?.toString()}</Text>
+//         <FVModal visible={showModal} onRequestClose={() => setShowModal(false)} firstName={firstName}></FVModal>
+//       </View>
+//       <Button title={buttonTitle()} onPress={handleClaim}></Button>
+//     </View>
+//   );
+// };
+// const Web3Component = (params: PageProps) => {
+//   return <ClaimButton {...params} />;
+// };
+
+const ClaimPools = () => {
+  const { poolsDetails, loading } = useGetMemberUBIPools();
+
+  if (loading || !poolsDetails.length) {
+    return <Text>No active pools</Text>;
+  }
+
+  return poolsDetails[0][0].map(pool =>
+    Object.values(pool).map(({ isRegistered, nextClaimTime, claimAmount }) => (
+      <View key={"test"}>
+        <Text>Registered: {`${isRegistered}`}</Text>
+        <Text>Next claim time: {nextClaimTime.toString()}</Text>
+        <Text>Claim amount: {claimAmount.toString()}</Text>
       </View>
-      <Button title={buttonTitle()} onPress={handleClaim}></Button>
-    </View>
+    ))
   );
 };
-const Web3Component = (params: PageProps) => {
-  return <ClaimButton {...params} />;
+
+export const UbiClaimPools = (params: PageProps) => {
+  console.log({ params });
+  return (
+    <W3Wrapper withMetaMask={true}>
+      <ClaimPools />
+    </W3Wrapper>
+  );
 };
-const Page = (params: PageProps) => (
-  <W3Wrapper withMetaMask={true}>
-    <Web3Component {...params} />
-  </W3Wrapper>
-);
 
-export default {
-  title: "Claim Flow Example - Hooks",
-  component: Page
-} as ComponentMeta<typeof Page>;
+// const Page = (params: PageProps) => (
+//   <W3Wrapper withMetaMask={true}>
+//     <Web3Component {...params} />
+//   </W3Wrapper>
+// );const Web3Component = (params: PageProps) => {
+//   //   return <ClaimButton {...params} />;
+//   // };
 
-const Template: ComponentStory<typeof Page> = args => (
-  <W3Wrapper withMetaMask={true}>
-    <Web3Component {...args} />
-  </W3Wrapper>
-);
+// export default {
+//   title: "Claim Flow Example - Hooks",
+//   component: Page
+// } as ComponentMeta<typeof Page>;
 
-export const ClaimFlowExample = Template.bind({});
-ClaimFlowExample.args = {
-  address: "",
-  firstName: "John"
-};
+// const Template: ComponentStory<typeof Page> = args => (
+//   <W3Wrapper withMetaMask={true}>
+//     <Web3Component {...args} />
+//   </W3Wrapper>
+// );
+
+// export const ClaimFlowExample = Template.bind({});
+// ClaimFlowExample.args = {
+//   address: "",
+//   firstName: "John"
+// };

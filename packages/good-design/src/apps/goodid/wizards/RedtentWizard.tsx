@@ -192,7 +192,7 @@ const RedtentVideoInstructions = withTheme({ name: "RedtentVideoInstructions" })
 const RedtentThanks = ({ onDone }: { onDone: RedTentProps["onDone"] }) => (
   <VStack space={200}>
     <VStack space={6}>
-      <Title variant="title-gdblue">Thanks you for submitting your video!</Title>
+      <Title variant="title-gdblue">{`Thank you for submitting your video!`}</Title>
       <HStack paddingBottom={8} borderBottomWidth={1} borderBottomColor="goodGrey.300">
         <Text variant="sm-grey-650">
           You are now in the{" "}
