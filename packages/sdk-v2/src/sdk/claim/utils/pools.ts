@@ -21,31 +21,47 @@ export const getMemberPools = async (account: string, factory: any, library: any
   return await ubiPoolFactory.getMemberPools(account);
 };
 
-export const getPoolsDetails = async (poolAddresses: string[], pool: any, library: any, account: string) => {
+export const getPoolsDetails = async (
+  poolAddresses: string[],
+  pool: any,
+  factory: any,
+  library: any,
+  account: string
+) => {
   const multicall = new Multicall({ ethersProvider: library, tryAggregate: true });
 
-  const contractCallContext: ContractCallContext[] = poolAddresses.map(addr => ({
-    reference: `pool_${addr}`,
-    contractAddress: addr,
-    abi: pool.abi,
-    calls: [
+  const contractCallContext: ContractCallContext[] = poolAddresses
+    .map(addr => [
       {
-        reference: "isRegistered",
-        methodName: "hasRole",
-        methodParameters: [ethers.utils.keccak256(ethers.utils.toUtf8Bytes("MEMBER_ROLE")), account]
+        reference: `pool_${addr}`,
+        contractAddress: addr,
+        abi: pool.abi,
+        calls: [
+          {
+            reference: "isRegistered",
+            methodName: "hasRole",
+            methodParameters: [ethers.utils.keccak256(ethers.utils.toUtf8Bytes("MEMBER_ROLE")), account]
+          },
+          {
+            reference: "claimTime",
+            methodName: "nextClaimTime",
+            methodParameters: []
+          },
+          {
+            reference: "claimAmount",
+            methodName: "checkEntitlement(address)",
+            methodParameters: [account]
+          }
+        ]
       },
       {
-        reference: "claimTime",
-        methodName: "nextClaimTime",
-        methodParameters: []
-      },
-      {
-        reference: "claimAmount",
-        methodName: "checkEntitlement(address)",
-        methodParameters: [account]
+        reference: `factory_${addr}`,
+        contractAddress: factory.address,
+        abi: factory.abi,
+        calls: [{ reference: "Registry", methodName: "registry", methodParameters: [addr] }]
       }
-    ]
-  }));
+    ])
+    .flat();
 
   const { results }: ContractCallResults = await multicall.call(contractCallContext);
 

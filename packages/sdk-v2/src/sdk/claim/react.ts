@@ -104,7 +104,7 @@ export const useGetMemberUBIPools = () => {
         return;
       }
 
-      const details = await getPoolsDetails(poolAddresses, pool, library, account);
+      const details = await getPoolsDetails(poolAddresses, pool, factory, library, account);
 
       setPoolsDetails(details);
     } catch (err: any) {
