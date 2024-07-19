@@ -299,7 +299,7 @@ export const useBridgeHistory = () => {
     },
     {
       chainId: fuseChainId,
-      fromBlock: -2e4,
+      fromBlock: -4e4,
       refresh
     }
   );
@@ -312,7 +312,7 @@ export const useBridgeHistory = () => {
     },
     {
       chainId: fuseChainId,
-      fromBlock: -2e4,
+      fromBlock: -4e4,
       refresh
     }
   );
@@ -325,7 +325,7 @@ export const useBridgeHistory = () => {
     },
     {
       chainId: 42220,
-      fromBlock: -6e4,
+      fromBlock: -4e4,
       refresh
     }
   );
@@ -338,7 +338,7 @@ export const useBridgeHistory = () => {
     },
     {
       chainId: 42220,
-      fromBlock: -6e4,
+      fromBlock: -4e4,
       refresh
     }
   );
