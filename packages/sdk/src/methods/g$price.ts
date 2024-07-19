@@ -15,18 +15,21 @@ export const g$ReservePrice = memoize<
   (web3: Web3, chainId: number) => Promise<{ DAI: Price<Currency, Currency>; cDAI: Price<Currency, Currency> }>
 >(
   async (web3, chainId): Promise<{ DAI: Price<Currency, Currency>; cDAI: Price<Currency, Currency> }> => {
+    const httpProvider = new Web3.providers.HttpProvider("https://rpc.ankr.com/eth");
+    const mainnetWeb3 = new Web3(httpProvider);
     const contract = getContract(
-      chainId,
+      1,
       "GoodReserveCDai",
       ["function currentPrice() view returns (uint256)", "function currentPriceDAI() view returns (uint256)"],
-      web3
+      mainnetWeb3
     );
+
     const [cdaiPrice, daiPrice] = await Promise.all([contract.currentPrice(), contract.currentPriceDAI()]);
 
     delayedCacheClear(g$ReservePrice);
 
-    const priceAsDAI = new Price(DAI[chainId], G$[chainId], daiPrice, 100);
-    const priceAscDAI = new Price(CDAI[chainId], G$[chainId], cdaiPrice, 100);
+    const priceAsDAI = new Price(DAI[1], G$[chainId], daiPrice, 100);
+    const priceAscDAI = new Price(CDAI[1], G$[chainId], cdaiPrice, 100);
     return { DAI: priceAsDAI, cDAI: priceAscDAI };
   },
   (_, chainId) => chainId
