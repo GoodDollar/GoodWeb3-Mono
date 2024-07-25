@@ -27,4 +27,5 @@ export interface MicroBridgeProps {
   onBridgeStart?: () => void;
   onBridgeSuccess?: () => void;
   onBridgeFailed?: (e: Error) => void;
+  withRelay?: boolean;
 }

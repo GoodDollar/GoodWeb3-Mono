@@ -1,14 +1,13 @@
 import React, { useEffect, useCallback, useState } from "react";
 import { Box, FormControl, HStack, Pressable, Spinner, Text, VStack, WarningOutlineIcon } from "native-base";
 import { CurrencyValue } from "@usedapp/core";
-import { SupportedChains, useG$Amounts } from "@gooddollar/web3sdk-v2";
+import { SupportedChains, useG$Amounts, useG$Balance } from "@gooddollar/web3sdk-v2";
 import { isEmpty } from "lodash";
 
 import { Web3ActionButton } from "../../advanced";
 import { Image, TokenInput, TokenOutput } from "../../core";
 import { BigNumber } from "ethers";
 import { GdAmount } from "../../core/layout/BalanceGD";
-import { useBalanceHook } from "./useBalanceHook";
 
 import ArrowTabLightRight from "../../assets/svg/arrow-tab-light-right.svg";
 
@@ -79,8 +78,12 @@ export const MicroBridge = ({
   const targetChain = sourceChain === "fuse" ? "celo" : "fuse";
   const [toggleState, setToggleState] = useState<boolean>(false);
 
-  const balances = useBalanceHook() ?? {};
-  const { wei, gdValue } = balances[sourceChain] ?? {};
+  // query balances every 5 blocks, so balance is updated after bridging
+  const { G$: fuseBalance } = useG$Balance(5, 122);
+  const { G$: celoBalance } = useG$Balance(5, 42220);
+
+  const gdValue = sourceChain === "fuse" ? fuseBalance : celoBalance;
+  const wei = gdValue.value.toString();
   const [bridgeWeiAmount, setBridgeAmount] = inputTransaction;
   const [, setPendingTransaction] = pendingTransaction;
   const { isValid, reason } = useCanBridge(sourceChain, bridgeWeiAmount);
@@ -93,7 +96,7 @@ export const MicroBridge = ({
 
   const hasBalance = Number(bridgeWeiAmount) <= Number(wei);
   const isValidInput = isValid && hasBalance;
-  const reasonOf = reason || (!hasBalance && "balance") || "";
+  const reasonOf = reason || (!hasBalance && "Not enough balance") || "";
 
   const toggleChains = useCallback(() => {
     setSourceChain(targetChain);
@@ -104,7 +107,6 @@ export const MicroBridge = ({
   const triggerBridge = useCallback(async () => {
     setPendingTransaction({ bridgeWeiAmount, expectedToReceive });
     onBridgeStart?.();
-    void nextStep();
   }, [setBridging, onBridgeStart, bridgeWeiAmount, sourceChain, expectedToReceive]);
 
   useEffect(() => {
@@ -120,6 +122,10 @@ export const MicroBridge = ({
 
     setBridging(isBridging);
 
+    // show next step only once user signs tx
+    if (bridgeStatus?.status === "Mining") {
+      void nextStep();
+    }
     if (isSuccess) {
       onBridgeSuccess?.();
     }
@@ -147,7 +153,7 @@ export const MicroBridge = ({
     [sourceChain]
   );
 
-  if (isEmpty(balances)) return <Spinner variant="page-loader" size="lg" />;
+  if (isEmpty(fuseBalance) || isEmpty(celoBalance)) return <Spinner variant="page-loader" size="lg" />;
 
   const celoActiveColor = getActiveColor("celo");
   const fuseActiveColor = getActiveColor("fuse");
@@ -162,7 +168,7 @@ export const MicroBridge = ({
             </Text>
             <GdAmount
               color={celoActiveColor}
-              amount={balances.celo.gdValue}
+              amount={celoBalance}
               withDefaultSuffix={false}
               withFullBalance
               fontSize="xs"
@@ -185,7 +191,7 @@ export const MicroBridge = ({
             </Text>
             <GdAmount
               color={fuseActiveColor}
-              amount={balances.fuse.gdValue}
+              amount={fuseBalance}
               withDefaultSuffix={false}
               withFullBalance
               fontSize="xs"
