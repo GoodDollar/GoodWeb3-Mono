@@ -253,7 +253,7 @@ const BridgeHistory = ({ env }: { env: string }) => {
             Status
           </Text>
         </HStack>
-        {!historySorted || historySorted.length === 0 ? (
+        {!historySorted ? (
           <Spinner variant="page-loader" size="lg" />
         ) : (
           <FlatList
@@ -336,6 +336,7 @@ export const MicroBridgeController: FC<IMicroBridgeControllerProps> = ({
         onBridgeFailed={onBridgeFailed}
         inputTransaction={inputTransaction}
         pendingTransaction={pendingTransaction}
+        withRelay={withRelay}
       />
       {withRelay && <BridgeHistoryWithRelay />}
       {withHistory && <BridgeHistory env={defaultEnv} />}

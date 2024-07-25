@@ -50,7 +50,8 @@ export const BridgeWizard = ({
   selfRelayStatus,
   onBridgeStart,
   onBridgeSuccess,
-  onBridgeFailed
+  onBridgeFailed,
+  withRelay
 }: MicroBridgeProps) => (
   <Wizard header={<WizardWrapper {...{ bridgeRequestStatus: bridgeStatus, error, selfRelayStatus }} />}>
     <MicroBridge
@@ -71,6 +72,8 @@ export const BridgeWizard = ({
         onBridgeFailed
       }}
     />
-    <MicroBridgeStatus {...{ bridgeStatus, originChain, pendingTransaction, relayStatus, selfRelayStatus }} />
+    <MicroBridgeStatus
+      {...{ bridgeStatus, originChain, pendingTransaction, relayStatus, selfRelayStatus, withRelay }}
+    />
   </Wizard>
 );

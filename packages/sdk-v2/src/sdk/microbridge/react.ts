@@ -344,7 +344,7 @@ export const useBridgeHistory = () => {
   );
 
   if (!fuseOut || !fuseIn || !celoOut || !celoIn) {
-    return;
+    return {};
   }
 
   const celoExecuted = groupBy(celoIn?.value || [], _ => _.data.id);

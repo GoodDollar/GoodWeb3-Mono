@@ -228,8 +228,8 @@ export function useG$Balance(refresh: QueryParams["refresh"] = "never", required
   const { account } = useEthers();
   const { chainId } = useGetEnvChainId(requiredChainId);
 
-  const g$Contract = useGetContract("GoodDollar", true, "base") as IGoodDollar;
-  const goodContract = useGetContract("GReputation", true, "base") as GReputation;
+  const g$Contract = useGetContract("GoodDollar", true, "base", chainId) as IGoodDollar;
+  const goodContract = useGetContract("GReputation", true, "base", chainId) as GReputation;
   const gdxContract = useGetContract("GoodReserveCDai", true, "base", 1) as GoodReserveCDai;
 
   const { MAINNET } = SupportedChains;
@@ -268,9 +268,9 @@ export function useG$Balance(refresh: QueryParams["refresh"] = "never", required
     result => result?.value?.[0] as BigNumber | undefined
   );
 
-  const g$Balance = useG$Amount(g$Value) as CurrencyValue;
-  const goodBalance = useG$Amount(goodValue, "GOOD") as CurrencyValue;
-  const gdxBalance = useG$Amount(gdxValue, "GDX") as CurrencyValue;
+  const g$Balance = useG$Amount(g$Value, "G$", chainId) as CurrencyValue;
+  const goodBalance = useG$Amount(goodValue, "GOOD", chainId) as CurrencyValue;
+  const gdxBalance = useG$Amount(gdxValue, "GDX", 1) as CurrencyValue;
 
   const balances: G$Balances = {
     G$: g$Balance,
