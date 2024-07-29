@@ -45,7 +45,7 @@ export const VerifyUniqueModal = withTheme({ name: "BasicStyledModal" })(
             show={open}
             onClose={onClose}
             title={`Verify \n Uniqueness`}
-            content={<ModalContent />}
+            body={<ModalContent />}
             footer={<ModalFooterCta buttonText="VERIFY I'M HUMAN" action={verify} />}
             withOverlay="dark"
             withCloseButton
