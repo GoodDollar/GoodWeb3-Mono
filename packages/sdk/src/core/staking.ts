@@ -802,9 +802,7 @@ export async function approveStake(
   const req = ERC20Contract(web3, token.address)
     .methods.approve(spender, MaxApproveValue.toString())
     .send({
-      ...(protocol !== LIQUIDITY_PROTOCOL.GOODDAO
-        ? { from: account, type: "0x2" }
-        : { from: account, gasPrice: "10000000000" })
+      ...(protocol !== LIQUIDITY_PROTOCOL.GOODDAO ? { from: account, type: "0x2" } : { from: account, gasPrice: 20e9 })
     });
 
   if (onSent) req.on("transactionHash", onSent);
@@ -834,7 +832,7 @@ export async function stakeGov(
   const account = await getAccount(web3);
 
   const tokenAmount = amount.toBigNumber(token.decimals);
-  const req = contract.methods.stake(tokenAmount).send({ from: account, gasPrice: "10000000000" });
+  const req = contract.methods.stake(tokenAmount).send({ from: account, gasPrice: 20e9 });
 
   if (onSent) req.on("transactionHash", (hash: string) => onSent(hash, account));
 
@@ -908,7 +906,7 @@ export async function withdraw(
 
   let req;
   if (stake.protocol === LIQUIDITY_PROTOCOL.GOODDAO) {
-    req = contract.methods.withdrawStake(toWithdraw).send({ from: account, gasPrice: "10000000000" });
+    req = contract.methods.withdrawStake(toWithdraw).send({ from: account, gasPrice: 20e9 });
   } else
     req = contract.methods.withdrawStake(toWithdraw, withdrawIntoInterestToken).send({
       from: account,
@@ -963,7 +961,7 @@ export async function claimGoodRewards(
   const transactions: any[] = [];
   if (chainId === SupportedChainId.FUSE) {
     const contract = governanceStakingContract(web3);
-    transactions.push(contract.methods.withdrawRewards().send({ from: account, gasPrice: "10000000000" }));
+    transactions.push(contract.methods.withdrawRewards().send({ from: account, gasPrice: 20e9 }));
   } else {
     const stakersDistribution = await stakersDistributionContract(web3);
     const simpleStakingReleases = await getSimpleStakingContractAddressesV3(web3);
@@ -1006,7 +1004,7 @@ export async function claimGoodReward(
   const transactions: any[] = [];
   if (chainId === SupportedChainId.FUSE) {
     const contract = governanceStakingContract(web3);
-    transactions.push(contract.methods.withdrawRewards().send({ from: account, gasPrice: "10000000000" }));
+    transactions.push(contract.methods.withdrawRewards().send({ from: account, gasPrice: 20e9 }));
   } else {
     const stakersDistribution = await stakersDistributionContract(web3);
 

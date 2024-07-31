@@ -114,7 +114,7 @@ export async function swap(
   const { methodName, args, value } = parameters;
 
   const req = contract.methods[methodName](...args).send({
-    ...{ gasPrice: "10000000000" },
+    ...{ gasPrice: 20e9 },
     ...(value && !isZero(value) ? { value, from: account } : { from: account })
   });
 

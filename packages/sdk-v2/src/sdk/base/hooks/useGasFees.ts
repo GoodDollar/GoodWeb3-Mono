@@ -17,7 +17,7 @@ export const useGasFees = () => {
     //force gas price for celo and ethereum
     switch (chainId) {
       case 122:
-        return BigNumber.from(10e9);
+        return BigNumber.from(20e9);
       case 42220:
         return BigNumber.from(5e9);
     }
