@@ -12,25 +12,22 @@ import { DAI, CDAI, G$ } from "constants/tokens";
  * @returns {Fraction} Ratio.
  */
 export const g$ReservePrice = memoize<
-  (web3: Web3, chainId: number) => Promise<{ DAI: Price<Currency, Currency>; cDAI: Price<Currency, Currency> }>
->(
-  async (web3, chainId): Promise<{ DAI: Price<Currency, Currency>; cDAI: Price<Currency, Currency> }> => {
-    const httpProvider = new Web3.providers.HttpProvider("https://rpc.ankr.com/eth");
-    const mainnetWeb3 = new Web3(httpProvider);
-    const contract = getContract(
-      1,
-      "GoodReserveCDai",
-      ["function currentPrice() view returns (uint256)", "function currentPriceDAI() view returns (uint256)"],
-      mainnetWeb3
-    );
+  () => Promise<{ DAI: Price<Currency, Currency>; cDAI: Price<Currency, Currency> }>
+>(async (): Promise<{ DAI: Price<Currency, Currency>; cDAI: Price<Currency, Currency> }> => {
+  const httpProvider = new Web3.providers.HttpProvider("https://rpc.ankr.com/eth");
+  const mainnetWeb3 = new Web3(httpProvider);
+  const contract = getContract(
+    1,
+    "GoodReserveCDai",
+    ["function currentPrice() view returns (uint256)", "function currentPriceDAI() view returns (uint256)"],
+    mainnetWeb3
+  );
 
-    const [cdaiPrice, daiPrice] = await Promise.all([contract.currentPrice(), contract.currentPriceDAI()]);
+  const [cdaiPrice, daiPrice] = await Promise.all([contract.currentPrice(), contract.currentPriceDAI()]);
 
-    delayedCacheClear(g$ReservePrice);
+  delayedCacheClear(g$ReservePrice);
 
-    const priceAsDAI = new Price(DAI[1], G$[chainId], daiPrice, 100);
-    const priceAscDAI = new Price(CDAI[1], G$[chainId], cdaiPrice, 100);
-    return { DAI: priceAsDAI, cDAI: priceAscDAI };
-  },
-  (_, chainId) => chainId
-);
+  const priceAsDAI = new Price(DAI[1], G$[1], daiPrice, 100);
+  const priceAscDAI = new Price(CDAI[1], G$[1], cdaiPrice, 100);
+  return { DAI: priceAsDAI, cDAI: priceAscDAI };
+});

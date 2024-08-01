@@ -302,7 +302,7 @@ export async function getBuyMeta(
       trade = g$trade.trade;
     }
 
-    const { cDAI: price } = await g$ReservePrice(web3, chainId);
+    const { cDAI: price } = await g$ReservePrice();
     priceImpact = computePriceImpact(price, inputCDAIValue, minimumOutputAmount);
   }
 
