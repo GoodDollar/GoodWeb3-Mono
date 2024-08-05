@@ -4,7 +4,6 @@ import { AsyncStorage } from "@gooddollar/web3sdk-v2";
 import { Text } from "native-base";
 
 import BasicStyledModal, { ModalFooterCta } from "./BasicStyledModal";
-import withTranslations from "../../../theme/hoc/withMultiTranslations";
 
 const youSureContent = {
   deleteAccount: {
@@ -29,13 +28,9 @@ interface YouSureModalProps {
   open: boolean;
   type: keyof typeof youSureContent;
   dontShowAgainKey?: string | undefined;
-  dontShowAgainCopy?: string;
   styleProps?: any;
   action: () => void;
   onClose: () => void;
-  title: string;
-  content: string;
-  buttonText: string;
 }
 
 /**
@@ -47,20 +42,10 @@ interface YouSureModalProps {
  * @param onClose - The action to be executed when the user closes the modal.
  * @param dontShowAgainKey (optional) - The key to store the user's preference of not showing the modal again.
  */
-export const YouSureModalComponent = ({
-  open,
-  action,
-  onClose,
-  dontShowAgainKey,
-  dontShowAgainCopy,
-  styleProps,
-  title,
-  content,
-  buttonText,
-  ...props
-}: YouSureModalProps) => {
+export const YouSureModal = ({ open, action, onClose, dontShowAgainKey, styleProps, ...props }: YouSureModalProps) => {
   const [dontShowAgain, setDontShowAgain] = useState(false);
   const { buttonStyle } = styleProps || {};
+  const { title, content, buttonText } = youSureContent[props.type as keyof typeof youSureContent];
 
   useEffect(() => {
     void (async () => {
@@ -84,7 +69,7 @@ export const YouSureModalComponent = ({
           action={action}
           buttonText={buttonText}
           dontShowAgainKey={dontShowAgainKey}
-          dontShowAgainCopy={dontShowAgainCopy}
+          dontShowAgainCopy={/*i18n*/ "Don't show this again"}
           styleProps={buttonStyle}
         />
       }
@@ -92,13 +77,4 @@ export const YouSureModalComponent = ({
       withCloseButton
     />
   );
-};
-
-export const YouSureModal = (props: any) => {
-  const { title, content, buttonText } = youSureContent[props.type as keyof typeof youSureContent];
-  const translationIds = { title, content, buttonText, dontShowAgainCopy: /*i18n*/ "Don't show this again" };
-
-  const ModalWithTranslations = withTranslations(YouSureModalComponent, translationIds);
-
-  return <ModalWithTranslations {...props} />;
 };

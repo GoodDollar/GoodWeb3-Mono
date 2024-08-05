@@ -3,7 +3,7 @@ import { Link, Text } from "native-base";
 
 import { useFVModalAction } from "../../../hooks/useFVModalAction";
 import BasicStyledModal, { ModalFooterCta } from "./BasicStyledModal";
-import { TxModalComponent as TxModal } from "./TxModal";
+import { TxModal } from "./TxModal";
 
 const ModalContent = () => (
   <Text variant="sm-grey-650">

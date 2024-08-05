@@ -4,8 +4,6 @@ import { Text } from "native-base";
 import { TransactionStatus } from "@usedapp/core";
 
 import BasicStyledModal from "./BasicStyledModal";
-import withTranslations from "../../../theme/hoc/withMultiTranslations";
-import { linksNew } from "../../constants";
 import { LearnButton } from "../../buttons";
 
 interface ITxModalProps {
@@ -14,10 +12,6 @@ interface ITxModalProps {
   onClose?: () => void;
   title?: string;
   content?: string;
-  label?: string;
-  learnTitle?: string;
-  icon?: any;
-  link?: string;
 }
 
 const txModalCopy = {
@@ -38,47 +32,27 @@ const txModalCopy = {
 
 const TxModalContent = ({ content }: { content: string }) => <Text variant="sm-grey-650">{content}</Text>;
 
-const TxModal: React.FC<ITxModalProps> = ({
+export const TxModal: React.FC<ITxModalProps> = ({
   isPending,
   onClose = noop,
-  title = "",
-  content = "",
-  learnTitle = "",
-  label,
-  icon,
-  link,
+
+  type,
   ...props
-}) => (
-  <BasicStyledModal
-    {...props}
-    type="learn"
-    show={isPending}
-    onClose={onClose}
-    title={title}
-    body={<TxModalContent content={content} />}
-    footer={
-      <LearnButton
-        {...{
-          icon,
-          label,
-          learnTitle,
-          link
-        }}
-      />
-    }
-    withOverlay="dark"
-    withCloseButton
-  />
-);
-
-export const TxModalComponent = (props: ITxModalProps) => {
-  const { title, content } = txModalCopy[props.type];
-  const { link, label, icon } = linksNew[props.type];
-
-  const translationIds = { title, content, label, learnTitle: /*i18n*/ "Learn" };
-  const TxModalWithTranslations = withTranslations(TxModal, translationIds, { icon, link });
-
-  return <TxModalWithTranslations {...props} />;
+}) => {
+  const { title, content } = txModalCopy[type];
+  return (
+    <BasicStyledModal
+      {...props}
+      type="learn"
+      show={isPending}
+      onClose={onClose}
+      title={title}
+      body={<TxModalContent content={content} />}
+      footer={<LearnButton type={type} />}
+      withOverlay="dark"
+      withCloseButton
+    />
+  );
 };
 
 export const TxModalStatus = ({

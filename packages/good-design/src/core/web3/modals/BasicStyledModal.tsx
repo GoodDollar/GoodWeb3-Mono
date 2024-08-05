@@ -4,7 +4,7 @@ import { AsyncStorage } from "@gooddollar/web3sdk-v2";
 
 import { withTheme } from "../../../theme/hoc/withTheme";
 import { Image } from "../../images";
-import { Title } from "../../layout";
+import { TransTitle } from "../../layout";
 import { useModal } from "../../../hooks";
 import { LinkButton } from "../../buttons/StyledLinkButton";
 
@@ -43,9 +43,7 @@ export type StyledModalProps = CtaOrLearnModalProps | AltModalProps;
 
 const ModalHeader = ({ title, variant = "title-gdblue" }: { title: string; variant: any }) => (
   <Center backgroundColor="white" textAlign="center" paddingBottom={0}>
-    <Title variant={variant} fontSize="xl">
-      {title}
-    </Title>
+    <TransTitle t={title} variant={variant} fontSize="xl" />
   </Center>
 );
 

@@ -3,10 +3,8 @@ import { useConfig } from "@usedapp/core";
 import { useSwitchNetwork } from "@gooddollar/web3sdk-v2";
 import { Text } from "native-base";
 
-import { linksNew } from "../../constants";
 import BasicStyledModal from "./BasicStyledModal";
 import { LearnButton } from "../../buttons";
-import withTranslations from "../../../theme/hoc/withMultiTranslations";
 
 const SwitchChainBody = ({ networkName }: { networkName: string | undefined }) => (
   <Text>To complete this action, switch to {networkName} in your wallet.</Text>
@@ -19,9 +17,7 @@ const SwitchChainBody = ({ networkName }: { networkName: string | undefined }) =
  * @param children
  * @returns JSX.Element
  */
-export const SwitchChainModal: FC<
-  PropsWithChildren<{ learnTitle?: string; label?: string; icon?: any; link?: string }>
-> = ({ children, learnTitle = "", label = "", icon, link, ...props }) => {
+export const SwitchChainModal: FC<PropsWithChildren> = ({ children, ...props }) => {
   const config = useConfig();
   const [requestedChain, setRequestedChain] = useState(0);
   const { setOnSwitchNetwork } = useSwitchNetwork();
@@ -52,34 +48,10 @@ export const SwitchChainModal: FC<
         show={show}
         onClose={() => setShow(false)}
         type="learn"
-        footer={
-          <LearnButton
-            {...{
-              label: label,
-              icon: icon,
-              learnTitle: learnTitle,
-              link: link
-            }}
-          />
-        }
+        footer={<LearnButton type={"network"} />}
         withCloseButton
       />
       {children}
     </Fragment>
   );
-};
-
-export const SwitchChainModalComponent: FC<PropsWithChildren<{ type: keyof typeof linksNew }>> = ({
-  type,
-  children
-}) => {
-  const { link, label, icon } = linksNew[type];
-
-  const SwitchChainWithTranslations = withTranslations(
-    SwitchChainModal,
-    { label, learnTitle: "Learn" },
-    { link, icon }
-  );
-
-  return <SwitchChainWithTranslations>{children}</SwitchChainWithTranslations>;
 };

@@ -1,20 +1,23 @@
 import React, { useCallback } from "react";
 import { Box, Text } from "native-base";
 import { openLink } from "@gooddollar/web3sdk-v2";
+import { Trans } from "@lingui/react";
 
 import BasePressable from "./BasePressable";
 import { Image } from "../images";
+import { linksNew } from "../constants";
 
 export type learnSources = "send" | "bridging" | "network" | "sign" | "identity";
 
 type LearnButtonType = {
   icon?: any;
   label?: string;
-  learnTitle?: string;
   link?: string;
+  type: keyof typeof linksNew;
 };
 
-const LearnButton = ({ icon, label, learnTitle, link }: LearnButtonType) => {
+const LearnButton = ({ type }: LearnButtonType) => {
+  const { link, label, icon } = linksNew[type];
   const openNotionTab = useCallback(async () => {
     if (link) {
       await openLink(link, "_blank");
@@ -25,10 +28,10 @@ const LearnButton = ({ icon, label, learnTitle, link }: LearnButtonType) => {
     <BasePressable variant="externalLink" onPress={openNotionTab} w="100%">
       <Box display="flex" w="60%" alignSelf="flex-start" p={2}>
         <Text color="lightBlue" fontSize="sm">
-          {learnTitle}
+          <Trans id={`Learn`} />
         </Text>
         <Text color="main" fontSize="sm" fontWeight="normal" fontFamily="subheading" textDecoration>
-          {label}
+          <Trans id={label ?? ""} message={label} />
         </Text>
       </Box>
       <Box>

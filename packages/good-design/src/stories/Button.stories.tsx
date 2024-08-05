@@ -2,15 +2,15 @@ import { ExternalProvider } from "@ethersproject/providers";
 import { Celo, Fuse, Web3Provider } from "@gooddollar/web3sdk-v2";
 import { Config, DAppProvider, Mainnet, useEthers } from "@usedapp/core";
 import { ethers, getDefaultProvider } from "ethers";
-import React, { FC, PropsWithChildren, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import BaseButton from "../core/buttons/BaseButton";
 import GoodButton from "../core/buttons/GoodButton";
 import ClaimButton from "../core/buttons/ClaimButton";
 import LearnButton from "../core/buttons/LearnButton";
 import { BasePressable } from "../core";
-import withTranslations from "../theme/hoc/withMultiTranslations";
+import { TxModal } from "../core";
 
-import { GoodUIi18nProvider, useGoodUILanguage } from "../theme";
+import { useGoodUILanguage } from "../theme";
 import { VStack } from "native-base";
 import { linksNew } from "../core/constants";
 
@@ -28,37 +28,33 @@ export const BaseButtonWithThemeExample = () => {
   );
 };
 
-export const TransLearnButton: FC<PropsWithChildren> = () => {
-  const { link, label, icon } = linksNew["network"];
-
-  const LearnButtonWithTranslations = withTranslations(LearnButton, { label, learnTitle: "Learn" }, { link, icon });
-
-  return <LearnButtonWithTranslations />;
-};
-
 const LinguiExample = () => {
   const { setLanguage } = useGoodUILanguage();
+  const [modalOpen, setModalOpen] = useState(false);
+  const { link, label, icon } = linksNew["network"];
+
+  const openModal = useCallback(() => {
+    setModalOpen(prev => !prev);
+  }, []);
 
   return (
     <VStack width="343">
+      <TxModal type="sign" isPending={modalOpen} link={link} label={label} icon={icon} />
       <GoodButton width="200" onPress={() => setLanguage("en")} backgroundColor="primary" color="white">
         English
       </GoodButton>
       <GoodButton width="200" onPress={() => setLanguage("es-419")} backgroundColor="primary" color="white">
         Spanish-Latin
       </GoodButton>
-      <TransLearnButton />
+      <LearnButton label={label} icon={icon} link={link} />;
+      <GoodButton width="200" onPress={openModal}>
+        Open Modal
+      </GoodButton>
     </VStack>
   );
 };
 
-export const LearnButtonWithTranslation = () => {
-  return (
-    <GoodUIi18nProvider>
-      <LinguiExample />
-    </GoodUIi18nProvider>
-  );
-};
+export const LearnButtonWithTranslation = () => <LinguiExample />;
 
 const config: Config = {
   networks: [Mainnet, Fuse, Celo],
