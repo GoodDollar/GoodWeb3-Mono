@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Center, Checkbox, HStack, Text, VStack } from "native-base";
+import { AsyncStorage } from "@gooddollar/web3sdk-v2";
 
 import { withTheme } from "../../../theme/hoc/withTheme";
 import { Image } from "../../images";
-import { Title } from "../../layout";
+import { TransTitle } from "../../layout";
 import { useModal } from "../../../hooks";
 import { LinkButton } from "../../buttons/StyledLinkButton";
-import { LearnButton } from "../../buttons";
-import { learnSources } from "../../buttons/LearnButton";
+
 import { SpinnerCheckMark } from "../../animated";
 import BillyCelebration from "../../../assets/images/billy-celebration.png";
 import BillyOops from "../../../assets/images/billy-oops.png";
-import { AsyncStorage } from "@gooddollar/web3sdk-v2";
 
 const LocalText = ({ ...props }) => <Text {...props} />;
 
@@ -44,9 +43,7 @@ export type StyledModalProps = CtaOrLearnModalProps | AltModalProps;
 
 const ModalHeader = ({ title, variant = "title-gdblue" }: { title: string; variant: any }) => (
   <Center backgroundColor="white" textAlign="center" paddingBottom={0}>
-    <Title variant={variant} fontSize="xl">
-      {title}
-    </Title>
+    <TransTitle t={title} variant={variant} fontSize="xl" />
   </Center>
 );
 
@@ -69,11 +66,13 @@ export const ModalFooterCta = ({
   buttonText,
   dontShowAgainKey,
   action,
+  dontShowAgainCopy,
   styleProps
 }: {
   buttonText: string;
   dontShowAgainKey?: string | undefined;
   styleProps?: any;
+  dontShowAgainCopy?: string;
   action: () => void;
 }) => {
   const [dontShowAgain, setDontShowAgain] = useState(false);
@@ -94,11 +93,10 @@ export const ModalFooterCta = ({
             variant="styled-blue"
             onChange={() => setDontShowAgain(prev => !prev)}
             colorScheme="info"
-            value="female"
+            value="dontShowAgain"
           >
-            {/* user-select is not supported by native-base, why we use a localized wrapper */}
             <LocalText variant="sm-grey-650" style={{ userSelect: "none" }}>
-              Don't show this again
+              {dontShowAgainCopy}
             </LocalText>
           </Checkbox>
         </HStack>
@@ -111,18 +109,6 @@ export const ModalFooterCta = ({
 export const ModalFooterCtaX = ({ extUrl, buttonText }: { extUrl: string; buttonText: string }) => (
   <Center padding="0" w="100%">
     <LinkButton buttonText={buttonText} url={extUrl} />
-  </Center>
-);
-
-export const ModalFooterLearn = ({
-  source,
-  altSource = { link: "", label: "", icon: null }
-}: {
-  source?: learnSources;
-  altSource?: { link: string; label: string; icon: any };
-}) => (
-  <Center padding="0" w="100%">
-    <LearnButton {...(source ? { source: source } : { altSource: altSource })} />
   </Center>
 );
 

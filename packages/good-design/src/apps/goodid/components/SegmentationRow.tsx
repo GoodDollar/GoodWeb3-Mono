@@ -6,15 +6,15 @@ import { Title } from "../../../core/layout";
 import { formatVerifiedValues } from "../../../utils/formatVerifiedValues";
 
 export const typeLabelsDispute = {
-  Gender: "I am",
-  Age: "Aged",
-  Location: "From"
+  Gender: /*i18n*/ "I am",
+  Age: /*i18n*/ "Aged",
+  Location: /*i18n*/ "From"
 };
 
 export const typeLabelsSegmentation = {
-  Gender: "Are you",
-  Age: "Aged",
-  Location: "In"
+  Gender: /*i18n*/ "Are you",
+  Age: /*i18n*/ "Aged",
+  Location: /*i18n*/ "In"
 };
 
 const SegmentationRow = ({

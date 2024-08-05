@@ -3,7 +3,8 @@ import { useConfig } from "@usedapp/core";
 import { useSwitchNetwork } from "@gooddollar/web3sdk-v2";
 import { Text } from "native-base";
 
-import BasicStyledModal, { ModalFooterLearn } from "./BasicStyledModal";
+import BasicStyledModal from "./BasicStyledModal";
+import { LearnButton } from "../../buttons";
 
 const SwitchChainBody = ({ networkName }: { networkName: string | undefined }) => (
   <Text>To complete this action, switch to {networkName} in your wallet.</Text>
@@ -47,7 +48,7 @@ export const SwitchChainModal: FC<PropsWithChildren> = ({ children, ...props }) 
         show={show}
         onClose={() => setShow(false)}
         type="learn"
-        footer={<ModalFooterLearn source="network" />}
+        footer={<LearnButton type={"network"} />}
         withCloseButton
       />
       {children}

@@ -1,7 +1,8 @@
 import React from "react";
-import { Link, Text } from "native-base";
+import { Link } from "native-base";
 
 import { withTheme } from "../../theme/hoc/withTheme";
+import { TransText } from "../layout";
 
 export const LinkButton = withTheme({ name: "LinkButton" })(
   ({ url, buttonText, onPress, ...styleProps }: { buttonText: string; url?: string; onPress?: () => void }) => (
@@ -21,9 +22,14 @@ export const LinkButton = withTheme({ name: "LinkButton" })(
       w="100%"
       {...styleProps}
     >
-      <Text textAlign="center" fontFamily="subheading" color="white" fontSize="sm" fontWeight="700">
-        {buttonText}
-      </Text>
+      <TransText
+        t={buttonText}
+        textAlign="center"
+        fontFamily="subheading"
+        color="white"
+        fontSize="sm"
+        fontWeight="700"
+      />
     </Link>
   )
 );

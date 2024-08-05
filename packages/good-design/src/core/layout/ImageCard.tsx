@@ -1,11 +1,12 @@
 import React, { useCallback } from "react";
-import { Center, HStack, ICenterProps, Text } from "native-base";
+import { Center, HStack, ICenterProps } from "native-base";
 import { openLink } from "@gooddollar/web3sdk-v2";
 
 import { BasePressable } from "../buttons";
 import { Image } from "../images";
 import { cardShadow } from "../../theme";
 import { withTheme } from "../../theme/hoc/withTheme";
+import { TransText } from "./Trans";
 
 interface IImageCard extends ICenterProps {
   picture?: string;
@@ -107,9 +108,7 @@ const ImageCard = withTheme({ name: "ImageCard", skipProps: ["content", "footer"
         <Center {...props}>
           {picture && <Image src={picture} alt="Image" {...pictureStyles} />}
           <Center width="100%" alignItems="flex-start" {...containerStyles}>
-            <Text fontFamily="subheading" {...titleStyles}>
-              {title}
-            </Text>
+            <TransText t={title} fontFamily="subheading" {...titleStyles} />
             {content}
             <HStack {...footerStyles}>{footer}</HStack>
           </Center>

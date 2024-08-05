@@ -1,10 +1,9 @@
 import React from "react";
-import { Center, VStack, Text } from "native-base";
+import { Center, VStack } from "native-base";
 import { useWizard } from "react-use-wizard";
 
 import { Image } from "../../../core/images";
-import { GoodButton } from "../../../core/buttons";
-import { Title } from "../../../core/layout";
+import { TransButton, TransText, TransTitle } from "../../../core/layout";
 
 import BillyDispute from "../../../assets/images/billy-dispute.png";
 
@@ -15,18 +14,20 @@ export const DisputeThanks = () => {
   return (
     <VStack space={8} width="100%">
       <VStack space={8}>
-        <Title variant="title-gdblue">{`Thanks for letting us know!`}</Title>
-        <Text variant="sm-grey-650" textAlign="center">
-          {`Heads-up that information you’ve corrected may show as “Unverified” on your GoodID. \n\n This will not affect your ability to claim UBI!`}
-        </Text>
+        <TransTitle t={"Thanks for letting us know!"} variant="title-gdblue" />
+        <TransText
+          t={
+            /*i18n*/ "Heads-up that information you’ve corrected may show as “Unverified” on your GoodID. \n\n This will not affect your ability to claim UBI!"
+          }
+          variant="sm-grey-650"
+          textAlign="center"
+        />
         <Center>
           <Image source={BillyDispute} w="265" h="116" style={{ resizeMode: "contain" }} />
         </Center>
       </VStack>
       <VStack space={6} justifyContent="center" alignItems="center">
-        <GoodButton width="100%" maxWidth="343" onPress={nextStep}>
-          Next
-        </GoodButton>
+        <TransButton t={/*i18n*/ "Next"} width="100%" maxW="343" variant="primary" onPress={nextStep} />
       </VStack>
     </VStack>
   );

@@ -24,6 +24,6 @@
     "declarationMap": true,
     "composite": true,
   },
-  "include": ["src/**/*", "src/**/*.json"],
-  "exclude": ["node_modules", "../../node_modules", "src/stories", "**/*.stories.tsx"]
+  "include": ["src/**/*", "src/**/*.json", "src/locales/**/*", "src/locales/index.ts"],
+  "exclude": ["node_modules", "../../node_modules", "src/stories", "**/*.stories.tsx", "src/locales/gen_supported_locales.js",]
 }

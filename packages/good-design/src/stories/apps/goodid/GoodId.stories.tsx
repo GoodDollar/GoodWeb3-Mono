@@ -9,10 +9,11 @@ import {
   useIdentityExpiryDate,
   useIsAddressVerified
 } from "@gooddollar/web3sdk-v2";
-import { Text, VStack } from "native-base";
+import { HStack, Text, VStack } from "native-base";
 import { Wizard } from "react-use-wizard";
 import moment from "moment";
 
+import { GoodButton } from "../../../core/buttons";
 import { W3Wrapper } from "../../W3Wrapper";
 import { useGoodId } from "../../../hooks/useGoodId";
 import { OffersAgreement } from "../../../apps/goodid/screens/OffersAgreement";
@@ -26,6 +27,7 @@ import {
   SegmentationDispute
 } from "../../../apps/goodid/screens";
 import { SegmentationController, OnboardController } from "../../../apps/goodid/controllers";
+import { GoodUIi18nProvider, useGoodUILanguage } from "../../../theme";
 
 const GoodIdWrapper = ({ children }) => {
   return <GoodIdContextProvider>{children}</GoodIdContextProvider>;
@@ -143,20 +145,22 @@ export const OnboardScreenExample = {
   }
 };
 
-export const OnboardFlowExample: Meta<React.ComponentProps<typeof OnboardController>> = {
+export const OnboardFlowExample: Meta<React.ComponentProps<typeof OnboardController> & { defaultLanguage: string }> = {
   decorators: [
     (Story: any) => (
-      <GoodIdWrapper>
-        <W3Wrapper withMetaMask={true} env="staging">
-          <Story />
-        </W3Wrapper>
-      </GoodIdWrapper>
+      <GoodUIi18nProvider defaultLanguage="es-419">
+        <GoodIdWrapper>
+          <W3Wrapper withMetaMask={true} env="staging">
+            <Story />
+          </W3Wrapper>
+        </GoodIdWrapper>
+      </GoodUIi18nProvider>
     )
   ],
   render: args => {
-    const { account } = useEthers();
-    console.log({ account });
-    args.account = account || args.account;
+    // const { account } = useEthers();
+    const { setLanguage } = useGoodUILanguage();
+
     return (
       <VStack>
         <Text w="100%" textAlign="center" fontWeight="bold" my="4">
@@ -164,6 +168,11 @@ export const OnboardFlowExample: Meta<React.ComponentProps<typeof OnboardControl
 Also reset your location permissions for the domain. 
 If you don't see a onboard screen, this means there is still a permission 'tos-accepted' in your local-storage.`}
         </Text>
+        <HStack width="200">
+          <GoodButton onPress={() => setLanguage("es-419")}>Spanish</GoodButton>
+          <GoodButton onPress={() => setLanguage("en")}>English</GoodButton>
+        </HStack>
+
         <OnboardController {...args} />
       </VStack>
     );
@@ -289,10 +298,15 @@ export const CheckAvailableOffersExample: Meta<AvailableOffersPropsAndArgs> = {
         }
       }
     ];
+    const { setLanguage } = useGoodUILanguage();
     const availableOffers = useCheckAvailableOffers({ account: account ?? args.account, pools: mockPool });
 
     return (
       <VStack>
+        <HStack width="200">
+          <GoodButton onPress={() => setLanguage("en")}>English</GoodButton>
+          <GoodButton onPress={() => setLanguage("es-419")}>Spanish</GoodButton>
+        </HStack>
         <Text fontWeight="bold" my="4" textAlign="center" w="100%">
           {`If you see finished demo change in the controls the country-code the country of your certificate. \n If you have no certificates, go through the segmentation or onboard flow stories to get one.`}
         </Text>
@@ -302,6 +316,7 @@ export const CheckAvailableOffersExample: Meta<AvailableOffersPropsAndArgs> = {
             alert("Finished demo");
           }}
           availableOffers={availableOffers}
+          withNavBar={true}
         />
       </VStack>
     );
@@ -324,12 +339,21 @@ export default {
   component: GoodIdCard,
   decorators: [
     (Story: any) => (
-      <GoodIdWrapper>
-        <W3Wrapper withMetaMask={true} env="fuse">
-          <Story />
-        </W3Wrapper>
-      </GoodIdWrapper>
+      <GoodUIi18nProvider defaultLanguage="es-419">
+        <GoodIdWrapper>
+          <W3Wrapper withMetaMask={true} env="fuse">
+            <Story />
+          </W3Wrapper>
+        </GoodIdWrapper>
+      </GoodUIi18nProvider>
     )
   ],
-  argTypes: {}
+  argTypes: {
+    language: {
+      description: "Set the language of the UI",
+      control: {
+        type: "text"
+      }
+    }
+  }
 };

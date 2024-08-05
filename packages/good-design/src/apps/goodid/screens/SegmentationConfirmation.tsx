@@ -3,6 +3,7 @@ import { IStackProps, VStack, Text } from "native-base";
 
 import { noop } from "lodash";
 import { useWizard } from "react-use-wizard";
+import { Trans } from "@lingui/react";
 
 import { Title } from "../../../core/layout";
 import GoodIdCard from "../components/GoodIdCard";
@@ -26,7 +27,12 @@ const SegmentationConfirmation = withTheme({ name: "SegmentationConfirmation" })
     const { innerContainer, button } = styles ?? {};
 
     return isWhitelisted === undefined || !account ? (
-      <LoaderModal title={`We are creating \n your GoodID`} overlay="dark" loading={true} onClose={noop} />
+      <Trans
+        id={"We are creating \n your GoodID"}
+        render={({ translation }: { translation: any }) => (
+          <LoaderModal title={translation} overlay="dark" loading={true} onClose={noop} />
+        )}
+      />
     ) : (
       <VStack space={200} width={"100%"} {...props}>
         <VStack space={6} alignItems="center" {...innerContainer}>

@@ -1,8 +1,8 @@
 import React from "react";
-import { Container, Heading, HStack, Text, VStack, IContainerProps, Spinner } from "native-base";
+import { Container, HStack, Text, VStack, IContainerProps, Spinner } from "native-base";
 
 import { withTheme } from "../../../theme";
-import { Title, TxModal } from "../../../core";
+import { TransText, TransTitle, TransHeading, TxModal } from "../../../core";
 import { BaseButton } from "../../../core/buttons";
 import { GoodIdCard } from "../components";
 import SvgXml from "../../../core/images/SvgXml";
@@ -69,14 +69,15 @@ export const OnboardScreen = withTheme({ name: "OnboardScreen" })(
 
     if (isWhitelisted === undefined) return <Spinner variant="page-loader" size="lg" />;
 
+    const titleCopy = isWhitelisted
+      ? /*i18n*/ "Renew your GoodID to claim UBI"
+      : /*i18n*/ "Get your GoodID to claim UBI";
     return (
       <Container {...props}>
         <TxModal type="identity" isPending={isPending} />
 
         <VStack space="6" justifyContent="center" alignItems="center" width="100%">
-          <Title variant="title-gdblue" fontSize="xl" alignSelf="center">
-            {isWhitelisted ? `Renew` : `Get`} your GoodID to claim UBI
-          </Title>
+          <TransTitle t={titleCopy} variant="title-gdblue" fontSize="xl" alignSelf="center" />
 
           <VStack {...innerContainer}>
             {account ? (
@@ -92,9 +93,7 @@ export const OnboardScreen = withTheme({ name: "OnboardScreen" })(
             ) : null}
 
             <VStack space={2} w="100%">
-              <Heading fontSize="md" color="goodGrey.600">
-                It unlocks access to:
-              </Heading>
+              <TransHeading t={/*i18n*/ `It unlocks access to:`} fontSize="md" color="goodGrey.600" />
               {accessList.map(({ label, icon }, index) => (
                 <HStack key={label} space={2}>
                   <SvgXml
@@ -111,17 +110,24 @@ export const OnboardScreen = withTheme({ name: "OnboardScreen" })(
               <VStack space={10}>
                 <HStack space={2} marginTop={2}>
                   <SvgXml src={StopWatchSvg} width="20" height="20" />
-                  <Text fontFamily="subheading" fontSize="sm" color="primary">
-                    Verification takes 2 minutes
-                  </Text>
+                  <TransText
+                    t={/*i18n*/ `Verification takes 2 minutes`}
+                    fontFamily="subheading"
+                    fontSize="sm"
+                    color="primary"
+                  />
                 </HStack>
               </VStack>
             </VStack>
           </VStack>
 
-          <Text variant="browse-wrap" alignSelf={"center"}>
-            {` By clicking on ”I accept, verify me”, you are accepting our Terms of Use and Privacy Policy. Per this policy you agree to let us collect information such as your gender and age.`}
-          </Text>
+          <TransText
+            variant="browse-wrap"
+            alignSelf={"center"}
+            t={
+              /*18n*/ `By clicking on ”I accept, verify me”, you are accepting our Terms of Use and Privacy Policy. Per this policy you agree to let us collect information such as your gender and age.`
+            }
+          />
 
           <VStack alignSelf={"center"}>
             <BaseButton onPress={onAccept} text="I ACCEPT, VERIFY ME" maxW={343} variant="standard-blue" />

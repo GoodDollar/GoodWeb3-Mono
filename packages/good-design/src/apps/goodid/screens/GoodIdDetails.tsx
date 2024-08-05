@@ -8,7 +8,7 @@ import { GoodIdCard } from "../components";
 import { YouSureModal } from "../../../core/web3/modals";
 
 import { Image } from "../../../core/images";
-import { Title } from "../../../core/layout";
+import { Title, TransText } from "../../../core/layout";
 import { Web3ActionButton } from "../../../advanced";
 import { truncateMiddle } from "../../../utils";
 import { TouchableOpacity } from "react-native";
@@ -69,7 +69,7 @@ const FaceId = ({ ...props }) => {
       <HStack {...props}>
         <Image source={FaceIcon} w="42" h="42" backgroundColor="goodBlack.400" borderRadius="50" resizeMode="center" />
         <VStack width="100%" flexShrink={1}>
-          <Text variant="sm-grey-700">FaceId</Text>
+          <TransText t={/*i18n*/ "FaceId"} variant="sm-grey-700" />
           {truncFaceId ? <Text variant="sm-grey-400">{truncFaceId}</Text> : null}
         </VStack>
         {!truncFaceId ? (
@@ -126,10 +126,13 @@ export const GoodIdDetails = withTheme({ name: "GoodIdDetails" })(
         {withHeader ? (
           <VStack {...header}>
             <Title variant="title-gdblue" fontSize="2xl">{`GoodID`}</Title>
-            <Text
+            <TransText
+              t={
+                /*i18n*/ "Your GoodID unlocks access to UBI, financial services, humanitarian funds and \n other special offers and opportunities to earn GoodDollars.`"
+              }
               variant="sm-grey-650"
               textAlign="center"
-            >{`Your GoodID unlocks access to UBI, financial services, humanitarian funds and \n other special offers and opportunities to earn GoodDollars.`}</Text>
+            />
           </VStack>
         ) : null}
 
@@ -153,7 +156,7 @@ export const GoodIdDetails = withTheme({ name: "GoodIdDetails" })(
                 resizeMode="center"
               />
               <VStack flexShrink={1} width="100%">
-                <Text variant="sm-grey-700">My Wallet Address</Text>
+                <TransText t={/*i18n*/ "My Wallet Address"} variant="sm-grey-700" />
                 <Text variant="sm-grey-400">{truncAccount}</Text>
               </VStack>
               <ActionButtonRound onPress={copyAddress} icon={CopyIcon} color="primary" />
@@ -161,10 +164,13 @@ export const GoodIdDetails = withTheme({ name: "GoodIdDetails" })(
             <FaceId {...section} />
           </VStack>
         </VStack>
-        <Text
+        <TransText
+          t={
+            /*i18n*/ "Attention: GoodDollar-verifying a new wallet address can only be \n done 24h after deleting your old face-id"
+          }
           variant="browse-wrap"
           textAlign="center"
-        >{`Attention: GoodDollar-verifying a new wallet address can only be \n done 24h after deleting your old face-id`}</Text>
+        />
       </VStack>
     );
   }

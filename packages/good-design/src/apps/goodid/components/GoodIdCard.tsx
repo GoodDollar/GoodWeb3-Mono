@@ -113,9 +113,11 @@ const GoodIdCard = withTheme({ name: "GoodIdCard", skipProps: "certificates" })(
             ))}
         </HStack>
         <HStack>
-          <Text variant="sm-grey-650" fontSize="2xs" {...footer}>
-            {`Expires on ` + expiryDate}
-          </Text>
+          {expiryDate ? (
+            <Text variant="sm-grey-650" fontSize="2xs" {...footer}>
+              {`Expires on ` + expiryDate}
+            </Text>
+          ) : null}
         </HStack>
       </VStack>
     );
