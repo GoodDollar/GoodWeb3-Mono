@@ -49,7 +49,8 @@ jobs:
             ${{ runner.os }}-yarn-good-design
       - name: "build"
         run: |
-
+          yarn workspace @gooddollar/web3sdk-v2 install --immutable
+          yarn workspace @gooddollar/web3sdk-v2 build:release
           yarn workspace @gooddollar/good-design install --immutable
           yarn workspace @gooddollar/good-design build:release
 
@@ -60,8 +61,9 @@ jobs:
           git config --global user.email "${{ env.git_email }}"
           git config --global user.name "${{ env.git_username }}"
           USER_INPUT=${{ github.event.inputs.bumpversion }}          
-          VERSION=${USER_INPUT:-"patch"}          
-          export MSG=`npm version ${VERSION}`
+          VERSION=${USER_INPUT:-"patch"}  
+          yarn version $VERSION
+          export MSG=`npm pkg get version --workspaces=false`
           git pull
           git add . 
           git commit -m "${MSG}"

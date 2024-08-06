@@ -18,9 +18,9 @@ export enum SupportedV2Networks {
 }
 
 export interface G$Balances {
-  G$: CurrencyValue | undefined;
-  GOOD: CurrencyValue | undefined;
-  GDX: CurrencyValue | undefined;
+  G$: CurrencyValue;
+  GOOD: CurrencyValue;
+  GDX: CurrencyValue;
 }
 
 export type G$Token = keyof G$Balances;

@@ -295,7 +295,7 @@ export async function getSellMeta(
       ({ amount: outputAmount, minAmount: minimumOutputAmount, route } = daiTrade);
     }
 
-    const { cDAI: price } = await g$ReservePrice(web3, chainId);
+    const { cDAI: price } = await g$ReservePrice();
     priceImpact = computePriceImpact(price.invert(), inputWithoutContribution, outputCDAIValue);
 
     GDXBalance = await tokenBalance(web3, "GDX", account);

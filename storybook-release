@@ -10,6 +10,7 @@ yarn config set -H enableImmutableInstalls false
 
 # build storybook distros
 cd packages/good-design
+yarn lingui:prepare
 yarn
 
 if ! yarn build-storybook; then

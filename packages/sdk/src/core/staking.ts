@@ -232,7 +232,7 @@ async function metaMyStake(web3: Web3, address: string, account: string, release
     getRewardGDAO(web3, address, account)
   ]);
 
-  const { cDAI: cdaiPrice } = await g$ReservePrice(web3, chainId);
+  const { cDAI: cdaiPrice } = await g$ReservePrice();
   const cDAI = cdaiPrice.asFraction;
   const ratio = await cDaiPrice(web3, chainId);
 
@@ -305,7 +305,7 @@ async function metaMyGovStake(
 
   const amount = CurrencyAmount.fromRawAmount(G$Token, users.amount.toString());
 
-  const tokenPrice = await g$ReservePrice(web3, chainId);
+  const tokenPrice = await g$ReservePrice();
 
   let amount$ = CurrencyAmount.fromRawAmount(G$Token, 0);
   if (tokenPrice) {
@@ -579,8 +579,7 @@ export const getReserveRatio = memoize<(web3: Web3, chainId: number) => Promise<
 const getAPY = memoize<(web3: Web3, address: string, protocol: LIQUIDITY_PROTOCOL, token: Token) => Promise<Fraction>>(
   async (web3, address, protocol, token) => {
     debugGroup(`APY of ${protocol} for ${token.symbol}`);
-    const chainId = await getChainId(web3);
-    const { DAI: price } = await g$ReservePrice(web3, chainId);
+    const { DAI: price } = await g$ReservePrice();
     const G$Ratio = price.asFraction;
 
     const yearlyRewardG$ = await getYearlyRewardG$(web3, address);
