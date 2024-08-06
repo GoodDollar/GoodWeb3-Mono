@@ -42,7 +42,7 @@ export async function claim(web3: Web3, account: string): Promise<void> {
   await validateChainId(web3);
 
   const contract = await ubiSchemeContract(web3);
-  return contract.methods.claim().send({ from: account, gasPrice: 20e9 });
+  return contract.methods.claim().send({ from: account, gasPrice: "10000000000" });
 }
 
 /**
