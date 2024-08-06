@@ -1,6 +1,6 @@
 import React from "react";
 import { W3Wrapper } from "../W3Wrapper";
-import { useWithinBridgeLimits, useGetBridgeData } from "../../sdk/microbridge/react";
+import { useWithinBridgeLimits, useGetBridgeData, useBridgeHistory } from "../../sdk/microbridge/react";
 
 export interface PageProps {
   address: string;
@@ -11,11 +11,13 @@ export interface PageProps {
 const BridgeHooksTest = (params: PageProps) => {
   const limits = useWithinBridgeLimits(params.chainId, params.address, params.amount.toString());
   const bridgeInfo = useGetBridgeData(params.chainId, params.address);
+  const bridgeHistory = useBridgeHistory();
   return (
     <>
       <pre>bridge minFee {bridgeInfo?.bridgeFees?.minFee?.toString()}</pre>
       <div>canBridge result: {JSON.stringify(limits)}</div>
       <pre>bridge data {JSON.stringify(bridgeInfo, null, 4)}</pre>
+      <pre>bridge history {JSON.stringify(bridgeHistory, null, 4)}</pre>
     </>
   );
 };

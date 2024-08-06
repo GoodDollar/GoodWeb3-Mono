@@ -325,7 +325,7 @@ export const useBridgeHistory = () => {
     },
     {
       chainId: 42220,
-      fromBlock: -6e4,
+      fromBlock: -2e4,
       refresh
     }
   );
@@ -338,13 +338,13 @@ export const useBridgeHistory = () => {
     },
     {
       chainId: 42220,
-      fromBlock: -6e4,
+      fromBlock: -2e4,
       refresh
     }
   );
 
   if (!fuseOut || !fuseIn || !celoOut || !celoIn) {
-    return;
+    return {};
   }
 
   const celoExecuted = groupBy(celoIn?.value || [], _ => _.data.id);

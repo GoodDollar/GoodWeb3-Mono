@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { NumericFormat } from "react-number-format";
 import { CurrencyValue } from "@usedapp/core";
 import { ethers } from "ethers";
-
+import { debounce } from "lodash";
 export const TokenInput = ({
   balanceWei,
   gdValue,
@@ -12,6 +12,7 @@ export const TokenInput = ({
   _numericformat,
   _button,
   minAmountWei = "0",
+  inputDebounceMs = 500,
   ...props
 }: {
   balanceWei: string;
@@ -22,6 +23,7 @@ export const TokenInput = ({
   _button?: any;
   _text?: any;
   minAmountWei?: string;
+  inputDebounceMs?: number;
 }) => {
   const _decimals = gdValue.currency.decimals;
   const [input, setInput] = useState<number>(0);
@@ -35,16 +37,16 @@ export const TokenInput = ({
   }, [/* used */ toggleState]);
 
   const handleChange = useCallback(
-    (v: string) => {
+    debounce((v: string) => {
       if (!/^\d+(?:\.\d{1,18})?$/.test(v)) {
         //todo: add error handler/message
-        console.error("Invalid input");
+        console.error("Invalid input", v);
         return;
       }
       setInput(Number(v));
       onChange(ethers.utils.parseUnits(v, _decimals).toString());
-    },
-    [setInput, onChange, _decimals]
+    }, inputDebounceMs),
+    [setInput, onChange, _decimals, inputDebounceMs]
   );
 
   return (
