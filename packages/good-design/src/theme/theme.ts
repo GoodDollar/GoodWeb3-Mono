@@ -54,6 +54,7 @@ export const theme = extendTheme({
       100: "#505661",
       200: "#3F444E",
       300: "#2F3338",
+      400: "#A5AEC0",
       500: "#26292F"
     },
 
@@ -103,6 +104,7 @@ export const theme = extendTheme({
     xl: 30,
     "2xl": 36
   },
+
   components: {
     ...layout,
     ...buttons,
@@ -118,6 +120,13 @@ export const theme = extendTheme({
           fontSize: "2xs",
           color: "goodGrey.400",
           textAlign: "center"
+        }),
+        "sm-grey-400": () => ({
+          fontFamily: "subheading",
+          fontSize: "sm",
+          fontWeight: 400,
+          color: "goodGrey.400",
+          lineHeight: 17.5
         }),
         "xs-green": () => ({
           fontFamily: "subheading",

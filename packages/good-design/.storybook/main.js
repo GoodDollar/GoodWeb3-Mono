@@ -68,6 +68,7 @@ module.exports = {
     config.resolve.alias = {
       ...config.resolve.alias,
       "react-native-webview": "react-native-web-webview",
+      "@react-native-clipboard/clipboard": "react-native-web-clipboard",
       "lottie-react-native": "react-native-web-lottie"
     };
     return config;

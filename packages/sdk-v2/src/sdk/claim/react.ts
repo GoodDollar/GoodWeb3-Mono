@@ -3,23 +3,23 @@ import { ChainId, QueryParams, useCalls, useEthers } from "@usedapp/core";
 import { BigNumber } from "ethers";
 import { first } from "lodash";
 import { useState, useEffect, useMemo, useRef } from "react";
-import { AsyncStorage } from "../storage";
+import { noop } from "lodash";
 import usePromise from "react-use-promise";
 
+import { AsyncStorage } from "../storage/sdk";
 import { EnvKey } from "../base/sdk";
 import { ClaimSDK } from "./sdk";
 
 import useRefreshOrNever from "../../hooks/useRefreshOrNever";
 import { useGetContract, useGetEnvChainId, useReadOnlySDK, useSDK } from "../base/react";
 import { Envs, SupportedChains, SupportedV2Networks } from "../constants";
-import { noop } from "lodash";
 import { useContractFunctionWithDefaultGasFees } from "../base/hooks/useGasFees";
 
 export const useFVLink = (chainId?: number) => {
   const { chainId: defaultChainId } = useGetEnvChainId();
   const sdk = useSDK(false, "claim", chainId ?? defaultChainId) as ClaimSDK;
 
-  return useMemo(() => sdk?.getFVLink(chainId), [sdk, chainId]);
+  return useMemo(() => sdk?.getFVLink(chainId) ?? {}, [sdk, chainId]);
 };
 
 export const useIsAddressVerified = (address: string, env?: EnvKey) => {

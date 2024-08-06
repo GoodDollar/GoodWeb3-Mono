@@ -2,8 +2,9 @@ export const BasicStyledModal = {
   baseStyle: {
     modalStyle: {
       maxWidth: 343,
+      paddingTop: 4,
+      paddingBottom: 8,
       paddingX: 4,
-      paddingY: 6,
       maxHeight: "auto"
     },
     headerStyle: {

@@ -1,13 +1,15 @@
 import React from "react";
 import { noop } from "lodash";
 import { Meta } from "@storybook/react";
+import { Text } from "native-base";
 
 import { BasicStyledModal, ClaimSuccessModal } from "../../../core/web3/modals";
 import {
   ModalFooterCta,
   ModalFooterCtaX,
   ModalFooterLearn,
-  ModalFooterSocial
+  ModalFooterSocial,
+  ModalErrorBody
 } from "../../../core/web3/modals/BasicStyledModal";
 
 type PagePropsAndCustomArgs = React.ComponentProps<typeof BasicStyledModal> & { footer?: string };
@@ -55,7 +57,7 @@ const meta: Meta<PagePropsAndCustomArgs> = {
     title: {
       description: "title of the modal"
     },
-    content: {
+    body: {
       description: "content of the modal"
     }
   }
@@ -69,11 +71,26 @@ export const BasicModal = {
     withOverlay: "dark",
     type: "ctaX",
     extUrl: "https://www.google.com",
-    content:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+    body: (
+      <Text variant="sub-grey">
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
+        magna aliqua."
+      </Text>
+    ),
     loading: true,
     title: `This is a \n Header`,
     buttonText: "Click me"
+  }
+};
+
+export const ErrorModal = {
+  args: {
+    withCloseButton: true,
+    withOverlay: "dark",
+    type: "loader",
+    titleVariant: "title-gdred",
+    title: "Oops!",
+    body: <ModalErrorBody error="This is an error message" />
   }
 };
 

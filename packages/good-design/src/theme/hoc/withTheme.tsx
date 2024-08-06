@@ -6,6 +6,15 @@ interface IWithThemeOpts {
   skipProps?: string | string[];
 }
 
+/**
+ * HOC to apply themed props to a component (convert theme defintions to css style-properties)
+ * @param options - options for the HOC
+ * @param options.name - the name of the component - should match the key in the theme
+ * @param options.skipProps - props to skip when applying the theme. Should be used for arrayed values, or <Component /> props
+ * @param Component - the component to apply the theme to
+ * @returns a themed component
+ * @example
+ */
 export const withTheme =
   (options?: IWithThemeOpts) =>
   // @ts-ignore

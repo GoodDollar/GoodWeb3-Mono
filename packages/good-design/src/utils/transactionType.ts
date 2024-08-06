@@ -1,1 +1,2 @@
-export const isTxReject = (errorMessage: string) => errorMessage === "user rejected transaction";
+export const isTxReject = ({ message, code }: { message: string; code?: number }) =>
+  message === "user rejected transaction" || code === 4001;
