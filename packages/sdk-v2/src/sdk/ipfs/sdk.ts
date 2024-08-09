@@ -20,8 +20,7 @@ export const isValidCID = source => isString(source) && source.length >= 40 && c
 export type IPFSUrls = { ipfsGateways: string; ipfsUploadGateway: string };
 
 export const defaulIPFS: IPFSUrls = {
-  ipfsGateways:
-    "https://{cid}.ipfs.nftstorage.link,https://cloudflare-ipfs.com/ipfs/{cid},https://ipfs.io/ipfs/{cid},https://{cid}.ipfs.dweb.link",
+  ipfsGateways: "https://{cid}.ipfs.nftstorage.link,https://ipfs.io/ipfs/{cid},https://{cid}.ipfs.dweb.link",
   ipfsUploadGateway: "https://ipfsgateway.goodworker.workers.dev"
 };
 
