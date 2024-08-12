@@ -63,7 +63,7 @@ jobs:
           export MSG=`npm pkg get version --workspaces=false`
           git pull
           git add . 
-          git commit -m "${MSG}"
+          git commit -m "${MSG} @gooddollar/login-sdk"
           if [ "${{ env.push_version_commit }}" = "true" ]; then
             git push --follow-tags
           else
