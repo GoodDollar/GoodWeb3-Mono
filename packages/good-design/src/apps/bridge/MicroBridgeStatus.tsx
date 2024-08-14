@@ -84,7 +84,8 @@ const StatusHeader = ({
   targetChain,
   expectedToReceive,
   fee,
-  relayStatus
+  relayStatus,
+  withRelay
 }: {
   sendAmount: CurrencyValue;
   sourceChain: string;
@@ -92,6 +93,7 @@ const StatusHeader = ({
   expectedToReceive: CurrencyValue;
   fee: CurrencyValue;
   relayStatus: MicroBridgeProps["relayStatus"];
+  withRelay: MicroBridgeProps["withRelay"];
 }) => {
   const [sendCopy, receiveCopy] =
     relayStatus?.status === "Success" ? ["You Bridged", "You've Received"] : ["You Have Bridged", "You Will Receive"];
@@ -137,8 +139,12 @@ const StatusHeader = ({
             You're paying <b>{fee.format({ suffix: "G$" })}</b> to use the bridge (See FAQ's for more no Fees)
           </Text>
           <Text fontSize="xs" fontFamily="subheading" fontWeight="400" lineHeight="18.2">
-            The transaction may take a few minutes to complete. You can choose <b>Self Relay</b> to speed up the process
-            and save 50% on fees!
+            The transaction may take a few minutes to complete.{" "}
+            {withRelay ? (
+              <Text>
+                You can choose <b>Self Relay</b> to speed up the process and save 50% on fees!
+              </Text>
+            ) : null}
           </Text>
         </VStack>
       ) : null}
@@ -196,12 +202,14 @@ export const SingleTxStatus = ({
 export const MicroBridgeStatus = ({
   originChain,
   pendingTransaction,
-  relayStatus
+  relayStatus,
+  withRelay
 }: {
   bridgeStatus: MicroBridgeProps["bridgeStatus"];
   originChain: MicroBridgeProps["originChain"];
   pendingTransaction: MicroBridgeProps["pendingTransaction"];
   relayStatus: MicroBridgeProps["relayStatus"];
+  withRelay: MicroBridgeProps["withRelay"];
 }) => {
   const [pendingTx] = pendingTransaction;
   const [sourceChain] = originChain;
@@ -230,7 +238,8 @@ export const MicroBridgeStatus = ({
           targetChain,
           expectedToReceive,
           fee,
-          relayStatus
+          relayStatus,
+          withRelay
         }}
       />
       <GoodButton onPress={handleFinish}>Done</GoodButton>

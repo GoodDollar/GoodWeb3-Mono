@@ -58,11 +58,12 @@ jobs:
           git config --global user.email "${{ env.git_email }}"
           git config --global user.name "${{ env.git_username }}"
           USER_INPUT=${{ github.event.inputs.bumpversion }}          
-          VERSION=${USER_INPUT:-"patch"}          
-          export MSG=`npm version ${VERSION}`
+          VERSION=${USER_INPUT:-"patch"}  
+          yarn version $VERSION
+          export MSG=`npm pkg get version --workspaces=false`
           git pull
           git add . 
-          git commit -m "${MSG}"
+          git commit -m "${MSG} @gooddollar/login-sdk"
           if [ "${{ env.push_version_commit }}" = "true" ]; then
             git push --follow-tags
           else

@@ -232,8 +232,8 @@ const BridgeHistory = ({ env }: { env: string }) => {
   const { historySorted } = useBridgeHistory() ?? {};
 
   return (
-    <VStack minWidth="384" width="100%">
-      <VStack paddingTop="6" paddingBottom="4" width="100%" textAlign="left">
+    <VStack minWidth="340" width="100%">
+      <VStack paddingLeft="1" paddingTop="6" paddingBottom="4" width="100%" textAlign="left">
         <Title variant="title-gdblue" textAlign="left" paddingBottom="1">
           Recent Transactions
         </Title>
@@ -241,7 +241,7 @@ const BridgeHistory = ({ env }: { env: string }) => {
           It may take up to 30 seconds to load transactions.
         </Title>
       </VStack>
-      <VStack space="2" minWidth="384">
+      <VStack space="2" minWidth="360">
         <HStack borderBottomWidth={1} space={3} borderBottomColor="goodGrey.300:alpha.70" textAlign="left">
           <Text fontFamily="subheading" flex="2 0 0%" variant="sm-grey-600" fontWeight="700">
             Date
@@ -253,7 +253,7 @@ const BridgeHistory = ({ env }: { env: string }) => {
             Status
           </Text>
         </HStack>
-        {!historySorted || historySorted.length === 0 ? (
+        {!historySorted ? (
           <Spinner variant="page-loader" size="lg" />
         ) : (
           <FlatList
@@ -336,6 +336,7 @@ export const MicroBridgeController: FC<IMicroBridgeControllerProps> = ({
         onBridgeFailed={onBridgeFailed}
         inputTransaction={inputTransaction}
         pendingTransaction={pendingTransaction}
+        withRelay={withRelay}
       />
       {withRelay && <BridgeHistoryWithRelay />}
       {withHistory && <BridgeHistory env={defaultEnv} />}

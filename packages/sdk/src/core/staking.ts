@@ -232,7 +232,7 @@ async function metaMyStake(web3: Web3, address: string, account: string, release
     getRewardGDAO(web3, address, account)
   ]);
 
-  const { cDAI: cdaiPrice } = await g$ReservePrice(web3, chainId);
+  const { cDAI: cdaiPrice } = await g$ReservePrice();
   const cDAI = cdaiPrice.asFraction;
   const ratio = await cDaiPrice(web3, chainId);
 
@@ -305,7 +305,7 @@ async function metaMyGovStake(
 
   const amount = CurrencyAmount.fromRawAmount(G$Token, users.amount.toString());
 
-  const tokenPrice = await g$ReservePrice(web3, chainId);
+  const tokenPrice = await g$ReservePrice();
 
   let amount$ = CurrencyAmount.fromRawAmount(G$Token, 0);
   if (tokenPrice) {
@@ -579,8 +579,7 @@ export const getReserveRatio = memoize<(web3: Web3, chainId: number) => Promise<
 const getAPY = memoize<(web3: Web3, address: string, protocol: LIQUIDITY_PROTOCOL, token: Token) => Promise<Fraction>>(
   async (web3, address, protocol, token) => {
     debugGroup(`APY of ${protocol} for ${token.symbol}`);
-    const chainId = await getChainId(web3);
-    const { DAI: price } = await g$ReservePrice(web3, chainId);
+    const { DAI: price } = await g$ReservePrice();
     const G$Ratio = price.asFraction;
 
     const yearlyRewardG$ = await getYearlyRewardG$(web3, address);
@@ -802,9 +801,7 @@ export async function approveStake(
   const req = ERC20Contract(web3, token.address)
     .methods.approve(spender, MaxApproveValue.toString())
     .send({
-      ...(protocol !== LIQUIDITY_PROTOCOL.GOODDAO
-        ? { from: account, type: "0x2" }
-        : { from: account, gasPrice: "10000000000" })
+      ...(protocol !== LIQUIDITY_PROTOCOL.GOODDAO ? { from: account, type: "0x2" } : { from: account, gasPrice: 11e9 })
     });
 
   if (onSent) req.on("transactionHash", onSent);
@@ -834,7 +831,7 @@ export async function stakeGov(
   const account = await getAccount(web3);
 
   const tokenAmount = amount.toBigNumber(token.decimals);
-  const req = contract.methods.stake(tokenAmount).send({ from: account, gasPrice: "10000000000" });
+  const req = contract.methods.stake(tokenAmount).send({ from: account, gasPrice: 11e9 });
 
   if (onSent) req.on("transactionHash", (hash: string) => onSent(hash, account));
 
@@ -908,7 +905,7 @@ export async function withdraw(
 
   let req;
   if (stake.protocol === LIQUIDITY_PROTOCOL.GOODDAO) {
-    req = contract.methods.withdrawStake(toWithdraw).send({ from: account, gasPrice: "10000000000" });
+    req = contract.methods.withdrawStake(toWithdraw).send({ from: account, gasPrice: 11e9 });
   } else
     req = contract.methods.withdrawStake(toWithdraw, withdrawIntoInterestToken).send({
       from: account,
@@ -963,7 +960,7 @@ export async function claimGoodRewards(
   const transactions: any[] = [];
   if (chainId === SupportedChainId.FUSE) {
     const contract = governanceStakingContract(web3);
-    transactions.push(contract.methods.withdrawRewards().send({ from: account, gasPrice: "10000000000" }));
+    transactions.push(contract.methods.withdrawRewards().send({ from: account, gasPrice: 11e9 }));
   } else {
     const stakersDistribution = await stakersDistributionContract(web3);
     const simpleStakingReleases = await getSimpleStakingContractAddressesV3(web3);
@@ -1006,7 +1003,7 @@ export async function claimGoodReward(
   const transactions: any[] = [];
   if (chainId === SupportedChainId.FUSE) {
     const contract = governanceStakingContract(web3);
-    transactions.push(contract.methods.withdrawRewards().send({ from: account, gasPrice: "10000000000" }));
+    transactions.push(contract.methods.withdrawRewards().send({ from: account, gasPrice: 11e9 }));
   } else {
     const stakersDistribution = await stakersDistributionContract(web3);
 
