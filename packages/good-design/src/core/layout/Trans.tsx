@@ -11,7 +11,9 @@ import { GoodButton } from "../buttons";
  * @returns Text
  */
 export const TransText = ({ t, ...props }: { t: string } & ITextProps) => (
-  <LinguiTrans id={t} render={({ translation }: { translation: any }) => <Text {...props}>{translation}</Text>} />
+  <Text {...props}>
+    <LinguiTrans id={t}>{t}</LinguiTrans>
+  </Text>
 );
 
 /**
@@ -20,7 +22,9 @@ export const TransText = ({ t, ...props }: { t: string } & ITextProps) => (
  * @returns Heading
  */
 export const TransHeading = ({ t, ...props }: { t: string } & IHeadingProps) => (
-  <LinguiTrans id={t} render={({ translation }: { translation: any }) => <Heading {...props}>{translation}</Heading>} />
+  <Heading {...props}>
+    <LinguiTrans id={t}>{t}</LinguiTrans>
+  </Heading>
 );
 
 /**
@@ -29,7 +33,9 @@ export const TransHeading = ({ t, ...props }: { t: string } & IHeadingProps) => 
  * @returns Title
  */
 export const TransTitle = ({ t, ...props }: { t: string } & ITextProps) => (
-  <LinguiTrans id={t} render={({ translation }: { translation: any }) => <Title {...props}>{translation}</Title>} />
+  <Title {...props}>
+    <LinguiTrans id={t}>{t}</LinguiTrans>
+  </Title>
 );
 
 /**
@@ -38,8 +44,7 @@ export const TransTitle = ({ t, ...props }: { t: string } & ITextProps) => (
  * @returns Title
  */
 export const TransButton = ({ t, ...props }: { t: string } & IButtonProps) => (
-  <LinguiTrans
-    id={t}
-    render={({ translation }: { translation: any }) => <GoodButton {...props}>{translation}</GoodButton>}
-  />
+  <GoodButton {...props}>
+    <LinguiTrans id={t}>{t}</LinguiTrans>
+  </GoodButton>
 );

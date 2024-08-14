@@ -12,7 +12,6 @@ import { TxModal } from "../core";
 
 import { useGoodUILanguage } from "../theme";
 import { VStack } from "native-base";
-import { linksNew } from "../core/constants";
 
 export const BaseButtonWithThemeExample = () => {
   return (
@@ -31,7 +30,6 @@ export const BaseButtonWithThemeExample = () => {
 const LinguiExample = () => {
   const { setLanguage } = useGoodUILanguage();
   const [modalOpen, setModalOpen] = useState(false);
-  const { link, label, icon } = linksNew["network"];
 
   const openModal = useCallback(() => {
     setModalOpen(prev => !prev);
@@ -39,14 +37,14 @@ const LinguiExample = () => {
 
   return (
     <VStack width="343">
-      <TxModal type="sign" isPending={modalOpen} link={link} label={label} icon={icon} />
+      <TxModal type="sign" isPending={modalOpen} />
       <GoodButton width="200" onPress={() => setLanguage("en")} backgroundColor="primary" color="white">
         English
       </GoodButton>
       <GoodButton width="200" onPress={() => setLanguage("es-419")} backgroundColor="primary" color="white">
         Spanish-Latin
       </GoodButton>
-      <LearnButton label={label} icon={icon} link={link} />;
+      <LearnButton type="network" />
       <GoodButton width="200" onPress={openModal}>
         Open Modal
       </GoodButton>

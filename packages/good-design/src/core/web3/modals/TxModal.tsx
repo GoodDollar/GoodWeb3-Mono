@@ -32,13 +32,7 @@ const txModalCopy = {
 
 const TxModalContent = ({ content }: { content: string }) => <Text variant="sm-grey-650">{content}</Text>;
 
-export const TxModal: React.FC<ITxModalProps> = ({
-  isPending,
-  onClose = noop,
-
-  type,
-  ...props
-}) => {
+export const TxModal: React.FC<ITxModalProps> = ({ isPending, onClose = noop, type, ...props }) => {
   const { title, content } = txModalCopy[type];
   return (
     <BasicStyledModal

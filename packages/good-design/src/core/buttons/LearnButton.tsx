@@ -1,11 +1,11 @@
 import React, { useCallback } from "react";
-import { Box, Text } from "native-base";
+import { Box } from "native-base";
 import { openLink } from "@gooddollar/web3sdk-v2";
-import { Trans } from "@lingui/react";
 
 import BasePressable from "./BasePressable";
 import { Image } from "../images";
 import { linksNew } from "../constants";
+import { TransText } from "../layout";
 
 export type learnSources = "send" | "bridging" | "network" | "sign" | "identity";
 
@@ -27,12 +27,15 @@ const LearnButton = ({ type }: LearnButtonType) => {
   return (
     <BasePressable variant="externalLink" onPress={openNotionTab} w="100%">
       <Box display="flex" w="60%" alignSelf="flex-start" p={2}>
-        <Text color="lightBlue" fontSize="sm">
-          <Trans id={`Learn`} />
-        </Text>
-        <Text color="main" fontSize="sm" fontWeight="normal" fontFamily="subheading" textDecoration>
-          <Trans id={label ?? ""} message={label} />
-        </Text>
+        <TransText color="lightBlue" fontSize="sm" t={`Learn`} />
+        <TransText
+          color="main"
+          fontSize="sm"
+          fontWeight="normal"
+          fontFamily="subheading"
+          textDecoration
+          t={label ?? ""}
+        />
       </Box>
       <Box>
         <Image source={icon} w="92px" h="111px" margin-right="0" style={{ resizeMode: "contain" }} />
