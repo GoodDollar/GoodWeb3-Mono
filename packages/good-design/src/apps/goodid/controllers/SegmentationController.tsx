@@ -42,8 +42,9 @@ export const SegmentationController = ({
   expiryFormatted,
   fvSig,
   isWhitelisted,
-  onDone,
-  withNavBar
+  withNavBar,
+  isDev = false,
+  onDone
 }: Omit<SegmentationProps, "onLocationRequest" | "onDataPermission" | "availableOffers"> & {
   fvSig?: string;
   certificates: AggregatedCertificate[];
@@ -51,7 +52,7 @@ export const SegmentationController = ({
   const { baseEnv } = useGetEnvChainId();
   const issueCertificate = useIssueCertificates(account, baseEnv);
   const fvLink = useFVLink();
-  const availableOffers = useCheckAvailableOffers({ account, pools: redtentOffer });
+  const availableOffers = useCheckAvailableOffers({ account, pools: redtentOffer, isDev });
 
   const onLocationRequest = useCallback(
     async (locationState: any, account: string) => {
