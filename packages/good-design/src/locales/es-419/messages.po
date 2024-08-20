@@ -8,7 +8,7 @@ msgstr ""
 "Language: es_419\n"
 "Project-Id-Version: goodui\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-07-17 16:00\n"
+"PO-Revision-Date: 2024-08-20 15:07\n"
 "Last-Translator: \n"
 "Language-Team: Spanish, Latin America\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -302,19 +302,19 @@ msgid "Go to website"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/core/web3/modals/TxModal.tsx:24
-#: src/core/web3/modals/TxModal.tsx:28
+#: src/core/web3/modals/TxModal.tsx:25
+#: src/core/web3/modals/TxModal.tsx:29
 msgid "Please sign with \n"
 " your wallet"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/core/web3/modals/TxModal.tsx:25
+#: src/core/web3/modals/TxModal.tsx:26
 msgid "To complete this action, sign with your wallet."
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/core/web3/modals/TxModal.tsx:30
+#: src/core/web3/modals/TxModal.tsx:31
 msgid "We need to know you’re you! Please sign\n"
 "with your wallet to verify your identity.\n"
 " Don’t worry, no link is kept between your\n"
@@ -322,18 +322,18 @@ msgid "We need to know you’re you! Please sign\n"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/core/web3/modals/TxModal.tsx:33
+#: src/core/web3/modals/TxModal.tsx:34
 msgid "Waiting for \n"
 " confirmation"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/core/web3/modals/TxModal.tsx:34
+#: src/core/web3/modals/TxModal.tsx:35
 msgid "Please wait for the transaction to be validated."
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/core/web3/modals/TxModal.tsx:77
+#: src/core/web3/modals/TxModal.tsx:78
 msgid "Learn"
 msgstr ""
 
