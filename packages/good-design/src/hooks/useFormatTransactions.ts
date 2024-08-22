@@ -24,8 +24,7 @@ export const useFormatClaimTransactions = (pools: any[], chainId: number | undef
 
         const tokenValue = G$Amount("G$", claimAmount, chainId, defaultEnv);
         const trunAddr = truncateMiddle(address, 11);
-        // todo: add utilty getContractName(address) which either reads from chain
-        // or uses name set at pool-creation (as one of the properties)
+
         const name = contractName ?? poolName;
         const network = SupportedChains[chainId];
         const displayName = `${name} (${trunAddr})`.trim();
