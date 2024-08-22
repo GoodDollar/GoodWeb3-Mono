@@ -38,8 +38,11 @@ export const useIsAddressVerified = (address: string, env?: EnvKey) => {
 };
 
 export const useMultiClaim = (poolsDetails: PoolDetails[]) => {
+  //the next contract to claim from
   const [contract, setContract] = useState<Contract | undefined>(undefined);
+  // all contracts to claim from
   const [poolContracts, setPoolContracts] = useState<Contract[]>([]);
+  // all contracts that have been claimed from
   const [claimedContracts, setClaimedContracts] = useState<Contract[]>([]);
 
   const { state, send, resetState } = useContractFunctionWithDefaultGasFees(contract, "claim", {
@@ -66,6 +69,8 @@ export const useMultiClaim = (poolsDetails: PoolDetails[]) => {
   useEffect(() => {
     if (contract) {
       void nextClaim();
+    } else {
+      setClaimedContracts([]);
     }
 
     return () => resetState();
@@ -78,6 +83,8 @@ export const useMultiClaim = (poolsDetails: PoolDetails[]) => {
       remainingClaims: poolContracts.length - claimedContracts.length
     },
     setContract,
+    setPoolContracts,
+    setClaimedContracts,
     transactionState: { state, resetState }
   };
 };
@@ -96,7 +103,11 @@ export const useGetMemberUBIPools = () => {
     setError(null);
 
     try {
-      if (!library || !account || !factory || !pool || chainId !== 42220) return [];
+      if (!library || !account || !factory || !pool || chainId !== 42220) {
+        setPoolsDetails([]);
+        return;
+      }
+
       const poolAddresses = await getMemberPools(account, factory, library);
 
       if (!poolAddresses || !poolAddresses.length) {
@@ -119,7 +130,10 @@ export const useGetMemberUBIPools = () => {
     void fetchPools();
   }, [fetchPools]);
 
-  return useMemo(() => ({ poolsDetails, loading, error }), [poolsDetails, factory, pool, loading, error]);
+  return useMemo(
+    () => ({ poolsDetails, loading, error, fetchPools }),
+    [account, poolsDetails, factory, pool, loading, error]
+  );
 };
 
 export const useClaim = (refresh: QueryParams["refresh"] = "never") => {
@@ -191,7 +205,7 @@ export const useHasClaimed = (requiredNetwork: keyof typeof SupportedV2Networks)
         args: [account]
       }
     ],
-    { refresh: "never", chainId: SupportedV2Networks[requiredNetwork] as unknown as ChainId }
+    { refresh: 8, chainId: SupportedV2Networks[requiredNetwork] as unknown as ChainId }
   );
 
   return first(hasClaimed?.value) as boolean;

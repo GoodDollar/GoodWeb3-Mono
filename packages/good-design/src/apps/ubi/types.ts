@@ -41,6 +41,7 @@ export interface ClaimContextProps {
   withSignModals: boolean;
   claimDetails: Omit<ClaimDetails, "claimCall">;
   poolsDetails: PoolDetails[];
+  loading: boolean;
   poolContracts: Contract[];
   claimPools: any;
   claimStatus: TransactionStatus;
@@ -48,6 +49,8 @@ export interface ClaimContextProps {
   claimedAlt: { hasClaimed: boolean; altChain: string };
   error?: string;
   supportedChains: SupportedChains[];
+  setError: (error: string | undefined) => void;
+  resetState: () => void;
   onClaim: () => Promise<void>;
   onClaimSuccess: () => Promise<void>;
   onClaimFailed: () => Promise<void>;

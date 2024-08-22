@@ -7,7 +7,7 @@ export const getContractsFromClaimPools = (poolsDetails: PoolDetails[]) => {
     const [poolName] = Object.keys(pool);
     const { [poolName]: poolDetail } = pool;
 
-    if ("contract" in poolDetail[0]) {
+    if ("contract" in poolDetail[0] && !poolDetail[0].hasClaimed) {
       acc.push(poolDetail[0].contract);
     }
     return acc;

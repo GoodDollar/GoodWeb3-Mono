@@ -1,9 +1,10 @@
 import React, { FC, PropsWithChildren, useCallback, useEffect } from "react";
 import { useWizard, Wizard } from "react-use-wizard";
 import { View } from "native-base";
-import { TransactionStatus } from "@usedapp/core";
+import { TransactionStatus, useEthers } from "@usedapp/core";
 
 import { isTxReject } from "../utils/transactionType";
+import { getUnclaimedPools } from "../utils/pools";
 import { StartClaim, PreClaim } from "../screens";
 import { PostClaim } from "../screens/PostClaim";
 import { ErrorModal, TxModal } from "../../../core/web3/modals";
@@ -33,8 +34,20 @@ const TxModalStatus = ({
 };
 
 const WizardWrapper: FC<PropsWithChildren> = ({ children }) => {
-  const { claimDetails, claimStatus, error, claimFlowStatus, withSignModals, onClaimSuccess, onClaimFailed } =
-    useClaimContext();
+  const {
+    claimDetails,
+    poolsDetails,
+    claimStatus,
+    error,
+    loading,
+    claimFlowStatus,
+    withSignModals,
+    setError,
+    resetState,
+    onClaimSuccess,
+    onClaimFailed
+  } = useClaimContext();
+  const { account, chainId } = useEthers();
   const { goToStep, stepCount } = useWizard();
   const lastStep = stepCount - 1;
   const { errorMessage = "", status } = claimStatus;
@@ -44,19 +57,29 @@ const WizardWrapper: FC<PropsWithChildren> = ({ children }) => {
     if (!isTxReject(error ?? "")) {
       goToStep(lastStep);
     }
+
+    setError(undefined);
   }, [error]);
 
   const handleNext = useCallback(async () => {
     const { isClaimingDone } = claimFlowStatus;
+    const unclaimedPools = getUnclaimedPools(poolsDetails);
 
-    if (status === "Success" && isClaimingDone) {
-      await onClaimSuccess();
+    if (status === "Success") {
+      if (isClaimingDone) {
+        await onClaimSuccess();
+      } else {
+        resetState();
+      }
+      return;
     }
 
-    if (claimDetails?.hasClaimed && !isReject && isClaimingDone) {
+    if (claimDetails?.hasClaimed && !isReject && unclaimedPools?.length === 0 && !loading) {
       goToStep(lastStep);
+    } else if (account) {
+      goToStep(1);
     }
-  }, [claimDetails, status, isReject, claimFlowStatus]);
+  }, [account, claimDetails, status, isReject, claimFlowStatus, poolsDetails]);
 
   useEffect(() => {
     void (async () => {
@@ -67,6 +90,14 @@ const WizardWrapper: FC<PropsWithChildren> = ({ children }) => {
       }
     })();
   }, [isReject, handleNext, onClaimFailed]);
+
+  useEffect(() => {
+    if (!account) {
+      goToStep(0);
+    } else {
+      goToStep(1);
+    }
+  }, [account, /* used */ chainId]);
 
   return (
     <View>
