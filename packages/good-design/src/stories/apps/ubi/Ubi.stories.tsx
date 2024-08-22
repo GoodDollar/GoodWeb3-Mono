@@ -17,25 +17,29 @@ export default {
   title: "Apps/Claim-Flow",
   component: ClaimWizard,
   decorators: [
-    (Story: any, args: any) => (
+    (Story: any) => (
       <W3Wrapper withMetaMask={true} env="fuse">
-        <ClaimProvider
-          withSignModals
-          explorerEndPoints={explorerEndPoints}
-          supportedChains={[SupportedChains.CELO, SupportedChains.FUSE]}
-          {...args.args}
-        >
-          <VStack alignItems="center">
-            <Story />
-          </VStack>
-        </ClaimProvider>
+        <VStack alignItems="center">
+          <Story />
+        </VStack>
       </W3Wrapper>
     )
   ]
 };
 
 export const ClaimFlow = {
-  render: (args: any) => <ClaimWizard {...args} />,
+  render: (args: any) => {
+    return (
+      <ClaimProvider
+        withSignModals
+        explorerEndPoints={explorerEndPoints}
+        supportedChains={[SupportedChains.CELO, SupportedChains.FUSE]}
+        {...args.args}
+      >
+        <ClaimWizard {...args} />
+      </ClaimProvider>
+    );
+  },
   args: {
     onTxDetails: async (transaction: any) => {
       console.log({ transaction });
