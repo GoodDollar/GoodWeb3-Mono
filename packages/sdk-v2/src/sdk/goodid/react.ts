@@ -235,6 +235,7 @@ export const useCertificatesSubject = (certificates: AggregatedCertificate[]) =>
 export interface CheckAvailableOffersProps {
   account: string;
   pools: PoolCriteria[];
+  isDev: boolean;
 }
 
 /**
@@ -244,7 +245,7 @@ export interface CheckAvailableOffersProps {
  * @returns the list of offers the user is eligible for
  * @example
  */
-export const useCheckAvailableOffers = ({ account, pools }: CheckAvailableOffersProps) => {
+export const useCheckAvailableOffers = ({ account, pools, isDev }: CheckAvailableOffersProps) => {
   const certificates = useAggregatedCertificates(account);
   const certificatesSubjects = useCertificatesSubject(certificates);
   const [hasPermission] = usePromise(
@@ -265,6 +266,17 @@ export const useCheckAvailableOffers = ({ account, pools }: CheckAvailableOffers
         const certificateSubject = certificatesSubjects[key];
 
         if (!certificateSubject) return false;
+
+        if (
+          isDev &&
+          (key !== "Location" ||
+            (certificatesSubjects.Gender?.gender === "Male" &&
+              ["JP", "UA", "IL", "BR", "NG"].includes(certificateSubject.countryCode)) ||
+            (certificatesSubjects.Gender?.gender === "Female" &&
+              ["US", "IL", "ES", "CO"].includes(certificateSubject.countryCode)))
+        ) {
+          return true;
+        }
 
         return checkCriteriaMatch(certificateSubject, criteria, key as keyof PoolCriteria);
       });

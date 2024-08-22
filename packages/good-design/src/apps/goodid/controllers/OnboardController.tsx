@@ -13,6 +13,7 @@ export interface OnboardControllerProps {
   withNavBar: boolean;
   name?: string | undefined;
   fvSig?: string;
+  isDev?: boolean;
   onFV?: () => void;
   onSkip: () => void;
   onDone: (e?: any) => Promise<void>;
@@ -21,7 +22,7 @@ export interface OnboardControllerProps {
 export const OnboardController = (
   props: Pick<OnboardScreenProps, "innerContainer" | "fontStyles"> & OnboardControllerProps & IContainerProps
 ) => {
-  const { onFV, onSkip, onDone, account, name, fvSig, withNavBar } = props;
+  const { onFV, onSkip, onDone, account, name, fvSig, withNavBar, isDev = false } = props;
   const { certificates, certificateSubjects, expiryDate, expiryFormatted, isWhitelisted } = useGoodId(account);
 
   const [isPending, setPendingSignTx] = useState(false);
@@ -102,7 +103,17 @@ export const OnboardController = (
   if (accepedTos)
     return (
       <SegmentationController
-        {...{ account, certificates, certificateSubjects, expiryFormatted, fvSig, isWhitelisted, onDone, withNavBar }}
+        {...{
+          account,
+          certificates,
+          certificateSubjects,
+          expiryFormatted,
+          fvSig,
+          isWhitelisted,
+          onDone,
+          withNavBar,
+          isDev
+        }}
       />
     );
 
