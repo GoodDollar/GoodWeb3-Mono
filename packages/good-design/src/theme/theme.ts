@@ -99,6 +99,7 @@ export const theme = extendTheme({
     "2xs": 12,
     xs: 14,
     sm: 16,
+    ms: 18,
     md: 20,
     l: 24,
     xl: 30,
@@ -133,6 +134,20 @@ export const theme = extendTheme({
           fontWeight: 700,
           color: "goodGreen.300",
           lineHeight: "18.2"
+        }),
+        "4xs-grey-400": () => ({
+          fontFamily: "subheading",
+          fontSize: "4xs",
+          color: "goodGrey.400",
+          fontWeight: 500,
+          lineHeight: 12
+        }),
+        "4xs-grey-600": () => ({
+          fontFamily: "subheading",
+          fontSize: "4xs",
+          color: "goodGrey.600",
+          fontWeight: 500,
+          lineHeight: 12
         }),
         "xs-grey": () => ({
           fontFamily: "subheading",

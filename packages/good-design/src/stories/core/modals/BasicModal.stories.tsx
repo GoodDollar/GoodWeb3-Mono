@@ -2,8 +2,12 @@ import React from "react";
 import { noop } from "lodash";
 import { Meta } from "@storybook/react";
 import { Text } from "native-base";
+import moment from "moment";
 
-import { BasicStyledModal, ClaimSuccessModal } from "../../../core/web3/modals";
+import { G$Amount } from "@gooddollar/web3sdk-v2";
+import { ethers } from "ethers";
+
+import { BasicStyledModal, ClaimSuccessModal, TxDetailsModal } from "../../../core/web3/modals";
 import {
   ModalFooterCta,
   ModalFooterCtaX,
@@ -92,6 +96,26 @@ export const ErrorModal = {
     title: "Oops!",
     body: <ModalErrorBody error="This is an error message" />
   }
+};
+
+const transaction = {
+  address: "0x123",
+  network: "CELO",
+  contractAddress: "0x123",
+  token: "G$",
+  status: "not-started",
+  type: "claim-confirmed",
+  date: moment.utc(),
+  displayName: "GoodDollar (0x123)",
+  tokenValue: undefined,
+  transactionHash: "0xTransactionHash"
+};
+
+export const TransactionDetailsModal = () => {
+  const tokenValue = G$Amount("G$", ethers.BigNumber.from("1000000"), 122, "fuse");
+  transaction.tokenValue = tokenValue as any;
+
+  return <TxDetailsModal open={true} tx={transaction} />;
 };
 
 export const SuccessModal = () => <ClaimSuccessModal open={true} />;

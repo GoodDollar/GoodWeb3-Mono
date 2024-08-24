@@ -7,7 +7,7 @@ import { isTxReject } from "../utils/transactionType";
 import { getUnclaimedPools } from "../utils/pools";
 import { StartClaim, PreClaim } from "../screens";
 import { PostClaim } from "../screens/PostClaim";
-import { ErrorModal, TxModal } from "../../../core/web3/modals";
+import { ErrorModal, TxDetailsModal, TxModal } from "../../../core/web3/modals";
 import { useClaimContext } from "../context/ClaimContext";
 
 const TxModalStatus = ({
@@ -42,6 +42,8 @@ const WizardWrapper: FC<PropsWithChildren> = ({ children }) => {
     loading,
     claimFlowStatus,
     withSignModals,
+    txDetails,
+    setTxDetails,
     setError,
     resetState,
     onClaimSuccess,
@@ -52,6 +54,7 @@ const WizardWrapper: FC<PropsWithChildren> = ({ children }) => {
   const lastStep = stepCount - 1;
   const { errorMessage = "", status } = claimStatus;
   const isReject = isTxReject(errorMessage);
+  const { transaction, isOpen } = txDetails;
 
   const handleClose = useCallback(() => {
     if (!isTxReject(error ?? "")) {
@@ -107,6 +110,13 @@ const WizardWrapper: FC<PropsWithChildren> = ({ children }) => {
       {withSignModals ? (
         <TxModalStatus remainingClaims={claimFlowStatus.remainingClaims} txStatus={claimStatus} onClose={handleClose} />
       ) : null}
+      {isOpen ? (
+        <TxDetailsModal
+          open={isOpen}
+          onClose={() => setTxDetails((prev: any) => ({ ...prev, isOpen: false }))}
+          tx={transaction}
+        />
+      ) : null}
       {/* {withSignModals ? <TxModalStatus txStatus={poolClaimStatus} onClose={handleClose} /> : null} */}
       {/* <TxModalStatus txStatus={claimStatus} onClose={handleClose} /> */}
       {children}
@@ -116,7 +126,6 @@ const WizardWrapper: FC<PropsWithChildren> = ({ children }) => {
 
 export const ClaimWizard: FC<any> = () => (
   <Wizard wrapper={<WizardWrapper />}>
-    {/* todo-fix: jump over from start claim > pre-claim */}
     <StartClaim />
     <PreClaim />
     <PostClaim />

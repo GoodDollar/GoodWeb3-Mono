@@ -1,11 +1,12 @@
 import { Center, Text, VStack } from "native-base";
-import React from "react";
+import React, { useCallback, useState } from "react";
 import { ClaimProvider, ClaimWizard, PostClaim, TransactionCard } from "../../../apps/ubi";
 import { G$Amount, SupportedChains } from "@gooddollar/web3sdk-v2";
 import moment from "moment";
 import { ethers } from "ethers";
 
 import { W3Wrapper } from "../../W3Wrapper";
+import { TxDetailsModal } from "../../../core/web3";
 
 const explorerEndPoints = {
   CELO: "https://api.celoscan.io/api?apikey=WIX677MWRWNYWXTRCFKBK2NZAB2XHYBQ3K&",
@@ -52,23 +53,31 @@ export const TransactionCardStory = {
   render: (args: any) => {
     const tokenValue = G$Amount("G$", ethers.BigNumber.from("1000000"), 122, "fuse");
     args.transaction.tokenValue = tokenValue;
+    const [openTxDetails, setOpenTxDetails] = useState(false);
+
+    const onTxDetails = useCallback(() => {
+      setOpenTxDetails(prev => !prev);
+    }, [openTxDetails]);
+
     return (
       <VStack ml="auto" mr="auto" width="500" justifyContent="center" height="100vh">
-        <TransactionCard {...args} />
+        <TxDetailsModal open={openTxDetails} onClose={() => setOpenTxDetails(prev => !prev)} tx={args.transaction} />
+        <TransactionCard {...args} onTxDetails={onTxDetails} />
       </VStack>
     );
   },
   args: {
     transaction: {
+      address: "0x123",
       network: "CELO",
-      contractAddr: "0x123",
+      contractAddress: "0x123",
       token: "G$",
       status: "not-started",
-      type: "claim-start",
-      date: moment.utc().format()
-    },
-    onTxDetails: async () => {
-      alert(`Open Transaction Details`);
+      type: "claim-confirmed",
+      date: moment.utc(),
+      displayName: "GoodDollar (0x123)",
+      tokenValue: undefined,
+      transactionHash: "0xTransactionHash"
     }
   }
 };

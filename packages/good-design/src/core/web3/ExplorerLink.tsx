@@ -12,8 +12,8 @@ export const ExplorerLink = ({
   addressOrTx,
   text,
   withIcon = true,
-  fontSize = "sm",
-  fontFamily = "subheading",
+  fontStyle = { fontSize: "sm", fontFamily: "subheading", fontWeight: 700 },
+  maxWidth = "100%",
   ...props
 }: {
   chainId: number | undefined;
@@ -21,11 +21,12 @@ export const ExplorerLink = ({
   _icon?: any;
   text?: string;
   withIcon?: boolean;
-  fontSize?: string;
-  fontFamily?: string;
+  fontStyle?: { fontSize: string | number; fontFamily: string; fontWeight: string | number };
+  maxWidth?: string | number;
 }) => {
   const { networks } = useConfig();
   const network = (networks || []).find(_ => _.chainId === chainId);
+  const { fontSize, fontFamily, fontWeight } = fontStyle;
   const link =
     addressOrTx &&
     network &&
@@ -34,14 +35,14 @@ export const ExplorerLink = ({
       : network?.getExplorerTransactionLink(addressOrTx));
 
   return link ? (
-    <HStack flex="2 0" alignItems="center" space="1" maxWidth={"100%"}>
+    <HStack flex="2 0" alignItems="center" space="1" maxWidth={maxWidth}>
       <Link
         _text={{
           fontSize: fontSize,
           isTruncated: true,
           fontFamily: fontFamily,
           color: "goodGrey.400",
-          fontWeight: 700
+          fontWeight: fontWeight
         }}
         href={link}
         isExternal

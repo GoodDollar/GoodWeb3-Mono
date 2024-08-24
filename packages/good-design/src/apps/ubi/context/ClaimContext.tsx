@@ -36,19 +36,8 @@ export const ClaimProvider: FC<
     onConnect?: () => Promise<boolean>;
     onSuccess?: () => Promise<void>;
     onSendTx?: () => void;
-    onTxDetails?: (transaction: any) => void;
   } & PropsWithChildren
-> = ({
-  children,
-  explorerEndPoints,
-  provider,
-  supportedChains,
-  withSignModals,
-  onConnect,
-  onSuccess,
-  onSendTx,
-  onTxDetails
-}) => {
+> = ({ children, explorerEndPoints, provider, supportedChains, withSignModals, onConnect, onSuccess, onSendTx }) => {
   const { account, chainId, library, switchNetwork } = useEthers();
   const [refreshRate, setRefreshRate] = useState<QueryParams["refresh"]>(4);
   const [preClaimPools, setClaimPools] = useState<any[]>([]);
@@ -58,9 +47,12 @@ export const ClaimProvider: FC<
   const [error, setError] = useState<string | undefined>(undefined);
   const claimedAlt = useClaimedAlt(chainId);
 
+  const [txDetails, setTxDetails] = useState({ transaction: undefined, isOpen: false });
+
   const formattedTransactionList = useFormatClaimTransactions(
     postClaimPools.length > 0 ? postClaimPools : preClaimPools.length > 0 ? preClaimPools : [],
-    chainId
+    chainId,
+    account ?? ""
   );
 
   const claimDetails = useClaim(refreshRate);
@@ -69,6 +61,13 @@ export const ClaimProvider: FC<
   const { poolContracts, setContract, setPoolContracts, transactionState, claimFlowStatus } =
     useMultiClaim(preClaimPools);
   const { errorMessage } = transactionState?.state ?? {};
+
+  const onTxDetails = useCallback(
+    (transaction: any) => {
+      setTxDetails({ transaction, isOpen: true });
+    },
+    [txDetails]
+  );
 
   const onClaimFailed = useCallback(async () => {
     setError(errorMessage ?? "An unknown error occurred while claiming");
@@ -128,6 +127,7 @@ export const ClaimProvider: FC<
     resetState();
   }, [/*used*/ account, /* used */ chainId]);
 
+  //Handle navigation to pre-claim screen
   useEffect(() => {
     if (!isEmpty(postClaimPools) || explorerPollLock.isAcquired("resetLock")) return;
 
@@ -151,6 +151,7 @@ export const ClaimProvider: FC<
     }
   }, [claimDetails, preClaimPools, poolContracts, poolsDetails]);
 
+  //Handle navigation to post-claim screen
   useEffect(() => {
     void (async () => {
       if (explorerPollLock.isAcquired("pollLock") || explorerPollLock.isAcquired("resetLock")) return;
@@ -201,6 +202,8 @@ export const ClaimProvider: FC<
         error,
         supportedChains: supportedChains ?? [SupportedChains.CELO, SupportedChains.FUSE],
         withSignModals,
+        txDetails,
+        setTxDetails,
         setError,
         resetState,
         onClaim,

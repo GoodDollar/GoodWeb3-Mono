@@ -4,7 +4,7 @@ import { BigNumber } from "ethers";
 
 import { truncateMiddle } from "../utils";
 
-export const useFormatClaimTransactions = (pools: any[], chainId: number | undefined): any[] => {
+export const useFormatClaimTransactions = (pools: any[], chainId: number | undefined, account: string): any[] => {
   const { defaultEnv } = useGetEnvChainId();
 
   return useMemo(() => {
@@ -18,7 +18,15 @@ export const useFormatClaimTransactions = (pools: any[], chainId: number | undef
       const { [poolName]: poolDetail } = pool;
 
       poolDetail.map((transaction: any) => {
-        const { address, claimAmount = BigNumber.from("0"), contractName, hasClaimed, date = undefined } = transaction;
+        const {
+          address,
+          claimAmount = BigNumber.from("0"),
+          contractName,
+          hasClaimed,
+          date = undefined,
+          isPool = false,
+          transactionHash = undefined
+        } = transaction;
 
         console.log({ hasClaimed, date }); // temp for 'no-unused-vars' eslint rule
 
@@ -31,12 +39,17 @@ export const useFormatClaimTransactions = (pools: any[], chainId: number | undef
 
         formattedTransactions.totalAmount = formattedTransactions.totalAmount.add(claimAmount);
         formattedTransactions.transactionList.push({
+          account, //todo: read from logs, but for now receiver is always the current account.
+          contractAddress: address,
           token: "G$",
           tokenValue,
+          contractName: name,
           displayName,
           network,
           date,
-          type: date ? "claim-confirmed" : "claim-start"
+          type: date ? "claim-confirmed" : "claim-start",
+          isPool,
+          transactionHash
         });
       });
     });

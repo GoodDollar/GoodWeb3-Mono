@@ -73,6 +73,7 @@ export const getPoolsDetails = async (poolAddresses: string[], pool: any, librar
     details[poolName][0]["address"] = poolAddress;
     details[poolName][0]["contract"] = contract;
     details[poolName][0]["hasClaimed"] = details[poolName][0]["claimAmount"].isZero();
+    details[poolName][0]["isPool"] = true;
 
     return details;
   });

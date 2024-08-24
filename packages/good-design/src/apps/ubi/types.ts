@@ -49,6 +49,8 @@ export interface ClaimContextProps {
   claimedAlt: { hasClaimed: boolean; altChain: string };
   error?: string;
   supportedChains: SupportedChains[];
+  txDetails: { transaction: any; isOpen: boolean };
+  setTxDetails: (tx: any) => void;
   setError: (error: string | undefined) => void;
   resetState: () => void;
   onClaim: () => Promise<void>;

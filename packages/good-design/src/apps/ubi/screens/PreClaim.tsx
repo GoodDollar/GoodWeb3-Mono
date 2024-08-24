@@ -1,6 +1,6 @@
 import React, { FC } from "react";
 import { Center, Spinner, VStack } from "native-base";
-import { isEmpty, noop } from "lodash";
+import { isEmpty } from "lodash";
 
 import { Web3ActionButton } from "../../../advanced";
 import { Image } from "../../../core/images";
@@ -12,7 +12,7 @@ import ClaimFooter from "../../../assets/images/claim-footer.png";
 import { useClaimContext } from "../context";
 
 export const PreClaim: FC = () => {
-  const { claimPools, claimDetails, supportedChains, onClaim } = useClaimContext();
+  const { claimPools, claimDetails, supportedChains, onClaim, onTxDetails } = useClaimContext();
   const { totalAmount, transactionList } = claimPools ?? {};
 
   if ((claimDetails?.isWhitelisted as any) === undefined || isEmpty(transactionList))
@@ -31,7 +31,7 @@ export const PreClaim: FC = () => {
             </Center>
             <Image source={BillyGrin} w="93" h="65" style={{ resizeMode: "contain" }} />
           </VStack>
-          <TransactionList transactions={transactionList} onTxDetails={noop} />
+          <TransactionList transactions={transactionList} onTxDetails={onTxDetails} />
         </VStack>
         <Center>
           <Web3ActionButton
