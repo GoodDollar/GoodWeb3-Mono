@@ -9,3 +9,5 @@ export { default as ActionHeader } from "./ActionHeader";
 export { default as SlideDownTab } from "./SlideDownTab";
 export { default as CentreBox } from "./CentreBox";
 export { default as ImageCard } from "./ImageCard";
+export * from "./Trans";
+export * from "./BulletPoint";

@@ -1,9 +1,10 @@
 import React, { useCallback } from "react";
 import { useWizard } from "react-use-wizard";
 import { TouchableOpacity } from "react-native";
-import { ArrowBackIcon, Text, View } from "native-base";
+import { ArrowBackIcon, View } from "native-base";
 
 import { ErrorModal } from "../../../core/web3";
+import { TransText } from "../../../core/layout";
 
 export const WizardHeader = ({
   onDone,
@@ -50,9 +51,14 @@ export const WizardHeader = ({
           </View>
 
           <View flex={"auto"} flexDirection={"row"} justifyContent={"center"}>
-            <Text color="white" fontFamily="subheading" fontSize="sm" fontWeight="500" lineHeight={19}>
-              GoodID
-            </Text>
+            <TransText
+              t={"GoodID"}
+              color="white"
+              fontFamily="subheading"
+              fontSize="sm"
+              fontWeight="500"
+              lineHeight={19}
+            />
           </View>
         </View>
       ) : null}

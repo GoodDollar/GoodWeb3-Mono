@@ -8,7 +8,7 @@ import ImageCard from "../../../core/layout/ImageCard";
 import { Image } from "../../../core/images";
 import { WebVideoUploader } from "../../../core/inputs/WebVideoUploader";
 import { WizardContextProvider } from "../../../utils/WizardContext";
-import { BulletPointList, Title } from "../../../core/layout";
+import { BulletPointList, TransButton, TransText, TransTitle } from "../../../core/layout";
 import { YouSureModal } from "../../../core/web3/modals";
 
 import RedTentCard from "../../../assets/images/redtentcard.png";
@@ -27,15 +27,15 @@ export type RedTentProps = {
 };
 
 const videoRequirements = [
-  "Your first name",
-  "Your age",
-  "Your location",
-  "What you plan to do with the money you receive"
+  /*i18n*/ "Your first name",
+  /*i18n*/ "Your age",
+  /*i18n*/ "Your location",
+  /*i18n*/ "What you plan to do with the money you receive"
 ];
 
-const videoRestrictions = ["Maximum video length 30sec", "Maximum size 20mb"];
+const videoRestrictions = [/*i18n*/ "Maximum video length 30sec", /*i18n*/ "Maximum size 20mb"];
 const videoUsagePolicy = [
-  `Your video may be reviewed by the \n GoodLabs or partner teams for \n verification purposes. Your video \n will not be shared or used publicly, \n and will be erased after a period of \n time.`
+  /*i18n*/ `Your video may be reviewed by the \n GoodLabs or partner teams for \n verification purposes. Your video \n will not be shared or used publicly, \n and will be erased after a period of \n time.`
 ];
 
 const WizardWrapper: FC<PropsWithChildren> = ({ children, ...props }) => (
@@ -46,30 +46,34 @@ const WizardWrapper: FC<PropsWithChildren> = ({ children, ...props }) => (
 
 const CardContent = () => (
   <VStack space="0">
-    <Text fontFamily="subheading" fontSize="sm" fontWeight="400" color="goodGrey.600">
-      Claim weekly:
-    </Text>
-    <Text fontFamily="heading" color="primary" fontSize="l" fontWeight="700">
-      10.000G$
-    </Text>
+    <TransText
+      t={/*i18n*/ "Claim weekly:"}
+      fontFamily="subheading"
+      fontSize="sm"
+      fontWeight="400"
+      color="goodGrey.600"
+    />
+    <TransText t={/*i18n*/ "10.000G$"} fontFamily="heading" color="primary" fontSize="l" fontWeight="700" />
   </VStack>
 );
 
 const CardFooter = ({ linkText }: { linkText: string }) => (
-  <Text mr="auto" fontSize="sm" fontFamily="subheading" fontWeight="400" color="primary">
+  <TransText t={linkText} mr="auto" fontSize="sm" fontFamily="subheading" fontWeight="400" color="primary">
     {linkText}
-  </Text>
+  </TransText>
 );
 
 const PoolRequirements = () => (
   <VStack space={6}>
-    <Title variant="subtitle-grey">To qualify for this pool you need to:</Title>
+    <TransTitle t={/*i18n*/ "To qualify for this pool you need to: "} variant="subtitle-grey" />
     <VStack space="4">
       <HStack space={2}>
         <Checkbox variant="styled-blue" isDisabled defaultIsChecked colorScheme="info" value="female" />
-        <Text variant="sm-grey-650">
-          Have verified your gender as <Text fontWeight="bold">Female</Text> in your GoodID
-        </Text>
+        <HStack alignItems="flex-start">
+          <TransText t={/*i18n*/ "Have verified your gender as"} variant="sm-grey-650" />
+          <TransText t={/*i18n*/ "Female"} variant="sm-grey-650" fontWeight="bold" />
+          <TransText t={/*i18n*/ "in your GoodID"} variant="sm-grey-650" />
+        </HStack>
       </HStack>
       <HStack space={2}>
         <Checkbox variant="styled-blue" defaultIsChecked colorScheme="info" value="location" />
@@ -79,7 +83,7 @@ const PoolRequirements = () => (
       </HStack>
       <HStack space={2}>
         <Checkbox isDisabled colorScheme="info" value="test" />
-        <Text variant="sm-grey-650">Submit a video selfie saying:</Text>
+        <TransText t={/*i18n*/ "Submit a video selfie saying: "} variant="sm-grey-650" />
       </HStack>
       <BulletPointList bulletPoints={videoRequirements} />
     </VStack>
@@ -109,12 +113,12 @@ const RedtentOffer = ({ onDone }: { onDone: RedTentProps["onDone"] }) => {
           onClose={onDone}
           dontShowAgainKey="noOffersModalAgain"
         />
-        <Title variant="title-gdblue">{`You are eligible for \n additional UBI!`}</Title>
+        <TransTitle t={/*i18n*/ "You are eligible for \n additional UBI!"} variant="title-gdblue" />
         <ImageCard
           variant="offer-card"
-          title="Red Tent Women in Nigeria"
+          title={/*i18n*/ "Red Tent Women in Nigeria"}
           content={<CardContent />}
-          footer={<CardFooter linkText={`Learn more>>`} />}
+          footer={<CardFooter linkText={/*i18n*/ "Learn more>>"} />}
           picture={RedTentCard}
           link="https://www.google.com" // todo: add link to good-collective pool page
           pictureStyles={{ resizeMode: "cover" }}
@@ -132,9 +136,11 @@ const RedtentOffer = ({ onDone }: { onDone: RedTentProps["onDone"] }) => {
       </VStack>
       <PoolRequirements />
       <VStack space={4}>
-        <GoodButton onPress={nextStep}>Upload Video Selfie</GoodButton>
+        <GoodButton onPress={nextStep}>
+          <TransText t={/*i18n*/ "Upload Video Selfie"} />
+        </GoodButton>
         <GoodButton onPress={handleSkip} variant={"link-like"} padding={0}>
-          Skip for now
+          <TransText t={/*i18n*/ "Skip for now"} />
         </GoodButton>
       </VStack>
     </View>
@@ -167,18 +173,18 @@ const RedtentVideoInstructions = withTheme({ name: "RedtentVideoInstructions" })
 
     return (
       <VStack space={6} {...props}>
-        <Title variant="title-gdblue">Video instructions</Title>
+        <TransTitle t={/*i18n*/ "Video instructions"} variant="title-gdblue" />
         <Center>
           <Image source={BillyPhone} width={126} height={156} />
         </Center>
 
         {[
-          { title: "Submit a video selfie", pointsList: videoRequirements },
-          { title: "Restrictions", pointsList: videoRestrictions },
-          { title: "How will my video be used?", pointsList: videoUsagePolicy }
+          { title: /*i18n*/ "Submit a video selfie", pointsList: videoRequirements },
+          { title: /*i18n*/ "Restrictions", pointsList: videoRestrictions },
+          { title: /*i18n*/ "How will my video be used?", pointsList: videoUsagePolicy }
         ].map(({ title, pointsList }) => (
           <VStack key={title} space={2}>
-            <Title variant="subtitle-grey">{title}</Title>
+            <TransTitle t={title} variant="subtitle-grey" />
             <BulletPointList bulletPoints={pointsList} />
           </VStack>
         ))}
@@ -192,20 +198,19 @@ const RedtentVideoInstructions = withTheme({ name: "RedtentVideoInstructions" })
 const RedtentThanks = ({ onDone }: { onDone: RedTentProps["onDone"] }) => (
   <VStack space={200}>
     <VStack space={6}>
-      <Title variant="title-gdblue">{`Thank you for submitting your video!`}</Title>
+      <TransTitle t={/*i18n*/ "Thanks you for submitting your video!"} variant="title-gdblue" />
       <HStack paddingBottom={8} borderBottomWidth={1} borderBottomColor="goodGrey.300">
-        <Text variant="sm-grey-650">
-          You are now in the{" "}
-          <Text fontWeight="bold" color="primary">
-            {`Red Tent Women in Nigeria \n`}
-          </Text>
-          GoodCollective. You can claim this additional UBI daily.
-        </Text>
+        <TransText t={/*i18n*/ "You are now in the"} variant="sm-grey-650" />
+        <TransText
+          t={/*i18n*/ "Red Tent Woman in Nigeria \n"}
+          variant="sm-grey-650"
+          fontWeight="bold"
+          color="primary"
+        />
+        <TransText t={/*i18n*/ "GoodCollective. You can claim this additional UBI daily."} variant="sm-grey-650" />
       </HStack>
     </VStack>
-    <GoodButton onPress={() => onDone()} variant="standard">
-      Next
-    </GoodButton>
+    <TransButton t={/*i18n*/ "Next"} onPress={() => onDone} variant="standard" />
   </VStack>
 );
 

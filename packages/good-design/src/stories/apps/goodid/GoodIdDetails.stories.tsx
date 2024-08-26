@@ -1,10 +1,12 @@
 import React from "react";
 import { useEthers } from "@usedapp/core";
-import { View } from "native-base";
+import { HStack, View } from "native-base";
 import { isEmpty } from "lodash";
 import { W3Wrapper } from "../../W3Wrapper";
 import { GoodIdContextProvider } from "@gooddollar/web3sdk-v2";
 import { GoodIdDetails } from "../../../apps/goodid";
+import { GoodUIi18nProvider, useGoodUILanguage } from "../../../theme";
+import { GoodButton } from "../../../core";
 
 const GoodIdWrapper = ({ children }) => {
   return <GoodIdContextProvider>{children}</GoodIdContextProvider>;
@@ -13,11 +15,15 @@ const GoodIdWrapper = ({ children }) => {
 export const GoodIdDetailsScreen = {
   render: (args: any) => {
     const { account = "" } = useEthers();
-
+    const { setLanguage } = useGoodUILanguage();
     const styles = Object.values(args.styles).filter((styleprop: any) => !isEmpty(styleprop));
 
     return (
       <View>
+        <HStack width="200">
+          <GoodButton onPress={() => setLanguage("en")}>English</GoodButton>
+          <GoodButton onPress={() => setLanguage("es-419")}>Spanish</GoodButton>
+        </HStack>
         <GoodIdWrapper>
           <W3Wrapper withMetaMask={true} env="fuse">
             <GoodIdDetails account={account} withHeader={true} {...styles} />
@@ -44,9 +50,11 @@ export default {
   component: GoodIdDetails,
   decorators: [
     (Story: any) => (
-      <W3Wrapper withMetaMask={true} env="fuse">
-        <Story />
-      </W3Wrapper>
+      <GoodUIi18nProvider>
+        <W3Wrapper withMetaMask={true} env="fuse">
+          <Story />
+        </W3Wrapper>
+      </GoodUIi18nProvider>
     )
   ],
   argTypes: {}
