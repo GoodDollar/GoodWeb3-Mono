@@ -4,7 +4,7 @@ import { isEmpty } from "lodash";
 
 import { Web3ActionButton } from "../../../advanced";
 import { Image } from "../../../core/images";
-import { GdAmount, Title } from "../../../core/layout";
+import { GdAmount, TransTitle } from "../../../core/layout";
 import { TransactionList } from "../components/TransactionStateCard";
 
 import BillyGrin from "../../../assets/images/billy-grin.png";
@@ -20,9 +20,7 @@ export const PreClaim: FC = () => {
 
   return (
     <VStack justifyContent="center" alignItems="center">
-      <Title variant="title-gdblue" marginTop="6" marginBottom="2" fontSize="xl">
-        Claim your share
-      </Title>
+      <TransTitle t={/*i18n*/ "Claim your share"} variant="title-gdblue" marginTop="6" marginBottom="2" fontSize="xl" />
       <VStack space={10} width="343">
         <VStack space={8}>
           <VStack space={4} alignItems="center">
@@ -35,7 +33,7 @@ export const PreClaim: FC = () => {
         </VStack>
         <Center>
           <Web3ActionButton
-            text={`Claim Now`}
+            text={/*i18n*/ "Claim Now"}
             web3Action={onClaim}
             variant="round"
             supportedChains={supportedChains}

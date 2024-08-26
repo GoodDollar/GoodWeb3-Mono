@@ -1,11 +1,10 @@
 import React from "react";
-import { IStackProps, VStack, Text } from "native-base";
+import { IStackProps, VStack } from "native-base";
 
 import { noop } from "lodash";
 import { useWizard } from "react-use-wizard";
-import { Trans } from "@lingui/react";
 
-import { Title } from "../../../core/layout";
+import { TransText, TransTitle } from "../../../core/layout";
 import GoodIdCard from "../components/GoodIdCard";
 import { GoodButton } from "../../../core/buttons";
 import { withTheme } from "../../../theme";
@@ -27,29 +26,25 @@ const SegmentationConfirmation = withTheme({ name: "SegmentationConfirmation" })
     const { innerContainer, button } = styles ?? {};
 
     return isWhitelisted === undefined || !account ? (
-      <Trans
-        id={"We are creating \n your GoodID"}
-        render={({ translation }: { translation: any }) => (
-          <LoaderModal title={translation} overlay="dark" loading={true} onClose={noop} />
-        )}
-      />
+      <LoaderModal title={/*i18n*/ "We are creating \n your GoodID"} overlay="dark" loading={true} onClose={noop} />
     ) : (
       <VStack space={200} width={"100%"} {...props}>
         <VStack space={6} alignItems="center" {...innerContainer}>
-          <Title variant="title-gdblue">Your GoodID is ready!</Title>
+          <TransTitle t={/*i18n*/ "Your GoodID is ready"} variant="title-gdblue" />
           <GoodIdCard
             certificateSubjects={props.certificateSubjects}
             account={account}
             isWhitelisted={isWhitelisted}
             expiryDate={expiryFormatted}
           />
-          <Text variant="browse-wrap">
-            You can always access this GoodID by connecting your current wallet to GoodDapp.
-          </Text>
+          <TransText
+            t={/*i18n*/ "You can always access this GoodID by connecting your current wallet to GoodDapp."}
+            variant="browse-wrap"
+          />
         </VStack>
         <VStack space={4} alignItems="center" width={"100%"}>
           <GoodButton width="343" {...button} onPress={nextStep}>
-            Next
+            <TransText t={/*i18n*/ "Next"} />
           </GoodButton>
         </VStack>
       </VStack>

@@ -77,7 +77,7 @@ const FaceId = ({ ...props }) => {
             ml="4"
             mt={margin}
             padding="0"
-            text="Show my FaceId"
+            text={/*i18n*/ "Show my FaceId"}
             web3Action={retreiveFaceId}
             variant="outlined"
             innerText={{ fontSize: 14 }}

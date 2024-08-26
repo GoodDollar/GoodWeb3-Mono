@@ -35,7 +35,7 @@ const videoRequirements = [
 
 const videoRestrictions = [/*i18n*/ "Maximum video length 30sec", /*i18n*/ "Maximum size 20mb"];
 const videoUsagePolicy = [
-  /*i18n*/ `Your video may be reviewed by the \n GoodLabs or partner teams for \n verification purposes. Your video \n will not be shared or used publicly, \n and will be erased after a period of \n time.`
+  /*i18n*/ "Your video may be reviewed by the \n GoodLabs or partner teams for \n verification purposes. Your video \n will not be shared or used publicly, \n and will be erased after a period of \n time."
 ];
 
 const WizardWrapper: FC<PropsWithChildren> = ({ children, ...props }) => (

@@ -18,7 +18,7 @@ export const RedirectModal = ({ open, url, onClose, ...props }: RedirectModalPro
     type="ctaX"
     show={open}
     onClose={onClose}
-    title={/*i18n*/ `Redirect Notice`}
+    title={/*i18n*/ "Redirect Notice"}
     body={<TransText t={redirectCopy} variant="sm-grey-650" />}
     footer={<ModalFooterCtaX extUrl={url} buttonText={/*i18n*/ "Go to website"} />}
     withOverlay="dark"

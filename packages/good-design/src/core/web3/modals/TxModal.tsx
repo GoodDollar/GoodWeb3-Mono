@@ -1,15 +1,15 @@
 import React from "react";
 import { noop } from "lodash";
-import { Text } from "native-base";
 import { TransactionStatus } from "@usedapp/core";
 
+import { TransText } from "../../layout";
 import BasicStyledModal from "./BasicStyledModal";
 import { LearnButton } from "../../buttons";
 
 interface ITxModalProps {
   type: "send" | "sign" | "identity";
   isPending: boolean;
-  customTitle?: { title: string; content: string };
+  customTitle?: { title: { id: string; values: any } };
   onClose?: () => void;
   title?: string;
   content?: string;
@@ -31,7 +31,7 @@ const txModalCopy = {
   }
 };
 
-const TxModalContent = ({ content }: { content: string }) => <Text variant="sm-grey-650">{content}</Text>;
+const TxModalContent = ({ content }: { content: string }) => <TransText t={content} variant="sm-grey-650" />;
 
 export const TxModal: React.FC<ITxModalProps> = ({
   isPending,
@@ -40,14 +40,14 @@ export const TxModal: React.FC<ITxModalProps> = ({
   type,
   ...props
 }: ITxModalProps) => {
-  const { title, content } = customTitle ?? txModalCopy[type];
+  const { title, content } = txModalCopy[type];
   return (
     <BasicStyledModal
       {...props}
       type="learn"
       show={isPending}
       onClose={onClose}
-      title={title}
+      title={customTitle ?? title}
       body={<TxModalContent content={content} />}
       footer={<LearnButton type={type} />}
       withOverlay="dark"

@@ -1,12 +1,15 @@
-import { Center, Text, VStack } from "native-base";
+import { Center, HStack, Text, VStack } from "native-base";
 import React, { useCallback, useState } from "react";
 import { ClaimProvider, ClaimWizard, PostClaim, TransactionCard } from "../../../apps/ubi";
 import { G$Amount, SupportedChains } from "@gooddollar/web3sdk-v2";
 import moment from "moment";
 import { ethers } from "ethers";
 
+import { useGoodUILanguage } from "../../../theme";
+
 import { W3Wrapper } from "../../W3Wrapper";
 import { TxDetailsModal } from "../../../core/web3";
+import { GoodButton } from "../../../core";
 
 const explorerEndPoints = {
   CELO: "https://api.celoscan.io/api?apikey=WIX677MWRWNYWXTRCFKBK2NZAB2XHYBQ3K&",
@@ -30,6 +33,8 @@ export default {
 
 export const ClaimFlow = {
   render: (args: any) => {
+    const { setLanguage } = useGoodUILanguage();
+
     return (
       <ClaimProvider
         withSignModals
@@ -37,6 +42,15 @@ export const ClaimFlow = {
         supportedChains={[SupportedChains.CELO, SupportedChains.FUSE]}
         {...args.args}
       >
+        <HStack>
+          <GoodButton onPress={() => setLanguage("en")} backgroundColor="primary" color="white">
+            English
+          </GoodButton>
+          <GoodButton onPress={() => setLanguage("es-419")} backgroundColor="primary" color="white">
+            spanish
+          </GoodButton>
+        </HStack>
+
         <ClaimWizard {...args} />
       </ClaimProvider>
     );

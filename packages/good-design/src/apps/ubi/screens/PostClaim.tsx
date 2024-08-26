@@ -4,10 +4,10 @@ import { isEmpty } from "lodash";
 import { useTimer } from "@gooddollar/web3sdk-v2";
 
 import { Image } from "../../../core/images";
-import { Title } from "../../../core/layout";
+import { TransText, TransTitle } from "../../../core/layout";
 import { TransactionList } from "../components/TransactionStateCard";
 import { useClaimContext } from "../context";
-import { GoodButton } from "../../../core";
+import { GoodButton } from "../../../core/buttons";
 
 import BillyHearts from "../../../assets/gifs/billy-hearts.gif";
 import SwitchArrows from "../../../assets/svg/switch-arrows.svg";
@@ -21,9 +21,7 @@ const NextClaim = ({ time }: { time: Date }) => {
     <VStack alignItems="center">
       <Image source={BillyHearts} alt="billy-hearts" width="100" height="120" />
       <VStack space={0} backgroundColor="goodGrey.400" borderRadius="100" w="160" h="160" justifyContent="center">
-        <Text textAlign="center" variant="sm-white-normal">
-          {`Your Next Claim`}
-        </Text>
+        <TransText t={/*i18n*/ "Your Next Claim"} textAlign="center" variant="sm-white-normal" />
         <Text textAlign="center" fontFamily="heading" fontWeight="700" fontSize="l" color="white">
           {nextClaim}
         </Text>
@@ -51,16 +49,18 @@ export const PostClaim: FC = () => {
         borderBottomColor="goodGrey.300"
         alignItems="center"
       >
-        <Title variant="title-gdblue" fontSize="xl">
-          {`You've claimed today`}
-        </Title>
+        <TransTitle t={/*i18n*/ "You've claimed today"} variant="title-gdblue" fontSize="xl" />
         {claimTime ? <NextClaim time={claimTime} /> : null}
         {!hasClaimed ? (
           <Center>
             <GoodButton onPress={switchChain} flexDir="row">
               <HStack space={2} justifyContent="center" alignItems="center">
                 <Image source={SwitchArrows} alt="switch-arrows" width="6" height="6" />
-                <Text variant="sm-white-normal">{`CLAIM ON ${altChain}`}</Text>
+                <TransText
+                  t={/*i18n*/ "CLAIM ON {altChain}"}
+                  values={{ altChain: altChain }}
+                  variant="sm-white-normal"
+                />
               </HStack>
             </GoodButton>
           </Center>
@@ -68,9 +68,7 @@ export const PostClaim: FC = () => {
       </VStack>
       <VStack marginTop={8} space={4} width="375">
         <VStack width="375">
-          <Title variant="title-gdblue" fontSize="l" width="100%">
-            {`Recent claims (Last 30 days):`}
-          </Title>
+          <TransTitle t={/*i18n*/ "Recent claims (Last 30 days):"} variant="title-gdblue" fontSize="l" width="100%" />
         </VStack>
 
         {transactionList?.length === 0 ? (

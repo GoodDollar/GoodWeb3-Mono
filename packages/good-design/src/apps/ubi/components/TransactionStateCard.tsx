@@ -4,7 +4,7 @@ import { Center, HStack, Text, VStack } from "native-base";
 import { withTheme } from "../../../theme/hoc";
 import { BasePressable } from "../../../core/buttons";
 import { Image } from "../../../core/images";
-import { GdAmount } from "../../../core/layout";
+import { GdAmount, TransText } from "../../../core/layout";
 
 import { ClaimContextProps, Transaction } from "../types";
 import { isReceiveTransaction } from "../utils/transactionType";
@@ -64,13 +64,15 @@ export const TransactionCard = withTheme({ name: "TransactionCard" })(
                 <Text variant="sm-grey" fontWeight="500">
                   {displayName}
                 </Text>
-                <Text
+                <TransText
+                  t={/*i18n*/ "Your Daily Basic Income"}
                   fontSize="4xs"
                   fontFamily="subheading"
                   fontWeight="400"
                   lineHeight="12"
                   color="goodGrey.600"
-                >{`Your Daily Basic Income`}</Text>
+                />
+                {/* Todo: should read subtitle from pool details*/}
                 {status === "failed" ? <Text>TransactionFailedDetails</Text> : null}
               </VStack>
               <Center h="100%" justifyContent="center" alignItems="center" justifyItems="center">

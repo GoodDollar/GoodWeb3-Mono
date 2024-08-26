@@ -21,8 +21,10 @@ const TxModalStatus = ({
 }) => {
   const { status } = txStatus;
   const customTitle = {
-    title: `Please sign with \n your wallet \n(${remainingClaims} transactions left)`,
-    content: "To complete this action, sign with your wallet."
+    title: /*i18n*/ {
+      id: "Please sign with \n your wallet \n({remainingClaims} transactions left)",
+      values: { remainingClaims: remainingClaims }
+    }
   };
 
   return status === "PendingSignature" ? (

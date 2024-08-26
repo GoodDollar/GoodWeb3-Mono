@@ -1,7 +1,6 @@
 import React, { useContext } from "react";
 import { Center, Spinner, Text, VStack } from "native-base";
 import { noop } from "lodash";
-import { Trans } from "@lingui/react";
 
 import { BasicStyledModal } from "../../../core/web3/modals";
 import { WizardContext } from "../../../utils/WizardContext";
@@ -29,19 +28,14 @@ export const SegmentationScreen = ({
 
   return (
     <>
-      <Trans
-        id={"We could not \n confirm your \n location"}
-        render={({ translation }: { translation: any }) => (
-          <BasicStyledModal
-            title={translation}
-            body={<ModalLocationDenied />}
-            type={"cta"}
-            show={data?.locationPermission === false}
-            withOverlay={"dark"}
-            onClose={noop}
-            withCloseButton
-          />
-        )}
+      <BasicStyledModal
+        title={/*i18n*/ "We could not \n confirm your \n location"}
+        body={<ModalLocationDenied />}
+        type={"cta"}
+        show={data?.locationPermission === false}
+        withOverlay={"dark"}
+        onClose={noop}
+        withCloseButton
       />
       <VStack space={10} width="100%" justifyContent="center" alignItems="center">
         <VStack space={6}>

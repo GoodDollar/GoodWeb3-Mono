@@ -70,7 +70,7 @@ export const ClaimProvider: FC<
   );
 
   const onClaimFailed = useCallback(async () => {
-    setError(errorMessage ?? "An unknown error occurred while claiming");
+    setError(errorMessage ?? /*i18n*/ "An unknown error occurred while claiming");
 
     if (claimFlowStatus.isClaimingDone) {
       resetState();
