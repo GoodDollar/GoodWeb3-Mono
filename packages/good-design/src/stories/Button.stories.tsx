@@ -2,11 +2,16 @@ import { ExternalProvider } from "@ethersproject/providers";
 import { Celo, Fuse, Web3Provider } from "@gooddollar/web3sdk-v2";
 import { Config, DAppProvider, Mainnet, useEthers } from "@usedapp/core";
 import { ethers, getDefaultProvider } from "ethers";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import BaseButton from "../core/buttons/BaseButton";
+import GoodButton from "../core/buttons/GoodButton";
 import ClaimButton from "../core/buttons/ClaimButton";
-// import SelectBox from "../advanced/customswitch/SelectBox";
+import LearnButton from "../core/buttons/LearnButton";
 import { BasePressable } from "../core";
+import { TxModal } from "../core";
+
+import { useGoodUILanguage } from "../theme";
+import { VStack } from "native-base";
 
 export const BaseButtonWithThemeExample = () => {
   return (
@@ -21,6 +26,33 @@ export const BaseButtonWithThemeExample = () => {
     </>
   );
 };
+
+const LinguiExample = () => {
+  const { setLanguage } = useGoodUILanguage();
+  const [modalOpen, setModalOpen] = useState(false);
+
+  const openModal = useCallback(() => {
+    setModalOpen(prev => !prev);
+  }, []);
+
+  return (
+    <VStack width="343">
+      <TxModal type="sign" isPending={modalOpen} />
+      <GoodButton width="200" onPress={() => setLanguage("en")} backgroundColor="primary" color="white">
+        English
+      </GoodButton>
+      <GoodButton width="200" onPress={() => setLanguage("es-419")} backgroundColor="primary" color="white">
+        Spanish-Latin
+      </GoodButton>
+      <LearnButton type="network" />
+      <GoodButton width="200" onPress={openModal}>
+        Open Modal
+      </GoodButton>
+    </VStack>
+  );
+};
+
+export const LearnButtonWithTranslation = () => <LinguiExample />;
 
 const config: Config = {
   networks: [Mainnet, Fuse, Celo],

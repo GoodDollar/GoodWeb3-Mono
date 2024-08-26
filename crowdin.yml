@@ -1,0 +1,6 @@
+files:
+  - source: packages/good-design/src/locales/en/
+    ignore:
+      - '*.ts'
+      - '*.js'
+    translation: /packages/good-design/src/locales/%two_letters_code%/messages.po

@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import { FeedPost } from "@gooddollar/web3sdk-v2";
 import { Heading, Spinner, Stack, Text, useBreakpointValue, VStack } from "native-base";
+import { Trans } from "@lingui/react";
 
 import SvgXml from "../../core/images/SvgXml";
 import { CentreBox } from "../../core/layout/CentreBox";
@@ -94,8 +95,7 @@ export const NewsFeed = ({ feed }: { feed: FeedPost[] }) => {
           backgroundColor="rgba(0,175,255,0.1)"
         >
           <Heading size="sm" fontFamily="subheading" fontWeight="400" lineHeight="130%" color="primary">
-            {" "}
-            News{" "}
+            <Trans id="News" />
           </Heading>
         </CentreBox>
         <VStack width={feedWidth} ml="auto" mr="auto">
