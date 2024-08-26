@@ -8,7 +8,7 @@ msgstr ""
 "Language: es_419\n"
 "Project-Id-Version: goodui\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-08-26 08:55\n"
+"PO-Revision-Date: 2024-08-26 09:08\n"
 "Last-Translator: \n"
 "Language-Team: Spanish, Latin America\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -21,7 +21,7 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/apps/goodid/components/SegmentationRow.tsx:9
 msgid "I am"
-msgstr ""
+msgstr "Yo soy"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/components/SegmentationRow.tsx:10
@@ -56,7 +56,7 @@ msgstr "Atención: La información que has corregido puede mostrarse como \"sin 
 #: src/apps/goodid/screens/SegmentationDispute.tsx:54
 #: src/apps/goodid/wizards/RedtentWizard.tsx:213
 msgid "Next"
-msgstr ""
+msgstr "Siguiente"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/GoodIdDetails.tsx:72
@@ -122,7 +122,7 @@ msgstr "Tu nombre"
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:31
 msgid "Your age"
-msgstr ""
+msgstr "Tu edad"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:32
@@ -142,17 +142,17 @@ msgstr "Duración máxima del vídeo 30s"
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:36
 msgid "Maximum size 20mb"
-msgstr ""
+msgstr "Tamaño máximo 20mb"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:50
 msgid "Claim weekly:"
-msgstr ""
+msgstr "Reclamar semanalmente:"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:56
 msgid "10.000G$"
-msgstr ""
+msgstr "10.000G$"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:68
@@ -162,22 +162,22 @@ msgstr "Para calificar para esta \"pool\" necesitas: "
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:73
 msgid "Have verified your gender as"
-msgstr ""
+msgstr "Has verificado tu género como"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:74
 msgid "Female"
-msgstr ""
+msgstr "Mujer"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:75
 msgid "in your GoodID"
-msgstr ""
+msgstr "en tu GoodID"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:86
 msgid "Submit a video selfie saying: "
-msgstr ""
+msgstr "Enviar un video selfie diciendo: "
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:116
@@ -188,12 +188,12 @@ msgstr "Eres elegible para UBI adicional!"
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:119
 msgid "Red Tent Women in Nigeria"
-msgstr ""
+msgstr "Mujeres de tienda roja en Nigeria"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:121
 msgid "Learn more>>"
-msgstr ""
+msgstr "Más información>>"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:140
@@ -203,7 +203,7 @@ msgstr "Subir video selfie"
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:143
 msgid "Skip for now"
-msgstr ""
+msgstr "Saltar por ahora"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:176
@@ -233,7 +233,7 @@ msgstr "¡Gracias por enviar su video!"
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:203
 msgid "You are now in the"
-msgstr ""
+msgstr "Ahora estás en el"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:205
@@ -243,13 +243,14 @@ msgstr "Mujeres de la \"Red Tent\" en Nigeria \n"
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:210
 msgid "GoodCollective. You can claim this additional UBI daily."
-msgstr ""
+msgstr "GoodCollective. Puedes reclamar este UBI adicional diariamente."
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/SegmentationWizard.tsx:57
 msgid "We're checking \n"
 " your information"
-msgstr ""
+msgstr "Estamos comprobando \n"
+" tu información"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/SegmentationWizard.tsx:68
@@ -264,12 +265,12 @@ msgstr "no, no soy"
 #. js-lingui-explicit-id
 #: src/apps/newsfeed/NewsFeed.tsx:98
 msgid "News"
-msgstr ""
+msgstr "Noticias"
 
 #. js-lingui-explicit-id
 #: src/core/constants.ts:10
 msgid "How do transactions work?"
-msgstr ""
+msgstr "¿Cómo funcionan las transacciones?"
 
 #. js-lingui-explicit-id
 #: src/core/constants.ts:15
@@ -279,17 +280,17 @@ msgstr "¿Cómo funciona el puente?"
 #. js-lingui-explicit-id
 #: src/core/constants.ts:20
 msgid "What is a web3 network?"
-msgstr ""
+msgstr "¿Qué es una red web3?"
 
 #. js-lingui-explicit-id
 #: src/core/constants.ts:25
 msgid "What is signing?"
-msgstr ""
+msgstr "¿Qué es firmar?"
 
 #. js-lingui-explicit-id
 #: src/core/constants.ts:30
 msgid "Learn about the identification process"
-msgstr ""
+msgstr "Aprende sobre el proceso de identificación"
 
 #. js-lingui-explicit-id
 #: src/core/web3/modals/RedirectModal.tsx:17
@@ -343,13 +344,13 @@ msgstr "Por favor, espere a que la transacción sea validada."
 #. js-lingui-explicit-id
 #: src/core/web3/modals/TxModal.tsx:78
 msgid "Learn"
-msgstr ""
+msgstr "Aprender"
 
 #. js-lingui-explicit-id
 #: src/core/web3/modals/YouSureModal.tsx:11
 #: src/core/web3/modals/YouSureModal.tsx:22
 msgid "Are you sure?"
-msgstr ""
+msgstr "¿Estás seguro?"
 
 #. js-lingui-explicit-id
 #: src/core/web3/modals/YouSureModal.tsx:13
@@ -366,12 +367,12 @@ msgstr "Eliminar cuenta"
 #. js-lingui-explicit-id
 #: src/core/web3/modals/YouSureModal.tsx:17
 msgid "Are you sure you want to skip this offer for now?"
-msgstr ""
+msgstr "¿Estás seguro de que quieres saltarte esta oferta por ahora?"
 
 #. js-lingui-explicit-id
 #: src/core/web3/modals/YouSureModal.tsx:19
 msgid "Skip"
-msgstr ""
+msgstr "Saltar"
 
 #. js-lingui-explicit-id
 #: src/core/web3/modals/YouSureModal.tsx:23
@@ -381,10 +382,10 @@ msgstr "Tenga en cuenta que incluso las transacciones no exitosas y fallidas le 
 #. js-lingui-explicit-id
 #: src/core/web3/modals/YouSureModal.tsx:24
 msgid "Yes, try again"
-msgstr ""
+msgstr "Sí, inténtelo de nuevo"
 
 #. js-lingui-explicit-id
 #: src/core/web3/modals/YouSureModal.tsx:99
 msgid "Don't show this again"
-msgstr ""
+msgstr "No mostrar esto de nuevo"
 
