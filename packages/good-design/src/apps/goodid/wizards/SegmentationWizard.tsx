@@ -24,6 +24,7 @@ export type SegmentationProps = {
   isWhitelisted?: boolean;
   expiryFormatted: string | undefined;
   availableOffers: false | PoolCriteria[] | any;
+  isDev?: boolean;
 };
 
 const SegmentationScreenWrapper = (
