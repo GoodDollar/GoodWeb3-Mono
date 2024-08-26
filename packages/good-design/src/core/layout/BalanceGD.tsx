@@ -115,7 +115,7 @@ export const GdAmount = ({
   const amountAbbr = abbreviateGd(amountNumber.toString());
 
   const isLargeNumber = amountNumber > 1e6;
-  const fontSize = isLargeNumber ? "ms" : "l";
+  const fontSize = isLargeNumber ? "sm" : "l";
 
   return (
     <HStack alignItems="flex-end">

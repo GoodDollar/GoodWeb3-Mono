@@ -33,11 +33,22 @@ export const ClaimProvider: FC<
     supportedChains: SupportedChains[];
     withSignModals: boolean;
     provider?: any;
+    onNews: () => void;
     onConnect?: () => Promise<boolean>;
     onSuccess?: () => Promise<void>;
     onSendTx?: () => void;
   } & PropsWithChildren
-> = ({ children, explorerEndPoints, provider, supportedChains, withSignModals, onConnect, onSuccess, onSendTx }) => {
+> = ({
+  children,
+  explorerEndPoints,
+  provider,
+  supportedChains,
+  withSignModals,
+  onConnect,
+  onNews,
+  onSendTx,
+  onSuccess
+}) => {
   const { account, chainId, library, switchNetwork } = useEthers();
   const [refreshRate, setRefreshRate] = useState<QueryParams["refresh"]>(4);
   const [preClaimPools, setClaimPools] = useState<any[]>([]);
@@ -203,6 +214,7 @@ export const ClaimProvider: FC<
         supportedChains: supportedChains ?? [SupportedChains.CELO, SupportedChains.FUSE],
         withSignModals,
         txDetails,
+        onNews,
         setTxDetails,
         setError,
         resetState,

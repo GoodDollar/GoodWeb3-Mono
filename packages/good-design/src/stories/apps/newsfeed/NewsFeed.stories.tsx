@@ -16,7 +16,7 @@ const NewsFeedWidget = () => {
 
   return (
     <Center width={375}>
-      <NewsFeed feed={feed} />
+      <NewsFeed feed={feed} withHeader />
     </Center>
   );
 };

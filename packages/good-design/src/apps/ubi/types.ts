@@ -50,6 +50,7 @@ export interface ClaimContextProps {
   error?: string;
   supportedChains: SupportedChains[];
   txDetails: { transaction: any; isOpen: boolean };
+  onNews: () => void;
   setTxDetails: (tx: any) => void;
   setError: (error: string | undefined) => void;
   resetState: () => void;

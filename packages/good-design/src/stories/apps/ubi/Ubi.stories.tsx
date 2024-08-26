@@ -1,7 +1,7 @@
 import { Center, HStack, Text, VStack } from "native-base";
 import React, { useCallback, useState } from "react";
 import { ClaimProvider, ClaimWizard, PostClaim, TransactionCard } from "../../../apps/ubi";
-import { G$Amount, SupportedChains } from "@gooddollar/web3sdk-v2";
+import { G$Amount, NewsFeedProvider, SupportedChains } from "@gooddollar/web3sdk-v2";
 import moment from "moment";
 import { ethers } from "ethers";
 
@@ -23,9 +23,11 @@ export default {
   decorators: [
     (Story: any) => (
       <W3Wrapper withMetaMask={true} env="fuse">
-        <VStack alignItems="center">
-          <Story />
-        </VStack>
+        <NewsFeedProvider env="qa" limit={1}>
+          <VStack alignItems="center">
+            <Story />
+          </VStack>
+        </NewsFeedProvider>
       </W3Wrapper>
     )
   ]
@@ -56,9 +58,8 @@ export const ClaimFlow = {
     );
   },
   args: {
-    onTxDetails: async (transaction: any) => {
-      console.log({ transaction });
-      alert(`Open Transaction Details`);
+    onNews: () => {
+      alert("Should go to news page");
     }
   }
 };

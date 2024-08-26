@@ -1,8 +1,9 @@
-import React, { FC, useEffect } from "react";
+import React, { FC, useContext, useEffect } from "react";
 import { Center, HStack, Spinner, Text, VStack } from "native-base";
 import { isEmpty } from "lodash";
-import { useTimer } from "@gooddollar/web3sdk-v2";
+import { NewsFeedContext, useTimer } from "@gooddollar/web3sdk-v2";
 
+import { NewsFeed } from "../../newsfeed";
 import { Image } from "../../../core/images";
 import { TransText, TransTitle } from "../../../core/layout";
 import { TransactionList } from "../components/TransactionStateCard";
@@ -31,7 +32,8 @@ const NextClaim = ({ time }: { time: Date }) => {
 };
 
 export const PostClaim: FC = () => {
-  const { claimPools, claimDetails, claimedAlt, onTxDetails, switchChain } = useClaimContext();
+  const { claimPools, claimDetails, claimedAlt, onNews, onTxDetails, switchChain } = useClaimContext();
+  const { feed } = useContext(NewsFeedContext);
   const { transactionList } = claimPools ?? {};
   const { claimTime, isWhitelisted } = claimDetails;
   const { hasClaimed, altChain } = claimedAlt ?? {};
@@ -65,6 +67,20 @@ export const PostClaim: FC = () => {
             </GoodButton>
           </Center>
         ) : null}
+        <VStack space={6}>
+          <Center width="375">
+            <NewsFeed {...{ feed }} />
+          </Center>
+          <GoodButton variant="link-like" onPress={onNews}>
+            <TransText
+              t={/*i18n*/ "See all news >"}
+              fontFamily="subheading"
+              color="primary"
+              fontSize="ms"
+              fontWeight="700"
+            />
+          </GoodButton>
+        </VStack>
       </VStack>
       <VStack marginTop={8} space={4} width="375">
         <VStack width="375">

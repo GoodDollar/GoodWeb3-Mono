@@ -71,7 +71,7 @@ const NewsCardWrapper = ({ item }: { item: FeedPost }) => {
   );
 };
 
-export const NewsFeed = ({ feed }: { feed: FeedPost[] }) => {
+export const NewsFeed = ({ feed, withHeader = false }: { feed: FeedPost[]; withHeader?: boolean }) => {
   const containerWidth = useBreakpointValue({
     base: "100%",
     xl: "auto"
@@ -85,19 +85,22 @@ export const NewsFeed = ({ feed }: { feed: FeedPost[] }) => {
   return (
     <CentreBox flexDir="column" minWidth="325" width={containerWidth}>
       <Stack w="100%">
-        <CentreBox
-          w="100%"
-          justifyContent="center"
-          alignItems="center"
-          px={4}
-          py={2}
-          marginBottom={4}
-          backgroundColor="rgba(0,175,255,0.1)"
-        >
-          <Heading size="sm" fontFamily="subheading" fontWeight="400" lineHeight="130%" color="primary">
-            <Trans id="News" />
-          </Heading>
-        </CentreBox>
+        {withHeader ? (
+          <CentreBox
+            w="100%"
+            justifyContent="center"
+            alignItems="center"
+            px={4}
+            py={2}
+            marginBottom={4}
+            backgroundColor="rgba(0,175,255,0.1)"
+          >
+            <Heading size="sm" fontFamily="subheading" fontWeight="400" lineHeight="130%" color="primary">
+              <Trans id="News" />
+            </Heading>
+          </CentreBox>
+        ) : null}
+
         <VStack width={feedWidth} ml="auto" mr="auto">
           {feed && feed.length > 0 ? (
             feed.map((item: FeedPost) => <NewsCardWrapper key={item.id} item={item} />)
