@@ -27,7 +27,7 @@ const LearnButton = ({ type }: LearnButtonType) => {
   return (
     <BasePressable variant="externalLink" onPress={openNotionTab} w="100%">
       <Box display="flex" w="60%" alignSelf="flex-start" p={2}>
-        <TransText color="lightBlue" fontSize="sm" t={`Learn`} />
+        <TransText color="lightBlue" fontSize="sm" t={/*i18n*/ "Learn"} />
         <TransText
           color="main"
           fontSize="sm"
