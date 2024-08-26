@@ -8,7 +8,7 @@ msgstr ""
 "Language: en\n"
 "Project-Id-Version: goodui\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-08-26 08:44\n"
+"PO-Revision-Date: 2024-08-20 15:07\n"
 "Last-Translator: \n"
 "Language-Team: English\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -17,11 +17,6 @@ msgstr ""
 "X-Crowdin-Language: en\n"
 "X-Crowdin-File: /168-gooddesign-localization/packages/good-design/src/locales/en/messages.po\n"
 "X-Crowdin-File-ID: 126\n"
-
-#. js-lingui-explicit-id
-#: src/core/buttons/LearnButton.tsx:30
-msgid "Learn"
-msgstr "Learn"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/components/SegmentationRow.tsx:9
@@ -258,19 +253,19 @@ msgid "GoodCollective. You can claim this additional UBI daily."
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/wizards/SegmentationWizard.tsx:58
+#: src/apps/goodid/wizards/SegmentationWizard.tsx:57
 msgid ""
 "We're checking \n"
 " your information"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/wizards/SegmentationWizard.tsx:69
+#: src/apps/goodid/wizards/SegmentationWizard.tsx:68
 msgid "yes, i am"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/wizards/SegmentationWizard.tsx:72
+#: src/apps/goodid/wizards/SegmentationWizard.tsx:71
 msgid "no, i am not"
 msgstr ""
 
@@ -305,7 +300,7 @@ msgid "Learn about the identification process"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/core/web3/modals/RedirectModal.tsx:13
+#: src/core/web3/modals/RedirectModal.tsx:17
 msgid ""
 "By accessing this link you are leaving \n"
 " gooddapp.org and are being redirected to a \n"
@@ -313,83 +308,85 @@ msgid ""
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/core/web3/modals/RedirectModal.tsx:23
+#: src/core/web3/modals/RedirectModal.tsx:34
 msgid "Go to website"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/core/web3/modals/TxModal.tsx:19
-#: src/core/web3/modals/TxModal.tsx:23
-msgid ""
-"Please sign with \n"
+#: src/core/web3/modals/TxModal.tsx:25
+#: src/core/web3/modals/TxModal.tsx:29
+msgid "Please sign with \n"
 " your wallet"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/core/web3/modals/TxModal.tsx:20
+#: src/core/web3/modals/TxModal.tsx:26
 msgid "To complete this action, sign with your wallet."
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/core/web3/modals/TxModal.tsx:25
-msgid ""
-"We need to know you’re you! Please sign\n"
+#: src/core/web3/modals/TxModal.tsx:31
+msgid "We need to know you’re you! Please sign\n"
 "with your wallet to verify your identity.\n"
 " Don’t worry, no link is kept between your\n"
 "identity record and your wallet address."
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/core/web3/modals/TxModal.tsx:28
-msgid ""
-"Waiting for \n"
+#: src/core/web3/modals/TxModal.tsx:34
+msgid "Waiting for \n"
 " confirmation"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/core/web3/modals/TxModal.tsx:29
+#: src/core/web3/modals/TxModal.tsx:35
 msgid "Please wait for the transaction to be validated."
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/core/web3/modals/YouSureModal.tsx:10
-#: src/core/web3/modals/YouSureModal.tsx:21
+#: src/core/web3/modals/TxModal.tsx:78
+msgid "Learn"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/core/web3/modals/YouSureModal.tsx:11
+#: src/core/web3/modals/YouSureModal.tsx:22
 msgid "Are you sure?"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/core/web3/modals/YouSureModal.tsx:12
+#: src/core/web3/modals/YouSureModal.tsx:13
 msgid ""
 "This cannot be undone! \n"
 "After deleting your Face ID, you must wait 24 hours before going through the face verification flow again. After 24 hours, you can verify again by pressing the “claim” button."
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/core/web3/modals/YouSureModal.tsx:13
+#: src/core/web3/modals/YouSureModal.tsx:14
 msgid "Delete Account"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/core/web3/modals/YouSureModal.tsx:16
+#: src/core/web3/modals/YouSureModal.tsx:17
 msgid "Are you sure you want to skip this offer for now?"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/core/web3/modals/YouSureModal.tsx:18
+#: src/core/web3/modals/YouSureModal.tsx:19
 msgid "Skip"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/core/web3/modals/YouSureModal.tsx:22
+#: src/core/web3/modals/YouSureModal.tsx:23
 msgid "Keep in mind that even unsuccessful and failed transactions cost you gas. "
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/core/web3/modals/YouSureModal.tsx:23
+#: src/core/web3/modals/YouSureModal.tsx:24
 msgid "Yes, try again"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/core/web3/modals/YouSureModal.tsx:72
+#: src/core/web3/modals/YouSureModal.tsx:99
 msgid "Don't show this again"
 msgstr ""
