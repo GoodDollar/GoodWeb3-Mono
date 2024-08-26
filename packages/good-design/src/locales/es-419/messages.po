@@ -19,11 +19,6 @@ msgstr ""
 "X-Crowdin-File-ID: 126\n"
 
 #. js-lingui-explicit-id
-#: src/core/buttons/LearnButton.tsx:30
-msgid "Learn"
-msgstr "Aprender"
-
-#. js-lingui-explicit-id
 #: src/apps/goodid/components/SegmentationRow.tsx:9
 msgid "I am"
 msgstr "Yo soy"
@@ -51,9 +46,13 @@ msgstr "En"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/DisputeThanks.tsx:20
-msgid "Heads-up that information you’ve corrected may show as “Unverified” on your GoodID. \n\n"
+msgid ""
+"Heads-up that information you’ve corrected may show as “Unverified” on your GoodID. \n"
+"\n"
 " This will not affect your ability to claim UBI!"
-msgstr "Atención: La información que has corregido puede mostrarse como \"sin verificar\" en tu GoodID.\n\n"
+msgstr ""
+"Atención: La información que has corregido puede mostrarse como \"sin verificar\" en tu GoodID.\n"
+"\n"
 "¡Esto no afectará a tu capacidad de reclamar UBI!"
 
 #. js-lingui-explicit-id
@@ -70,9 +69,11 @@ msgstr "Face ID"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/GoodIdDetails.tsx:131
-msgid "Your GoodID unlocks access to UBI, financial services, humanitarian funds and \n"
+msgid ""
+"Your GoodID unlocks access to UBI, financial services, humanitarian funds and \n"
 " other special offers and opportunities to earn GoodDollars.`"
-msgstr "Tu GoodID desbloquea el acceso a UBI, servicios financieros, fondos humanitarios y \n"
+msgstr ""
+"Tu GoodID desbloquea el acceso a UBI, servicios financieros, fondos humanitarios y \n"
 " otras ofertas especiales y oportunidades para ganar GoodDollars.`"
 
 #. js-lingui-explicit-id
@@ -82,7 +83,8 @@ msgstr "Dirección de mi billetera"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/GoodIdDetails.tsx:169
-msgid "Attention: GoodDollar-verifying a new wallet address can only be \n"
+msgid ""
+"Attention: GoodDollar-verifying a new wallet address can only be \n"
 " done 24h after deleting your old face-id"
 msgstr "Atención: Solo podrá volver a verificar una nueva dirección de billetera 24 horas despues de haber eliminado su antigua Face Id"
 
@@ -98,7 +100,8 @@ msgstr "Obtén tu GoodID para reclamar UBI"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/SegmentationConfirmation.tsx:30
-msgid "We are creating \n"
+msgid ""
+"We are creating \n"
 " your GoodID"
 msgstr "Estamos creando tu GoodID"
 
@@ -109,7 +112,8 @@ msgstr "Por favor, indique que es incorrecto"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/SegmentationScreen.tsx:32
-msgid "We could not \n"
+msgid ""
+"We could not \n"
 " confirm your \n"
 " location"
 msgstr "No hemos podido confirmar tu localización"
@@ -186,7 +190,8 @@ msgstr "Enviar un video selfie diciendo: "
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:116
-msgid "You are eligible for \n"
+msgid ""
+"You are eligible for \n"
 " additional UBI!"
 msgstr "Eres elegible para UBI adicional!"
 
@@ -242,8 +247,12 @@ msgstr "Ahora estás en el"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:205
-msgid "Red Tent Woman in Nigeria \n"
-msgstr "Mujeres de la \"Red Tent\" en Nigeria \n"
+msgid ""
+"Red Tent Woman in Nigeria \n"
+""
+msgstr ""
+"Mujeres de la \"Red Tent\" en Nigeria \n"
+""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:210
@@ -252,9 +261,11 @@ msgstr "GoodCollective. Puedes reclamar este UBI adicional diariamente."
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/SegmentationWizard.tsx:58
-msgid "We're checking \n"
+msgid ""
+"We're checking \n"
 " your information"
-msgstr "Estamos comprobando \n"
+msgstr ""
+"Estamos comprobando \n"
 " tu información"
 
 #. js-lingui-explicit-id
@@ -271,6 +282,11 @@ msgstr "no, no soy"
 #: src/apps/newsfeed/NewsFeed.tsx:98
 msgid "News"
 msgstr "Noticias"
+
+#. js-lingui-explicit-id
+#: src/core/buttons/LearnButton.tsx:30
+msgid "Learn"
+msgstr "Aprender"
 
 #. js-lingui-explicit-id
 #: src/core/constants.ts:10
@@ -299,10 +315,12 @@ msgstr "Aprende sobre el proceso de identificación"
 
 #. js-lingui-explicit-id
 #: src/core/web3/modals/RedirectModal.tsx:13
-msgid "By accessing this link you are leaving \n"
+msgid ""
+"By accessing this link you are leaving \n"
 " gooddapp.org and are being redirected to a \n"
 " third-party, independent website."
-msgstr "Al acceder a este enlace, usted está saliendo de \n"
+msgstr ""
+"Al acceder a este enlace, usted está saliendo de \n"
 " gooddapp.org y está siendo redirigido a un \n"
 " sitio web de terceros y independiente."
 
@@ -312,37 +330,42 @@ msgid "Go to website"
 msgstr "Ir al sitio web"
 
 #. js-lingui-explicit-id
-#: src/core/web3/modals/TxModal.tsx:19
-#: src/core/web3/modals/TxModal.tsx:23
-msgid "Please sign with \n"
+#: src/core/web3/modals/TxModal.tsx:20
+#: src/core/web3/modals/TxModal.tsx:24
+msgid ""
+"Please sign with \n"
 " your wallet"
-msgstr "Por favor, regístrate con \n"
+msgstr ""
+"Por favor, regístrate con \n"
 " su billetera"
 
 #. js-lingui-explicit-id
-#: src/core/web3/modals/TxModal.tsx:20
+#: src/core/web3/modals/TxModal.tsx:21
 msgid "To complete this action, sign with your wallet."
 msgstr "Para completar esta acción, firma con tu billetera."
 
 #. js-lingui-explicit-id
-#: src/core/web3/modals/TxModal.tsx:25
-msgid "We need to know you’re you! Please sign\n"
+#: src/core/web3/modals/TxModal.tsx:26
+msgid ""
+"We need to know you’re you! Please sign\n"
 "with your wallet to verify your identity.\n"
 " Don’t worry, no link is kept between your\n"
 "identity record and your wallet address."
-msgstr "¡Necesitamos saber que eres tú! Por favor, firma\n"
+msgstr ""
+"¡Necesitamos saber que eres tú! Por favor, firma\n"
 "con tu billetera para verificar tu identidad.\n"
 " No se preocupe, no se mantiene ningún enlace entre tu registro de identidad\n"
 "y la dirección de tu billetera."
 
 #. js-lingui-explicit-id
-#: src/core/web3/modals/TxModal.tsx:28
-msgid "Waiting for \n"
+#: src/core/web3/modals/TxModal.tsx:29
+msgid ""
+"Waiting for \n"
 " confirmation"
 msgstr "Esperando confirmación"
 
 #. js-lingui-explicit-id
-#: src/core/web3/modals/TxModal.tsx:29
+#: src/core/web3/modals/TxModal.tsx:30
 msgid "Please wait for the transaction to be validated."
 msgstr "Por favor, espere a que la transacción sea validada."
 
@@ -354,9 +377,11 @@ msgstr "¿Estás seguro?"
 
 #. js-lingui-explicit-id
 #: src/core/web3/modals/YouSureModal.tsx:12
-msgid "This cannot be undone! \n"
+msgid ""
+"This cannot be undone! \n"
 "After deleting your Face ID, you must wait 24 hours before going through the face verification flow again. After 24 hours, you can verify again by pressing the “claim” button."
-msgstr "¡Esto no se puede deshacer! \n"
+msgstr ""
+"¡Esto no se puede deshacer! \n"
 "Después de eliminar tu Face ID, deberas esperar 24 horas antes de poder volver a realizar el proceso de verifiación. Después de 24 horas, podras verificar de nuevo pulsando el botón “reclamar”."
 
 #. js-lingui-explicit-id
@@ -388,4 +413,3 @@ msgstr "Sí, inténtelo de nuevo"
 #: src/core/web3/modals/YouSureModal.tsx:72
 msgid "Don't show this again"
 msgstr "No mostrar esto de nuevo"
-
