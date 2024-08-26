@@ -8,7 +8,7 @@ msgstr ""
 "Language: en\n"
 "Project-Id-Version: goodui\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-07-17 15:52\n"
+"PO-Revision-Date: 2024-08-20 15:07\n"
 "Last-Translator: \n"
 "Language-Team: English\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -267,7 +267,7 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/SegmentationWizard.tsx:71
 msgid "no, i am not"
-msgstr "No, I am not"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/apps/newsfeed/NewsFeed.tsx:98
@@ -315,8 +315,7 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/core/web3/modals/TxModal.tsx:25
 #: src/core/web3/modals/TxModal.tsx:29
-msgid ""
-"Please sign with \n"
+msgid "Please sign with \n"
 " your wallet"
 msgstr ""
 
@@ -327,8 +326,7 @@ msgstr ""
 
 #. js-lingui-explicit-id
 #: src/core/web3/modals/TxModal.tsx:31
-msgid ""
-"We need to know you’re you! Please sign\n"
+msgid "We need to know you’re you! Please sign\n"
 "with your wallet to verify your identity.\n"
 " Don’t worry, no link is kept between your\n"
 "identity record and your wallet address."
@@ -336,8 +334,7 @@ msgstr ""
 
 #. js-lingui-explicit-id
 #: src/core/web3/modals/TxModal.tsx:34
-msgid ""
-"Waiting for \n"
+msgid "Waiting for \n"
 " confirmation"
 msgstr ""
 
