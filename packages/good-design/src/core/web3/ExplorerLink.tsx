@@ -27,6 +27,8 @@ export const ExplorerLink = ({
   const { networks } = useConfig();
   const network = (networks || []).find(_ => _.chainId === chainId);
   const { fontSize, fontFamily, fontWeight } = fontStyle;
+
+  console.log("networks -->", { networks, chainId, network });
   const link =
     addressOrTx &&
     network &&
