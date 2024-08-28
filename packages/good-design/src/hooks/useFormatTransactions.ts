@@ -3,8 +3,13 @@ import { G$Amount, SupportedChains, useGetEnvChainId } from "@gooddollar/web3sdk
 import { BigNumber } from "ethers";
 
 import { truncateMiddle } from "../utils";
+import type { ClaimContextProps } from "../apps/ubi/types";
 
-export const useFormatClaimTransactions = (pools: any[], chainId: number | undefined, account: string): any[] => {
+export const useFormatClaimTransactions = (
+  pools: any[],
+  chainId: number | undefined,
+  account: string
+): ClaimContextProps["claimPools"] => {
   const { defaultEnv } = useGetEnvChainId();
 
   return useMemo(() => {
@@ -22,13 +27,10 @@ export const useFormatClaimTransactions = (pools: any[], chainId: number | undef
           address,
           claimAmount = BigNumber.from("0"),
           contractName,
-          hasClaimed,
           date = undefined,
           isPool = false,
           transactionHash = undefined
         } = transaction;
-
-        console.log({ hasClaimed, date }); // temp for 'no-unused-vars' eslint rule
 
         const tokenValue = G$Amount("G$", claimAmount, chainId, defaultEnv);
         const trunAddr = truncateMiddle(address, 11);
