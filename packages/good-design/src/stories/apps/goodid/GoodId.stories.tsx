@@ -17,6 +17,7 @@ import { GoodButton } from "../../../core/buttons";
 import { W3Wrapper } from "../../W3Wrapper";
 import { useGoodId } from "../../../hooks/useGoodId";
 import { OffersAgreement } from "../../../apps/goodid/screens/OffersAgreement";
+import { GoodIdProvider } from "../../../apps/goodid/context/GoodIdProvider";
 
 import { CheckAvailableOffers, GoodIdCard } from "../../../apps/goodid";
 import {
@@ -40,18 +41,20 @@ export const GoodIdCardExample = {
     const { certificateSubjects, expiryFormatted, isWhitelisted } = useGoodId(account);
 
     return (
-      <VStack {...args.styles.containerStyles}>
-        <Text variant="browse-wrap" fontSize="sm">
-          For testing purposes. this card is using dev contracts
-        </Text>
-        <GoodIdCard
-          account={account ?? "0x000...0000"}
-          certificateSubjects={certificateSubjects}
-          isWhitelisted={args.isWhitelisted || isWhitelisted}
-          fullname={args.fullName}
-          expiryDate={expiryFormatted}
-        />
-      </VStack>
+      <GoodIdProvider onGoToClaim={() => alert("Should navigate to the claim-page")}>
+        <VStack {...args.styles.containerStyles}>
+          <Text variant="browse-wrap" fontSize="sm">
+            For testing purposes. this card is using dev contracts
+          </Text>
+          <GoodIdCard
+            account={account ?? "0x000...0000"}
+            certificateSubjects={certificateSubjects}
+            isWhitelisted={args.isWhitelisted || isWhitelisted}
+            fullname={args.fullName}
+            expiryDate={expiryFormatted}
+          />
+        </VStack>
+      </GoodIdProvider>
     );
   },
   args: {

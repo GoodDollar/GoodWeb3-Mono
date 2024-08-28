@@ -1,5 +1,6 @@
 import React from "react";
 import { Container, HStack, Text, VStack, IContainerProps, Spinner } from "native-base";
+import type { CredentialSubjectsByType } from "@gooddollar/web3sdk-v2";
 
 import { withTheme } from "../../../theme";
 import { TransText, TransTitle, TransHeading, TxModal } from "../../../core";
@@ -16,7 +17,7 @@ export interface OnboardScreenProps {
   account: string;
   isPending: boolean;
   isWhitelisted?: boolean;
-  certificateSubjects: any;
+  certificateSubjects: CredentialSubjectsByType;
   expiryDate?: string;
   name?: string;
   onAccept: () => void;
@@ -108,15 +109,28 @@ export const OnboardScreen = withTheme({ name: "OnboardScreen" })(
                 </HStack>
               ))}
               <VStack space={10}>
-                <HStack space={2} marginTop={2}>
-                  <SvgXml src={StopWatchSvg} width="20" height="20" />
-                  <TransText
-                    t={/*i18n*/ "Verification takes 2 minutes"}
-                    fontFamily="subheading"
-                    fontSize="sm"
-                    color="primary"
-                  />
-                </HStack>
+                <VStack space={4}>
+                  <HStack space={2} marginTop={2}>
+                    <SvgXml src={StopWatchSvg} width="20" height="20" />
+                    <TransText
+                      t={/*i18n*/ "Verification takes 2 minutes"}
+                      fontFamily="subheading"
+                      fontSize="sm"
+                      color="primary"
+                    />
+                  </HStack>
+                  <HStack space={2}>
+                    <SvgXml src={StopWatchSvg} width="20" height="20" />
+                    <TransText
+                      t={
+                        /*i18n*/ "Your GoodID lives in your local storage. If you use other devices, browsers or browser sessions to access GoodDollar, you will be asked to upgrade again."
+                      }
+                      fontFamily="subheading"
+                      fontSize="sm"
+                      color="goodGrey.400"
+                    />
+                  </HStack>
+                </VStack>
               </VStack>
             </VStack>
           </VStack>

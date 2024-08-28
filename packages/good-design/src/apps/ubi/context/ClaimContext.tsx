@@ -75,6 +75,7 @@ export const ClaimProvider: FC<
 
   const onTxDetails = useCallback(
     (transaction: any) => {
+      console.log("transactionTxDetails -->", { transaction });
       setTxDetails({ transaction, isOpen: true });
     },
     [txDetails]

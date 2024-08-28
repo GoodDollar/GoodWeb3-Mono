@@ -53,3 +53,4 @@ export type CertificateSubject = {
   gender?: string;
   location?: { countryCode: string };
 };
+export type CredentialSubjectsByType = Record<string, CredentialSubject | undefined>;

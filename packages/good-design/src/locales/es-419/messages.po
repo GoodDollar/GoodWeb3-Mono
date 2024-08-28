@@ -19,6 +19,21 @@ msgstr ""
 "X-Crowdin-File-ID: 126\n"
 
 #. js-lingui-explicit-id
+#: src/apps/goodid/components/GoodIdCard.tsx:127
+msgid "Claim"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreen.tsx:126
+msgid "Your GoodID lives in your local storage. If you use other devices, browsers or browser sessions to access GoodDollar, you will be asked to upgrade again."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/ubi/screens/PostClaim.tsx:76
+msgid "See all news >"
+msgstr ""
+
+#. js-lingui-explicit-id
 #: src/apps/goodid/screens/DisputeThanks.tsx:17
 msgid "Thanks for letting us know!"
 msgstr ""
@@ -55,35 +70,35 @@ msgstr ""
 
 #. GoodID feature access list
 #. js-lingui-explicit-id
-#: src/apps/goodid/screens/OnboardScreen.tsx:29
+#: src/apps/goodid/screens/OnboardScreen.tsx:30
 msgid "Crypto UBI"
 msgstr ""
 
 #. GoodID feature access list
 #. js-lingui-explicit-id
-#: src/apps/goodid/screens/OnboardScreen.tsx:33
+#: src/apps/goodid/screens/OnboardScreen.tsx:34
 msgid "Humanitarian funds"
 msgstr ""
 
 #. GoodID feature access list
 #. js-lingui-explicit-id
-#: src/apps/goodid/screens/OnboardScreen.tsx:37
+#: src/apps/goodid/screens/OnboardScreen.tsx:38
 msgid "Climate relief disbursements"
 msgstr ""
 
 #. GoodID feature access list
 #. js-lingui-explicit-id
-#: src/apps/goodid/screens/OnboardScreen.tsx:41
+#: src/apps/goodid/screens/OnboardScreen.tsx:42
 msgid "Financial services"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/screens/SegmentationConfirmation.tsx:34
+#: src/apps/goodid/screens/SegmentationConfirmation.tsx:33
 msgid "Your GoodID is ready"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/screens/SegmentationConfirmation.tsx:42
+#: src/apps/goodid/screens/SegmentationConfirmation.tsx:41
 msgid "You can always access this GoodID by connecting your current wallet to GoodDapp."
 msgstr ""
 
@@ -93,22 +108,22 @@ msgid "Your Daily Basic Income"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/screens/PostClaim.tsx:24
+#: src/apps/ubi/screens/PostClaim.tsx:25
 msgid "Your Next Claim"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/screens/PostClaim.tsx:52
+#: src/apps/ubi/screens/PostClaim.tsx:54
 msgid "You've claimed today"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/screens/PostClaim.tsx:60
+#: src/apps/ubi/screens/PostClaim.tsx:62
 msgid "CLAIM ON {altChain}"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/screens/PostClaim.tsx:71
+#: src/apps/ubi/screens/PostClaim.tsx:87
 msgid "Recent claims (Last 30 days):"
 msgstr ""
 
@@ -184,7 +199,7 @@ msgstr ""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/DisputeThanks.tsx:30
-#: src/apps/goodid/screens/SegmentationConfirmation.tsx:48
+#: src/apps/goodid/screens/SegmentationConfirmation.tsx:47
 #: src/apps/goodid/screens/SegmentationDispute.tsx:54
 #: src/apps/goodid/wizards/RedtentWizard.tsx:213
 msgid "Next"
@@ -217,27 +232,27 @@ msgid ""
 msgstr "Atención: Solo podrá volver a verificar una nueva dirección de billetera 24 horas despues de haber eliminado su antigua Face Id"
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/screens/OnboardScreen.tsx:73
+#: src/apps/goodid/screens/OnboardScreen.tsx:74
 msgid "Renew your GoodID to claim UBI"
 msgstr "Renueve su GoodID para reclamar UBI"
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/screens/OnboardScreen.tsx:74
+#: src/apps/goodid/screens/OnboardScreen.tsx:75
 msgid "Get your GoodID to claim UBI"
 msgstr "Obtén tu GoodID para reclamar UBI"
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/screens/OnboardScreen.tsx:96
+#: src/apps/goodid/screens/OnboardScreen.tsx:97
 msgid "It unlocks access to:"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/screens/OnboardScreen.tsx:114
+#: src/apps/goodid/screens/OnboardScreen.tsx:116
 msgid "Verification takes 2 minutes"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/screens/SegmentationConfirmation.tsx:30
+#: src/apps/goodid/screens/SegmentationConfirmation.tsx:29
 msgid ""
 "We are creating \n"
 " your GoodID"
@@ -249,7 +264,7 @@ msgid "Please indicate which is incorrect"
 msgstr "Por favor, indique que es incorrecto"
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/screens/SegmentationScreen.tsx:33
+#: src/apps/goodid/screens/SegmentationScreen.tsx:32
 msgid ""
 "We could not \n"
 " confirm your \n"
@@ -257,7 +272,7 @@ msgid ""
 msgstr "No hemos podido confirmar tu localización"
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/screens/SegmentationScreen.tsx:43
+#: src/apps/goodid/screens/SegmentationScreen.tsx:42
 msgid "Please confirm"
 msgstr "Por favor, confirma"
 
@@ -428,12 +443,12 @@ msgid "no, i am not"
 msgstr "no, no soy"
 
 #. js-lingui-explicit-id
-#: src/apps/newsfeed/NewsFeed.tsx:98
+#: src/apps/newsfeed/NewsFeed.tsx:99
 msgid "News"
 msgstr "Noticias"
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/context/ClaimContext.tsx:73
+#: src/apps/ubi/context/ClaimContext.tsx:85
 msgid "An unknown error occurred while claiming"
 msgstr ""
 

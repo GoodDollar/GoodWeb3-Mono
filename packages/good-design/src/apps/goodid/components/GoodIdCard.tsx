@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { Center, IStackProps, HStack, Text, View, VStack } from "native-base";
-import { CredentialType } from "@gooddollar/web3sdk-v2";
+import { CredentialType, CredentialSubjectsByType } from "@gooddollar/web3sdk-v2";
 
 import { withTheme } from "../../../theme";
 import SvgXml from "../../../core/images/SvgXml";
@@ -11,11 +11,14 @@ import { Title } from "../../../core/layout";
 import UnknownAvatarSvg from "../../../assets/svg/unknown-avatar.svg";
 import GdVerifiedSvg from "../../../assets/svg/gdverified.svg";
 import GdUnverifiedSvg from "../../../assets/svg/gdunverified.svg";
+import { GoodButton } from "../../../core/buttons";
+import { TransText } from "../../../core/layout";
+import { useGoodIdProvider } from "../context/GoodIdProvider";
 
 interface GoodIdCardProps extends IStackProps {
   account: string;
   isWhitelisted: boolean;
-  certificateSubjects: any;
+  certificateSubjects: CredentialSubjectsByType;
   avatar?: string;
   fullname?: string;
   expiryDate?: string;
@@ -27,10 +30,12 @@ const CardRowItem = withTheme({ name: "CardRowItem" })(
     credentialLabel,
     credential,
     fontStyles,
+    isNew,
     ...props
   }: {
     credentialLabel: string;
     credential: FormattedCertificate;
+    isNew: boolean;
     fontStyles?: any;
   }) => {
     const { subHeading, subContent } = fontStyles ?? {};
@@ -39,7 +44,6 @@ const CardRowItem = withTheme({ name: "CardRowItem" })(
     const verifiedCopy =
       verifiedValue === `Unverified-${credentialLabel}` ? verifiedValue.split("-")[0] : verifiedValue;
 
-    //todo: handle initial good-id card state (onboard-screen), should show '-' for all values
     return (
       <VStack {...props}>
         <Text variant="sm-grey-650" fontWeight="600" {...subHeading}>
@@ -47,12 +51,12 @@ const CardRowItem = withTheme({ name: "CardRowItem" })(
         </Text>
         <HStack space={1} alignItems="center">
           <Text variant="sm-grey-650" {...subContent}>
-            {verifiedCopy}
+            {isNew ? "-" : verifiedCopy}
           </Text>
 
           <Center mt="-3px">
             <SvgXml
-              src={!["Unverified"].includes(verifiedCopy) ? GdVerifiedSvg : GdUnverifiedSvg}
+              src={isNew ? "-" : !["Unverified"].includes(verifiedCopy) ? GdVerifiedSvg : GdUnverifiedSvg}
               height="16"
               width="16"
               color="purple"
@@ -66,6 +70,7 @@ const CardRowItem = withTheme({ name: "CardRowItem" })(
 
 const GoodIdCard = withTheme({ name: "GoodIdCard", skipProps: "certificates" })(
   ({ account, isWhitelisted, certificateSubjects, avatar, fullname, expiryDate, ...props }: GoodIdCardProps) => {
+    const { onGoToClaim } = useGoodIdProvider();
     const { title, subHeading, subContent, footer } = props.fontStyles ?? {};
     const truncatedAccount = truncateMiddle(account, 11);
 
@@ -108,17 +113,30 @@ const GoodIdCard = withTheme({ name: "GoodIdCard", skipProps: "certificates" })(
                     credentialSubject: certificateSubjects?.[typeName],
                     typeName: CredentialType[typeName]
                   }}
+                  isNew={!certificateSubjects}
                 />
               </View>
             ))}
         </HStack>
-        <HStack>
-          {expiryDate ? (
-            <Text variant="sm-grey-650" fontSize="2xs" {...footer}>
-              {`Expires on ` + expiryDate}
-            </Text>
+        <VStack space={4}>
+          {!certificateSubjects && onGoToClaim ? (
+            <HStack space={0}>
+              <Text variant="sm-grey-650" fontSize="2xs" {...footer}>
+                {"To upgrade your GoodID, please "}
+                <GoodButton padding={0} background="none" onPress={onGoToClaim}>
+                  <TransText fontSize="2xs" fontWeight="600" color="primary" t={/*i18n*/ "Claim"} underline />
+                </GoodButton>
+              </Text>
+            </HStack>
           ) : null}
-        </HStack>
+          <HStack>
+            {expiryDate ? (
+              <Text variant="sm-grey-650" fontSize="2xs" {...footer}>
+                {`Expires on ` + expiryDate}
+              </Text>
+            ) : null}
+          </HStack>
+        </VStack>
       </VStack>
     );
   }

@@ -12,7 +12,7 @@ import {
   Certificate,
   CertificateItem,
   CertificateRecord,
-  CredentialSubject,
+  CredentialSubjectsByType,
   CredentialType,
   PoolCriteria
 } from "./types";
@@ -195,10 +195,13 @@ export const useIssueCertificates = (account: string | undefined, baseEnv: any) 
 
       try {
         const promises: Promise<CertificateItem>[] = [];
+
         if (location) {
           promises.push(requestLocationCertificate(baseEnv, location, fvsig, account));
         }
+
         promises.push(requestIdentityCertificate(baseEnv, fvsig, account));
+
         const results = await Promise.allSettled(promises);
 
         for (const result of results) {
@@ -228,7 +231,7 @@ export const useCertificatesSubject = (certificates: AggregatedCertificate[]) =>
       }
 
       return acc;
-    }, {} as Record<string, CredentialSubject | undefined>);
+    }, {} as CredentialSubjectsByType);
   }, [certificates]);
 };
 

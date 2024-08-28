@@ -17,14 +17,16 @@ export type ClaimDetails = {
 };
 
 export type Transaction = {
+  address: string;
   network: string;
-  contractAddr: string;
+  contractAddress: string;
   token: string;
-  tokenValue: CurrencyValue;
-  status: "pending" | "confirmed" | "failed";
+  status: string;
   type: string;
-  hash?: string;
-  date?: string;
+  date?: Moment;
+  displayName: string;
+  tokenValue?: CurrencyValue;
+  transactionHash?: string;
 };
 
 export type ReceiveTransaction = Transaction & {
@@ -43,7 +45,7 @@ export interface ClaimContextProps {
   poolsDetails: PoolDetails[];
   loading: boolean;
   poolContracts: Contract[];
-  claimPools: any;
+  claimPools: { totalAmount: CurrencyValue; transactionList: Transaction[] };
   claimStatus: TransactionStatus;
   claimFlowStatus: any;
   claimedAlt: { hasClaimed: boolean; altChain: string };

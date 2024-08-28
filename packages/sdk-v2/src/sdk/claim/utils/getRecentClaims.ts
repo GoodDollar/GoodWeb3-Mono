@@ -5,10 +5,10 @@ import { isArray, orderBy, sample } from "lodash";
 //todo: add error handler
 
 export interface RecentClaims {
-  address: any;
+  address: string;
   claimAmount: ethers.BigNumber;
   date: moment.Moment;
-  transactionHash: any;
+  transactionHash: string;
 }
 
 export const getRecentClaims = async (
