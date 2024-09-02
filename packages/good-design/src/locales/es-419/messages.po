@@ -8,7 +8,7 @@ msgstr ""
 "Language: es_419\n"
 "Project-Id-Version: goodui\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-08-28 06:28\n"
+"PO-Revision-Date: 2024-09-02 05:28\n"
 "Last-Translator: \n"
 "Language-Team: Spanish, Latin America\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -19,7 +19,22 @@ msgstr ""
 "X-Crowdin-File-ID: 140\n"
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/components/GoodIdCard.tsx:127
+#: src/apps/goodid/components/GoodIdCard.tsx:145
+msgid "Expires on {expiryDate}"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/SegmentationConfirmation.tsx:44
+msgid "You can always access this GoodID by connecting your current wallet to "
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/components/GoodIdCard.tsx:125
+msgid "To upgrade your GoodID, please"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/components/GoodIdCard.tsx:136
 msgid "Claim"
 msgstr ""
 
@@ -93,13 +108,8 @@ msgid "Financial services"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/screens/SegmentationConfirmation.tsx:33
+#: src/apps/goodid/screens/SegmentationConfirmation.tsx:35
 msgid "Your GoodID is ready"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/screens/SegmentationConfirmation.tsx:41
-msgid "You can always access this GoodID by connecting your current wallet to GoodDapp."
 msgstr ""
 
 #. js-lingui-explicit-id
@@ -194,7 +204,7 @@ msgstr "Atención: La información que has corregido puede mostrarse como \"sin 
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/DisputeThanks.tsx:30
-#: src/apps/goodid/screens/SegmentationConfirmation.tsx:47
+#: src/apps/goodid/screens/SegmentationConfirmation.tsx:66
 #: src/apps/goodid/screens/SegmentationDispute.tsx:54
 #: src/apps/goodid/wizards/RedtentWizard.tsx:213
 msgid "Next"
@@ -244,7 +254,7 @@ msgid "Verification takes 2 minutes"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/screens/SegmentationConfirmation.tsx:29
+#: src/apps/goodid/screens/SegmentationConfirmation.tsx:31
 msgid "We are creating \n"
 " your GoodID"
 msgstr "Estamos creando tu GoodID"
