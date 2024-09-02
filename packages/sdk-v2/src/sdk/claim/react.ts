@@ -130,10 +130,7 @@ export const useGetMemberUBIPools = () => {
     void fetchPools();
   }, [fetchPools]);
 
-  return useMemo(
-    () => ({ poolsDetails, loading, error, fetchPools }),
-    [account, poolsDetails, factory, pool, loading, error]
-  );
+  return { poolsDetails, loading, error, fetchPools };
 };
 
 export const useClaim = (refresh: QueryParams["refresh"] = "never") => {

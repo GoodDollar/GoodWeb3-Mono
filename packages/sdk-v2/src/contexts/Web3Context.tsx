@@ -201,8 +201,6 @@ export const Web3Provider = ({ children, config: inConfig, web3Provider, env = "
   const [switchNetwork, setSwitchNetwork] = useState<SwitchNetwork>();
   const [onSwitchNetwork, setOnSwitchNetwork] = useState<SwitchCallback>();
 
-  console.log("sdk-v2 config initial -->", { config, inConfig });
-
   const setSwitcNetworkCallback = useCallback((cb: SwitchNetwork) => setSwitchNetwork(() => cb), [setSwitchNetwork]);
 
   // use this to override usedapp default switchNetwork used in our custom web3contextprovider
@@ -233,8 +231,6 @@ export const Web3Provider = ({ children, config: inConfig, web3Provider, env = "
     1: sample(["https://cloudflare-eth.com", "https://rpc.ankr.com/eth"]) as string,
     ...config.readOnlyUrls
   };
-
-  console.log("sdk-v2 configs final -->", { config });
 
   const defaultAddresses =
     config.multicallVersion === 1 ? getMulticallAddresses(config.networks) : getMulticall2Addresses(config.networks);

@@ -184,10 +184,13 @@ export const ClaimProvider: FC<
           endpoints,
           provider ?? library,
           isArray(poolsDetails) && poolsDetails?.length > 0
-        ).then(res => {
-          explorerPollLock.release("pollLock");
-          return res;
-        });
+        )
+          .then(res => {
+            return res;
+          })
+          .finally(() => {
+            explorerPollLock.release("pollLock");
+          });
 
         const details: any = [];
 

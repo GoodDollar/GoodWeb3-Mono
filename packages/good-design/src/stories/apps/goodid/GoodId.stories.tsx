@@ -214,17 +214,19 @@ export const SegmentationConfirmationScreenExample = {
 
     return (
       <W3Wrapper withMetaMask={true}>
-        <Wizard>
-          <SegmentationConfirmation
-            {...{
-              account,
-              isWhitelisted,
-              idExpiry: { expiryDate, state },
-              certificateSubjects
-            }}
-            {...args}
-          />
-        </Wizard>
+        <GoodIdProvider>
+          <Wizard>
+            <SegmentationConfirmation
+              {...{
+                account,
+                isWhitelisted,
+                idExpiry: { expiryDate, state },
+                certificateSubjects
+              }}
+              {...args}
+            />
+          </Wizard>
+        </GoodIdProvider>
       </W3Wrapper>
     );
   },

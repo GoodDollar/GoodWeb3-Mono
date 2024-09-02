@@ -19,7 +19,22 @@ msgstr ""
 "X-Crowdin-File-ID: 126\n"
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/components/GoodIdCard.tsx:127
+#: src/apps/goodid/components/GoodIdCard.tsx:145
+msgid "Expires on {expiryDate}"
+msgstr "Expires on {expiryDate}"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/SegmentationConfirmation.tsx:44
+msgid "You can always access this GoodID by connecting your current wallet to "
+msgstr "You can always access this GoodID by connecting your current wallet to "
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/components/GoodIdCard.tsx:125
+msgid "To upgrade your GoodID, please"
+msgstr "To upgrade your GoodID, please"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/components/GoodIdCard.tsx:136
 msgid "Claim"
 msgstr "Claim"
 
@@ -93,14 +108,9 @@ msgid "Financial services"
 msgstr "Financial services"
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/screens/SegmentationConfirmation.tsx:33
+#: src/apps/goodid/screens/SegmentationConfirmation.tsx:35
 msgid "Your GoodID is ready"
 msgstr "Your GoodID is ready"
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/screens/SegmentationConfirmation.tsx:41
-msgid "You can always access this GoodID by connecting your current wallet to GoodDapp."
-msgstr "You can always access this GoodID by connecting your current wallet to GoodDapp."
 
 #. js-lingui-explicit-id
 #: src/apps/ubi/components/TransactionStateCard.tsx:68
@@ -198,7 +208,7 @@ msgstr ""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/DisputeThanks.tsx:30
-#: src/apps/goodid/screens/SegmentationConfirmation.tsx:47
+#: src/apps/goodid/screens/SegmentationConfirmation.tsx:66
 #: src/apps/goodid/screens/SegmentationDispute.tsx:54
 #: src/apps/goodid/wizards/RedtentWizard.tsx:213
 msgid "Next"
@@ -249,7 +259,7 @@ msgid "Verification takes 2 minutes"
 msgstr "Verification takes 2 minutes"
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/screens/SegmentationConfirmation.tsx:29
+#: src/apps/goodid/screens/SegmentationConfirmation.tsx:31
 msgid ""
 "We are creating \n"
 " your GoodID"

@@ -120,20 +120,34 @@ const GoodIdCard = withTheme({ name: "GoodIdCard", skipProps: "certificates" })(
         </HStack>
         <VStack space={4}>
           {!certificateSubjects && onGoToClaim ? (
-            <HStack space={0}>
-              <Text variant="sm-grey-650" fontSize="2xs" {...footer}>
-                {"To upgrade your GoodID, please "}
-                <GoodButton padding={0} background="none" onPress={onGoToClaim}>
-                  <TransText fontSize="2xs" fontWeight="600" color="primary" t={/*i18n*/ "Claim"} underline />
-                </GoodButton>
-              </Text>
+            <HStack space={0.5}>
+              <TransText
+                t={/*i18n*/ "To upgrade your GoodID, please"}
+                variant="sm-grey-650"
+                fontSize="2xs"
+                {...footer}
+              />
+              <GoodButton padding={0} background="none" onPress={onGoToClaim}>
+                <TransText
+                  fontFamily="subheading"
+                  fontSize="2xs"
+                  fontWeight="600"
+                  color="primary"
+                  t={/*i18n*/ "Claim"}
+                  underline
+                />
+              </GoodButton>
             </HStack>
           ) : null}
           <HStack>
             {expiryDate ? (
-              <Text variant="sm-grey-650" fontSize="2xs" {...footer}>
-                {`Expires on ` + expiryDate}
-              </Text>
+              <TransText
+                t={/*i18n*/ "Expires on {expiryDate}"}
+                values={{ expiryDate: expiryDate }}
+                variant="sm-grey-650"
+                fontSize="2xs"
+                {...footer}
+              />
             ) : null}
           </HStack>
         </VStack>

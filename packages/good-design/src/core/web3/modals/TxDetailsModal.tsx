@@ -24,8 +24,6 @@ const TxDetailsContent = ({ tx, color, network }: any) => {
   const trunContractAddr = truncateMiddle(contractAddress, 11);
   const trunAccountAddr = truncateMiddle(account, 11);
 
-  console.log("txdetailscontent -->", { trunContractAddr, trunAccountAddr });
-
   return (
     <VStack space={3}>
       <Center>
