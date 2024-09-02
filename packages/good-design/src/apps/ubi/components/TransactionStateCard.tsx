@@ -12,7 +12,7 @@ import { isReceiveTransaction } from "../utils/transactionType";
 import { getTxIcons } from "../../../utils/icons";
 
 export type TransactionCardProps = {
-  transaction: any; //<-- should be type of FormattedTransaction
+  transaction: Transaction;
   onTxDetails: ClaimContextProps["onTxDetails"];
 };
 
@@ -52,7 +52,14 @@ export const TransactionCard = withTheme({ name: "TransactionCard" })(
             </Center>
             <HStack flexShrink={1} justifyContent="space-between" width="100%" alignItems="flex-end">
               <Text fontSize="4xs">{txDate}</Text>
-              <GdAmount amount={tokenValue} options={{ prefix: amountPrefix }} color={colorAmount} withDefaultSuffix />
+              {tokenValue ? (
+                <GdAmount
+                  amount={tokenValue}
+                  options={{ prefix: amountPrefix }}
+                  color={colorAmount}
+                  withDefaultSuffix
+                />
+              ) : null}
             </HStack>
           </HStack>
           <HStack justifyContent="space-between" padding={2} space={22} backgroundColor="white">
@@ -87,13 +94,13 @@ export const TransactionCard = withTheme({ name: "TransactionCard" })(
 );
 
 type TransactionListProps = {
-  transactions: Transaction[];
+  transactions: Transaction[] | undefined;
   onTxDetails: ClaimContextProps["onTxDetails"];
 };
 
 export const TransactionList = ({ transactions, onTxDetails }: TransactionListProps) => (
   <VStack>
-    {transactions.map((tx: Transaction, i: any) => (
+    {transactions?.map((tx: Transaction, i: any) => (
       <TransactionCard key={i} {...{ transaction: tx, onTxDetails }} />
     ))}
   </VStack>

@@ -13,7 +13,7 @@ export const useFormatClaimTransactions = (
   const { defaultEnv } = useGetEnvChainId();
 
   return useMemo(() => {
-    if (!pools || pools.length === 0 || !chainId) return [];
+    if (!pools || pools.length === 0 || !chainId) return undefined;
 
     const formattedTransactions: any = { totalAmount: BigNumber.from("0"), transactionList: [] };
 

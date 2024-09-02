@@ -1,6 +1,5 @@
 import React, { FC, useContext, useEffect } from "react";
 import { Center, HStack, Spinner, Text, VStack } from "native-base";
-import { isEmpty } from "lodash";
 import { NewsFeedContext, useTimer } from "@gooddollar/web3sdk-v2";
 
 import { NewsFeed } from "../../newsfeed";
@@ -38,7 +37,7 @@ export const PostClaim: FC = () => {
   const { claimTime, isWhitelisted } = claimDetails;
   const { hasClaimed, altChain } = claimedAlt ?? {};
 
-  if ((isWhitelisted as any) === undefined || isEmpty(transactionList))
+  if ((isWhitelisted as any) === undefined || transactionList === undefined)
     return <Spinner variant="page-loader" size="lg" />;
 
   return (

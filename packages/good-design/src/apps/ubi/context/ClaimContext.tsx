@@ -143,7 +143,7 @@ export const ClaimProvider: FC<
   useEffect(() => {
     if (!isEmpty(postClaimPools) || explorerPollLock.isAcquired("resetLock")) return;
 
-    if (!isEmpty(poolContracts) && isEmpty(poolsDetails)) return;
+    if (!isEmpty(poolContracts) && poolsDetails === undefined) return;
     const unclaimedPools = getUnclaimedPools(poolsDetails);
 
     if (
@@ -155,7 +155,7 @@ export const ClaimProvider: FC<
     ) {
       const details: any[] = !claimDetails.hasClaimed ? [{ GoodDollar: [claimDetails] }] : [];
 
-      if (!isEmpty(unclaimedPools)) {
+      if (!isEmpty(unclaimedPools) && poolsDetails) {
         details.push(...poolsDetails);
       }
 

@@ -16,8 +16,8 @@ export const getRecentClaims = async (
   endpoints: string,
   library: any,
   withPools: boolean
-): Promise<RecentClaims[]> => {
-  if (!library) return [];
+): Promise<RecentClaims[] | undefined> => {
+  if (!library) return undefined;
   const apiEndpoint = sample(endpoints.split(","));
   const sender32 = ethers.utils.hexZeroPad(account, 32);
 
@@ -29,7 +29,7 @@ export const getRecentClaims = async (
   const blockNoUrl = `${apiEndpoint}&module=block&action=getblocknobytime&timestamp=${unix30DaysAgo}&closest=before`;
   const { result: blockNoStart } = await fetch(blockNoUrl).then(res => res.json());
 
-  if (!blockNoStart) return [];
+  if (!blockNoStart) return undefined;
   const lastBlockNo = await library.getBlockNumber();
 
   const params = {

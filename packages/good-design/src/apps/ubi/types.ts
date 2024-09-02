@@ -42,10 +42,10 @@ export interface ClaimContextProps {
   chainId: number | undefined;
   withSignModals: boolean;
   claimDetails: Omit<ClaimDetails, "claimCall">;
-  poolsDetails: PoolDetails[];
+  poolsDetails: PoolDetails[] | undefined;
   loading: boolean;
   poolContracts: Contract[];
-  claimPools: { totalAmount: CurrencyValue; transactionList: Transaction[] };
+  claimPools: { totalAmount: CurrencyValue; transactionList: Transaction[] | undefined };
   claimStatus: TransactionStatus;
   claimFlowStatus: any;
   claimedAlt: { hasClaimed: boolean; altChain: string };
@@ -60,6 +60,6 @@ export interface ClaimContextProps {
   onClaimSuccess: () => Promise<void>;
   onClaimFailed: () => Promise<void>;
   onConnect?: () => Promise<boolean>;
-  onTxDetails?: (transaction: string) => void;
+  onTxDetails?: (transaction: Transaction) => void;
   switchChain: () => void;
 }

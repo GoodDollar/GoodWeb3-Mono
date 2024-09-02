@@ -1,11 +1,12 @@
 import { IIdentity, UBIScheme } from "@gooddollar/goodprotocol/types";
 import { ChainId, QueryParams, useCalls, useEthers } from "@usedapp/core";
-import { BigNumber, Contract } from "ethers";
+import ethers, { BigNumber, Contract } from "ethers";
 import { first } from "lodash";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { noop } from "lodash";
 import usePromise from "react-use-promise";
 import GoodCollectiveContracts from "@gooddollar/goodcollective-contracts/releases/deployment.json";
+import { GoodCollectiveSDK } from "@gooddollar/goodcollective-sdk";
 
 import { AsyncStorage } from "../storage/sdk";
 import { EnvKey } from "../base/sdk";
@@ -16,7 +17,7 @@ import { useGetContract, useGetEnvChainId, useReadOnlySDK, useSDK } from "../bas
 import { Envs, SupportedChains, SupportedV2Networks } from "../constants";
 import { useContractFunctionWithDefaultGasFees } from "../base/hooks/useGasFees";
 
-import { getContractsFromClaimPools, getMemberPools, getPoolsDetails } from "./utils/pools";
+import { getContractsFromClaimPools, getPoolsDetails } from "./utils/pools";
 import { PoolDetails } from "./types";
 
 export const useFVLink = (chainId?: number) => {
@@ -91,31 +92,30 @@ export const useMultiClaim = (poolsDetails: PoolDetails[]) => {
 
 export const useGetMemberUBIPools = () => {
   const { account, library, chainId } = useEthers();
-  const [poolsDetails, setPoolsDetails] = useState<PoolDetails[]>([]);
+  const [poolsDetails, setPoolsDetails] = useState<PoolDetails[] | undefined>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const factory = GoodCollectiveContracts["42220"]?.find(envs => envs.name === "development-celo")?.contracts
-    .UBIPoolFactory;
   const pool = GoodCollectiveContracts["42220"]?.find(envs => envs.name === "development-celo")?.contracts.UBIPool;
+  const sdk = new GoodCollectiveSDK("42220", library as ethers.providers.Provider, { network: "development-celo" });
 
   const fetchPools = useCallback(async () => {
     setLoading(true);
     setError(null);
 
     try {
-      if (!library || !account || !factory || !pool || chainId !== 42220) {
+      if (!library || !account || !pool || chainId !== 42220) {
+        setPoolsDetails(undefined);
+        return;
+      }
+
+      const memberUbiPools = await sdk.getMemberUBIPools(account);
+
+      if (!memberUbiPools || !memberUbiPools.length) {
         setPoolsDetails([]);
         return;
       }
 
-      const poolAddresses = await getMemberPools(account, factory, library);
-
-      if (!poolAddresses || !poolAddresses.length) {
-        setPoolsDetails([]);
-        return;
-      }
-
-      const details = await getPoolsDetails(poolAddresses, pool, library, account);
+      const details = getPoolsDetails(memberUbiPools, pool.abi, library);
 
       setPoolsDetails(details);
     } catch (err: any) {

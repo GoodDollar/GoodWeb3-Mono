@@ -1,5 +1,7 @@
 import React from "react";
 import { View, Button, Modal, Text, StyleSheet, Linking, ModalProps } from "react-native";
+import { ComponentStory, ComponentMeta } from "@storybook/react";
+
 import { W3Wrapper } from "../W3Wrapper";
 import { useFVLink, useGetMemberUBIPools } from "../../sdk/claim/react";
 import { noop } from "lodash";
@@ -114,26 +116,21 @@ const styles = StyleSheet.create({
 //     </View>
 //   );
 // };
-// const Web3Component = (params: PageProps) => {
-//   return <ClaimButton {...params} />;
-// };
 
 const ClaimPools = () => {
   const { poolsDetails, loading } = useGetMemberUBIPools();
 
-  if (loading || !poolsDetails.length) {
+  if (loading || !poolsDetails?.length) {
     return <Text>No active pools</Text>;
   }
 
-  return poolsDetails[0][0].map(pool =>
-    Object.values(pool).map(({ isRegistered, nextClaimTime, claimAmount }) => (
-      <View key={"test"}>
-        <Text>Registered: {`${isRegistered}`}</Text>
-        <Text>Next claim time: {nextClaimTime.toString()}</Text>
-        <Text>Claim amount: {claimAmount.toString()}</Text>
-      </View>
-    ))
-  );
+  return poolsDetails[0]["RedTent"].map(({ isRegistered, claimTime, claimAmount }) => (
+    <View key={"test"}>
+      <Text>Registered: {`${isRegistered}`}</Text>
+      <Text>Next claim time: {claimTime.toString()}</Text>
+      <Text>Claim amount: {claimAmount.toString()}</Text>
+    </View>
+  ));
 };
 
 export const UbiClaimPools = (params: PageProps) => {
@@ -145,27 +142,31 @@ export const UbiClaimPools = (params: PageProps) => {
   );
 };
 
-// const Page = (params: PageProps) => (
-//   <W3Wrapper withMetaMask={true}>
-//     <Web3Component {...params} />
-//   </W3Wrapper>
-// );const Web3Component = (params: PageProps) => {
-//   //   return <ClaimButton {...params} />;
-//   // };
+const Page = (params: PageProps) => {
+  console.log({ params });
+  return (
+    <W3Wrapper withMetaMask={true}>
+      <></>
+    </W3Wrapper>
+  );
+};
 
-// export default {
-//   title: "Claim Flow Example - Hooks",
-//   component: Page
-// } as ComponentMeta<typeof Page>;
+export default {
+  title: "Claim Flow Example - Hooks",
+  component: Page
+} as ComponentMeta<typeof Page>;
 
-// const Template: ComponentStory<typeof Page> = args => (
-//   <W3Wrapper withMetaMask={true}>
-//     <Web3Component {...args} />
-//   </W3Wrapper>
-// );
+const Template: ComponentStory<typeof Page> = (args: any) => {
+  console.log("args", args);
+  return (
+    <W3Wrapper withMetaMask={true}>
+      <></>
+    </W3Wrapper>
+  );
+};
 
-// export const ClaimFlowExample = Template.bind({});
-// ClaimFlowExample.args = {
-//   address: "",
-//   firstName: "John"
-// };
+export const ClaimFlowExample = Template.bind({});
+ClaimFlowExample.args = {
+  address: "",
+  firstName: "John"
+};

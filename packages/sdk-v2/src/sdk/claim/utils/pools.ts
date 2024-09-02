@@ -1,5 +1,4 @@
-import { BigNumber, Contract, ethers } from "ethers";
-import { ContractCallContext, ContractCallResults, Multicall } from "ethereum-multicall";
+import ethers, { BigNumber, Contract } from "ethers";
 import { PoolDetails } from "../types";
 
 export const getContractsFromClaimPools = (poolsDetails: PoolDetails[]) => {
@@ -14,67 +13,24 @@ export const getContractsFromClaimPools = (poolsDetails: PoolDetails[]) => {
   }, [] as Contract[]);
 };
 
-export const getMemberPools = async (account: string, factory: any, library: any) => {
-  if (!library || !account || !factory) return [];
-
-  const ubiPoolFactory = new Contract(factory.address, factory.abi, library);
-  return await ubiPoolFactory.getMemberPools(account);
-};
-
-export const getPoolsDetails = async (poolAddresses: string[], pool: any, library: any, account: string) => {
-  const multicall = new Multicall({ ethersProvider: library, tryAggregate: true });
-
-  const contractCallContext: ContractCallContext[] = poolAddresses.map(addr => ({
-    reference: `pool_${addr}`,
-    contractAddress: addr,
-    abi: pool.abi,
-    calls: [
-      {
-        reference: "isRegistered",
-        methodName: "hasRole",
-        methodParameters: [ethers.utils.keccak256(ethers.utils.toUtf8Bytes("MEMBER_ROLE")), account]
-      },
-      {
-        reference: "claimTime",
-        methodName: "nextClaimTime",
-        methodParameters: []
-      },
-      {
-        reference: "claimAmount",
-        methodName: "checkEntitlement(address)",
-        methodParameters: [account]
-      }
-    ]
-  }));
-
-  const { results }: ContractCallResults = await multicall.call(contractCallContext);
-
-  if (!results) throw new Error("Failed to fetch pool results");
-
-  return Object.entries(results).map(([poolAddr, { callsReturnContext: poolDetails }]) => {
-    const poolAddress = poolAddr.split("_")[1];
+export const getPoolsDetails = (
+  pools: any[],
+  abi: any,
+  library: ethers.providers.JsonRpcProvider | ethers.providers.FallbackProvider
+) =>
+  pools.map((pool: any) => {
+    const { claimAmount, contract: address, isRegistered, nextClaimTime } = pool;
     const poolName = "RedTent";
+    const contract = new Contract(address, abi, library);
+    const details = { [poolName]: [{}] as any };
 
-    const details = poolDetails.reduce(
-      (acc, { returnValues, reference }) => {
-        if (returnValues[0].type === "BigNumber") {
-          acc[poolName][0][reference] = BigNumber.from(returnValues[0]);
-        } else {
-          acc[poolName][0][reference] = returnValues[0];
-        }
-
-        return acc;
-      },
-      { [poolName as string]: [{}] } as PoolDetails
-    );
-
-    const contract = new Contract(poolAddress, pool.abi, library);
-
-    details[poolName][0]["address"] = poolAddress;
+    details[poolName][0]["address"] = address;
     details[poolName][0]["contract"] = contract;
-    details[poolName][0]["hasClaimed"] = details[poolName][0]["claimAmount"].isZero();
+    details[poolName][0]["claimAmount"] = BigNumber.from(claimAmount);
+    details[poolName][0]["hasClaimed"] = BigNumber.from(claimAmount).isZero();
+    details[poolName][0]["isRegistered"] = isRegistered;
+    details[poolName][0]["claimTime"] = nextClaimTime;
     details[poolName][0]["isPool"] = true;
 
-    return details;
+    return details as PoolDetails;
   });
-};
