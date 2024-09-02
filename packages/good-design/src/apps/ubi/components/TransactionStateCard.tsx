@@ -13,18 +13,18 @@ import { getTxIcons } from "../../../utils/icons";
 
 export type TransactionCardProps = {
   transaction: Transaction;
-  onTxDetails: ClaimContextProps["onTxDetails"];
+  onTxDetailsPress: ClaimContextProps["onTxDetailsPress"];
 };
 
 //todo: border needs to indicate state of transaction by color
 //todo: border likely needs to be turned into component because of pattern. border-image not supported in react-native
 export const TransactionCard = withTheme({ name: "TransactionCard" })(
-  ({ transaction, onTxDetails }: TransactionCardProps) => {
+  ({ transaction, onTxDetailsPress }: TransactionCardProps) => {
     const { tokenValue, type, status, date, displayName } = transaction;
 
     const openTransactionDetails = useCallback(() => {
-      onTxDetails?.(transaction);
-    }, [transaction, onTxDetails]);
+      onTxDetailsPress?.(transaction);
+    }, [transaction, onTxDetailsPress]);
 
     const isClaimStart = type === "claim-start";
 
@@ -95,13 +95,13 @@ export const TransactionCard = withTheme({ name: "TransactionCard" })(
 
 type TransactionListProps = {
   transactions: Transaction[] | undefined;
-  onTxDetails: ClaimContextProps["onTxDetails"];
+  onTxDetailsPress: ClaimContextProps["onTxDetailsPress"];
 };
 
-export const TransactionList = ({ transactions, onTxDetails }: TransactionListProps) => (
+export const TransactionList = ({ transactions, onTxDetailsPress }: TransactionListProps) => (
   <VStack>
     {transactions?.map((tx: Transaction, i: any) => (
-      <TransactionCard key={i} {...{ transaction: tx, onTxDetails }} />
+      <TransactionCard key={i} {...{ transaction: tx, onTxDetailsPress }} />
     ))}
   </VStack>
 );

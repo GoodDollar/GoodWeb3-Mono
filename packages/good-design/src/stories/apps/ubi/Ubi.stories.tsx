@@ -70,14 +70,14 @@ export const TransactionCardStory = {
     args.transaction.tokenValue = tokenValue;
     const [openTxDetails, setOpenTxDetails] = useState(false);
 
-    const onTxDetails = useCallback(() => {
+    const onTxDetailsPress = useCallback(() => {
       setOpenTxDetails(prev => !prev);
     }, [openTxDetails]);
 
     return (
       <VStack ml="auto" mr="auto" width="500" justifyContent="center" height="100vh">
         <TxDetailsModal open={openTxDetails} onClose={() => setOpenTxDetails(prev => !prev)} tx={args.transaction} />
-        <TransactionCard {...args} onTxDetails={onTxDetails} />
+        <TransactionCard {...args} onTxDetailsPress={onTxDetailsPress} />
       </VStack>
     );
   },

@@ -1,12 +1,12 @@
 import { useMemo } from "react";
-import { G$Amount, SupportedChains, useGetEnvChainId } from "@gooddollar/web3sdk-v2";
+import { G$Amount, PoolDetails, SupportedChains, useGetEnvChainId } from "@gooddollar/web3sdk-v2";
 import { BigNumber } from "ethers";
 
 import { truncateMiddle } from "../utils";
 import type { ClaimContextProps } from "../apps/ubi/types";
 
 export const useFormatClaimTransactions = (
-  pools: any[],
+  pools: PoolDetails[],
   chainId: number | undefined,
   account: string
 ): ClaimContextProps["claimPools"] => {
@@ -18,7 +18,7 @@ export const useFormatClaimTransactions = (
     const formattedTransactions: any = { totalAmount: BigNumber.from("0"), transactionList: [] };
 
     //todo: fix typings
-    pools?.map((pool: any) => {
+    pools?.map((pool: PoolDetails) => {
       const [poolName] = Object.keys(pool);
       const { [poolName]: poolDetail } = pool;
 

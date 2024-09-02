@@ -12,7 +12,7 @@ import ClaimFooter from "../../../assets/images/claim-footer.png";
 import { useClaimContext } from "../context";
 
 export const PreClaim: FC = () => {
-  const { claimPools, claimDetails, supportedChains, onClaim, onTxDetails } = useClaimContext();
+  const { claimPools, claimDetails, supportedChains, onClaim, onTxDetailsPress } = useClaimContext();
   const { totalAmount, transactionList } = claimPools ?? {};
 
   if ((claimDetails?.isWhitelisted as any) === undefined || isEmpty(transactionList))
@@ -29,7 +29,7 @@ export const PreClaim: FC = () => {
             </Center>
             <Image source={BillyGrin} w="93" h="65" style={{ resizeMode: "contain" }} />
           </VStack>
-          <TransactionList transactions={transactionList} onTxDetails={onTxDetails} />
+          <TransactionList transactions={transactionList} onTxDetailsPress={onTxDetailsPress} />
         </VStack>
         <Center>
           <Web3ActionButton

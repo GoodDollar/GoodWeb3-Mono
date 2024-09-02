@@ -73,7 +73,7 @@ export const ClaimProvider: FC<
     useMultiClaim(preClaimPools);
   const { errorMessage } = transactionState?.state ?? {};
 
-  const onTxDetails = useCallback(
+  const onTxDetailsPress = useCallback(
     (transaction: any) => {
       console.log("transactionTxDetails -->", { transaction });
       setTxDetails({ transaction, isOpen: true });
@@ -226,7 +226,7 @@ export const ClaimProvider: FC<
         onClaimFailed,
         onClaimSuccess,
         onConnect,
-        onTxDetails: onTxDetails ?? noop,
+        onTxDetailsPress: onTxDetailsPress ?? noop,
         switchChain // todo: fix handling alt switch
       }}
     >

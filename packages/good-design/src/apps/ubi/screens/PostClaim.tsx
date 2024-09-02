@@ -31,7 +31,7 @@ const NextClaim = ({ time }: { time: Date }) => {
 };
 
 export const PostClaim: FC = () => {
-  const { claimPools, claimDetails, claimedAlt, onNews, onTxDetails, switchChain } = useClaimContext();
+  const { claimPools, claimDetails, claimedAlt, onNews, onTxDetailsPress, switchChain } = useClaimContext();
   const { feed } = useContext(NewsFeedContext);
   const { transactionList } = claimPools ?? {};
   const { claimTime, isWhitelisted } = claimDetails;
@@ -89,7 +89,7 @@ export const PostClaim: FC = () => {
         {transactionList?.length === 0 ? (
           <Spinner variant="page-loader" size="lg" />
         ) : (
-          <TransactionList transactions={transactionList} onTxDetails={onTxDetails} />
+          <TransactionList transactions={transactionList} onTxDetailsPress={onTxDetailsPress} />
         )}
       </VStack>
     </VStack>
