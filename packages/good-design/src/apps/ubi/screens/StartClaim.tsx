@@ -16,7 +16,7 @@ export const StartClaim: FC = () => {
         await nextStep();
       }
     })();
-  }, [account]);
+  }, [account, chainId]);
 
   return (
     <VStack space="6" alignItems="center">

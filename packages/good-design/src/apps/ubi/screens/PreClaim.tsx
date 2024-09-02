@@ -1,6 +1,5 @@
 import React, { FC } from "react";
 import { Center, Spinner, VStack } from "native-base";
-import { isEmpty } from "lodash";
 
 import { Web3ActionButton } from "../../../advanced";
 import { Image } from "../../../core/images";
@@ -15,7 +14,7 @@ export const PreClaim: FC = () => {
   const { claimPools, claimDetails, supportedChains, onClaim, onTxDetailsPress } = useClaimContext();
   const { totalAmount, transactionList } = claimPools ?? {};
 
-  if ((claimDetails?.isWhitelisted as any) === undefined || isEmpty(transactionList))
+  if ((claimDetails?.isWhitelisted as any) === undefined || transactionList === undefined)
     return <Spinner variant="page-loader" size="lg" />;
 
   return (

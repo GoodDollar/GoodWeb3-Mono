@@ -86,7 +86,7 @@ export const PostClaim: FC = () => {
           <TransTitle t={/*i18n*/ "Recent claims (Last 30 days):"} variant="title-gdblue" fontSize="l" width="100%" />
         </VStack>
 
-        {transactionList?.length === 0 ? (
+        {transactionList === undefined ? (
           <Spinner variant="page-loader" size="lg" />
         ) : (
           <TransactionList transactions={transactionList} onTxDetailsPress={onTxDetailsPress} />

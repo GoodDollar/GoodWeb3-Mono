@@ -17,7 +17,6 @@ export const useFormatClaimTransactions = (
 
     const formattedTransactions: any = { totalAmount: BigNumber.from("0"), transactionList: [] };
 
-    //todo: fix typings
     pools?.map((pool: PoolDetails) => {
       const [poolName] = Object.keys(pool);
       const { [poolName]: poolDetail } = pool;
