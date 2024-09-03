@@ -1,14 +1,13 @@
 import { JsonRpcProvider, Web3Provider as W3Provider } from "@ethersproject/providers";
-import { Chain, Config, DAppProvider, Mainnet, useEthers, useCalls, ChainId } from "@usedapp/core";
+import { Chain, Config, DAppProvider, Mainnet, useEthers, useCalls } from "@usedapp/core";
 import EventEmitter from "eventemitter3";
 import React, { createContext, FC, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { defaultsDeep, noop, sample } from "lodash";
 import { ethers } from "ethers";
 import { EnvKey } from "../sdk/base/sdk";
 import { G$Decimals } from "../sdk/constants";
-import { GoodReserveCDai, GReputation, IGoodDollar } from "@gooddollar/goodprotocol/types";
+import { GReputation, IGoodDollar } from "@gooddollar/goodprotocol/types";
 import { useGetContract } from "../sdk";
-import { SupportedChains } from "../sdk/constants";
 /**
  * request to switch to network id
  * returns void if no result yet true/false if success
@@ -127,9 +126,6 @@ const TokenProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
   const { chainId } = useEthers();
   const g$Contract = useGetContract("GoodDollar", true, "base") as IGoodDollar;
   const goodContract = useGetContract("GReputation", true, "base") as GReputation;
-  const gdxContract = useGetContract("GoodReserveCDai", true, "base", 1) as GoodReserveCDai;
-
-  const { MAINNET } = SupportedChains;
 
   const results = useCalls(
     [
@@ -147,21 +143,10 @@ const TokenProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
     { refresh: "never", chainId }
   );
 
-  const [mainnetGdx] = useCalls(
-    [
-      {
-        contract: gdxContract,
-        method: "decimals",
-        args: []
-      }
-    ].filter(_ => _.contract),
-    { refresh: "never", chainId: MAINNET as unknown as ChainId }
-  );
-
   const value = useMemo(() => {
     const [g$, good] = results;
 
-    if (chainId && mainnetGdx && results) {
+    if (chainId && results) {
       const newValue = defaultsDeep(
         {
           G$: {
@@ -169,9 +154,6 @@ const TokenProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
           },
           GOOD: {
             [chainId]: good?.value?.[0]
-          },
-          GDX: {
-            [MAINNET]: mainnetGdx?.value?.[0]
           }
         },
         G$Decimals
@@ -180,7 +162,7 @@ const TokenProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
     }
 
     return G$Decimals;
-  }, [results, chainId, mainnetGdx]);
+  }, [results, chainId]);
 
   return <TokenContext.Provider value={value}>{children}</TokenContext.Provider>;
 };

@@ -153,18 +153,14 @@ export const G$: { [chainId: number]: Token } = {
     2,
     "G$",
     "GoodDollar"
+  ),
+  [SupportedChainId.CELO]: new Token(
+    SupportedChainId.CELO,
+    G$ContractAddresses(SupportedChainId.CELO, "GoodDollar"),
+    18,
+    "G$",
+    "GoodDollar"
   )
-};
-
-export const GDX: { [chainId: number]: Token } = {
-  [SupportedChainId.MAINNET]: new Token(
-    SupportedChainId.MAINNET,
-    G$ContractAddresses(SupportedChainId.MAINNET, "GoodReserveCDai"),
-    2,
-    "G$X",
-    "GoodDollar X"
-  )
-  // [SupportedChainId.FUSE]: new Token(SupportedChainId.FUSE, G$ContractAddresses(SupportedChainId.FUSE, 'GoodReserveCDai'), 2, 'G$X', 'GoodDollar X'),
 };
 
 export const GDAO: { [chainId: number]: Token } = {
@@ -223,5 +219,6 @@ export const TOKEN_LISTS: { [chainId: number]: string[] } = {
     "https://www.gemini.com/uniswap/manifest.json",
     "https://raw.githubusercontent.com/voltfinance/swap-default-token-list/master/build/voltage-swap-default.tokenlist.json",
     "https://raw.githubusercontent.com/compound-finance/token-list/master/compound.tokenlist.json"
-  ]
+  ],
+  [SupportedChainId.CELO]: ["https://raw.githubusercontent.com/celo-org/celo-token-list/main/celo.tokenlist.json"]
 };

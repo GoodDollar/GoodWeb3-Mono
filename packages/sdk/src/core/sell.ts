@@ -19,7 +19,6 @@ import { v2TradeExactIn } from "methods/v2TradeExactIn";
 import { getAccount, getChainId } from "utils/web3";
 import { debug, debugGroup, debugGroupEnd } from "utils/debug";
 import { computeRealizedLPFeePercent } from "utils/prices";
-import { tokenBalance } from "utils/tokenBalance";
 import { exchangeHelperContract } from "contracts/ExchangeHelperContract";
 import { SupportedChainId } from "constants/chains";
 import { v2TradeExactOut } from "methods/v2TradeExactOut";
@@ -235,7 +234,6 @@ export async function getSellMeta(
 
   let priceImpact = new Fraction(0);
   let liquidityFee = CurrencyAmount.fromRawAmount(G$, "0");
-  let GDXBalance: CurrencyAmount<Currency> | Fraction = new Fraction(0);
 
   let contribution = CurrencyAmount.fromRawAmount(G$, "0");
 
@@ -251,7 +249,7 @@ export async function getSellMeta(
     ({ priceImpact, liquidityFee } = realizedLPFeePriceImpact(g$trade.trade));
     ({ amount: outputAmount, minAmount: minimumOutputAmount, route } = g$trade);
   } else {
-    contribution = await calculateExitContribution(web3, inputAmount, account);
+    contribution = await calculateExitContribution(web3, inputAmount);
     const inputWithoutContribution = inputAmount.subtract(contribution);
     if (TO.symbol === "G$") {
       return null;
@@ -297,8 +295,6 @@ export async function getSellMeta(
 
     const { cDAI: price } = await g$ReservePrice();
     priceImpact = computePriceImpact(price.invert(), inputWithoutContribution, outputCDAIValue);
-
-    GDXBalance = await tokenBalance(web3, "GDX", account);
   }
 
   debugGroupEnd(`Get meta ${amount} G$ to ${toSymbol}`);
@@ -310,7 +306,6 @@ export async function getSellMeta(
 
     DAIAmount,
     cDAIAmount,
-    GDXAmount: inputAmount.lessThan(GDXBalance) ? inputAmount : GDXBalance,
 
     priceImpact,
     slippageTolerance: slippageTolerancePercent,
