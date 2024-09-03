@@ -1,7 +1,7 @@
 import { IIdentity, UBIScheme } from "@gooddollar/goodprotocol/types";
-import { ChainId, QueryParams, TransactionStatus, useCalls, useEthers } from "@usedapp/core";
+import { ChainId, QueryParams, TransactionStatus, useCalls, useEthers, useTransactions } from "@usedapp/core";
 import ethers, { BigNumber, Contract } from "ethers";
-import { first } from "lodash";
+import { first, has } from "lodash";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { noop } from "lodash";
 import usePromise from "react-use-promise";
@@ -39,7 +39,11 @@ export const useIsAddressVerified = (address: string, env?: EnvKey) => {
 };
 
 export const useMultiClaim2 = (poolsDetails: PoolDetails[]) => {
-  const [claimFlowStatus, setStatus] = useState({ isClaimingDone: false, remainingClaims: 0, error: undefined });
+  const [claimFlowStatus, setStatus] = useState<{
+    isClaimingDone: boolean;
+    remainingClaims: number;
+    error: boolean;
+  }>({ isClaimingDone: false, remainingClaims: 0, error: false });
   //the next contract to claim from
   const [contract, setContract] = useState<Contract | undefined>(undefined);
   // all contracts to claim from
@@ -48,7 +52,6 @@ export const useMultiClaim2 = (poolsDetails: PoolDetails[]) => {
   const [claimedContracts, setClaimedContracts] = useState<
     {
       contract: Contract | undefined;
-      state: TransactionStatus;
       promise: Promise<ethers.providers.TransactionReceipt | undefined>;
     }[]
   >([]);
@@ -80,14 +83,18 @@ export const useMultiClaim2 = (poolsDetails: PoolDetails[]) => {
     if (state?.status !== "None" || !contract) return;
     const promise = send();
 
-    setClaimedContracts(prev => [{ contract, promise, state }, ...prev]);
+    setClaimedContracts(prev => [{ contract, promise }, ...prev]);
   }, [contract, state]);
 
   const updateStatus = async () => {
-    const result = await Promise.all(claimedContracts.map(_ => _.promise))
-      .then(() => ({ isClaimingDone: claimedContracts.length === poolContracts.length, error: undefined }))
-      .catch(e => ({ isClaimingDone: false, error: e }));
-    setStatus({ ...result, remainingClaims: poolContracts.length - claimedContracts.length });
+    const results = await Promise.all(claimedContracts.map(_ => _.promise)).catch(() => [undefined]);
+    const hasError = results.find(_ => _ === undefined);
+
+    setStatus({
+      isClaimingDone: !hasError && results.length === poolContracts.length,
+      remainingClaims: poolContracts.length - claimedContracts.length,
+      error: !!hasError
+    });
   };
 
   // once a tx state changes in claimedContracts[] we update the state.
