@@ -75,7 +75,7 @@ export const useMultiClaim2 = (poolsDetails: PoolDetails[]) => {
     }
   }, [state]);
 
-  // once the next contract is set, perform claim
+  // once the next contract is set (status === "None"), perform claim
   useEffect(() => {
     if (state?.status !== "None" || !contract) return;
     const promise = send();
@@ -90,8 +90,8 @@ export const useMultiClaim2 = (poolsDetails: PoolDetails[]) => {
     setStatus({ ...result, remainingClaims: poolContracts.length - claimedContracts.length });
   };
 
-  // once a tx state changes we update the state.
-  // TODO: verify the state inside the claimedContracts array does actually trigger this effect
+  // once a tx state changes in claimedContracts[] we update the state.
+  // TODO: verify the individual state change of each TX inside the claimedContracts array does actually trigger this effect
   useEffect(() => {
     void updateStatus();
     // eslint-disable-next-line react-hooks-addons/no-unused-deps
