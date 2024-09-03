@@ -1,5 +1,5 @@
 import { IIdentity, UBIScheme } from "@gooddollar/goodprotocol/types";
-import { ChainId, QueryParams, useCalls, useEthers } from "@usedapp/core";
+import { ChainId, QueryParams, TransactionStatus, useCalls, useEthers } from "@usedapp/core";
 import ethers, { BigNumber, Contract } from "ethers";
 import { first } from "lodash";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -36,6 +36,81 @@ export const useIsAddressVerified = (address: string, env?: EnvKey) => {
   }, [address, env, sdk]);
 
   return result;
+};
+
+export const useMultiClaim2 = (poolsDetails: PoolDetails[]) => {
+  const [claimFlowStatus, setStatus] = useState({ isClaimingDone: false, remainingClaims: 0, error: undefined });
+  //the next contract to claim from
+  const [contract, setContract] = useState<Contract | undefined>(undefined);
+  // all contracts to claim from
+  const [poolContracts, setPoolContracts] = useState<Contract[]>([]);
+  // all contracts that have been claimed from
+  const [claimedContracts, setClaimedContracts] = useState<
+    {
+      contract: Contract | undefined;
+      state: TransactionStatus;
+      promise: Promise<ethers.providers.TransactionReceipt | undefined>;
+    }[]
+  >([]);
+
+  const { state, send } = useContractFunctionWithDefaultGasFees(contract, "claim", {
+    transactionName: "Claimed UBI"
+  });
+
+  // initialize the state
+  useEffect(() => {
+    if (poolsDetails.length) {
+      const poolContracts = getContractsFromClaimPools(poolsDetails);
+      setPoolContracts(poolContracts);
+      setClaimedContracts([]);
+      setContract(undefined);
+    }
+  }, [poolsDetails]);
+
+  // once tx is mining move on to the next contract
+  useEffect(() => {
+    if (state.status === "Mining") {
+      const next = poolContracts.find(c => !claimedContracts.find(cc => cc.contract === c) && c !== contract);
+      setContract(next);
+    }
+  }, [state]);
+
+  // once the next contract is set, perform claim
+  useEffect(() => {
+    if (state?.status !== "None" || !contract) return;
+    const promise = send();
+
+    setClaimedContracts(prev => [{ contract, promise, state }, ...prev]);
+  }, [contract, state]);
+
+  const updateStatus = async () => {
+    const result = await Promise.all(claimedContracts.map(_ => _.promise))
+      .then(() => ({ isClaimingDone: claimedContracts.length === poolContracts.length, error: undefined }))
+      .catch(e => ({ isClaimingDone: false, error: e }));
+    setStatus({ ...result, remainingClaims: poolContracts.length - claimedContracts.length });
+  };
+
+  // once a tx state changes we update the state.
+  // TODO: verify the state inside the claimedContracts array does actually trigger this effect
+  useEffect(() => {
+    void updateStatus();
+    // eslint-disable-next-line react-hooks-addons/no-unused-deps
+  }, [claimedContracts, poolContracts]);
+
+  // set the first contract to trigger the claiming process
+  const startClaiming = useCallback(async () => {
+    if (!contract) {
+      const next = poolContracts.find(c => !claimedContracts.find(cc => cc.contract === c) && c !== contract);
+      setContract(next);
+    }
+  }, [contract, poolContracts]);
+
+  return {
+    poolContracts,
+    claimFlowStatus,
+    startClaiming,
+    updateStatus
+  };
 };
 
 export const useMultiClaim = (poolsDetails: PoolDetails[]) => {
@@ -146,11 +221,11 @@ export const useClaim = (refresh: QueryParams["refresh"] = "never") => {
   const results = useCalls(
     [
       identity &&
-        account && {
-          contract: identity,
-          method: "isWhitelisted",
-          args: [account]
-        },
+      account && {
+        contract: identity,
+        method: "isWhitelisted",
+        args: [account]
+      },
       ubi && {
         contract: ubi,
         method: "currentDay",
@@ -162,11 +237,11 @@ export const useClaim = (refresh: QueryParams["refresh"] = "never") => {
         args: []
       },
       ubi &&
-        account && {
-          contract: ubi,
-          method: "checkEntitlement(address)",
-          args: [account]
-        }
+      account && {
+        contract: ubi,
+        method: "checkEntitlement(address)",
+        args: [account]
+      }
     ],
     { refresh: refreshOrNever, chainId }
   );
