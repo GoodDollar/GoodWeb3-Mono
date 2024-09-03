@@ -17,26 +17,15 @@ const AZ = ethers.constants.AddressZero;
  */
 export async function calculateExitContribution(
   web3: Web3,
-  G$Currency: CurrencyAmount<Currency>,
-  account: string
+  G$Currency: CurrencyAmount<Currency>
 ): Promise<CurrencyAmount<Currency>> {
   const goodReserveCDai = await ContributionCalcContract(web3);
 
   debugGroup("Exit contribution");
 
   debug("G$", G$Currency.toFixed(2));
-  const GDXCurrency = await tokenBalance(web3, "GDX", account);
-  const GDXCurrencyAmount = CurrencyAmount.fromFractionalAmount(
-    G$Currency.currency,
-    GDXCurrency.numerator,
-    GDXCurrency.denominator
-  );
-  debug("GDX", GDXCurrencyAmount.toFixed(2));
 
-  const G$CurrencyDiscount = G$Currency.subtract(
-    G$Currency.lessThan(GDXCurrencyAmount) ? G$Currency : GDXCurrencyAmount
-  );
-  debug("G$ discount", G$CurrencyDiscount.toFixed(2));
+  const G$CurrencyDiscount = G$Currency;
 
   if (G$CurrencyDiscount.equalTo(0)) {
     debugGroupEnd("Exit contribution");
