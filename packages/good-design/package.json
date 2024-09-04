@@ -32,8 +32,6 @@
     "@babel/preset-typescript": "^7.16.0",
     "@babel/runtime": "^7.18.9",
     "@gooddollar/web3sdk-v2": "0.2.32-beta.5a150dbc",
-    "@lingui/cli": "^4.11.2",
-    "@lingui/macro": "^4.11.2",
     "@storybook/addon-actions": "^6.5.12",
     "@storybook/addon-essentials": "^6.5.12",
     "@storybook/addon-links": "^6.5.12",

@@ -1,7 +1,6 @@
 export * from "./amplitude";
 export * from "./google";
 export * from "./indicative";
-export * from "./mixpanel";
 export * from "./posthog";
 export * from "./react";
 export * from "./sdk";

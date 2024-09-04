@@ -16,7 +16,6 @@ import { Sentry } from "./sentry/Sentry";
 import { ISentryConfig } from "./sentry/types";
 import { Indicative } from "./indicative/Indicative";
 import { IIndicativeConfig } from "./indicative/types";
-import { IMixpanelConfig, Mixpanel } from "./mixpanel/mixpanel";
 import { IPostHogConfig, PostHog } from "./posthog/posthog";
 
 export interface IAnalyticsConfig {
@@ -24,7 +23,6 @@ export interface IAnalyticsConfig {
   [ProviderType.GoogleAnalytics]?: IGoogleConfig;
   [ProviderType.Indicative]?: IIndicativeConfig;
   [ProviderType.Sentry]?: ISentryConfig;
-  [ProviderType.Mixpanel]?: IMixpanelConfig;
   [ProviderType.PostHog]?: IPostHogConfig;
 }
 
@@ -38,7 +36,6 @@ export class Analytics implements IAbstractProvider, IAnalyticsProvider, IMonito
     [ProviderType.GoogleAnalytics]: GoogleAnalytics,
     [ProviderType.Indicative]: Indicative,
     [ProviderType.Sentry]: Sentry,
-    [ProviderType.Mixpanel]: Mixpanel,
     [ProviderType.PostHog]: PostHog
   };
 
