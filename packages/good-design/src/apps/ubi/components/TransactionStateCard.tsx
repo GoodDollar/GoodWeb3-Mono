@@ -16,7 +16,6 @@ export type TransactionCardProps = {
   onTxDetailsPress: ClaimContextProps["onTxDetailsPress"];
 };
 
-//todo: border needs to indicate state of transaction by color
 //todo: border likely needs to be turned into component because of pattern. border-image not supported in react-native
 export const TransactionCard = withTheme({ name: "TransactionCard" })(
   ({ transaction, onTxDetailsPress }: TransactionCardProps) => {

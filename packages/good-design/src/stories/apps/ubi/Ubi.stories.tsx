@@ -22,13 +22,13 @@ export default {
   component: ClaimWizard,
   decorators: [
     (Story: any) => (
-      <W3Wrapper withMetaMask={true} env="fuse">
-        <NewsFeedProvider env="qa" limit={1}>
-          <VStack alignItems="center">
-            <Story />
-          </VStack>
-        </NewsFeedProvider>
-      </W3Wrapper>
+      // <W3Wrapper withMetaMask={true} env="fuse">
+      <NewsFeedProvider env="qa" limit={1}>
+        <VStack alignItems="center">
+          <Story />
+        </VStack>
+      </NewsFeedProvider>
+      // </W3Wrapper>
     )
   ]
 };
@@ -38,23 +38,25 @@ export const ClaimFlow = {
     const { setLanguage } = useGoodUILanguage();
 
     return (
-      <ClaimProvider
-        withSignModals
-        explorerEndPoints={explorerEndPoints}
-        supportedChains={[SupportedChains.CELO, SupportedChains.FUSE]}
-        {...args.args}
-      >
-        <HStack>
-          <GoodButton onPress={() => setLanguage("en")} backgroundColor="primary" color="white">
-            English
-          </GoodButton>
-          <GoodButton onPress={() => setLanguage("es-419")} backgroundColor="primary" color="white">
-            spanish
-          </GoodButton>
-        </HStack>
+      <W3Wrapper withMetaMask={true} env="fuse">
+        <ClaimProvider
+          withSignModals
+          explorerEndPoints={explorerEndPoints}
+          supportedChains={[SupportedChains.CELO, SupportedChains.FUSE]}
+          {...args.args}
+        >
+          <HStack>
+            <GoodButton onPress={() => setLanguage("en")} backgroundColor="primary" color="white">
+              English
+            </GoodButton>
+            <GoodButton onPress={() => setLanguage("es-419")} backgroundColor="primary" color="white">
+              spanish
+            </GoodButton>
+          </HStack>
 
-        <ClaimWizard {...args} />
-      </ClaimProvider>
+          <ClaimWizard {...args} />
+        </ClaimProvider>
+      </W3Wrapper>
     );
   },
   args: {

@@ -9,6 +9,7 @@ export type PoolDetails = {
       contract: Contract;
       hasClaimed: boolean;
       address: string;
+      isPool?: boolean;
     }
   ];
 };

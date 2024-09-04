@@ -18,15 +18,18 @@ export type ClaimDetails = {
 
 export type Transaction = {
   address: string;
+  account: string;
   network: string;
   contractAddress: string;
   token: string;
   status: string;
   type: string;
   date?: Moment;
+  contractName: string;
   displayName: string;
   tokenValue?: CurrencyValue;
   transactionHash?: string;
+  isPool?: boolean;
 };
 
 export type ReceiveTransaction = Transaction & {
