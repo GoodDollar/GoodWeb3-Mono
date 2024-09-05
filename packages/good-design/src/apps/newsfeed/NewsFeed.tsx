@@ -1,12 +1,14 @@
 import React, { FC, useCallback, useMemo } from "react";
 import { FeedPost } from "@gooddollar/web3sdk-v2";
-import { Heading, HStack, Image, Spinner, Stack, Text, useBreakpointValue, VStack } from "native-base";
+import { Heading, HStack, Image, Spinner, Stack, VStack, Text } from "native-base";
 
 import { BasePressable } from "../../core";
 import SvgXml from "../../core/images/SvgXml";
 import { withTheme } from "../../theme";
 import { CentreBox } from "../../core/layout/CentreBox";
 import { openLink } from "@gooddollar/web3sdk-v2";
+import { IHStackProps } from "native-base/lib/typescript/components/primitives/Stack/HStack";
+import { IVStackProps } from "native-base/lib/typescript/components/primitives/Stack/VStack";
 
 interface NewsFeedItemProps {
   item: FeedPost;
@@ -50,11 +52,11 @@ export const NewsFeedItem: FC<NewsFeedItemProps> = withTheme({ name: "NewsFeedIt
     }, [link]);
 
     return (
-      <BasePressable onPress={handlePress}>
-        <CentreBox flexDir="column" {...props}>
+      <BasePressable onPress={handlePress} width="340" height="310" marginBottom="4">
+        <CentreBox flexDir="column" {...props} justifyContent="flex-start" height="310">
           {picture && (
             <Image
-              minW="325"
+              minW="375"
               width="100%"
               pb="56.25%"
               src={picture}
@@ -63,7 +65,7 @@ export const NewsFeedItem: FC<NewsFeedItemProps> = withTheme({ name: "NewsFeedIt
               {...pictureStyles}
             />
           )}
-          <CentreBox {...containerStyles}>
+          <CentreBox flex="1" justifyContent="space-between" {...containerStyles}>
             <Text {...titleStyles}>{title}</Text>
             <Text {...contentStyles}>{content}</Text>
             <HStack {...footerStyles}>
@@ -79,42 +81,36 @@ export const NewsFeedItem: FC<NewsFeedItemProps> = withTheme({ name: "NewsFeedIt
   }
 );
 
-export const NewsFeed = ({ feed }: { feed: FeedPost[] }) => {
-  const containerWidth = useBreakpointValue({
-    base: "100%",
-    xl: "auto"
-  });
+export const NewsFeed = withTheme({ name: "NewsFeed", skipProps: "feed" })(
+  ({ feed, variant, containerStyles }: { feed: FeedPost[]; containerStyles?: any } & IHStackProps & IVStackProps) => {
+    const ContainerDirection = variant === "multiRow" ? HStack : VStack;
 
-  const feedWidth = useBreakpointValue({
-    base: "75%",
-    xl: "95%"
-  });
-
-  return (
-    <CentreBox flexDir="column" minWidth="325" width={containerWidth}>
-      <Stack w="100%">
-        <CentreBox
-          w="100%"
-          justifyContent="center"
-          alignItems="center"
-          px={4}
-          py={2}
-          marginBottom={4}
-          backgroundColor="rgba(0,175,255,0.1)"
-        >
-          <Heading size="sm" fontFamily="subheading" fontWeight="400" lineHeight="130%" color="primary">
-            {" "}
-            News{" "}
-          </Heading>
-        </CentreBox>
-        <VStack width={feedWidth} ml="auto" mr="auto">
-          {feed && feed.length > 0 ? (
-            feed.map((item: FeedPost) => <NewsFeedItem key={item.id} item={item} />)
-          ) : (
-            <Spinner color="primary" size="lg" />
-          )}
-        </VStack>
-      </Stack>
-    </CentreBox>
-  );
-};
+    return (
+      <CentreBox flexDir="column" minWidth="340" maxWidth="100%">
+        <Stack w="100%">
+          <CentreBox
+            w="100%"
+            justifyContent="center"
+            alignItems="center"
+            px={4}
+            py={2}
+            marginBottom={4}
+            backgroundColor="rgba(0,175,255,0.1)"
+          >
+            <Heading size="sm" fontFamily="subheading" fontWeight="400" lineHeight="130%" color="primary">
+              {" "}
+              News{" "}
+            </Heading>
+          </CentreBox>
+          <ContainerDirection {...containerStyles}>
+            {feed && feed.length > 0 ? (
+              feed.map((item: FeedPost) => <NewsFeedItem key={item.id} item={item} />)
+            ) : (
+              <Spinner color="primary" size="lg" />
+            )}
+          </ContainerDirection>
+        </Stack>
+      </CentreBox>
+    );
+  }
+);
