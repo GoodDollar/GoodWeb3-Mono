@@ -3,7 +3,7 @@ import { useWizard, Wizard } from "react-use-wizard";
 import { Center, VStack } from "native-base";
 import { useEthers } from "@usedapp/core";
 import { noop } from "lodash";
-import { GeoLocation, PoolCriteria, useGeoLocation } from "@gooddollar/web3sdk-v2";
+import { GeoLocation, useGeoLocation } from "@gooddollar/web3sdk-v2";
 import { Trans } from "@lingui/react";
 
 import { TransButton } from "../../../core/layout";
@@ -23,7 +23,6 @@ export type SegmentationProps = {
   account: string;
   isWhitelisted?: boolean;
   expiryFormatted: string | undefined;
-  availableOffers: false | PoolCriteria[] | any;
   isDev?: boolean;
 };
 
@@ -134,8 +133,8 @@ export const SegmentationWizard = (props: SegmentationProps) => {
         <CheckAvailableOffers
           withNavBar={props.withNavBar}
           account={account}
-          availableOffers={props.availableOffers}
           onDone={modalOnDone}
+          isDev={props.isDev}
         />
       </Wizard>
     </WizardContextProvider>
