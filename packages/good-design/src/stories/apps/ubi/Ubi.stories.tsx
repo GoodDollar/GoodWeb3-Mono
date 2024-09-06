@@ -38,7 +38,7 @@ export const ClaimFlow = {
     const { setLanguage } = useGoodUILanguage();
 
     return (
-      <W3Wrapper withMetaMask={true} env="qa">
+      <W3Wrapper withMetaMask={true} env="staging">
         {/* For testing purposes we have to be on qa env */}
         <ClaimProvider
           withSignModals
