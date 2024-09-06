@@ -192,30 +192,39 @@ const RedtentVideoInstructions = withTheme({ name: "RedtentVideoInstructions" })
   }
 );
 
-const RedtentThanks = ({ onDone }: { onDone: RedTentProps["onDone"] }) => (
-  <VStack space={200}>
-    <VStack space={6}>
-      <TransTitle t={/*i18n*/ "Thanks you for submitting your video!"} variant="title-gdblue" />
-      <Box
-        display="block"
-        justifyContent="flex-start"
-        paddingBottom={8}
-        borderBottomWidth={1}
-        borderBottomColor="goodGrey.300"
-      >
-        <TransText t={/*i18n*/ "You are now in the"} variant="sm-grey-650" />
-        <TransText
-          t={/*i18n*/ " Red Tent Woman in Nigeria \n"}
-          variant="sm-grey-650"
-          fontWeight="bold"
-          color="primary"
-        />
-        <TransText t={/*i18n*/ "GoodCollective. You can claim this additional UBI daily."} variant="sm-grey-650" />
-      </Box>
+const RedtentThanks = ({ onDone }: { onDone: RedTentProps["onDone"] }) => {
+  // when passed down directly into an inline callback, for some reason the onDone is not being called
+  const onPress = () => {
+    void onDone();
+  };
+
+  return (
+    <VStack space={200}>
+      <VStack space={6}>
+        <TransTitle t={/*i18n*/ "Thanks you for submitting your video!"} variant="title-gdblue" />
+        <Box
+          display="block"
+          justifyContent="flex-start"
+          paddingBottom={8}
+          borderBottomWidth={1}
+          borderBottomColor="goodGrey.300"
+          ml="auto"
+          mr="auto"
+        >
+          <TransText t={/*i18n*/ "You are now in the"} variant="sm-grey-650" />
+          <TransText
+            t={/*i18n*/ " Red Tent Woman in Nigeria \n"}
+            variant="sm-grey-650"
+            fontWeight="bold"
+            color="primary"
+          />
+          <TransText t={/*i18n*/ "GoodCollective. You can claim this additional UBI daily."} variant="sm-grey-650" />
+        </Box>
+      </VStack>
+      <TransButton t={/*i18n*/ "Next"} onPress={onPress} variant="standard" />
     </VStack>
-    <TransButton t={/*i18n*/ "Next"} onPress={() => onDone} variant="standard" />
-  </VStack>
-);
+  );
+};
 
 export const RedtentWizard: React.FC<RedTentProps> = (props: RedTentProps) => {
   const [error, setError] = useState<Error | undefined>(undefined);
@@ -223,6 +232,7 @@ export const RedtentWizard: React.FC<RedTentProps> = (props: RedTentProps) => {
   // inject show modal on callbacks exceptions
   const modalOnDone: RedTentProps["onDone"] = async error => {
     try {
+      console.log("modalOnDone -- redtent wizard -->", { error, props });
       await props.onDone(error);
     } catch (e: any) {
       setError(e.message);
