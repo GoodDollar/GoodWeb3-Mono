@@ -3,7 +3,6 @@ import React, { useContext } from "react";
 import { NewsFeed } from "../../../apps/newsfeed";
 
 import { NewsFeedContext, NewsFeedProvider } from "@gooddollar/web3sdk-v2";
-import { Center } from "native-base";
 
 const NewsFeedStorageWrapper = ({ children }) => {
   return <NewsFeedProvider env="qa">{children}</NewsFeedProvider>;
@@ -14,11 +13,7 @@ const NewsFeedWidget = () => {
 
   if (!feed) return null;
 
-  return (
-    <Center width={375}>
-      <NewsFeed feed={feed} withHeader />
-    </Center>
-  );
+  return <NewsFeed feed={feed} direction="row" variant="multiRow" />;
 };
 
 export default {

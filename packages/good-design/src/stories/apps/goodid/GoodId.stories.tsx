@@ -5,7 +5,6 @@ import {
   GoodIdContextProvider,
   useAggregatedCertificates,
   useCertificatesSubject,
-  useCheckAvailableOffers,
   useIdentityExpiryDate,
   useIsAddressVerified
 } from "@gooddollar/web3sdk-v2";
@@ -102,7 +101,8 @@ export const SegmentationFlow = {
               certificates,
               certificateSubjects,
               expiryFormatted,
-              withNavBar: true
+              withNavBar: true,
+              isDev: true
             }}
             onDone={async (e: any) => {
               console.log({ e });
@@ -295,16 +295,15 @@ export const CheckAvailableOffersExample: Meta<AvailableOffersPropsAndArgs> = {
   component: CheckAvailableOffers,
   render: args => {
     const { account } = useEthers();
-    const mockPool = [
-      {
-        campaign: "RedTent",
-        Location: {
-          countryCode: args.countryCode ?? "NG"
-        }
-      }
-    ];
+    // const mockPool = [
+    //   {
+    //     campaign: "RedTent",
+    //     Location: {
+    //       countryCode: args.countryCode ?? "NG"
+    //     }
+    //   }
+    // ];
     const { setLanguage } = useGoodUILanguage();
-    const availableOffers = useCheckAvailableOffers({ account: account ?? args.account, pools: mockPool });
 
     return (
       <VStack>
@@ -320,8 +319,8 @@ export const CheckAvailableOffersExample: Meta<AvailableOffersPropsAndArgs> = {
           onDone={async () => {
             alert("Finished demo");
           }}
-          availableOffers={availableOffers}
           withNavBar={true}
+          isDev={true}
         />
       </VStack>
     );

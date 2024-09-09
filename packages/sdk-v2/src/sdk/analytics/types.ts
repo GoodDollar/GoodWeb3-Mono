@@ -3,7 +3,6 @@ export enum ProviderType {
   GoogleAnalytics = "google",
   Indicative = "indicative",
   Sentry = "sentry",
-  Mixpanel = "mixpanel",
   PostHog = "posthog"
 }
 

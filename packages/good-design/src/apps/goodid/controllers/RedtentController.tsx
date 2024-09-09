@@ -7,7 +7,9 @@ export const RedtentController = (props: Omit<RedTentProps, "onVideo"> & { accou
   const registerRedtent = useRegisterRedtent();
   const { account } = props;
   const certificatesList = useAggregatedCertificates(account);
-  const certificates = certificatesList.filter(cert => cert.typeName === "Location" || cert.typeName === "Identity");
+  const certificates = certificatesList
+    .filter(cert => cert.typeName === "Location" || cert.typeName === "Identity")
+    .map(_ => _.certificate);
 
   const onVideo: RedTentProps["onVideo"] = async (base64, extension) => {
     if (base64) {

@@ -251,6 +251,7 @@ export interface CheckAvailableOffersProps {
 export const useCheckAvailableOffers = ({ account, pools, isDev }: CheckAvailableOffersProps) => {
   const certificates = useAggregatedCertificates(account);
   const certificatesSubjects = useCertificatesSubject(certificates);
+
   const [hasPermission] = usePromise(
     () => AsyncStorage.getItem("goodid_permission").then(value => value === "true"),
     []
@@ -284,5 +285,5 @@ export const useCheckAvailableOffers = ({ account, pools, isDev }: CheckAvailabl
         return checkCriteriaMatch(certificateSubject, criteria, key as keyof PoolCriteria);
       });
     });
-  }, [certificatesSubjects, certificates]);
+  }, [certificatesSubjects, certificates, hasPermission]);
 };

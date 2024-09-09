@@ -1,7 +1,6 @@
 import React, { useCallback } from "react";
 import {
   AsyncStorage,
-  useCheckAvailableOffers,
   useFVLink,
   useIssueCertificates,
   useGetEnvChainId,
@@ -10,30 +9,6 @@ import {
 import { isEmpty } from "lodash";
 
 import { SegmentationProps, SegmentationWizard } from "../wizards/SegmentationWizard";
-
-const redtentOffer = [
-  {
-    campaign: "RedTent",
-    Location: {
-      countryCode: "NG"
-    },
-    Gender: "Female"
-  },
-  {
-    campaign: "RedTent",
-    Location: {
-      countryCode: "CO"
-    },
-    Gender: "Female"
-  }
-  // {
-  //   campaign: "RedTent",
-  //   Location: {
-  //     countryCode: "PH" // not confirmed yet
-  //   },
-  //   Gender: "Female"
-  // }
-];
 
 export const SegmentationController = ({
   account,
@@ -52,7 +27,6 @@ export const SegmentationController = ({
   const { baseEnv } = useGetEnvChainId();
   const issueCertificate = useIssueCertificates(account, baseEnv);
   const fvLink = useFVLink();
-  const availableOffers = useCheckAvailableOffers({ account, pools: redtentOffer, isDev });
 
   const onLocationRequest = useCallback(
     async (locationState: any, account: string) => {
@@ -86,9 +60,9 @@ export const SegmentationController = ({
         certificateSubjects,
         expiryFormatted,
         isWhitelisted,
-        availableOffers,
         onDataPermission,
-        withNavBar
+        withNavBar,
+        isDev
       }}
     />
   );

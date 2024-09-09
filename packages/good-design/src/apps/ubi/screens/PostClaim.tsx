@@ -68,7 +68,7 @@ export const PostClaim: FC = () => {
         ) : null}
         <VStack space={6}>
           <Center width="375">
-            <NewsFeed {...{ feed }} />
+            <NewsFeed direction="column" {...{ feed }} />
           </Center>
           <GoodButton variant="link-like" onPress={onNews}>
             <TransText
