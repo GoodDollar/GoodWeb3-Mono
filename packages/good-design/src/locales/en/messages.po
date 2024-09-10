@@ -19,14 +19,18 @@ msgstr ""
 "X-Crowdin-File-ID: 126\n"
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/components/GoodIdCard.tsx:145
-msgid "Expires on {expiryDate}"
-msgstr "Expires on {expiryDate}"
+#: src/apps/goodid/wizards/RedtentWizard.tsx:73
+msgid " Female "
+msgstr " Female "
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/screens/SegmentationConfirmation.tsx:44
-msgid "You can always access this GoodID by connecting your current wallet to "
-msgstr "You can always access this GoodID by connecting your current wallet to "
+#: src/apps/goodid/wizards/RedtentWizard.tsx:216
+msgid ""
+" Red Tent Woman in Nigeria \n"
+""
+msgstr ""
+" Red Tent Woman in Nigeria \n"
+""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/components/GoodIdCard.tsx:125
@@ -39,14 +43,41 @@ msgid "Claim"
 msgstr "Claim"
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/screens/OnboardScreen.tsx:126
-msgid "Your GoodID lives in your local storage. If you use other devices, browsers or browser sessions to access GoodDollar, you will be asked to upgrade again."
-msgstr "Your GoodID lives in your local storage. If you use other devices, browsers or browser sessions to access GoodDollar, you will be asked to upgrade again."
+#: src/apps/goodid/components/GoodIdCard.tsx:145
+msgid "Expires on {expiryDate}"
+msgstr "Expires on {expiryDate}"
 
+#. context: I am (Male/Female)
 #. js-lingui-explicit-id
-#: src/apps/ubi/screens/PostClaim.tsx:76
-msgid "See all news >"
-msgstr "See all news >"
+#: src/apps/goodid/components/SegmentationRow.tsx:9
+msgid "I am"
+msgstr ""
+
+#. context: Aged (X years of age)
+#. context: Aged (X years of age)
+#. js-lingui-explicit-id
+#: src/apps/goodid/components/SegmentationRow.tsx:10
+#: src/apps/goodid/components/SegmentationRow.tsx:16
+msgid "Aged"
+msgstr ""
+
+#. context: From (Location)
+#. js-lingui-explicit-id
+#: src/apps/goodid/components/SegmentationRow.tsx:11
+msgid "From"
+msgstr ""
+
+#. context: Are you (Male/Female)
+#. js-lingui-explicit-id
+#: src/apps/goodid/components/SegmentationRow.tsx:15
+msgid "Are you"
+msgstr ""
+
+#. context: In (Location)
+#. js-lingui-explicit-id
+#: src/apps/goodid/components/SegmentationRow.tsx:17
+msgid "In"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/DisputeThanks.tsx:17
@@ -54,9 +85,49 @@ msgid "Thanks for letting us know!"
 msgstr "Thanks for letting us know!"
 
 #. js-lingui-explicit-id
+#: src/apps/goodid/screens/DisputeThanks.tsx:20
+msgid ""
+"Heads-up that information you’ve corrected may show as “Unverified” on your GoodID. \n"
+"\n"
+" This will not affect your ability to claim UBI!"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/DisputeThanks.tsx:30
+#: src/apps/goodid/screens/SegmentationConfirmation.tsx:66
+#: src/apps/goodid/screens/SegmentationDispute.tsx:54
+#: src/apps/goodid/wizards/RedtentWizard.tsx:224
+msgid "Next"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/GoodIdDetails.tsx:72
+msgid "FaceId"
+msgstr ""
+
+#. js-lingui-explicit-id
 #: src/apps/goodid/screens/GoodIdDetails.tsx:80
 msgid "Show my FaceId"
 msgstr "Show my FaceId"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/GoodIdDetails.tsx:131
+msgid ""
+"Your GoodID unlocks access to UBI, financial services, humanitarian funds and \n"
+" other special offers and opportunities to earn GoodDollars.`"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/GoodIdDetails.tsx:159
+msgid "My Wallet Address"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/GoodIdDetails.tsx:169
+msgid ""
+"Attention: GoodDollar-verifying a new wallet address can only be \n"
+" done 24h after deleting your old face-id"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/OffersAgreement.tsx:30
@@ -108,42 +179,268 @@ msgid "Financial services"
 msgstr "Financial services"
 
 #. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreen.tsx:74
+msgid "Renew your GoodID to claim UBI"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreen.tsx:75
+msgid "Get your GoodID to claim UBI"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreen.tsx:97
+msgid "It unlocks access to:"
+msgstr "It unlocks access to:"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreen.tsx:116
+msgid "Verification takes 2 minutes"
+msgstr "Verification takes 2 minutes"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreen.tsx:126
+msgid "Your GoodID lives in your local storage. If you use other devices, browsers or browser sessions to access GoodDollar, you will be asked to upgrade again."
+msgstr "Your GoodID lives in your local storage. If you use other devices, browsers or browser sessions to access GoodDollar, you will be asked to upgrade again."
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/SegmentationConfirmation.tsx:31
+msgid ""
+"We are creating \n"
+" your GoodID"
+msgstr ""
+
+#. js-lingui-explicit-id
 #: src/apps/goodid/screens/SegmentationConfirmation.tsx:35
 msgid "Your GoodID is ready"
 msgstr "Your GoodID is ready"
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/components/TransactionStateCard.tsx:68
+#: src/apps/goodid/screens/SegmentationConfirmation.tsx:44
+msgid "You can always access this GoodID by connecting your current wallet to "
+msgstr "You can always access this GoodID by connecting your current wallet to "
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/SegmentationDispute.tsx:39
+msgid "Please indicate which is incorrect"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/SegmentationScreen.tsx:32
+msgid ""
+"We could not \n"
+" confirm your \n"
+" location"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/SegmentationScreen.tsx:42
+msgid "Please confirm"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:29
+msgid "Your first name"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:30
+msgid "Your age"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:31
+msgid "Your location"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:32
+msgid "What you plan to do with the money you receive"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:35
+msgid "Maximum video length 30sec"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:35
+msgid "Maximum size 20mb"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:37
+msgid ""
+"Your video may be reviewed by the \n"
+" GoodLabs or partner teams for \n"
+" verification purposes. Your video \n"
+" will not be shared or used publicly, \n"
+" and will be erased after a period of \n"
+" time."
+msgstr ""
+"Your video may be reviewed by the \n"
+" GoodLabs or partner teams for \n"
+" verification purposes. Your video \n"
+" will not be shared or used publicly, \n"
+" and will be erased after a period of \n"
+" time."
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:49
+msgid "Claim weekly:"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:55
+msgid "10.000G$"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:67
+msgid "To qualify for this pool you need to: "
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:72
+msgid "Have verified your gender as"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:74
+msgid "in your GoodID"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:85
+msgid "Submit a video selfie saying: "
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:115
+msgid ""
+"You are eligible for \n"
+" additional UBI!"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:118
+msgid "Red Tent Women in Nigeria"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:120
+msgid "Learn more>>"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:140
+msgid "Upload Video Selfie"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:141
+msgid "Skip for now"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:173
+msgid "Video instructions"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:179
+msgid "Submit a video selfie"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:180
+msgid "Restrictions"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:181
+msgid "How will my video be used?"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:204
+msgid "Thanks you for submitting your video!"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:214
+msgid "You are now in the"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:221
+msgid "GoodCollective. You can claim this additional UBI daily."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/wizards/SegmentationWizard.tsx:57
+msgid ""
+"We're checking \n"
+" your information"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/wizards/SegmentationWizard.tsx:68
+msgid "yes, i am"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/wizards/SegmentationWizard.tsx:71
+msgid "no, i am not"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/newsfeed/NewsFeed.tsx:90
+msgid "News"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/ubi/components/TransactionStateCard.tsx:74
 msgid "Your Daily Basic Income"
 msgstr "Your Daily Basic Income"
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/screens/PostClaim.tsx:25
+#: src/apps/ubi/context/ClaimContext.tsx:85
+msgid "An unknown error occurred while claiming"
+msgstr "An unknown error occurred while claiming"
+
+#. js-lingui-explicit-id
+#: src/apps/ubi/screens/PostClaim.tsx:24
 msgid "Your Next Claim"
 msgstr "Your Next Claim"
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/screens/PostClaim.tsx:54
+#: src/apps/ubi/screens/PostClaim.tsx:53
 msgid "You've claimed today"
 msgstr "You've claimed today"
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/screens/PostClaim.tsx:62
+#: src/apps/ubi/screens/PostClaim.tsx:61
 msgid "CLAIM ON {altChain}"
 msgstr "CLAIM ON {altChain}"
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/screens/PostClaim.tsx:87
+#: src/apps/ubi/screens/PostClaim.tsx:75
+msgid "See all news >"
+msgstr "See all news >"
+
+#. js-lingui-explicit-id
+#: src/apps/ubi/screens/PostClaim.tsx:86
 msgid "Recent claims (Last 30 days):"
 msgstr "Recent claims (Last 30 days):"
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/screens/PreClaim.tsx:23
+#: src/apps/ubi/screens/PreClaim.tsx:31
 msgid "Claim your share"
 msgstr "Claim your share"
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/screens/PreClaim.tsx:36
+#: src/apps/ubi/screens/PreClaim.tsx:44
 msgid "Claim Now"
 msgstr "Claim Now"
 
@@ -166,303 +463,9 @@ msgstr ""
 msgid "Claim G$"
 msgstr "Claim G$"
 
-#. context: I am (Male/Female)
-#. js-lingui-explicit-id
-#: src/apps/goodid/components/SegmentationRow.tsx:9
-msgid "I am"
-msgstr ""
-
-#. context: Aged (X years of age)
-#. context: Aged (X years of age)
-#. js-lingui-explicit-id
-#: src/apps/goodid/components/SegmentationRow.tsx:10
-#: src/apps/goodid/components/SegmentationRow.tsx:16
-msgid "Aged"
-msgstr ""
-
-#. context: From (Location)
-#. js-lingui-explicit-id
-#: src/apps/goodid/components/SegmentationRow.tsx:11
-msgid "From"
-msgstr ""
-
-#. context: Are you (Male/Female)
-#. js-lingui-explicit-id
-#: src/apps/goodid/components/SegmentationRow.tsx:15
-msgid "Are you"
-msgstr ""
-
-#. context: In (Location)
-#. js-lingui-explicit-id
-#: src/apps/goodid/components/SegmentationRow.tsx:17
-msgid "In"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/screens/DisputeThanks.tsx:20
-msgid ""
-"Heads-up that information you’ve corrected may show as “Unverified” on your GoodID. \n"
-"\n"
-" This will not affect your ability to claim UBI!"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/screens/DisputeThanks.tsx:30
-#: src/apps/goodid/screens/SegmentationConfirmation.tsx:66
-#: src/apps/goodid/screens/SegmentationDispute.tsx:54
-#: src/apps/goodid/wizards/RedtentWizard.tsx:213
-msgid "Next"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/screens/GoodIdDetails.tsx:72
-msgid "FaceId"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/screens/GoodIdDetails.tsx:131
-msgid ""
-"Your GoodID unlocks access to UBI, financial services, humanitarian funds and \n"
-" other special offers and opportunities to earn GoodDollars.`"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/screens/GoodIdDetails.tsx:159
-msgid "My Wallet Address"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/screens/GoodIdDetails.tsx:169
-msgid ""
-"Attention: GoodDollar-verifying a new wallet address can only be \n"
-" done 24h after deleting your old face-id"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/screens/OnboardScreen.tsx:74
-msgid "Renew your GoodID to claim UBI"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/screens/OnboardScreen.tsx:75
-msgid "Get your GoodID to claim UBI"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/screens/OnboardScreen.tsx:97
-msgid "It unlocks access to:"
-msgstr "It unlocks access to:"
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/screens/OnboardScreen.tsx:116
-msgid "Verification takes 2 minutes"
-msgstr "Verification takes 2 minutes"
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/screens/SegmentationConfirmation.tsx:31
-msgid ""
-"We are creating \n"
-" your GoodID"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/screens/SegmentationDispute.tsx:39
-msgid "Please indicate which is incorrect"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/screens/SegmentationScreen.tsx:32
-msgid ""
-"We could not \n"
-" confirm your \n"
-" location"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/screens/SegmentationScreen.tsx:42
-msgid "Please confirm"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/wizards/RedtentWizard.tsx:30
-msgid "Your first name"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/wizards/RedtentWizard.tsx:31
-msgid "Your age"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/wizards/RedtentWizard.tsx:32
-msgid "Your location"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/wizards/RedtentWizard.tsx:33
-msgid "What you plan to do with the money you receive"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/wizards/RedtentWizard.tsx:36
-msgid "Maximum video length 30sec"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/wizards/RedtentWizard.tsx:36
-msgid "Maximum size 20mb"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/wizards/RedtentWizard.tsx:38
-msgid ""
-"Your video may be reviewed by the \n"
-" GoodLabs or partner teams for \n"
-" verification purposes. Your video \n"
-" will not be shared or used publicly, \n"
-" and will be erased after a period of \n"
-" time."
-msgstr ""
-"Your video may be reviewed by the \n"
-" GoodLabs or partner teams for \n"
-" verification purposes. Your video \n"
-" will not be shared or used publicly, \n"
-" and will be erased after a period of \n"
-" time."
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/wizards/RedtentWizard.tsx:50
-msgid "Claim weekly:"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/wizards/RedtentWizard.tsx:56
-msgid "10.000G$"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/wizards/RedtentWizard.tsx:68
-msgid "To qualify for this pool you need to: "
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/wizards/RedtentWizard.tsx:73
-msgid "Have verified your gender as"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/wizards/RedtentWizard.tsx:74
-msgid "Female"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/wizards/RedtentWizard.tsx:75
-msgid "in your GoodID"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/wizards/RedtentWizard.tsx:86
-msgid "Submit a video selfie saying: "
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/wizards/RedtentWizard.tsx:116
-msgid ""
-"You are eligible for \n"
-" additional UBI!"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/wizards/RedtentWizard.tsx:119
-msgid "Red Tent Women in Nigeria"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/wizards/RedtentWizard.tsx:121
-msgid "Learn more>>"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/wizards/RedtentWizard.tsx:140
-msgid "Upload Video Selfie"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/wizards/RedtentWizard.tsx:143
-msgid "Skip for now"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/wizards/RedtentWizard.tsx:176
-msgid "Video instructions"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/wizards/RedtentWizard.tsx:182
-msgid "Submit a video selfie"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/wizards/RedtentWizard.tsx:183
-msgid "Restrictions"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/wizards/RedtentWizard.tsx:184
-msgid "How will my video be used?"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/wizards/RedtentWizard.tsx:201
-msgid "Thanks you for submitting your video!"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/wizards/RedtentWizard.tsx:203
-msgid "You are now in the"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/wizards/RedtentWizard.tsx:205
-msgid ""
-"Red Tent Woman in Nigeria \n"
-""
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/wizards/RedtentWizard.tsx:210
-msgid "GoodCollective. You can claim this additional UBI daily."
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/wizards/SegmentationWizard.tsx:58
-msgid ""
-"We're checking \n"
-" your information"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/wizards/SegmentationWizard.tsx:69
-msgid "yes, i am"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/wizards/SegmentationWizard.tsx:72
-msgid "no, i am not"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/newsfeed/NewsFeed.tsx:99
-msgid "News"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/ubi/context/ClaimContext.tsx:85
-msgid "An unknown error occurred while claiming"
-msgstr "An unknown error occurred while claiming"
-
 #. js-lingui-explicit-id
 #: src/apps/ubi/wizard/ClaimWizard.tsx:24
+#: src/apps/ubi/wizard/ClaimWizard.tsx:59
 msgid ""
 "Please sign with \n"
 " your wallet \n"
