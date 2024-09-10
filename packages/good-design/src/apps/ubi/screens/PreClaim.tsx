@@ -1,5 +1,6 @@
-import React, { FC } from "react";
+import React, { FC, useEffect } from "react";
 import { Center, Spinner, VStack } from "native-base";
+import { useWizard } from "react-use-wizard";
 
 import { Web3ActionButton } from "../../../advanced";
 import { Image } from "../../../core/images";
@@ -11,8 +12,16 @@ import ClaimFooter from "../../../assets/images/claim-footer.png";
 import { useClaimContext } from "../context";
 
 export const PreClaim: FC = () => {
+  const { goToStep, stepCount } = useWizard();
   const { claimPools, claimDetails, supportedChains, onClaim, onTxDetailsPress } = useClaimContext();
   const { totalAmount, transactionList } = claimPools ?? {};
+
+  useEffect(() => {
+    const claimConfirmed = transactionList?.some(tx => tx.type === "claim-confirmed");
+    if (claimConfirmed) {
+      goToStep(stepCount - 1);
+    }
+  }, [transactionList]);
 
   if ((claimDetails?.isWhitelisted as any) === undefined || transactionList === undefined)
     return <Spinner variant="page-loader" size="lg" />;

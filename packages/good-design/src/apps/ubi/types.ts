@@ -1,7 +1,7 @@
 import { Contract } from "ethers";
 import { BigNumber } from "@ethersproject/bignumber";
 import { PoolDetails, SupportedChains } from "@gooddollar/web3sdk-v2";
-import { CurrencyValue, TransactionStatus } from "@usedapp/core";
+import { CurrencyValue } from "@usedapp/core";
 import { Moment } from "moment";
 
 export type ClaimDetails = {
@@ -47,9 +47,8 @@ export interface ClaimContextProps {
   claimDetails: Omit<ClaimDetails, "claimCall">;
   poolsDetails: PoolDetails[] | undefined;
   loading: boolean;
-  poolContracts: Contract[];
+  poolContracts: Contract[] | undefined;
   claimPools: { totalAmount: CurrencyValue; transactionList: Transaction[] | undefined };
-  claimStatus: TransactionStatus;
   claimFlowStatus: any;
   claimedAlt: { hasClaimed: boolean; altChain: string };
   error?: string;
@@ -58,7 +57,6 @@ export interface ClaimContextProps {
   onNews: () => void;
   setTxDetails: (tx: any) => void;
   setError: (error: string | undefined) => void;
-  resetState: () => void;
   onClaim: () => Promise<void>;
   onClaimSuccess: () => Promise<void>;
   onClaimFailed: () => Promise<void>;

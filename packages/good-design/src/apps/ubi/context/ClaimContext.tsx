@@ -1,6 +1,7 @@
 import React, { createContext, FC, PropsWithChildren, useContext, useCallback, useEffect, useState } from "react";
 import {
   getRecentClaims,
+  PoolDetails,
   SupportedChains,
   useClaim,
   useClaimedAlt,
@@ -46,13 +47,13 @@ export const ClaimProvider: FC<
   withSignModals,
   onConnect,
   onNews,
-  onSendTx,
+  // onSendTx,
   onSuccess
 }) => {
   const { account, chainId, library, switchNetwork } = useEthers();
   const [refreshRate, setRefreshRate] = useState<QueryParams["refresh"]>(4);
-  const [preClaimPools, setClaimPools] = useState<any[]>([]);
-  const [postClaimPools, setPostClaimPools] = useState<any[]>([]);
+  const [preClaimPools, setClaimPools] = useState<any[] | undefined>(undefined);
+  const [postClaimPools, setPostClaimPools] = useState<any[] | undefined>(undefined);
   const activeChain = SupportedChains[chainId as number] ?? "CELO";
   const endpoints = explorerEndPoints[activeChain as keyof typeof SupportedChains];
   const [error, setError] = useState<string | undefined>(undefined);
@@ -61,7 +62,7 @@ export const ClaimProvider: FC<
   const [txDetails, setTxDetails] = useState({ transaction: undefined, isOpen: false });
 
   const formattedTransactionList = useFormatClaimTransactions(
-    postClaimPools.length > 0 ? postClaimPools : preClaimPools.length > 0 ? preClaimPools : [],
+    postClaimPools && postClaimPools?.length > 0 ? postClaimPools : preClaimPools ? preClaimPools : [],
     chainId,
     account ?? ""
   );
@@ -69,13 +70,12 @@ export const ClaimProvider: FC<
   const claimDetails = useClaim(refreshRate);
   const { poolsDetails, loading, fetchPools } = useGetMemberUBIPools();
 
-  const { poolContracts, setContract, setPoolContracts, transactionState, claimFlowStatus } =
-    useMultiClaim(preClaimPools);
-  const { errorMessage } = transactionState?.state ?? {};
+  const { errorMessage } = { errorMessage: undefined };
+
+  const { poolContracts, startClaiming: onClaim, claimFlowStatus } = useMultiClaim(preClaimPools);
 
   const onTxDetailsPress = useCallback(
     (transaction: any) => {
-      console.log("transactionTxDetails -->", { transaction });
       setTxDetails({ transaction, isOpen: true });
     },
     [txDetails]
@@ -83,46 +83,24 @@ export const ClaimProvider: FC<
 
   const onClaimFailed = useCallback(async () => {
     setError(errorMessage ?? /*i18n*/ "An unknown error occurred while claiming");
-
-    if (claimFlowStatus.isClaimingDone) {
-      resetState();
-    }
-  }, [errorMessage, claimFlowStatus]);
-
-  const resetState = () => {
-    setRefreshRate("everyBlock");
-    setClaimPools([]);
-    setPostClaimPools([]);
-    setPoolContracts([]);
-    void fetchPools();
-
-    // because of awaiting on-chain data (eg. contract status / tx validation) and context switching (account/network)
-    // combined with the varying states of the claim process (pre-claim, post-claim, with/without additional pools),
-    // we can end up in a wrong or mixed up page-state.
-    // why we set a short lock to handle certain racing-conditions
-    void explorerPollLock.acquire("resetLock");
-
-    setTimeout(async () => {
-      void explorerPollLock.release("resetLock");
-      setRefreshRate(4);
-    }, 300);
-  };
-
-  const onClaim = useCallback(async () => {
-    // todo: handle onboard/upgrade flow?
-
-    // initializes a cycle of claim transactions for all contracts
-    setContract(poolContracts[0]);
-  }, [poolsDetails, onSendTx, poolContracts]);
+    setClaimPools(undefined);
+  }, [errorMessage]);
 
   const onClaimSuccess = useCallback(async () => {
-    transactionState?.resetState();
-    resetState();
-
     // should handle what happens after all claims are done (eg. showing a next-task modal)
     // if nothing is done, it will just silently finish
+
+    setClaimPools(undefined);
+    setRefreshRate("everyBlock");
+    void fetchPools();
     await onSuccess?.();
-  }, [transactionState, onSuccess]);
+  }, [onSuccess]);
+
+  useEffect(() => {
+    setClaimPools(undefined);
+    setPostClaimPools(undefined);
+    void fetchPools();
+  }, [/*used*/ chainId, /*used*/ account]);
 
   const switchChain = useCallback(() => {
     // 4902: Network is not added, and should be done manually
@@ -135,46 +113,55 @@ export const ClaimProvider: FC<
     });
   }, [switchNetwork, claimedAlt]);
 
-  useEffect(() => {
-    resetState();
-  }, [/*used*/ account, /* used */ chainId]);
-
   //Handle navigation to pre-claim screen
   useEffect(() => {
-    if (!isEmpty(postClaimPools) || explorerPollLock.isAcquired("resetLock")) return;
+    if (isUndefined(poolsDetails === undefined || claimDetails.hasClaimed) || !isUndefined(preClaimPools)) {
+      return;
+    }
 
-    if (!isEmpty(poolContracts) && poolsDetails === undefined) return;
     const unclaimedPools = getUnclaimedPools(poolsDetails);
 
-    if (
-      account &&
-      isEmpty(preClaimPools) &&
-      !loading &&
-      !isUndefined(claimDetails.hasClaimed) &&
-      (claimDetails.hasClaimed === false || !isEmpty(unclaimedPools))
-    ) {
-      const details: any[] = !claimDetails.hasClaimed ? [{ GoodDollar: [claimDetails] }] : [];
+    if (account && !loading && !isUndefined(claimDetails.hasClaimed)) {
+      let details: any[] = !claimDetails.hasClaimed ? [{ GoodDollar: claimDetails }] : [];
 
-      if (!isEmpty(unclaimedPools) && poolsDetails) {
-        details.push(...poolsDetails);
+      if (!isEmpty(unclaimedPools) && unclaimedPools) {
+        details.push(...unclaimedPools);
+      }
+
+      // the claimReceipts are more reliable because of immediate availibilty,
+      // opposed to fetching latest data from chain
+      if (claimFlowStatus.claimReceipts) {
+        const alreadyClaimed = claimFlowStatus.claimReceipts.filter(Boolean).map(receipt => receipt.to);
+
+        details = details.filter(pool => !alreadyClaimed.includes(Object.values(pool as PoolDetails)[0].address));
       }
 
       setClaimPools(details);
     }
-  }, [claimDetails, preClaimPools, poolContracts, poolsDetails]);
+  }, [/*used*/ poolContracts, claimDetails, preClaimPools, poolsDetails, claimFlowStatus.isClaimingDone]);
 
   //Handle navigation to post-claim screen
   useEffect(() => {
     void (async () => {
-      if (explorerPollLock.isAcquired("pollLock") || explorerPollLock.isAcquired("resetLock")) return;
-
-      if (!isEmpty(poolContracts) && isEmpty(poolsDetails)) return;
+      if (
+        explorerPollLock.isAcquired("pollLock") ||
+        explorerPollLock.isAcquired("resetLock") ||
+        !isEmpty(postClaimPools) ||
+        poolsDetails === undefined
+      ) {
+        return;
+      }
 
       const unclaimedPools = getUnclaimedPools(poolsDetails);
       const noPostClaimPools = isEmpty(postClaimPools);
       const noUnclaimedPools = isEmpty(unclaimedPools);
 
       const hasClaimed = claimDetails.hasClaimed === true;
+
+      if (unclaimedPools && unclaimedPools.length > 0) {
+        setPostClaimPools(undefined);
+        return;
+      }
 
       if (account && hasClaimed && noPostClaimPools && noUnclaimedPools && !loading) {
         await explorerPollLock.acquire("pollLock");
@@ -196,10 +183,11 @@ export const ClaimProvider: FC<
 
         details.push({ GoodDollar: claimTransactionList });
 
+        setClaimPools([]);
         setPostClaimPools(details);
       }
     })();
-  }, [/* used */ chainId, /*used*/ poolsDetails, postClaimPools, claimDetails, endpoints]);
+  }, [postClaimPools, claimDetails, endpoints, poolsDetails]);
 
   return (
     <ClaimContext.Provider
@@ -210,7 +198,6 @@ export const ClaimProvider: FC<
         poolsDetails,
         loading,
         claimPools: formattedTransactionList,
-        claimStatus: transactionState.state,
         claimFlowStatus,
         poolContracts,
         claimedAlt,
@@ -221,7 +208,6 @@ export const ClaimProvider: FC<
         onNews,
         setTxDetails,
         setError,
-        resetState,
         onClaim,
         onClaimFailed,
         onClaimSuccess,
