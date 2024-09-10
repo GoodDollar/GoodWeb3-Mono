@@ -31,7 +31,6 @@
     "@babel/preset-react": "^7.16.0",
     "@babel/preset-typescript": "^7.16.0",
     "@babel/runtime": "^7.18.9",
-    "@gooddollar/good-design": "file:.yalc/@gooddollar/good-design",
     "@gooddollar/web3sdk-v2": "0.2.32-beta.8a7258f3",
     "@storybook/addon-actions": "^6.5.12",
     "@storybook/addon-essentials": "^6.5.12",
