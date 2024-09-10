@@ -4284,54 +4284,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/good-design@file:.yalc/@gooddollar/good-design::locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design":
-  version: 0.1.58-beta.62e07aeb
-  resolution: "@gooddollar/good-design@file:.yalc/@gooddollar/good-design#.yalc/@gooddollar/good-design::hash=d1d138&locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design"
-  dependencies:
-    "@babel/core": ^7.18.10
-    "@babel/runtime": ^7.18.9
-    "@formatjs/intl-locale": ^4.0.0
-    "@formatjs/intl-pluralrules": ^5.2.14
-    "@gooddollar/goodprotocol": ^2.0.24
-    "@lingui/core": ^4.11.2
-    "@lingui/react": ^4.11.2
-    "@magiklabs/react-sdk": ^1.0.8
-    "@react-native-clipboard/clipboard": ^1.14.1
-    "@uniswap/sdk-core": ^3.1.0
-    async-await-mutex-lock: ^1.0.11
-    buffer: ^6.0.3
-    country-data: ^0.0.31
-    ethers: 5.7.2
-    i18n-iso-countries: ^7.11.1
-    metro-react-native-babel-preset: ^0.72.0
-    moment: ^2.29.4
-    moment-duration-format: ^2.3.2
-    native-base: ^3.4.28
-    prop-types: ^15.8.1
-    react: 17.0.2
-    react-dom: 17.0.2
-    react-helmet: ^6.1.0
-    react-inlinesvg: 2.3.0
-    react-native: 0.70.4
-    react-native-fs: ^2.20.0
-    react-native-image-picker: ^7.1.2
-    react-native-mask-input: ^1.2.2
-    react-native-safe-area-context: ^3.3.2
-    react-native-svg: ^12.1.1
-    react-native-svg-uri: ^1.2.3
-    react-native-svg-web: ^1.0.9
-    react-native-web: 0.17.7
-    react-native-web-clipboard: ^0.1.1
-    react-native-web-webview: ^1.0.2
-    react-native-webview: ^13.2.2
-    react-number-format: ^5.1.1
-    react-use-promise: ^0.5.0
-    react-use-wizard: ^2.3.0
-    require-from-string: ^2.0.2
-  checksum: a32ec0850653afcc08bd8fbb1f23950c99108646b2657f2e2dd046a64bb53fcd814346515ec02465ee6663775898cb3c371ac4dbc78219f5f0bfc094f142df65
-  languageName: node
-  linkType: hard
-
 "@gooddollar/good-design@workspace:packages/good-design":
   version: 0.0.0-use.local
   resolution: "@gooddollar/good-design@workspace:packages/good-design"
@@ -4345,9 +4297,8 @@ __metadata:
     "@babel/runtime": ^7.18.9
     "@formatjs/intl-locale": ^4.0.0
     "@formatjs/intl-pluralrules": ^5.2.14
-    "@gooddollar/good-design": "file:.yalc/@gooddollar/good-design"
     "@gooddollar/goodprotocol": ^2.0.24
-    "@gooddollar/web3sdk-v2": 0.2.32-beta.8a7258f3
+    "@gooddollar/web3sdk-v2": 0.2.32-beta.aecc26ca
     "@lingui/core": ^4.11.2
     "@lingui/react": ^4.11.2
     "@magiklabs/react-sdk": ^1.0.8
@@ -4547,7 +4498,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/web3sdk-v2@0.2.32-beta.8a7258f3, @gooddollar/web3sdk-v2@workspace:packages/sdk-v2":
+"@gooddollar/web3sdk-v2@0.2.32-beta.aecc26ca, @gooddollar/web3sdk-v2@workspace:packages/sdk-v2":
   version: 0.0.0-use.local
   resolution: "@gooddollar/web3sdk-v2@workspace:packages/sdk-v2"
   dependencies:
