@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { View, Button, Modal, Text, StyleSheet, Linking, ModalProps } from "react-native";
 import { ComponentStory, ComponentMeta } from "@storybook/react";
+import { useEthers, QueryParams } from "@usedapp/core";
+import { noop, isEmpty, isUndefined } from "lodash";
 
+import { PoolDetails } from "../../sdk";
 import { W3Wrapper } from "../W3Wrapper";
-import { useFVLink, useGetMemberUBIPools } from "../../sdk/claim/react";
-import { noop } from "lodash";
+import { useFVLink, useGetMemberUBIPools, useClaim, useMultiClaim } from "../../sdk/claim/react";
 
 export interface PageProps {
   address?: string;
@@ -74,48 +76,109 @@ const styles = StyleSheet.create({
   }
 });
 
-// const ClaimButton = ({ address, firstName }: PageProps) => {
-//   // const library = useSDK(true, "claim");
-//   const [showModal, setShowModal] = useState(false);
-//   const [refresh, setRefresh] = useState(false);
-//   const hasClaimed = useHasClaimed("FUSE");
-//   const { isWhitelisted, claimAmount, claimTime } = useClaim(refresh ? "everyBlock" : "never");
-//   const handleClaim = async () => {
-//     if (isWhitelisted) {
-//       await claimCall.send();
-//     } else {
-//       setShowModal(true);
-//     }
-//   };
+export const getUnclaimedPools = (pools: PoolDetails[] | undefined) =>
+  pools?.filter(pool => {
+    const claimsRemaining = Object.values(pool)[0] as any;
+    return !claimsRemaining.hasClaimed;
+  });
 
-//   // const onClaim = usePressOrSwitchChain({ chainId: 122, onPress: handleClaim });
-//   useEffect(() => {
-//     if (!isWhitelisted || claimCall.state.status === "Mining" || claimCall.state.status === "PendingSignature") {
-//       setRefresh(true);
-//     } else setRefresh(false);
-//   }, [isWhitelisted, claimCall.state]);
+const MultiClaim = () => {
+  const { account } = useEthers();
+  const [refreshRate, setRefreshRate] = useState<QueryParams["refresh"]>(4);
+  const claimDetails = useClaim(refreshRate);
+  const { poolsDetails, loading, fetchPools } = useGetMemberUBIPools();
+  const [preClaimPools, setPreClaimPools] = useState<any[] | undefined>(undefined);
+  const { startClaiming, poolContracts, claimFlowStatus } = useMultiClaim(preClaimPools);
 
-//   const buttonTitle = () => {
-//     if (isWhitelisted) {
-//       if (claimAmount.gt(0)) return `Claim ${claimAmount}`;
-//       else return `Claim at: ${claimTime}`;
-//     } else return "Verify Uniqueness";
-//   };
+  //Handle navigation to pre-claim screen
+  useEffect(() => {
+    if (!isEmpty(poolContracts) && poolsDetails === undefined) return;
+    const unclaimedPools = getUnclaimedPools(poolsDetails);
 
-//   return (
-//     <View>
-//       <View style={styles.container}>
-//         <Text>address: {address}</Text>
-//         <Text>hasClaimed: {String(hasClaimed)}</Text>
-//         <Text>isWhitelisted: {String(isWhitelisted)}</Text>
-//         <Text>Claim time: {claimTime?.toString()}</Text>
-//         <Text>Claim amount: {claimAmount?.toString()}</Text>
-//         <FVModal visible={showModal} onRequestClose={() => setShowModal(false)} firstName={firstName}></FVModal>
-//       </View>
-//       <Button title={buttonTitle()} onPress={handleClaim}></Button>
-//     </View>
-//   );
-// };
+    if (
+      account &&
+      preClaimPools === undefined &&
+      !loading &&
+      !isUndefined(claimDetails.hasClaimed) &&
+      (claimDetails.hasClaimed === false || !isEmpty(unclaimedPools))
+    ) {
+      let details: any[] = !claimDetails.hasClaimed ? [{ GoodDollar: claimDetails }] : [];
+
+      if (!isEmpty(unclaimedPools) && unclaimedPools) {
+        details.push(...unclaimedPools);
+      }
+
+      // the claimReceipts are more reliable because of immediate availibilty,
+      // opposed to fetching latest data from chain
+      if (claimFlowStatus.claimReceipts) {
+        const alreadyClaimed = claimFlowStatus.claimReceipts.filter(Boolean).map(receipt => receipt.to);
+
+        details = details.filter(pool => !alreadyClaimed.includes(Object.values(pool as PoolDetails)[0].address));
+      }
+
+      setPreClaimPools(details);
+    }
+  }, [account, claimDetails, claimFlowStatus.claimReceipts, preClaimPools, poolContracts, poolsDetails]);
+
+  useEffect(() => {
+    if (claimFlowStatus.remainingClaims === 0 && claimFlowStatus.error) {
+      setRefreshRate("everyBlock");
+      void fetchPools();
+
+      setTimeout(() => {
+        setPreClaimPools(undefined);
+      }, 1000);
+    } else if (claimFlowStatus.isClaimingDone) {
+      alert("All claims done!, a post-claim screen should be shown");
+    }
+  }, [claimFlowStatus.isClaimingDone, claimFlowStatus.remainingClaims]);
+
+  return (
+    <View>
+      {preClaimPools ? (
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            maxWidth: 400,
+            marginBottom: 10
+          }}
+        >
+          {preClaimPools.map((pool, i) =>
+            Object.values(pool as PoolDetails).map(details => (
+              <View key={i} style={{ paddingLeft: 12 }}>
+                <Text>PoolName: {details.contractName}</Text>
+                <Text>HasClaimed: {details.hasClaimed.toString()}</Text>
+                <Text>Address: {details.address} </Text>
+              </View>
+            ))
+          )}
+        </View>
+      ) : (
+        <View>
+          <Text>Loading....</Text>
+        </View>
+      )}
+      <Button onPress={startClaiming} title="Start Claiming" />
+      <View style={{ marginTop: 10, marginBottom: 10 }}>
+        {claimFlowStatus ? (
+          <View>
+            <Text>Is Claiming: {claimFlowStatus.isClaiming.toString()}</Text>
+            <Text>Is Claiming Done: {claimFlowStatus.isClaimingDone.toString()}</Text>
+            <Text>Remaining Claims: {claimFlowStatus.remainingClaims?.toString()}</Text>
+            <Text>Error: {claimFlowStatus.error.toString()}</Text>
+          </View>
+        ) : null}
+      </View>
+    </View>
+  );
+};
+
+export const UseMultiClaim = () => (
+  <W3Wrapper withMetaMask={true}>
+    <MultiClaim />
+  </W3Wrapper>
+);
 
 const ClaimPools = () => {
   const { poolsDetails, loading } = useGetMemberUBIPools();
@@ -124,7 +187,7 @@ const ClaimPools = () => {
     return <Text>No active pools</Text>;
   }
 
-  return poolsDetails[0]["RedTent"].map(({ isRegistered, claimTime, claimAmount }) => (
+  return Object.values(poolsDetails[0]["RedTent"]).map(({ isRegistered, claimTime, claimAmount }) => (
     <View key={"test"}>
       <Text>Registered: {`${isRegistered}`}</Text>
       <Text>Next claim time: {claimTime.toString()}</Text>

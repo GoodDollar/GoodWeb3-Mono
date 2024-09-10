@@ -6,8 +6,8 @@ export const getContractsFromClaimPools = (poolsDetails: PoolDetails[]) => {
     const [poolName] = Object.keys(pool);
     const { [poolName]: poolDetail } = pool;
 
-    if ("contract" in poolDetail[0] && !poolDetail[0].hasClaimed) {
-      acc.push(poolDetail[0].contract);
+    if ("contract" in poolDetail && !poolDetail.hasClaimed) {
+      acc.push(poolDetail.contract);
     }
     return acc;
   }, [] as Contract[]);
@@ -20,17 +20,18 @@ export const getPoolsDetails = (
 ) =>
   pools.map((pool: any) => {
     const { claimAmount, contract: address, isRegistered, nextClaimTime } = pool;
-    const poolName = "RedTent";
+    const poolName = "RedTent_" + address;
     const contract = new Contract(address, abi, library);
-    const details = { [poolName]: [{}] as any };
+    const details = { [poolName]: {} as any };
 
-    details[poolName][0]["address"] = address;
-    details[poolName][0]["contract"] = contract;
-    details[poolName][0]["claimAmount"] = BigNumber.from(claimAmount);
-    details[poolName][0]["hasClaimed"] = BigNumber.from(claimAmount).isZero();
-    details[poolName][0]["isRegistered"] = isRegistered;
-    details[poolName][0]["claimTime"] = nextClaimTime;
-    details[poolName][0]["isPool"] = true;
+    details[poolName].address = address;
+    details[poolName].contract = contract;
+    details[poolName].claimAmount = BigNumber.from(claimAmount);
+    details[poolName].hasClaimed = BigNumber.from(claimAmount).isZero();
+    details[poolName].isRegistered = isRegistered;
+    details[poolName].claimTime = nextClaimTime;
+    details[poolName].isPool = true;
+    details[poolName].contractName = poolName.split("_")[0];
 
     return details as PoolDetails;
   });
