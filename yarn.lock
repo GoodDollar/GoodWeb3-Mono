@@ -4286,7 +4286,7 @@ __metadata:
 
 "@gooddollar/good-design@file:.yalc/@gooddollar/good-design::locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design":
   version: 0.1.58-beta.62e07aeb
-  resolution: "@gooddollar/good-design@file:.yalc/@gooddollar/good-design#.yalc/@gooddollar/good-design::hash=0a1c76&locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design"
+  resolution: "@gooddollar/good-design@file:.yalc/@gooddollar/good-design#.yalc/@gooddollar/good-design::hash=d1d138&locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design"
   dependencies:
     "@babel/core": ^7.18.10
     "@babel/runtime": ^7.18.9
@@ -4328,7 +4328,7 @@ __metadata:
     react-use-promise: ^0.5.0
     react-use-wizard: ^2.3.0
     require-from-string: ^2.0.2
-  checksum: b32413f34f0698c81db12a2a74f5b034f917652d13e02c0e88c00f22117d44fd98d19a9f2647627e13d68c42240237df8c59304486f9144b4f439a45ca7a8dbf
+  checksum: a32ec0850653afcc08bd8fbb1f23950c99108646b2657f2e2dd046a64bb53fcd814346515ec02465ee6663775898cb3c371ac4dbc78219f5f0bfc094f142df65
   languageName: node
   linkType: hard
 
@@ -4347,7 +4347,7 @@ __metadata:
     "@formatjs/intl-pluralrules": ^5.2.14
     "@gooddollar/good-design": "file:.yalc/@gooddollar/good-design"
     "@gooddollar/goodprotocol": ^2.0.24
-    "@gooddollar/web3sdk-v2": "file:.yalc/@gooddollar/web3sdk-v2"
+    "@gooddollar/web3sdk-v2": 0.2.32-beta.8a7258f3
     "@lingui/core": ^4.11.2
     "@lingui/react": ^4.11.2
     "@magiklabs/react-sdk": ^1.0.8
@@ -4547,64 +4547,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2::locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design":
-  version: 0.2.32-beta.62e07aeb
-  resolution: "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2#.yalc/@gooddollar/web3sdk-v2::hash=6fe5f6&locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design"
-  dependencies:
-    "@amplitude/analytics-browser": ^1.6.4
-    "@amplitude/analytics-react-native": ^0.7.0
-    "@aws-sdk/client-s3": ^3.550.0
-    "@ceramicnetwork/http-client": ^2.32.0
-    "@ceramicnetwork/stream-tile": ^2.31.0
-    "@gooddollar/bridge-app": ^1.5.0
-    "@gooddollar/bridge-contracts": ^1.0.17
-    "@gooddollar/goodcollective-contracts": ^1.1.0
-    "@gooddollar/goodcollective-sdk": ^1.1.1
-    "@gooddollar/goodprotocol": ^2.0.24
-    "@orbisclub/orbis-sdk": ^0.4.87
-    "@react-native-community/geolocation": 3.1.0
-    "@react-native-firebase/analytics": ^16.4.6
-    "@sentry/browser": 7.16.0
-    "@sentry/react-native": ^5.15.1
-    "@solana/web3.js": ^1.72.0
-    "@types/react": ^18.2.28
-    "@walletconnect/client": ^1.8.0
-    "@walletconnect/qrcode-modal": ^1.8.0
-    "@web3-onboard/coinbase": ^2.4.1
-    "@web3-onboard/core": ^2.22.2
-    "@web3-onboard/injected-wallets": ^2.11.2
-    "@web3-onboard/react": ^2.9.2
-    "@web3-onboard/torus": ^2.3.1
-    "@web3-onboard/walletconnect": ^2.6.1
-    "@web3auth/base": ^4.0.0
-    "@web3auth/core": ^4.0.0
-    "@web3auth/openlogin-adapter": ^4.1.0
-    "@web3auth/torus-wallet-connector-plugin": ^4.0.0
-    "@web3modal/ethereum": ^2.6.2
-    "@web3modal/react": ^2.6.2
-    base-64: ^1.0.0
-    dexie: ^3.2.4
-    dexie-react-hooks: ^1.1.7
-    ethers: 5.7.2
-    eventemitter3: ^4.0.7
-    moment: 2.29.4
-    multiformats: 9.9.0
-    posthog-react-native: 2.8.1
-    react-native-indicative: ^0.2.1
-    react-native-restart: ^0.0.24
-    react-use-promise: ^0.5.0
-    viem: ^1.2.13
-    wagmi: ^1.3.8
-  peerDependencies:
-    "@react-native-async-storage/async-storage": 1.17.10
-    "@usedapp/core": "*"
-    react-native: "*"
-    react-native-web: "*"
-  checksum: 3e103023b70ffa9bab925793643e157c81c89a8a3d525bd65b413108206b746e4a2d4b70bb1d3b393ff45b1446855ceec9d39bbdee00a295d60e5a68678513c2
-  languageName: node
-  linkType: hard
-
-"@gooddollar/web3sdk-v2@workspace:packages/sdk-v2":
+"@gooddollar/web3sdk-v2@0.2.32-beta.8a7258f3, @gooddollar/web3sdk-v2@workspace:packages/sdk-v2":
   version: 0.0.0-use.local
   resolution: "@gooddollar/web3sdk-v2@workspace:packages/sdk-v2"
   dependencies:
