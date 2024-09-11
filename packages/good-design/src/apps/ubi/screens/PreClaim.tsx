@@ -1,10 +1,10 @@
-import React, { FC } from "react";
+import React, { FC, useEffect } from "react";
 import { Center, Spinner, VStack } from "native-base";
-import { isEmpty } from "lodash";
+import { useWizard } from "react-use-wizard";
 
 import { Web3ActionButton } from "../../../advanced";
 import { Image } from "../../../core/images";
-import { GdAmount, Title } from "../../../core/layout";
+import { GdAmount, TransTitle } from "../../../core/layout";
 import { TransactionList } from "../components/TransactionStateCard";
 
 import BillyGrin from "../../../assets/images/billy-grin.png";
@@ -12,17 +12,23 @@ import ClaimFooter from "../../../assets/images/claim-footer.png";
 import { useClaimContext } from "../context";
 
 export const PreClaim: FC = () => {
-  const { claimPools, claimDetails, supportedChains, onClaim, onTxDetails } = useClaimContext();
+  const { goToStep, stepCount } = useWizard();
+  const { claimPools, claimDetails, supportedChains, onClaim, onTxDetailsPress } = useClaimContext();
   const { totalAmount, transactionList } = claimPools ?? {};
 
-  if ((claimDetails?.isWhitelisted as any) === undefined || isEmpty(transactionList))
+  useEffect(() => {
+    const claimConfirmed = transactionList?.some(tx => tx.type === "claim-confirmed");
+    if (claimConfirmed) {
+      goToStep(stepCount - 1);
+    }
+  }, [transactionList]);
+
+  if ((claimDetails?.isWhitelisted as any) === undefined || transactionList === undefined)
     return <Spinner variant="page-loader" size="lg" />;
 
   return (
     <VStack justifyContent="center" alignItems="center">
-      <Title variant="title-gdblue" marginTop="6" marginBottom="2" fontSize="xl">
-        Claim your share
-      </Title>
+      <TransTitle t={/*i18n*/ "Claim your share"} variant="title-gdblue" marginTop="6" marginBottom="2" fontSize="xl" />
       <VStack space={10} width="343">
         <VStack space={8}>
           <VStack space={4} alignItems="center">
@@ -31,11 +37,11 @@ export const PreClaim: FC = () => {
             </Center>
             <Image source={BillyGrin} w="93" h="65" style={{ resizeMode: "contain" }} />
           </VStack>
-          <TransactionList transactions={transactionList} onTxDetails={onTxDetails} />
+          <TransactionList transactions={transactionList} onTxDetailsPress={onTxDetailsPress} />
         </VStack>
         <Center>
           <Web3ActionButton
-            text={`Claim Now`}
+            text={/*i18n*/ "Claim Now"}
             web3Action={onClaim}
             variant="round"
             supportedChains={supportedChains}

@@ -1,11 +1,14 @@
 import React, { useMemo } from "react";
 import { FeedPost } from "@gooddollar/web3sdk-v2";
-import { Heading, Spinner, Stack, Text, useBreakpointValue, VStack } from "native-base";
+import { Heading, Spinner, Stack, Text } from "native-base";
 import { Trans } from "@lingui/react";
 
+import { withTheme } from "../../theme/hoc/withTheme";
 import SvgXml from "../../core/images/SvgXml";
 import { CentreBox } from "../../core/layout/CentreBox";
 import ImageCard from "../../core/layout/ImageCard";
+import { IHStackProps } from "native-base/lib/typescript/components/primitives/Stack/HStack";
+import { IVStackProps } from "native-base/lib/typescript/components/primitives/Stack/VStack";
 
 const NewsCardContent = ({ content }: { content: any }) => (
   <Text
@@ -61,51 +64,41 @@ const NewsCardWrapper = ({ item }: { item: FeedPost }) => {
       borderLeftWidth="10px"
       borderLeftColor="main"
       borderRadius={6}
-      containerStyles={{
-        paddingTop: 2,
-        paddingX: 2,
-        width: "100%",
-        alignItems: "flex-start"
-      }}
     />
   );
 };
 
-export const NewsFeed = ({ feed }: { feed: FeedPost[] }) => {
-  const containerWidth = useBreakpointValue({
-    base: "100%",
-    xl: "auto"
-  });
-
-  const feedWidth = useBreakpointValue({
-    base: "75%",
-    xl: "95%"
-  });
-
-  return (
-    <CentreBox flexDir="column" minWidth="325" width={containerWidth}>
-      <Stack w="100%">
-        <CentreBox
-          w="100%"
-          justifyContent="center"
-          alignItems="center"
-          px={4}
-          py={2}
-          marginBottom={4}
-          backgroundColor="rgba(0,175,255,0.1)"
-        >
-          <Heading size="sm" fontFamily="subheading" fontWeight="400" lineHeight="130%" color="primary">
-            <Trans id="News" />
-          </Heading>
-        </CentreBox>
-        <VStack width={feedWidth} ml="auto" mr="auto">
-          {feed && feed.length > 0 ? (
-            feed.map((item: FeedPost) => <NewsCardWrapper key={item.id} item={item} />)
-          ) : (
-            <Spinner color="primary" size="lg" />
-          )}
-        </VStack>
-      </Stack>
-    </CentreBox>
-  );
-};
+export const NewsFeed = withTheme({ name: "NewsFeed", skipProps: "feed" })(
+  ({
+    feed,
+    direction,
+    styles = {}
+  }: { feed: FeedPost[]; direction: "row" | "column"; styles?: { item?: object } } & IHStackProps & IVStackProps) => {
+    return (
+      <CentreBox flexDir="column" minWidth="340" maxWidth="100%">
+        <Stack w="100%">
+          <CentreBox
+            w="100%"
+            justifyContent="center"
+            alignItems="center"
+            px={4}
+            py={2}
+            marginBottom={4}
+            backgroundColor="rgba(0,175,255,0.1)"
+          >
+            <Heading size="sm" fontFamily="subheading" fontWeight="400" lineHeight="130%" color="primary">
+              <Trans id="News" />
+            </Heading>
+          </CentreBox>
+          <Stack {...{ direction }} {...styles.item}>
+            {feed && feed.length > 0 ? (
+              feed.map((item: FeedPost) => <NewsCardWrapper key={item.id} item={item} />)
+            ) : (
+              <Spinner color="primary" size="lg" />
+            )}
+          </Stack>
+        </Stack>
+      </CentreBox>
+    );
+  }
+);

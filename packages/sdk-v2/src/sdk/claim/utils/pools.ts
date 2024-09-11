@@ -1,5 +1,4 @@
-import { BigNumber, Contract, ethers } from "ethers";
-import { ContractCallContext, ContractCallResults, Multicall } from "ethereum-multicall";
+import ethers, { BigNumber, Contract } from "ethers";
 import { PoolDetails } from "../types";
 
 export const getContractsFromClaimPools = (poolsDetails: PoolDetails[]) => {
@@ -7,74 +6,32 @@ export const getContractsFromClaimPools = (poolsDetails: PoolDetails[]) => {
     const [poolName] = Object.keys(pool);
     const { [poolName]: poolDetail } = pool;
 
-    if ("contract" in poolDetail[0] && !poolDetail[0].hasClaimed) {
-      acc.push(poolDetail[0].contract);
+    if ("contract" in poolDetail && !poolDetail.hasClaimed) {
+      acc.push(poolDetail.contract);
     }
     return acc;
   }, [] as Contract[]);
 };
 
-export const getMemberPools = async (account: string, factory: any, library: any) => {
-  if (!library || !account || !factory) return [];
+export const getPoolsDetails = (
+  pools: any[],
+  abi: any,
+  library: ethers.providers.JsonRpcProvider | ethers.providers.FallbackProvider
+) =>
+  pools.map((pool: any) => {
+    const { claimAmount, contract: address, isRegistered, nextClaimTime } = pool;
+    const poolName = "RedTent_" + address;
+    const contract = new Contract(address, abi, library);
+    const details = { [poolName]: {} as any };
 
-  const ubiPoolFactory = new Contract(factory.address, factory.abi, library);
-  return await ubiPoolFactory.getMemberPools(account);
-};
+    details[poolName].address = address;
+    details[poolName].contract = contract;
+    details[poolName].claimAmount = BigNumber.from(claimAmount);
+    details[poolName].hasClaimed = BigNumber.from(claimAmount).isZero();
+    details[poolName].isRegistered = isRegistered;
+    details[poolName].claimTime = nextClaimTime;
+    details[poolName].isPool = true;
+    details[poolName].contractName = poolName.split("_")[0];
 
-export const getPoolsDetails = async (poolAddresses: string[], pool: any, library: any, account: string) => {
-  const multicall = new Multicall({ ethersProvider: library, tryAggregate: true });
-
-  const contractCallContext: ContractCallContext[] = poolAddresses.map(addr => ({
-    reference: `pool_${addr}`,
-    contractAddress: addr,
-    abi: pool.abi,
-    calls: [
-      {
-        reference: "isRegistered",
-        methodName: "hasRole",
-        methodParameters: [ethers.utils.keccak256(ethers.utils.toUtf8Bytes("MEMBER_ROLE")), account]
-      },
-      {
-        reference: "claimTime",
-        methodName: "nextClaimTime",
-        methodParameters: []
-      },
-      {
-        reference: "claimAmount",
-        methodName: "checkEntitlement(address)",
-        methodParameters: [account]
-      }
-    ]
-  }));
-
-  const { results }: ContractCallResults = await multicall.call(contractCallContext);
-
-  if (!results) throw new Error("Failed to fetch pool results");
-
-  return Object.entries(results).map(([poolAddr, { callsReturnContext: poolDetails }]) => {
-    const poolAddress = poolAddr.split("_")[1];
-    const poolName = "RedTent";
-
-    const details = poolDetails.reduce(
-      (acc, { returnValues, reference }) => {
-        if (returnValues[0].type === "BigNumber") {
-          acc[poolName][0][reference] = BigNumber.from(returnValues[0]);
-        } else {
-          acc[poolName][0][reference] = returnValues[0];
-        }
-
-        return acc;
-      },
-      { [poolName as string]: [{}] } as PoolDetails
-    );
-
-    const contract = new Contract(poolAddress, pool.abi, library);
-
-    details[poolName][0]["address"] = poolAddress;
-    details[poolName][0]["contract"] = contract;
-    details[poolName][0]["hasClaimed"] = details[poolName][0]["claimAmount"].isZero();
-    details[poolName][0]["isPool"] = true;
-
-    return details;
+    return details as PoolDetails;
   });
-};

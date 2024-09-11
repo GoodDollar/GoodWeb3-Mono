@@ -1,5 +1,6 @@
 import React from "react";
 import { Container, HStack, Text, VStack, IContainerProps, Spinner } from "native-base";
+import type { CredentialSubjectsByType } from "@gooddollar/web3sdk-v2";
 
 import { withTheme } from "../../../theme";
 import { TransText, TransTitle, TransHeading, TxModal } from "../../../core";
@@ -16,7 +17,7 @@ export interface OnboardScreenProps {
   account: string;
   isPending: boolean;
   isWhitelisted?: boolean;
-  certificateSubjects: any;
+  certificateSubjects: CredentialSubjectsByType;
   expiryDate?: string;
   name?: string;
   onAccept: () => void;
@@ -26,19 +27,19 @@ export interface OnboardScreenProps {
 
 const accessList = [
   {
-    label: "Crypto UBI",
+    label: /*i18n*/ { id: "Crypto UBI", comment: "GoodID feature access list" },
     icon: UbiSvg
   },
   {
-    label: "Humanitarian funds",
+    label: /*i18n*/ { id: "Humanitarian funds", comment: "GoodID feature access list" },
     icon: HeartsSvg
   },
   {
-    label: "Climate relief disbursements",
+    label: /*i18n*/ { id: "Climate relief disbursements", comment: "GoodID feature access list" },
     icon: GlobusSvg
   },
   {
-    label: "Financial services",
+    label: /*i18n*/ { id: "Financial services", comment: "GoodID feature access list" },
     icon: DollarSvg
   }
 ];
@@ -93,9 +94,9 @@ export const OnboardScreen = withTheme({ name: "OnboardScreen" })(
             ) : null}
 
             <VStack space={2} w="100%">
-              <TransHeading t={/*i18n*/ `It unlocks access to:`} fontSize="md" color="goodGrey.600" />
+              <TransHeading t={/*i18n*/ "It unlocks access to:"} fontSize="md" color="goodGrey.600" />
               {accessList.map(({ label, icon }, index) => (
-                <HStack key={label} space={2}>
+                <HStack key={label.id} space={2}>
                   <SvgXml
                     style={{ backgroundColor: "#00AFFF", borderRadius: "50%", padding: 4 }}
                     key={index}
@@ -104,19 +105,32 @@ export const OnboardScreen = withTheme({ name: "OnboardScreen" })(
                     height="16"
                     enableBackground="true"
                   />
-                  <Text {...listLabel}>{label}</Text>
+                  <TransText t={label.id} {...listLabel} />
                 </HStack>
               ))}
               <VStack space={10}>
-                <HStack space={2} marginTop={2}>
-                  <SvgXml src={StopWatchSvg} width="20" height="20" />
-                  <TransText
-                    t={/*i18n*/ `Verification takes 2 minutes`}
-                    fontFamily="subheading"
-                    fontSize="sm"
-                    color="primary"
-                  />
-                </HStack>
+                <VStack space={4}>
+                  <HStack space={2} marginTop={2}>
+                    <SvgXml src={StopWatchSvg} width="20" height="20" />
+                    <TransText
+                      t={/*i18n*/ "Verification takes 2 minutes"}
+                      fontFamily="subheading"
+                      fontSize="sm"
+                      color="primary"
+                    />
+                  </HStack>
+                  <HStack space={2}>
+                    <SvgXml src={StopWatchSvg} width="20" height="20" />
+                    <TransText
+                      t={
+                        /*i18n*/ "Your GoodID lives in your local storage. If you use other devices, browsers or browser sessions to access GoodDollar, you will be asked to upgrade again."
+                      }
+                      fontFamily="subheading"
+                      fontSize="sm"
+                      color="goodGrey.400"
+                    />
+                  </HStack>
+                </VStack>
               </VStack>
             </VStack>
           </VStack>
@@ -125,7 +139,7 @@ export const OnboardScreen = withTheme({ name: "OnboardScreen" })(
             variant="browse-wrap"
             alignSelf={"center"}
             t={
-              /*18n*/ `By clicking on ”I accept, verify me”, you are accepting our Terms of Use and Privacy Policy. Per this policy you agree to let us collect information such as your gender and age.`
+              /*18n*/ "By clicking on ”I accept, verify me”, you are accepting our Terms of Use and Privacy Policy. Per this policy you agree to let us collect information such as your gender and age."
             }
           />
 

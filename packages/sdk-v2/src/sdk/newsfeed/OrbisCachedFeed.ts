@@ -81,13 +81,8 @@ export class OrbisCachedFeed {
       const existing = cachedPosts.map(_ => _.id);
       const incoming = postsWithId.map(_ => _.id);
       const missing = existing.filter(_ => incoming.includes(_) === false);
-      const deleted = (
-        await Promise.all(missing.map(_ => this.sdk.getPost(_).then(postResult => [_, !!postResult.data])))
-      )
-        .filter(_ => !_[1])
-        .map(_ => _[0]);
 
-      deleted.length > 0 && (await this.db.posts.bulkDelete(deleted));
+      missing.length > 0 && (await this.db.posts.bulkDelete(missing));
     }
 
     //check if we need to fetch more, if all posts are newer we need to fetch next page

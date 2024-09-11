@@ -58,17 +58,20 @@ export const Envs: { [key: EnvKey]: { [key: string]: string } } = {
   production: {
     dappUrl: "https://wallet.gooddollar.org",
     identityUrl: "https://goodid.gooddollar.org",
-    backend: "https://goodserver.gooddollar.org"
+    backend: "https://goodserver.gooddollar.org",
+    goodCollectiveUrl: "https://goodcollective.vercel.app/"
   },
   staging: {
     dappUrl: "https://qa.gooddollar.org",
     identityUrl: "https://goodid-qa.vercel.app",
-    backend: "https://goodserver-qa.herokuapp.com"
+    backend: "https://goodserver-qa.herokuapp.com",
+    goodCollectiveUrl: "https://staging-goodcollective.vercel.app/"
   },
   development: {
     dappUrl: "https://dev.gooddollar.org",
     identityUrl: "https://goodid-dev.vercel.app",
-    backend: "https://good-server.herokuapp.com"
+    backend: "https://good-server.herokuapp.com",
+    goodCollectiveUrl: "https://dev-goodcollective.vercel.app/"
   }
 };
 

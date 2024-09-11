@@ -4,7 +4,7 @@ import { Center, HStack, Text, VStack } from "native-base";
 import { withTheme } from "../../../theme/hoc";
 import { BasePressable } from "../../../core/buttons";
 import { Image } from "../../../core/images";
-import { GdAmount } from "../../../core/layout";
+import { GdAmount, TransText } from "../../../core/layout";
 
 import { ClaimContextProps, Transaction } from "../types";
 import { isReceiveTransaction } from "../utils/transactionType";
@@ -12,19 +12,18 @@ import { isReceiveTransaction } from "../utils/transactionType";
 import { getTxIcons } from "../../../utils/icons";
 
 export type TransactionCardProps = {
-  transaction: any; //<-- should be type of FormattedTransaction
-  onTxDetails: ClaimContextProps["onTxDetails"];
+  transaction: Transaction;
+  onTxDetailsPress: ClaimContextProps["onTxDetailsPress"];
 };
 
-//todo: border needs to indicate state of transaction by color
 //todo: border likely needs to be turned into component because of pattern. border-image not supported in react-native
 export const TransactionCard = withTheme({ name: "TransactionCard" })(
-  ({ transaction, onTxDetails }: TransactionCardProps) => {
+  ({ transaction, onTxDetailsPress }: TransactionCardProps) => {
     const { tokenValue, type, status, date, displayName } = transaction;
 
     const openTransactionDetails = useCallback(() => {
-      onTxDetails?.(transaction);
-    }, [transaction, onTxDetails]);
+      onTxDetailsPress?.(transaction);
+    }, [transaction, onTxDetailsPress]);
 
     const isClaimStart = type === "claim-start";
 
@@ -52,7 +51,14 @@ export const TransactionCard = withTheme({ name: "TransactionCard" })(
             </Center>
             <HStack flexShrink={1} justifyContent="space-between" width="100%" alignItems="flex-end">
               <Text fontSize="4xs">{txDate}</Text>
-              <GdAmount amount={tokenValue} options={{ prefix: amountPrefix }} color={colorAmount} withDefaultSuffix />
+              {tokenValue ? (
+                <GdAmount
+                  amount={tokenValue}
+                  options={{ prefix: amountPrefix }}
+                  color={colorAmount}
+                  withDefaultSuffix
+                />
+              ) : null}
             </HStack>
           </HStack>
           <HStack justifyContent="space-between" padding={2} space={22} backgroundColor="white">
@@ -64,13 +70,15 @@ export const TransactionCard = withTheme({ name: "TransactionCard" })(
                 <Text variant="sm-grey" fontWeight="500">
                   {displayName}
                 </Text>
-                <Text
+                <TransText
+                  t={/*i18n*/ "Your Daily Basic Income"}
                   fontSize="4xs"
                   fontFamily="subheading"
                   fontWeight="400"
                   lineHeight="12"
                   color="goodGrey.600"
-                >{`Your Daily Basic Income`}</Text>
+                />
+                {/* Todo: should read subtitle from pool details*/}
                 {status === "failed" ? <Text>TransactionFailedDetails</Text> : null}
               </VStack>
               <Center h="100%" justifyContent="center" alignItems="center" justifyItems="center">
@@ -85,14 +93,14 @@ export const TransactionCard = withTheme({ name: "TransactionCard" })(
 );
 
 type TransactionListProps = {
-  transactions: Transaction[];
-  onTxDetails: ClaimContextProps["onTxDetails"];
+  transactions: Transaction[] | undefined;
+  onTxDetailsPress: ClaimContextProps["onTxDetailsPress"];
 };
 
-export const TransactionList = ({ transactions, onTxDetails }: TransactionListProps) => (
+export const TransactionList = ({ transactions, onTxDetailsPress }: TransactionListProps) => (
   <VStack>
-    {transactions.map((tx: Transaction, i: any) => (
-      <TransactionCard key={i} {...{ transaction: tx, onTxDetails }} />
+    {transactions?.map((tx: Transaction, i: any) => (
+      <TransactionCard key={i} {...{ transaction: tx, onTxDetailsPress }} />
     ))}
   </VStack>
 );

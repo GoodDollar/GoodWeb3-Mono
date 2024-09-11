@@ -12,7 +12,7 @@ import {
   Certificate,
   CertificateItem,
   CertificateRecord,
-  CredentialSubject,
+  CredentialSubjectsByType,
   CredentialType,
   PoolCriteria
 } from "./types";
@@ -195,10 +195,13 @@ export const useIssueCertificates = (account: string | undefined, baseEnv: any) 
 
       try {
         const promises: Promise<CertificateItem>[] = [];
+
         if (location) {
           promises.push(requestLocationCertificate(baseEnv, location, fvsig, account));
         }
+
         promises.push(requestIdentityCertificate(baseEnv, fvsig, account));
+
         const results = await Promise.allSettled(promises);
 
         for (const result of results) {
@@ -228,7 +231,7 @@ export const useCertificatesSubject = (certificates: AggregatedCertificate[]) =>
       }
 
       return acc;
-    }, {} as Record<string, CredentialSubject | undefined>);
+    }, {} as CredentialSubjectsByType);
   }, [certificates]);
 };
 
@@ -248,6 +251,7 @@ export interface CheckAvailableOffersProps {
 export const useCheckAvailableOffers = ({ account, pools, isDev }: CheckAvailableOffersProps) => {
   const certificates = useAggregatedCertificates(account);
   const certificatesSubjects = useCertificatesSubject(certificates);
+
   const [hasPermission] = usePromise(
     () => AsyncStorage.getItem("goodid_permission").then(value => value === "true"),
     []
@@ -281,5 +285,5 @@ export const useCheckAvailableOffers = ({ account, pools, isDev }: CheckAvailabl
         return checkCriteriaMatch(certificateSubject, criteria, key as keyof PoolCriteria);
       });
     });
-  }, [certificatesSubjects, certificates]);
+  }, [certificatesSubjects, certificates, hasPermission]);
 };

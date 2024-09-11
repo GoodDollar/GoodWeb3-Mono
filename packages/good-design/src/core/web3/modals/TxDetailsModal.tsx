@@ -8,6 +8,7 @@ import { Image } from "../../images";
 import BasicStyledModal from "./BasicStyledModal";
 import { truncateMiddle } from "../../../utils/string";
 import { isReceiveTransaction } from "../../../apps/ubi/utils/transactionType";
+import { Transaction } from "../../../apps/ubi/types";
 
 import ReceiveIconLegacy from "../../../assets/images/receive-icon-legacy.png";
 import { GoodButton } from "../../buttons";
@@ -16,8 +17,8 @@ import { ExplorerLink } from "../..";
 import UnknownAvatarSvg from "../../../assets/svg/unknown-avatar.svg";
 import { getTxIcons } from "../../../utils/icons";
 
-const TxDetailsContent = ({ tx, color, network }: any) => {
-  const { account, contractAddress, contractName, date, tokenValue, type } = tx;
+const TxDetailsContent = ({ tx, color, network }: { tx: Transaction; color: string; network: number }) => {
+  const { account, contractAddress, contractName, date, isPool, tokenValue, type } = tx;
 
   const { txIcon, networkIcon, contractIcon } = getTxIcons(tx);
   const txDate = date ? date.format?.("MM/DD/YYYY, HH:mm") : "";
@@ -30,20 +31,22 @@ const TxDetailsContent = ({ tx, color, network }: any) => {
         <Image source={ReceiveIconLegacy} w={137} h={135} style={{ resizeMode: "contain" }} />
       </Center>
 
-      <VStack space={0} borderBottomColor={color} borderBottomWidth="2" paddingY="4" paddingX="1">
+      <VStack space={0} borderBottomColor={color} borderBottomWidth="2" paddingY="3" paddingX="1">
         <HStack justifyContent="flex-start" flexShrink={1} space={4}>
           <Image source={networkIcon} w="6" h="6" accessibilityLabel="NetworkIcon" />
           <HStack space={15} flexGrow={1} justifyContent="flex-start">
             <Text variant="4xs-grey-400" width="100%">
               {txDate}
             </Text>
-            <GdAmount amount={tokenValue} options={{ prefix: "+" }} color={color} withDefaultSuffix />
+            {tokenValue ? (
+              <GdAmount amount={tokenValue} options={{ prefix: "+" }} color={color} withDefaultSuffix />
+            ) : null}
           </HStack>
         </HStack>
       </VStack>
 
-      <VStack space={0} borderBottomColor={color} borderBottomWidth="2" paddingY="4" paddingX="1">
-        <HStack justifyContent="flex-start" flexShrink={1} space={4}>
+      <VStack space={0} borderBottomColor={color} borderBottomWidth="2" paddingY="3" paddingX="1">
+        <HStack justifyContent="flex-start" flexShrink={1} space={3}>
           <Image source={contractIcon ?? UnknownAvatarSvg} w="8" h="8" accessibilityLabel="Test" />
           <HStack space={10} flexGrow={1} justifyContent="flex-start">
             <VStack flexGrow="1" space="0.5">
@@ -52,23 +55,15 @@ const TxDetailsContent = ({ tx, color, network }: any) => {
                 <Text variant="4xs-grey-600" fontSize="sm">
                   {contractName}
                 </Text>
-                {/*todo: if gooddollar > link to ? / if pool > link to goodcollective pool 
-                {isPool ? (
-                  <></> todo: extend explorer-link to link to good-collective page.
-                ) : (
-                  // <ExplorerLink chainId={42220} />
-                  
-                  <Text variant="4xs-grey-600" fontSize="sm">
-                    {contractName}
-                  </Text>
-                )} */}
               </Text>
+              {/* Todo: should link to gc or explorer */}
               <ExplorerLink
                 addressOrTx={contractAddress}
                 chainId={network}
                 text={trunContractAddr}
                 fontStyle={{ fontSize: "sm", fontFamily: "subheading", fontWeight: 500 }}
                 maxWidth={"60%"}
+                isPool={isPool}
               />
             </VStack>
 

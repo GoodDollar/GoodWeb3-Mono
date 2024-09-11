@@ -14,7 +14,7 @@ export const DisputeThanks = () => {
   return (
     <VStack space={8} width="100%">
       <VStack space={8}>
-        <TransTitle t={"Thanks for letting us know!"} variant="title-gdblue" />
+        <TransTitle t={/*i18n*/ "Thanks for letting us know!"} variant="title-gdblue" />
         <TransText
           t={
             /*i18n*/ "Heads-up that information you’ve corrected may show as “Unverified” on your GoodID. \n\n This will not affect your ability to claim UBI!"

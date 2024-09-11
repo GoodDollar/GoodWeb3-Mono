@@ -1,9 +1,8 @@
-import { Checkbox, Center, HStack, Text, View, VStack } from "native-base";
+import { Checkbox, Center, HStack, Text, View, VStack, Box } from "native-base";
 import React, { FC, PropsWithChildren, useCallback, useState } from "react";
 import { Wizard, useWizard } from "react-use-wizard";
 
 import { withTheme } from "../../../theme";
-import { GoodButton } from "../../../core/buttons";
 import ImageCard from "../../../core/layout/ImageCard";
 import { Image } from "../../../core/images";
 import { WebVideoUploader } from "../../../core/inputs/WebVideoUploader";
@@ -35,7 +34,7 @@ const videoRequirements = [
 
 const videoRestrictions = [/*i18n*/ "Maximum video length 30sec", /*i18n*/ "Maximum size 20mb"];
 const videoUsagePolicy = [
-  /*i18n*/ `Your video may be reviewed by the \n GoodLabs or partner teams for \n verification purposes. Your video \n will not be shared or used publicly, \n and will be erased after a period of \n time.`
+  /*i18n*/ "Your video may be reviewed by the \n GoodLabs or partner teams for \n verification purposes. Your video \n will not be shared or used publicly, \n and will be erased after a period of \n time."
 ];
 
 const WizardWrapper: FC<PropsWithChildren> = ({ children, ...props }) => (
@@ -71,12 +70,12 @@ const PoolRequirements = () => (
         <Checkbox variant="styled-blue" isDisabled defaultIsChecked colorScheme="info" value="female" />
         <HStack alignItems="flex-start">
           <TransText t={/*i18n*/ "Have verified your gender as"} variant="sm-grey-650" />
-          <TransText t={/*i18n*/ "Female"} variant="sm-grey-650" fontWeight="bold" />
+          <TransText t={/*i18n*/ " Female "} variant="sm-grey-650" fontWeight="bold" />
           <TransText t={/*i18n*/ "in your GoodID"} variant="sm-grey-650" />
         </HStack>
       </HStack>
       <HStack space={2}>
-        <Checkbox variant="styled-blue" defaultIsChecked colorScheme="info" value="location" />
+        <Checkbox variant="styled-blue" isDisabled defaultIsChecked colorScheme="info" value="location" />
         <Text variant="sm-grey-650">
           Have verified your country as <Text fontWeight="bold">Nigeria</Text> in your GoodID
         </Text>
@@ -121,14 +120,16 @@ const RedtentOffer = ({ onDone }: { onDone: RedTentProps["onDone"] }) => {
           footer={<CardFooter linkText={/*i18n*/ "Learn more>>"} />}
           picture={RedTentCard}
           link="https://www.google.com" // todo: add link to good-collective pool page
-          pictureStyles={{ resizeMode: "cover" }}
-          containerStyles={{ paddingY: 4, paddingX: 4, width: "100%", alignItems: "flex-start" }}
-          titleStyles={{
-            fontFamily: "subheading",
-            fontSize: "md",
-            fontWeight: "500",
-            color: "goodGrey.600",
-            paddingBottom: 2
+          styles={{
+            picture: { resizeMode: "cover" },
+            container: { width: "100%", alignItems: "flex-start" },
+            title: {
+              fontFamily: "subheading",
+              fontSize: "md",
+              fontWeight: "500",
+              color: "goodGrey.600",
+              paddingBottom: 2
+            }
           }}
           style={cardShadow}
           borderRadius={20}
@@ -136,12 +137,8 @@ const RedtentOffer = ({ onDone }: { onDone: RedTentProps["onDone"] }) => {
       </VStack>
       <PoolRequirements />
       <VStack space={4}>
-        <GoodButton onPress={nextStep}>
-          <TransText t={/*i18n*/ "Upload Video Selfie"} />
-        </GoodButton>
-        <GoodButton onPress={handleSkip} variant={"link-like"} padding={0}>
-          <TransText t={/*i18n*/ "Skip for now"} />
-        </GoodButton>
+        <TransButton t={/*i18n*/ "Upload Video Selfie"} onPress={nextStep} />
+        <TransButton t={/*i18n*/ "Skip for now"} onPress={handleSkip} variant={"link-like"} padding={0} />
       </VStack>
     </View>
   );
@@ -195,24 +192,39 @@ const RedtentVideoInstructions = withTheme({ name: "RedtentVideoInstructions" })
   }
 );
 
-const RedtentThanks = ({ onDone }: { onDone: RedTentProps["onDone"] }) => (
-  <VStack space={200}>
-    <VStack space={6}>
-      <TransTitle t={/*i18n*/ "Thanks you for submitting your video!"} variant="title-gdblue" />
-      <HStack paddingBottom={8} borderBottomWidth={1} borderBottomColor="goodGrey.300">
-        <TransText t={/*i18n*/ "You are now in the"} variant="sm-grey-650" />
-        <TransText
-          t={/*i18n*/ "Red Tent Woman in Nigeria \n"}
-          variant="sm-grey-650"
-          fontWeight="bold"
-          color="primary"
-        />
-        <TransText t={/*i18n*/ "GoodCollective. You can claim this additional UBI daily."} variant="sm-grey-650" />
-      </HStack>
+const RedtentThanks = ({ onDone }: { onDone: RedTentProps["onDone"] }) => {
+  // when passed down directly into an inline callback, for some reason the onDone is not being called
+  const onPress = () => {
+    void onDone();
+  };
+
+  return (
+    <VStack space={200}>
+      <VStack space={6}>
+        <TransTitle t={/*i18n*/ "Thanks you for submitting your video!"} variant="title-gdblue" />
+        <Box
+          display="block"
+          justifyContent="flex-start"
+          paddingBottom={8}
+          borderBottomWidth={1}
+          borderBottomColor="goodGrey.300"
+          ml="auto"
+          mr="auto"
+        >
+          <TransText t={/*i18n*/ "You are now in the"} variant="sm-grey-650" />
+          <TransText
+            t={/*i18n*/ " Red Tent Woman in Nigeria \n"}
+            variant="sm-grey-650"
+            fontWeight="bold"
+            color="primary"
+          />
+          <TransText t={/*i18n*/ "GoodCollective. You can claim this additional UBI daily."} variant="sm-grey-650" />
+        </Box>
+      </VStack>
+      <TransButton t={/*i18n*/ "Next"} onPress={onPress} variant="standard" />
     </VStack>
-    <TransButton t={/*i18n*/ "Next"} onPress={() => onDone} variant="standard" />
-  </VStack>
-);
+  );
+};
 
 export const RedtentWizard: React.FC<RedTentProps> = (props: RedTentProps) => {
   const [error, setError] = useState<Error | undefined>(undefined);

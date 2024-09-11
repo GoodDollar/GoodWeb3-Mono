@@ -1,7 +1,7 @@
 {
   "name": "@gooddollar/web3sdk-v2",
   "repository": "https://github.com/GoodDollar/GoodWeb3-mono/packages/sdk-v2",
-  "version": "0.2.32-beta.84ad6c31",
+  "version": "0.2.32-beta.66385340",
   "description": "ethers and react hooks based on usedapp sdk for GoodDollar protocol",
   "scripts": {
     "build": "yarn dev:clean && ctix c && tsc && yarn copy:assets && yalc publish --push",
@@ -76,6 +76,7 @@
     "@gooddollar/bridge-app": "^1.5.0",
     "@gooddollar/bridge-contracts": "^1.0.17",
     "@gooddollar/goodcollective-contracts": "^1.1.0",
+    "@gooddollar/goodcollective-sdk": "^1.1.1",
     "@gooddollar/goodprotocol": "^2.0.24",
     "@orbisclub/orbis-sdk": "^0.4.87",
     "@react-native-community/geolocation": "3.1.0",
@@ -101,11 +102,8 @@
     "base-64": "^1.0.0",
     "dexie": "^3.2.4",
     "dexie-react-hooks": "^1.1.7",
-    "ethereum-multicall": "^2.24.0",
     "ethers": "5.7.2",
     "eventemitter3": "^4.0.7",
-    "mixpanel-browser": "^2.45.0",
-    "mixpanel-react-native": "^2.1.0",
     "moment": "2.29.4",
     "multiformats": "9.9.0",
     "posthog-react-native": "2.8.1",

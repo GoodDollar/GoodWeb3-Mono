@@ -7,8 +7,8 @@ import BaseButton from "../core/buttons/BaseButton";
 import GoodButton from "../core/buttons/GoodButton";
 import ClaimButton from "../core/buttons/ClaimButton";
 import LearnButton from "../core/buttons/LearnButton";
-import { BasePressable } from "../core";
-import { TxModal } from "../core";
+import { BasePressable } from "../core/buttons";
+import { TxModal } from "../core/web3/modals";
 
 import { useGoodUILanguage } from "../theme";
 import { VStack } from "native-base";

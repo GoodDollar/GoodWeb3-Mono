@@ -1,11 +1,12 @@
 import { IIdentity, UBIScheme } from "@gooddollar/goodprotocol/types";
 import { ChainId, QueryParams, useCalls, useEthers } from "@usedapp/core";
-import { BigNumber, Contract } from "ethers";
+import ethers, { BigNumber, Contract } from "ethers";
 import { first } from "lodash";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { noop } from "lodash";
 import usePromise from "react-use-promise";
 import GoodCollectiveContracts from "@gooddollar/goodcollective-contracts/releases/deployment.json";
+import { GoodCollectiveSDK } from "@gooddollar/goodcollective-sdk";
 
 import { AsyncStorage } from "../storage/sdk";
 import { EnvKey } from "../base/sdk";
@@ -16,7 +17,7 @@ import { useGetContract, useGetEnvChainId, useReadOnlySDK, useSDK } from "../bas
 import { Envs, SupportedChains, SupportedV2Networks } from "../constants";
 import { useContractFunctionWithDefaultGasFees } from "../base/hooks/useGasFees";
 
-import { getContractsFromClaimPools, getMemberPools, getPoolsDetails } from "./utils/pools";
+import { getContractsFromClaimPools, getPoolsDetails } from "./utils/pools";
 import { PoolDetails } from "./types";
 
 export const useFVLink = (chainId?: number) => {
@@ -25,6 +26,8 @@ export const useFVLink = (chainId?: number) => {
 
   return useMemo(() => sdk?.getFVLink(chainId) ?? {}, [sdk, chainId]);
 };
+
+export const isTxReject = (errorMessage: string) => errorMessage === "user rejected transaction";
 
 export const useIsAddressVerified = (address: string, env?: EnvKey) => {
   const sdk = useReadOnlySDK("claim") as ClaimSDK;
@@ -37,65 +40,127 @@ export const useIsAddressVerified = (address: string, env?: EnvKey) => {
   return result;
 };
 
-export const useMultiClaim = (poolsDetails: PoolDetails[]) => {
+export const useMultiClaim = (poolsDetails: PoolDetails[] | undefined) => {
+  const { account, chainId } = useEthers();
+  const [claimFlowStatus, setStatus] = useState<{
+    isClaimingDone: boolean;
+    remainingClaims: number | undefined;
+    error: boolean;
+    isClaiming: boolean;
+    claimReceipts: any[] | undefined;
+  }>({ isClaimingDone: false, remainingClaims: undefined, error: false, isClaiming: false, claimReceipts: undefined });
   //the next contract to claim from
   const [contract, setContract] = useState<Contract | undefined>(undefined);
   // all contracts to claim from
-  const [poolContracts, setPoolContracts] = useState<Contract[]>([]);
+  const [poolContracts, setPoolContracts] = useState<Contract[] | undefined>(undefined);
   // all contracts that have been claimed from
-  const [claimedContracts, setClaimedContracts] = useState<Contract[]>([]);
+  const [claimedContracts, setClaimedContracts] = useState<
+    {
+      contract: Contract | undefined;
+      promise: Promise<ethers.providers.TransactionReceipt | undefined>;
+    }[]
+  >([]);
 
-  const { state, send, resetState } = useContractFunctionWithDefaultGasFees(contract, "claim", {
+  const { resetState, state, send } = useContractFunctionWithDefaultGasFees(contract, "claim", {
     transactionName: "Claimed UBI"
   });
 
-  const nextClaim = useCallback(async () => {
-    if (!contract) return;
-
-    await send();
-
-    setClaimedContracts((prev: Contract[]) => [contract, ...prev]);
-    const remainingContracts = poolContracts.find(c => !claimedContracts.includes(c) && c !== contract);
-    setContract(remainingContracts);
-  }, [contract, poolContracts]);
-
+  // initialize the state
   useEffect(() => {
-    if (poolsDetails.length && !poolContracts.length) {
-      const poolContracts = getContractsFromClaimPools(poolsDetails);
-      setPoolContracts(poolContracts);
-    }
-  }, [poolsDetails]);
+    if (!poolsDetails) return;
 
-  useEffect(() => {
-    if (contract) {
-      void nextClaim();
+    const poolContracts = getContractsFromClaimPools(poolsDetails ?? []);
+
+    if (!poolContracts.length) {
+      setStatus(prev => ({ ...prev, isClaimingDone: true, remainingClaims: 0 }));
     } else {
+      setPoolContracts(poolContracts);
       setClaimedContracts([]);
+      setContract(undefined);
+    }
+  }, [poolsDetails, /*used*/ chainId, /*used*/ account]);
+
+  // once tx is mining move on to the next contract
+  useEffect(() => {
+    const { errorMessage = "", status } = state;
+    const isError = isTxReject(errorMessage) || status === "Exception";
+
+    // Error here indicates a transaction failed to be submitted to the blockchain
+    if (status === "Mining" || isError) {
+      const next = poolContracts?.find(c => !claimedContracts.find(cc => cc.contract === c) && c !== contract);
+
+      if (!next) {
+        setStatus(prev => ({ ...prev, isClaiming: false }));
+      }
+
+      // if you don't reset state, the next claim call will not be called.
+      resetState();
+      setContract(next);
+    }
+  }, [state.status]);
+
+  // once the next contract is set (status === "None"), perform claim
+  useEffect(() => {
+    if (state.status !== "None" || !contract) return;
+
+    const promise = send();
+
+    setClaimedContracts(prev => [{ contract, promise }, ...prev]);
+  }, [contract, state.status]);
+
+  const updateStatus = useCallback(async () => {
+    const results = await Promise.all(claimedContracts.map(_ => _.promise)).catch(() => [undefined]);
+    const hasError = results.some(_ => _ === undefined);
+
+    setStatus(prev => ({
+      ...prev,
+      isClaimingDone: !hasError && poolContracts?.length === results.length,
+      remainingClaims: poolContracts ? poolContracts?.length - claimedContracts.length : undefined,
+      error: !!hasError,
+      claimReceipts: results
+    }));
+  }, [claimedContracts]);
+
+  // once a tx state changes in claimedContracts[] we update the state.
+  useEffect(() => {
+    if (claimedContracts.length > 0) {
+      void updateStatus();
     }
 
-    return () => resetState();
-  }, [contract]);
+    // eslint-disable-next-line react-hooks-addons/no-unused-deps
+  }, [claimedContracts, poolContracts]);
+
+  // set the first contract to trigger the claiming process
+  const startClaiming = useCallback(async () => {
+    if (!contract) {
+      setStatus({
+        isClaimingDone: false,
+        isClaiming: true,
+        error: false,
+        remainingClaims: poolContracts?.length,
+        claimReceipts: undefined
+      });
+
+      resetState();
+      setClaimedContracts([]);
+
+      setContract(poolContracts?.[0]);
+    }
+  }, [contract, poolContracts, claimedContracts]);
 
   return {
     poolContracts,
-    claimFlowStatus: {
-      isClaimingDone: claimedContracts.length === poolContracts.length,
-      remainingClaims: poolContracts.length - claimedContracts.length
-    },
-    setContract,
-    setPoolContracts,
-    setClaimedContracts,
-    transactionState: { state, resetState }
+    claimFlowStatus,
+    startClaiming,
+    updateStatus
   };
 };
 
 export const useGetMemberUBIPools = () => {
   const { account, library, chainId } = useEthers();
-  const [poolsDetails, setPoolsDetails] = useState<PoolDetails[]>([]);
+  const [poolsDetails, setPoolsDetails] = useState<PoolDetails[] | undefined>(undefined);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const factory = GoodCollectiveContracts["42220"]?.find(envs => envs.name === "development-celo")?.contracts
-    .UBIPoolFactory;
   const pool = GoodCollectiveContracts["42220"]?.find(envs => envs.name === "development-celo")?.contracts.UBIPool;
 
   const fetchPools = useCallback(async () => {
@@ -103,19 +168,26 @@ export const useGetMemberUBIPools = () => {
     setError(null);
 
     try {
-      if (!library || !account || !factory || !pool || chainId !== 42220) {
+      if (!library || !account || !pool) {
+        setPoolsDetails(undefined);
+        return;
+      }
+
+      if (chainId !== 42220) {
         setPoolsDetails([]);
         return;
       }
 
-      const poolAddresses = await getMemberPools(account, factory, library);
+      const sdk = new GoodCollectiveSDK("42220", library as ethers.providers.Provider, { network: "development-celo" });
 
-      if (!poolAddresses || !poolAddresses.length) {
+      const memberUbiPools = await sdk.getMemberUBIPools(account);
+
+      if (!memberUbiPools || !memberUbiPools.length) {
         setPoolsDetails([]);
         return;
       }
 
-      const details = await getPoolsDetails(poolAddresses, pool, library, account);
+      const details = getPoolsDetails(memberUbiPools, pool.abi, library);
 
       setPoolsDetails(details);
     } catch (err: any) {
@@ -127,13 +199,12 @@ export const useGetMemberUBIPools = () => {
   }, [account, library, chainId]);
 
   useEffect(() => {
-    void fetchPools();
-  }, [fetchPools]);
+    if (poolsDetails === undefined) {
+      void fetchPools();
+    }
+  }, [fetchPools, poolsDetails]);
 
-  return useMemo(
-    () => ({ poolsDetails, loading, error, fetchPools }),
-    [account, poolsDetails, factory, pool, loading, error]
-  );
+  return { poolsDetails, loading, error, fetchPools };
 };
 
 export const useClaim = (refresh: QueryParams["refresh"] = "never") => {

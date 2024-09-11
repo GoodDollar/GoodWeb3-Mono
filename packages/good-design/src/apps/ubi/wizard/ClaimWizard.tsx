@@ -2,15 +2,15 @@ import React, { FC, PropsWithChildren, useCallback, useEffect } from "react";
 import { useWizard, Wizard } from "react-use-wizard";
 import { View } from "native-base";
 import { TransactionStatus, useEthers } from "@usedapp/core";
+import ethers from "ethers";
 
-import { isTxReject } from "../utils/transactionType";
-import { getUnclaimedPools } from "../utils/pools";
+// import { isTxReject } from "../utils/transactionType";
 import { StartClaim, PreClaim } from "../screens";
 import { PostClaim } from "../screens/PostClaim";
 import { ErrorModal, TxDetailsModal, TxModal } from "../../../core/web3/modals";
 import { useClaimContext } from "../context/ClaimContext";
 
-const TxModalStatus = ({
+export const TxModalStatus = ({
   remainingClaims,
   txStatus,
   onClose
@@ -21,8 +21,10 @@ const TxModalStatus = ({
 }) => {
   const { status } = txStatus;
   const customTitle = {
-    title: `Please sign with \n your wallet \n(${remainingClaims} transactions left)`,
-    content: "To complete this action, sign with your wallet."
+    title: /*i18n*/ {
+      id: "Please sign with \n your wallet \n({remainingClaims} transactions left)",
+      values: { remainingClaims: remainingClaims }
+    }
   };
 
   return status === "PendingSignature" ? (
@@ -36,80 +38,90 @@ const TxModalStatus = ({
 const WizardWrapper: FC<PropsWithChildren> = ({ children }) => {
   const {
     claimDetails,
-    poolsDetails,
-    claimStatus,
+    claimFlowStatus,
     error,
     loading,
-    claimFlowStatus,
-    withSignModals,
+    poolsDetails,
     txDetails,
+    withSignModals,
     setTxDetails,
     setError,
-    resetState,
     onClaimSuccess,
     onClaimFailed
   } = useClaimContext();
   const { account, chainId } = useEthers();
   const { goToStep, stepCount } = useWizard();
   const lastStep = stepCount - 1;
-  const { errorMessage = "", status } = claimStatus;
-  const isReject = isTxReject(errorMessage);
+  const { isClaiming, isClaimingDone, error: claimError, remainingClaims, claimReceipts } = claimFlowStatus;
   const { transaction, isOpen } = txDetails;
 
-  const handleClose = useCallback(() => {
-    if (!isTxReject(error ?? "")) {
-      goToStep(lastStep);
+  const customTitle = {
+    title: /*i18n*/ {
+      id: "Please sign with \n your wallet \n({remainingClaims} transactions left)",
+      values: { remainingClaims: remainingClaims }
     }
+  };
 
+  const handleClose = useCallback(() => {
     setError(undefined);
-  }, [error]);
+  }, [claimFlowStatus]);
 
   const handleNext = useCallback(async () => {
-    const { isClaimingDone } = claimFlowStatus;
-    const unclaimedPools = getUnclaimedPools(poolsDetails);
-
-    if (status === "Success") {
-      if (isClaimingDone) {
-        await onClaimSuccess();
-      } else {
-        resetState();
-      }
-      return;
-    }
-
-    if (claimDetails?.hasClaimed && !isReject && unclaimedPools?.length === 0 && !loading) {
+    if (isClaimingDone) {
+      await onClaimSuccess();
       goToStep(lastStep);
-    } else if (account) {
-      goToStep(1);
+    } else if (remainingClaims === 0 && claimError) {
+      await onClaimFailed();
     }
-  }, [account, claimDetails, status, isReject, claimFlowStatus, poolsDetails]);
+  }, [account, claimDetails, claimFlowStatus, loading, poolsDetails]);
 
   useEffect(() => {
     void (async () => {
-      if (isReject || status === "Exception") {
-        void onClaimFailed();
-      } else {
-        void handleNext();
-      }
+      void handleNext();
     })();
-  }, [isReject, handleNext, onClaimFailed]);
+  }, [/*used*/ claimFlowStatus.isClaimingDone, claimFlowStatus.remainingClaims]);
 
   useEffect(() => {
     if (!account) {
       goToStep(0);
-    } else {
-      goToStep(1);
     }
-  }, [account, /* used */ chainId]);
+  }, [account]);
+
+  useEffect(() => {
+    goToStep(1);
+  }, [/* used*/ chainId]);
 
   return (
     <View>
       {error ? <ErrorModal error={error} onClose={handleClose} overlay="dark" /> : null}
 
       {/* This is optional, should be possible to be overriden or handled by app */}
+      {/* {withSignModals && isClaiming ? (
+        <TxModalStatus remainingClaims={claimFlowStatus.remainingClaims} txStatus={isClaiming} onClose={handleClose} />
+      ) : null} */}
       {withSignModals ? (
-        <TxModalStatus remainingClaims={claimFlowStatus.remainingClaims} txStatus={claimStatus} onClose={handleClose} />
+        isClaiming ? (
+          <TxModal type="sign" customTitle={customTitle} isPending={isClaiming} />
+        ) : (
+          <TxModal type="send" isPending={!isClaimingDone && remainingClaims > 0} onClose={handleClose} />
+        )
       ) : null}
+
+      {isClaiming && withSignModals ? (
+        <TxModal type="sign" customTitle={customTitle} isPending={isClaiming} />
+      ) : remainingClaims !== undefined ? (
+        <TxModal
+          type="send"
+          isPending={
+            !isClaimingDone &&
+            remainingClaims > 0 &&
+            claimReceipts?.every((tx: ethers.providers.TransactionReceipt) => tx?.confirmations > 0)
+          }
+          onClose={handleClose}
+        />
+      ) : null}
+
+      {/* TxDetailsModal */}
       {isOpen ? (
         <TxDetailsModal
           open={isOpen}
@@ -117,8 +129,6 @@ const WizardWrapper: FC<PropsWithChildren> = ({ children }) => {
           tx={transaction}
         />
       ) : null}
-      {/* {withSignModals ? <TxModalStatus txStatus={poolClaimStatus} onClose={handleClose} /> : null} */}
-      {/* <TxModalStatus txStatus={claimStatus} onClose={handleClose} /> */}
       {children}
     </View>
   );

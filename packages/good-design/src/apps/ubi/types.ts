@@ -1,7 +1,7 @@
 import { Contract } from "ethers";
 import { BigNumber } from "@ethersproject/bignumber";
 import { PoolDetails, SupportedChains } from "@gooddollar/web3sdk-v2";
-import { CurrencyValue, TransactionStatus } from "@usedapp/core";
+import { CurrencyValue } from "@usedapp/core";
 import { Moment } from "moment";
 
 export type ClaimDetails = {
@@ -17,14 +17,19 @@ export type ClaimDetails = {
 };
 
 export type Transaction = {
+  address: string;
+  account: string;
   network: string;
-  contractAddr: string;
+  contractAddress: string;
   token: string;
-  tokenValue: CurrencyValue;
-  status: "pending" | "confirmed" | "failed";
+  status: string;
   type: string;
-  hash?: string;
-  date?: string;
+  date?: Moment;
+  contractName: string;
+  displayName: string;
+  tokenValue?: CurrencyValue;
+  transactionHash?: string;
+  isPool?: boolean;
 };
 
 export type ReceiveTransaction = Transaction & {
@@ -40,23 +45,22 @@ export interface ClaimContextProps {
   chainId: number | undefined;
   withSignModals: boolean;
   claimDetails: Omit<ClaimDetails, "claimCall">;
-  poolsDetails: PoolDetails[];
+  poolsDetails: PoolDetails[] | undefined;
   loading: boolean;
-  poolContracts: Contract[];
-  claimPools: any;
-  claimStatus: TransactionStatus;
+  poolContracts: Contract[] | undefined;
+  claimPools: { totalAmount: CurrencyValue; transactionList: Transaction[] | undefined };
   claimFlowStatus: any;
   claimedAlt: { hasClaimed: boolean; altChain: string };
   error?: string;
   supportedChains: SupportedChains[];
   txDetails: { transaction: any; isOpen: boolean };
+  onNews: () => void;
   setTxDetails: (tx: any) => void;
   setError: (error: string | undefined) => void;
-  resetState: () => void;
   onClaim: () => Promise<void>;
   onClaimSuccess: () => Promise<void>;
   onClaimFailed: () => Promise<void>;
   onConnect?: () => Promise<boolean>;
-  onTxDetails?: (transaction: string) => void;
+  onTxDetailsPress?: (transaction: Transaction) => void;
   switchChain: () => void;
 }

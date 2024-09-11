@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Center, Checkbox, HStack, Text, VStack } from "native-base";
 import { AsyncStorage } from "@gooddollar/web3sdk-v2";
+import { Trans } from "@lingui/react";
 
 import { withTheme } from "../../../theme/hoc/withTheme";
 import { Image } from "../../images";
-import { TransTitle } from "../../layout";
+import { TransText, TransTitle } from "../../layout";
 import { useModal } from "../../../hooks";
 import { LinkButton } from "../../buttons/StyledLinkButton";
 
@@ -19,7 +20,7 @@ export interface BasicModalProps {
   onClose: () => void;
   withOverlay?: "blur" | "dark";
   withCloseButton: boolean;
-  title: string;
+  title: any;
   modalStyle?: any;
   headerStyle?: any;
   titleVariant?: string;
@@ -41,11 +42,15 @@ interface AltModalProps extends BasicModalProps {
 
 export type StyledModalProps = CtaOrLearnModalProps | AltModalProps;
 
-const ModalHeader = ({ title, variant = "title-gdblue" }: { title: string; variant: any }) => (
-  <Center backgroundColor="white" textAlign="center" paddingBottom={0}>
-    <TransTitle t={title} variant={variant} fontSize="xl" />
-  </Center>
-);
+const ModalHeader = ({ title, variant = "title-gdblue" }: { title: any; variant: any }) => {
+  const transTitle = typeof title === "object" ? title.title : { id: title, values: {} };
+
+  return (
+    <Center backgroundColor="white" textAlign="center" paddingBottom={0}>
+      <TransTitle t={transTitle.id} variant={variant} fontSize="xl" values={transTitle.values} />
+    </Center>
+  );
+};
 
 export const ModalLoaderBody = () => (
   <Center padding={0}>
@@ -56,9 +61,7 @@ export const ModalLoaderBody = () => (
 export const ModalErrorBody = ({ error }: { error: string }) => (
   <VStack space={6} justifyContent="center" alignItems="center">
     <Image source={BillyOops} w={137} h={135} style={{ resizeMode: "contain" }} />
-    <Text variant="sm-grey-650" color="goodRed.100">
-      {error}
-    </Text>
+    <TransText variant="sm-grey-650" color="goodRed.100" t={error} />
   </VStack>
 );
 
@@ -95,9 +98,11 @@ export const ModalFooterCta = ({
             colorScheme="info"
             value="dontShowAgain"
           >
-            <LocalText variant="sm-grey-650" style={{ userSelect: "none" }}>
-              {dontShowAgainCopy}
-            </LocalText>
+            <Trans id={dontShowAgainCopy ?? ""}>
+              <LocalText variant="sm-grey-650" style={{ userSelect: "none" }}>
+                {dontShowAgainCopy}
+              </LocalText>
+            </Trans>
           </Checkbox>
         </HStack>
       ) : null}
