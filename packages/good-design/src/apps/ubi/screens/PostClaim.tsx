@@ -1,6 +1,8 @@
 import React, { FC, useContext, useEffect } from "react";
 import { Center, HStack, Spinner, Text, VStack } from "native-base";
 import { NewsFeedContext, useTimer } from "@gooddollar/web3sdk-v2";
+import moment from "moment";
+import { isEmpty } from "lodash";
 
 import { NewsFeed } from "../../newsfeed";
 import { Image } from "../../../core/images";
@@ -31,11 +33,23 @@ const NextClaim = ({ time }: { time: Date }) => {
 };
 
 export const PostClaim: FC = () => {
-  const { claimPools, claimDetails, claimedAlt, onNews, onTxDetailsPress, switchChain } = useClaimContext();
+  const { claimPools, claimDetails, claimedAlt, poolsDetails, onNews, onTxDetailsPress, switchChain } =
+    useClaimContext();
   const { feed } = useContext(NewsFeedContext);
   const { transactionList } = claimPools ?? {};
-  const { claimTime, isWhitelisted } = claimDetails;
+
   const { hasClaimed, altChain } = claimedAlt ?? {};
+
+  const { claimTime, isWhitelisted } = claimDetails;
+  const poolTimes: Date[] | undefined = poolsDetails?.map(obj => Object.values(obj)[0].claimTime);
+
+  const getEarliestClaimTime = (times: Date[]) => {
+    const allTimes = [...times, claimTime];
+    const earliestTime = allTimes.reduce((prev, curr) => (prev < curr ? prev : curr));
+    return moment(earliestTime).toDate();
+  };
+
+  const nextClaimTime = poolTimes && !isEmpty(poolTimes) ? getEarliestClaimTime(poolTimes) : claimTime;
 
   if ((isWhitelisted as any) === undefined || transactionList === undefined)
     return <Spinner variant="page-loader" size="lg" />;
@@ -51,7 +65,7 @@ export const PostClaim: FC = () => {
         alignItems="center"
       >
         <TransTitle t={/*i18n*/ "You've claimed today"} variant="title-gdblue" fontSize="xl" />
-        {claimTime ? <NextClaim time={claimTime} /> : null}
+        {nextClaimTime ? <NextClaim time={nextClaimTime} /> : null}
         {!hasClaimed ? (
           <Center>
             <GoodButton onPress={switchChain} flexDir="row">
