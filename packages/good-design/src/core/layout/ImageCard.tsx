@@ -4,7 +4,7 @@ import { openLink } from "@gooddollar/web3sdk-v2";
 
 import { BasePressable } from "../buttons";
 import { Image } from "../images";
-import { cardShadow } from "../../theme";
+import { cardShadow } from "../../theme/shadows";
 import { withTheme } from "../../theme/hoc/withTheme";
 import { TransText } from "./Trans";
 

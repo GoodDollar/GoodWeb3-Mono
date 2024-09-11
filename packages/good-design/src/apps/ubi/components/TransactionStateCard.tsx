@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Center, HStack, Text, VStack } from "native-base";
+import { Center, HStack, ScrollView, Text, VStack } from "native-base";
 
 import { withTheme } from "../../../theme/hoc";
 import { BasePressable } from "../../../core/buttons";
@@ -15,6 +15,8 @@ export type TransactionCardProps = {
   transaction: Transaction;
   onTxDetailsPress: ClaimContextProps["onTxDetailsPress"];
 };
+
+const LocalScrollView = ({ ...props }) => <ScrollView {...props} />;
 
 //todo: border likely needs to be turned into component because of pattern. border-image not supported in react-native
 export const TransactionCard = withTheme({ name: "TransactionCard" })(
@@ -98,9 +100,11 @@ type TransactionListProps = {
 };
 
 export const TransactionList = ({ transactions, onTxDetailsPress }: TransactionListProps) => (
-  <VStack>
-    {transactions?.map((tx: Transaction, i: any) => (
-      <TransactionCard key={i} {...{ transaction: tx, onTxDetailsPress }} />
-    ))}
-  </VStack>
+  <LocalScrollView maxHeight="550" style={{ scrollbarWidth: "thin" }}>
+    <VStack>
+      {transactions?.map((tx: Transaction, i: any) => (
+        <TransactionCard key={i} {...{ transaction: tx, onTxDetailsPress }} />
+      ))}
+    </VStack>
+  </LocalScrollView>
 );

@@ -38,6 +38,8 @@ export const ClaimProvider: FC<
     onConnect?: () => Promise<boolean>;
     onSuccess?: () => Promise<void>;
     onSendTx?: () => void;
+    onSwitchChain?: () => Promise<void>;
+    withNewsFeed: boolean;
   } & PropsWithChildren
 > = ({
   children,
@@ -49,10 +51,12 @@ export const ClaimProvider: FC<
   provider,
   supportedChains,
   withSignModals,
+  withNewsFeed = true,
   onConnect,
   onNews,
   // onSendTx,
-  onSuccess
+  onSuccess,
+  onSwitchChain
 }) => {
   const { account, chainId, library, switchNetwork } = useEthers();
   const [refreshRate, setRefreshRate] = useState<QueryParams["refresh"]>(4);
@@ -201,6 +205,7 @@ export const ClaimProvider: FC<
         supportedChains: supportedChains ?? [SupportedChains.CELO, SupportedChains.FUSE],
         withSignModals,
         txDetails,
+        withNewsFeed,
         onNews,
         setTxDetails,
         setError,
@@ -209,7 +214,7 @@ export const ClaimProvider: FC<
         onClaimSuccess,
         onConnect,
         onTxDetailsPress: onTxDetailsPress ?? noop,
-        switchChain // todo: fix handling alt switch
+        switchChain: onSwitchChain ?? switchChain
       }}
     >
       {children}

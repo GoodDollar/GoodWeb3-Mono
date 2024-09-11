@@ -54,6 +54,7 @@ export interface ClaimContextProps {
   error?: string;
   supportedChains: SupportedChains[];
   txDetails: { transaction: any; isOpen: boolean };
+  withNewsFeed?: boolean;
   onNews: () => void;
   setTxDetails: (tx: any) => void;
   setError: (error: string | undefined) => void;
@@ -62,5 +63,5 @@ export interface ClaimContextProps {
   onClaimFailed: () => Promise<void>;
   onConnect?: () => Promise<boolean>;
   onTxDetailsPress?: (transaction: Transaction) => void;
-  switchChain: () => void;
+  switchChain: (network: string) => void;
 }

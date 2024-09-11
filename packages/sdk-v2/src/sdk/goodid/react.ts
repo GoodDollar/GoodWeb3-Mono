@@ -256,11 +256,15 @@ export const useCheckAvailableOffers = ({ account, pools, isDev }: CheckAvailabl
     []
   );
 
+  const [ignoredActiveoffer] = usePromise(() =>
+    AsyncStorage.getItem("goodid_noOffersModalAgain").then(value => value === "true")
+  );
+
   return useMemo(() => {
     // keep null until we have fetched everything
     if (certificates.length === 0 || hasPermission === undefined) return null;
 
-    if (!hasPermission) {
+    if (!hasPermission || ignoredActiveoffer) {
       return false;
     }
 

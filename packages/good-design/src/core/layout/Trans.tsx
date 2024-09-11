@@ -17,7 +17,7 @@ export const TransText = ({
   ...props
 }: { t: string; values?: any; comment?: string } & ITextProps) => (
   <Text {...props}>
-    <LinguiTrans id={t} values={values} comment={comment}>
+    <LinguiTrans id={t} message={t} values={values} comment={comment}>
       {t}
     </LinguiTrans>
   </Text>

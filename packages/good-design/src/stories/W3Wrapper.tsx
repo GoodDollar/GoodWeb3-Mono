@@ -1,7 +1,7 @@
 import { ExternalProvider, JsonRpcProvider } from "@ethersproject/providers";
 import { Web3Provider } from "@gooddollar/web3sdk-v2";
 import * as ethers from "ethers";
-import { View } from "native-base";
+import { View } from "react-native";
 import React, { useState } from "react";
 
 import { Celo, Fuse } from "@gooddollar/web3sdk-v2";

@@ -104,14 +104,14 @@ const RedtentOffer = ({ onDone }: { onDone: RedTentProps["onDone"] }) => {
 
   return (
     <View>
+      <YouSureModal
+        open={showModal}
+        action={handleOnDone}
+        type="offers"
+        onClose={onDone}
+        dontShowAgainKey="goodid_noOffersModalAgain"
+      />
       <VStack space={10}>
-        <YouSureModal
-          open={showModal}
-          action={handleOnDone}
-          type="offers"
-          onClose={onDone}
-          dontShowAgainKey="noOffersModalAgain"
-        />
         <TransTitle t={/*i18n*/ "You are eligible for \n additional UBI!"} variant="title-gdblue" />
         <ImageCard
           variant="offer-card"

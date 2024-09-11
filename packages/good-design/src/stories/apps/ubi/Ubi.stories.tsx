@@ -5,6 +5,8 @@ import { G$Amount, NewsFeedProvider, SupportedChains } from "@gooddollar/web3sdk
 import moment from "moment";
 import { ethers } from "ethers";
 
+import { NativeBaseProvider, theme } from "../../../theme";
+
 import { useGoodUILanguage } from "../../../theme";
 
 import { W3Wrapper } from "../../W3Wrapper";
@@ -22,13 +24,15 @@ export default {
   component: ClaimWizard,
   decorators: [
     (Story: any) => (
-      // <W3Wrapper withMetaMask={true} env="fuse">
-      <NewsFeedProvider env="qa" limit={1}>
-        <VStack alignItems="center">
-          <Story />
-        </VStack>
-      </NewsFeedProvider>
-      // </W3Wrapper>
+      <W3Wrapper withMetaMask={true} env="staging">
+        <NativeBaseProvider theme={theme}>
+          <NewsFeedProvider env="qa" limit={1}>
+            <VStack alignItems="center">
+              <Story />
+            </VStack>
+          </NewsFeedProvider>
+        </NativeBaseProvider>
+      </W3Wrapper>
     )
   ]
 };
@@ -38,26 +42,24 @@ export const ClaimFlow = {
     const { setLanguage } = useGoodUILanguage();
 
     return (
-      <W3Wrapper withMetaMask={true} env="staging">
-        {/* For testing purposes we have to be on qa env */}
-        <ClaimProvider
-          withSignModals
-          explorerEndPoints={explorerEndPoints}
-          supportedChains={[SupportedChains.CELO, SupportedChains.FUSE]}
-          {...args.args}
-        >
-          <HStack>
-            <GoodButton onPress={() => setLanguage("en")} backgroundColor="primary" color="white">
-              English
-            </GoodButton>
-            <GoodButton onPress={() => setLanguage("es-419")} backgroundColor="primary" color="white">
-              spanish
-            </GoodButton>
-          </HStack>
+      //   {/* For testing purposes we have to be on qa env */}
+      <ClaimProvider
+        withSignModals
+        explorerEndPoints={explorerEndPoints}
+        supportedChains={[SupportedChains.CELO, SupportedChains.FUSE]}
+        {...args.args}
+      >
+        <HStack>
+          <GoodButton onPress={() => setLanguage("en")} backgroundColor="primary" color="white">
+            English
+          </GoodButton>
+          <GoodButton onPress={() => setLanguage("es-419")} backgroundColor="primary" color="white">
+            spanish
+          </GoodButton>
+        </HStack>
 
-          <ClaimWizard {...args} />
-        </ClaimProvider>
-      </W3Wrapper>
+        <ClaimWizard {...args} />
+      </ClaimProvider>
     );
   },
   args: {
