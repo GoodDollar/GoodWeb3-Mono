@@ -8,7 +8,7 @@ msgstr ""
 "Language: en\n"
 "Project-Id-Version: goodui\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-09-11 12:39\n"
+"PO-Revision-Date: 2024-09-11 19:16\n"
 "Last-Translator: \n"
 "Language-Team: English\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -17,6 +17,16 @@ msgstr ""
 "X-Crowdin-Language: en\n"
 "X-Crowdin-File: /goodid-claim-flow/packages/good-design/src/locales/en/messages.po\n"
 "X-Crowdin-File-ID: 140\n"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreen.tsx:155
+msgid "I ACCEPT, VERIFY ME"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/SegmentationConfirmation.tsx:42
+msgid "You can always access this GoodID by connecting your current wallet to {gooddapp}"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/OffersAgreement.tsx:42
@@ -93,19 +103,19 @@ msgid "In"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/screens/DisputeThanks.tsx:17
+#: src/apps/goodid/screens/DisputeThanks.tsx:16
 msgid "Thanks for letting us know!"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/screens/DisputeThanks.tsx:20
+#: src/apps/goodid/screens/DisputeThanks.tsx:19
 msgid "Heads-up that information you’ve corrected may show as “Unverified” on your GoodID. \n\n"
 " This will not affect your ability to claim UBI!"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/screens/DisputeThanks.tsx:31
-#: src/apps/goodid/screens/SegmentationConfirmation.tsx:64
+#: src/apps/goodid/screens/DisputeThanks.tsx:30
+#: src/apps/goodid/screens/SegmentationConfirmation.tsx:68
 #: src/apps/goodid/screens/SegmentationDispute.tsx:54
 #: src/apps/goodid/wizards/RedtentWizard.tsx:224
 msgid "Next"
@@ -216,11 +226,6 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/SegmentationConfirmation.tsx:33
 msgid "Your GoodID is ready"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/screens/SegmentationConfirmation.tsx:42
-msgid "You can always access this GoodID by connecting your current wallet to "
 msgstr ""
 
 #. js-lingui-explicit-id
@@ -393,27 +398,27 @@ msgid "News"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/components/TransactionStateCard.tsx:74
+#: src/apps/ubi/components/TransactionStateCard.tsx:76
 msgid "Your Daily Basic Income"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/context/ClaimContext.tsx:100
+#: src/apps/ubi/context/ClaimContext.tsx:104
 msgid "An unknown error occurred while claiming"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/screens/PostClaim.tsx:27
+#: src/apps/ubi/screens/PostClaim.tsx:26
 msgid "Your Next Claim"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/screens/PostClaim.tsx:68
+#: src/apps/ubi/screens/PostClaim.tsx:67
 msgid "You've claimed today"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/screens/PostClaim.tsx:76
+#: src/apps/ubi/screens/PostClaim.tsx:75
 msgid "CLAIM ON {altChain}"
 msgstr ""
 
@@ -423,7 +428,7 @@ msgid "See all news >"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/screens/PostClaim.tsx:101
+#: src/apps/ubi/screens/PostClaim.tsx:102
 msgid "Recent claims (Last 30 days):"
 msgstr ""
 
@@ -454,8 +459,7 @@ msgid "Claim G$"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/wizard/ClaimWizard.tsx:24
-#: src/apps/ubi/wizard/ClaimWizard.tsx:59
+#: src/apps/ubi/wizard/ClaimWizard.tsx:34
 msgid "Please sign with \n"
 " your wallet \n"
 "({remainingClaims} transactions left)"
