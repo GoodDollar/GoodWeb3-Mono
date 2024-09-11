@@ -10,7 +10,7 @@ import { truncateMiddle } from "../../../utils/string";
 import { isReceiveTransaction } from "../../../apps/ubi/utils/transactionType";
 import { Transaction } from "../../../apps/ubi/types";
 
-import ReceiveIconLegacy from "../../../assets/images/receive-icon-legacy.png";
+import BillyReceive from "../../../assets/images/billy-receive.png";
 import { GoodButton } from "../../buttons";
 import { GdAmount } from "../../layout";
 import { ExplorerLink } from "../..";
@@ -28,13 +28,13 @@ const TxDetailsContent = ({ tx, color, network }: { tx: Transaction; color: stri
   return (
     <VStack space={3}>
       <Center>
-        <Image source={ReceiveIconLegacy} w={137} h={135} style={{ resizeMode: "contain" }} />
+        <Image source={BillyReceive} w={121} h={87} style={{ resizeMode: "contain" }} />
       </Center>
 
       <VStack space={0} borderBottomColor={color} borderBottomWidth="2" paddingY="3" paddingX="1">
         <HStack justifyContent="flex-start" flexShrink={1} space={4}>
           <Image source={networkIcon} w="6" h="6" accessibilityLabel="NetworkIcon" />
-          <HStack space={15} flexGrow={1} justifyContent="flex-start">
+          <HStack space={15} flexGrow={1} justifyContent="flex-start" alignItems="center">
             <Text variant="4xs-grey-400" width="100%">
               {txDate}
             </Text>

@@ -99,14 +99,6 @@ const WizardWrapper: FC<PropsWithChildren> = ({ children }) => {
       {/* {withSignModals && isClaiming ? (
         <TxModalStatus remainingClaims={claimFlowStatus.remainingClaims} txStatus={isClaiming} onClose={handleClose} />
       ) : null} */}
-      {withSignModals ? (
-        isClaiming ? (
-          <TxModal type="sign" customTitle={customTitle} isPending={isClaiming} />
-        ) : (
-          <TxModal type="send" isPending={!isClaimingDone && remainingClaims > 0} onClose={handleClose} />
-        )
-      ) : null}
-
       {isClaiming && withSignModals ? (
         <TxModal type="sign" customTitle={customTitle} isPending={isClaiming} />
       ) : remainingClaims !== undefined ? (

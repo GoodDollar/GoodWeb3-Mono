@@ -90,26 +90,30 @@ export const SegmentationFlow = {
 
     return (
       <W3Wrapper withMetaMask={true} env={args.env}>
-        <VStack {...args}>
-          <Text variant="browse-wrap" fontSize="sm">
-            For testing purposes. this flow is using staging/QA contracts
-          </Text>
-          <SegmentationController
-            {...{
-              account,
-              isWhitelisted,
-              certificates,
-              certificateSubjects,
-              expiryFormatted,
-              withNavBar: true,
-              isDev: true
-            }}
-            onDone={async (e: any) => {
-              console.log({ e });
-              alert("Segmentation finished");
-            }}
-          />
-        </VStack>
+        <GoodIdProvider onGoToClaim={() => alert("Should navigate to the claim-page")}>
+          <VStack {...args}>
+            <Text variant="browse-wrap" fontSize="sm">
+              For testing purposes. this flow is using staging/QA contracts
+            </Text>
+            <VStack alignItems="center">
+              <SegmentationController
+                {...{
+                  account,
+                  isWhitelisted,
+                  certificates,
+                  certificateSubjects,
+                  expiryFormatted,
+                  withNavBar: true,
+                  isDev: true
+                }}
+                onDone={async (e: any) => {
+                  console.log({ e });
+                  alert("Segmentation finished");
+                }}
+              />
+            </VStack>
+          </VStack>
+        </GoodIdProvider>
       </W3Wrapper>
     );
   },
@@ -121,18 +125,20 @@ export const SegmentationFlow = {
 };
 
 export const OnboardScreenExample = {
-  render: args => {
+  render: (args: any) => {
     const { account = "" } = useEthers();
     const { expiryDate, styles } = args;
     const formattedExpiryTimestamp = moment(expiryDate).format("MMMM DD, YYYY");
     return (
-      <OnboardScreen
-        account={account}
-        onAccept={() => alert("This is just a UI Demo")}
-        {...args}
-        expiryDate={formattedExpiryTimestamp}
-        {...styles}
-      />
+      <GoodIdProvider>
+        <OnboardScreen
+          account={account}
+          onAccept={() => alert("This is just a UI Demo")}
+          {...args}
+          expiryDate={formattedExpiryTimestamp}
+          {...styles}
+        />
+      </GoodIdProvider>
     );
   },
   args: {
