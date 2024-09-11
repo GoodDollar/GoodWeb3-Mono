@@ -223,8 +223,8 @@ export const useIssueCertificates = (account: string | undefined, baseEnv: any) 
  * @param certificates
  * @returns the credential subjects from the certificates
  */
-export const useCertificatesSubject = (certificates: AggregatedCertificate[]) => {
-  return useMemo(() => {
+export const useCertificatesSubject = (certificates: AggregatedCertificate[]) =>
+  useMemo(() => {
     return certificates.reduce((acc, { certificate, typeName }) => {
       if (certificate) {
         acc[typeName] = certificate.credentialSubject;
@@ -233,7 +233,6 @@ export const useCertificatesSubject = (certificates: AggregatedCertificate[]) =>
       return acc;
     }, {} as CredentialSubjectsByType);
   }, [certificates]);
-};
 
 export interface CheckAvailableOffersProps {
   account: string;
