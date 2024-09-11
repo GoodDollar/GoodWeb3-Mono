@@ -8,15 +8,15 @@ msgstr ""
 "Language: es_419\n"
 "Project-Id-Version: goodui\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-08-26 09:24\n"
+"PO-Revision-Date: 2024-09-10 20:27\n"
 "Last-Translator: \n"
 "Language-Team: Spanish, Latin America\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: goodui\n"
 "X-Crowdin-Project-ID: 691741\n"
 "X-Crowdin-Language: es-419\n"
-"X-Crowdin-File: /168-gooddesign-localization/packages/good-design/src/locales/en/messages.po\n"
-"X-Crowdin-File-ID: 126\n"
+"X-Crowdin-File: /goodid-claim-flow/packages/good-design/src/locales/en/messages.po\n"
+"X-Crowdin-File-ID: 140\n"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:73
@@ -290,7 +290,7 @@ msgstr "Reclamar semanalmente:"
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:55
 msgid "10.000G$"
-msgstr "10.000G$"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:67
