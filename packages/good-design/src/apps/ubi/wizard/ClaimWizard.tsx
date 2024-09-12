@@ -70,10 +70,6 @@ const WizardWrapper: FC<PropsWithChildren> = ({ children }) => {
     <View>
       {error ? <ErrorModal error={error} onClose={handleClose} overlay="dark" /> : null}
 
-      {/* This is optional, should be possible to be overriden or handled by app */}
-      {/* {withSignModals && isClaiming ? (
-        <TxModalStatus remainingClaims={claimFlowStatus.remainingClaims} txStatus={isClaiming} onClose={handleClose} />
-      ) : null} */}
       {isClaiming && withSignModals ? (
         <TxModal type="sign" customTitle={customTitle} isPending={isClaiming} />
       ) : remainingClaims !== undefined ? (
