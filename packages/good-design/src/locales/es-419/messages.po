@@ -8,7 +8,7 @@ msgstr ""
 "Language: es_419\n"
 "Project-Id-Version: goodui\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-09-11 19:16\n"
+"PO-Revision-Date: 2024-09-12 11:12\n"
 "Last-Translator: \n"
 "Language-Team: Spanish, Latin America\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -21,54 +21,56 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/OnboardScreen.tsx:155
 msgid "I ACCEPT, VERIFY ME"
-msgstr ""
+msgstr "ACEPTO, VERIFIQUE ME"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/SegmentationConfirmation.tsx:42
 msgid "You can always access this GoodID by connecting your current wallet to {gooddapp}"
-msgstr ""
+msgstr "Siempre puedes acceder a este GoodID conectando tu billetera actual a {gooddapp}"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/OffersAgreement.tsx:42
 msgid "By tapping “Yes” you’re allowing GoodLabs Ltd to read your GoodID until its expiration date only to show you offers relevant to you. We will not share your information with anyone. To read  our full Privacy Policy, go to {privy}"
-msgstr ""
+msgstr "Pulsando \"Sí\" acepta que GoodLabs Ltd lea su GoodID hasta su fecha de caducidad para mostrarle ofertas relevantes para usted. No compartiremos tu información con nadie. Para leer nuestra Política de Privacidad completa, ve a {privy}"
 
 #. js-lingui-explicit-id
 #: src/core/animated/SpinnerCheckMark.tsx:10
 msgid "Please wait while processing..."
-msgstr ""
+msgstr "Por favor espere mientras se procesa..."
 
 #. js-lingui-explicit-id
 #: src/core/inputs/WebVideoUploader.tsx:38
 msgid "It seems the video format you uploaded is unsupported. 😕\n"
 "Supported formats include: MP4, WEBM, OGG, MOV, 3GP, M4V, AVI, and MKV.\n"
 " Please upload your video in one of these formats. Thank you!"
-msgstr ""
+msgstr "Parece ser que el formato de vídeo que has subido no es compatible. 😕\n"
+"Los formatos soportados son: MP4, WEBM, OGG, MOV, 3GP, M4V, AVI y MKV.\n"
+"Por favor, sube tu vídeo en uno de estos formatos. ¡Gracias!"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:73
 msgid " Female "
-msgstr ""
+msgstr " Femenino "
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:216
 msgid " Red Tent Woman in Nigeria \n"
-msgstr ""
+msgstr " Red Tent Mujeres en Nigeria\n"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/components/GoodIdCard.tsx:125
 msgid "To upgrade your GoodID, please"
-msgstr ""
+msgstr "Para actualizar tu GoodID, por favor"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/components/GoodIdCard.tsx:136
 msgid "Claim"
-msgstr ""
+msgstr "Reclamar"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/components/GoodIdCard.tsx:145
 msgid "Expires on {expiryDate}"
-msgstr ""
+msgstr "Expira el {expiryDate}"
 
 #. context: I am (Male/Female)
 #. js-lingui-explicit-id
