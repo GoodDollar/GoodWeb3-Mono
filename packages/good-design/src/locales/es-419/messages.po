@@ -8,7 +8,7 @@ msgstr ""
 "Language: es_419\n"
 "Project-Id-Version: goodui\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-09-12 11:12\n"
+"PO-Revision-Date: 2024-09-12 12:33\n"
 "Last-Translator: \n"
 "Language-Team: Spanish, Latin America\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -107,7 +107,7 @@ msgstr "En"
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/DisputeThanks.tsx:16
 msgid "Thanks for letting us know!"
-msgstr ""
+msgstr "¡Gracias por avisarnos!"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/DisputeThanks.tsx:19
@@ -132,7 +132,7 @@ msgstr "Face ID"
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/GoodIdDetails.tsx:80
 msgid "Show my FaceId"
-msgstr ""
+msgstr "Mostrar mi FaceId"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/GoodIdDetails.tsx:131
@@ -155,46 +155,46 @@ msgstr "Atención: Solo podrá volver a verificar una nueva dirección de billet
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/OffersAgreement.tsx:29
 msgid "You might qualify for extra money disbursements"
-msgstr ""
+msgstr "Podría calificar para desembolsos de dinero adicionales"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/OffersAgreement.tsx:32
 msgid "Would you like to receive offers specific to you, such as special rewards offers, humanitarian funds, climate relief disbursements, and financial services?"
-msgstr ""
+msgstr "¿Te gustaría recibir ofertas específicas, tales como ofertas de recompensas especiales, fondos humanitarios, desembolsos de ayuda climática y servicios financieros?"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/OffersAgreement.tsx:51
 msgid "yes, i accept"
-msgstr ""
+msgstr "sí, acepto"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/OffersAgreement.tsx:53
 msgid "no"
-msgstr ""
+msgstr "no"
 
 #. GoodID feature access list
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/OnboardScreen.tsx:34
 msgid "Crypto UBI"
-msgstr ""
+msgstr "Crypto UBI"
 
 #. GoodID feature access list
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/OnboardScreen.tsx:38
 msgid "Humanitarian funds"
-msgstr ""
+msgstr "Fondos humanitarios"
 
 #. GoodID feature access list
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/OnboardScreen.tsx:42
 msgid "Climate relief disbursements"
-msgstr ""
+msgstr "Desembolsos de ayuda climática"
 
 #. GoodID feature access list
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/OnboardScreen.tsx:46
 msgid "Financial services"
-msgstr ""
+msgstr "Servicios financieros"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/OnboardScreen.tsx:78
@@ -209,17 +209,17 @@ msgstr "Obtén tu GoodID para reclamar UBI"
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/OnboardScreen.tsx:101
 msgid "It unlocks access to:"
-msgstr ""
+msgstr "Desbloquea el acceso a:"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/OnboardScreen.tsx:120
 msgid "Verification takes 2 minutes"
-msgstr ""
+msgstr "La verificación tarda 2 minutos"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/OnboardScreen.tsx:130
 msgid "Your GoodID lives in your local storage. If you use other devices, browsers or browser sessions to access GoodDollar, you will be asked to upgrade again."
-msgstr ""
+msgstr "Tu GoodID vive en tu almacenamiento local. Si utiliza otros dispositivos, navegadores o sesiones de navegador para acceder a GoodDollar, se le pedirá que actualice de nuevo."
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/SegmentationConfirmation.tsx:29
@@ -230,7 +230,7 @@ msgstr "Estamos creando tu GoodID"
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/SegmentationConfirmation.tsx:33
 msgid "Your GoodID is ready"
-msgstr ""
+msgstr "Tu GoodID está listo"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/SegmentationDispute.tsx:39
@@ -287,7 +287,11 @@ msgid "Your video may be reviewed by the \n"
 " will not be shared or used publicly, \n"
 " and will be erased after a period of \n"
 " time."
-msgstr ""
+msgstr "Tu vídeo puede ser revisado por el \n"
+" GoodLabs o equipos asociados con fines de verificación. Tu video \n"
+" no será compartido o usado públicamente, \n"
+" y será borrado después de un periodo de \n"
+" tiempo."
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:49
@@ -297,7 +301,7 @@ msgstr "Reclamar semanalmente:"
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:55
 msgid "10.000G$"
-msgstr ""
+msgstr "10.000G$"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:67
@@ -405,70 +409,72 @@ msgstr "Noticias"
 #. js-lingui-explicit-id
 #: src/apps/ubi/components/TransactionStateCard.tsx:76
 msgid "Your Daily Basic Income"
-msgstr ""
+msgstr "Su ingreso básico diario"
 
 #. js-lingui-explicit-id
 #: src/apps/ubi/context/ClaimContext.tsx:104
 msgid "An unknown error occurred while claiming"
-msgstr ""
+msgstr "Se ha producido un error desconocido al reclamar"
 
 #. js-lingui-explicit-id
 #: src/apps/ubi/screens/PostClaim.tsx:26
 msgid "Your Next Claim"
-msgstr ""
+msgstr "Tu próximo reclamo"
 
 #. js-lingui-explicit-id
 #: src/apps/ubi/screens/PostClaim.tsx:67
 msgid "You've claimed today"
-msgstr ""
+msgstr "Has reclamado hoy"
 
 #. js-lingui-explicit-id
 #: src/apps/ubi/screens/PostClaim.tsx:75
 msgid "CLAIM ON {altChain}"
-msgstr ""
+msgstr "Reclamar en {altChain}"
 
 #. js-lingui-explicit-id
 #: src/apps/ubi/screens/PostClaim.tsx:90
 msgid "See all news >"
-msgstr ""
+msgstr "Ver todas las noticias >"
 
 #. js-lingui-explicit-id
 #: src/apps/ubi/screens/PostClaim.tsx:102
 msgid "Recent claims (Last 30 days):"
-msgstr ""
+msgstr "Reclamos recientes (últimos 30 días):"
 
 #. js-lingui-explicit-id
 #: src/apps/ubi/screens/PreClaim.tsx:31
 msgid "Claim your share"
-msgstr ""
+msgstr "Reclama tu parte"
 
 #. js-lingui-explicit-id
 #: src/apps/ubi/screens/PreClaim.tsx:45
 msgid "Claim Now"
-msgstr ""
+msgstr "Reclama ahora"
 
 #. js-lingui-explicit-id
 #: src/apps/ubi/screens/StartClaim.tsx:24
 msgid "Collect G$"
-msgstr ""
+msgstr "Recolecta G$"
 
 #. js-lingui-explicit-id
 #: src/apps/ubi/screens/StartClaim.tsx:33
 msgid "GoodDollar creates free money as a public \n"
 " good, G$ tokens, which you can collect daily."
-msgstr ""
+msgstr "GoodDollar crea dinero gratuito como bien público, tokens G$, que puedes recolectar diariamente."
 
 #. js-lingui-explicit-id
 #: src/apps/ubi/screens/StartClaim.tsx:47
 msgid "Claim G$"
-msgstr ""
+msgstr "Reclamar $"
 
 #. js-lingui-explicit-id
 #: src/apps/ubi/wizard/ClaimWizard.tsx:34
 msgid "Please sign with \n"
 " your wallet \n"
 "({remainingClaims} transactions left)"
-msgstr ""
+msgstr "Por favor, firma con \n"
+" tu billetera \n"
+"({remainingClaims} transacciones restantes)"
 
 #. js-lingui-explicit-id
 #: src/core/buttons/LearnButton.tsx:30
@@ -512,7 +518,7 @@ msgstr "Al acceder a este enlace, usted está saliendo de \n"
 #. js-lingui-explicit-id
 #: src/core/web3/modals/RedirectModal.tsx:21
 msgid "Redirect Notice"
-msgstr ""
+msgstr "Redirigir Aviso"
 
 #. js-lingui-explicit-id
 #: src/core/web3/modals/RedirectModal.tsx:23
