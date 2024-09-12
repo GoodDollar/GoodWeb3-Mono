@@ -2,7 +2,7 @@ import React from "react";
 import { Container, HStack, Text, VStack, IContainerProps, Spinner, Link } from "native-base";
 import type { CredentialSubjectsByType } from "@gooddollar/web3sdk-v2";
 
-import { withTheme } from "../../../theme";
+import { withTheme } from "../../../theme/hoc/withTheme";
 
 import { openLink } from "@gooddollar/web3sdk-v2";
 import { TransButton, TransHeading, TransText, TransTitle } from "../../../core/layout";

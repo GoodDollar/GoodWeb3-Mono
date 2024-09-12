@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { Center, IStackProps, HStack, Text, View, VStack } from "native-base";
 import { CredentialType, CredentialSubjectsByType } from "@gooddollar/web3sdk-v2";
 
-import { withTheme } from "../../../theme";
+import { withTheme } from "../../../theme/hoc/withTheme";
 import SvgXml from "../../../core/images/SvgXml";
 import { truncateMiddle } from "../../../utils";
 import { FormattedCertificate, formatVerifiedValues } from "../../../utils/formatVerifiedValues";

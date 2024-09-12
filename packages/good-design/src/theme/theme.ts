@@ -6,7 +6,7 @@ import * as web3modals from "../core/web3/modals/theme";
 import * as advanced from "../advanced/theme";
 import * as nativebase from "./nativebase";
 import * as apps from "../apps/theme";
-import { fontConfig, getPlatformFamilies } from "./fonts";
+import { fontConfig, getPlatformFamilies } from "./utils/fonts";
 
 export const theme = extendTheme({
   fontConfig: getPlatformFamilies(fontConfig),

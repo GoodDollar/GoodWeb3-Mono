@@ -7,7 +7,7 @@ import { useWizard } from "react-use-wizard";
 import { TransText, TransTitle } from "../../../core/layout";
 import GoodIdCard from "../components/GoodIdCard";
 import { GoodButton } from "../../../core/buttons";
-import { withTheme } from "../../../theme";
+import { withTheme } from "../../../theme/hoc/withTheme";
 import { LoaderModal } from "../../../core/web3/modals";
 import { SegmentationProps } from "../wizards";
 

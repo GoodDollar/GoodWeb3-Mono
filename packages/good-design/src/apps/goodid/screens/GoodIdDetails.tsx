@@ -12,7 +12,7 @@ import { Title, TransText } from "../../../core/layout";
 import { Web3ActionButton } from "../../../advanced";
 import { truncateMiddle } from "../../../utils";
 import { TouchableOpacity } from "react-native";
-import { withTheme } from "../../../theme";
+import { withTheme } from "../../../theme/hoc/withTheme";
 
 import FaceIcon from "../../../assets/images/face.png";
 import CopyIcon from "../../../assets/images/copy.png";

@@ -2,7 +2,7 @@ import { Checkbox, Center, HStack, Text, View, VStack, Box } from "native-base";
 import React, { FC, PropsWithChildren, useCallback, useState } from "react";
 import { Wizard, useWizard } from "react-use-wizard";
 
-import { withTheme } from "../../../theme";
+import { withTheme } from "../../../theme/hoc/withTheme";
 import ImageCard from "../../../core/layout/ImageCard";
 import { Image } from "../../../core/images";
 import { WebVideoUploader } from "../../../core/inputs/WebVideoUploader";

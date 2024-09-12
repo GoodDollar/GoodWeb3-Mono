@@ -76,6 +76,11 @@ export const theme = {
       borderLeftColor: "main",
       borderRadius: 6,
       styles: {
+        footer: {
+          display: "flex",
+          width: "100%",
+          alignItems: "flex-end"
+        },
         container: {
           flexDirection: "column",
           height: "310",

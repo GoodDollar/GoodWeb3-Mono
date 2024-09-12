@@ -28,20 +28,20 @@ export const useClaimContext = () => {
 
 const explorerPollLock = new Lock();
 
-export const ClaimProvider: FC<
-  {
-    explorerEndPoints: { [key in keyof typeof SupportedChains]: string };
-    supportedChains: SupportedChains[];
-    withSignModals: boolean;
-    provider?: any;
-    onNews: () => void;
-    onConnect?: () => Promise<boolean>;
-    onSuccess?: () => Promise<void>;
-    onSendTx?: () => void;
-    onSwitchChain?: () => Promise<void>;
-    withNewsFeed: boolean;
-  } & PropsWithChildren
-> = ({
+interface ClaimProviderProps {
+  explorerEndPoints: { [key in keyof typeof SupportedChains]: string };
+  supportedChains: SupportedChains[];
+  withSignModals: boolean;
+  provider?: any;
+  onNews: () => void;
+  onConnect?: () => Promise<boolean>;
+  onSuccess?: () => Promise<void>;
+  onSendTx?: () => void;
+  onSwitchChain?: () => Promise<void>;
+  withNewsFeed: boolean;
+}
+
+export const ClaimProvider: FC<PropsWithChildren<ClaimProviderProps>> = ({
   children,
   explorerEndPoints = {
     MAINNET: "https://api.etherscan.io/api?",

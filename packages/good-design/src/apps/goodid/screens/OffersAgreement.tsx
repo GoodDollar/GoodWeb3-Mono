@@ -6,7 +6,7 @@ import { TransButton, TransText, TransTitle } from "../../../core/layout";
 import { Image } from "../../../core/images";
 
 import BillyGrin from "../../../assets/images/billy-grin.png";
-import { withTheme } from "../../../theme";
+import { withTheme } from "../../../theme/hoc/withTheme";
 
 export const OffersAgreement = withTheme({ name: "OffersAgreement" })(
   ({ styles, ...props }: IContainerProps & { styles?: any; onDataPermission: (accepted: string) => Promise<void> }) => {
