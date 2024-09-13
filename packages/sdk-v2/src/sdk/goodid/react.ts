@@ -239,7 +239,7 @@ export interface CheckAvailableOffersProps {
   account: string;
   pools: PoolCriteria[];
   isDev: boolean;
-  onSkip?: (skipOffer: boolean) => void;
+  onDone?: (skipOffer: boolean) => void;
 }
 
 /**
@@ -249,7 +249,7 @@ export interface CheckAvailableOffersProps {
  * @returns the list of offers the user is eligible for
  * @example
  */
-export const useCheckAvailableOffers = ({ account, pools, isDev, onSkip }: CheckAvailableOffersProps) => {
+export const useCheckAvailableOffers = ({ account, pools, isDev, onDone }: CheckAvailableOffersProps) => {
   const certificates = useAggregatedCertificates(account);
   const certificatesSubjects = useCertificatesSubject(certificates);
 
@@ -268,7 +268,7 @@ export const useCheckAvailableOffers = ({ account, pools, isDev, onSkip }: Check
     if (isEmpty(certificates) || hasPermission === undefined) return null;
 
     if (!hasPermission || skipOffer) {
-      onSkip?.(true);
+      onDone?.(true);
       return false;
     }
 

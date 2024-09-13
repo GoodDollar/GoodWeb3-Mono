@@ -121,7 +121,7 @@ export const ClaimWizard: FC<Omit<CheckAvailableOffersProps, "onDone">> = ({
 }) => {
   const [skipOffer, setSkipOffer] = useState<Error | boolean | undefined>(false);
 
-  const onSkip = useCallback(
+  const onDone = useCallback(
     async (offerSkipped: Error | boolean | undefined) => {
       setSkipOffer(offerSkipped);
     },
@@ -132,7 +132,7 @@ export const ClaimWizard: FC<Omit<CheckAvailableOffersProps, "onDone">> = ({
     <Wizard wrapper={<WizardWrapper skipOffer={skipOffer} />}>
       <StartClaim />
       {chainId === SupportedChains.CELO ? (
-        <CheckAvailableOffers {...{ account, chainId, isDev, onDone: onSkip, onSkip, withNavBar }} />
+        <CheckAvailableOffers {...{ account, chainId, isDev, onDone, withNavBar }} />
       ) : null}
 
       <PreClaim />

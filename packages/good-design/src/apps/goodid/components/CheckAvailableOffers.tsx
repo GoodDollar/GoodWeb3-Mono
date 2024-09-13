@@ -11,7 +11,6 @@ export interface CheckAvailableOffersProps {
   chainId: number;
   isDev?: boolean;
   onDone: (e?: Error | boolean | undefined) => Promise<void>;
-  onSkip?: (skipOffer: boolean) => void;
   onError?: (e: Error | undefined) => void;
   // pools: any;
 }
@@ -45,18 +44,12 @@ const CheckAvailableOffers: FC<CheckAvailableOffersProps> = ({
   isDev = false,
   withNavBar,
   onDone,
-  onSkip,
   onError
 }) => {
-  const availableOffers = useCheckAvailableOffers({ account, pools: redtentOffer, isDev, onSkip });
+  const availableOffers = useCheckAvailableOffers({ account, pools: redtentOffer, isDev, onDone });
 
   useEffect(() => {
     if (availableOffers === false || availableOffers?.length === 0) {
-      if (onSkip) {
-        onSkip(true);
-        return;
-      }
-
       void onDone?.();
     }
   }, [availableOffers]);
