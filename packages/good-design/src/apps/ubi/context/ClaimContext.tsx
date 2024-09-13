@@ -41,7 +41,11 @@ export const ClaimProvider: FC<
   } & PropsWithChildren
 > = ({
   children,
-  explorerEndPoints,
+  explorerEndPoints = {
+    MAINNET: "https://api.etherscan.io/api?",
+    CELO: "https://api.celoscan.io/api?",
+    FUSE: "https://explorer.fuse.io/api?"
+  },
   provider,
   supportedChains,
   withSignModals,
@@ -74,6 +78,17 @@ export const ClaimProvider: FC<
 
   const { poolContracts, startClaiming: onClaim, claimFlowStatus } = useMultiClaim(preClaimPools);
 
+  const switchChain = useCallback(() => {
+    // 4902: Network is not added, and should be done manually
+    // explanation to user is shown through network modal
+    switchNetwork(SupportedChains[claimedAlt.altChain as keyof typeof SupportedChains]).catch((e: any) => {
+      if (e.code === 4902) {
+        // toggleNetworkModal()
+        //todo: discuss how to handle this
+      }
+    });
+  }, [switchNetwork, claimedAlt]);
+
   const onTxDetailsPress = useCallback(
     (transaction: any) => {
       setTxDetails({ transaction, isOpen: true });
@@ -102,18 +117,7 @@ export const ClaimProvider: FC<
     void fetchPools();
   }, [/*used*/ chainId, /*used*/ account]);
 
-  const switchChain = useCallback(() => {
-    // 4902: Network is not added, and should be done manually
-    // explanation to user is shown through network modal
-    switchNetwork(SupportedChains[claimedAlt.altChain as keyof typeof SupportedChains]).catch((e: any) => {
-      if (e.code === 4902) {
-        // toggleNetworkModal()
-        //todo: discuss how to handle this
-      }
-    });
-  }, [switchNetwork, claimedAlt]);
-
-  //Handle navigation to pre-claim screen
+  //Handling of claimable pools
   useEffect(() => {
     if (isUndefined(poolsDetails === undefined || claimDetails.hasClaimed) || !isUndefined(preClaimPools)) {
       return;
@@ -128,8 +132,7 @@ export const ClaimProvider: FC<
         details.push(...unclaimedPools);
       }
 
-      // the claimReceipts are more reliable because of immediate availibilty,
-      // opposed to fetching latest data from chain
+      // the claimReceipts are available faster then awaiting useCall and sdk responses
       if (claimFlowStatus.claimReceipts) {
         const alreadyClaimed = claimFlowStatus.claimReceipts.filter(Boolean).map(receipt => receipt.to);
 
@@ -140,30 +143,23 @@ export const ClaimProvider: FC<
     }
   }, [/*used*/ poolContracts, claimDetails, preClaimPools, poolsDetails, claimFlowStatus.isClaimingDone]);
 
-  //Handle navigation to post-claim screen
+  //Handling of post-claim transaction list
   useEffect(() => {
     void (async () => {
-      if (
-        explorerPollLock.isAcquired("pollLock") ||
-        explorerPollLock.isAcquired("resetLock") ||
-        !isEmpty(postClaimPools) ||
-        poolsDetails === undefined
-      ) {
+      if (explorerPollLock.isAcquired("pollLock") || !isEmpty(postClaimPools) || poolsDetails === undefined) {
         return;
       }
 
-      const unclaimedPools = getUnclaimedPools(poolsDetails);
-      const noPostClaimPools = isEmpty(postClaimPools);
-      const noUnclaimedPools = isEmpty(unclaimedPools);
+      const noUnclaimedPools = !isEmpty(getUnclaimedPools(poolsDetails));
 
       const hasClaimed = claimDetails.hasClaimed === true;
 
-      if (unclaimedPools && unclaimedPools.length > 0) {
+      if (noUnclaimedPools) {
         setPostClaimPools(undefined);
         return;
       }
 
-      if (account && hasClaimed && noPostClaimPools && noUnclaimedPools && !loading) {
+      if (account && hasClaimed && !noUnclaimedPools && !loading) {
         await explorerPollLock.acquire("pollLock");
 
         const claimTransactionList = await getRecentClaims(

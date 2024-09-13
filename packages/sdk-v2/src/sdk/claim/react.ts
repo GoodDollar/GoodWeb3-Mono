@@ -161,6 +161,7 @@ export const useGetMemberUBIPools = () => {
   const [poolsDetails, setPoolsDetails] = useState<PoolDetails[] | undefined>(undefined);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  //todo: change to take current envs name, awaiting staging/production contracts to be deployed.
   const pool = GoodCollectiveContracts["42220"]?.find(envs => envs.name === "development-celo")?.contracts.UBIPool;
 
   const fetchPools = useCallback(async () => {

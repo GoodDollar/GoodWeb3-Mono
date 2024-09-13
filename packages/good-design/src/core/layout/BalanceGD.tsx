@@ -109,12 +109,15 @@ export const GdAmount = ({
     suffix: "",
     ...(options || {})
   };
+  const formatAmount = amount.format({
+    thousandSeparator: "",
+    suffix: "",
+    prefix: ""
+  });
 
-  const decimals = amount.currency.decimals;
-  const amountNumber = Number(amount.value.toString()) / 10 ** decimals;
-  const amountAbbr = abbreviateGd(amountNumber.toString());
+  const amountAbbr = abbreviateGd(formatAmount);
 
-  const isLargeNumber = amountNumber > 1e6;
+  const isLargeNumber = +formatAmount > 1e6;
   const fontSize = isLargeNumber ? "sm" : "l";
 
   return (

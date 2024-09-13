@@ -61,7 +61,7 @@ export const ModalLoaderBody = () => (
 export const ModalErrorBody = ({ error }: { error: string }) => (
   <VStack space={6} justifyContent="center" alignItems="center">
     <Image source={BillyOops} w={137} h={135} style={{ resizeMode: "contain" }} />
-    <TransText variant="sm-grey-650" color="goodRed.100" t={error} />
+    <TransText textAlign="center" variant="sm-grey-650" color="goodRed.100" t={error} />
   </VStack>
 );
 
@@ -98,11 +98,9 @@ export const ModalFooterCta = ({
             colorScheme="info"
             value="dontShowAgain"
           >
-            <Trans id={dontShowAgainCopy ?? ""}>
-              <LocalText variant="sm-grey-650" style={{ userSelect: "none" }}>
-                {dontShowAgainCopy}
-              </LocalText>
-            </Trans>
+            <LocalText variant="sm-grey-650" style={{ userSelect: "none" }}>
+              <Trans id={dontShowAgainCopy ?? ""}>{dontShowAgainCopy}</Trans>
+            </LocalText>
           </Checkbox>
         </HStack>
       ) : null}

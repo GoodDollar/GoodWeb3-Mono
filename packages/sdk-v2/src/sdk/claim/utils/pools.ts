@@ -1,8 +1,8 @@
 import ethers, { BigNumber, Contract } from "ethers";
 import { PoolDetails } from "../types";
 
-export const getContractsFromClaimPools = (poolsDetails: PoolDetails[]) => {
-  return poolsDetails.reduce((acc, pool) => {
+export const getContractsFromClaimPools = (poolsDetails: PoolDetails[]) =>
+  poolsDetails.reduce((acc, pool) => {
     const [poolName] = Object.keys(pool);
     const { [poolName]: poolDetail } = pool;
 
@@ -11,11 +11,10 @@ export const getContractsFromClaimPools = (poolsDetails: PoolDetails[]) => {
     }
     return acc;
   }, [] as Contract[]);
-};
 
 export const getPoolsDetails = (
   pools: any[],
-  abi: any,
+  abi: ethers.ethers.ContractInterface,
   library: ethers.providers.JsonRpcProvider | ethers.providers.FallbackProvider
 ) =>
   pools.map((pool: any) => {
@@ -29,7 +28,7 @@ export const getPoolsDetails = (
     details[poolName].claimAmount = BigNumber.from(claimAmount);
     details[poolName].hasClaimed = BigNumber.from(claimAmount).isZero();
     details[poolName].isRegistered = isRegistered;
-    details[poolName].claimTime = nextClaimTime;
+    details[poolName].claimTime = new Date(nextClaimTime * 1000);
     details[poolName].isPool = true;
     details[poolName].contractName = poolName.split("_")[0];
 

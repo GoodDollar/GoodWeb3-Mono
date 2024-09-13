@@ -1,10 +1,14 @@
 import React from "react";
-import { Container, HStack, Text, VStack, IContainerProps, Spinner } from "native-base";
+import { Container, HStack, Text, VStack, IContainerProps, Spinner, Link } from "native-base";
 import type { CredentialSubjectsByType } from "@gooddollar/web3sdk-v2";
 
 import { withTheme } from "../../../theme";
-import { TransText, TransTitle, TransHeading, TxModal } from "../../../core";
-import { BaseButton } from "../../../core/buttons";
+
+import { openLink } from "@gooddollar/web3sdk-v2";
+import { TransHeading, TransText, TransTitle } from "../../../core/layout";
+import { TxModal } from "../../../core/web3/modals";
+import { BaseButton, BasePressable } from "../../../core/buttons";
+
 import { GoodIdCard } from "../components";
 import SvgXml from "../../../core/images/SvgXml";
 import DollarSvg from "../../../assets/svg/goodid/dollar.svg";
@@ -139,13 +143,19 @@ export const OnboardScreen = withTheme({ name: "OnboardScreen" })(
             variant="browse-wrap"
             alignSelf={"center"}
             t={
-              /*18n*/ "By clicking on ”I accept, verify me”, you are accepting our Terms of Use and Privacy Policy. Per this policy you agree to let us collect information such as your gender and age."
+              /*18n*/ "By clicking on ”I accept, verify me”, you are accepting our {tos} and {privy}. Per this policy you agree to let us collect information such as your gender and age."
             }
+            values={{
+              tos: <Link href="https://www.gooddollar.org/terms-of-use">Terms of Use</Link>,
+              privy: <Link href="https://www.gooddollar.org/privacy-policy">Privacy Policy</Link>
+            }}
           />
 
           <VStack alignSelf={"center"}>
             <BaseButton onPress={onAccept} text="I ACCEPT, VERIFY ME" maxW={343} variant="standard-blue" />
-            <Text {...poweredBy}>Powered by GoodDollar</Text>
+            <BasePressable onPress={() => openLink("https://gooddollar.org/", "_blank")}>
+              <Text {...poweredBy}>Powered by GoodDollar</Text>
+            </BasePressable>
           </VStack>
         </VStack>
       </Container>

@@ -106,7 +106,7 @@ const GoodIdCard = withTheme({ name: "GoodIdCard", skipProps: "certificates" })(
           {Object.keys(CredentialType)
             .filter((typeName): typeName is Exclude<keyof typeof CredentialType, "Identity"> => typeName !== "Identity")
             .map(typeName => (
-              <View mb="2" width="45%" key={typeName}>
+              <View mb="2" width={typeName === "Location" ? "300%" : "45%"} key={typeName}>
                 <CardRowItem
                   credentialLabel={typeName}
                   credential={{

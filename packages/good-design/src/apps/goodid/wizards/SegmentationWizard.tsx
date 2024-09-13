@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useWizard, Wizard } from "react-use-wizard";
 import { Center, VStack } from "native-base";
 import { useEthers } from "@usedapp/core";
@@ -82,6 +82,7 @@ const SegmentationScreenWrapper = (
 export const SegmentationWizard = (props: SegmentationProps) => {
   const [error, setError] = useState<string | null>(null);
   const { account = "" } = useEthers();
+  const [stepHistory, setStepHistory] = useState<number[]>([0]);
 
   // inject show modal on callbacks exceptions
   const modalOnDone: SegmentationProps["onDone"] = async error => {
@@ -106,9 +107,21 @@ export const SegmentationWizard = (props: SegmentationProps) => {
     console.log("disputedValues", disputedValues);
   };
 
+  const onStepChange = useCallback(
+    (step: number) => {
+      setStepHistory(prev => [...prev, step]);
+    },
+    [stepHistory]
+  );
+
   return (
     <WizardContextProvider>
-      <Wizard header={<WizardHeader withNavBar={props.withNavBar} onDone={modalOnDone} error={error} />}>
+      <Wizard
+        header={
+          <WizardHeader withNavBar={props.withNavBar} onDone={modalOnDone} error={error} stepHistory={stepHistory} />
+        }
+        onStepChange={onStepChange}
+      >
         <SegmentationScreenWrapper
           onDone={modalOnDone}
           onLocationRequest={modalOnLocation}
@@ -118,6 +131,7 @@ export const SegmentationWizard = (props: SegmentationProps) => {
         {/* Optional paths, only shown to users who think there data is wrong */}
         <SegmentationDispute certificateSubjects={props.certificateSubjects} onDispute={onDispute} />
         <DisputeThanks />
+
         {/* Ask permission for matching their data against potential pools  */}
         <OffersAgreement onDataPermission={props.onDataPermission} />
         <SegmentationConfirmation

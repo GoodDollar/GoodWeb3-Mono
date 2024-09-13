@@ -1,5 +1,6 @@
 import React from "react";
 import { HStack, Text, VStack } from "native-base";
+import { TransText } from "./Trans";
 
 const BlueBullet = () => <Text variant="sm-grey" color="primary">{`\u2022`}</Text>;
 
@@ -8,7 +9,7 @@ const BulletPointList = ({ bulletPoints }: { bulletPoints: string[] }) => (
     {bulletPoints.map((copy, index) => (
       <HStack key={index} space={2}>
         <BlueBullet />
-        <Text variant="sm-grey-650">{copy}</Text>
+        <TransText t={copy} variant="sm-grey-650" />
       </HStack>
     ))}
   </VStack>

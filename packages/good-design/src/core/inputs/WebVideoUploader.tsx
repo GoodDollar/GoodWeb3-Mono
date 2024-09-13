@@ -34,9 +34,9 @@ export const WebVideoUploader = ({ onUpload, isLoading }: { onUpload: Props["onD
             } else {
               void onUpload(
                 undefined,
-                new Error(`It seems the video format you uploaded is unsupported. 😕
-Supported formats include: MP4, WEBM, OGG, MOV, 3GP, M4V, AVI, and MKV.
-Please upload your video in one of these formats. Thank you!`)
+                new Error(
+                  /*i18n*/ "It seems the video format you uploaded is unsupported. 😕\nSupported formats include: MP4, WEBM, OGG, MOV, 3GP, M4V, AVI, and MKV.\n Please upload your video in one of these formats. Thank you!"
+                )
               );
               return;
             }

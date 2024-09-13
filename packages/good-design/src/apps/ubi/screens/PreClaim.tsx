@@ -35,20 +35,22 @@ export const PreClaim: FC = () => {
             <Center borderWidth="2" borderColor="borderDarkGrey" px="56px" py="3" borderRadius="8">
               <GdAmount amount={totalAmount} withDefaultSuffix />
             </Center>
-            <Image source={BillyGrin} w="93" h="65" style={{ resizeMode: "contain" }} />
           </VStack>
           <TransactionList transactions={transactionList} onTxDetailsPress={onTxDetailsPress} />
         </VStack>
         <Center>
-          <Web3ActionButton
-            text={/*i18n*/ "Claim Now"}
-            web3Action={onClaim}
-            variant="round"
-            supportedChains={supportedChains}
-            w="160"
-            h="160"
-            // onEvent={onEvent} <-- todo: add event handling
-          />
+          <VStack space={0} alignItems="center">
+            <Image source={BillyGrin} w="93" h="65" style={{ resizeMode: "contain" }} />
+            <Web3ActionButton
+              text={/*i18n*/ "Claim Now"}
+              web3Action={onClaim}
+              variant="round"
+              supportedChains={supportedChains}
+              w="160"
+              h="160"
+              // onEvent={onEvent} <-- todo: add event handling
+            />
+          </VStack>
         </Center>
       </VStack>
       <Center w="full">

@@ -11,22 +11,40 @@ export const WizardHeader = ({
   withNavBar,
   error,
   onClose,
+  stepHistory,
   ...props
 }: {
   onDone: (error?: Error) => Promise<void>;
   withNavBar: boolean;
   error: any;
+  stepHistory?: number[];
   onClose?: any;
 }) => {
-  const { isFirstStep, previousStep, isLastStep, goToStep } = useWizard();
+  const { activeStep, isFirstStep, isLastStep, goToStep, previousStep } = useWizard();
 
   const handleBack = useCallback(() => {
     if (isFirstStep) {
       void onDone();
       return;
     }
+
+    //wip. alternative flow needed for segmentation flow
+    if (stepHistory) {
+      const hasDisputed = [1, 2].some(value => stepHistory.includes(value));
+
+      if (activeStep === 3 && !hasDisputed) {
+        goToStep(0);
+        return;
+      }
+
+      if (activeStep === 4 && hasDisputed) {
+        goToStep(2);
+        return;
+      }
+    }
+
     previousStep();
-  }, [isFirstStep]);
+  }, [isFirstStep, stepHistory]);
 
   return (
     <>

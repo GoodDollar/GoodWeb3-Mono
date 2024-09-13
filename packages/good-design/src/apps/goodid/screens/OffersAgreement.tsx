@@ -1,9 +1,8 @@
 import React from "react";
-import { Center, Container, IContainerProps, VStack } from "native-base";
+import { Center, Container, IContainerProps, Link, VStack } from "native-base";
 import { useWizard } from "react-use-wizard";
 
-import { TransText, TransTitle } from "../../../core/layout";
-import { GoodButton } from "../../../core/buttons";
+import { TransButton, TransText, TransTitle } from "../../../core/layout";
 import { Image } from "../../../core/images";
 
 import BillyGrin from "../../../assets/images/billy-grin.png";
@@ -40,18 +39,23 @@ export const OffersAgreement = withTheme({ name: "OffersAgreement" })(
             <VStack space={6} alignItems="center">
               <TransText
                 t={
-                  /*i18n*/ "By tapping “Yes” you’re allowing GoodLabs Ltd to read your GoodID until its expiration date only to show you offers relevant to you. We will not share your information with anyone. To read  our full Privacy Policy, go to http://gooddollar.org/privacy-policy"
+                  /*i18n*/ "By tapping “Yes” you’re allowing GoodLabs Ltd to read your GoodID until its expiration date only to show you offers relevant to you. We will not share your information with anyone. To read  our full Privacy Policy, go to {privy}"
                 }
                 variant="browse-wrap"
+                values={{
+                  privy: <Link href="https://gooddollar.org/privacy-policy">https://gooddollar.org/privacy-policy</Link>
+                }}
               />
 
               <VStack {...buttonContainer}>
-                <GoodButton onPress={handleYes} width="100%">
-                  <TransText t={/*i18n*/ "yes, i accept"}></TransText>
-                </GoodButton>
-                <GoodButton onPress={handleNo} variant="link-like" _text={{ underline: false }}>
-                  <TransText t={/*i18n*/ "no"} />
-                </GoodButton>
+                <TransButton t={/*i18n*/ "yes, i accept"} onPress={handleYes} width="100%" />
+                <TransButton
+                  t={/*i18n*/ "no"}
+                  width="100%"
+                  onPress={handleNo}
+                  variant="link-like"
+                  _text={{ underline: false }}
+                />
               </VStack>
             </VStack>
           </VStack>

@@ -25,8 +25,6 @@ const SegmentationConfirmation = withTheme({ name: "SegmentationConfirmation" })
     const { nextStep } = useWizard();
     const { innerContainer, button } = styles ?? {};
 
-    // console.log("isWhitelisted -->", { account, isWhitelisted });
-
     return isWhitelisted === undefined || !account ? (
       <LoaderModal title={/*i18n*/ "We are creating \n your GoodID"} overlay="dark" loading={true} onClose={noop} />
     ) : (
