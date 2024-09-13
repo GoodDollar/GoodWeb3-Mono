@@ -2,7 +2,7 @@ import React, { FC, useCallback, useEffect, useRef, useState } from "react";
 import { HStack, Spinner, Text, ITextProps } from "native-base";
 import { useEthers } from "@usedapp/core";
 import BaseButton, { BaseButtonProps } from "../../core/buttons/BaseButton";
-import { withTheme } from "../../theme";
+import { withTheme } from "../../theme/hoc/withTheme";
 import { noop } from "lodash";
 
 export interface Web3ActionProps extends Omit<BaseButtonProps, "onPress"> {
@@ -146,7 +146,7 @@ export const Web3ActionButton: FC<Web3ActionProps> = withTheme({
 
     return (
       <BaseButton text={actionText ? "" : text} onPress={startFlow} {...buttonProps}>
-        {!!actionText && <StepIndicator text={actionText} {...innerIndicatorText} />}
+        {actionText ? <StepIndicator text={actionText} {...innerIndicatorText} /> : null}
       </BaseButton>
     );
   }

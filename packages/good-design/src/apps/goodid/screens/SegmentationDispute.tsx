@@ -6,7 +6,7 @@ import { TransButton, TransTitle } from "../../../core/layout";
 import { Image } from "../../../core/images";
 import { SegmentationRow, typeLabelsDispute as typeLabels } from "../components";
 import { SegmentationProps } from "../wizards";
-import { withTheme } from "../../../theme/hoc";
+import { withTheme } from "../../../theme/hoc/withTheme";
 
 import RoboBilly from "../../../assets/images/robo-billy.png";
 

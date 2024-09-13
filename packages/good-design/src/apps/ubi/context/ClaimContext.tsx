@@ -28,18 +28,21 @@ export const useClaimContext = () => {
 
 const explorerPollLock = new Lock();
 
-export const ClaimProvider: FC<
-  {
-    explorerEndPoints: { [key in keyof typeof SupportedChains]: string };
-    supportedChains: SupportedChains[];
-    withSignModals: boolean;
-    provider?: any;
-    onNews: () => void;
-    onConnect?: () => Promise<boolean>;
-    onSuccess?: () => Promise<void>;
-    onSendTx?: () => void;
-  } & PropsWithChildren
-> = ({
+interface ClaimProviderProps {
+  explorerEndPoints: { [key in keyof typeof SupportedChains]: string };
+  supportedChains: SupportedChains[];
+  withSignModals: boolean;
+  provider?: any;
+  onNews: () => void;
+  onUpgrade: () => void;
+  onConnect?: () => Promise<boolean>;
+  onSuccess?: () => Promise<void>;
+  onSendTx?: () => void;
+  onSwitchChain?: () => Promise<void>;
+  withNewsFeed: boolean;
+}
+
+export const ClaimProvider: FC<PropsWithChildren<ClaimProviderProps>> = ({
   children,
   explorerEndPoints = {
     MAINNET: "https://api.etherscan.io/api?",
@@ -49,10 +52,13 @@ export const ClaimProvider: FC<
   provider,
   supportedChains,
   withSignModals,
+  withNewsFeed = true,
+  onUpgrade,
   onConnect,
   onNews,
   // onSendTx,
-  onSuccess
+  onSuccess,
+  onSwitchChain
 }) => {
   const { account, chainId, library, switchNetwork } = useEthers();
   const [refreshRate, setRefreshRate] = useState<QueryParams["refresh"]>(4);
@@ -119,7 +125,7 @@ export const ClaimProvider: FC<
 
   //Handling of claimable pools
   useEffect(() => {
-    if (isUndefined(poolsDetails === undefined || claimDetails.hasClaimed) || !isUndefined(preClaimPools)) {
+    if (isUndefined(poolsDetails || claimDetails.hasClaimed) || !isUndefined(preClaimPools)) {
       return;
     }
 
@@ -201,6 +207,8 @@ export const ClaimProvider: FC<
         supportedChains: supportedChains ?? [SupportedChains.CELO, SupportedChains.FUSE],
         withSignModals,
         txDetails,
+        withNewsFeed,
+        onUpgrade,
         onNews,
         setTxDetails,
         setError,
@@ -209,7 +217,7 @@ export const ClaimProvider: FC<
         onClaimSuccess,
         onConnect,
         onTxDetailsPress: onTxDetailsPress ?? noop,
-        switchChain // todo: fix handling alt switch
+        switchChain: onSwitchChain ?? switchChain
       }}
     >
       {children}

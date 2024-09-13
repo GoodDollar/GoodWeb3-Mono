@@ -2,12 +2,12 @@ import React from "react";
 import { Container, HStack, Text, VStack, IContainerProps, Spinner, Link } from "native-base";
 import type { CredentialSubjectsByType } from "@gooddollar/web3sdk-v2";
 
-import { withTheme } from "../../../theme";
+import { withTheme } from "../../../theme/hoc/withTheme";
 
 import { openLink } from "@gooddollar/web3sdk-v2";
-import { TransHeading, TransText, TransTitle } from "../../../core/layout";
+import { TransButton, TransHeading, TransText, TransTitle } from "../../../core/layout";
 import { TxModal } from "../../../core/web3/modals";
-import { BaseButton, BasePressable } from "../../../core/buttons";
+import { BasePressable } from "../../../core/buttons";
 
 import { GoodIdCard } from "../components";
 import SvgXml from "../../../core/images/SvgXml";
@@ -151,8 +151,8 @@ export const OnboardScreen = withTheme({ name: "OnboardScreen" })(
             }}
           />
 
-          <VStack alignSelf={"center"}>
-            <BaseButton onPress={onAccept} text="I ACCEPT, VERIFY ME" maxW={343} variant="standard-blue" />
+          <VStack alignItems="center" space={4} width="100%">
+            <TransButton t={/*i18n*/ "I ACCEPT, VERIFY ME"} onPress={onAccept} maxW={"343"} width="100%" />
             <BasePressable onPress={() => openLink("https://gooddollar.org/", "_blank")}>
               <Text {...poweredBy}>Powered by GoodDollar</Text>
             </BasePressable>

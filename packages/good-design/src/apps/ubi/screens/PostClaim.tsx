@@ -33,7 +33,7 @@ const NextClaim = ({ time }: { time: Date }) => {
 };
 
 export const PostClaim: FC = () => {
-  const { claimPools, claimDetails, claimedAlt, poolsDetails, onNews, onTxDetailsPress, switchChain } =
+  const { claimPools, claimDetails, claimedAlt, poolsDetails, withNewsFeed, onNews, onTxDetailsPress, switchChain } =
     useClaimContext();
   const { feed } = useContext(NewsFeedContext);
   const { transactionList } = claimPools ?? {};
@@ -68,7 +68,7 @@ export const PostClaim: FC = () => {
         {nextClaimTime ? <NextClaim time={nextClaimTime} /> : null}
         {!hasClaimed ? (
           <Center>
-            <GoodButton onPress={switchChain} flexDir="row">
+            <GoodButton onPress={() => switchChain(altChain)} flexDir="row">
               <HStack space={2} justifyContent="center" alignItems="center">
                 <Image source={SwitchArrows} alt="switch-arrows" width="6" height="6" />
                 <TransText
@@ -80,22 +80,24 @@ export const PostClaim: FC = () => {
             </GoodButton>
           </Center>
         ) : null}
-        <VStack space={6}>
-          <Center width="375">
-            <NewsFeed direction="column" {...{ feed }} />
-          </Center>
-          <GoodButton variant="link-like" onPress={onNews}>
-            <TransText
-              t={/*i18n*/ "See all news >"}
-              fontFamily="subheading"
-              color="primary"
-              fontSize="ms"
-              fontWeight="700"
-            />
-          </GoodButton>
-        </VStack>
+        {withNewsFeed ? (
+          <VStack space={6}>
+            <Center width="375">
+              <NewsFeed direction="column" {...{ feed }} />
+            </Center>
+            <GoodButton variant="link-like" onPress={onNews}>
+              <TransText
+                t={/*i18n*/ "See all news >"}
+                fontFamily="subheading"
+                color="primary"
+                fontSize="ms"
+                fontWeight="700"
+              />
+            </GoodButton>
+          </VStack>
+        ) : null}
       </VStack>
-      <VStack marginTop={8} space={4} width="375">
+      <VStack mt={8} mb={8} space={4} width="375">
         <VStack width="375">
           <TransTitle t={/*i18n*/ "Recent claims (Last 30 days):"} variant="title-gdblue" fontSize="l" width="100%" />
         </VStack>

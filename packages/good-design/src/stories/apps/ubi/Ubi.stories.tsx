@@ -1,10 +1,14 @@
 import { Center, HStack, Text, VStack } from "native-base";
 import React, { useCallback, useState } from "react";
-import { ClaimProvider, ClaimWizard, PostClaim, TransactionCard } from "../../../apps/ubi";
-import { G$Amount, NewsFeedProvider, SupportedChains } from "@gooddollar/web3sdk-v2";
+import { useEthers } from "@usedapp/core";
 import moment from "moment";
 import { ethers } from "ethers";
+import { G$Amount, GoodIdContextProvider, NewsFeedProvider, SupportedChains } from "@gooddollar/web3sdk-v2";
 
+import { ClaimProvider, ClaimWizard, PostClaim, TransactionCard } from "../../../apps/ubi";
+
+import { NativeBaseProvider, theme } from "../../../theme";
+import { GoodIdProvider } from "../../../apps/goodid";
 import { useGoodUILanguage } from "../../../theme";
 
 import { W3Wrapper } from "../../W3Wrapper";
@@ -22,13 +26,15 @@ export default {
   component: ClaimWizard,
   decorators: [
     (Story: any) => (
-      // <W3Wrapper withMetaMask={true} env="fuse">
-      <NewsFeedProvider env="qa" limit={1}>
-        <VStack alignItems="center">
-          <Story />
-        </VStack>
-      </NewsFeedProvider>
-      // </W3Wrapper>
+      <W3Wrapper withMetaMask={true} env="staging">
+        <NativeBaseProvider theme={theme}>
+          <NewsFeedProvider env="qa" limit={1}>
+            <VStack alignItems="center">
+              <Story />
+            </VStack>
+          </NewsFeedProvider>
+        </NativeBaseProvider>
+      </W3Wrapper>
     )
   ]
 };
@@ -36,34 +42,41 @@ export default {
 export const ClaimFlow = {
   render: (args: any) => {
     const { setLanguage } = useGoodUILanguage();
+    const { account = "", chainId } = useEthers();
 
     return (
-      <W3Wrapper withMetaMask={true} env="staging">
-        {/* For testing purposes we have to be on qa env */}
-        <ClaimProvider
-          withSignModals
-          explorerEndPoints={explorerEndPoints}
-          supportedChains={[SupportedChains.CELO, SupportedChains.FUSE]}
-          {...args.args}
-        >
-          <HStack>
-            <GoodButton onPress={() => setLanguage("en")} backgroundColor="primary" color="white">
-              English
-            </GoodButton>
-            <GoodButton onPress={() => setLanguage("es-419")} backgroundColor="primary" color="white">
-              spanish
-            </GoodButton>
-          </HStack>
+      //   {/* For testing purposes we have to be on qa env */}
+      <GoodIdContextProvider>
+        <GoodIdProvider>
+          <ClaimProvider
+            withSignModals
+            explorerEndPoints={explorerEndPoints}
+            supportedChains={[SupportedChains.CELO, SupportedChains.FUSE]}
+            {...args}
+          >
+            <HStack>
+              <GoodButton onPress={() => setLanguage("en")} backgroundColor="primary" color="white">
+                English
+              </GoodButton>
+              <GoodButton onPress={() => setLanguage("es-419")} backgroundColor="primary" color="white">
+                spanish
+              </GoodButton>
+            </HStack>
 
-          <ClaimWizard {...args} />
-        </ClaimProvider>
-      </W3Wrapper>
+            <ClaimWizard {...args} account={account} chainId={chainId} />
+          </ClaimProvider>
+        </GoodIdProvider>
+      </GoodIdContextProvider>
     );
   },
   args: {
     onNews: () => {
       alert("Should go to news page");
-    }
+    },
+    onUpgrade: () => {
+      alert("Should go to goodid upgrade page");
+    },
+    isDev: true
   }
 };
 

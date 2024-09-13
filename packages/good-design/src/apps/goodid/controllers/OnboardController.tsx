@@ -3,7 +3,9 @@ import { AsyncStorage } from "@gooddollar/web3sdk-v2";
 import { isEmpty, noop } from "lodash";
 import moment from "moment";
 import { IContainerProps, Spinner } from "native-base";
+import { Wizard } from "react-use-wizard";
 
+import { WizardHeader } from "../wizards";
 import { OnboardScreen, OnboardScreenProps } from "../screens/OnboardScreen";
 import { useFVModalAction, useGoodId } from "../../../hooks";
 import { SegmentationController } from "./SegmentationController";
@@ -17,12 +19,13 @@ export interface OnboardControllerProps {
   onFV?: () => void;
   onSkip: () => void;
   onDone: (e?: any) => Promise<void>;
+  onExit: () => void;
 }
 
 export const OnboardController = (
   props: Pick<OnboardScreenProps, "innerContainer" | "fontStyles"> & OnboardControllerProps & IContainerProps
 ) => {
-  const { onFV, onSkip, onDone, account, name, fvSig, withNavBar, isDev = false } = props;
+  const { onDone, onExit, onFV, onSkip, account, name, fvSig, withNavBar, isDev = false } = props;
   const { certificates, certificateSubjects, expiryDate, expiryFormatted, isWhitelisted } = useGoodId(account);
 
   const [isPending, setPendingSignTx] = useState(false);
@@ -32,7 +35,7 @@ export const OnboardController = (
   useEffect(() => {
     if (isEmpty(certificates)) return;
     const hasValidCertificates = certificates.some(cert => cert.certificate);
-    //todo: add check from server: https://github.com/GoodDollar/GoodServer/issues/470
+
     if (hasValidCertificates && !alreadyChecked) {
       onSkip();
       return;
@@ -118,16 +121,18 @@ export const OnboardController = (
     );
 
   return (
-    <OnboardScreen
-      {...{
-        ...props,
-        name,
-        isPending,
-        isWhitelisted,
-        certificateSubjects,
-        expiryDate: expiryFormatted,
-        onAccept: handleShouldFV
-      }}
-    />
+    <Wizard header={<WizardHeader onExit={onExit} withNavBar={props.withNavBar} onDone={onDone} error={undefined} />}>
+      <OnboardScreen
+        {...{
+          ...props,
+          name,
+          isPending,
+          isWhitelisted,
+          certificateSubjects,
+          expiryDate: expiryFormatted,
+          onAccept: handleShouldFV
+        }}
+      />
+    </Wizard>
   );
 };
