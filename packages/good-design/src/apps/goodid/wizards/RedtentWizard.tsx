@@ -196,7 +196,7 @@ const RedtentThanks = ({ dontShowAgainKey, onDone }: { dontShowAgainKey: string;
   // when passed down directly into an inline callback, for some reason the onDone is not being called
   const onPress = async () => {
     await AsyncStorage.setItem(dontShowAgainKey, "true");
-    void onDone();
+    void onDone(true);
   };
 
   return (
