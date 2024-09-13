@@ -50,7 +50,7 @@ const CheckAvailableOffers: FC<CheckAvailableOffersProps> = ({
 
   useEffect(() => {
     if (availableOffers === false || availableOffers?.length === 0) {
-      void onDone?.();
+      void onDone?.(true);
     }
   }, [availableOffers]);
 
