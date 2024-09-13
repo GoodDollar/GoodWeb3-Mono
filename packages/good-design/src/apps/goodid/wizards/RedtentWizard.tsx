@@ -1,6 +1,7 @@
 import { Checkbox, Center, HStack, Text, View, VStack, Box } from "native-base";
 import React, { FC, PropsWithChildren, useCallback, useState } from "react";
 import { Wizard, useWizard } from "react-use-wizard";
+import { AsyncStorage } from "@gooddollar/web3sdk-v2";
 
 import { withTheme } from "../../../theme/hoc/withTheme";
 import ImageCard from "../../../core/layout/ImageCard";
@@ -88,7 +89,7 @@ const PoolRequirements = () => (
   </VStack>
 );
 
-const RedtentOffer = ({ onDone }: { onDone: RedTentProps["onDone"] }) => {
+const RedtentOffer = ({ dontShowAgainKey, onDone }: { onDone: RedTentProps["onDone"]; dontShowAgainKey: string }) => {
   const { nextStep } = useWizard();
   const [showModal, setShowModal] = useState(false);
 
@@ -108,7 +109,7 @@ const RedtentOffer = ({ onDone }: { onDone: RedTentProps["onDone"] }) => {
         action={handleOnDone}
         type="offers"
         onClose={onDone}
-        dontShowAgainKey="goodid_noOffersModalAgain"
+        dontShowAgainKey={dontShowAgainKey}
       />
       <VStack space={10}>
         <TransTitle t={/*i18n*/ "You are eligible for \n additional UBI!"} variant="title-gdblue" />
@@ -191,9 +192,10 @@ const RedtentVideoInstructions = withTheme({ name: "RedtentVideoInstructions" })
   }
 );
 
-const RedtentThanks = ({ onDone }: { onDone: RedTentProps["onDone"] }) => {
+const RedtentThanks = ({ dontShowAgainKey, onDone }: { dontShowAgainKey: string; onDone: RedTentProps["onDone"] }) => {
   // when passed down directly into an inline callback, for some reason the onDone is not being called
-  const onPress = () => {
+  const onPress = async () => {
+    await AsyncStorage.setItem(dontShowAgainKey, "true");
     void onDone();
   };
 
@@ -228,6 +230,7 @@ const RedtentThanks = ({ onDone }: { onDone: RedTentProps["onDone"] }) => {
 export const RedtentWizard: React.FC<RedTentProps> = (props: RedTentProps) => {
   const [error, setError] = useState<Error | undefined>(undefined);
   const { containerStyles, videoInstructStyles } = props;
+  const dontShowAgainKey = "goodid_noOffersModalAgain";
   // inject show modal on callbacks exceptions
   const modalOnDone: RedTentProps["onDone"] = async errorOnDone => {
     try {
@@ -247,9 +250,9 @@ export const RedtentWizard: React.FC<RedTentProps> = (props: RedTentProps) => {
   return (
     <WizardContextProvider>
       <Wizard wrapper={<WizardWrapper {...containerStyles} />}>
-        <RedtentOffer onDone={modalOnDone} />
+        <RedtentOffer onDone={modalOnDone} dontShowAgainKey={dontShowAgainKey} />
         <RedtentVideoInstructions onDone={modalOnDone} onVideo={modalOnVideo} {...videoInstructStyles} />
-        <RedtentThanks onDone={modalOnDone} />
+        <RedtentThanks onDone={modalOnDone} dontShowAgainKey={dontShowAgainKey} />
       </Wizard>
     </WizardContextProvider>
   );
