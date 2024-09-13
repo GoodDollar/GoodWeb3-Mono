@@ -16,11 +16,13 @@ const SegmentationConfirmation = withTheme({ name: "SegmentationConfirmation" })
     isWhitelisted,
     expiryFormatted,
     styles,
+    isWallet,
     onDone,
     ...props
   }: IStackProps &
     Omit<SegmentationProps, "onLocationRequest" | "availableOffers" | "onDataPermission" | "withNavBar"> & {
       styles?: any;
+      isWallet: boolean;
     }) => {
     const { innerContainer, button } = styles ?? {};
 
@@ -37,29 +39,37 @@ const SegmentationConfirmation = withTheme({ name: "SegmentationConfirmation" })
             expiryDate={expiryFormatted}
           />
           <VStack space={0.5} alignItems="center">
-            <TransText
-              t={/*i18n*/ "You can always access this GoodID \n by connecting your current wallet to {gooddapp}"}
-              width="343"
-              values={{
-                gooddapp: (
-                  <Link
-                    padding={0}
-                    background="none"
-                    href="https://gooddapp.org"
-                    _text={{
-                      fontSize: "2xs",
-                      isTruncated: true,
-                      fontFamily: "subheading",
-                      color: "primary",
-                      fontWeight: "600"
-                    }}
-                  >
-                    GoodDapp.
-                  </Link>
-                )
-              }}
-              variant="browse-wrap"
-            />
+            {isWallet ? (
+              <TransText
+                t={/*i18n*/ "You can always access your GoodID in your Profile."}
+                width="343"
+                variant="browse-wrap"
+              />
+            ) : (
+              <TransText
+                t={/*i18n*/ "You can always access this GoodID \n by connecting your current wallet to {gooddapp}"}
+                width="343"
+                values={{
+                  gooddapp: (
+                    <Link
+                      padding={0}
+                      background="none"
+                      href="https://gooddapp.org"
+                      _text={{
+                        fontSize: "2xs",
+                        isTruncated: true,
+                        fontFamily: "subheading",
+                        color: "primary",
+                        fontWeight: "600"
+                      }}
+                    >
+                      GoodDapp.
+                    </Link>
+                  )
+                }}
+                variant="browse-wrap"
+              />
+            )}
           </VStack>
         </VStack>
         <VStack space={4} alignItems="center" width={"100%"}>

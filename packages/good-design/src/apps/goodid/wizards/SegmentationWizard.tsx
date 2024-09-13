@@ -23,6 +23,7 @@ export type SegmentationProps = {
   isWhitelisted?: boolean;
   expiryFormatted: string | undefined;
   isDev?: boolean;
+  isWallet?: boolean;
 };
 
 const SegmentationScreenWrapper = (
@@ -139,7 +140,8 @@ export const SegmentationWizard = (props: SegmentationProps) => {
             onDone: modalOnDone,
             expiryFormatted: props.expiryFormatted,
             isWhitelisted: props.isWhitelisted,
-            certificateSubjects: props.certificateSubjects
+            certificateSubjects: props.certificateSubjects,
+            isWallet: props.isWallet ?? false
           }}
         />
       </Wizard>
