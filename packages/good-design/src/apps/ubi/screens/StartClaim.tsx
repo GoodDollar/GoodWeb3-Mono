@@ -1,22 +1,20 @@
-import React, { FC, useEffect } from "react";
-import { Center, VStack } from "native-base";
-import { useWizard } from "react-use-wizard";
+import React, { FC } from "react";
+import { Center, Spinner, VStack } from "native-base";
+import { isEmpty, noop } from "lodash";
 
 import { TransTitle, TransText } from "../../../core/layout";
 import { Web3ActionButton } from "../../../advanced";
 import { useClaimContext } from "../context";
+import { useGoodId } from "../../../hooks";
 
 export const StartClaim: FC = () => {
-  const { account, chainId, supportedChains, onConnect } = useClaimContext();
-  const { nextStep } = useWizard();
+  const { account, supportedChains, onConnect } = useClaimContext();
+  const { certificates } = useGoodId(account ?? "");
 
-  useEffect(() => {
-    void (async () => {
-      if (account && chainId && supportedChains.includes(chainId)) {
-        await nextStep();
-      }
-    })();
-  }, [account, chainId]);
+  // navigation to either upgrade flow / claim flow / or showing an eligible offer
+  // is handled in the ClaimWizardWrapper
+  // this loader is for awaiting the 'next step decision'
+  if (!isEmpty(certificates) && account) return <Spinner variant="page-loader" />;
 
   return (
     <VStack space="6" alignItems="center">
@@ -43,13 +41,12 @@ export const StartClaim: FC = () => {
           variant="round"
           supportedChains={supportedChains}
           handleConnect={onConnect}
-          web3Action={nextStep}
+          web3Action={noop}
           text={/*i18n*/ "Claim G$"}
           w="220"
           h="220"
         />
       </Center>
-      {/* Add claim-carrousel */}
     </VStack>
   );
 };

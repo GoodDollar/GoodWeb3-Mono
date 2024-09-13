@@ -8,7 +8,7 @@ import {
   useIdentityExpiryDate,
   useIsAddressVerified
 } from "@gooddollar/web3sdk-v2";
-import { HStack, Text, VStack } from "native-base";
+import { HStack, Spinner, Text, VStack } from "native-base";
 import { Wizard } from "react-use-wizard";
 import moment from "moment";
 
@@ -159,15 +159,17 @@ export const OnboardFlowExample: Meta<React.ComponentProps<typeof OnboardControl
     (Story: any) => (
       <GoodUIi18nProvider defaultLanguage="es-419">
         <GoodIdWrapper>
-          <W3Wrapper withMetaMask={true} env="staging">
-            <Story />
-          </W3Wrapper>
+          <GoodIdProvider>
+            <W3Wrapper withMetaMask={true} env="staging">
+              <Story />
+            </W3Wrapper>
+          </GoodIdProvider>
         </GoodIdWrapper>
       </GoodUIi18nProvider>
     )
   ],
   render: args => {
-    // const { account } = useEthers();
+    const { account } = useEthers();
     const { setLanguage } = useGoodUILanguage();
 
     return (
@@ -182,12 +184,11 @@ If you don't see a onboard screen, this means there is still a permission 'tos-a
           <GoodButton onPress={() => setLanguage("en")}>English</GoodButton>
         </HStack>
 
-        <OnboardController {...args} />
+        <OnboardController {...args} account={account ?? ""} />
       </VStack>
     );
   },
   args: {
-    account: "0x5128E3C1f8846724cc1007Af9b4189713922E4BB",
     name: "testuser",
     // onFV: () => alert("onFV"),
     onSkip: () => alert("Already verified, should go to claim-page"),
@@ -195,7 +196,10 @@ If you don't see a onboard screen, this means there is still a permission 'tos-a
       alert("segmentation complemented, should go to claim-page (Available offers not part of this demo-flow)");
       console.log("onDone", e);
     },
-    width: "100%"
+    onExit: () => alert("Should exit the flow"),
+    width: "100%",
+    withNavBar: true,
+    isDev: true
   }
 };
 
@@ -300,7 +304,7 @@ export const CheckAvailableOffersExample: Meta<AvailableOffersPropsAndArgs> = {
   title: "Core/Modals",
   component: CheckAvailableOffers,
   render: args => {
-    const { account } = useEthers();
+    const { account, chainId } = useEthers();
     // const mockPool = [
     //   {
     //     campaign: "RedTent",
@@ -310,6 +314,8 @@ export const CheckAvailableOffersExample: Meta<AvailableOffersPropsAndArgs> = {
     //   }
     // ];
     const { setLanguage } = useGoodUILanguage();
+
+    if (!chainId) return <Spinner variant="page-loader" />;
 
     return (
       <VStack>
@@ -321,6 +327,7 @@ export const CheckAvailableOffersExample: Meta<AvailableOffersPropsAndArgs> = {
           {`If you see finished demo change in the controls the country-code the country of your certificate. \n If you have no certificates, go through the segmentation or onboard flow stories to get one.`}
         </Text>
         <CheckAvailableOffers
+          chainId={chainId}
           account={account ?? args.account}
           onDone={async () => {
             alert("Finished demo");

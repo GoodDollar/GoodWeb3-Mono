@@ -5,6 +5,7 @@ import { Platform } from "react-native";
 import GeoLocation from "@react-native-community/geolocation";
 import usePromise from "react-use-promise";
 import { useLiveQuery } from "dexie-react-hooks";
+import { isEmpty } from "lodash";
 
 import { AsyncStorage } from "../storage";
 import { GoodIdContext } from "../../contexts/goodid/GoodIdContext";
@@ -54,10 +55,10 @@ export const useCertificates = (account: string, onDatabaseUpdated: () => Promis
   const { db } = useContext(GoodIdContext);
 
   const loadCertificates = useLiveQuery(
-    async (types: CredentialType[] | null = null): Promise<CertificateItem[]> =>
+    async (types: CredentialType[] | null = null): Promise<CertificateItem[] | null> =>
       account
         ? queryCertificates(db, account, types).then(certificates => certificates.map(certificateRecordToItem))
-        : [],
+        : null,
     [db, account]
   );
 
@@ -238,6 +239,7 @@ export interface CheckAvailableOffersProps {
   account: string;
   pools: PoolCriteria[];
   isDev: boolean;
+  onSkip?: (skipOffer: boolean) => void;
 }
 
 /**
@@ -247,7 +249,7 @@ export interface CheckAvailableOffersProps {
  * @returns the list of offers the user is eligible for
  * @example
  */
-export const useCheckAvailableOffers = ({ account, pools, isDev }: CheckAvailableOffersProps) => {
+export const useCheckAvailableOffers = ({ account, pools, isDev, onSkip }: CheckAvailableOffersProps) => {
   const certificates = useAggregatedCertificates(account);
   const certificatesSubjects = useCertificatesSubject(certificates);
 
@@ -256,15 +258,17 @@ export const useCheckAvailableOffers = ({ account, pools, isDev }: CheckAvailabl
     []
   );
 
-  const [ignoredActiveoffer] = usePromise(() =>
-    AsyncStorage.getItem("goodid_noOffersModalAgain").then(value => value === "true")
+  const [skipOffer] = usePromise(
+    () => AsyncStorage.getItem("goodid_noOffersModalAgain").then(value => value === "true"),
+    []
   );
 
   return useMemo(() => {
     // keep null until we have fetched everything
-    if (certificates.length === 0 || hasPermission === undefined) return null;
+    if (isEmpty(certificates) || hasPermission === undefined) return null;
 
-    if (!hasPermission || ignoredActiveoffer) {
+    if (!hasPermission || skipOffer) {
+      onSkip?.(true);
       return false;
     }
 

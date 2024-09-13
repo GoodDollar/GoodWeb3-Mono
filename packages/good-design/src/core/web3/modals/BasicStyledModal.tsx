@@ -83,6 +83,8 @@ export const ModalFooterCta = ({
   const onAction = async () => {
     if (dontShowAgainKey && dontShowAgain) {
       await AsyncStorage.setItem(dontShowAgainKey, "true");
+    } else if (dontShowAgainKey) {
+      await AsyncStorage.setItem(dontShowAgainKey, "false");
     }
 
     action();

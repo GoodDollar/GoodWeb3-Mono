@@ -34,6 +34,7 @@ interface ClaimProviderProps {
   withSignModals: boolean;
   provider?: any;
   onNews: () => void;
+  onUpgrade: () => void;
   onConnect?: () => Promise<boolean>;
   onSuccess?: () => Promise<void>;
   onSendTx?: () => void;
@@ -52,6 +53,7 @@ export const ClaimProvider: FC<PropsWithChildren<ClaimProviderProps>> = ({
   supportedChains,
   withSignModals,
   withNewsFeed = true,
+  onUpgrade,
   onConnect,
   onNews,
   // onSendTx,
@@ -123,7 +125,7 @@ export const ClaimProvider: FC<PropsWithChildren<ClaimProviderProps>> = ({
 
   //Handling of claimable pools
   useEffect(() => {
-    if (isUndefined(poolsDetails === undefined || claimDetails.hasClaimed) || !isUndefined(preClaimPools)) {
+    if (isUndefined(poolsDetails || claimDetails.hasClaimed) || !isUndefined(preClaimPools)) {
       return;
     }
 
@@ -206,6 +208,7 @@ export const ClaimProvider: FC<PropsWithChildren<ClaimProviderProps>> = ({
         withSignModals,
         txDetails,
         withNewsFeed,
+        onUpgrade,
         onNews,
         setTxDetails,
         setError,

@@ -12,11 +12,10 @@ import { LoaderModal } from "../../../core/web3/modals";
 import { WizardContext, WizardContextProvider } from "../../../utils/WizardContext";
 import { WizardHeader } from "./WizardHeader";
 import { SegmentationDispute } from "../screens/SegmentationDispute";
-import { CheckAvailableOffers } from "../components";
 
 export type SegmentationProps = {
   onLocationRequest: (locationState: GeoLocation, account: string) => Promise<void>;
-  onDone: (error?: Error) => Promise<void>;
+  onDone: (error?: Error | boolean) => Promise<void>;
   onDataPermission: (accepted: string) => Promise<void>;
   withNavBar: boolean;
   certificateSubjects: any;
@@ -137,18 +136,11 @@ export const SegmentationWizard = (props: SegmentationProps) => {
         <SegmentationConfirmation
           {...{
             account,
+            onDone: modalOnDone,
             expiryFormatted: props.expiryFormatted,
             isWhitelisted: props.isWhitelisted,
             certificateSubjects: props.certificateSubjects
           }}
-        />
-        {/* if offers available it will handle the offers flow. 
-        If no offers, or the flow is finished, handle next-step through onDone */}
-        <CheckAvailableOffers
-          withNavBar={props.withNavBar}
-          account={account}
-          onDone={modalOnDone}
-          isDev={props.isDev}
         />
       </Wizard>
     </WizardContextProvider>

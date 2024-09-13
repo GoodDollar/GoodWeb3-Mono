@@ -5,11 +5,14 @@ import { Spinner } from "native-base";
 import { RedtentController } from "../controllers/RedtentController";
 import { isNull } from "lodash";
 
-interface CheckAvailableOffersProps {
+export interface CheckAvailableOffersProps {
   account: string;
-  onDone: (e?: Error) => Promise<void>;
   withNavBar: boolean;
+  chainId: number;
   isDev?: boolean;
+  onDone: (e?: Error | boolean | undefined) => Promise<void>;
+  onSkip?: (skipOffer: boolean) => void;
+  onError?: (e: Error | undefined) => void;
   // pools: any;
 }
 
@@ -37,12 +40,24 @@ const redtentOffer = [
   // }
 ];
 
-const CheckAvailableOffers: FC<CheckAvailableOffersProps> = ({ account, isDev = false, withNavBar, onDone }) => {
-  const availableOffers = useCheckAvailableOffers({ account, pools: redtentOffer, isDev });
+const CheckAvailableOffers: FC<CheckAvailableOffersProps> = ({
+  account,
+  isDev = false,
+  withNavBar,
+  onDone,
+  onSkip,
+  onError
+}) => {
+  const availableOffers = useCheckAvailableOffers({ account, pools: redtentOffer, isDev, onSkip });
 
   useEffect(() => {
     if (availableOffers === false || availableOffers?.length === 0) {
-      void onDone();
+      if (onSkip) {
+        onSkip(true);
+        return;
+      }
+
+      void onDone?.();
     }
   }, [availableOffers]);
 
@@ -58,7 +73,8 @@ const CheckAvailableOffers: FC<CheckAvailableOffersProps> = ({ account, isDev = 
         withNavBar,
         account,
         availableOffers,
-        onDone
+        onDone,
+        onError
       }}
     />
   );

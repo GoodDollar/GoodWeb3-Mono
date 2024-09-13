@@ -14,11 +14,10 @@ import RedTentCard from "../../../assets/images/redtentcard.png";
 import BillyPhone from "../../../assets/images/billy-phone.png";
 import { cardShadow } from "../../../theme";
 
-import { WizardHeader } from ".";
-
 export type RedTentProps = {
   onVideo: (base64: string, extension: string) => Promise<void>;
-  onDone: (error?: Error) => Promise<void>;
+  onDone: (error?: Error | boolean) => Promise<void>;
+  onError?: (error: Error | undefined) => void;
   withNavBar: boolean;
   containerStyles?: any;
   headerStyles?: any;
@@ -99,7 +98,7 @@ const RedtentOffer = ({ onDone }: { onDone: RedTentProps["onDone"] }) => {
 
   const handleOnDone = () => {
     setShowModal(false);
-    void onDone();
+    void onDone(true);
   };
 
   return (
@@ -228,13 +227,13 @@ const RedtentThanks = ({ onDone }: { onDone: RedTentProps["onDone"] }) => {
 
 export const RedtentWizard: React.FC<RedTentProps> = (props: RedTentProps) => {
   const [error, setError] = useState<Error | undefined>(undefined);
-  const { containerStyles, headerStyles, videoInstructStyles } = props;
+  const { containerStyles, videoInstructStyles } = props;
   // inject show modal on callbacks exceptions
-  const modalOnDone: RedTentProps["onDone"] = async error => {
+  const modalOnDone: RedTentProps["onDone"] = async errorOnDone => {
     try {
-      await props.onDone(error);
+      await props.onDone(errorOnDone);
     } catch (e: any) {
-      setError(e.message);
+      props.onError && props.onError(error);
     }
   };
   const modalOnVideo: RedTentProps["onVideo"] = async (...args) => {
@@ -247,10 +246,7 @@ export const RedtentWizard: React.FC<RedTentProps> = (props: RedTentProps) => {
 
   return (
     <WizardContextProvider>
-      <Wizard
-        header={<WizardHeader withNavBar={props.withNavBar} onDone={modalOnDone} error={error} {...headerStyles} />}
-        wrapper={<WizardWrapper {...containerStyles} />}
-      >
+      <Wizard wrapper={<WizardWrapper {...containerStyles} />}>
         <RedtentOffer onDone={modalOnDone} />
         <RedtentVideoInstructions onDone={modalOnDone} onVideo={modalOnVideo} {...videoInstructStyles} />
         <RedtentThanks onDone={modalOnDone} />

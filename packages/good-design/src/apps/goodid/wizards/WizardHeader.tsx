@@ -12,6 +12,7 @@ export const WizardHeader = ({
   error,
   onClose,
   stepHistory,
+  onExit,
   ...props
 }: {
   onDone: (error?: Error) => Promise<void>;
@@ -19,10 +20,16 @@ export const WizardHeader = ({
   error: any;
   stepHistory?: number[];
   onClose?: any;
+  onExit?: () => void;
 }) => {
-  const { activeStep, isFirstStep, isLastStep, goToStep, previousStep } = useWizard();
+  const { activeStep, isFirstStep, isLastStep, stepCount, goToStep, previousStep } = useWizard();
 
   const handleBack = useCallback(() => {
+    if (onExit) {
+      onExit();
+      return;
+    }
+
     if (isFirstStep) {
       void onDone();
       return;
@@ -57,14 +64,14 @@ export const WizardHeader = ({
           height={12}
           flexDir={"row"}
           width="100%"
-          paddingLeft={isFirstStep || isLastStep ? 0 : 4}
+          paddingLeft={isLastStep && stepCount > 1 ? 0 : 4}
           paddingRight={4}
           mb={6}
           {...props}
         >
           <View position={"relative"} display={"inline"} width={15}>
             <TouchableOpacity onPress={handleBack}>
-              {isLastStep || isFirstStep ? null : <ArrowBackIcon color="white" />}
+              {(isLastStep && stepCount > 1) || (isFirstStep && !onExit) ? null : <ArrowBackIcon color="white" />}
             </TouchableOpacity>
           </View>
 

@@ -2,7 +2,6 @@ import React from "react";
 import { IStackProps, Link, VStack } from "native-base";
 
 import { noop } from "lodash";
-import { useWizard } from "react-use-wizard";
 
 import { TransText, TransTitle } from "../../../core/layout";
 import GoodIdCard from "../components/GoodIdCard";
@@ -17,12 +16,12 @@ const SegmentationConfirmation = withTheme({ name: "SegmentationConfirmation" })
     isWhitelisted,
     expiryFormatted,
     styles,
+    onDone,
     ...props
   }: IStackProps &
-    Omit<SegmentationProps, "onDone" | "onLocationRequest" | "availableOffers" | "onDataPermission" | "withNavBar"> & {
+    Omit<SegmentationProps, "onLocationRequest" | "availableOffers" | "onDataPermission" | "withNavBar"> & {
       styles?: any;
     }) => {
-    const { nextStep } = useWizard();
     const { innerContainer, button } = styles ?? {};
 
     return isWhitelisted === undefined || !account ? (
@@ -64,7 +63,7 @@ const SegmentationConfirmation = withTheme({ name: "SegmentationConfirmation" })
           </VStack>
         </VStack>
         <VStack space={4} alignItems="center" width={"100%"}>
-          <GoodButton width="343" {...button} onPress={nextStep}>
+          <GoodButton width="343" {...button} onPress={onDone}>
             <TransText
               t={/*i18n*/ "Next"}
               color="white"

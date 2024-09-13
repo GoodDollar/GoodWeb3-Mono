@@ -61,7 +61,8 @@ export interface ClaimContextProps {
   onClaim: () => Promise<void>;
   onClaimSuccess: () => Promise<void>;
   onClaimFailed: () => Promise<void>;
-  onConnect?: () => Promise<boolean>;
-  onTxDetailsPress?: (transaction: Transaction) => void;
+  onUpgrade: () => void;
   switchChain: (network: string) => void;
+  onTxDetailsPress?: (transaction: Transaction) => void;
+  onConnect?: () => Promise<boolean>;
 }

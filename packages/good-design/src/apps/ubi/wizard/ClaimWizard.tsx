@@ -1,16 +1,20 @@
-import React, { FC, PropsWithChildren, useCallback, useEffect } from "react";
+import React, { FC, PropsWithChildren, useCallback, useEffect, useState } from "react";
 import { useWizard, Wizard } from "react-use-wizard";
 import { View } from "native-base";
 import { useEthers } from "@usedapp/core";
 import ethers from "ethers";
 
 // import { isTxReject } from "../utils/transactionType";
+import { CheckAvailableOffers, CheckAvailableOffersProps } from "../../goodid";
+import { useGoodId } from "../../../hooks";
 import { StartClaim, PreClaim } from "../screens";
 import { PostClaim } from "../screens/PostClaim";
 import { ErrorModal, TxDetailsModal, TxModal } from "../../../core/web3/modals";
 import { useClaimContext } from "../context/ClaimContext";
+import { isEmpty } from "lodash";
+import { SupportedChains } from "@gooddollar/web3sdk-v2";
 
-const WizardWrapper: FC<PropsWithChildren> = ({ children }) => {
+const WizardWrapper: FC<PropsWithChildren<{ skipOffer: Error | boolean | undefined }>> = ({ skipOffer, children }) => {
   const {
     claimDetails,
     claimFlowStatus,
@@ -19,6 +23,7 @@ const WizardWrapper: FC<PropsWithChildren> = ({ children }) => {
     poolsDetails,
     txDetails,
     withSignModals,
+    onUpgrade,
     setTxDetails,
     setError,
     onClaimSuccess,
@@ -29,6 +34,7 @@ const WizardWrapper: FC<PropsWithChildren> = ({ children }) => {
   const lastStep = stepCount - 1;
   const { isClaiming, isClaimingDone, error: claimError, remainingClaims, claimReceipts } = claimFlowStatus;
   const { transaction, isOpen } = txDetails;
+  const { certificates } = useGoodId(account ?? "");
 
   const customTitle = {
     title: /*i18n*/ {
@@ -59,12 +65,22 @@ const WizardWrapper: FC<PropsWithChildren> = ({ children }) => {
   useEffect(() => {
     if (!account) {
       goToStep(0);
-    }
-  }, [account]);
+    } else if (chainId === SupportedChains.FUSE) {
+      goToStep(1);
+    } else if (account && chainId && !isEmpty(certificates)) {
+      const hasValidCertificates = certificates.some(cert => cert.certificate);
 
-  useEffect(() => {
-    goToStep(1);
-  }, [/* used*/ chainId]);
+      if (hasValidCertificates) {
+        if (skipOffer) {
+          goToStep(2);
+        } else {
+          goToStep(1);
+        }
+      } else {
+        onUpgrade();
+      }
+    }
+  }, [account, /*used*/ chainId, certificates, skipOffer]);
 
   return (
     <View>
@@ -97,10 +113,30 @@ const WizardWrapper: FC<PropsWithChildren> = ({ children }) => {
   );
 };
 
-export const ClaimWizard: FC<any> = () => (
-  <Wizard wrapper={<WizardWrapper />}>
-    <StartClaim />
-    <PreClaim />
-    <PostClaim />
-  </Wizard>
-);
+export const ClaimWizard: FC<Omit<CheckAvailableOffersProps, "onDone">> = ({
+  account,
+  chainId,
+  isDev = false,
+  withNavBar = false
+}) => {
+  const [skipOffer, setSkipOffer] = useState<Error | boolean | undefined>(false);
+
+  const onSkip = useCallback(
+    async (offerSkipped: Error | boolean | undefined) => {
+      setSkipOffer(offerSkipped);
+    },
+    [skipOffer]
+  );
+
+  return (
+    <Wizard wrapper={<WizardWrapper skipOffer={skipOffer} />}>
+      <StartClaim />
+      {chainId === SupportedChains.CELO ? (
+        <CheckAvailableOffers {...{ account, chainId, isDev, onDone: onSkip, onSkip, withNavBar }} />
+      ) : null}
+
+      <PreClaim />
+      <PostClaim />
+    </Wizard>
+  );
+};
