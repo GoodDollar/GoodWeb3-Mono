@@ -56,6 +56,7 @@ export interface ClaimContextProps {
   txDetails: { transaction: any; isOpen: boolean };
   withNewsFeed?: boolean;
   onNews: () => void;
+  onReset: () => void;
   setTxDetails: (tx: any) => void;
   setError: (error: string | undefined) => void;
   onClaim: () => Promise<void>;

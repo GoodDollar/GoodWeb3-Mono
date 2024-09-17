@@ -7,14 +7,15 @@ import { Web3ActionButton } from "../../../advanced";
 import { useClaimContext } from "../context";
 import { useGoodId } from "../../../hooks";
 
-export const StartClaim: FC = () => {
-  const { account, supportedChains, onConnect } = useClaimContext();
+export const StartClaim: FC<{ connectedAccount: string }> = ({ connectedAccount }) => {
+  const { account, chainId, supportedChains, onConnect } = useClaimContext();
   const { certificates } = useGoodId(account ?? "");
 
   // navigation to either upgrade flow / claim flow / or showing an eligible offer
   // is handled in the ClaimWizardWrapper
   // this loader is for awaiting the 'next step decision'
-  if (!isEmpty(certificates) && account) return <Spinner variant="page-loader" />;
+  if ((!isEmpty(certificates) || !chainId) && (account || connectedAccount))
+    return <Spinner variant="page-loader" size="lg" />;
 
   return (
     <VStack space="6" alignItems="center">

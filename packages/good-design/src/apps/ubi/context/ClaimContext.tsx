@@ -90,7 +90,7 @@ export const ClaimProvider: FC<PropsWithChildren<ClaimProviderProps>> = ({
     switchNetwork(SupportedChains[claimedAlt.altChain as keyof typeof SupportedChains]).catch((e: any) => {
       if (e.code === 4902) {
         // toggleNetworkModal()
-        //todo: discuss how to handle this
+        //todo: add network modal for gooddapp
       }
     });
   }, [switchNetwork, claimedAlt]);
@@ -107,6 +107,12 @@ export const ClaimProvider: FC<PropsWithChildren<ClaimProviderProps>> = ({
     setClaimPools(undefined);
   }, [errorMessage]);
 
+  const onReset = useCallback(() => {
+    setClaimPools(undefined);
+    setPostClaimPools(undefined);
+    void fetchPools();
+  }, [onSuccess, chainId, account]);
+
   const onClaimSuccess = useCallback(async () => {
     // should handle what happens after all claims are done (eg. showing a next-task modal)
     // if nothing is done, it will just silently finish
@@ -118,9 +124,7 @@ export const ClaimProvider: FC<PropsWithChildren<ClaimProviderProps>> = ({
   }, [onSuccess]);
 
   useEffect(() => {
-    setClaimPools(undefined);
-    setPostClaimPools(undefined);
-    void fetchPools();
+    onReset();
   }, [/*used*/ chainId, /*used*/ account]);
 
   //Handling of claimable pools
@@ -209,6 +213,7 @@ export const ClaimProvider: FC<PropsWithChildren<ClaimProviderProps>> = ({
         txDetails,
         withNewsFeed,
         onUpgrade,
+        onReset,
         onNews,
         setTxDetails,
         setError,

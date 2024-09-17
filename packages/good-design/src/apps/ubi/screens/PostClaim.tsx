@@ -14,27 +14,73 @@ import { GoodButton } from "../../../core/buttons";
 import BillyHearts from "../../../assets/gifs/billy-hearts.gif";
 import SwitchArrows from "../../../assets/svg/switch-arrows.svg";
 
-const NextClaim = ({ time }: { time: Date }) => {
-  const [nextClaim, , setClaimTime] = useTimer(time);
+const getEarliestClaimTime = (times: Date[], claimTime: Date) => {
+  const allTimes = [...times, claimTime];
+  const earliestTime = allTimes.reduce((prev, curr) => (prev < curr ? prev : curr));
 
-  useEffect(() => setClaimTime(time), [time.toString()]);
+  return moment(earliestTime).toDate();
+};
+
+const NextClaim = ({
+  poolTimes,
+  claimTime,
+  onReset
+}: {
+  poolTimes: Date[] | undefined;
+  claimTime: Date;
+  onReset?: () => void;
+}) => {
+  const [earliestNextTime, setEarliestTime] = React.useState<Date | undefined>(undefined);
+  const [nextClaim, , setClaimTime] = useTimer(earliestNextTime);
+
+  useEffect(() => {
+    if (earliestNextTime) {
+      const earliestMoment = moment(earliestNextTime);
+
+      if (earliestMoment.isBefore(moment())) {
+        onReset?.();
+      }
+    }
+
+    const nextClaim = poolTimes && !isEmpty(poolTimes) ? getEarliestClaimTime(poolTimes, claimTime) : claimTime;
+
+    setEarliestTime(nextClaim);
+  }, [poolTimes, claimTime]);
+
+  useEffect(() => setClaimTime(earliestNextTime), [earliestNextTime?.toString()]);
 
   return (
     <VStack alignItems="center">
-      <Image source={BillyHearts} alt="billy-hearts" width="100" height="120" />
-      <VStack space={0} backgroundColor="goodGrey.400" borderRadius="100" w="160" h="160" justifyContent="center">
-        <TransText t={/*i18n*/ "Your Next Claim"} textAlign="center" variant="sm-white-normal" />
-        <Text textAlign="center" fontFamily="heading" fontWeight="700" fontSize="l" color="white">
-          {nextClaim}
-        </Text>
-      </VStack>
+      {nextClaim ? (
+        <>
+          <Image source={BillyHearts} alt="billy-hearts" width="100" height="120" />
+          <VStack space={0} backgroundColor="goodGrey.400" borderRadius="100" w="160" h="160" justifyContent="center">
+            <TransText t={/*i18n*/ "Your Next Claim"} textAlign="center" variant="sm-white-normal" />
+
+            <Text textAlign="center" fontFamily="heading" fontWeight="700" fontSize="l" color="white">
+              {nextClaim}
+            </Text>
+          </VStack>
+        </>
+      ) : (
+        <Spinner variant="page-loader" size="lg" />
+      )}
     </VStack>
   );
 };
 
 export const PostClaim: FC = () => {
-  const { claimPools, claimDetails, claimedAlt, poolsDetails, withNewsFeed, onNews, onTxDetailsPress, switchChain } =
-    useClaimContext();
+  const {
+    claimPools,
+    claimDetails,
+    claimedAlt,
+    poolsDetails,
+    withNewsFeed,
+    onNews,
+    onReset,
+    onTxDetailsPress,
+    switchChain
+  } = useClaimContext();
   const { feed } = useContext(NewsFeedContext);
   const { transactionList } = claimPools ?? {};
 
@@ -42,14 +88,6 @@ export const PostClaim: FC = () => {
 
   const { claimTime, isWhitelisted } = claimDetails;
   const poolTimes: Date[] | undefined = poolsDetails?.map(obj => Object.values(obj)[0].claimTime);
-
-  const getEarliestClaimTime = (times: Date[]) => {
-    const allTimes = [...times, claimTime];
-    const earliestTime = allTimes.reduce((prev, curr) => (prev < curr ? prev : curr));
-    return moment(earliestTime).toDate();
-  };
-
-  const nextClaimTime = poolTimes && !isEmpty(poolTimes) ? getEarliestClaimTime(poolTimes) : claimTime;
 
   if ((isWhitelisted as any) === undefined || transactionList === undefined)
     return <Spinner variant="page-loader" size="lg" />;
@@ -65,7 +103,7 @@ export const PostClaim: FC = () => {
         alignItems="center"
       >
         <TransTitle t={/*i18n*/ "You've claimed today"} variant="title-gdblue" fontSize="xl" />
-        {nextClaimTime ? <NextClaim time={nextClaimTime} /> : null}
+        {poolTimes || claimTime ? <NextClaim {...{ claimTime, onReset, poolTimes }} /> : null}
         {!hasClaimed ? (
           <Center>
             <GoodButton onPress={() => switchChain(altChain)} flexDir="row">
