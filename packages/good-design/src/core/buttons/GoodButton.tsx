@@ -25,8 +25,6 @@ export const theme = {
         backgroundColor: "primary:alpha.80"
       },
       backgroundColor: "primary",
-      paddingX: 8,
-      paddingY: 10,
       borderRadius: 24,
       textAlign: "center"
     };

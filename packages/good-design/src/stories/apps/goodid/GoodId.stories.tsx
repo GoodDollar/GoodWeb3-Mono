@@ -8,7 +8,7 @@ import {
   useIdentityExpiryDate,
   useIsAddressVerified
 } from "@gooddollar/web3sdk-v2";
-import { HStack, Text, VStack } from "native-base";
+import { HStack, Spinner, Text, VStack } from "native-base";
 import { Wizard } from "react-use-wizard";
 import moment from "moment";
 
@@ -16,6 +16,7 @@ import { GoodButton } from "../../../core/buttons";
 import { W3Wrapper } from "../../W3Wrapper";
 import { useGoodId } from "../../../hooks/useGoodId";
 import { OffersAgreement } from "../../../apps/goodid/screens/OffersAgreement";
+import { GoodIdProvider } from "../../../apps/goodid/context/GoodIdProvider";
 
 import { CheckAvailableOffers, GoodIdCard } from "../../../apps/goodid";
 import {
@@ -39,18 +40,20 @@ export const GoodIdCardExample = {
     const { certificateSubjects, expiryFormatted, isWhitelisted } = useGoodId(account);
 
     return (
-      <VStack {...args.styles.containerStyles}>
-        <Text variant="browse-wrap" fontSize="sm">
-          For testing purposes. this card is using dev contracts
-        </Text>
-        <GoodIdCard
-          account={account ?? "0x000...0000"}
-          certificateSubjects={certificateSubjects}
-          isWhitelisted={args.isWhitelisted || isWhitelisted}
-          fullname={args.fullName}
-          expiryDate={expiryFormatted}
-        />
-      </VStack>
+      <GoodIdProvider onGoToClaim={() => alert("Should navigate to the claim-page")}>
+        <VStack {...args.styles.containerStyles}>
+          <Text variant="browse-wrap" fontSize="sm">
+            For testing purposes. this card is using dev contracts
+          </Text>
+          <GoodIdCard
+            account={account ?? "0x000...0000"}
+            certificateSubjects={certificateSubjects}
+            isWhitelisted={args.isWhitelisted || isWhitelisted}
+            fullname={args.fullName}
+            expiryDate={expiryFormatted}
+          />
+        </VStack>
+      </GoodIdProvider>
     );
   },
   args: {
@@ -87,26 +90,30 @@ export const SegmentationFlow = {
 
     return (
       <W3Wrapper withMetaMask={true} env={args.env}>
-        <VStack {...args}>
-          <Text variant="browse-wrap" fontSize="sm">
-            For testing purposes. this flow is using staging/QA contracts
-          </Text>
-          <SegmentationController
-            {...{
-              account,
-              isWhitelisted,
-              certificates,
-              certificateSubjects,
-              expiryFormatted,
-              withNavBar: true,
-              isDev: true
-            }}
-            onDone={async (e: any) => {
-              console.log({ e });
-              alert("Segmentation finished");
-            }}
-          />
-        </VStack>
+        <GoodIdProvider onGoToClaim={() => alert("Should navigate to the claim-page")}>
+          <VStack {...args}>
+            <Text variant="browse-wrap" fontSize="sm">
+              For testing purposes. this flow is using staging/QA contracts
+            </Text>
+            <VStack alignItems="center">
+              <SegmentationController
+                {...{
+                  account,
+                  isWhitelisted,
+                  certificates,
+                  certificateSubjects,
+                  expiryFormatted,
+                  withNavBar: true,
+                  isDev: true
+                }}
+                onDone={async (e: any) => {
+                  console.log({ e });
+                  alert("Segmentation finished");
+                }}
+              />
+            </VStack>
+          </VStack>
+        </GoodIdProvider>
       </W3Wrapper>
     );
   },
@@ -118,18 +125,20 @@ export const SegmentationFlow = {
 };
 
 export const OnboardScreenExample = {
-  render: args => {
+  render: (args: any) => {
     const { account = "" } = useEthers();
     const { expiryDate, styles } = args;
     const formattedExpiryTimestamp = moment(expiryDate).format("MMMM DD, YYYY");
     return (
-      <OnboardScreen
-        account={account}
-        onAccept={() => alert("This is just a UI Demo")}
-        {...args}
-        expiryDate={formattedExpiryTimestamp}
-        {...styles}
-      />
+      <GoodIdProvider>
+        <OnboardScreen
+          account={account}
+          onAccept={() => alert("This is just a UI Demo")}
+          {...args}
+          expiryDate={formattedExpiryTimestamp}
+          {...styles}
+        />
+      </GoodIdProvider>
     );
   },
   args: {
@@ -150,15 +159,17 @@ export const OnboardFlowExample: Meta<React.ComponentProps<typeof OnboardControl
     (Story: any) => (
       <GoodUIi18nProvider defaultLanguage="es-419">
         <GoodIdWrapper>
-          <W3Wrapper withMetaMask={true} env="staging">
-            <Story />
-          </W3Wrapper>
+          <GoodIdProvider>
+            <W3Wrapper withMetaMask={true} env="staging">
+              <Story />
+            </W3Wrapper>
+          </GoodIdProvider>
         </GoodIdWrapper>
       </GoodUIi18nProvider>
     )
   ],
   render: args => {
-    // const { account } = useEthers();
+    const { account } = useEthers();
     const { setLanguage } = useGoodUILanguage();
 
     return (
@@ -173,12 +184,11 @@ If you don't see a onboard screen, this means there is still a permission 'tos-a
           <GoodButton onPress={() => setLanguage("en")}>English</GoodButton>
         </HStack>
 
-        <OnboardController {...args} />
+        <OnboardController {...args} account={account ?? ""} />
       </VStack>
     );
   },
   args: {
-    account: "0x5128E3C1f8846724cc1007Af9b4189713922E4BB",
     name: "testuser",
     // onFV: () => alert("onFV"),
     onSkip: () => alert("Already verified, should go to claim-page"),
@@ -186,7 +196,10 @@ If you don't see a onboard screen, this means there is still a permission 'tos-a
       alert("segmentation complemented, should go to claim-page (Available offers not part of this demo-flow)");
       console.log("onDone", e);
     },
-    width: "100%"
+    onExit: () => alert("Should exit the flow"),
+    width: "100%",
+    withNavBar: true,
+    isDev: true
   }
 };
 
@@ -211,17 +224,19 @@ export const SegmentationConfirmationScreenExample = {
 
     return (
       <W3Wrapper withMetaMask={true}>
-        <Wizard>
-          <SegmentationConfirmation
-            {...{
-              account,
-              isWhitelisted,
-              idExpiry: { expiryDate, state },
-              certificateSubjects
-            }}
-            {...args}
-          />
-        </Wizard>
+        <GoodIdProvider>
+          <Wizard>
+            <SegmentationConfirmation
+              {...{
+                account,
+                isWhitelisted,
+                idExpiry: { expiryDate, state },
+                certificateSubjects
+              }}
+              {...args}
+            />
+          </Wizard>
+        </GoodIdProvider>
       </W3Wrapper>
     );
   },
@@ -289,7 +304,7 @@ export const CheckAvailableOffersExample: Meta<AvailableOffersPropsAndArgs> = {
   title: "Core/Modals",
   component: CheckAvailableOffers,
   render: args => {
-    const { account } = useEthers();
+    const { account, chainId } = useEthers();
     // const mockPool = [
     //   {
     //     campaign: "RedTent",
@@ -299,6 +314,8 @@ export const CheckAvailableOffersExample: Meta<AvailableOffersPropsAndArgs> = {
     //   }
     // ];
     const { setLanguage } = useGoodUILanguage();
+
+    if (!chainId) return <Spinner variant="page-loader" />;
 
     return (
       <VStack>
@@ -310,6 +327,7 @@ export const CheckAvailableOffersExample: Meta<AvailableOffersPropsAndArgs> = {
           {`If you see finished demo change in the controls the country-code the country of your certificate. \n If you have no certificates, go through the segmentation or onboard flow stories to get one.`}
         </Text>
         <CheckAvailableOffers
+          chainId={chainId}
           account={account ?? args.account}
           onDone={async () => {
             alert("Finished demo");

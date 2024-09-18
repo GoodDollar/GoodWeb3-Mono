@@ -1,14 +1,15 @@
 import React from "react";
 import { noop } from "lodash";
-import { Text } from "native-base";
 import { TransactionStatus } from "@usedapp/core";
 
+import { TransText } from "../../layout";
 import BasicStyledModal from "./BasicStyledModal";
 import { LearnButton } from "../../buttons";
 
 interface ITxModalProps {
   type: "send" | "sign" | "identity";
   isPending: boolean;
+  customTitle?: { title: { id: string; values: any } };
   onClose?: () => void;
   title?: string;
   content?: string;
@@ -17,7 +18,8 @@ interface ITxModalProps {
 const txModalCopy = {
   sign: {
     title: /*i18n*/ "Please sign with \n your wallet",
-    content: /*i18n*/ "To complete this action, sign with your wallet."
+    content:
+      /*i18n*/ "To complete this action, sign with your wallet. It can take a moment for a transaction to be validated."
   },
   identity: {
     title: /*i18n*/ "Please sign with \n your wallet",
@@ -30,9 +32,15 @@ const txModalCopy = {
   }
 };
 
-const TxModalContent = ({ content }: { content: string }) => <Text variant="sm-grey-650">{content}</Text>;
+const TxModalContent = ({ content }: { content: string }) => <TransText t={content} variant="sm-grey-650" />;
 
-export const TxModal: React.FC<ITxModalProps> = ({ isPending, onClose = noop, type, ...props }) => {
+export const TxModal: React.FC<ITxModalProps> = ({
+  isPending,
+  onClose = noop,
+  customTitle,
+  type,
+  ...props
+}: ITxModalProps) => {
   const { title, content } = txModalCopy[type];
   return (
     <BasicStyledModal
@@ -40,11 +48,11 @@ export const TxModal: React.FC<ITxModalProps> = ({ isPending, onClose = noop, ty
       type="learn"
       show={isPending}
       onClose={onClose}
-      title={title}
+      title={customTitle ?? title}
       body={<TxModalContent content={content} />}
       footer={<LearnButton type={type} />}
       withOverlay="dark"
-      withCloseButton
+      withCloseButton={false}
     />
   );
 };

@@ -1,8 +1,8 @@
 import React, { useMemo } from "react";
 import { Center, IStackProps, HStack, Text, View, VStack } from "native-base";
-import { CredentialType } from "@gooddollar/web3sdk-v2";
+import { CredentialType, CredentialSubjectsByType, AsyncStorage } from "@gooddollar/web3sdk-v2";
 
-import { withTheme } from "../../../theme";
+import { withTheme } from "../../../theme/hoc/withTheme";
 import SvgXml from "../../../core/images/SvgXml";
 import { truncateMiddle } from "../../../utils";
 import { FormattedCertificate, formatVerifiedValues } from "../../../utils/formatVerifiedValues";
@@ -11,11 +11,15 @@ import { Title } from "../../../core/layout";
 import UnknownAvatarSvg from "../../../assets/svg/unknown-avatar.svg";
 import GdVerifiedSvg from "../../../assets/svg/gdverified.svg";
 import GdUnverifiedSvg from "../../../assets/svg/gdunverified.svg";
+import { GoodButton } from "../../../core/buttons";
+import { TransText } from "../../../core/layout";
+import { useGoodIdProvider } from "../context/GoodIdProvider";
+import usePromise from "react-use-promise";
 
 interface GoodIdCardProps extends IStackProps {
   account: string;
   isWhitelisted: boolean;
-  certificateSubjects: any;
+  certificateSubjects: CredentialSubjectsByType;
   avatar?: string;
   fullname?: string;
   expiryDate?: string;
@@ -27,10 +31,12 @@ const CardRowItem = withTheme({ name: "CardRowItem" })(
     credentialLabel,
     credential,
     fontStyles,
+    isNew,
     ...props
   }: {
     credentialLabel: string;
     credential: FormattedCertificate;
+    isNew: boolean;
     fontStyles?: any;
   }) => {
     const { subHeading, subContent } = fontStyles ?? {};
@@ -39,7 +45,6 @@ const CardRowItem = withTheme({ name: "CardRowItem" })(
     const verifiedCopy =
       verifiedValue === `Unverified-${credentialLabel}` ? verifiedValue.split("-")[0] : verifiedValue;
 
-    //todo: handle initial good-id card state (onboard-screen), should show '-' for all values
     return (
       <VStack {...props}>
         <Text variant="sm-grey-650" fontWeight="600" {...subHeading}>
@@ -47,16 +52,18 @@ const CardRowItem = withTheme({ name: "CardRowItem" })(
         </Text>
         <HStack space={1} alignItems="center">
           <Text variant="sm-grey-650" {...subContent}>
-            {verifiedCopy}
+            {isNew ? "-" : verifiedCopy}
           </Text>
 
           <Center mt="-3px">
-            <SvgXml
-              src={!["Unverified"].includes(verifiedCopy) ? GdVerifiedSvg : GdUnverifiedSvg}
-              height="16"
-              width="16"
-              color="purple"
-            />
+            {!isNew ? (
+              <SvgXml
+                src={!["Unverified"].includes(verifiedCopy) ? GdVerifiedSvg : GdUnverifiedSvg}
+                height="16"
+                width="16"
+                color="purple"
+              />
+            ) : null}
           </Center>
         </HStack>
       </VStack>
@@ -66,8 +73,10 @@ const CardRowItem = withTheme({ name: "CardRowItem" })(
 
 const GoodIdCard = withTheme({ name: "GoodIdCard", skipProps: "certificates" })(
   ({ account, isWhitelisted, certificateSubjects, avatar, fullname, expiryDate, ...props }: GoodIdCardProps) => {
+    const { onGoToClaim } = useGoodIdProvider();
     const { title, subHeading, subContent, footer } = props.fontStyles ?? {};
     const truncatedAccount = truncateMiddle(account, 11);
+    const [disputedSubjects] = usePromise(() => AsyncStorage.getItem("goodid_disputedSubjects"), []);
 
     return (
       <VStack variant="shadow-card" paddingBottom={2} {...props}>
@@ -86,11 +95,11 @@ const GoodIdCard = withTheme({ name: "GoodIdCard", skipProps: "certificates" })(
                 </Center>
               )}
             </HStack>
-            {fullname && (
+            {fullname ? (
               <Text variant="sm-grey-650" {...subContent}>
                 {fullname}
               </Text>
-            )}
+            ) : null}
           </VStack>
           <VStack justifyContent="flex-start">
             <SvgXml src={avatar ?? UnknownAvatarSvg} height="56" width="56" />
@@ -101,24 +110,52 @@ const GoodIdCard = withTheme({ name: "GoodIdCard", skipProps: "certificates" })(
           {Object.keys(CredentialType)
             .filter((typeName): typeName is Exclude<keyof typeof CredentialType, "Identity"> => typeName !== "Identity")
             .map(typeName => (
-              <View mb="2" width="45%" key={typeName}>
+              <View mb="2" width={typeName === "Location" ? "300%" : "45%"} key={typeName}>
                 <CardRowItem
                   credentialLabel={typeName}
                   credential={{
                     credentialSubject: certificateSubjects?.[typeName],
-                    typeName: CredentialType[typeName]
+                    typeName: CredentialType[typeName],
+                    disputedSubjects
                   }}
+                  isNew={!certificateSubjects}
                 />
               </View>
             ))}
         </HStack>
-        <HStack>
-          {expiryDate ? (
-            <Text variant="sm-grey-650" fontSize="2xs" {...footer}>
-              {`Expires on ` + expiryDate}
-            </Text>
+        <VStack space={4}>
+          {!certificateSubjects && onGoToClaim ? (
+            <HStack space={0.5}>
+              <TransText
+                t={/*i18n*/ "To upgrade your GoodID, please"}
+                variant="sm-grey-650"
+                fontSize="2xs"
+                {...footer}
+              />
+              <GoodButton padding={0} background="none" onPress={onGoToClaim}>
+                <TransText
+                  fontFamily="subheading"
+                  fontSize="2xs"
+                  fontWeight="600"
+                  color="primary"
+                  t={/*i18n*/ "Claim"}
+                  underline
+                />
+              </GoodButton>
+            </HStack>
           ) : null}
-        </HStack>
+          <HStack>
+            {expiryDate ? (
+              <TransText
+                t={/*i18n*/ "Expires on {expiryDate}"}
+                values={{ expiryDate: expiryDate }}
+                variant="sm-grey-650"
+                fontSize="2xs"
+                {...footer}
+              />
+            ) : null}
+          </HStack>
+        </VStack>
       </VStack>
     );
   }

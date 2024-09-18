@@ -10,9 +10,16 @@ import { GoodButton } from "../buttons";
  * @param t text that needs to be translated
  * @returns Text
  */
-export const TransText = ({ t, ...props }: { t: string } & ITextProps) => (
+export const TransText = ({
+  t,
+  values,
+  comment,
+  ...props
+}: { t: string; values?: any; comment?: string } & ITextProps) => (
   <Text {...props}>
-    <LinguiTrans id={t}>{t}</LinguiTrans>
+    <LinguiTrans id={t} message={t} values={values} comment={comment}>
+      {t}
+    </LinguiTrans>
   </Text>
 );
 
@@ -32,9 +39,11 @@ export const TransHeading = ({ t, ...props }: { t: string } & IHeadingProps) => 
  * @param t text that needs to be translated
  * @returns Title
  */
-export const TransTitle = ({ t, ...props }: { t: string } & ITextProps) => (
+export const TransTitle = ({ t, values, ...props }: { t: string; values?: any } & ITextProps) => (
   <Title {...props}>
-    <LinguiTrans id={t}>{t}</LinguiTrans>
+    <LinguiTrans id={t} values={values}>
+      {t}
+    </LinguiTrans>
   </Title>
 );
 

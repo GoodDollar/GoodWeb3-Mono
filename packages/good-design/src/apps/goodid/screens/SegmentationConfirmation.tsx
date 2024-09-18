@@ -1,15 +1,13 @@
 import React from "react";
-import { IStackProps, VStack, Text } from "native-base";
+import { IStackProps, Link, VStack } from "native-base";
 
 import { noop } from "lodash";
-import { useWizard } from "react-use-wizard";
-import { Trans } from "@lingui/react";
 
-import { Title } from "../../../core/layout";
+import { TransText, TransTitle } from "../../../core/layout";
 import GoodIdCard from "../components/GoodIdCard";
 import { GoodButton } from "../../../core/buttons";
-import { withTheme } from "../../../theme";
-import { LoaderModal } from "../../../core";
+import { withTheme } from "../../../theme/hoc/withTheme";
+import { LoaderModal } from "../../../core/web3/modals";
 import { SegmentationProps } from "../wizards";
 
 const SegmentationConfirmation = withTheme({ name: "SegmentationConfirmation" })(
@@ -18,38 +16,72 @@ const SegmentationConfirmation = withTheme({ name: "SegmentationConfirmation" })
     isWhitelisted,
     expiryFormatted,
     styles,
+    isWallet,
+    onDone,
     ...props
   }: IStackProps &
-    Omit<SegmentationProps, "onDone" | "onLocationRequest" | "availableOffers" | "onDataPermission" | "withNavBar"> & {
+    Omit<SegmentationProps, "onLocationRequest" | "availableOffers" | "onDataPermission" | "withNavBar"> & {
       styles?: any;
+      isWallet: boolean;
     }) => {
-    const { nextStep } = useWizard();
     const { innerContainer, button } = styles ?? {};
 
     return isWhitelisted === undefined || !account ? (
-      <Trans
-        id={"We are creating \n your GoodID"}
-        render={({ translation }: { translation: any }) => (
-          <LoaderModal title={translation} overlay="dark" loading={true} onClose={noop} />
-        )}
-      />
+      <LoaderModal title={/*i18n*/ "We are creating \n your GoodID"} overlay="dark" loading={true} onClose={noop} />
     ) : (
       <VStack space={200} width={"100%"} {...props}>
         <VStack space={6} alignItems="center" {...innerContainer}>
-          <Title variant="title-gdblue">Your GoodID is ready!</Title>
+          <TransTitle t={/*i18n*/ "Your GoodID is ready"} variant="title-gdblue" />
           <GoodIdCard
             certificateSubjects={props.certificateSubjects}
             account={account}
             isWhitelisted={isWhitelisted}
             expiryDate={expiryFormatted}
           />
-          <Text variant="browse-wrap">
-            You can always access this GoodID by connecting your current wallet to GoodDapp.
-          </Text>
+          <VStack space={0.5} alignItems="center">
+            {isWallet ? (
+              <TransText
+                t={/*i18n*/ "You can always access your GoodID in your Profile."}
+                width="343"
+                variant="browse-wrap"
+              />
+            ) : (
+              <TransText
+                t={/*i18n*/ "You can always access this GoodID \n by connecting your current wallet to {gooddapp}"}
+                width="343"
+                values={{
+                  gooddapp: (
+                    <Link
+                      padding={0}
+                      background="none"
+                      href="https://gooddapp.org"
+                      _text={{
+                        fontSize: "2xs",
+                        isTruncated: true,
+                        fontFamily: "subheading",
+                        color: "primary",
+                        fontWeight: "600"
+                      }}
+                    >
+                      GoodDapp.
+                    </Link>
+                  )
+                }}
+                variant="browse-wrap"
+              />
+            )}
+          </VStack>
         </VStack>
         <VStack space={4} alignItems="center" width={"100%"}>
-          <GoodButton width="343" {...button} onPress={nextStep}>
-            Next
+          <GoodButton width="343" {...button} onPress={onDone}>
+            <TransText
+              t={/*i18n*/ "Next"}
+              color="white"
+              textTransform="uppercase"
+              fontWeight="bold"
+              fontSize="sm"
+              fontFamily="subheading"
+            />
           </GoodButton>
         </VStack>
       </VStack>

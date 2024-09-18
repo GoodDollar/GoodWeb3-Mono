@@ -1,9 +1,11 @@
 import { IButtonProps, ITextProps, View } from "native-base";
-import { Button, Text } from "native-base";
+import { Button } from "native-base";
 import { IViewProps } from "native-base/lib/typescript/components/basic/View/types";
 import React from "react";
+
+import { TransText } from "../";
 import { withTheme } from "../../theme/hoc/withTheme";
-import { withThemingTools } from "../../theme/utils/themingTools";
+import { withThemingTools } from "../../theme/utils";
 
 export interface BaseButtonProps extends IButtonProps {
   /**
@@ -21,7 +23,7 @@ const BaseButton = withTheme({ name: "BaseButton" })(
   ({ text, innerText, innerView, onPress, children, ...props }: BaseButtonProps) => (
     <Button onPress={onPress} px={100} {...props}>
       <View {...innerView}>
-        <Text {...innerText}>{text}</Text>
+        <TransText t={text} {...innerText} />
         {children}
       </View>
     </Button>

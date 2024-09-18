@@ -2,19 +2,19 @@ import React from "react";
 import { Checkbox, HStack, VStack } from "native-base";
 import { CredentialSubject, CredentialType } from "@gooddollar/web3sdk-v2";
 
-import { Title } from "../../../core/layout";
+import { Title, TransTitle } from "../../../core/layout";
 import { formatVerifiedValues } from "../../../utils/formatVerifiedValues";
 
 export const typeLabelsDispute = {
-  Gender: /*i18n*/ "I am",
-  Age: /*i18n*/ "Aged",
-  Location: /*i18n*/ "From"
+  Gender: /*i18n*/ { id: "I am", comment: "context: I am (Male/Female)" },
+  Age: /*i18n*/ { id: "Aged", comment: "context: Aged (X years of age)" },
+  Location: /*i18n*/ { id: "From", comment: "context: From (Location)" }
 };
 
 export const typeLabelsSegmentation = {
-  Gender: /*i18n*/ "Are you",
-  Age: /*i18n*/ "Aged",
-  Location: /*i18n*/ "In"
+  Gender: /*i18n*/ { id: "Are you", comment: "context: Are you (Male/Female)" },
+  Age: /*i18n*/ { id: "Aged", comment: "context: Aged (X years of age)" },
+  Location: /*i18n*/ { id: "In", comment: "context: In (Location)" }
 };
 
 const SegmentationRow = ({
@@ -31,7 +31,7 @@ const SegmentationRow = ({
 
   return (
     <VStack space={onCheck ? 2 : undefined}>
-      <Title variant="subtitle-grey">{typeLabels[typeName]}</Title>
+      <TransTitle t={typeLabels[typeName].id} variant="subtitle-grey" />
       {onCheck ? (
         <HStack space={4}>
           <Checkbox

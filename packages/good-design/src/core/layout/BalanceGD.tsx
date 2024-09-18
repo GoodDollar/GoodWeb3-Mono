@@ -109,13 +109,27 @@ export const GdAmount = ({
     suffix: "",
     ...(options || {})
   };
+  const formatAmount = amount.format({
+    thousandSeparator: "",
+    suffix: "",
+    prefix: ""
+  });
 
-  const decimals = amount.currency.decimals;
-  const amountAbbr = abbreviateGd((Number(amount.value) / 10 ** decimals).toString());
+  const amountAbbr = abbreviateGd(formatAmount);
+
+  const isLargeNumber = +formatAmount > 1e6;
+  const fontSize = isLargeNumber ? "sm" : "l";
 
   return (
     <HStack alignItems="flex-end">
-      <Text variant="l-grey-650" fontFamily="heading" color={color} {...props} textTransform="capitalize">
+      <Text
+        variant="l-grey-650"
+        fontSize={fontSize}
+        fontFamily="heading"
+        color={color}
+        {...props}
+        textTransform="capitalize"
+      >
         {withFullBalance ? amount?.format?.(formatOptions) : amountAbbr}
       </Text>
       {withDefaultSuffix ? (

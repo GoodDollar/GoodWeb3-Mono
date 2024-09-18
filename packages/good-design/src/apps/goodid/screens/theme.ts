@@ -19,7 +19,9 @@ const OnboardScreen = {
       poweredBy: {
         underline: true,
         textAlign: "center",
-        fontSize: "2xs"
+        fontSize: "2xs",
+        fontFamily: "subheading",
+        color: "goodGrey.600"
       }
     }
   }

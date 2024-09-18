@@ -1,8 +1,9 @@
 import { Checkbox, Center, HStack, Text, View, VStack, Box } from "native-base";
 import React, { FC, PropsWithChildren, useCallback, useState } from "react";
 import { Wizard, useWizard } from "react-use-wizard";
+import { AsyncStorage } from "@gooddollar/web3sdk-v2";
 
-import { withTheme } from "../../../theme";
+import { withTheme } from "../../../theme/hoc/withTheme";
 import ImageCard from "../../../core/layout/ImageCard";
 import { Image } from "../../../core/images";
 import { WebVideoUploader } from "../../../core/inputs/WebVideoUploader";
@@ -14,11 +15,10 @@ import RedTentCard from "../../../assets/images/redtentcard.png";
 import BillyPhone from "../../../assets/images/billy-phone.png";
 import { cardShadow } from "../../../theme";
 
-import { WizardHeader } from ".";
-
 export type RedTentProps = {
   onVideo: (base64: string, extension: string) => Promise<void>;
-  onDone: (error?: Error) => Promise<void>;
+  onDone: (error?: Error | boolean) => Promise<void>;
+  onError?: (error: Error | undefined) => void;
   withNavBar: boolean;
   containerStyles?: any;
   headerStyles?: any;
@@ -34,7 +34,7 @@ const videoRequirements = [
 
 const videoRestrictions = [/*i18n*/ "Maximum video length 30sec", /*i18n*/ "Maximum size 20mb"];
 const videoUsagePolicy = [
-  /*i18n*/ `Your video may be reviewed by the \n GoodLabs or partner teams for \n verification purposes. Your video \n will not be shared or used publicly, \n and will be erased after a period of \n time.`
+  /*i18n*/ "Your video may be reviewed by the \n GoodLabs or partner teams for \n verification purposes. Your video \n will not be shared or used publicly, \n and will be erased after a period of \n time."
 ];
 
 const WizardWrapper: FC<PropsWithChildren> = ({ children, ...props }) => (
@@ -89,7 +89,7 @@ const PoolRequirements = () => (
   </VStack>
 );
 
-const RedtentOffer = ({ onDone }: { onDone: RedTentProps["onDone"] }) => {
+const RedtentOffer = ({ dontShowAgainKey, onDone }: { onDone: RedTentProps["onDone"]; dontShowAgainKey: string }) => {
   const { nextStep } = useWizard();
   const [showModal, setShowModal] = useState(false);
 
@@ -99,19 +99,19 @@ const RedtentOffer = ({ onDone }: { onDone: RedTentProps["onDone"] }) => {
 
   const handleOnDone = () => {
     setShowModal(false);
-    void onDone();
+    void onDone(true);
   };
 
   return (
     <View>
+      <YouSureModal
+        open={showModal}
+        action={handleOnDone}
+        type="offers"
+        onClose={onDone}
+        dontShowAgainKey={dontShowAgainKey}
+      />
       <VStack space={10}>
-        <YouSureModal
-          open={showModal}
-          action={handleOnDone}
-          type="offers"
-          onClose={onDone}
-          dontShowAgainKey="noOffersModalAgain"
-        />
         <TransTitle t={/*i18n*/ "You are eligible for \n additional UBI!"} variant="title-gdblue" />
         <ImageCard
           variant="offer-card"
@@ -192,10 +192,11 @@ const RedtentVideoInstructions = withTheme({ name: "RedtentVideoInstructions" })
   }
 );
 
-const RedtentThanks = ({ onDone }: { onDone: RedTentProps["onDone"] }) => {
+const RedtentThanks = ({ dontShowAgainKey, onDone }: { dontShowAgainKey: string; onDone: RedTentProps["onDone"] }) => {
   // when passed down directly into an inline callback, for some reason the onDone is not being called
-  const onPress = () => {
-    void onDone();
+  const onPress = async () => {
+    await AsyncStorage.setItem(dontShowAgainKey, "true");
+    void onDone(true);
   };
 
   return (
@@ -228,14 +229,14 @@ const RedtentThanks = ({ onDone }: { onDone: RedTentProps["onDone"] }) => {
 
 export const RedtentWizard: React.FC<RedTentProps> = (props: RedTentProps) => {
   const [error, setError] = useState<Error | undefined>(undefined);
-  const { containerStyles, headerStyles, videoInstructStyles } = props;
+  const { containerStyles, videoInstructStyles } = props;
+  const dontShowAgainKey = "goodid_noOffersModalAgain";
   // inject show modal on callbacks exceptions
-  const modalOnDone: RedTentProps["onDone"] = async error => {
+  const modalOnDone: RedTentProps["onDone"] = async errorOnDone => {
     try {
-      console.log("modalOnDone -- redtent wizard -->", { error, props });
-      await props.onDone(error);
+      await props.onDone(errorOnDone);
     } catch (e: any) {
-      setError(e.message);
+      props.onError && props.onError(error);
     }
   };
   const modalOnVideo: RedTentProps["onVideo"] = async (...args) => {
@@ -248,13 +249,10 @@ export const RedtentWizard: React.FC<RedTentProps> = (props: RedTentProps) => {
 
   return (
     <WizardContextProvider>
-      <Wizard
-        header={<WizardHeader withNavBar={props.withNavBar} onDone={modalOnDone} error={error} {...headerStyles} />}
-        wrapper={<WizardWrapper {...containerStyles} />}
-      >
-        <RedtentOffer onDone={modalOnDone} />
+      <Wizard wrapper={<WizardWrapper {...containerStyles} />}>
+        <RedtentOffer onDone={modalOnDone} dontShowAgainKey={dontShowAgainKey} />
         <RedtentVideoInstructions onDone={modalOnDone} onVideo={modalOnVideo} {...videoInstructStyles} />
-        <RedtentThanks onDone={modalOnDone} />
+        <RedtentThanks onDone={modalOnDone} dontShowAgainKey={dontShowAgainKey} />
       </Wizard>
     </WizardContextProvider>
   );

@@ -1,9 +1,9 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useWizard, Wizard } from "react-use-wizard";
 import { Center, VStack } from "native-base";
 import { useEthers } from "@usedapp/core";
 import { noop } from "lodash";
-import { GeoLocation, useGeoLocation } from "@gooddollar/web3sdk-v2";
+import { AsyncStorage, GeoLocation, useGeoLocation } from "@gooddollar/web3sdk-v2";
 import { Trans } from "@lingui/react";
 
 import { TransButton } from "../../../core/layout";
@@ -12,11 +12,10 @@ import { LoaderModal } from "../../../core/web3/modals";
 import { WizardContext, WizardContextProvider } from "../../../utils/WizardContext";
 import { WizardHeader } from "./WizardHeader";
 import { SegmentationDispute } from "../screens/SegmentationDispute";
-import { CheckAvailableOffers } from "../components";
 
 export type SegmentationProps = {
   onLocationRequest: (locationState: GeoLocation, account: string) => Promise<void>;
-  onDone: (error?: Error) => Promise<void>;
+  onDone: (error?: Error | boolean) => Promise<void>;
   onDataPermission: (accepted: string) => Promise<void>;
   withNavBar: boolean;
   certificateSubjects: any;
@@ -24,6 +23,7 @@ export type SegmentationProps = {
   isWhitelisted?: boolean;
   expiryFormatted: string | undefined;
   isDev?: boolean;
+  isWallet?: boolean;
 };
 
 const SegmentationScreenWrapper = (
@@ -82,6 +82,7 @@ const SegmentationScreenWrapper = (
 export const SegmentationWizard = (props: SegmentationProps) => {
   const [error, setError] = useState<string | null>(null);
   const { account = "" } = useEthers();
+  const [stepHistory, setStepHistory] = useState<number[]>([0]);
 
   // inject show modal on callbacks exceptions
   const modalOnDone: SegmentationProps["onDone"] = async error => {
@@ -104,11 +105,24 @@ export const SegmentationWizard = (props: SegmentationProps) => {
     // should report analytics
     // todo: replace with analytics report, log for 'unused var' eslint
     console.log("disputedValues", disputedValues);
+    await AsyncStorage.setItem("goodid_disputedSubjects", JSON.stringify(disputedValues));
   };
+
+  const onStepChange = useCallback(
+    (step: number) => {
+      setStepHistory(prev => [...prev, step]);
+    },
+    [stepHistory]
+  );
 
   return (
     <WizardContextProvider>
-      <Wizard header={<WizardHeader withNavBar={props.withNavBar} onDone={modalOnDone} error={error} />}>
+      <Wizard
+        header={
+          <WizardHeader withNavBar={props.withNavBar} onDone={modalOnDone} error={error} stepHistory={stepHistory} />
+        }
+        onStepChange={onStepChange}
+      >
         <SegmentationScreenWrapper
           onDone={modalOnDone}
           onLocationRequest={modalOnLocation}
@@ -118,23 +132,18 @@ export const SegmentationWizard = (props: SegmentationProps) => {
         {/* Optional paths, only shown to users who think there data is wrong */}
         <SegmentationDispute certificateSubjects={props.certificateSubjects} onDispute={onDispute} />
         <DisputeThanks />
+
         {/* Ask permission for matching their data against potential pools  */}
         <OffersAgreement onDataPermission={props.onDataPermission} />
         <SegmentationConfirmation
           {...{
             account,
+            onDone: modalOnDone,
             expiryFormatted: props.expiryFormatted,
             isWhitelisted: props.isWhitelisted,
-            certificateSubjects: props.certificateSubjects
+            certificateSubjects: props.certificateSubjects,
+            isWallet: props.isWallet ?? false
           }}
-        />
-        {/* if offers available it will handle the offers flow. 
-        If no offers, or the flow is finished, handle next-step through onDone */}
-        <CheckAvailableOffers
-          withNavBar={props.withNavBar}
-          account={account}
-          onDone={modalOnDone}
-          isDev={props.isDev}
         />
       </Wizard>
     </WizardContextProvider>

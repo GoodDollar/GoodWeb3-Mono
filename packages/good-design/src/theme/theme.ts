@@ -6,7 +6,7 @@ import * as web3modals from "../core/web3/modals/theme";
 import * as advanced from "../advanced/theme";
 import * as nativebase from "./nativebase";
 import * as apps from "../apps/theme";
-import { fontConfig, getPlatformFamilies } from "./fonts";
+import { fontConfig, getPlatformFamilies } from "./utils/fonts";
 
 export const theme = extendTheme({
   fontConfig: getPlatformFamilies(fontConfig),
@@ -99,12 +99,12 @@ export const theme = extendTheme({
     "2xs": 12,
     xs: 14,
     sm: 16,
+    ms: 18,
     md: 20,
     l: 24,
     xl: 30,
     "2xl": 36
   },
-
   components: {
     ...layout,
     ...buttons,
@@ -135,6 +135,20 @@ export const theme = extendTheme({
           color: "goodGreen.300",
           lineHeight: "18.2"
         }),
+        "4xs-grey-400": () => ({
+          fontFamily: "subheading",
+          fontSize: "4xs",
+          color: "goodGrey.400",
+          fontWeight: 500,
+          lineHeight: 12
+        }),
+        "4xs-grey-600": () => ({
+          fontFamily: "subheading",
+          fontSize: "4xs",
+          color: "goodGrey.600",
+          fontWeight: 500,
+          lineHeight: 12
+        }),
         "xs-grey": () => ({
           fontFamily: "subheading",
           fontSize: "xs",
@@ -161,6 +175,13 @@ export const theme = extendTheme({
           fontSize: "sm",
           fontWeight: 400,
           color: "goodGrey.700",
+          lineHeight: 20.8
+        }),
+        "sm-white-normal": () => ({
+          fontFamily: "subheading",
+          fontSize: "sm",
+          fontWeight: "normal",
+          color: "white",
           lineHeight: 20.8
         }),
         "md-grey-700": () => ({

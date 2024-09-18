@@ -7,7 +7,7 @@ import "@formatjs/intl-locale/polyfill";
 import "@formatjs/intl-pluralrules/polyfill";
 
 import { chain, keys, mapValues, omit, pick, toLower } from "lodash";
-import { fontConfig, FontID, getFamiliesUrl } from "./fonts";
+import { fontConfig, FontID, getFamiliesUrl } from "./utils/fonts";
 
 type ILoadFonts = {
   [fontId in FontID]?: boolean;

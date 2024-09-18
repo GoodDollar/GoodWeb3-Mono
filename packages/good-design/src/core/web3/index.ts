@@ -1,5 +1,4 @@
-export * from "./WalletAndChainGuard";
-export * from "./modals/SwitchChainModal";
-export * from "./ExplorerLink";
 export * from "./modals";
+export * from "./WalletAndChainGuard";
+export * from "./ExplorerLink";
 export { default as Converter } from "./Converter";

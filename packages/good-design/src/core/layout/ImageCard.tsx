@@ -4,7 +4,7 @@ import { openLink } from "@gooddollar/web3sdk-v2";
 
 import { BasePressable } from "../buttons";
 import { Image } from "../images";
-import { cardShadow } from "../../theme";
+import { cardShadow } from "../../theme/shadows";
 import { withTheme } from "../../theme/hoc/withTheme";
 import { TransText } from "./Trans";
 
@@ -76,6 +76,11 @@ export const theme = {
       borderLeftColor: "main",
       borderRadius: 6,
       styles: {
+        footer: {
+          display: "flex",
+          width: "100%",
+          alignItems: "flex-end"
+        },
         container: {
           flexDirection: "column",
           height: "310",

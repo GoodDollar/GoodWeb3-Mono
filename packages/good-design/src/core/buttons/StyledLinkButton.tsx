@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "native-base";
 
 import { withTheme } from "../../theme/hoc/withTheme";
-import { TransText } from "../layout";
+import { TransText } from "../";
 
 export const LinkButton = withTheme({ name: "LinkButton" })(
   ({ url, buttonText, onPress, ...styleProps }: { buttonText: string; url?: string; onPress?: () => void }) => (

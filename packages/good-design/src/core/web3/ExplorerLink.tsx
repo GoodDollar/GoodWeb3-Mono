@@ -1,6 +1,7 @@
 import { useConfig } from "@usedapp/core";
 import { createIcon, HStack, Link } from "native-base";
 import React from "react";
+import { Envs, useGetEnvChainId } from "@gooddollar/web3sdk-v2";
 
 const LinkIcon = createIcon({
   viewBox: "0 0 448 512",
@@ -12,8 +13,9 @@ export const ExplorerLink = ({
   addressOrTx,
   text,
   withIcon = true,
-  fontSize = "sm",
-  fontFamily = "subheading",
+  fontStyle = { fontSize: "sm", fontFamily: "subheading", fontWeight: 700 },
+  maxWidth = "100%",
+  isPool = false,
   ...props
 }: {
   chainId: number | undefined;
@@ -21,27 +23,35 @@ export const ExplorerLink = ({
   _icon?: any;
   text?: string;
   withIcon?: boolean;
-  fontSize?: string;
-  fontFamily?: string;
+  fontStyle?: { fontSize: string | number; fontFamily: string; fontWeight: string | number };
+  maxWidth?: string | number;
+  isPool?: boolean;
 }) => {
   const { networks } = useConfig();
+  const { baseEnv } = useGetEnvChainId();
+  const devEnv = baseEnv === "fuse" ? "development" : baseEnv;
+  const { goodCollectiveUrl } = Envs[devEnv];
+
   const network = (networks || []).find(_ => _.chainId === chainId);
-  const link =
-    addressOrTx &&
-    network &&
-    (addressOrTx.length === 42
-      ? network?.getExplorerAddressLink(addressOrTx)
-      : network?.getExplorerTransactionLink(addressOrTx));
+  const { fontSize, fontFamily, fontWeight } = fontStyle;
+
+  const link = isPool
+    ? `${goodCollectiveUrl}collective/${addressOrTx}`
+    : addressOrTx &&
+      network &&
+      (addressOrTx.length === 42
+        ? network?.getExplorerAddressLink(addressOrTx)
+        : network?.getExplorerTransactionLink(addressOrTx));
 
   return link ? (
-    <HStack flex="2 0" alignItems="center" space="1" maxWidth={"100%"}>
+    <HStack flex="2 0" alignItems="center" space="1" maxWidth={maxWidth}>
       <Link
         _text={{
           fontSize: fontSize,
           isTruncated: true,
           fontFamily: fontFamily,
           color: "goodGrey.400",
-          fontWeight: 700
+          fontWeight: fontWeight
         }}
         href={link}
         isExternal

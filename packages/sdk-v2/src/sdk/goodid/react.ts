@@ -5,6 +5,7 @@ import { Platform } from "react-native";
 import GeoLocation from "@react-native-community/geolocation";
 import usePromise from "react-use-promise";
 import { useLiveQuery } from "dexie-react-hooks";
+import { isEmpty } from "lodash";
 
 import { AsyncStorage } from "../storage";
 import { GoodIdContext } from "../../contexts/goodid/GoodIdContext";
@@ -12,7 +13,7 @@ import {
   Certificate,
   CertificateItem,
   CertificateRecord,
-  CredentialSubject,
+  CredentialSubjectsByType,
   CredentialType,
   PoolCriteria
 } from "./types";
@@ -54,10 +55,10 @@ export const useCertificates = (account: string, onDatabaseUpdated: () => Promis
   const { db } = useContext(GoodIdContext);
 
   const loadCertificates = useLiveQuery(
-    async (types: CredentialType[] | null = null): Promise<CertificateItem[]> =>
+    async (types: CredentialType[] | null = null): Promise<CertificateItem[] | null> =>
       account
         ? queryCertificates(db, account, types).then(certificates => certificates.map(certificateRecordToItem))
-        : [],
+        : null,
     [db, account]
   );
 
@@ -195,10 +196,13 @@ export const useIssueCertificates = (account: string | undefined, baseEnv: any) 
 
       try {
         const promises: Promise<CertificateItem>[] = [];
+
         if (location) {
           promises.push(requestLocationCertificate(baseEnv, location, fvsig, account));
         }
+
         promises.push(requestIdentityCertificate(baseEnv, fvsig, account));
+
         const results = await Promise.allSettled(promises);
 
         for (const result of results) {
@@ -220,22 +224,22 @@ export const useIssueCertificates = (account: string | undefined, baseEnv: any) 
  * @param certificates
  * @returns the credential subjects from the certificates
  */
-export const useCertificatesSubject = (certificates: AggregatedCertificate[]) => {
-  return useMemo(() => {
+export const useCertificatesSubject = (certificates: AggregatedCertificate[]) =>
+  useMemo(() => {
     return certificates.reduce((acc, { certificate, typeName }) => {
       if (certificate) {
         acc[typeName] = certificate.credentialSubject;
       }
 
       return acc;
-    }, {} as Record<string, CredentialSubject | undefined>);
+    }, {} as CredentialSubjectsByType);
   }, [certificates]);
-};
 
 export interface CheckAvailableOffersProps {
   account: string;
   pools: PoolCriteria[];
   isDev: boolean;
+  onDone?: (skipOffer: boolean) => void;
 }
 
 /**
@@ -245,7 +249,7 @@ export interface CheckAvailableOffersProps {
  * @returns the list of offers the user is eligible for
  * @example
  */
-export const useCheckAvailableOffers = ({ account, pools, isDev }: CheckAvailableOffersProps) => {
+export const useCheckAvailableOffers = ({ account, pools, isDev, onDone }: CheckAvailableOffersProps) => {
   const certificates = useAggregatedCertificates(account);
   const certificatesSubjects = useCertificatesSubject(certificates);
 
@@ -254,11 +258,17 @@ export const useCheckAvailableOffers = ({ account, pools, isDev }: CheckAvailabl
     []
   );
 
+  const [skipOffer] = usePromise(
+    () => AsyncStorage.getItem("goodid_noOffersModalAgain").then(value => value === "true"),
+    []
+  );
+
   return useMemo(() => {
     // keep null until we have fetched everything
-    if (certificates.length === 0 || hasPermission === undefined) return null;
+    if (isEmpty(certificates) || hasPermission === undefined) return null;
 
-    if (!hasPermission) {
+    if (!hasPermission || skipOffer) {
+      onDone?.(true);
       return false;
     }
 
