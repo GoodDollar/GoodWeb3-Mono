@@ -188,7 +188,7 @@ export const useGetMemberUBIPools = () => {
         return;
       }
 
-      const details = getPoolsDetails(memberUbiPools, pool.abi, library);
+      const details = getPoolsDetails(memberUbiPools as PoolDetails[], pool.abi, library);
 
       setPoolsDetails(details);
     } catch (err: any) {
@@ -258,7 +258,7 @@ export const useClaim = (refresh: QueryParams["refresh"] = "never") => {
     isWhitelisted: first(results[0]?.value) as boolean,
     claimAmount: (first(results[3]?.value) as BigNumber) || undefined,
     hasClaimed: (first(results[3]?.value) as BigNumber)?.isZero(),
-    claimTime: startRef,
+    nextClaimTime: startRef,
     address: ubi?.address,
     contract: ubi,
     contractName: "GoodDollar"

@@ -9,8 +9,7 @@ export type ClaimDetails = {
   isRegistered?: boolean;
   claimAmount?: BigNumber;
   hasClaimed: boolean;
-  claimTime: Date;
-  claimCall: any;
+  nextClaimTime: Date;
   address?: string;
   contractName?: string;
   date?: Moment;
@@ -44,7 +43,7 @@ export interface ClaimContextProps {
   account: string | undefined;
   chainId: number | undefined;
   withSignModals: boolean;
-  claimDetails: Omit<ClaimDetails, "claimCall">;
+  claimDetails: ClaimDetails;
   poolsDetails: PoolDetails[] | undefined;
   loading: boolean;
   poolContracts: Contract[] | undefined;

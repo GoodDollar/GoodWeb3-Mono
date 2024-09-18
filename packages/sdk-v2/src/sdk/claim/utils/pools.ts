@@ -3,35 +3,30 @@ import { PoolDetails } from "../types";
 
 export const getContractsFromClaimPools = (poolsDetails: PoolDetails[]) =>
   poolsDetails.reduce((acc, pool) => {
-    const [poolName] = Object.keys(pool);
-    const { [poolName]: poolDetail } = pool;
-
-    if ("contract" in poolDetail && !poolDetail.hasClaimed) {
-      acc.push(poolDetail.contract);
+    if ("contract" in pool && !pool.hasClaimed) {
+      acc.push(pool.contract);
     }
     return acc;
   }, [] as Contract[]);
 
 export const getPoolsDetails = (
-  pools: any[],
+  pools: { [key: string]: any },
   abi: ethers.ethers.ContractInterface,
   library: ethers.providers.JsonRpcProvider | ethers.providers.FallbackProvider
 ) =>
-  pools.map((pool: any) => {
-    const { claimAmount, contract: address, isRegistered, nextClaimTime } = pool;
-    const poolName = "RedTent_" + address;
-    const contract = new Contract(address, abi, library);
-    const details = { [poolName]: {} as any };
-    const hasClaimed = BigNumber.from(claimAmount).isZero();
+  pools.map((pool: PoolDetails) => {
+    const { claimAmount, contract: c, nextClaimTime } = pool;
+    const contract = typeof c === "string" ? new Contract(c, abi, library) : c;
+    const details = pool;
+    const amount = BigNumber.from(claimAmount);
 
-    details[poolName].address = address;
-    details[poolName].contract = contract;
-    details[poolName].claimAmount = BigNumber.from(claimAmount);
-    details[poolName].hasClaimed = hasClaimed;
-    details[poolName].isRegistered = isRegistered;
-    details[poolName].claimTime = new Date((nextClaimTime + (hasClaimed ? 86400 : 0)) * 1000);
-    details[poolName].isPool = true;
-    details[poolName].contractName = poolName.split("_")[0];
+    details.address = contract.address;
+    details.claimAmount = amount;
+    details.hasClaimed = amount.isZero();
+    details.nextClaimTime = new Date(+nextClaimTime * 1000);
+    details.isPool = true;
+    details.contract = contract;
+    details.contractName = "RedTent";
 
     return details as PoolDetails;
   });

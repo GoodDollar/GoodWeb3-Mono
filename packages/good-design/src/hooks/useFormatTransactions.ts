@@ -18,9 +18,6 @@ export const useFormatClaimTransactions = (
     const formattedTransactions: any = { totalAmount: BigNumber.from("0"), transactionList: [] };
 
     pools?.map((pool: PoolDetails | RecentClaims) => {
-      const [poolName] = Object.keys(pool);
-      const poolDetail = Object.values(pool)[0];
-
       const formatTransaction = (transaction: any) => {
         const {
           address,
@@ -34,7 +31,7 @@ export const useFormatClaimTransactions = (
         const tokenValue = G$Amount("G$", claimAmount, chainId, defaultEnv);
         const trunAddr = truncateMiddle(address, 11);
 
-        const name = contractName ?? poolName;
+        const name = contractName;
         const network = SupportedChains[chainId];
         const displayName = `${name} (${trunAddr})`.trim();
 
@@ -54,10 +51,10 @@ export const useFormatClaimTransactions = (
         });
       };
 
-      if (Array.isArray(poolDetail)) {
-        poolDetail.map((transaction: any) => formatTransaction(transaction));
-      } else if (typeof poolDetail === "object" && poolDetail !== null) {
-        formatTransaction(poolDetail);
+      if (Array.isArray(pool)) {
+        pool.map((transaction: any) => formatTransaction(transaction));
+      } else if (typeof pool === "object" && pool !== null) {
+        formatTransaction(pool);
       }
     });
 

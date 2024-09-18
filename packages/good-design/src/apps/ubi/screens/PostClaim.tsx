@@ -3,6 +3,7 @@ import { Center, HStack, Spinner, Text, VStack } from "native-base";
 import { NewsFeedContext, useTimer } from "@gooddollar/web3sdk-v2";
 import moment from "moment";
 import { isEmpty } from "lodash";
+import { useWizard } from "react-use-wizard";
 
 import { NewsFeed } from "../../newsfeed";
 import { Image } from "../../../core/images";
@@ -23,13 +24,14 @@ const getEarliestClaimTime = (times: Date[], claimTime: Date) => {
 
 const NextClaim = ({
   poolTimes,
-  claimTime,
+  nextClaimTime,
   onReset
 }: {
   poolTimes: Date[] | undefined;
-  claimTime: Date;
+  nextClaimTime: Date;
   onReset?: () => void;
 }) => {
+  const { goToStep } = useWizard();
   const [earliestNextTime, setEarliestTime] = React.useState<Date | undefined>(undefined);
   const [nextClaim, , setClaimTime] = useTimer(earliestNextTime);
 
@@ -39,13 +41,14 @@ const NextClaim = ({
 
       if (earliestMoment.isBefore(moment())) {
         onReset?.();
+        goToStep(2);
       }
     }
 
-    const nextClaim = poolTimes && !isEmpty(poolTimes) ? getEarliestClaimTime(poolTimes, claimTime) : claimTime;
+    const nextClaim = poolTimes && !isEmpty(poolTimes) ? getEarliestClaimTime(poolTimes, nextClaimTime) : nextClaimTime;
 
     setEarliestTime(nextClaim);
-  }, [poolTimes, claimTime]);
+  }, [poolTimes, nextClaimTime]);
 
   useEffect(() => setClaimTime(earliestNextTime), [earliestNextTime?.toString()]);
 
@@ -86,8 +89,8 @@ export const PostClaim: FC = () => {
 
   const { hasClaimed, altChain } = claimedAlt ?? {};
 
-  const { claimTime, isWhitelisted } = claimDetails;
-  const poolTimes: Date[] | undefined = poolsDetails?.map(obj => Object.values(obj)[0].claimTime);
+  const { nextClaimTime, isWhitelisted } = claimDetails;
+  const poolTimes: Date[] | undefined = poolsDetails?.map(pool => pool.nextClaimTime);
 
   if ((isWhitelisted as any) === undefined || transactionList === undefined)
     return <Spinner variant="page-loader" size="lg" />;
@@ -103,7 +106,7 @@ export const PostClaim: FC = () => {
         alignItems="center"
       >
         <TransTitle t={/*i18n*/ "You've claimed today"} variant="title-gdblue" fontSize="xl" />
-        {poolTimes || claimTime ? <NextClaim {...{ claimTime, onReset, poolTimes }} /> : null}
+        {poolTimes || nextClaimTime ? <NextClaim {...{ nextClaimTime, onReset, poolTimes }} /> : null}
         {!hasClaimed ? (
           <Center>
             <GoodButton onPress={() => switchChain(altChain)} flexDir="row">

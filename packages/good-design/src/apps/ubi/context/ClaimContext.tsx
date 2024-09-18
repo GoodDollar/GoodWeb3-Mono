@@ -136,7 +136,7 @@ export const ClaimProvider: FC<PropsWithChildren<ClaimProviderProps>> = ({
     const unclaimedPools = getUnclaimedPools(poolsDetails);
 
     if (account && !loading && !isUndefined(claimDetails.hasClaimed)) {
-      let details: any[] = !claimDetails.hasClaimed ? [{ GoodDollar: claimDetails }] : [];
+      let details: any[] = !claimDetails.hasClaimed ? [claimDetails] : [];
 
       if (!isEmpty(unclaimedPools) && unclaimedPools) {
         details.push(...unclaimedPools);
@@ -146,7 +146,7 @@ export const ClaimProvider: FC<PropsWithChildren<ClaimProviderProps>> = ({
       if (claimFlowStatus.claimReceipts) {
         const alreadyClaimed = claimFlowStatus.claimReceipts.filter(Boolean).map(receipt => receipt.to);
 
-        details = details.filter(pool => !alreadyClaimed.includes(Object.values(pool as PoolDetails)[0].address));
+        details = details.filter((pool: PoolDetails) => !alreadyClaimed.includes(pool.address));
       }
 
       setClaimPools(details);
@@ -187,7 +187,7 @@ export const ClaimProvider: FC<PropsWithChildren<ClaimProviderProps>> = ({
 
         const details: any = [];
 
-        details.push({ GoodDollar: claimTransactionList });
+        details.push(claimTransactionList);
 
         setClaimPools([]);
         setPostClaimPools(details);

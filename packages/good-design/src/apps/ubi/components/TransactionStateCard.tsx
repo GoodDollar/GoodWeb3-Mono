@@ -51,7 +51,7 @@ export const TransactionCard = withTheme({ name: "TransactionCard" })(
             <Center>
               <Image source={networkIcon} w="6" h="6" accessibilityLabel="NetworkIcon" />
             </Center>
-            <HStack flexShrink={1} justifyContent="space-between" width="100%" alignItems="flex-end">
+            <HStack flexShrink={1} justifyContent="space-between" width="100%" alignItems="center">
               <Text fontSize="4xs">{txDate}</Text>
               {tokenValue ? (
                 <GdAmount

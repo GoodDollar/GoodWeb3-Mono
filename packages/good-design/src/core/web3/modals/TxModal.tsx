@@ -18,7 +18,8 @@ interface ITxModalProps {
 const txModalCopy = {
   sign: {
     title: /*i18n*/ "Please sign with \n your wallet",
-    content: /*i18n*/ "To complete this action, sign with your wallet."
+    content:
+      /*i18n*/ "To complete this action, sign with your wallet. It can take a moment for a transaction to be validated."
   },
   identity: {
     title: /*i18n*/ "Please sign with \n your wallet",
