@@ -19,29 +19,17 @@ msgstr ""
 "X-Crowdin-File-ID: 140\n"
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/screens/SegmentationConfirmation.tsx:44
-msgid "You can always access your GoodID in your Profile."
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/screens/SegmentationConfirmation.tsx:50
-msgid ""
-"You can always access this GoodID \n"
-" by connecting your current wallet to {gooddapp}"
-msgstr "Siempre puedes acceder a este GoodID conectando tu billetera actual a {gooddapp}"
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/components/GoodIdCard.tsx:125
+#: src/apps/goodid/components/GoodIdCard.tsx:130
 msgid "To upgrade your GoodID, please"
 msgstr "Para actualizar tu GoodID, por favor"
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/components/GoodIdCard.tsx:136
+#: src/apps/goodid/components/GoodIdCard.tsx:141
 msgid "Claim"
 msgstr "Reclamar"
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/components/GoodIdCard.tsx:145
+#: src/apps/goodid/components/GoodIdCard.tsx:150
 msgid "Expires on {expiryDate}"
 msgstr "Expira el {expiryDate}"
 
@@ -133,27 +121,27 @@ msgid ""
 msgstr "Atención: Solo podrá volver a verificar una nueva dirección de billetera 24 horas despues de haber eliminado su antigua Face Id"
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/screens/OffersAgreement.tsx:29
+#: src/apps/goodid/screens/OffersAgreement.tsx:33
 msgid "You might qualify for extra money disbursements"
 msgstr "Podría calificar para desembolsos de dinero adicionales"
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/screens/OffersAgreement.tsx:32
+#: src/apps/goodid/screens/OffersAgreement.tsx:36
 msgid "Would you like to receive offers specific to you, such as special rewards offers, humanitarian funds, climate relief disbursements, and financial services?"
 msgstr "¿Te gustaría recibir ofertas específicas, tales como ofertas de recompensas especiales, fondos humanitarios, desembolsos de ayuda climática y servicios financieros?"
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/screens/OffersAgreement.tsx:42
+#: src/apps/goodid/screens/OffersAgreement.tsx:46
 msgid "By tapping “Yes” you’re allowing GoodLabs Ltd to read your GoodID until its expiration date only to show you offers relevant to you. We will not share your information with anyone. To read  our full Privacy Policy, go to {privy}"
 msgstr "Pulsando \"Sí\" acepta que GoodLabs Ltd lea su GoodID hasta su fecha de caducidad para mostrarle ofertas relevantes para usted. No compartiremos tu información con nadie. Para leer nuestra Política de Privacidad completa, ve a {privy}"
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/screens/OffersAgreement.tsx:51
+#: src/apps/goodid/screens/OffersAgreement.tsx:55
 msgid "yes, i accept"
 msgstr "sí, acepto"
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/screens/OffersAgreement.tsx:53
+#: src/apps/goodid/screens/OffersAgreement.tsx:57
 msgid "no"
 msgstr "no"
 
@@ -222,6 +210,18 @@ msgstr "Estamos creando tu GoodID"
 #: src/apps/goodid/screens/SegmentationConfirmation.tsx:34
 msgid "Your GoodID is ready"
 msgstr "Tu GoodID está listo"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/SegmentationConfirmation.tsx:44
+msgid "You can always access your GoodID in your Profile."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/SegmentationConfirmation.tsx:50
+msgid ""
+"You can always access this GoodID \n"
+" by connecting your current wallet to {gooddapp}"
+msgstr "Siempre puedes acceder a este GoodID conectando tu billetera actual a {gooddapp}"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/SegmentationDispute.tsx:39
@@ -428,27 +428,27 @@ msgid "An unknown error occurred while claiming"
 msgstr "Se ha producido un error desconocido al reclamar"
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/screens/PostClaim.tsx:26
+#: src/apps/ubi/screens/PostClaim.tsx:58
 msgid "Your Next Claim"
 msgstr "Tu próximo reclamo"
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/screens/PostClaim.tsx:67
+#: src/apps/ubi/screens/PostClaim.tsx:105
 msgid "You've claimed today"
 msgstr "Has reclamado hoy"
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/screens/PostClaim.tsx:75
+#: src/apps/ubi/screens/PostClaim.tsx:113
 msgid "CLAIM ON {altChain}"
 msgstr "Reclamar en {altChain}"
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/screens/PostClaim.tsx:90
+#: src/apps/ubi/screens/PostClaim.tsx:128
 msgid "See all news >"
 msgstr "Ver todas las noticias >"
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/screens/PostClaim.tsx:102
+#: src/apps/ubi/screens/PostClaim.tsx:140
 msgid "Recent claims (Last 30 days):"
 msgstr "Reclamos recientes (últimos 30 días):"
 
@@ -463,19 +463,19 @@ msgid "Claim Now"
 msgstr "Reclama ahora"
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/screens/StartClaim.tsx:22
+#: src/apps/ubi/screens/StartClaim.tsx:23
 msgid "Collect G$"
 msgstr "Recolecta G$"
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/screens/StartClaim.tsx:31
+#: src/apps/ubi/screens/StartClaim.tsx:32
 msgid ""
 "GoodDollar creates free money as a public \n"
 " good, G$ tokens, which you can collect daily."
 msgstr "GoodDollar crea dinero gratuito como bien público, tokens G$, que puedes recolectar diariamente."
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/screens/StartClaim.tsx:45
+#: src/apps/ubi/screens/StartClaim.tsx:46
 msgid "Claim G$"
 msgstr "Reclamar $"
 
