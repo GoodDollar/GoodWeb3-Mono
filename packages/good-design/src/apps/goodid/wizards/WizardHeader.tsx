@@ -6,6 +6,15 @@ import { ArrowBackIcon, View } from "native-base";
 import { ErrorModal } from "../../../core/web3";
 import { TransText } from "../../../core/layout";
 
+/* Step Reference 
+## Segmentation
+0. SegmentationScreen
+1. SegmentationDispute
+2. SegmentationThanks
+3. OffersAgreement
+4. SegmentationConfirmation
+*/
+
 export const WizardHeader = ({
   onDone,
   withNavBar,
@@ -71,7 +80,13 @@ export const WizardHeader = ({
         >
           <View position={"relative"} display={"inline"} width={15}>
             <TouchableOpacity onPress={handleBack}>
-              {(isLastStep && stepCount > 1) || (isFirstStep && !onExit) ? null : <ArrowBackIcon color="white" />}
+              {(isLastStep && stepCount > 1) || // handling wizard with only one step where first/last is equal (eg. onboardwizard)
+              (isFirstStep && !onExit) || // no onExit handler, user has to finish flow to exit
+              // for segmentation:
+              // if user disputes, we don't want the user to navigate back from DisputeThanks
+              (stepHistory && [1, 2].some(value => stepHistory.includes(value)) && activeStep === 2) ? null : (
+                <ArrowBackIcon color="white" />
+              )}
             </TouchableOpacity>
           </View>
 

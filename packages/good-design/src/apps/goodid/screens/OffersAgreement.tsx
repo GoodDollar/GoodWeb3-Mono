@@ -1,6 +1,7 @@
 import React from "react";
 import { Center, Container, IContainerProps, Link, VStack } from "native-base";
 import { useWizard } from "react-use-wizard";
+import { AsyncStorage } from "@gooddollar/web3sdk-v2";
 
 import { TransButton, TransText, TransTitle } from "../../../core/layout";
 import { Image } from "../../../core/images";
@@ -15,7 +16,10 @@ export const OffersAgreement = withTheme({ name: "OffersAgreement" })(
     const resizeMode = image.resizeMode ?? "contain";
 
     const handleNo = () => handleAccept("false");
-    const handleYes = () => handleAccept("true");
+    const handleYes = async () => {
+      await AsyncStorage.removeItem("goodid_disputedSubjects");
+      void handleAccept("true");
+    };
     // we need the offersAgreement acceptance for running checkAvailableOffers
     const handleAccept = async (accepted: string) => {
       await props.onDataPermission(accepted);
