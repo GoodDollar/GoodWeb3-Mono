@@ -1,9 +1,9 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useWizard, Wizard } from "react-use-wizard";
 import { Center, VStack } from "native-base";
-import { useEthers } from "@usedapp/core";
+// import { useEthers } from "@usedapp/core";
 import { noop } from "lodash";
-import { GeoLocation, useGeoLocation } from "@gooddollar/web3sdk-v2";
+import { GeoLocation, useGeoLocation, removePoolMember, useGetEnvChainId } from "@gooddollar/web3sdk-v2";
 import { Trans } from "@lingui/react";
 
 import { TransButton } from "../../../core/layout";
@@ -79,19 +79,32 @@ const SegmentationScreenWrapper = (
   );
 };
 
-export const SegmentationWizard = (props: SegmentationProps) => {
+export const SegmentationWizard = (props: SegmentationProps & { memberUbiPools: any }) => {
+  const { baseEnv } = useGetEnvChainId();
   const [error, setError] = useState<string | null>(null);
-  const { account = "" } = useEthers();
   const [stepHistory, setStepHistory] = useState<number[]>([0]);
+  const [disputed, setDisputed] = useState(false);
 
   // inject show modal on callbacks exceptions
-  const modalOnDone: SegmentationProps["onDone"] = async error => {
-    try {
-      await props.onDone(error);
-    } catch (e: any) {
-      setError(e.message);
-    }
-  };
+  const modalOnDone: SegmentationProps["onDone"] = useCallback(
+    async error => {
+      try {
+        const { memberUbiPools } = props;
+
+        // todo: add check for unverified values in certificateSubjects
+        // const hasUnverified = props.certificateSubjects.some(cert => !cert.verified);
+        console.log("memberUBiPools -- segmentationondone -->", { memberUbiPools, disputed });
+        if (memberUbiPools.length > 0 && disputed) {
+          await removePoolMember(baseEnv, props.account, memberUbiPools);
+        }
+
+        await props.onDone(error);
+      } catch (e: any) {
+        setError(e.message);
+      }
+    },
+    [disputed, props]
+  );
 
   const modalOnLocation: SegmentationProps["onLocationRequest"] = async (...args) => {
     try {
@@ -102,9 +115,10 @@ export const SegmentationWizard = (props: SegmentationProps) => {
   };
 
   const onDispute = async (disputedValues: string[]) => {
+    console.log("disputedValues", disputedValues);
     // should report analytics
     // todo: replace with analytics report, log for 'unused var' eslint
-    console.log("disputedValues", disputedValues);
+    setDisputed(true);
   };
 
   const onStepChange = useCallback(
@@ -136,7 +150,7 @@ export const SegmentationWizard = (props: SegmentationProps) => {
         <OffersAgreement onDataPermission={props.onDataPermission} />
         <SegmentationConfirmation
           {...{
-            account,
+            account: props.account,
             onDone: modalOnDone,
             expiryFormatted: props.expiryFormatted,
             isWhitelisted: props.isWhitelisted,

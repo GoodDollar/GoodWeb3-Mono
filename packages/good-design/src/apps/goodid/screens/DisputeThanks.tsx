@@ -10,6 +10,10 @@ import BillyDispute from "../../../assets/images/billy-dispute.png";
 export const DisputeThanks = () => {
   const { activeStep, goToStep } = useWizard();
 
+  const handleNext = () => {
+    goToStep(activeStep + 2);
+  };
+
   return (
     <VStack space={8} width="100%">
       <VStack space={8}>
@@ -26,13 +30,7 @@ export const DisputeThanks = () => {
         </Center>
       </VStack>
       <VStack space={6} justifyContent="center" alignItems="center">
-        <TransButton
-          t={/*i18n*/ "Next"}
-          width="100%"
-          maxW="343"
-          variant="primary"
-          onPress={() => goToStep(activeStep + 2)}
-        />
+        <TransButton t={/*i18n*/ "Next"} width="100%" maxW="343" variant="primary" onPress={handleNext} />
       </VStack>
     </VStack>
   );

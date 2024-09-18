@@ -85,8 +85,10 @@ export const SegmentationScreen = {
 
 export const SegmentationFlow = {
   render: (args: any) => {
-    const { account = "" } = useEthers();
+    const { account = "", library } = useEthers();
     const { certificates, certificateSubjects, expiryFormatted, isWhitelisted } = useGoodId(account);
+
+    if (!library || !account) return <Spinner variant="page-loader" size="lg" />;
 
     return (
       <W3Wrapper withMetaMask={true} env={args.env}>
@@ -99,6 +101,7 @@ export const SegmentationFlow = {
               <SegmentationController
                 {...{
                   account,
+                  library,
                   isWhitelisted,
                   certificates,
                   certificateSubjects,

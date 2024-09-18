@@ -4,6 +4,7 @@ import { isEmpty, noop } from "lodash";
 import moment from "moment";
 import { IContainerProps, Spinner } from "native-base";
 import { Wizard } from "react-use-wizard";
+import { useEthers } from "@usedapp/core";
 
 import { WizardHeader } from "../wizards";
 import { OnboardScreen, OnboardScreenProps } from "../screens/OnboardScreen";
@@ -26,6 +27,7 @@ export interface OnboardControllerProps {
 export const OnboardController = (
   props: Pick<OnboardScreenProps, "innerContainer" | "fontStyles"> & OnboardControllerProps & IContainerProps
 ) => {
+  const { library } = useEthers();
   const { onDone, onExit, onFV, onSkip, account, name, fvSig, withNavBar, isDev = false, isWallet = false } = props;
   const { certificates, certificateSubjects, expiryDate, expiryFormatted, isWhitelisted } = useGoodId(account);
 
@@ -103,13 +105,14 @@ export const OnboardController = (
     }
   }, [doFV, isWhitelisted, expiryDate]);
 
-  if (isEmpty(certificates)) return <Spinner variant="page-loader" size="lg" />;
+  if (isEmpty(certificates) || !library) return <Spinner variant="page-loader" size="lg" />;
 
   if (accepedTos)
     return (
       <SegmentationController
         {...{
           account,
+          library,
           certificates,
           certificateSubjects,
           expiryFormatted,

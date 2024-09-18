@@ -6,7 +6,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { noop } from "lodash";
 import usePromise from "react-use-promise";
 import GoodCollectiveContracts from "@gooddollar/goodcollective-contracts/releases/deployment.json";
-import { GoodCollectiveSDK } from "@gooddollar/goodcollective-sdk";
 
 import { AsyncStorage } from "../storage/sdk";
 import { EnvKey } from "../base/sdk";
@@ -17,7 +16,7 @@ import { useGetContract, useGetEnvChainId, useReadOnlySDK, useSDK } from "../bas
 import { Envs, SupportedChains, SupportedV2Networks } from "../constants";
 import { useContractFunctionWithDefaultGasFees } from "../base/hooks/useGasFees";
 
-import { getContractsFromClaimPools, getPoolsDetails } from "./utils/pools";
+import { getContractsFromClaimPools, getMemberUbiPools, getPoolsDetails } from "./utils/pools";
 import { PoolDetails } from "./types";
 
 export const useFVLink = (chainId?: number) => {
@@ -179,9 +178,9 @@ export const useGetMemberUBIPools = () => {
         return;
       }
 
-      const sdk = new GoodCollectiveSDK("42220", library as ethers.providers.Provider, { network: "development-celo" });
+      const memberUbiPools = await getMemberUbiPools(library, account);
 
-      const memberUbiPools = await sdk.getMemberUBIPools(account);
+      console.log("memberUbiPools -->", { memberUbiPools });
 
       if (!memberUbiPools || !memberUbiPools.length) {
         setPoolsDetails([]);

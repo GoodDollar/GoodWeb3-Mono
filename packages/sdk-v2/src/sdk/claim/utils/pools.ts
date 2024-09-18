@@ -1,4 +1,6 @@
 import ethers, { BigNumber, Contract } from "ethers";
+import { GoodCollectiveSDK } from "@gooddollar/goodcollective-sdk";
+
 import { PoolDetails } from "../types";
 
 export const getContractsFromClaimPools = (poolsDetails: PoolDetails[]) =>
@@ -35,3 +37,11 @@ export const getPoolsDetails = (
 
     return details as PoolDetails;
   });
+
+export const getMemberUbiPools = async (library: ethers.providers.Provider, account: string) => {
+  const sdk = new GoodCollectiveSDK("42220", library as ethers.providers.Provider, { network: "development-celo" });
+
+  const memberUbiPools = await sdk.getMemberUBIPools(account);
+
+  return memberUbiPools;
+};

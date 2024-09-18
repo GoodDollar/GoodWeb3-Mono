@@ -14,13 +14,14 @@ export const OffersAgreement = withTheme({ name: "OffersAgreement" })(
     const { buttonContainer, image } = styles ?? {};
     const resizeMode = image.resizeMode ?? "contain";
 
-    const handleNo = () => handleAccept("false");
-    const handleYes = () => handleAccept("true");
     // we need the offersAgreement acceptance for running checkAvailableOffers
     const handleAccept = async (accepted: string) => {
       await props.onDataPermission(accepted);
       void nextStep();
     };
+
+    const handleNo = () => handleAccept("false");
+    const handleYes = () => handleAccept("true");
 
     return (
       <>

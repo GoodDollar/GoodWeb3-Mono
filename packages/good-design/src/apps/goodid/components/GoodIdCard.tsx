@@ -53,14 +53,15 @@ const CardRowItem = withTheme({ name: "CardRowItem" })(
           <Text variant="sm-grey-650" {...subContent}>
             {isNew ? "-" : verifiedCopy}
           </Text>
-
           <Center mt="-3px">
-            <SvgXml
-              src={isNew ? "-" : !["Unverified"].includes(verifiedCopy) ? GdVerifiedSvg : GdUnverifiedSvg}
-              height="16"
-              width="16"
-              color="purple"
-            />
+            {!isNew ? (
+              <SvgXml
+                src={isNew ? "-" : !["Unverified"].includes(verifiedCopy) ? GdVerifiedSvg : GdUnverifiedSvg}
+                height="16"
+                width="16"
+                color="purple"
+              />
+            ) : null}
           </Center>
         </HStack>
       </VStack>
@@ -85,17 +86,17 @@ const GoodIdCard = withTheme({ name: "GoodIdCard", skipProps: "certificates" })(
               <Text variant="sm-grey-650" fontWeight="600" {...subHeading}>
                 {truncatedAccount}
               </Text>
-              {isWhitelisted && (
+              {isWhitelisted ? (
                 <Center mt="-3px">
                   <SvgXml src={GdVerifiedSvg} height="16" width="16" />
                 </Center>
-              )}
+              ) : null}
             </HStack>
-            {fullname && (
+            {fullname ? (
               <Text variant="sm-grey-650" {...subContent}>
                 {fullname}
               </Text>
-            )}
+            ) : null}
           </VStack>
           <VStack justifyContent="flex-start">
             <SvgXml src={avatar ?? UnknownAvatarSvg} height="56" width="56" />

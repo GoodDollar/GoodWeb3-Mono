@@ -18,6 +18,8 @@ import {
   PoolCriteria
 } from "./types";
 import { checkCriteriaMatch, requestIdentityCertificate, requestLocationCertificate } from "./sdk";
+// import { g$Request, g$Response, getDevEnv, useGetEnvChainId } from "..";
+// import { Envs } from "../constants";
 
 export interface AggregatedCertificate extends Partial<CertificateItem> {
   key: string; // composite unique key to be used for lists rendering
@@ -252,6 +254,7 @@ export interface CheckAvailableOffersProps {
 export const useCheckAvailableOffers = ({ account, pools, isDev, onDone }: CheckAvailableOffersProps) => {
   const certificates = useAggregatedCertificates(account);
   const certificatesSubjects = useCertificatesSubject(certificates);
+  // const { removeMember } = useRemovePoolMember();
 
   const [hasPermission] = usePromise(
     () => AsyncStorage.getItem("goodid_permission").then(value => value === "true"),
@@ -263,6 +266,8 @@ export const useCheckAvailableOffers = ({ account, pools, isDev, onDone }: Check
     []
   );
 
+  // const [disputed] = usePromise(() => AsyncStorage.getItem("goodid_disputed").then(value => value === true), []);
+
   return useMemo(() => {
     // keep null until we have fetched everything
     if (isEmpty(certificates) || hasPermission === undefined) return null;
@@ -271,6 +276,10 @@ export const useCheckAvailableOffers = ({ account, pools, isDev, onDone }: Check
       onDone?.(true);
       return false;
     }
+
+    // if (disputed) {
+    //   await removeMember({ account, poolAddress: disputed });
+    // }
 
     return pools.filter(pool => {
       return Object.entries(omit(pool, "campaign")).every(([key, criteria]) => {

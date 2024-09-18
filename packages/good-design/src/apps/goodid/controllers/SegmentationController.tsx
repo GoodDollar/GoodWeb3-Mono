@@ -1,17 +1,22 @@
 import React, { useCallback } from "react";
 import {
+  AggregatedCertificate,
   AsyncStorage,
+  getMemberUbiPools,
   useFVLink,
   useIssueCertificates,
-  useGetEnvChainId,
-  AggregatedCertificate
+  useGetEnvChainId
 } from "@gooddollar/web3sdk-v2";
 import { isEmpty } from "lodash";
+import { ethers } from "ethers";
+import usePromise from "react-use-promise";
 
 import { SegmentationProps, SegmentationWizard } from "../wizards/SegmentationWizard";
+import { Spinner } from "native-base";
 
 export const SegmentationController = ({
   account,
+  library,
   certificates,
   certificateSubjects,
   expiryFormatted,
@@ -23,10 +28,12 @@ export const SegmentationController = ({
 }: Omit<SegmentationProps, "onLocationRequest" | "onDataPermission" | "availableOffers"> & {
   fvSig?: string;
   certificates: AggregatedCertificate[];
+  library: ethers.providers.Provider;
 }) => {
   const { baseEnv } = useGetEnvChainId();
   const issueCertificate = useIssueCertificates(account, baseEnv);
   const fvLink = useFVLink();
+  const [memberUbiPools] = usePromise(() => getMemberUbiPools(library, account), []);
 
   const onLocationRequest = useCallback(
     async (locationState: any, account: string) => {
@@ -51,6 +58,8 @@ export const SegmentationController = ({
     await AsyncStorage.setItem("goodid_permission", accepted);
   };
 
+  if (memberUbiPools === undefined) return <Spinner variant="page-loader" size="lg" />;
+
   return (
     <SegmentationWizard
       {...{
@@ -62,7 +71,8 @@ export const SegmentationController = ({
         isWhitelisted,
         onDataPermission,
         withNavBar,
-        isDev
+        isDev,
+        memberUbiPools
       }}
     />
   );

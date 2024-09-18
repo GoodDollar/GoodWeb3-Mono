@@ -134,6 +134,15 @@ export const requestIdentityCertificate = async (
   ) as Promise<any>;
 };
 
+export const removePoolMember = async (baseEnv: string, account: string, poolAddresses: string[]) => {
+  const devEnv = getDevEnv(baseEnv);
+  const { backend } = Envs[devEnv];
+
+  console.log("removed member from pool", { account, poolAddresses, backend });
+  return true;
+  // return fetch(`${backend}/goodid/pool/remove`, g$Request({ account, poolAddresses })).then(g$Response);
+};
+
 type CriteriaMatcher = (certificateSubject: CertificateSubject, criteria: any) => boolean;
 
 const matchLocation: CriteriaMatcher = (certificateSubject, criteria) =>
