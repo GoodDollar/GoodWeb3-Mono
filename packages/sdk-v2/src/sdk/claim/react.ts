@@ -86,7 +86,7 @@ export const useMultiClaim = (poolsDetails: PoolDetails[] | undefined) => {
     const isError = isTxReject(errorMessage) || status === "Exception";
 
     // Error here indicates a transaction failed to be submitted to the blockchain
-    if (status === "Mining" || isError) {
+    if (status === "Success" || isError) {
       const next = poolContracts?.find(c => !claimedContracts.find(cc => cc.contract === c) && c !== contract);
 
       if (!next) {

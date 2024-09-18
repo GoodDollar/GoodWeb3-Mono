@@ -3,7 +3,7 @@ import { useWizard, Wizard } from "react-use-wizard";
 import { Center, VStack } from "native-base";
 import { useEthers } from "@usedapp/core";
 import { noop } from "lodash";
-import { GeoLocation, useGeoLocation } from "@gooddollar/web3sdk-v2";
+import { AsyncStorage, GeoLocation, useGeoLocation } from "@gooddollar/web3sdk-v2";
 import { Trans } from "@lingui/react";
 
 import { TransButton } from "../../../core/layout";
@@ -23,6 +23,7 @@ export type SegmentationProps = {
   isWhitelisted?: boolean;
   expiryFormatted: string | undefined;
   isDev?: boolean;
+  isWallet?: boolean;
 };
 
 const SegmentationScreenWrapper = (
@@ -104,6 +105,7 @@ export const SegmentationWizard = (props: SegmentationProps) => {
     // should report analytics
     // todo: replace with analytics report, log for 'unused var' eslint
     console.log("disputedValues", disputedValues);
+    await AsyncStorage.setItem("goodid_disputedSubjects", JSON.stringify(disputedValues));
   };
 
   const onStepChange = useCallback(
@@ -139,7 +141,8 @@ export const SegmentationWizard = (props: SegmentationProps) => {
             onDone: modalOnDone,
             expiryFormatted: props.expiryFormatted,
             isWhitelisted: props.isWhitelisted,
-            certificateSubjects: props.certificateSubjects
+            certificateSubjects: props.certificateSubjects,
+            isWallet: props.isWallet ?? false
           }}
         />
       </Wizard>

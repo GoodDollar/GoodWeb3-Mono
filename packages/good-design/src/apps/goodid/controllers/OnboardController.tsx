@@ -16,6 +16,7 @@ export interface OnboardControllerProps {
   name?: string | undefined;
   fvSig?: string;
   isDev?: boolean;
+  isWallet?: boolean;
   onFV?: () => void;
   onSkip: () => void;
   onDone: (e?: any) => Promise<void>;
@@ -25,7 +26,7 @@ export interface OnboardControllerProps {
 export const OnboardController = (
   props: Pick<OnboardScreenProps, "innerContainer" | "fontStyles"> & OnboardControllerProps & IContainerProps
 ) => {
-  const { onDone, onExit, onFV, onSkip, account, name, fvSig, withNavBar, isDev = false } = props;
+  const { onDone, onExit, onFV, onSkip, account, name, fvSig, withNavBar, isDev = false, isWallet = false } = props;
   const { certificates, certificateSubjects, expiryDate, expiryFormatted, isWhitelisted } = useGoodId(account);
 
   const [isPending, setPendingSignTx] = useState(false);
@@ -47,6 +48,7 @@ export const OnboardController = (
 
     void (async () => {
       const accepted = await AsyncStorage.getItem("tos-accepted");
+      await AsyncStorage.setItem("goodid_permission", "false");
       setAcceptedTos(accepted);
     })();
   }, [certificates]);
@@ -115,7 +117,8 @@ export const OnboardController = (
           isWhitelisted,
           onDone,
           withNavBar,
-          isDev
+          isDev,
+          isWallet
         }}
       />
     );

@@ -22,13 +22,14 @@ export const getPoolsDetails = (
     const poolName = "RedTent_" + address;
     const contract = new Contract(address, abi, library);
     const details = { [poolName]: {} as any };
+    const hasClaimed = BigNumber.from(claimAmount).isZero();
 
     details[poolName].address = address;
     details[poolName].contract = contract;
     details[poolName].claimAmount = BigNumber.from(claimAmount);
-    details[poolName].hasClaimed = BigNumber.from(claimAmount).isZero();
+    details[poolName].hasClaimed = hasClaimed;
     details[poolName].isRegistered = isRegistered;
-    details[poolName].claimTime = new Date(nextClaimTime * 1000);
+    details[poolName].claimTime = new Date((nextClaimTime + (hasClaimed ? 86400 : 0)) * 1000);
     details[poolName].isPool = true;
     details[poolName].contractName = poolName.split("_")[0];
 

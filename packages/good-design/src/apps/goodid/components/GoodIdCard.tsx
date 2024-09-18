@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { Center, IStackProps, HStack, Text, View, VStack } from "native-base";
-import { CredentialType, CredentialSubjectsByType } from "@gooddollar/web3sdk-v2";
+import { CredentialType, CredentialSubjectsByType, AsyncStorage } from "@gooddollar/web3sdk-v2";
 
 import { withTheme } from "../../../theme/hoc/withTheme";
 import SvgXml from "../../../core/images/SvgXml";
@@ -14,6 +14,7 @@ import GdUnverifiedSvg from "../../../assets/svg/gdunverified.svg";
 import { GoodButton } from "../../../core/buttons";
 import { TransText } from "../../../core/layout";
 import { useGoodIdProvider } from "../context/GoodIdProvider";
+import usePromise from "react-use-promise";
 
 interface GoodIdCardProps extends IStackProps {
   account: string;
@@ -55,12 +56,14 @@ const CardRowItem = withTheme({ name: "CardRowItem" })(
           </Text>
 
           <Center mt="-3px">
-            <SvgXml
-              src={isNew ? "-" : !["Unverified"].includes(verifiedCopy) ? GdVerifiedSvg : GdUnverifiedSvg}
-              height="16"
-              width="16"
-              color="purple"
-            />
+            {!isNew ? (
+              <SvgXml
+                src={!["Unverified"].includes(verifiedCopy) ? GdVerifiedSvg : GdUnverifiedSvg}
+                height="16"
+                width="16"
+                color="purple"
+              />
+            ) : null}
           </Center>
         </HStack>
       </VStack>
@@ -73,6 +76,7 @@ const GoodIdCard = withTheme({ name: "GoodIdCard", skipProps: "certificates" })(
     const { onGoToClaim } = useGoodIdProvider();
     const { title, subHeading, subContent, footer } = props.fontStyles ?? {};
     const truncatedAccount = truncateMiddle(account, 11);
+    const [disputedSubjects] = usePromise(() => AsyncStorage.getItem("goodid_disputedSubjects"), []);
 
     return (
       <VStack variant="shadow-card" paddingBottom={2} {...props}>
@@ -91,11 +95,11 @@ const GoodIdCard = withTheme({ name: "GoodIdCard", skipProps: "certificates" })(
                 </Center>
               )}
             </HStack>
-            {fullname && (
+            {fullname ? (
               <Text variant="sm-grey-650" {...subContent}>
                 {fullname}
               </Text>
-            )}
+            ) : null}
           </VStack>
           <VStack justifyContent="flex-start">
             <SvgXml src={avatar ?? UnknownAvatarSvg} height="56" width="56" />
@@ -111,7 +115,8 @@ const GoodIdCard = withTheme({ name: "GoodIdCard", skipProps: "certificates" })(
                   credentialLabel={typeName}
                   credential={{
                     credentialSubject: certificateSubjects?.[typeName],
-                    typeName: CredentialType[typeName]
+                    typeName: CredentialType[typeName],
+                    disputedSubjects
                   }}
                   isNew={!certificateSubjects}
                 />

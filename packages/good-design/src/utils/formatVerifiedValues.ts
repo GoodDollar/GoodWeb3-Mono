@@ -14,6 +14,7 @@ const getCountryName = (countryCode: string): string => {
 export interface FormattedCertificate {
   credentialSubject: CredentialSubject | undefined;
   typeName: CredentialType;
+  disputedSubjects?: string[];
 }
 
 /* 
@@ -29,9 +30,10 @@ const formatCredentialMapper: { [key in CredentialType]: (cred: CredentialSubjec
   [CredentialType.Identity]: cred => `ID: ${cred.id}`
 };
 
-export const formatVerifiedValues = ({ credentialSubject, typeName }: FormattedCertificate) => {
-  if (!credentialSubject) {
-    const typeKey = getKeyByValue(CredentialType, typeName);
+export const formatVerifiedValues = ({ credentialSubject, typeName, disputedSubjects }: FormattedCertificate) => {
+  const typeKey = getKeyByValue(CredentialType, typeName);
+
+  if (!credentialSubject || (typeKey && disputedSubjects?.includes(typeKey))) {
     return `Unverified-${typeKey}`;
   }
 
