@@ -46,7 +46,7 @@ export const ClaimProvider: FC<PropsWithChildren<ClaimProviderProps>> = ({
   children,
   explorerEndPoints = {
     MAINNET: "https://api.etherscan.io/api?",
-    CELO: "https://api.celoscan.io/api?",
+    CELO: "https://explorer.celo.org/api?",
     FUSE: "https://explorer.fuse.io/api?"
   },
   provider,
