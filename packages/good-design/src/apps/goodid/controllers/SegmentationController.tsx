@@ -19,6 +19,7 @@ export const SegmentationController = ({
   isWhitelisted,
   withNavBar,
   isDev = false,
+  isWallet = false,
   onDone
 }: Omit<SegmentationProps, "onLocationRequest" | "onDataPermission" | "availableOffers"> & {
   fvSig?: string;
@@ -62,7 +63,8 @@ export const SegmentationController = ({
         isWhitelisted,
         onDataPermission,
         withNavBar,
-        isDev
+        isDev,
+        isWallet
       }}
     />
   );

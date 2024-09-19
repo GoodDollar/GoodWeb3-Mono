@@ -132,6 +132,7 @@ export const OnboardScreen = withTheme({ name: "OnboardScreen" })(
                       fontFamily="subheading"
                       fontSize="sm"
                       color="goodGrey.400"
+                      width={343}
                     />
                   </HStack>
                 </VStack>

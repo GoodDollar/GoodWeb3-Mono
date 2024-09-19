@@ -46,7 +46,7 @@ export const WizardHeader = ({
 
     //wip. alternative flow needed for segmentation flow
     if (stepHistory) {
-      const hasDisputed = [1, 2].some(value => stepHistory.includes(value));
+      const hasDisputed = [2].some(value => stepHistory.includes(value));
 
       if (activeStep === 3 && !hasDisputed) {
         goToStep(0);
