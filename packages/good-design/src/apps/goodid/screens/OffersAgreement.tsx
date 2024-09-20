@@ -16,12 +16,11 @@ export const OffersAgreement = withTheme({ name: "OffersAgreement" })(
     const resizeMode = image.resizeMode ?? "contain";
 
     const handleNo = () => handleAccept("false");
-    const handleYes = async () => {
-      await AsyncStorage.removeItem("goodid_disputedSubjects");
-      void handleAccept("true");
-    };
+    const handleYes = async () => void handleAccept("true");
+
     // we need the offersAgreement acceptance for running checkAvailableOffers
     const handleAccept = async (accepted: string) => {
+      await AsyncStorage.removeItem("goodid_disputedSubjects");
       await props.onDataPermission(accepted);
       void nextStep();
     };
