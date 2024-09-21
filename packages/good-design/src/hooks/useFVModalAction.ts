@@ -1,10 +1,10 @@
 import { useFVLink, openLink } from "@gooddollar/web3sdk-v2";
 import { noop } from "lodash";
-import { useCallback, useMemo, useState } from "react";
-import { isAndroid } from "react-device-detect";
+import { useCallback, useState } from "react";
 
 import { FVFlowProps } from "../core";
 import { isTxReject } from "../utils/transactionType";
+import { useRedirectUri } from "./useRedirectUri";
 
 interface FVModalActionProps extends Pick<FVFlowProps, "method" | "firstName"> {
   onClose: () => void;
@@ -35,7 +35,7 @@ export const useFVModalAction = ({
 }: FVModalActionProps) => {
   const fvlink = useFVLink(chainId);
   const [loading, setLoading] = useState(false);
-  const redirectUri = useMemo(() => redirectUrl || (!isAndroid ? document.location.href : ""), [redirectUrl]);
+  const redirectUri = useRedirectUri(redirectUrl);
 
   const verify = useCallback(async () => {
     setLoading(true);
