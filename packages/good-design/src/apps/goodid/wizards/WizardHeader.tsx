@@ -78,7 +78,7 @@ export const WizardHeader = ({
           mb={6}
           {...props}
         >
-          <View position={"relative"} display={"inline"} width={15}>
+          <View position={"relative"} display={"flex"} width={15}>
             <TouchableOpacity onPress={handleBack}>
               {(isLastStep && stepCount > 1) || // handling wizard with only one step where first/last is equal (eg. onboardwizard)
               (isFirstStep && !onExit) || // no onExit handler, user has to finish flow to exit
