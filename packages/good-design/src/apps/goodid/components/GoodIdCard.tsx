@@ -118,7 +118,7 @@ const GoodIdCard = withTheme({ name: "GoodIdCard", skipProps: "certificates" })(
                     typeName: CredentialType[typeName],
                     disputedSubjects
                   }}
-                  isNew={!certificateSubjects}
+                  isNew={!isWhitelisted}
                 />
               </View>
             ))}

@@ -27,7 +27,8 @@ const WizardWrapper: FC<PropsWithChildren<{ skipOffer: Error | boolean | undefin
     setTxDetails,
     setError,
     onClaimSuccess,
-    onClaimFailed
+    onClaimFailed,
+    onReset
   } = useClaimContext();
   const { account, chainId } = useEthers();
   const { goToStep, stepCount } = useWizard();
@@ -72,6 +73,7 @@ const WizardWrapper: FC<PropsWithChildren<{ skipOffer: Error | boolean | undefin
 
       if (hasValidCertificates) {
         if (skipOffer) {
+          onReset();
           goToStep(2);
         } else {
           goToStep(1);

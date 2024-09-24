@@ -15,6 +15,7 @@ import DollarSvg from "../../../assets/svg/goodid/dollar.svg";
 import GlobusSvg from "../../../assets/svg/goodid/globus.svg";
 import HeartsSvg from "../../../assets/svg/goodid/hearts.svg";
 import StopWatchSvg from "../../../assets/svg/goodid/stopwatch.svg";
+import InfoSvg from "../../../assets/svg/goodid/info.svg";
 import UbiSvg from "../../../assets/svg/goodid/ubi.svg";
 
 export interface OnboardScreenProps {
@@ -124,7 +125,7 @@ export const OnboardScreen = withTheme({ name: "OnboardScreen" })(
                     />
                   </HStack>
                   <HStack space={2}>
-                    <SvgXml src={StopWatchSvg} width="20" height="20" />
+                    <SvgXml src={InfoSvg} width="20" height="20" />
                     <TransText
                       t={
                         /*i18n*/ "Your GoodID lives in your local storage. If you use other devices, browsers or browser sessions to access GoodDollar, you will be asked to upgrade again."
