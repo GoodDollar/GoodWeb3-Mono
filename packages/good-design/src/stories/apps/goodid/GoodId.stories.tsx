@@ -3,6 +3,7 @@ import { Meta } from "@storybook/react";
 import { useEthers } from "@usedapp/core";
 import {
   GoodIdContextProvider,
+  SupportedChains,
   useAggregatedCertificates,
   useCertificatesSubject,
   useIdentityExpiryDate,
@@ -28,6 +29,7 @@ import {
 } from "../../../apps/goodid/screens";
 import { SegmentationController, OnboardController } from "../../../apps/goodid/controllers";
 import { GoodUIi18nProvider, useGoodUILanguage } from "../../../theme";
+import { ClaimProvider } from "../../../apps/ubi";
 
 const GoodIdWrapper = ({ children }) => {
   return <GoodIdContextProvider>{children}</GoodIdContextProvider>;
@@ -300,7 +302,13 @@ export const DisputeThanksScreenExample = {
 
 type AvailableOffersPropsAndArgs = React.ComponentProps<typeof CheckAvailableOffers> & { countryCode?: string };
 
-export const CheckAvailableOffersExample: Meta<AvailableOffersPropsAndArgs> = {
+const explorerEndPoints = {
+  CELO: "https://api.celoscan.io/api?apikey=WIX677MWRWNYWXTRCFKBK2NZAB2XHYBQ3K&",
+  FUSE: "https://explorer.fuse.io/api?",
+  MAINNET: ""
+};
+
+export const CheckAvailableOffersExample: Meta<AvailableOffersPropsAndArgs & any> = {
   title: "Core/Modals",
   component: CheckAvailableOffers,
   render: args => {
@@ -318,28 +326,51 @@ export const CheckAvailableOffersExample: Meta<AvailableOffersPropsAndArgs> = {
     if (!chainId) return <Spinner variant="page-loader" />;
 
     return (
-      <VStack>
-        <HStack width="200">
-          <GoodButton onPress={() => setLanguage("en")}>English</GoodButton>
-          <GoodButton onPress={() => setLanguage("es-419")}>Spanish</GoodButton>
-        </HStack>
-        <Text fontWeight="bold" my="4" textAlign="center" w="100%">
-          {`If you see finished demo change in the controls the country-code the country of your certificate. \n If you have no certificates, go through the segmentation or onboard flow stories to get one.`}
-        </Text>
-        <CheckAvailableOffers
-          chainId={chainId}
-          account={account ?? args.account}
-          onDone={async () => {
-            alert("Finished demo");
-          }}
-          withNavBar={true}
-          isDev={true}
-        />
-      </VStack>
+      <ClaimProvider
+        {...args.claimArgs}
+        //dev pools
+        activePoolAddresses={[
+          "0x77253761353271813c1aca275de8eec768b217c5",
+          "0x627dbf00ce1a54067f5a34d6596a217a029c1532"
+        ]}
+        explorerEndPoints={explorerEndPoints}
+        supportedChains={[SupportedChains.CELO, SupportedChains.FUSE]}
+        withSignModals
+      >
+        <VStack>
+          <HStack width="200">
+            <GoodButton onPress={() => setLanguage("en")}>English</GoodButton>
+            <GoodButton onPress={() => setLanguage("es-419")}>Spanish</GoodButton>
+          </HStack>
+          <Text fontWeight="bold" my="4" textAlign="center" w="100%">
+            {`If you see finished demo change in the controls the country-code the country of your certificate. \n If you have no certificates, go through the segmentation or onboard flow stories to get one.`}
+          </Text>
+          <CheckAvailableOffers
+            chainId={chainId}
+            account={account ?? args.account}
+            onDone={async () => {
+              alert("Finished demo");
+            }}
+            withNavBar={true}
+            isDev={true}
+          />
+        </VStack>
+      </ClaimProvider>
     );
   },
   args: {
-    countryCode: "Fill in your two-letter country-code"
+    countryCode: "Fill in your two-letter country-code",
+    claimArgs: {
+      args: {
+        onNews: () => {
+          alert("Should go to news page");
+        },
+        onUpgrade: () => {
+          alert("Should go to goodid upgrade page");
+        },
+        isDev: true
+      }
+    }
   },
   argTypes: {
     account: {

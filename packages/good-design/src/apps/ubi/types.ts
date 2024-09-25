@@ -41,6 +41,7 @@ export type SendTransaction = Transaction & {
 
 export interface ClaimContextProps {
   account: string | undefined;
+  activePoolAddresses: string[];
   chainId: number | undefined;
   withSignModals: boolean;
   claimDetails: ClaimDetails;

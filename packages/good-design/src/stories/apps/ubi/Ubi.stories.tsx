@@ -49,6 +49,11 @@ export const ClaimFlow = {
       <GoodIdContextProvider>
         <GoodIdProvider>
           <ClaimProvider
+            activePoolAddresses={[
+              // dev pools
+              "0x77253761353271813c1aca275de8eec768b217c5",
+              "0x627dbf00ce1a54067f5a34d6596a217a029c1532"
+            ]}
             withSignModals
             explorerEndPoints={explorerEndPoints}
             supportedChains={[SupportedChains.CELO, SupportedChains.FUSE]}
