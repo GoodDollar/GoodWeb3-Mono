@@ -83,7 +83,7 @@ const BasicModal: FC<BasicModalProps> = ({
         )}
         <VStack space={6}>
           {!!header && (
-            <NBModal.Header backgroundColor={bgColor} borderBottomWidth={hasTopBorder ? "px" : "0"} {..._header}>
+            <NBModal.Header backgroundColor={bgColor} borderBottomWidth={hasTopBorder ? 1 : 0} {..._header}>
               {header}
             </NBModal.Header>
           )}
@@ -94,7 +94,7 @@ const BasicModal: FC<BasicModalProps> = ({
         </VStack>
         <VStack paddingTop={6}>
           {(!!footer || !!actionText) && (
-            <NBModal.Footer borderTopWidth={hasBottomBorder ? "px" : "0"} {..._footer} padding="0" bgColor={bgColor}>
+            <NBModal.Footer borderTopWidth={hasBottomBorder ? 1 : 0} {..._footer} padding="0" bgColor={bgColor}>
               {footer}
               <Button.Group space={2}>{actionButton}</Button.Group>
             </NBModal.Footer>

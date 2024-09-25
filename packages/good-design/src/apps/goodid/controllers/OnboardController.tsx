@@ -133,7 +133,8 @@ export const OnboardController = (
           isWhitelisted,
           certificateSubjects,
           expiryDate: expiryFormatted,
-          onAccept: handleShouldFV
+          onAccept: handleShouldFV,
+          paddingBottom: 8
         }}
       />
     </Wizard>

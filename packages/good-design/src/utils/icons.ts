@@ -3,8 +3,8 @@ import { isReceiveTransaction } from "../apps/ubi/utils/transactionType";
 import CeloIcon from "../assets/images/celonetwork.png";
 import FuseIcon from "../assets/images/fusenetwork.png";
 
-import GdIcon from "../assets/svg/goodid/gd-icon.svg";
-import RedTentIcon from "../assets/svg/goodid/redtent-icon.svg";
+import GdIcon from "../assets/images/goodid/gd-icon.png";
+import RedTentIcon from "../assets/images/goodid/redtent.png";
 
 import TxGreenIcon from "../assets/images/tx-green.png";
 import TxGreyIcon from "../assets/images/tx-grey.png";

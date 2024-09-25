@@ -308,7 +308,15 @@ const explorerEndPoints = {
   MAINNET: ""
 };
 
-export const CheckAvailableOffersExample: Meta<AvailableOffersPropsAndArgs & any> = {
+type ClaimArgs = {
+  claimArgs: {
+    onNews: () => void;
+    onUpgrade: () => void;
+    isDev: boolean;
+  };
+};
+
+export const CheckAvailableOffersExample: Meta<AvailableOffersPropsAndArgs & ClaimArgs> = {
   title: "Core/Modals",
   component: CheckAvailableOffers,
   render: args => {
@@ -336,6 +344,7 @@ export const CheckAvailableOffersExample: Meta<AvailableOffersPropsAndArgs & any
         explorerEndPoints={explorerEndPoints}
         supportedChains={[SupportedChains.CELO, SupportedChains.FUSE]}
         withSignModals
+        withNewsFeed
       >
         <VStack>
           <HStack width="200">
@@ -361,15 +370,13 @@ export const CheckAvailableOffersExample: Meta<AvailableOffersPropsAndArgs & any
   args: {
     countryCode: "Fill in your two-letter country-code",
     claimArgs: {
-      args: {
-        onNews: () => {
-          alert("Should go to news page");
-        },
-        onUpgrade: () => {
-          alert("Should go to goodid upgrade page");
-        },
-        isDev: true
-      }
+      onNews: () => {
+        alert("Should go to news page");
+      },
+      onUpgrade: () => {
+        alert("Should go to goodid upgrade page");
+      },
+      isDev: true
     }
   },
   argTypes: {

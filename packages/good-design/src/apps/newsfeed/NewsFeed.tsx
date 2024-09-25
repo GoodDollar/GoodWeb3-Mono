@@ -4,7 +4,7 @@ import { Heading, Spinner, Stack, Text } from "native-base";
 import { Trans } from "@lingui/react";
 
 import { withTheme } from "../../theme/hoc/withTheme";
-import SvgXml from "../../core/images/SvgXml";
+import SvgXml from "../../core/images/SvgXml.web";
 import { CentreBox } from "../../core/layout/CentreBox";
 import ImageCard from "../../core/layout/ImageCard";
 import { IHStackProps } from "native-base/lib/typescript/components/primitives/Stack/HStack";

@@ -13,7 +13,7 @@ import { useClaimContext } from "../context";
 import { GoodButton } from "../../../core/buttons";
 
 import BillyHearts from "../../../assets/gifs/billy-hearts.gif";
-import SwitchArrows from "../../../assets/svg/switch-arrows.svg";
+import SwitchArrows from "../../../assets/images/goodid/switch-arrows.png";
 
 const getEarliestClaimTime = (times: Date[], claimTime: Date) => {
   const allTimes = [...times, claimTime];

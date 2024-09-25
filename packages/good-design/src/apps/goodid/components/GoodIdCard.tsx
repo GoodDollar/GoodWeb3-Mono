@@ -1,20 +1,21 @@
 import React, { useMemo } from "react";
 import { Center, IStackProps, HStack, Text, View, VStack } from "native-base";
 import { CredentialType, CredentialSubjectsByType, AsyncStorage } from "@gooddollar/web3sdk-v2";
+import usePromise from "react-use-promise";
 
 import { withTheme } from "../../../theme/hoc/withTheme";
-import SvgXml from "../../../core/images/SvgXml";
 import { truncateMiddle } from "../../../utils";
 import { FormattedCertificate, formatVerifiedValues } from "../../../utils/formatVerifiedValues";
 import { Title } from "../../../core/layout";
+import { Image } from "../../../core/images";
 
-import UnknownAvatarSvg from "../../../assets/svg/unknown-avatar.svg";
-import GdVerifiedSvg from "../../../assets/svg/gdverified.svg";
-import GdUnverifiedSvg from "../../../assets/svg/gdunverified.svg";
 import { GoodButton } from "../../../core/buttons";
 import { TransText } from "../../../core/layout";
 import { useGoodIdProvider } from "../context/GoodIdProvider";
-import usePromise from "react-use-promise";
+
+import UnknownAvatarIcon from "../../../assets/images/goodid/unknown-avatar.png";
+import GdVerifiedIcon from "../../../assets/images/goodid/gdverified.png";
+import GdUnverifiedIcon from "../../../assets/images/goodid/gdunverified.png";
 
 interface GoodIdCardProps extends IStackProps {
   account: string;
@@ -57,10 +58,10 @@ const CardRowItem = withTheme({ name: "CardRowItem" })(
 
           <Center mt="-3px">
             {!isNew ? (
-              <SvgXml
-                src={!["Unverified"].includes(verifiedCopy) ? GdVerifiedSvg : GdUnverifiedSvg}
-                height="16"
-                width="16"
+              <Image
+                source={!["Unverified"].includes(verifiedCopy) ? GdVerifiedIcon : GdUnverifiedIcon}
+                height="4"
+                width="4"
                 color="purple"
               />
             ) : null}
@@ -91,7 +92,7 @@ const GoodIdCard = withTheme({ name: "GoodIdCard", skipProps: "certificates" })(
               </Text>
               {isWhitelisted && (
                 <Center mt="-3px">
-                  <SvgXml src={GdVerifiedSvg} height="16" width="16" />
+                  <Image source={GdVerifiedIcon} height="4" width="4" />
                 </Center>
               )}
             </HStack>
@@ -102,7 +103,7 @@ const GoodIdCard = withTheme({ name: "GoodIdCard", skipProps: "certificates" })(
             ) : null}
           </VStack>
           <VStack justifyContent="flex-start">
-            <SvgXml src={avatar ?? UnknownAvatarSvg} height="56" width="56" />
+            <Image source={avatar ?? UnknownAvatarIcon} height="14" width="14" />
           </VStack>
         </HStack>
         <HStack space={2} flexWrap="wrap">
