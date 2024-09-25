@@ -22,7 +22,6 @@ export const theme = extendTheme({
     main: "#00AEFF",
     mainDark: "#151a30",
     mainDarkContrast: "#1a1f38",
-    text: "#0D182D",
     paragraph: "#0005376",
     heading: "#42454A",
     headingBlack: "#303030",
@@ -113,6 +112,16 @@ export const theme = extendTheme({
     ...animated,
     ...web3modals,
     ...nativebase,
+    Link: {
+      variants: {
+        "browse-wrap": () => ({
+          fontFamily: "subheading",
+          fontSize: "2xs",
+          color: "goodGrey.400",
+          textAlign: "center"
+        })
+      }
+    },
     Text: {
       variants: {
         "browse-wrap": () => ({

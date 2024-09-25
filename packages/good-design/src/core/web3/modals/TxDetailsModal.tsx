@@ -14,7 +14,7 @@ import BillyReceive from "../../../assets/images/billy-receive.png";
 import { GoodButton } from "../../buttons";
 import { GdAmount } from "../../layout";
 import { ExplorerLink } from "../..";
-import UnknownAvatarSvg from "../../../assets/svg/unknown-avatar.svg";
+import UnknownAvatarIcon from "../../../assets/images/goodid/unknown-avatar.png";
 import { getTxIcons } from "../../../utils/icons";
 
 const TxDetailsContent = ({ tx, color, network }: { tx: Transaction; color: string; network: number }) => {
@@ -47,7 +47,7 @@ const TxDetailsContent = ({ tx, color, network }: { tx: Transaction; color: stri
 
       <VStack space={0} borderBottomColor={color} borderBottomWidth="2" paddingY="3" paddingX="1">
         <HStack justifyContent="flex-start" flexShrink={1} space={3}>
-          <Image source={contractIcon ?? UnknownAvatarSvg} w="8" h="8" accessibilityLabel="Test" />
+          <Image source={contractIcon ?? UnknownAvatarIcon} w="8" h="8" accessibilityLabel="Test" />
           <HStack space={10} flexGrow={1} justifyContent="flex-start">
             <VStack flexGrow="1" space="0.5">
               <Text variant="4xs-grey-600" flexGrow="">
@@ -75,7 +75,7 @@ const TxDetailsContent = ({ tx, color, network }: { tx: Transaction; color: stri
       {type !== "claim-start" ? (
         <VStack space={0} borderBottomColor={color} borderBottomWidth="2" paddingY="4" paddingX="1">
           <HStack justifyContent="flex-start" flexShrink={1} space={4}>
-            <Image source={UnknownAvatarSvg} w="8" h="8" accessibilityLabel="Test" />
+            <Image source={UnknownAvatarIcon} w="8" h="8" accessibilityLabel="Test" />
             <HStack space={10} flexGrow={1} justifyContent="flex-start">
               <VStack flexGrow="1" space="0.5">
                 <Text variant="4xs-grey-600" flexGrow="1">
