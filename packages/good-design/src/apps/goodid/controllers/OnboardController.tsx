@@ -105,7 +105,7 @@ export const OnboardController = (
 
   if (isEmpty(certificates)) return <Spinner variant="page-loader" size="lg" />;
 
-  if (accepedTos)
+  if (accepedTos && isWhitelisted === true)
     return (
       <SegmentationController
         {...{
