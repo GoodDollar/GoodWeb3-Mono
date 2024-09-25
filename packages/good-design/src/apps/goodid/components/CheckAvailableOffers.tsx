@@ -1,9 +1,10 @@
-import React, { FC, useEffect } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { useCheckAvailableOffers } from "@gooddollar/web3sdk-v2";
 import { Spinner } from "native-base";
+import { isNull } from "lodash";
 
 import { RedtentController } from "../controllers/RedtentController";
-import { isNull } from "lodash";
+import { useClaimContext } from "../../ubi";
 
 export interface CheckAvailableOffersProps {
   account: string;
@@ -46,17 +47,22 @@ const CheckAvailableOffers: FC<CheckAvailableOffersProps> = ({
   onDone,
   onError
 }) => {
+  const { activePoolAddresses, poolContracts } = useClaimContext();
   const availableOffers = useCheckAvailableOffers({ account, pools: redtentOffer, isDev, onDone });
+  const [alreadyMember, setAlreadyMember] = useState<boolean | undefined>(undefined);
 
   useEffect(() => {
-    if (availableOffers === false || availableOffers?.length === 0) {
+    const isMember = poolContracts?.some(pool => activePoolAddresses.includes(pool.address.toLowerCase()));
+    setAlreadyMember(isMember);
+
+    if (availableOffers === false || availableOffers?.length === 0 || isMember) {
       void onDone?.(true);
     }
-  }, [availableOffers]);
+  }, [availableOffers, activePoolAddresses, poolContracts]);
 
   // If isNull means we are still waiting for the availableOffers to be fetched
   // else we are just waiting on onDone to handle the next step / navigation
-  if (isNull(availableOffers) || availableOffers === false || availableOffers?.length === 0)
+  if (isNull(availableOffers) || availableOffers === false || availableOffers?.length === 0 || alreadyMember !== false)
     return <Spinner variant="page-loader" size="lg" />;
 
   return (

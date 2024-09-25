@@ -1,7 +1,6 @@
 import { Checkbox, Center, HStack, Text, View, VStack, Box } from "native-base";
 import React, { FC, PropsWithChildren, useCallback, useState } from "react";
 import { Wizard, useWizard } from "react-use-wizard";
-import { AsyncStorage } from "@gooddollar/web3sdk-v2";
 
 import { withTheme } from "../../../theme/hoc/withTheme";
 import ImageCard from "../../../core/layout/ImageCard";
@@ -192,10 +191,9 @@ const RedtentVideoInstructions = withTheme({ name: "RedtentVideoInstructions" })
   }
 );
 
-const RedtentThanks = ({ dontShowAgainKey, onDone }: { dontShowAgainKey: string; onDone: RedTentProps["onDone"] }) => {
+const RedtentThanks = ({ onDone }: { onDone: RedTentProps["onDone"] }) => {
   // when passed down directly into an inline callback, for some reason the onDone is not being called
   const onPress = async () => {
-    await AsyncStorage.setItem(dontShowAgainKey, "true");
     void onDone(true);
   };
 
@@ -252,7 +250,7 @@ export const RedtentWizard: React.FC<RedTentProps> = (props: RedTentProps) => {
       <Wizard wrapper={<WizardWrapper {...containerStyles} />}>
         <RedtentOffer onDone={modalOnDone} dontShowAgainKey={dontShowAgainKey} />
         <RedtentVideoInstructions onDone={modalOnDone} onVideo={modalOnVideo} {...videoInstructStyles} />
-        <RedtentThanks onDone={modalOnDone} dontShowAgainKey={dontShowAgainKey} />
+        <RedtentThanks onDone={modalOnDone} />
       </Wizard>
     </WizardContextProvider>
   );

@@ -1,7 +1,6 @@
 import React, { useCallback } from "react";
 import { useWizard } from "react-use-wizard";
-import { TouchableOpacity } from "react-native";
-import { ArrowBackIcon, View } from "native-base";
+import { ArrowBackIcon, Pressable, View } from "native-base";
 
 import { ErrorModal } from "../../../core/web3";
 import { TransText } from "../../../core/layout";
@@ -79,7 +78,7 @@ export const WizardHeader = ({
           {...props}
         >
           <View position={"relative"} display={"flex"} width={15}>
-            <TouchableOpacity onPress={handleBack}>
+            <Pressable onPress={handleBack}>
               {(isLastStep && stepCount > 1) || // handling wizard with only one step where first/last is equal (eg. onboardwizard)
               (isFirstStep && !onExit) || // no onExit handler, user has to finish flow to exit
               // for segmentation:
@@ -87,10 +86,10 @@ export const WizardHeader = ({
               (stepHistory && [1, 2].some(value => stepHistory.includes(value)) && activeStep === 2) ? null : (
                 <ArrowBackIcon color="white" />
               )}
-            </TouchableOpacity>
+            </Pressable>
           </View>
 
-          <View flex={"auto"} flexDirection={"row"} justifyContent={"center"}>
+          <View flex={1} flexDirection={"row"} justifyContent={"center"}>
             <TransText
               t={"GoodID"}
               color="white"
