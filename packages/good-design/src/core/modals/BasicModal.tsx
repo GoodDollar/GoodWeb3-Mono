@@ -48,7 +48,7 @@ const BasicModal: FC<BasicModalProps> = ({
   actionText,
   closeText,
   hasCloseButton = !!closeText,
-  hasTopBorder = true,
+  hasTopBorder = false,
   hasBottomBorder = true,
   onClose = noop,
   onAction = noop,

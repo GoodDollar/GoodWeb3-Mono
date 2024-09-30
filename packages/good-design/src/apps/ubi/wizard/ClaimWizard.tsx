@@ -3,6 +3,8 @@ import { useWizard, Wizard } from "react-use-wizard";
 import { View } from "native-base";
 import { useEthers } from "@usedapp/core";
 import ethers from "ethers";
+import { isEmpty } from "lodash";
+import { SupportedChains } from "@gooddollar/web3sdk-v2";
 
 // import { isTxReject } from "../utils/transactionType";
 import { CheckAvailableOffers, CheckAvailableOffersProps } from "../../goodid";
@@ -11,8 +13,6 @@ import { StartClaim, PreClaim } from "../screens";
 import { PostClaim } from "../screens/PostClaim";
 import { ErrorModal, TxDetailsModal, TxModal } from "../../../core/web3/modals";
 import { useClaimContext } from "../context/ClaimContext";
-import { isEmpty } from "lodash";
-import { SupportedChains } from "@gooddollar/web3sdk-v2";
 
 const WizardWrapper: FC<PropsWithChildren<{ skipOffer: Error | boolean | undefined }>> = ({ skipOffer, children }) => {
   const {
@@ -121,11 +121,16 @@ export const ClaimWizard: FC<Omit<CheckAvailableOffersProps, "onDone">> = ({
   isDev = false,
   withNavBar = false
 }) => {
+  const { setError } = useClaimContext();
   const [skipOffer, setSkipOffer] = useState<Error | boolean | undefined>(false);
 
   const onDone = useCallback(
-    async (offerSkipped: Error | boolean | undefined) => {
-      setSkipOffer(offerSkipped);
+    async (e: Error | boolean | undefined) => {
+      if (e instanceof Error && e.message) {
+        setError(e.message);
+      } else {
+        setSkipOffer(e);
+      }
     },
     [skipOffer]
   );

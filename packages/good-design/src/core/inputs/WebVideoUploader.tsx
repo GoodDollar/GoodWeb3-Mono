@@ -1,5 +1,5 @@
-import { View } from "native-base";
 import React, { useCallback, useRef } from "react";
+import { View } from "native-base";
 import { readAsDataURL } from "@gooddollar/web3sdk-v2";
 import { first } from "lodash";
 import { GoodButton } from "..";
@@ -19,6 +19,7 @@ export const WebVideoUploader = ({ onUpload, isLoading }: { onUpload: Props["onD
       event.preventDefault();
       const [videoFile] = event.target.files;
       if (videoFile.size > maxSize) {
+        fileRef.current.value = "";
         void onUpload(undefined, new Error("File size is too large."));
         return;
       }
