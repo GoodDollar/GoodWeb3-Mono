@@ -27,7 +27,7 @@ export const SegmentationScreen = ({
   }
 
   return (
-    <>
+    <Center>
       <BasicStyledModal
         title={/*i18n*/ "We could not \n confirm your \n location"}
         body={<ModalLocationDenied />}
@@ -54,6 +54,6 @@ export const SegmentationScreen = ({
           </Center>
         </VStack>
       </VStack>
-    </>
+    </Center>
   );
 };

@@ -26,15 +26,18 @@ export const theme = extendTheme({
     heading: "#42454A",
     headingBlack: "#303030",
     headingGrey: "#999",
-    lightBlue: "#8499BB",
     txGreen: "#00C3AE",
 
     // UI
     buttonBackground: "#40C4FFCC",
 
     /* g$ design system */
-    primary: "#00AFFF",
+    gdPrimary: "#00AFFF",
     primaryHoverDark: "#0075AC",
+
+    goodLightBlue: {
+      100: "#8499BB"
+    },
     // text
     goodGrey: {
       300: "#D4D4D4",
@@ -142,21 +145,21 @@ export const theme = extendTheme({
           fontSize: "xs",
           fontWeight: 700,
           color: "goodGreen.300",
-          lineHeight: "18.2"
+          lineHeight: 18.2
         }),
         "4xs-grey-400": () => ({
           fontFamily: "subheading",
           fontSize: "4xs",
           color: "goodGrey.400",
           fontWeight: 500,
-          lineHeight: 12
+          lineHeight: 19
         }),
         "4xs-grey-600": () => ({
           fontFamily: "subheading",
           fontSize: "4xs",
           color: "goodGrey.600",
           fontWeight: 500,
-          lineHeight: 12
+          lineHeight: 19
         }),
         "xs-grey": () => ({
           fontFamily: "subheading",
@@ -240,7 +243,7 @@ export const theme = extendTheme({
       variants: {
         "page-loader": () => ({
           borderWidth: "0",
-          color: "primary",
+          color: "gdPrimary",
           paddingBottom: 4
         })
       }

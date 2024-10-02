@@ -66,7 +66,7 @@ export const WizardHeader = ({
       {error ? <ErrorModal error={error} onClose={onClose ?? (() => goToStep(0))} overlay="dark" /> : null}
       {withNavBar ? (
         <View
-          bg="primary"
+          bg="gdPrimary"
           justifyContent={"center"}
           alignItems={"center"}
           height={12}

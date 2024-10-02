@@ -1,5 +1,6 @@
 import React, { useCallback } from "react";
 import { Center, HStack, ScrollView, Text, VStack } from "native-base";
+import { Platform } from "react-native";
 
 import { withTheme } from "../../../theme/hoc";
 import { BasePressable } from "../../../core/buttons";
@@ -31,23 +32,29 @@ export const TransactionCard = withTheme({ name: "TransactionCard" })(
 
     const isReceive = isReceiveTransaction(transaction);
     const amountPrefix = isClaimStart ? "" : isReceive ? "+" : "-";
-    const txDate = date ? date.format?.("MM/DD/YYYY, HH:mm") : "";
+    const txDate = date ? date.local().format?.("MM.DD.YYYY HH:mm") : "";
     const colorAmount = isClaimStart ? null : isReceive ? "txGreen" : "goodRed.200";
 
     const { txIcon, networkIcon, contractIcon } = getTxIcons(transaction);
 
     return (
-      <BasePressable onPress={openTransactionDetails} width="100%" marginBottom={2}>
+      <BasePressable
+        onPress={openTransactionDetails}
+        marginLeft="auto"
+        marginRight="auto"
+        {...Platform.select({ web: { marginBottom: 1 } })}
+      >
         <VStack
-          space={0}
+          space={1}
           borderLeftWidth="10px"
           borderColor={colorAmount ?? "goodGrey.650"}
           backgroundColor="goodWhite.100"
           borderRadius="5"
           shadow="1"
-          width="100%"
+          width="343"
+          justifyContent={"flex-start"}
         >
-          <HStack justifyContent="space-between" space={22} paddingX={2} paddingY={1}>
+          <HStack justifyContent="space-between" space={2} paddingX={2} paddingY={1}>
             <Center>
               <Image source={networkIcon} w="6" h="6" accessibilityLabel="NetworkIcon" />
             </Center>
@@ -63,12 +70,12 @@ export const TransactionCard = withTheme({ name: "TransactionCard" })(
               ) : null}
             </HStack>
           </HStack>
-          <HStack justifyContent="space-between" padding={2} space={22} backgroundColor="white">
+          <HStack justifyContent="space-between" padding={2}>
             <Center>
               <Image source={contractIcon} w="8" h="8" accessibilityLabel="Test" />
             </Center>
             <HStack flexShrink={1} justifyContent="space-between" width="100%" alignItems="flex-end">
-              <VStack space={0}>
+              <VStack space={0} paddingLeft={2}>
                 <Text variant="sm-grey" fontWeight="500">
                   {displayName}
                 </Text>
@@ -83,7 +90,7 @@ export const TransactionCard = withTheme({ name: "TransactionCard" })(
                 {/* Todo: should read subtitle from pool details*/}
                 {status === "failed" ? <Text>TransactionFailedDetails</Text> : null}
               </VStack>
-              <Center h="100%" justifyContent="center" alignItems="center" justifyItems="center">
+              <Center h={Platform.select({ web: "100%" })} justifyContent="center" alignItems="center">
                 {status !== "failed" ? <Image w="34" h="34" source={txIcon} /> : null}
               </Center>
             </HStack>
@@ -101,10 +108,8 @@ type TransactionListProps = {
 
 export const TransactionList = ({ transactions, onTxDetailsPress }: TransactionListProps) => (
   <LocalScrollView maxHeight="550" style={{ scrollbarWidth: "thin" }}>
-    <VStack>
-      {transactions?.map((tx: Transaction, i: any) => (
-        <TransactionCard key={i} {...{ transaction: tx, onTxDetailsPress }} />
-      ))}
-    </VStack>
+    {transactions?.map((tx: Transaction, i: any) => (
+      <TransactionCard key={i} {...{ transaction: tx, onTxDetailsPress }} />
+    ))}
   </LocalScrollView>
 );

@@ -29,7 +29,7 @@ const OnboardScreen = {
 
 const OffersAgreement = {
   baseStyle: {
-    width: "100%",
+    width: 343,
     paddingX: 4,
     alignItems: "center",
     styles: {
@@ -85,8 +85,7 @@ const GoodIdDetails = {
     container: {
       width: "100%",
       space: 6,
-      alignItems: "center",
-      paddingLeft: 2
+      alignItems: "center"
     },
     header: {
       width: "100%",
@@ -95,6 +94,9 @@ const GoodIdDetails = {
     innerContainer: {
       space: 8,
       alignItems: "center",
+      justifyContent: "center",
+      marginLeft: "auto",
+      marginRight: "auto",
       width: "100%"
     },
     section: {

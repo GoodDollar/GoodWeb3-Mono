@@ -38,10 +38,10 @@ const LinguiExample = () => {
   return (
     <VStack width="343">
       <TxModal type="sign" isPending={modalOpen} />
-      <GoodButton width="200" onPress={() => setLanguage("en")} backgroundColor="primary" color="white">
+      <GoodButton width="200" onPress={() => setLanguage("en")} backgroundColor="gdPrimary" color="white">
         English
       </GoodButton>
-      <GoodButton width="200" onPress={() => setLanguage("es-419")} backgroundColor="primary" color="white">
+      <GoodButton width="200" onPress={() => setLanguage("es-419")} backgroundColor="gdPrimary" color="white">
         Spanish-Latin
       </GoodButton>
       <LearnButton type="network" />
@@ -67,7 +67,7 @@ const config: Config = {
 export const BasePressableWithStates = () => (
   <BasePressable
     text={"Testing"}
-    viewInteraction={{ hover: { backgroundColor: "primary" } }}
+    viewInteraction={{ hover: { backgroundColor: "gdPrimary" } }}
     textInteraction={{ hover: { color: "white" } }}
   />
 );
@@ -126,7 +126,7 @@ export default {
 export const Basic = {
   args: {
     text: "Hello World",
-    colorScheme: "primary",
+    colorScheme: "gdPrimary",
     size: "md"
   }
 };

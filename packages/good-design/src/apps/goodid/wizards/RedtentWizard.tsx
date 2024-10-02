@@ -36,11 +36,32 @@ const videoUsagePolicy = [
   /*i18n*/ "Your video may be reviewed by the \n GoodLabs or partner teams for \n verification purposes. Your video \n will not be shared or used publicly, \n and will be erased after a period of \n time."
 ];
 
-const WizardWrapper: FC<PropsWithChildren> = ({ children, ...props }) => (
-  <View mr="auto" ml="auto" {...props}>
-    {children}
-  </View>
-);
+const WizardWrapper: FC<PropsWithChildren<{ withNavBar: boolean }>> = ({ withNavBar, children, ...props }) =>
+  withNavBar ? (
+    <View
+      bg="gdPrimary"
+      justifyContent={"center"}
+      alignItems={"center"}
+      height={12}
+      flexDir={"row"}
+      width="100%"
+      paddingX={4}
+      mb={6}
+      {...props}
+    >
+      <View flex={1} flexDirection={"row"} justifyContent={"center"}>
+        <TransText
+          t={"GoodID Upgrade"}
+          color="white"
+          fontFamily="subheading"
+          fontSize="sm"
+          fontWeight="500"
+          lineHeight={19}
+        />
+      </View>
+      {children}
+    </View>
+  ) : null;
 
 const CardContent = () => (
   <VStack space="0">
@@ -51,12 +72,12 @@ const CardContent = () => (
       fontWeight="400"
       color="goodGrey.600"
     />
-    <TransText t={/*i18n*/ "10.000G$"} fontFamily="heading" color="primary" fontSize="l" fontWeight="700" />
+    <TransText t={/*i18n*/ "10.000G$"} fontFamily="heading" color="gdPrimary" fontSize="l" fontWeight="700" />
   </VStack>
 );
 
 const CardFooter = ({ linkText }: { linkText: string }) => (
-  <TransText t={linkText} mr="auto" fontSize="sm" fontFamily="subheading" fontWeight="400" color="primary">
+  <TransText t={linkText} mr="auto" fontSize="sm" fontFamily="subheading" fontWeight="400" color="gdPrimary">
     {linkText}
   </TransText>
 );
@@ -215,7 +236,7 @@ const RedtentThanks = ({ onDone }: { onDone: RedTentProps["onDone"] }) => {
             t={/*i18n*/ " Red Tent Woman in Nigeria \n"}
             variant="sm-grey-650"
             fontWeight="bold"
-            color="primary"
+            color="gdPrimary"
           />
           <TransText t={/*i18n*/ "GoodCollective. You can claim this additional UBI daily."} variant="sm-grey-650" />
         </Box>
@@ -247,7 +268,7 @@ export const RedtentWizard: React.FC<RedTentProps> = (props: RedTentProps) => {
 
   return (
     <WizardContextProvider>
-      <Wizard wrapper={<WizardWrapper {...containerStyles} />}>
+      <Wizard wrapper={<WizardWrapper withNavBar={props.withNavBar} {...containerStyles} />}>
         <RedtentOffer onDone={modalOnDone} dontShowAgainKey={dontShowAgainKey} />
         <RedtentVideoInstructions
           onDone={modalOnDone}

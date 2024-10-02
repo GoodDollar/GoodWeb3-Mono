@@ -16,12 +16,13 @@ import { GdAmount } from "../../layout";
 import { ExplorerLink } from "../..";
 import UnknownAvatarIcon from "../../../assets/images/goodid/unknown-avatar.png";
 import { getTxIcons } from "../../../utils/icons";
+import { Platform } from "react-native";
 
 const TxDetailsContent = ({ tx, color, network }: { tx: Transaction; color: string; network: number }) => {
   const { account, contractAddress, contractName, date, isPool, tokenValue, type } = tx;
 
   const { txIcon, networkIcon, contractIcon } = getTxIcons(tx);
-  const txDate = date ? date.format?.("MM/DD/YYYY, HH:mm") : "";
+  const txDate = date ? date.local().format?.("MM.DD.YYYY HH:mm") : "";
   const trunContractAddr = truncateMiddle(contractAddress, 11);
   const trunAccountAddr = truncateMiddle(account, 11);
 
@@ -31,7 +32,7 @@ const TxDetailsContent = ({ tx, color, network }: { tx: Transaction; color: stri
         <Image source={BillyReceive} w={121} h={87} style={{ resizeMode: "contain" }} />
       </Center>
 
-      <VStack space={0} borderBottomColor={color} borderBottomWidth="2" paddingY="3" paddingX="1">
+      <VStack space={0} borderBottomColor={color} borderBottomWidth="2" paddingY="3" paddingX="1" width="100%">
         <HStack justifyContent="flex-start" flexShrink={1} space={4}>
           <Image source={networkIcon} w="6" h="6" accessibilityLabel="NetworkIcon" />
           <HStack space={15} flexGrow={1} justifyContent="flex-start" alignItems="center">
@@ -45,13 +46,13 @@ const TxDetailsContent = ({ tx, color, network }: { tx: Transaction; color: stri
         </HStack>
       </VStack>
 
-      <VStack space={0} borderBottomColor={color} borderBottomWidth="2" paddingY="3" paddingX="1">
+      <VStack space={0} borderBottomColor={color} borderBottomWidth="2" paddingY="3" paddingX="1" width="100%">
         <HStack justifyContent="flex-start" flexShrink={1} space={3}>
           <Image source={contractIcon ?? UnknownAvatarIcon} w="8" h="8" accessibilityLabel="Test" />
-          <HStack space={10} flexGrow={1} justifyContent="flex-start">
-            <VStack flexGrow="1" space="0.5">
-              <Text variant="4xs-grey-600" flexGrow="">
-                from:{` `}
+          <HStack space={10} flexGrow={1} justifyContent="space-between">
+            <VStack space={0}>
+              <Text variant="4xs-grey-600" flexGrow={1}>
+                from:
                 <Text variant="4xs-grey-600" fontSize="sm">
                   {contractName}
                 </Text>
@@ -64,6 +65,7 @@ const TxDetailsContent = ({ tx, color, network }: { tx: Transaction; color: stri
                 fontStyle={{ fontSize: "sm", fontFamily: "subheading", fontWeight: 500 }}
                 maxWidth={"60%"}
                 isPool={isPool}
+                withIcon={false}
               />
             </VStack>
 
@@ -73,12 +75,13 @@ const TxDetailsContent = ({ tx, color, network }: { tx: Transaction; color: stri
       </VStack>
 
       {type !== "claim-start" ? (
-        <VStack space={0} borderBottomColor={color} borderBottomWidth="2" paddingY="4" paddingX="1">
+        <VStack space={0} borderBottomColor={color} borderBottomWidth="2" paddingY="4" paddingX="1" width="100%">
           <HStack justifyContent="flex-start" flexShrink={1} space={4}>
             <Image source={UnknownAvatarIcon} w="8" h="8" accessibilityLabel="Test" />
             <HStack space={10} flexGrow={1} justifyContent="flex-start">
-              <VStack flexGrow="1" space="0.5">
-                <Text variant="4xs-grey-600" flexGrow="1">
+              {/* <VStack flexGrow={1} space="0.5"> */}
+              <VStack flexGrow={1} space="0.5">
+                <Text variant="4xs-grey-600" flexGrow={1}>
                   To:{" "}
                   <Text variant="4xs-grey-600" fontSize="sm">
                     {/* todo: me or first-name (wallet) */}
@@ -91,6 +94,7 @@ const TxDetailsContent = ({ tx, color, network }: { tx: Transaction; color: stri
                   text={trunAccountAddr}
                   fontStyle={{ fontSize: "sm", fontFamily: "subheading", fontWeight: 500 }}
                   maxWidth={"42%"}
+                  withIcon={false}
                 />
               </VStack>
               <></>
@@ -117,23 +121,31 @@ const TxDetailsFooter = ({
 
   return (
     <VStack width="100%" space="2">
-      <HStack justifyContent="space-between" marginTop="2" width="100%">
-        <VStack space="0.5">
+      <HStack justifyContent={"space-between"} marginTop="2" width="100%">
+        <VStack space="0.5" flexGrow="2">
           {type !== "claim-start" ? (
-            <>
+            <VStack width="100%" flexGrow={2}>
               <Text variant="4xs-grey-600">TX Details</Text>
               <ExplorerLink
                 addressOrTx={txHash}
                 chainId={network}
                 text={trunTxHash}
                 fontStyle={{ fontSize: "sm", fontFamily: "subheading", fontWeight: 500 }}
+                withIcon={false}
               />
-            </>
+            </VStack>
           ) : null}
         </VStack>
 
-        <GoodButton onPress={onClose} width="100" size="xs" paddingTop={2} paddingBottom={2}>
-          Ok
+        <GoodButton
+          onPress={onClose}
+          {...Platform.select({ web: { width: 100 }, android: { width: 200 } })}
+          width="100"
+          size="xs"
+          padding={0}
+          margin={0}
+        >
+          <Text color="white">Ok</Text>
         </GoodButton>
       </HStack>
       {/*todo: see if worth to implement/find native-base equivalent 
@@ -166,14 +178,14 @@ export const TxDetailsModal = ({
   const { transactionHash: txHash, type } = tx;
   const isClaimStart = type === "claim-start";
   const isReceive = isReceiveTransaction(tx);
-  const color = isClaimStart ? "goodGrey.650" : isReceive ? "txGreen" : "goodRed.200";
+  const color = isClaimStart ? "#5A5A5A" : isReceive ? "#00C3AE" : "#F87171";
   const network = SupportedChains[tx.network as keyof typeof SupportedChains];
 
   return (
     <BasicStyledModal
       {...props}
       type="ctaX"
-      modalStyle={{ borderLeftWidth: "10", borderLeftColor: color }}
+      modalStyle={{ borderLeftWidth: 10, borderColor: color }}
       show={open}
       onClose={onClose}
       title={``}

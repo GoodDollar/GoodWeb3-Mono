@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { HStack, Spinner, Text, useBreakpointValue, VStack } from "native-base";
+import { HStack, Pressable, Spinner, Text, useBreakpointValue, VStack } from "native-base";
 import { SupportedChains, useFVLink } from "@gooddollar/web3sdk-v2";
 import Clipboard from "@react-native-clipboard/clipboard";
 
@@ -11,7 +11,6 @@ import { Image } from "../../../core/images";
 import { Title, TransText } from "../../../core/layout";
 import { Web3ActionButton } from "../../../advanced";
 import { truncateMiddle } from "../../../utils";
-import { TouchableOpacity } from "react-native";
 import { withTheme } from "../../../theme/hoc/withTheme";
 
 import FaceIcon from "../../../assets/images/face.png";
@@ -20,9 +19,17 @@ import WalletIcon from "../../../assets/images/wallet.png";
 import TrashIcon from "../../../assets/images/trash.png";
 
 const ActionButtonRound = ({ ...props }) => (
-  <TouchableOpacity onPress={props.onPress}>
-    <Image source={props.icon} w="42" h="42" backgroundColor={props.color} borderRadius="50" resizeMode="center" />
-  </TouchableOpacity>
+  <Pressable
+    w="42"
+    h="42"
+    onPress={props.onPress}
+    backgroundColor={props.color}
+    borderRadius="50"
+    justifyContent="center"
+    alignItems="center"
+  >
+    <Image source={props.icon} w={6} h={6} resizeMode="contain" />
+  </Pressable>
 );
 
 const FaceId = ({ ...props }) => {
@@ -67,7 +74,17 @@ const FaceId = ({ ...props }) => {
         styleProps={{ buttonStyle: { backgroundColor: "goodRed.100" } }}
       />
       <HStack {...props}>
-        <Image source={FaceIcon} w="42" h="42" backgroundColor="goodBlack.400" borderRadius="50" resizeMode="center" />
+        <HStack
+          backgroundColor="goodBlack.400"
+          w="42"
+          h="42"
+          borderRadius="50"
+          justifyContent="center"
+          alignItems="center"
+        >
+          <Image source={FaceIcon} w={6} h={6} resizeMode="contain" />
+        </HStack>
+
         <VStack width="100%" flexShrink={1}>
           <TransText t={/*i18n*/ "FaceId"} variant="sm-grey-700" />
           {truncFaceId ? <Text variant="sm-grey-400">{truncFaceId}</Text> : null}
@@ -77,17 +94,18 @@ const FaceId = ({ ...props }) => {
             ml="4"
             mt={margin}
             padding="0"
+            px="4"
             text={/*i18n*/ "Show my FaceId"}
             web3Action={retreiveFaceId}
             variant="outlined"
-            innerText={{ fontSize: 14 }}
-            innerIndicatorText={{ color: "goodBlack.100" }}
+            innerText={{ fontSize: 14, color: "gdPrimary" }}
+            innerIndicatorText={{ fontSize: 14, color: "gdPrimary" }}
             supportedChains={[SupportedChains.FUSE, SupportedChains.CELO]}
           />
         ) : (
           <HStack space={2}>
             <ActionButtonRound onPress={handleDeleteFaceId} icon={TrashIcon} color="goodRed.100" />
-            <ActionButtonRound onPress={copyFvId} icon={CopyIcon} color="primary" />
+            <ActionButtonRound onPress={copyFvId} icon={CopyIcon} color="gdPrimary" />
           </HStack>
         )}
       </HStack>
@@ -138,6 +156,8 @@ export const GoodIdDetails = withTheme({ name: "GoodIdDetails" })(
 
         <VStack {...innerContainer}>
           <GoodIdCard
+            ml="auto"
+            mr="auto"
             account={account}
             isWhitelisted={isWhitelisted ?? isVerified}
             certificateSubjects={certificateSubjects}
@@ -146,27 +166,35 @@ export const GoodIdDetails = withTheme({ name: "GoodIdDetails" })(
           />
           <VStack width="100%" space={2}>
             <HStack {...section}>
-              <Image
-                backgroundColor={"goodBlack.400"}
-                source={WalletIcon}
+              <HStack
                 w="42"
                 h="42"
-                accessibilityLabel="Wallet"
+                backgroundColor="goodBlack.400"
                 borderRadius="50"
-                resizeMode="center"
-              />
+                justifyContent="center"
+                alignItems="center"
+              >
+                <Image
+                  source={WalletIcon}
+                  w={6}
+                  h={6}
+                  accessibilityLabel="Wallet"
+                  borderRadius="50"
+                  resizeMode="contain"
+                />
+              </HStack>
               <VStack flexShrink={1} width="100%">
                 <TransText t={/*i18n*/ "My Wallet Address"} variant="sm-grey-700" />
                 <Text variant="sm-grey-400">{truncAccount}</Text>
               </VStack>
-              <ActionButtonRound onPress={copyAddress} icon={CopyIcon} color="primary" />
+              <ActionButtonRound onPress={copyAddress} icon={CopyIcon} color="gdPrimary" />
             </HStack>
             <FaceId {...section} />
           </VStack>
         </VStack>
         <TransText
           t={
-            /*i18n*/ "Attention: GoodDollar-verifying a new wallet address can only be \n done 24h after deleting your old face-id"
+            /*i18n*/ "Attention: GoodDollar-verifying a new wallet address can only be done 24h after deleting your old face-id"
           }
           variant="browse-wrap"
           textAlign="center"

@@ -31,7 +31,7 @@ const SegmentationRow = ({
 
   return (
     <VStack space={onCheck ? 2 : undefined}>
-      <TransTitle t={typeLabels[typeName].id} variant="subtitle-grey" />
+      <TransTitle t={typeLabels[typeName].id} textAlign="center" variant="subtitle-grey" />
       {onCheck ? (
         <HStack space={4}>
           <Checkbox

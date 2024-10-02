@@ -4,6 +4,7 @@ import { useEthers } from "@usedapp/core";
 import moment from "moment";
 import { ethers } from "ethers";
 import { G$Amount, GoodIdContextProvider, NewsFeedProvider, SupportedChains } from "@gooddollar/web3sdk-v2";
+import { Provider } from "react-native-paper";
 
 import { ClaimProvider, ClaimWizard, PostClaim, TransactionCard } from "../../../apps/ubi";
 
@@ -47,30 +48,32 @@ export const ClaimFlow = {
     return (
       //   {/* For testing purposes we have to be on qa env */}
       <GoodIdContextProvider>
-        <GoodIdProvider>
-          <ClaimProvider
-            activePoolAddresses={[
-              // dev pools
-              "0x77253761353271813c1aca275de8eec768b217c5",
-              "0x627dbf00ce1a54067f5a34d6596a217a029c1532"
-            ]}
-            withSignModals
-            explorerEndPoints={explorerEndPoints}
-            supportedChains={[SupportedChains.CELO, SupportedChains.FUSE]}
-            {...args}
-          >
-            <HStack>
-              <GoodButton onPress={() => setLanguage("en")} backgroundColor="primary" color="white">
-                English
-              </GoodButton>
-              <GoodButton onPress={() => setLanguage("es-419")} backgroundColor="primary" color="white">
-                spanish
-              </GoodButton>
-            </HStack>
+        <Provider>
+          <GoodIdProvider>
+            <ClaimProvider
+              activePoolAddresses={[
+                // dev pools
+                "0x77253761353271813c1aca275de8eec768b217c5",
+                "0x627dbf00ce1a54067f5a34d6596a217a029c1532"
+              ]}
+              withSignModals
+              explorerEndPoints={explorerEndPoints}
+              supportedChains={[SupportedChains.CELO, SupportedChains.FUSE]}
+              {...args}
+            >
+              <HStack>
+                <GoodButton onPress={() => setLanguage("en")} backgroundColor="gdPrimary" color="white">
+                  English
+                </GoodButton>
+                <GoodButton onPress={() => setLanguage("es-419")} backgroundColor="gdPrimary" color="white">
+                  spanish
+                </GoodButton>
+              </HStack>
 
-            <ClaimWizard {...args} account={account} chainId={chainId} />
-          </ClaimProvider>
-        </GoodIdProvider>
+              <ClaimWizard {...args} account={account} chainId={chainId} />
+            </ClaimProvider>
+          </GoodIdProvider>
+        </Provider>
       </GoodIdContextProvider>
     );
   },
@@ -96,10 +99,12 @@ export const TransactionCardStory = {
     }, [openTxDetails]);
 
     return (
-      <VStack ml="auto" mr="auto" width="500" justifyContent="center" height="100vh">
-        <TxDetailsModal open={openTxDetails} onClose={() => setOpenTxDetails(prev => !prev)} tx={args.transaction} />
-        <TransactionCard {...args} onTxDetailsPress={onTxDetailsPress} />
-      </VStack>
+      <Provider>
+        <VStack ml="auto" mr="auto" width="500" justifyContent="center" height="100vh">
+          <TxDetailsModal open={openTxDetails} onClose={() => setOpenTxDetails(prev => !prev)} tx={args.transaction} />
+          <TransactionCard {...args} onTxDetailsPress={onTxDetailsPress} />
+        </VStack>
+      </Provider>
     );
   },
   args: {

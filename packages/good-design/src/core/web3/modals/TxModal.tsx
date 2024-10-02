@@ -1,4 +1,4 @@
-import React from "react";
+import React, { FC } from "react";
 import { noop } from "lodash";
 import { TransactionStatus } from "@usedapp/core";
 
@@ -34,7 +34,7 @@ const txModalCopy = {
 
 const TxModalContent = ({ content }: { content: string }) => <TransText t={content} variant="sm-grey-650" />;
 
-export const TxModal: React.FC<ITxModalProps> = ({
+export const TxModal: FC<ITxModalProps> = ({
   isPending,
   onClose = noop,
   customTitle,

@@ -16,14 +16,14 @@ export const theme = {
         opacity: 1
       },
       _checked: {
-        borderColor: "primary",
-        bg: "primary",
+        borderColor: "gdPrimary",
+        bg: "gdPrimary",
         _hover: {
-          borderColor: "primary",
-          bg: "primary",
+          borderColor: "gdPrimary",
+          bg: "gdPrimary",
           _disabled: {
-            borderColor: "primary",
-            bg: "primary"
+            borderColor: "gdPrimary",
+            bg: "gdPrimary"
           }
         }
       }

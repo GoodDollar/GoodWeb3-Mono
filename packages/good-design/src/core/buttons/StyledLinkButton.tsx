@@ -8,8 +8,8 @@ export const LinkButton = withTheme({ name: "LinkButton" })(
   ({ url, buttonText, onPress, ...styleProps }: { buttonText: string; url?: string; onPress?: () => void }) => (
     <Link
       // hover doesn't work in gooddapp for this component because of fixed/older @react-native-aria/interactions package
-      _hover={{ bg: "primary:alpha.80" }}
-      bg="primary"
+      _hover={{ bg: "gdPrimary:alpha.80" }}
+      bg="gdPrimary"
       href={url}
       isExternal={onPress ? false : true}
       onPress={onPress}

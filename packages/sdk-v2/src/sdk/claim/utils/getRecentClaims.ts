@@ -82,7 +82,7 @@ export const getRecentClaims = async (
         // for now we assume its either GoodDollar or RedTent
         const contractName = isGdPool ? "GoodDollar" : "RedTent";
 
-        return { address, claimAmount, contractName, date, transactionHash };
+        return { address, claimAmount, contractName, date, transactionHash, isPool: !isGdPool };
       });
 
       return formatted;

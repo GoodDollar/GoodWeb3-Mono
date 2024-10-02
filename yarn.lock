@@ -3951,6 +3951,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@callstack/react-theme-provider@npm:^3.0.5":
+  version: 3.0.9
+  resolution: "@callstack/react-theme-provider@npm:3.0.9"
+  dependencies:
+    deepmerge: ^3.2.0
+    hoist-non-react-statics: ^3.3.0
+  peerDependencies:
+    react: ">=16.3.0"
+  checksum: f888ef0b8f993d393a9d49864f75b04b5cf7259e72f290ec570fc5e314315f75c979b03b391243a72578ab55db4ffcdd4dc9dc1a2f8ec2b516cabb958971a85e
+  languageName: node
+  linkType: hard
+
 "@ceramicnetwork/codecs@npm:^1.14.0":
   version: 1.14.0
   resolution: "@ceramicnetwork/codecs@npm:1.14.0"
@@ -5509,7 +5521,7 @@ __metadata:
     "@formatjs/intl-locale": ^4.0.0
     "@formatjs/intl-pluralrules": ^5.2.14
     "@gooddollar/goodprotocol": ^2.0.24
-    "@gooddollar/web3sdk-v2": 0.2.32-beta.23e3f37e
+    "@gooddollar/web3sdk-v2": "file:.yalc/@gooddollar/web3sdk-v2"
     "@lingui/core": ^4.11.2
     "@lingui/react": ^4.11.2
     "@magiklabs/react-sdk": ^1.0.8
@@ -5566,6 +5578,7 @@ __metadata:
     react-native-fs: ^2.20.0
     react-native-image-picker: ^7.1.2
     react-native-mask-input: ^1.2.2
+    react-native-paper: 3.12.0
     react-native-safe-area-context: ^3.3.2
     react-native-svg: 13.14.0
     react-native-svg-transformer: ^1.5.0
@@ -5711,7 +5724,64 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/web3sdk-v2@0.2.32-beta.23e3f37e, @gooddollar/web3sdk-v2@workspace:packages/sdk-v2":
+"@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2::locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design":
+  version: 0.2.32-beta.23e3f37e
+  resolution: "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2#.yalc/@gooddollar/web3sdk-v2::hash=f6a7d7&locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design"
+  dependencies:
+    "@amplitude/analytics-browser": ^1.6.4
+    "@amplitude/analytics-react-native": ^0.7.0
+    "@aws-sdk/client-s3": ^3.550.0
+    "@ceramicnetwork/http-client": ^2.32.0
+    "@ceramicnetwork/stream-tile": ^2.31.0
+    "@gooddollar/bridge-app": ^1.5.0
+    "@gooddollar/bridge-contracts": ^1.0.17
+    "@gooddollar/goodcollective-contracts": ^1.1.0
+    "@gooddollar/goodcollective-sdk": ^1.1.2
+    "@gooddollar/goodprotocol": ^2.0.24
+    "@orbisclub/orbis-sdk": ^0.4.87
+    "@react-native-community/geolocation": 3.1.0
+    "@react-native-firebase/analytics": ^16.4.6
+    "@sentry/browser": 7.16.0
+    "@sentry/react-native": ^5.15.1
+    "@solana/web3.js": ^1.72.0
+    "@types/react": ^18.2.28
+    "@walletconnect/client": ^1.8.0
+    "@walletconnect/qrcode-modal": ^1.8.0
+    "@web3-onboard/coinbase": ^2.4.1
+    "@web3-onboard/core": ^2.22.2
+    "@web3-onboard/injected-wallets": ^2.11.2
+    "@web3-onboard/react": ^2.9.2
+    "@web3-onboard/torus": ^2.3.1
+    "@web3-onboard/walletconnect": ^2.6.1
+    "@web3auth/base": ^4.0.0
+    "@web3auth/core": ^4.0.0
+    "@web3auth/openlogin-adapter": ^4.1.0
+    "@web3auth/torus-wallet-connector-plugin": ^4.0.0
+    "@web3modal/ethereum": ^2.6.2
+    "@web3modal/react": ^2.6.2
+    base-64: ^1.0.0
+    dexie: ^3.2.4
+    dexie-react-hooks: ^1.1.7
+    ethers: 5.7.2
+    eventemitter3: ^4.0.7
+    moment: 2.29.4
+    multiformats: 9.9.0
+    posthog-react-native: 2.8.1
+    react-native-indicative: ^0.2.1
+    react-native-restart: ^0.0.24
+    react-use-promise: ^0.5.0
+    viem: ^1.2.13
+    wagmi: ^1.3.8
+  peerDependencies:
+    "@react-native-async-storage/async-storage": 1.17.10
+    "@usedapp/core": "*"
+    react-native: "*"
+    react-native-web: "*"
+  checksum: de61aa5ad61ee7b6b866ee41937457774a51ce49d35aef3ac4730eec7e39677390b0de21363e1adc6e4ea1a93942cbd7ef30803ad746a3e3d4e5f4794a416b6f
+  languageName: node
+  linkType: hard
+
+"@gooddollar/web3sdk-v2@workspace:packages/sdk-v2":
   version: 0.0.0-use.local
   resolution: "@gooddollar/web3sdk-v2@workspace:packages/sdk-v2"
   dependencies:
@@ -19457,7 +19527,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"color-convert@npm:^1.9.0":
+"color-convert@npm:^1.9.0, color-convert@npm:^1.9.3":
   version: 1.9.3
   resolution: "color-convert@npm:1.9.3"
   dependencies:
@@ -19482,10 +19552,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"color-name@npm:~1.1.4":
+"color-name@npm:^1.0.0, color-name@npm:~1.1.4":
   version: 1.1.4
   resolution: "color-name@npm:1.1.4"
   checksum: b0445859521eb4021cd0fb0cc1a75cecf67fceecae89b63f62b201cca8d345baf8b952c966862a9d9a2632987d4f6581f0ec8d957dfacece86f0a7919316f610
+  languageName: node
+  linkType: hard
+
+"color-string@npm:^1.6.0":
+  version: 1.9.1
+  resolution: "color-string@npm:1.9.1"
+  dependencies:
+    color-name: ^1.0.0
+    simple-swizzle: ^0.2.2
+  checksum: c13fe7cff7885f603f49105827d621ce87f4571d78ba28ef4a3f1a104304748f620615e6bf065ecd2145d0d9dad83a3553f52bb25ede7239d18e9f81622f1cc5
   languageName: node
   linkType: hard
 
@@ -19495,6 +19575,16 @@ __metadata:
   bin:
     color-support: bin.js
   checksum: 9b7356817670b9a13a26ca5af1c21615463b500783b739b7634a0c2047c16cef4b2865d7576875c31c3cddf9dd621fa19285e628f20198b233a5cfdda6d0793b
+  languageName: node
+  linkType: hard
+
+"color@npm:^3.1.2":
+  version: 3.2.1
+  resolution: "color@npm:3.2.1"
+  dependencies:
+    color-convert: ^1.9.3
+    color-string: ^1.6.0
+  checksum: f81220e8b774d35865c2561be921f5652117638dcda7ca4029262046e37fc2444ac7bbfdd110cf1fd9c074a4ee5eda8f85944ffbdda26186b602dd9bb05f6400
   languageName: node
   linkType: hard
 
@@ -25591,7 +25681,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hoist-non-react-statics@npm:^3.3.2":
+"hoist-non-react-statics@npm:^2.3.1":
+  version: 2.5.5
+  resolution: "hoist-non-react-statics@npm:2.5.5"
+  checksum: ee2d05e5c7e1398ad84a15b0327f66bd78f38a8e0015e852f954b36434e32eb7e942d5357505020a3a1147f247b165bf1e69d72393e3accab67cafdafeb86230
+  languageName: node
+  linkType: hard
+
+"hoist-non-react-statics@npm:^3.3.0, hoist-non-react-statics@npm:^3.3.2":
   version: 3.3.2
   resolution: "hoist-non-react-statics@npm:3.3.2"
   dependencies:
@@ -26400,6 +26497,13 @@ __metadata:
   version: 0.2.1
   resolution: "is-arrayish@npm:0.2.1"
   checksum: eef4417e3c10e60e2c810b6084942b3ead455af16c4509959a27e490e7aee87cfb3f38e01bbde92220b528a0ee1a18d52b787e1458ee86174d8c7f0e58cd488f
+  languageName: node
+  linkType: hard
+
+"is-arrayish@npm:^0.3.1":
+  version: 0.3.2
+  resolution: "is-arrayish@npm:0.3.2"
+  checksum: 977e64f54d91c8f169b59afcd80ff19227e9f5c791fa28fa2e5bce355cbaf6c2c356711b734656e80c9dd4a854dd7efcf7894402f1031dfc5de5d620775b4d5f
   languageName: node
   linkType: hard
 
@@ -34356,6 +34460,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-native-paper@npm:3.12.0":
+  version: 3.12.0
+  resolution: "react-native-paper@npm:3.12.0"
+  dependencies:
+    "@callstack/react-theme-provider": ^3.0.5
+    color: ^3.1.2
+    react-native-safe-area-view: ^0.14.9
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+    react-native-vector-icons: "*"
+  checksum: 06948c6c41947d747c5a261fc64a620bcef1bada8873ac07a59f89d5f9dd4ff0c37e1c4a7c8026b86eb3fc23908365088183116eedba8212f4f7eb81f3fd0538
+  languageName: node
+  linkType: hard
+
 "react-native-restart@npm:^0.0.24":
   version: 0.0.24
   resolution: "react-native-restart@npm:0.0.24"
@@ -34373,6 +34492,18 @@ __metadata:
     react: "*"
     react-native: "*"
   checksum: 86a0614c5bef60ff8e056cff3fd4200cc6d181653cb6c26992ab62061792474f4872d1f5d394234ec6da75ce8b2960c930f4d6a1b6af3b6579cf1c30b6d64bb5
+  languageName: node
+  linkType: hard
+
+"react-native-safe-area-view@npm:^0.14.9":
+  version: 0.14.9
+  resolution: "react-native-safe-area-view@npm:0.14.9"
+  dependencies:
+    hoist-non-react-statics: ^2.3.1
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 529546da1f7e1bfa7ae958cb301633bbb568e5b0d025cc15e689a4842a9cb6716c3ee4ae25994910943186212d7aaf7de2b7004c88e5fe332f97077edb7da51d
   languageName: node
   linkType: hard
 
@@ -36215,6 +36346,15 @@ __metadata:
     once: ^1.3.1
     simple-concat: ^1.0.0
   checksum: 230bd931d3198f21a5a1a566687a5ee1ef651b13b61c7a01b547b2a0c2bf72769b5fe14a3b4dd518e99a18ba1002ba8af3901c0e61e8a0d1e7631a3c2eb1f7a9
+  languageName: node
+  linkType: hard
+
+"simple-swizzle@npm:^0.2.2":
+  version: 0.2.2
+  resolution: "simple-swizzle@npm:0.2.2"
+  dependencies:
+    is-arrayish: ^0.3.1
+  checksum: a7f3f2ab5c76c4472d5c578df892e857323e452d9f392e1b5cf74b74db66e6294a1e1b8b390b519fa1b96b5b613f2a37db6cffef52c3f1f8f3c5ea64eb2d54c0
   languageName: node
   linkType: hard
 

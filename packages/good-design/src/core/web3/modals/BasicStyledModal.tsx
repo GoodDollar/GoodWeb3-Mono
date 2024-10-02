@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Center, Checkbox, HStack, Text, VStack } from "native-base";
 import { AsyncStorage } from "@gooddollar/web3sdk-v2";
 import { Trans } from "@lingui/react";
+import { Portal } from "react-native-paper";
 
 import { withTheme } from "../../../theme/hoc/withTheme";
 import { Image } from "../../images";
@@ -155,7 +156,7 @@ const BasicStyledModal = withTheme({ name: "BasicStyledModal", skipProps: ["body
     }, [showModal, show]);
 
     return (
-      <React.Fragment>
+      <Portal>
         <Modal
           _modalContainer={modalStyle}
           _header={headerStyle}
@@ -169,7 +170,7 @@ const BasicStyledModal = withTheme({ name: "BasicStyledModal", skipProps: ["body
           body={body}
           footer={footer}
         />
-      </React.Fragment>
+      </Portal>
     );
   }
 );

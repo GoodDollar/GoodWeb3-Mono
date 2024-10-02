@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React from "react";
 
 import BasicStyledModal, { ModalLoaderBody } from "./BasicStyledModal";
 
@@ -15,16 +15,14 @@ export const LoaderModal = ({
   loading: boolean;
   onClose: () => void;
 }) => (
-  <Fragment>
-    <BasicStyledModal
-      type="loader"
-      title={title}
-      show={true}
-      loading={loading}
-      onClose={onClose}
-      withCloseButton={false}
-      withOverlay={overlay}
-      body={<ModalLoaderBody />}
-    />
-  </Fragment>
+  <BasicStyledModal
+    type="loader"
+    title={title}
+    show={true}
+    loading={loading}
+    onClose={onClose}
+    withCloseButton={false}
+    withOverlay={overlay}
+    body={<ModalLoaderBody />}
+  />
 );

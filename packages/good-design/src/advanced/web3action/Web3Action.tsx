@@ -25,7 +25,7 @@ export interface Web3ActionProps extends Omit<BaseButtonProps, "onPress"> {
 const ButtonSteps = {
   connect: "Connecting wallet...",
   switch: "Switching network...",
-  action: "Awaiting confirmation..."
+  action: "Sign transaction..."
 };
 
 const throwIfCancelled = (e: any) => {
@@ -43,9 +43,9 @@ const throwCancelled = () => {
 
 const StepIndicator: FC<{ text?: string } & ITextProps> = withTheme({ name: "StepIndicator" })(
   ({ text, color, fontSize }) => (
-    <HStack space={2} alignItems="center" flexDirection="row">
+    <HStack space={2} alignItems="flex-start" flexDirection="row" padding="0">
       <Spinner color={color as string} size="sm" accessibilityLabel="Waiting on wallet confirmation" />
-      <Text color={color} fontSize={fontSize} fontFamily="subheading" alignItems="center">
+      <Text color={color} fontSize={fontSize} fontFamily="subheading" alignItems="flex-start" padding={0}>
         {text}
       </Text>
     </HStack>

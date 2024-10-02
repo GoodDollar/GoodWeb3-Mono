@@ -59,7 +59,7 @@ const SegmentationConfirmation = withTheme({ name: "SegmentationConfirmation" })
                         fontSize: "2xs",
                         isTruncated: true,
                         fontFamily: "subheading",
-                        color: "primary",
+                        color: "gdPrimary",
                         fontWeight: "600"
                       }}
                     >

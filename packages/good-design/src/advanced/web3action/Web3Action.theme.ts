@@ -1,6 +1,6 @@
 export const StepIndicator = {
   baseStyle: {
-    color: "primary",
+    color: "gdPrimary",
     fontSize: "md"
   }
 };
@@ -12,6 +12,7 @@ const interactionStyles = {
 
 export const Web3ActionButton = {
   baseStyle: {
+    backgroundColor: "goodGrey.400",
     innerText: {
       fontSize: "xl",
       fontWeight: "bold",
@@ -27,7 +28,7 @@ export const Web3ActionButton = {
     round: () => ({
       shadow: 2,
       px: 2.5,
-      borderRadius: "50%",
+      borderRadius: 120,
       bg: "main",
       innerText: {
         variant: "shadowed",
@@ -36,11 +37,10 @@ export const Web3ActionButton = {
         width: 175,
         lineHeight: 26.4,
         textAlign: "center"
-      },
-      _hover: interactionStyles
+      }
     }),
     mobile: () => ({
-      backgroundColor: "primary",
+      backgroundColor: "gdPrimary",
       width: "100%",
       maxWidth: "none",
       height: 75,
@@ -61,17 +61,16 @@ export const Web3ActionButton = {
       }
     }),
     outlined: () => ({
-      backgroundColor: "white",
+      backgroundColor: "#fff",
       borderRadius: 15,
       borderWidth: 1,
       borderColor: "borderBlue",
-      width: 170,
       height: 43,
       padding: "12px 16px",
       _focus: interactionStyles,
       _hover: interactionStyles,
       innerText: {
-        color: "main",
+        color: "gdPrimary",
         fontSize: "sm",
         fontFamily: "subheading",
         lineHeight: 19

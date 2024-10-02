@@ -12,6 +12,7 @@ import {
 import { HStack, Spinner, Text, VStack } from "native-base";
 import { Wizard } from "react-use-wizard";
 import moment from "moment";
+import { Provider } from "react-native-paper";
 
 import { GoodButton } from "../../../core/buttons";
 import { W3Wrapper } from "../../W3Wrapper";
@@ -92,30 +93,32 @@ export const SegmentationFlow = {
 
     return (
       <W3Wrapper withMetaMask={true} env={args.env}>
-        <GoodIdProvider onGoToClaim={() => alert("Should navigate to the claim-page")}>
-          <VStack {...args}>
-            <Text variant="browse-wrap" fontSize="sm">
-              For testing purposes. this flow is using staging/QA contracts
-            </Text>
-            <VStack alignItems="center">
-              <SegmentationController
-                {...{
-                  account,
-                  isWhitelisted,
-                  certificates,
-                  certificateSubjects,
-                  expiryFormatted,
-                  withNavBar: true,
-                  isDev: true
-                }}
-                onDone={async (e: any) => {
-                  console.log({ e });
-                  alert("Segmentation finished");
-                }}
-              />
+        <Provider>
+          <GoodIdProvider onGoToClaim={() => alert("Should navigate to the claim-page")}>
+            <VStack {...args}>
+              <Text variant="browse-wrap" fontSize="sm">
+                For testing purposes. this flow is using staging/QA contracts
+              </Text>
+              <VStack alignItems="center">
+                <SegmentationController
+                  {...{
+                    account,
+                    isWhitelisted,
+                    certificates,
+                    certificateSubjects,
+                    expiryFormatted,
+                    withNavBar: true,
+                    isDev: true
+                  }}
+                  onDone={async (e: any) => {
+                    console.log({ e });
+                    alert("Segmentation finished");
+                  }}
+                />
+              </VStack>
             </VStack>
-          </VStack>
-        </GoodIdProvider>
+          </GoodIdProvider>
+        </Provider>
       </W3Wrapper>
     );
   },
@@ -160,13 +163,15 @@ export const OnboardFlowExample: Meta<React.ComponentProps<typeof OnboardControl
   decorators: [
     (Story: any) => (
       <GoodUIi18nProvider defaultLanguage="es-419">
-        <GoodIdWrapper>
-          <GoodIdProvider>
-            <W3Wrapper withMetaMask={true} env="staging">
-              <Story />
-            </W3Wrapper>
-          </GoodIdProvider>
-        </GoodIdWrapper>
+        <Provider>
+          <GoodIdWrapper>
+            <GoodIdProvider>
+              <W3Wrapper withMetaMask={true} env="staging">
+                <Story />
+              </W3Wrapper>
+            </GoodIdProvider>
+          </GoodIdWrapper>
+        </Provider>
       </GoodUIi18nProvider>
     )
   ],

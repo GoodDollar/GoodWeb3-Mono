@@ -14,6 +14,7 @@ import { GoodButton } from "../../../core/buttons";
 
 import BillyHearts from "../../../assets/gifs/billy-hearts.gif";
 import SwitchArrows from "../../../assets/images/goodid/switch-arrows.png";
+import { Platform } from "react-native";
 
 const getEarliestClaimTime = (times: Date[], claimTime: Date) => {
   const allTimes = [...times, claimTime];
@@ -138,7 +139,15 @@ export const PostClaim: FC = () => {
           </VStack>
         ) : null}
       </VStack>
-      <VStack mt={8} mb={8} space={4} width="375">
+      <VStack
+        mt={8}
+        mb={8}
+        space={0}
+        {...Platform.select({
+          web: { width: 375 },
+          android: { width: "95%", marginLeft: "auto", marginRight: "auto" }
+        })}
+      >
         <VStack width="375">
           <TransTitle t={/*i18n*/ "Recent claims (Last 30 days):"} variant="title-gdblue" fontSize="l" width="100%" />
         </VStack>

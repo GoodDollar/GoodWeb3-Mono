@@ -4,7 +4,9 @@ import { HStack, View } from "native-base";
 import { isEmpty } from "lodash";
 import { W3Wrapper } from "../../W3Wrapper";
 import { GoodIdContextProvider } from "@gooddollar/web3sdk-v2";
-import { GoodIdDetails } from "../../../apps/goodid";
+import { Provider } from "react-native-paper";
+
+import { GoodIdDetails, GoodIdProvider } from "../../../apps/goodid";
 import { GoodUIi18nProvider, useGoodUILanguage } from "../../../theme";
 import { GoodButton } from "../../../core";
 
@@ -19,17 +21,21 @@ export const GoodIdDetailsScreen = {
     const styles = Object.values(args.styles).filter((styleprop: any) => !isEmpty(styleprop));
 
     return (
-      <View>
-        <HStack width="200">
-          <GoodButton onPress={() => setLanguage("en")}>English</GoodButton>
-          <GoodButton onPress={() => setLanguage("es-419")}>Spanish</GoodButton>
-        </HStack>
-        <GoodIdWrapper>
-          <W3Wrapper withMetaMask={true} env="fuse">
-            <GoodIdDetails account={account} withHeader={true} {...styles} />
-          </W3Wrapper>
-        </GoodIdWrapper>
-      </View>
+      <Provider>
+        <GoodIdProvider>
+          <View>
+            <HStack width="200">
+              <GoodButton onPress={() => setLanguage("en")}>English</GoodButton>
+              <GoodButton onPress={() => setLanguage("es-419")}>Spanish</GoodButton>
+            </HStack>
+            <GoodIdWrapper>
+              <W3Wrapper withMetaMask={true} env="fuse">
+                <GoodIdDetails account={account} withHeader={true} {...styles} />
+              </W3Wrapper>
+            </GoodIdWrapper>
+          </View>
+        </GoodIdProvider>
+      </Provider>
     );
   },
   args: {

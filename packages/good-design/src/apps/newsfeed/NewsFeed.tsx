@@ -86,7 +86,7 @@ export const NewsFeed = withTheme({ name: "NewsFeed", skipProps: "feed" })(
             marginBottom={4}
             backgroundColor="rgba(0,175,255,0.1)"
           >
-            <Heading size="sm" fontFamily="subheading" fontWeight="400" lineHeight="130%" color="primary">
+            <Heading size="sm" fontFamily="subheading" fontWeight="400" lineHeight="130%" color="gdPrimary">
               <Trans id="News" />
             </Heading>
           </CentreBox>
@@ -94,7 +94,7 @@ export const NewsFeed = withTheme({ name: "NewsFeed", skipProps: "feed" })(
             {feed && feed.length > 0 ? (
               feed.map((item: FeedPost) => <NewsCardWrapper key={item.id} item={item} />)
             ) : (
-              <Spinner color="primary" size="lg" />
+              <Spinner color="gdPrimary" size="lg" />
             )}
           </Stack>
         </Stack>

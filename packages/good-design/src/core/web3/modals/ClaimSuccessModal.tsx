@@ -7,7 +7,7 @@ import BasicStyledModal, { ModalFooterSocial } from "./BasicStyledModal";
 const ClaimSuccessContent = () => (
   <Text variant="sm-grey-650">
     Why not tell your friends on social media?
-    <Text fontFamily="subheading" fontSize="sm" color="primary">
+    <Text fontFamily="subheading" fontSize="sm" color="gdPrimary">
       {` Don't forget to tag use`}
     </Text>
   </Text>

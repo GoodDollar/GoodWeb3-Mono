@@ -62,7 +62,6 @@ const CardRowItem = withTheme({ name: "CardRowItem" })(
                 source={!["Unverified"].includes(verifiedCopy) ? GdVerifiedIcon : GdUnverifiedIcon}
                 height="4"
                 width="4"
-                color="purple"
               />
             ) : null}
           </Center>
@@ -111,7 +110,7 @@ const GoodIdCard = withTheme({ name: "GoodIdCard", skipProps: "certificates" })(
           {Object.keys(CredentialType)
             .filter((typeName): typeName is Exclude<keyof typeof CredentialType, "Identity"> => typeName !== "Identity")
             .map(typeName => (
-              <View mb="2" width={typeName === "Location" ? "300%" : "45%"} key={typeName}>
+              <View mb="2" width={typeName === "Location" ? "300%" : "48%"} key={typeName}>
                 <CardRowItem
                   credentialLabel={typeName}
                   credential={{
@@ -138,7 +137,7 @@ const GoodIdCard = withTheme({ name: "GoodIdCard", skipProps: "certificates" })(
                   fontFamily="subheading"
                   fontSize="2xs"
                   fontWeight="600"
-                  color="primary"
+                  color="gdPrimary"
                   t={/*i18n*/ "Claim"}
                   underline
                 />

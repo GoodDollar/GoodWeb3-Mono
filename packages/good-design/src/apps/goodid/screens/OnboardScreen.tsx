@@ -104,7 +104,7 @@ export const OnboardScreen = withTheme({ name: "OnboardScreen" })(
               <TransHeading t={/*i18n*/ "It unlocks access to:"} fontSize="md" color="goodGrey.600" />
               {accessList.map(({ label, icon }, index) => (
                 <HStack key={label.id} space={2}>
-                  <View width="6" height="6" backgroundColor="primary" borderRadius="50">
+                  <View width="6" height="6" backgroundColor="gdPrimary" borderRadius="50">
                     <Image key={index} source={icon} w="4" h="4" margin="auto" resizeMode="center" />
                   </View>
 
@@ -119,7 +119,7 @@ export const OnboardScreen = withTheme({ name: "OnboardScreen" })(
                       t={/*i18n*/ "Verification takes 2 minutes"}
                       fontFamily="subheading"
                       fontSize="sm"
-                      color="primary"
+                      color="gdPrimary"
                     />
                   </HStack>
                   <HStack space={2}>
@@ -161,24 +161,13 @@ export const OnboardScreen = withTheme({ name: "OnboardScreen" })(
                 </Link>
               ),
               privy: (
-                <Link
-                  href="https://www.gooddollar.org/privacy-policy"
-                  // display="flex"
-                  // justifyContent="flex-end"
-                  // alignItems="flex-end"
-                >
+                <Link href="https://www.gooddollar.org/privacy-policy">
                   <Text
                     style={{
-                      borderColor: "black",
                       fontFamily: "Roboto",
                       fontSize: 12,
                       color: "#7A88A5",
-                      textDecorationLine: "underline",
-                      // display: "flex",
-                      // alignItems: "flex-start",
-                      // justifyContent: "flex-start",
-                      padding: 0,
-                      margin: 0
+                      textDecorationLine: "underline"
                     }}
                   >
                     Privacy Policy
