@@ -3,7 +3,7 @@ import { useWizard, Wizard } from "react-use-wizard";
 import { View } from "native-base";
 import { useEthers } from "@usedapp/core";
 import ethers from "ethers";
-import { isEmpty } from "lodash";
+import { isEmpty, noop } from "lodash";
 import { SupportedChains } from "@gooddollar/web3sdk-v2";
 
 // import { isTxReject } from "../utils/transactionType";
@@ -13,6 +13,7 @@ import { StartClaim, PreClaim } from "../screens";
 import { PostClaim } from "../screens/PostClaim";
 import { ErrorModal, TxDetailsModal, TxModal } from "../../../core/web3/modals";
 import { useClaimContext } from "../context/ClaimContext";
+import { UbiWizardHeader } from "../../../core/layout";
 
 const WizardWrapper: FC<PropsWithChildren<{ skipOffer: Error | boolean | undefined }>> = ({ skipOffer, children }) => {
   const {
@@ -85,7 +86,7 @@ const WizardWrapper: FC<PropsWithChildren<{ skipOffer: Error | boolean | undefin
   }, [account, /*used*/ chainId, certificates, skipOffer]);
 
   return (
-    <View>
+    <View width="100%">
       {error ? <ErrorModal error={error} onClose={handleClose} overlay="dark" /> : null}
 
       {isClaiming && withSignModals ? (
@@ -119,7 +120,8 @@ export const ClaimWizard: FC<Omit<CheckAvailableOffersProps, "onDone">> = ({
   account,
   chainId,
   isDev = false,
-  withNavBar = false
+  withNavBar = false,
+  onExit
 }) => {
   const { setError } = useClaimContext();
   const [skipOffer, setSkipOffer] = useState<Error | boolean | undefined>(false);
@@ -136,7 +138,10 @@ export const ClaimWizard: FC<Omit<CheckAvailableOffersProps, "onDone">> = ({
   );
 
   return (
-    <Wizard wrapper={<WizardWrapper skipOffer={skipOffer} />}>
+    <Wizard
+      wrapper={<WizardWrapper skipOffer={skipOffer} />}
+      header={<UbiWizardHeader onDone={onDone} onExit={onExit ?? noop} />}
+    >
       <StartClaim connectedAccount={account} />
       {chainId === SupportedChains.CELO ? (
         <CheckAvailableOffers {...{ account, chainId, isDev, onDone, withNavBar }} />

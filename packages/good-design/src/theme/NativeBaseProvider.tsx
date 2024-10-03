@@ -27,7 +27,7 @@ export const NativeBaseProvider = ({ children, ...props }: NativeBaseProviderPro
   const loadFonts = chain(DEFAULT_FAMILIES).clone().assign(pick(props, FAMILIES_AVAILABLE)).pickBy().keys().value();
 
   return (
-    <BaseProvider {...rest}>
+    <BaseProvider config={{ suppressColorAccessibilityWarning: true }} {...rest}>
       <Helmet>
         {loadFonts.length && [
           <link key="gapis" rel="preconnect" href="//fonts.googleapis.com" />,

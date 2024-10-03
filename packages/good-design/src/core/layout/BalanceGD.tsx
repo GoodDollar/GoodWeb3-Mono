@@ -12,7 +12,7 @@ interface BalanceGDProps {
 
 const BalanceCopy = ({ heading, subHeading }: { heading: string; subHeading: string }) => (
   <Box mb="4">
-    <Text fontSize="2xl" fontWeight="extrabold" fontFamily="heading" mb="0.5" color="main">
+    <Text fontSize="2xl" fontWeight="extrabold" fontFamily="heading" mb="0.5" color="gdPrimary">
       {heading}
     </Text>
     <Text fontSize="sm" fontWeight="normal" fontFamily="subheading" color="goodGrey.500">

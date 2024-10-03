@@ -73,7 +73,7 @@ export const theme = {
     "news-card": () => ({
       shadow: 1,
       borderLeftWidth: "10px",
-      borderLeftColor: "main",
+      borderLeftColor: "gdPrimary",
       borderRadius: 6,
       styles: {
         footer: {

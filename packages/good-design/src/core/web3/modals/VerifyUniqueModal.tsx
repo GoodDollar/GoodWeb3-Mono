@@ -9,7 +9,7 @@ const ModalContent = () => (
   <Text variant="sm-grey-650">
     You're almost there! To claim G$, you need to be a unique human and prove it with your camera.
     <Link
-      _text={{ color: "main" }}
+      _text={{ color: "gdPrimary" }}
       mt="5"
       href="https://www.notion.so/gooddollar/Get-G-873391f31aee4a18ab5ad7fb7467acb3"
       isExternal

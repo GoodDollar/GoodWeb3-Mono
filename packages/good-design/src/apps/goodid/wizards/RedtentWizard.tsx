@@ -1,7 +1,8 @@
-import { Checkbox, Center, HStack, Text, View, VStack, Box } from "native-base";
-import React, { FC, PropsWithChildren, useCallback, useState } from "react";
+import React, { useCallback, useState } from "react";
+import { Box, Checkbox, Center, HStack, Text, View, VStack } from "native-base";
 import { Wizard, useWizard } from "react-use-wizard";
 
+import { RedTentProps } from "../types";
 import { withTheme } from "../../../theme/hoc/withTheme";
 import ImageCard from "../../../core/layout/ImageCard";
 import { Image } from "../../../core/images";
@@ -13,16 +14,6 @@ import { YouSureModal } from "../../../core/web3/modals";
 import RedTentCard from "../../../assets/images/redtentcard.png";
 import BillyPhone from "../../../assets/images/billy-phone.png";
 import { cardShadow } from "../../../theme";
-
-export type RedTentProps = {
-  onVideo: (base64: string, extension: string) => Promise<void>;
-  onDone: (error?: Error | boolean) => Promise<void>;
-  onError?: (error: Error | undefined) => void;
-  withNavBar: boolean;
-  containerStyles?: any;
-  headerStyles?: any;
-  videoInstructStyles?: any;
-};
 
 const videoRequirements = [
   /*i18n*/ "Your first name",
@@ -36,33 +27,6 @@ const videoUsagePolicy = [
   /*i18n*/ "Your video may be reviewed by the \n GoodLabs or partner teams for \n verification purposes. Your video \n will not be shared or used publicly, \n and will be erased after a period of \n time."
 ];
 
-const WizardWrapper: FC<PropsWithChildren<{ withNavBar: boolean }>> = ({ withNavBar, children, ...props }) =>
-  withNavBar ? (
-    <View
-      bg="gdPrimary"
-      justifyContent={"center"}
-      alignItems={"center"}
-      height={12}
-      flexDir={"row"}
-      width="100%"
-      paddingX={4}
-      mb={6}
-      {...props}
-    >
-      <View flex={1} flexDirection={"row"} justifyContent={"center"}>
-        <TransText
-          t={"GoodID Upgrade"}
-          color="white"
-          fontFamily="subheading"
-          fontSize="sm"
-          fontWeight="500"
-          lineHeight={19}
-        />
-      </View>
-      {children}
-    </View>
-  ) : null;
-
 const CardContent = () => (
   <VStack space="0">
     <TransText
@@ -72,7 +36,7 @@ const CardContent = () => (
       fontWeight="400"
       color="goodGrey.600"
     />
-    <TransText t={/*i18n*/ "10.000G$"} fontFamily="heading" color="gdPrimary" fontSize="l" fontWeight="700" />
+    <TransText t={"800G$"} fontFamily="heading" color="gdPrimary" fontSize="l" fontWeight="700" />
   </VStack>
 );
 
@@ -248,7 +212,7 @@ const RedtentThanks = ({ onDone }: { onDone: RedTentProps["onDone"] }) => {
 
 export const RedtentWizard: React.FC<RedTentProps> = (props: RedTentProps) => {
   const [error, setError] = useState<Error | undefined>(undefined);
-  const { containerStyles, videoInstructStyles } = props;
+  const { videoInstructStyles } = props;
   const dontShowAgainKey = "goodid_noOffersModalAgain";
   // inject show modal on callbacks exceptions
   const modalOnDone: RedTentProps["onDone"] = async errorOnDone => {
@@ -268,7 +232,7 @@ export const RedtentWizard: React.FC<RedTentProps> = (props: RedTentProps) => {
 
   return (
     <WizardContextProvider>
-      <Wizard wrapper={<WizardWrapper withNavBar={props.withNavBar} {...containerStyles} />}>
+      <Wizard>
         <RedtentOffer onDone={modalOnDone} dontShowAgainKey={dontShowAgainKey} />
         <RedtentVideoInstructions
           onDone={modalOnDone}

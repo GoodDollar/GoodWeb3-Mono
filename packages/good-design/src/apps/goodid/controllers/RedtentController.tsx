@@ -1,7 +1,8 @@
 import React from "react";
 import { uploadToS3, useAggregatedCertificates, useRegisterRedtent } from "@gooddollar/web3sdk-v2";
 
-import { RedtentWizard, RedTentProps } from "../wizards/RedtentWizard";
+import { RedtentWizard } from "../wizards/RedtentWizard";
+import { RedTentProps } from "../types";
 
 export const RedtentController = (props: Omit<RedTentProps, "onVideo"> & { account: string }) => {
   const registerRedtent = useRegisterRedtent();

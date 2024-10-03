@@ -62,7 +62,7 @@ const NewsCardWrapper = ({ item }: { item: FeedPost }) => {
       footer={<NewsCardFooter published={published} sponsored_logo={sponsored_logo} />}
       shadow={1}
       borderLeftWidth="10px"
-      borderLeftColor="main"
+      borderLeftColor="gdPrimary"
       borderRadius={6}
     />
   );

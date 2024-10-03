@@ -29,7 +29,7 @@ const LearnButton = ({ type }: LearnButtonType) => {
       <Box display="flex" w="60%" alignSelf="flex-start" p={2}>
         <TransText color="goodLightBlue" fontSize="sm" t={/*i18n*/ "Learn"} />
         <TransText
-          color="main"
+          color="gdPrimary"
           fontSize="sm"
           fontWeight="normal"
           fontFamily="subheading"

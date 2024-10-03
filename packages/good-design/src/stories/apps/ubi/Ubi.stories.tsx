@@ -84,6 +84,9 @@ export const ClaimFlow = {
     onUpgrade: () => {
       alert("Should go to goodid upgrade page");
     },
+    onExit: () => {
+      alert("If wallet > should go to dashboard");
+    },
     isDev: true
   }
 };

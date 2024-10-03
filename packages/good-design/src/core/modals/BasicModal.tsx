@@ -51,7 +51,7 @@ const BasicModal: FC<BasicModalProps> = ({
     onClose();
   }, [onAction, onClose]);
 
-  const overlayDark = useColorModeValue("mainDarkContracts:alpha.40", "white:alpha.40");
+  const overlayDark = useColorModeValue("mainDarkContrast:alpha.40", "white:alpha.40");
   const overlayBlur = "purple.300"; //todo: add blur overlay
 
   const bgOverlay = withOverlay === "dark" ? overlayDark : withOverlay === "blur" ? overlayBlur : "transparent";
@@ -81,7 +81,16 @@ const BasicModal: FC<BasicModalProps> = ({
         }}
         bgColor={bgOverlay}
       >
-        <NBModal.Content style={{ maxWidth: 343, padding: 0, paddingTop: 0, ..._modalContainer }}>
+        <NBModal.Content
+          style={{
+            ..._modalContainer,
+            maxWidth: 343,
+            paddingTop: 0,
+            paddingBottom: 0,
+            paddingLeft: 0,
+            paddingRight: 0
+          }}
+        >
           {hasCloseButton ? (
             <NBModal.Actions style={{ position: "absolute", top: 0, right: 0, zIndex: 1 }}>
               <Button
@@ -97,10 +106,15 @@ const BasicModal: FC<BasicModalProps> = ({
           <VStack space={6}>
             {header ? (
               <NBModal.Title
-                style={{ marginBottom: 0, padding: 10 }}
                 backgroundColor={bgColor}
                 borderBottomWidth={hasTopBorder ? 1 : 0}
                 {..._header}
+                style={{
+                  ...Platform.select({
+                    web: { marginTop: 22, marginBottom: 0, marginLeft: 0, marginRight: 0, padding: 0 },
+                    android: { marginBottom: 0, padding: 10 }
+                  })
+                }}
               >
                 {header}
               </NBModal.Title>

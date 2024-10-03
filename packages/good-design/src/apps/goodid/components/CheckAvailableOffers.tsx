@@ -13,6 +13,7 @@ export interface CheckAvailableOffersProps {
   isDev?: boolean;
   onDone: (e?: Error | boolean | undefined) => Promise<void>;
   onError?: (e: Error | undefined) => void;
+  onExit?: () => void;
   // pools: any;
 }
 

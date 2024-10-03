@@ -99,7 +99,7 @@ export const SegmentationFlow = {
               <Text variant="browse-wrap" fontSize="sm">
                 For testing purposes. this flow is using staging/QA contracts
               </Text>
-              <VStack alignItems="center">
+              <VStack alignItems="center" minHeight="850">
                 <SegmentationController
                   {...{
                     account,
