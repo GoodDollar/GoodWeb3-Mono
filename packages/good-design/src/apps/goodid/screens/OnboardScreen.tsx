@@ -180,7 +180,7 @@ export const OnboardScreen = withTheme({ name: "OnboardScreen" })(
           <VStack alignItems="center" space={4} width="100%">
             <TransButton t={/*i18n*/ "I ACCEPT, VERIFY ME"} onPress={onAccept} maxW={"343"} width="100%" />
             <BasePressable onPress={() => openLink("https://gooddollar.org/", "_blank")}>
-              <Text {...poweredBy}>Powered by GoodDollar</Text>
+              <TransText t={/*i18n*/ "Powered by GoodDollar"} {...poweredBy} />
             </BasePressable>
           </VStack>
         </VStack>

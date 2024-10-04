@@ -19,6 +19,11 @@ msgstr ""
 "X-Crowdin-File-ID: 140\n"
 
 #. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreen.tsx:183
+msgid "Powered by GoodDollar"
+msgstr "Powered by GoodDollar"
+
+#. js-lingui-explicit-id
 #: src/apps/goodid/components/GoodIdCard.tsx:130
 msgid "To upgrade your GoodID, please"
 msgstr ""
