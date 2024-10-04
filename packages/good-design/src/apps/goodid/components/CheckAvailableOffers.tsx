@@ -63,7 +63,13 @@ const CheckAvailableOffers: FC<CheckAvailableOffersProps> = ({
 
   // If isNull means we are still waiting for the availableOffers to be fetched
   // else we are just waiting on onDone to handle the next step / navigation
-  if (isNull(availableOffers) || availableOffers === false || availableOffers?.length === 0 || alreadyMember !== false)
+  if (
+    isNull(availableOffers) ||
+    availableOffers === false ||
+    availableOffers?.length === 0 ||
+    alreadyMember !== false ||
+    poolContracts === undefined
+  )
     return <Spinner variant="page-loader" size="lg" />;
 
   return (

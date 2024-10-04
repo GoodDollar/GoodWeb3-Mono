@@ -125,7 +125,7 @@ const BasicModal: FC<BasicModalProps> = ({
             </NBModal.Content>
           </VStack>
           {footer ? (
-            <VStack paddingTop={6}>
+            <VStack paddingLeft={6} paddingRight={6} paddingBottom={6}>
               <NBModal.Actions borderTopWidth={hasBottomBorder ? 1 : 0} {..._footer} padding="0" bgColor={bgColor}>
                 {footer}
                 {actionButton ? <Button.Group space={2}>{actionButton}</Button.Group> : null}

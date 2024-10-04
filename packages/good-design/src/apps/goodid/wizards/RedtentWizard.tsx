@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from "react";
-import { Box, Checkbox, Center, HStack, Text, View, VStack } from "native-base";
+import { Box, Checkbox, Center, HStack, View, VStack, Spinner } from "native-base";
 import { Wizard, useWizard } from "react-use-wizard";
+import { isEmpty } from "lodash";
 
 import { RedTentProps } from "../types";
 import { withTheme } from "../../../theme/hoc/withTheme";
@@ -27,6 +28,17 @@ const videoUsagePolicy = [
   /*i18n*/ "Your video may be reviewed by the \n GoodLabs or partner teams for \n verification purposes. Your video \n will not be shared or used publicly, \n and will be erased after a period of \n time."
 ];
 
+const offerCriteria = {
+  location: {
+    NG: /*i18n*/ "Nigeria",
+    CO: /*i18n*/ "Colombia"
+  },
+  gender: {
+    Female: /*i18n*/ "Female",
+    Male: /*i18n*/ "Male"
+  }
+};
+
 const CardContent = () => (
   <VStack space="0">
     <TransText
@@ -46,34 +58,57 @@ const CardFooter = ({ linkText }: { linkText: string }) => (
   </TransText>
 );
 
-const PoolRequirements = () => (
-  <VStack space={6}>
-    <TransTitle t={/*i18n*/ "To qualify for this pool you need to: "} variant="subtitle-grey" />
-    <VStack space="4">
-      <HStack space={2}>
-        <Checkbox variant="styled-blue" isDisabled defaultIsChecked colorScheme="info" value="female" />
-        <HStack alignItems="flex-start">
-          <TransText t={/*i18n*/ "Have verified your gender as"} variant="sm-grey-650" />
-          <TransText t={/*i18n*/ " Female "} variant="sm-grey-650" fontWeight="bold" />
-          <TransText t={/*i18n*/ "in your GoodID"} variant="sm-grey-650" />
-        </HStack>
-      </HStack>
-      <HStack space={2}>
-        <Checkbox variant="styled-blue" isDisabled defaultIsChecked colorScheme="info" value="location" />
-        <Text variant="sm-grey-650">
-          Have verified your country as <Text fontWeight="bold">Nigeria</Text> in your GoodID
-        </Text>
-      </HStack>
-      <HStack space={2}>
-        <Checkbox isDisabled colorScheme="info" value="test" />
-        <TransText t={/*i18n*/ "Submit a video selfie saying: "} variant="sm-grey-650" />
-      </HStack>
-      <BulletPointList bulletPoints={videoRequirements} />
-    </VStack>
-  </VStack>
-);
+const PoolRequirements = ({ offer }: { offer: any }) => {
+  const gender = offer.Gender;
+  const country = offerCriteria.location[offer.Location.countryCode as keyof typeof offerCriteria.location];
 
-const RedtentOffer = ({ dontShowAgainKey, onDone }: { onDone: RedTentProps["onDone"]; dontShowAgainKey: string }) => {
+  return (
+    <VStack space={6}>
+      <TransTitle t={/*i18n*/ "To qualify for this pool you need to: "} variant="subtitle-grey" />
+      <VStack space="4">
+        <HStack space={2}>
+          <Checkbox variant="styled-blue" isDisabled defaultIsChecked colorScheme="info" value="female" />
+          <HStack alignItems="flex-start" flexShrink={1}>
+            <TransText
+              t={/*i18n*/ "Have verified your gender as {gender} in your GoodID"}
+              variant="sm-grey-650"
+              values={{
+                gender: <TransText t={gender} variant="sm-grey-650" fontWeight="bold" />
+              }}
+            />
+          </HStack>
+        </HStack>
+
+        <HStack space={2}>
+          <Checkbox variant="styled-blue" isDisabled defaultIsChecked colorScheme="info" value="location" />
+          <TransText
+            t={/*i18n*/ "Have verified your country as {country} in your GoodID"}
+            variant="sm-grey-650"
+            values={{
+              country: <TransText t={country} fontWeight="bold" variant="sm-grey-650" />
+            }}
+          />
+        </HStack>
+
+        <HStack space={2}>
+          <Checkbox isDisabled colorScheme="info" value="test" />
+          <TransText t={/*i18n*/ "Submit a video selfie saying: "} variant="sm-grey-650" />
+        </HStack>
+        <BulletPointList bulletPoints={videoRequirements} />
+      </VStack>
+    </VStack>
+  );
+};
+
+const RedtentOffer = ({
+  dontShowAgainKey,
+  onDone,
+  offer
+}: {
+  onDone: RedTentProps["onDone"];
+  dontShowAgainKey: string;
+  offer: any;
+}) => {
   const { nextStep } = useWizard();
   const [showModal, setShowModal] = useState(false);
 
@@ -86,8 +121,10 @@ const RedtentOffer = ({ dontShowAgainKey, onDone }: { onDone: RedTentProps["onDo
     void onDone(true);
   };
 
+  if (isEmpty(offer)) return <Spinner variant="lg" />;
+
   return (
-    <View>
+    <View maxWidth="343" margin="auto">
       <YouSureModal
         open={showModal}
         action={handleOnDone}
@@ -99,7 +136,10 @@ const RedtentOffer = ({ dontShowAgainKey, onDone }: { onDone: RedTentProps["onDo
         <TransTitle t={/*i18n*/ "You are eligible for \n additional UBI!"} variant="title-gdblue" />
         <ImageCard
           variant="offer-card"
-          title={/*i18n*/ "Red Tent Women in Nigeria"}
+          title={
+            /*i18n*/ "Red Tent Women in " +
+            offerCriteria.location[offer.Location.countryCode as keyof typeof offerCriteria.location]
+          }
           content={<CardContent />}
           footer={<CardFooter linkText={/*i18n*/ "Learn more>>"} />}
           picture={RedTentCard}
@@ -119,7 +159,7 @@ const RedtentOffer = ({ dontShowAgainKey, onDone }: { onDone: RedTentProps["onDo
           borderRadius={20}
         />
       </VStack>
-      <PoolRequirements />
+      <PoolRequirements {...{ offer }} />
       <VStack space={4}>
         <TransButton t={/*i18n*/ "Upload Video Selfie"} onPress={nextStep} />
         <TransButton t={/*i18n*/ "Skip for now"} onPress={handleSkip} variant={"link-like"} padding={0} />
@@ -215,6 +255,7 @@ export const RedtentWizard: React.FC<RedTentProps> = (props: RedTentProps) => {
   const { videoInstructStyles } = props;
   const dontShowAgainKey = "goodid_noOffersModalAgain";
   // inject show modal on callbacks exceptions
+
   const modalOnDone: RedTentProps["onDone"] = async errorOnDone => {
     try {
       await props.onDone(errorOnDone);
@@ -233,7 +274,7 @@ export const RedtentWizard: React.FC<RedTentProps> = (props: RedTentProps) => {
   return (
     <WizardContextProvider>
       <Wizard>
-        <RedtentOffer onDone={modalOnDone} dontShowAgainKey={dontShowAgainKey} />
+        <RedtentOffer onDone={modalOnDone} dontShowAgainKey={dontShowAgainKey} offer={props.availableOffers?.[0]} />
         <RedtentVideoInstructions
           onDone={modalOnDone}
           onVideo={modalOnVideo}
