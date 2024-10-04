@@ -27,6 +27,12 @@ interface GoodIdCardProps extends IStackProps {
   fontStyles?: any;
 }
 
+const idTypeLabels = {
+  Age: /*i18n*/ "Age",
+  Gender: /*i18n*/ "Gender",
+  Location: /*i18n*/ "Location"
+};
+
 const CardRowItem = withTheme({ name: "CardRowItem" })(
   ({
     credentialLabel,
@@ -43,14 +49,11 @@ const CardRowItem = withTheme({ name: "CardRowItem" })(
     const { subHeading, subContent } = fontStyles ?? {};
     const verifiedValue = useMemo(() => formatVerifiedValues(credential), [credential]);
 
-    const verifiedCopy =
-      verifiedValue === `Unverified-${credentialLabel}` ? verifiedValue.split("-")[0] : verifiedValue;
+    const verifiedCopy = verifiedValue === `Unverified-${credentialLabel}` ? /*i18n*/ "Unverified" : verifiedValue;
 
     return (
       <VStack {...props}>
-        <Text variant="sm-grey-650" fontWeight="600" {...subHeading}>
-          {credentialLabel}
-        </Text>
+        <TransText t={credentialLabel} variant="sm-grey-650" fontWeight="600" {...subHeading} />
         <HStack space={1} alignItems="center">
           <Text variant="sm-grey-650" {...subContent}>
             {isNew ? "-" : verifiedCopy}
@@ -112,7 +115,7 @@ const GoodIdCard = withTheme({ name: "GoodIdCard", skipProps: "certificates" })(
             .map(typeName => (
               <View mb="2" width={typeName === "Location" ? "300%" : "48%"} key={typeName}>
                 <CardRowItem
-                  credentialLabel={typeName}
+                  credentialLabel={idTypeLabels[typeName]}
                   credential={{
                     credentialSubject: certificateSubjects?.[typeName],
                     typeName: CredentialType[typeName],
