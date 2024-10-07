@@ -95,7 +95,7 @@ export const theme = {
       },
       borderRadius: "30px",
       _hover: {
-        bgColor: "primary"
+        bgColor: "gdPrimary"
       }
     }),
     externalLink: () => ({

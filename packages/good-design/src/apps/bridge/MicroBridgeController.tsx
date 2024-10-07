@@ -195,8 +195,7 @@ const HistoryRowItem = ({ item, env }: { item: any; env: string }) => {
             <VStack alignItems="flex-start">
               <Text variant="xs-grey">{`(Bridged to ${SupportedChains[targetChain]})`}</Text>
               <ExplorerLink
-                fontSize="xs"
-                fontFamily="subheading"
+                fontStyle={{ fontSize: "xs", fontFamily: "subheading", fontWeight: 700 }}
                 chainId={targetChain}
                 addressOrTx={relayEvent.transactionHash}
                 text={truncateMiddle(relayEvent.transactionHash, 11)}
@@ -213,8 +212,7 @@ const HistoryRowItem = ({ item, env }: { item: any; env: string }) => {
             <VStack alignItems="flex-start">
               <Text variant="xs-grey">{`(Bridging from ${SupportedChains[sourceChain]})`}</Text>
               <ExplorerLink
-                fontSize="xs"
-                fontFamily="subheading"
+                fontStyle={{ fontSize: "xs", fontFamily: "subheading", fontWeight: 700 }}
                 chainId={sourceChain}
                 addressOrTx={transactionHash}
                 text={truncateMiddle(transactionHash, 11)}

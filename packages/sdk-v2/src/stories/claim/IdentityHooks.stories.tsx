@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { W3Wrapper } from "../W3Wrapper";
 import { ComponentStory, ComponentMeta } from "@storybook/react";
 import { useFVLink, useIsAddressVerified } from "../../sdk/claim/react";
-import { useSDK } from "../../sdk/base/react";
 import { useEthers } from "@usedapp/core";
 
 export interface PageProps {
