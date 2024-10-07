@@ -224,7 +224,7 @@ const RedtentThanks = ({ onDone }: { onDone: RedTentProps["onDone"] }) => {
 
   return (
     <VStack space={200}>
-      <VStack space={6}>
+      <VStack space={6} maxWidth={343} margin="auto">
         <TransTitle t={/*i18n*/ "Thanks you for submitting your video!"} variant="title-gdblue" />
         <Box
           display="block"
