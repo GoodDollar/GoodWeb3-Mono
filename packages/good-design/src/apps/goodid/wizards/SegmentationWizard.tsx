@@ -48,7 +48,10 @@ const SegmentationScreenWrapper = (
     if ((error || geoLocation?.location) && account) {
       updateDataValue("segmentation", "locationPermission", !error);
       void props.onLocationRequest(geoLocation, account).then(() => {
-        setLoading(false);
+        // add a small delay to make sure certificates are retrieved correctly.
+        setTimeout(() => {
+          setLoading(false);
+        }, 2500);
       });
     }
   }, [geoLocation, account, error]);

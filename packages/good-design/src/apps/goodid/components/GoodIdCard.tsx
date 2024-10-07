@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { Center, IStackProps, HStack, Text, View, VStack } from "native-base";
+import { Center, IStackProps, HStack, Spinner, Text, View, VStack } from "native-base";
 import { CredentialType, CredentialSubjectsByType, AsyncStorage } from "@gooddollar/web3sdk-v2";
 import usePromise from "react-use-promise";
 
@@ -80,6 +80,8 @@ const GoodIdCard = withTheme({ name: "GoodIdCard", skipProps: "certificates" })(
     const { title, subHeading, subContent, footer } = props.fontStyles ?? {};
     const truncatedAccount = truncateMiddle(account, 11);
     const [disputedSubjects] = usePromise(() => AsyncStorage.getItem("goodid_disputedSubjects"), []);
+
+    if (disputedSubjects === undefined) return <Spinner variant="page-loader" size="lg" />;
 
     return (
       <VStack variant="shadow-card" paddingBottom={2} {...props}>

@@ -1,6 +1,6 @@
 import React from "react";
 import { noop } from "lodash";
-import { Center, HStack, Text, VStack } from "native-base";
+import { Box, Center, HStack, Text, VStack } from "native-base";
 import { SupportedChains } from "@gooddollar/web3sdk-v2";
 
 import { Image } from "../../images";
@@ -50,7 +50,7 @@ const TxDetailsContent = ({ tx, color, network }: { tx: Transaction; color: stri
         <HStack justifyContent="flex-start" flexShrink={1} space={3}>
           <Image source={contractIcon ?? UnknownAvatarIcon} w="8" h="8" accessibilityLabel="Test" />
           <HStack space={10} flexGrow={1} justifyContent="space-between">
-            <VStack space={0}>
+            <VStack space={0.5}>
               <Text variant="4xs-grey-600" flexGrow={1}>
                 from:
                 <Text variant="4xs-grey-600" fontSize="sm">
@@ -63,7 +63,6 @@ const TxDetailsContent = ({ tx, color, network }: { tx: Transaction; color: stri
                 chainId={network}
                 text={trunContractAddr}
                 fontStyle={{ fontSize: "sm", fontFamily: "subheading", fontWeight: 500 }}
-                maxWidth={"60%"}
                 isPool={isPool}
                 withIcon={false}
               />
@@ -75,8 +74,8 @@ const TxDetailsContent = ({ tx, color, network }: { tx: Transaction; color: stri
       </VStack>
 
       {type !== "claim-start" ? (
-        <VStack space={0} borderBottomColor={color} borderBottomWidth="2" paddingY="4" paddingX="1" width="100%">
-          <HStack justifyContent="flex-start" flexShrink={1} space={4}>
+        <VStack space={0} borderBottomColor={color} borderBottomWidth="2" paddingY="3" paddingX="1" width="100%">
+          <HStack justifyContent="flex-start" flexShrink={1} space={3}>
             <Image source={UnknownAvatarIcon} w="8" h="8" accessibilityLabel="Test" />
             <HStack space={10} flexGrow={1} justifyContent="flex-start">
               {/* <VStack flexGrow={1} space="0.5"> */}
@@ -93,12 +92,11 @@ const TxDetailsContent = ({ tx, color, network }: { tx: Transaction; color: stri
                   chainId={network}
                   text={trunAccountAddr}
                   fontStyle={{ fontSize: "sm", fontFamily: "subheading", fontWeight: 500 }}
-                  maxWidth={"42%"}
                   withIcon={false}
                 />
               </VStack>
-              <></>
             </HStack>
+            <Box />
           </HStack>
         </VStack>
       ) : null}
@@ -145,7 +143,9 @@ const TxDetailsFooter = ({
           padding={0}
           margin={0}
         >
-          <Text color="white">Ok</Text>
+          <Text color="white" textTransform="uppercase" fontWeight="bold" fontFamily="subheading">
+            OK
+          </Text>
         </GoodButton>
       </HStack>
       {/*todo: see if worth to implement/find native-base equivalent 

@@ -89,7 +89,7 @@ export const WizardHeader = ({
             </Pressable>
           </View>
 
-          <View flex={1} flexDirection={"row"} justifyContent={"center"}>
+          <View flex={1} flexDirection={"row"} justifyContent={"center"} paddingRight={4}>
             <TransText
               t={"GoodID"}
               color="white"
