@@ -93,8 +93,7 @@ export const PostClaim: FC = () => {
   const { nextClaimTime, isWhitelisted } = claimDetails;
   const poolTimes: Date[] | undefined = poolsDetails?.map(pool => pool.nextClaimTime);
 
-  if ((isWhitelisted as any) === undefined || transactionList === undefined)
-    return <Spinner variant="page-loader" size="lg" />;
+  if ((isWhitelisted as any) === undefined) return <Spinner variant="page-loader" size="lg" />;
 
   return (
     <VStack justifyContent="center" alignItems="center">
