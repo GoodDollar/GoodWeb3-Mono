@@ -19,6 +19,11 @@ msgstr ""
 "X-Crowdin-File-ID: 140\n"
 
 #. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:136
+msgid "You are eligible to claim more GoodDollars!"
+msgstr "You are eligible to claim more GoodDollars!"
+
+#. js-lingui-explicit-id
 #: src/apps/goodid/components/GoodIdCard.tsx:31
 msgid "Age"
 msgstr "Age"
@@ -39,28 +44,18 @@ msgid "Unverified"
 msgstr "Unverified"
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/screens/OnboardScreen.tsx:146
-msgid "By clicking on ”I accept, verify me”, you are accepting our {tos} and {privy}. Per this policy you agree to let us collect information such as your gender and age."
-msgstr "By clicking on ”I accept, verify me”, you are accepting our {tos} and {privy}. Per this policy you agree to let us collect information such as your gender and age."
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/screens/OnboardScreen.tsx:183
-msgid "Powered by GoodDollar"
-msgstr "Powered by GoodDollar"
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/components/GoodIdCard.tsx:133
+#: src/apps/goodid/components/GoodIdCard.tsx:135
 msgid "To upgrade your GoodID, please"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/components/GoodIdCard.tsx:144
+#: src/apps/goodid/components/GoodIdCard.tsx:146
 #: src/core/layout/UbiWizardHeader.tsx:11
 msgid "Claim"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/components/GoodIdCard.tsx:153
+#: src/apps/goodid/components/GoodIdCard.tsx:155
 msgid "Expires on {expiryDate}"
 msgstr ""
 
@@ -219,9 +214,19 @@ msgid "Your GoodID lives in your local storage. If you use other devices, browse
 msgstr ""
 
 #. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreen.tsx:146
+msgid "By clicking on ”I accept, verify me”, you are accepting our {tos} and {privy}. Per this policy you agree to let us collect information such as your gender and age."
+msgstr "By clicking on ”I accept, verify me”, you are accepting our {tos} and {privy}. Per this policy you agree to let us collect information such as your gender and age."
+
+#. js-lingui-explicit-id
 #: src/apps/goodid/screens/OnboardScreen.tsx:181
 msgid "I ACCEPT, VERIFY ME"
 msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreen.tsx:183
+msgid "Powered by GoodDollar"
+msgstr "Powered by GoodDollar"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/SegmentationConfirmation.tsx:30
@@ -352,13 +357,6 @@ msgid "Submit a video selfie saying: "
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/wizards/RedtentWizard.tsx:136
-msgid ""
-"You are eligible for \n"
-" additional UBI!"
-msgstr ""
-
-#. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:144
 msgid "Learn more>>"
 msgstr ""
@@ -416,19 +414,19 @@ msgid "GoodCollective. You can claim this additional UBI daily."
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/wizards/SegmentationWizard.tsx:58
+#: src/apps/goodid/wizards/SegmentationWizard.tsx:61
 msgid ""
 "We're checking \n"
 " your information"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/wizards/SegmentationWizard.tsx:70
+#: src/apps/goodid/wizards/SegmentationWizard.tsx:73
 msgid "yes, i am"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/wizards/SegmentationWizard.tsx:73
+#: src/apps/goodid/wizards/SegmentationWizard.tsx:76
 msgid "no, i am not"
 msgstr ""
 
@@ -453,22 +451,22 @@ msgid "Your Next Claim"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/screens/PostClaim.tsx:109
+#: src/apps/ubi/screens/PostClaim.tsx:108
 msgid "You've claimed today"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/screens/PostClaim.tsx:117
+#: src/apps/ubi/screens/PostClaim.tsx:116
 msgid "CLAIM ON {altChain}"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/screens/PostClaim.tsx:132
+#: src/apps/ubi/screens/PostClaim.tsx:131
 msgid "See all news >"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/screens/PostClaim.tsx:152
+#: src/apps/ubi/screens/PostClaim.tsx:151
 msgid "Recent claims (Last 30 days):"
 msgstr ""
 
@@ -543,7 +541,7 @@ msgid "Learn about the identification process"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/core/inputs/WebVideoUploader.tsx:39
+#: src/core/inputs/WebVideoUploader.tsx:40
 msgid ""
 "It seems the video format you uploaded is unsupported. 😕\n"
 "Supported formats include: MP4, WEBM, OGG, MOV, 3GP, M4V, AVI, and MKV.\n"

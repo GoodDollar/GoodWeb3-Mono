@@ -133,7 +133,7 @@ const RedtentOffer = ({
         dontShowAgainKey={dontShowAgainKey}
       />
       <VStack space={10}>
-        <TransTitle t={/*i18n*/ "You are eligible for \n additional UBI!"} variant="title-gdblue" />
+        <TransTitle t={/*i18n*/ "You are eligible to claim more GoodDollars!"} variant="title-gdblue" />
         <ImageCard
           variant="offer-card"
           title={
