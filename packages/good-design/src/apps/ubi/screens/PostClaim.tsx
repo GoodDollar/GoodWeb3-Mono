@@ -4,6 +4,7 @@ import { NewsFeedContext, useTimer } from "@gooddollar/web3sdk-v2";
 import moment from "moment";
 import { isEmpty } from "lodash";
 import { useWizard } from "react-use-wizard";
+import { Platform } from "react-native";
 
 import { NewsFeed } from "../../newsfeed";
 import { Image } from "../../../core/images";
@@ -14,7 +15,6 @@ import { GoodButton } from "../../../core/buttons";
 
 import BillyHearts from "../../../assets/gifs/billy-hearts.gif";
 import SwitchArrows from "../../../assets/images/goodid/switch-arrows.png";
-import { Platform } from "react-native";
 
 const getEarliestClaimTime = (times: Date[], claimTime: Date) => {
   const allTimes = [...times, claimTime];
@@ -57,7 +57,8 @@ const NextClaim = ({
     <VStack alignItems="center">
       {nextClaim ? (
         <>
-          <Image source={BillyHearts} alt="billy-hearts" width="100" height="120" />
+          {Platform.OS === "web" ? <Image source={BillyHearts} alt="billy-hearts" width="100" height="120" /> : null}
+
           <VStack space={0} backgroundColor="goodGrey.400" borderRadius="100" w="160" h="160" justifyContent="center">
             <TransText t={/*i18n*/ "Your Next Claim"} textAlign="center" variant="sm-white-normal" />
 
@@ -96,7 +97,7 @@ export const PostClaim: FC = () => {
   if ((isWhitelisted as any) === undefined) return <Spinner variant="page-loader" size="lg" />;
 
   return (
-    <VStack justifyContent="center" alignItems="center">
+    <VStack justifyContent="center" alignItems="center" mb={6}>
       <VStack
         width="100%"
         space={8}
@@ -139,12 +140,11 @@ export const PostClaim: FC = () => {
         ) : null}
       </VStack>
       <VStack
-        mt={8}
-        mb={8}
-        space={0}
+        mt={2}
+        mb={2}
+        margin="auto"
         {...Platform.select({
-          web: { width: 375 },
-          android: { width: "95%", marginLeft: "auto", marginRight: "auto" }
+          web: { width: 375 }
         })}
       >
         <VStack width="375">

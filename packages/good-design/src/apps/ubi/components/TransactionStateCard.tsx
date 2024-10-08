@@ -1,9 +1,8 @@
 import React, { useCallback } from "react";
-import { Center, HStack, ScrollView, Text, VStack } from "native-base";
+import { Center, HStack, Pressable, ScrollView, Text, VStack } from "native-base";
 import { Platform } from "react-native";
 
 import { withTheme } from "../../../theme/hoc";
-import { BasePressable } from "../../../core/buttons";
 import { Image } from "../../../core/images";
 import { GdAmount, TransText } from "../../../core/layout";
 
@@ -16,8 +15,6 @@ export type TransactionCardProps = {
   transaction: Transaction;
   onTxDetailsPress: ClaimContextProps["onTxDetailsPress"];
 };
-
-const LocalScrollView = ({ ...props }) => <ScrollView {...props} />;
 
 //todo: border likely needs to be turned into component because of pattern. border-image not supported in react-native
 export const TransactionCard = withTheme({ name: "TransactionCard" })(
@@ -38,10 +35,11 @@ export const TransactionCard = withTheme({ name: "TransactionCard" })(
     const { txIcon, networkIcon, contractIcon } = getTxIcons(transaction);
 
     return (
-      <BasePressable
+      <Pressable
         onPress={openTransactionDetails}
         marginLeft="auto"
         marginRight="auto"
+        marginBottom={2}
         {...Platform.select({ web: { marginBottom: 1 } })}
       >
         <VStack
@@ -96,7 +94,7 @@ export const TransactionCard = withTheme({ name: "TransactionCard" })(
             </HStack>
           </HStack>
         </VStack>
-      </BasePressable>
+      </Pressable>
     );
   }
 );
@@ -107,9 +105,21 @@ type TransactionListProps = {
 };
 
 export const TransactionList = ({ transactions, onTxDetailsPress }: TransactionListProps) => (
-  <LocalScrollView maxHeight="550" style={{ scrollbarWidth: "thin" }}>
+  <ScrollView
+    style={{
+      ...Platform.select({
+        web: { scrollBarWidth: "thin", maxHeight: 550 },
+        android: { maxWidth: 360, margin: "auto", marginTop: 4, height: 300, maxHeight: 300 }
+      })
+    }}
+    contentContainerStyle={{ flexGrow: 1, alignItems: "center", justifyContent: "center" }}
+    showsVerticalScrollIndicator={true}
+    scrollEnabled={true}
+    persistentScrollbar={true}
+    nestedScrollEnabled={true}
+  >
     {transactions?.map((tx: Transaction, i: any) => (
       <TransactionCard key={i} {...{ transaction: tx, onTxDetailsPress }} />
     ))}
-  </LocalScrollView>
+  </ScrollView>
 );

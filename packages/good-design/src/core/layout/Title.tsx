@@ -36,7 +36,8 @@ export const theme = {
       fontFamily: "heading",
       fontSize: "l",
       textAlign: "center",
-      lineHeight: 27.6
+      lineHeight: Platform.select({ web: 27.6 }),
+      margin: Platform.select({ android: "auto" })
     }),
     "title-gdred": () => ({
       color: "goodRed.100",

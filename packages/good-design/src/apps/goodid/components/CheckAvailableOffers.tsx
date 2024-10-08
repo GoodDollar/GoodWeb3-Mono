@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useState } from "react";
 import { useCheckAvailableOffers } from "@gooddollar/web3sdk-v2";
 import { Spinner } from "native-base";
-import { isNull } from "lodash";
+import { isEmpty, isNull } from "lodash";
 
 import { RedtentController } from "../controllers/RedtentController";
 import { useClaimContext } from "../../ubi";
@@ -68,7 +68,7 @@ const CheckAvailableOffers: FC<CheckAvailableOffersProps> = ({
     availableOffers === false ||
     availableOffers?.length === 0 ||
     alreadyMember !== false ||
-    poolContracts === undefined
+    isEmpty(poolContracts)
   )
     return <Spinner variant="page-loader" size="lg" />;
 
