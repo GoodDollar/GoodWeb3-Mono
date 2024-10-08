@@ -7,7 +7,7 @@ import { ethers } from "ethers";
 import { EnvKey } from "../sdk/base/sdk";
 import { G$Decimals } from "../sdk/constants";
 import { GoodReserveCDai, GReputation, IGoodDollar } from "@gooddollar/goodprotocol/types";
-import { useGetContract } from "../sdk";
+import { useFaucet, useGetContract } from "../sdk";
 import { SupportedChains } from "../sdk/constants";
 /**
  * request to switch to network id
@@ -111,7 +111,8 @@ const getMulticall2Addresses = (networks: Chain[] | undefined) => {
 
 const Web3Connector = ({ web3Provider }: { web3Provider: JsonRpcProvider | void }) => {
   const { activate, deactivate } = useEthers();
-
+  // trigger calls to top wallet on balance changes
+  void useFaucet();
   useEffect(() => {
     if (web3Provider) {
       activate(web3Provider).catch(noop);
