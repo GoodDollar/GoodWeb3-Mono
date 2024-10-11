@@ -1,5 +1,5 @@
 import { IIdentity, UBIScheme } from "@gooddollar/goodprotocol/types";
-import { ChainId, QueryParams, useCalls, useEthers } from "@usedapp/core";
+import { ChainId, QueryParams, useCalls, useEthers, useEtherBalance } from "@usedapp/core";
 import ethers, { BigNumber, Contract } from "ethers";
 import { first } from "lodash";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -15,7 +15,7 @@ import { ClaimSDK } from "./sdk";
 import useRefreshOrNever from "../../hooks/useRefreshOrNever";
 import { useGetContract, useGetEnvChainId, useReadOnlySDK, useSDK } from "../base/react";
 import { Envs, SupportedChains, SupportedV2Networks } from "../constants";
-import { useContractFunctionWithDefaultGasFees } from "../base/hooks/useGasFees";
+import { useContractFunctionWithDefaultGasFees, useGasFees } from "../base/hooks/useGasFees";
 
 import { getContractsFromClaimPools, getPoolsDetails } from "./utils/pools";
 import { PoolDetails } from "./types";
@@ -61,6 +61,10 @@ export const useMultiClaim = (poolsDetails: PoolDetails[] | undefined) => {
     }[]
   >([]);
 
+  const { gasPrice = BigNumber.from(5e9) } = useGasFees();
+  const minBalance = BigNumber.from(chainId === 42220 ? "250000" : "150000").mul(gasPrice);
+  const balance = useEtherBalance(account, { refresh: 2 }); // refresh every 10 seconds
+
   const { resetState, state, send } = useContractFunctionWithDefaultGasFees(contract, "claim", {
     transactionName: "Claimed UBI"
   });
@@ -100,13 +104,14 @@ export const useMultiClaim = (poolsDetails: PoolDetails[] | undefined) => {
   }, [state.status]);
 
   // once the next contract is set (status === "None"), perform claim
+  // once balance is lower the minBalance, we don't execute until faucet has topped up the wallet
   useEffect(() => {
-    if (state.status !== "None" || !contract) return;
+    if ((state.status !== "None" || !contract) && balance?.lte(minBalance)) return;
 
     const promise = send();
 
     setClaimedContracts(prev => [{ contract, promise }, ...prev]);
-  }, [contract, state.status]);
+  }, [contract, state.status, balance]);
 
   const updateStatus = useCallback(async () => {
     const results = await Promise.all(claimedContracts.map(_ => _.promise)).catch(() => [undefined]);
