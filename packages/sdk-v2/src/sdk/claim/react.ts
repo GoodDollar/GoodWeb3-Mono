@@ -60,10 +60,11 @@ export const useMultiClaim = (poolsDetails: PoolDetails[] | undefined) => {
       promise: Promise<ethers.providers.TransactionReceipt | undefined>;
     }[]
   >([]);
+  const [refreshRate, ,] = useState<QueryParams["refresh"]>("everyBlock");
 
   const { gasPrice = BigNumber.from(5e9) } = useGasFees();
   const minBalance = BigNumber.from(chainId === 42220 ? "250000" : "150000").mul(gasPrice);
-  const balance = useEtherBalance(account, { refresh: 2 }); // refresh every 10 seconds
+  const balance = useEtherBalance(account, { refresh: refreshRate }); // refresh every 10 seconds
 
   const { resetState, state, send } = useContractFunctionWithDefaultGasFees(contract, "claim", {
     transactionName: "Claimed UBI"
@@ -104,9 +105,14 @@ export const useMultiClaim = (poolsDetails: PoolDetails[] | undefined) => {
   }, [state.status]);
 
   // once the next contract is set (status === "None"), perform claim
-  // once balance is lower the minBalance, we don't execute until faucet has topped up the wallet
   useEffect(() => {
-    if ((state.status !== "None" || !contract) && balance?.lte(minBalance)) return;
+    // there can be a delay between sending claim request to wallet and balance update being triggered.
+    // this can result in state.status still on none, while the original send promise is being handled.
+    // to prevent re-sending the same promise,
+    // we check if the contract is already in the claimedContracts[] array.
+    const isAlreadyPending = claimedContracts.some(c => c.contract === contract);
+
+    if (!contract || isAlreadyPending || state.status !== "None" || balance?.lte(minBalance)) return;
 
     const promise = send();
 
@@ -129,6 +135,7 @@ export const useMultiClaim = (poolsDetails: PoolDetails[] | undefined) => {
   // once a tx state changes in claimedContracts[] we update the state.
   useEffect(() => {
     if (claimedContracts.length > 0) {
+      console.log("updateStatus");
       void updateStatus();
     }
 
@@ -137,6 +144,7 @@ export const useMultiClaim = (poolsDetails: PoolDetails[] | undefined) => {
 
   // set the first contract to trigger the claiming process
   const startClaiming = useCallback(async () => {
+    console.log("startClaiming?");
     if (!contract) {
       setStatus({
         isClaimingDone: false,
