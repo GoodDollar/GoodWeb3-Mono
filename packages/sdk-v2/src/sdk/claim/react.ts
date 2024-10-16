@@ -1,5 +1,5 @@
 import { IIdentity, UBIScheme } from "@gooddollar/goodprotocol/types";
-import { ChainId, QueryParams, useCalls, useEthers, useEtherBalance } from "@usedapp/core";
+import { ChainId, QueryParams, useCalls, useEthers } from "@usedapp/core";
 import ethers, { BigNumber, Contract } from "ethers";
 import { first } from "lodash";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -41,7 +41,7 @@ export const useIsAddressVerified = (address: string, env?: EnvKey) => {
 };
 
 export const useMultiClaim = (poolsDetails: PoolDetails[] | undefined) => {
-  const { account, chainId } = useEthers();
+  const { account, chainId, library } = useEthers();
   const [claimFlowStatus, setStatus] = useState<{
     isClaimingDone: boolean;
     remainingClaims: number | undefined;
@@ -60,15 +60,19 @@ export const useMultiClaim = (poolsDetails: PoolDetails[] | undefined) => {
       promise: Promise<ethers.providers.TransactionReceipt | undefined>;
     }[]
   >([]);
-  const [refreshRate, ,] = useState<QueryParams["refresh"]>("everyBlock");
 
   const { gasPrice = BigNumber.from(5e9) } = useGasFees();
   const minBalance = BigNumber.from(chainId === 42220 ? "250000" : "150000").mul(gasPrice);
-  const balance = useEtherBalance(account, { refresh: refreshRate }); // refresh every 10 seconds
+  const signer = (library as ethers.providers.JsonRpcProvider)?.getSigner();
 
   const { resetState, state, send } = useContractFunctionWithDefaultGasFees(contract, "claim", {
     transactionName: "Claimed UBI"
   });
+
+  const getBalance = useCallback(async () => {
+    const balance = await signer?.getBalance();
+    return balance;
+  }, [signer]);
 
   // initialize the state
   useEffect(() => {
@@ -90,14 +94,14 @@ export const useMultiClaim = (poolsDetails: PoolDetails[] | undefined) => {
     const { errorMessage = "", status } = state;
     const isError = isTxReject(errorMessage) || status === "Exception";
 
-    const next = poolContracts?.find(c => !claimedContracts.find(cc => cc.contract === c) && c !== contract);
-
-    if (!next) {
+    if (claimedContracts.length === poolContracts?.length && !["None", "PendingSignature"].includes(status)) {
       setStatus(prev => ({ ...prev, isClaiming: false }));
     }
 
     // Error here indicates a transaction failed to be submitted to the blockchain
     if (status === "Success" || isError) {
+      const next = poolContracts?.find(c => !claimedContracts.find(cc => cc.contract === c) && c !== contract);
+
       // if you don't reset state, the next claim call will not be called.
       resetState();
       setContract(next);
@@ -111,13 +115,16 @@ export const useMultiClaim = (poolsDetails: PoolDetails[] | undefined) => {
     // to prevent re-sending the same promise,
     // we check if the contract is already in the claimedContracts[] array.
     const isAlreadyPending = claimedContracts.some(c => c.contract === contract);
+    if (isAlreadyPending) return;
 
-    if (!contract || isAlreadyPending || state.status !== "None" || balance?.lte(minBalance)) return;
+    void getBalance().then(balance => {
+      if (!contract || state.status !== "None" || balance?.lte(minBalance)) return;
 
-    const promise = send();
+      const promise = send();
 
-    setClaimedContracts(prev => [{ contract, promise }, ...prev]);
-  }, [contract, state.status, balance]);
+      setClaimedContracts(prev => [{ contract, promise }, ...prev]);
+    });
+  }, [contract, state.status]);
 
   const updateStatus = useCallback(async () => {
     const results = await Promise.all(claimedContracts.map(_ => _.promise)).catch(() => [undefined]);

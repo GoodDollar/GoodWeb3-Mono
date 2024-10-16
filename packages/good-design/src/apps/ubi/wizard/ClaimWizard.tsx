@@ -97,13 +97,14 @@ const WizardWrapper: FC<PropsWithChildren<{ skipOffer: Error | boolean | undefin
           isPending={
             !isClaimingDone &&
             remainingClaims > 0 &&
-            claimReceipts?.every((tx: ethers.providers.TransactionReceipt) => tx?.confirmations > 0)
+            claimReceipts?.every(
+              (tx: ethers.providers.TransactionReceipt) => isEmpty(tx?.confirmations) || tx?.confirmations > 0
+            )
           }
           onClose={handleClose}
         />
       ) : null}
 
-      {/* TxDetailsModal */}
       {isOpen ? (
         <TxDetailsModal
           open={isOpen}

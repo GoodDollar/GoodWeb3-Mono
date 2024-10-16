@@ -18,7 +18,7 @@ const config: Config = {
   readOnlyChainId: 42220,
   readOnlyUrls: {
     122: "https://rpc.fuse.io",
-    42220: "https://forno.celo.org"
+    42220: "http://127.0.0.1:8545"
   }
 };
 
