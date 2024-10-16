@@ -135,7 +135,6 @@ export const useMultiClaim = (poolsDetails: PoolDetails[] | undefined) => {
   // once a tx state changes in claimedContracts[] we update the state.
   useEffect(() => {
     if (claimedContracts.length > 0) {
-      console.log("updateStatus");
       void updateStatus();
     }
 
