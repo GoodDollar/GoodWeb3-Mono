@@ -143,7 +143,6 @@ export const useMultiClaim = (poolsDetails: PoolDetails[] | undefined) => {
 
   // set the first contract to trigger the claiming process
   const startClaiming = useCallback(async () => {
-    console.log("startClaiming?");
     if (!contract) {
       setStatus({
         isClaimingDone: false,
