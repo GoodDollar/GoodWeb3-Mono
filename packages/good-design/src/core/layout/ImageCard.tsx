@@ -9,7 +9,7 @@ import { withTheme } from "../../theme/hoc/withTheme";
 import { TransText } from "./Trans";
 
 interface IImageCard extends ICenterProps {
-  picture?: string;
+  picture?: any;
   title: string;
   content: object;
   link: string;
@@ -132,7 +132,7 @@ const ImageCard = withTheme({ name: "ImageCard", skipProps: ["content", "footer"
     return (
       <BasePressable onPress={handlePress} {...styles.button}>
         <Center {...props} {...styles.container}>
-          {picture && <Image src={picture} alt="Image" {...styles.picture} />}
+          {picture && <Image source={picture} alt="Image" {...styles.picture} />}
           <Center width="100%" alignItems="flex-start" {...styles.content}>
             <TransText t={title} fontFamily="subheading" {...styles.title} />
             {content}
