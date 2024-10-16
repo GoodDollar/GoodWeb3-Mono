@@ -90,14 +90,14 @@ export const useMultiClaim = (poolsDetails: PoolDetails[] | undefined) => {
     const { errorMessage = "", status } = state;
     const isError = isTxReject(errorMessage) || status === "Exception";
 
+    const next = poolContracts?.find(c => !claimedContracts.find(cc => cc.contract === c) && c !== contract);
+
+    if (!next) {
+      setStatus(prev => ({ ...prev, isClaiming: false }));
+    }
+
     // Error here indicates a transaction failed to be submitted to the blockchain
     if (status === "Success" || isError) {
-      const next = poolContracts?.find(c => !claimedContracts.find(cc => cc.contract === c) && c !== contract);
-
-      if (!next) {
-        setStatus(prev => ({ ...prev, isClaiming: false }));
-      }
-
       // if you don't reset state, the next claim call will not be called.
       resetState();
       setContract(next);
