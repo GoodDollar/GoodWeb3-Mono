@@ -32,7 +32,8 @@ module.exports = {
         }
       }
     },
-    "@storybook/addon-react-native-web"
+    "@storybook/addon-react-native-web",
+    "storybook-addon-linguijs/register"
   ],
   framework: "@storybook/react",
   core: {
@@ -68,6 +69,7 @@ module.exports = {
     config.resolve.alias = {
       ...config.resolve.alias,
       "react-native-webview": "react-native-web-webview",
+      "@react-native-clipboard/clipboard": "react-native-web-clipboard",
       "lottie-react-native": "react-native-web-lottie"
     };
     return config;

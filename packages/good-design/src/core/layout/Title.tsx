@@ -1,6 +1,7 @@
 import { ITextProps, Text } from "native-base";
 import React, { FC } from "react";
 import { withTheme } from "../../theme/hoc/withTheme";
+import { Platform } from "react-native";
 
 const Title: FC<ITextProps> = withTheme({ name: "Title" })(({ children, ...props }) => (
   <Text {...props}>{children}</Text>
@@ -8,7 +9,7 @@ const Title: FC<ITextProps> = withTheme({ name: "Title" })(({ children, ...props
 
 export const theme = {
   defaultProps: {
-    color: "main",
+    color: "gdPrimary",
     size: "lg"
   },
   baseStyle: {
@@ -27,15 +28,16 @@ export const theme = {
       fontSize: "md",
       fontWeight: "500",
       color: "goodGrey.600",
-      lineHeight: "125%"
+      lineHeight: Platform.select({ web: "125%" })
     }),
     "title-gdblue": () => ({
-      color: "primary",
+      color: "gdPrimary",
       fontWeight: 700,
       fontFamily: "heading",
       fontSize: "l",
       textAlign: "center",
-      lineHeight: 27.6
+      lineHeight: Platform.select({ web: 27.6 }),
+      margin: Platform.select({ android: "auto" })
     }),
     "title-gdred": () => ({
       color: "goodRed.100",

@@ -44,7 +44,7 @@ export const W3Wrapper = () => {
 };
 
 const Web3Action = () => {
-  const { isWhitelisted, claimAmount, claimCall } = useClaim("everyBlock");
+  const { isWhitelisted, claimAmount } = useClaim("everyBlock");
   const [claimText, setClaimText] = useState<string>("Claim UBI");
 
   const handleClaim = useCallback(async () => {
@@ -53,10 +53,9 @@ const Web3Action = () => {
     if (isWhitelisted) {
       console.log("isWhitelisted");
       //todo-fix: this tries to send call from readonly provider, where library already should be Web3Provider
-      // see note above in W3 Wrapper
-      await claimCall.send();
+      alert("should claim");
     }
-  }, [claimCall, isWhitelisted]);
+  }, [isWhitelisted]);
 
   useEffect(() => {
     if (claimAmount) {

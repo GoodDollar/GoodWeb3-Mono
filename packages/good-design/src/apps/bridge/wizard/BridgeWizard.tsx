@@ -20,7 +20,7 @@ const WizardWrapper: FC<
 
   useEffect(() => {
     void (async () => {
-      if (isTxReject(errorMessage)) {
+      if (isTxReject({ message: errorMessage })) {
         goToStep(0);
       }
     })();

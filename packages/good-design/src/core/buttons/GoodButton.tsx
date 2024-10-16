@@ -1,6 +1,7 @@
-import { IButtonProps } from "native-base";
-import { Button } from "native-base";
+import { Button, IButtonProps } from "native-base";
 import React from "react";
+import { Platform } from "react-native";
+
 import { withTheme } from "../../theme/hoc/withTheme";
 import { withThemingTools } from "../../theme/utils/themingTools";
 
@@ -22,11 +23,9 @@ export const theme = {
         fontFamily: "subheading"
       },
       _hover: {
-        backgroundColor: "primary:alpha.80"
+        backgroundColor: "gdPrimary:alpha.80"
       },
-      backgroundColor: "primary",
-      paddingX: 8,
-      paddingY: 10,
+      backgroundColor: "gdPrimary",
       borderRadius: 24,
       textAlign: "center"
     };
@@ -44,7 +43,9 @@ export const theme = {
       _hover: {
         backgroundColor: "goodGrey.400:alpha.20"
       },
-      backgroundColor: "none",
+      backgroundColor: Platform.select({
+        web: "none"
+      }),
       paddingY: 0,
       paddingX: 8,
       textAlign: "center",

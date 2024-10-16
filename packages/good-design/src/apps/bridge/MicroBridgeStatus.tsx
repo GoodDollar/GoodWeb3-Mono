@@ -32,7 +32,7 @@ const Status = ({ result, ...props }: { result?: string }) => {
     case "Mining":
     case "PendingSignature":
     default:
-      return <Spinner color="primary" borderWidth={0} size="sm" {...props} />;
+      return <Spinner color="gdPrimary" borderWidth={0} size="sm" {...props} />;
     case "Success":
       return <CheckIcon size="5" mt="0.5" color="emerald.500" {...props} />;
     case "Fail":
@@ -100,7 +100,7 @@ const StatusHeader = ({
 
   return (
     <>
-      <VStack space={4} paddingBottom="4" borderBottomWidth={1} borderBottomColor="primary">
+      <VStack space={4} paddingBottom="4" borderBottomWidth={1} borderBottomColor="gdPrimary">
         <HStack justifyContent="space-between">
           <Text variant="sm-grey-700">{sendCopy}</Text>
           <GdAmount
@@ -168,7 +168,7 @@ export const SingleTxStatus = ({
   <VStack>
     <VStack>
       {bridgeStatus && bridgeStatus?.status != "None" && (
-        <Box p={2} borderWidth="1" borderColor="primary" rounded="lg" bgColor="white">
+        <Box p={2} borderWidth="1" borderColor="gdPrimary" rounded="lg" bgColor="white">
           <StatusBox text="Sending funds to bridge" txStatus={bridgeStatus} sourceChain={sourceChain} />
 
           {bridgeStatus?.status === "Success" && selfRelayStatus && (

@@ -176,7 +176,7 @@ export const MicroBridge = ({
           </VStack>
 
           <Box w="100px" height="64px" pl="3" pr="3" display="flex" justifyContent={"center"} alignItems="center">
-            <Pressable onPress={toggleChains} backgroundColor="primary" borderRadius="50" p="2">
+            <Pressable onPress={toggleChains} backgroundColor="gdPrimary" borderRadius="50" p="2">
               <Image
                 source={ArrowTabLightRight}
                 w="6"
@@ -225,7 +225,7 @@ export const MicroBridge = ({
         supportedChains={[SupportedChains[sourceChain.toUpperCase() as keyof typeof SupportedChains]]}
         web3Action={triggerBridge}
         disabled={isBridging}
-        backgroundColor="primary"
+        backgroundColor="gdPrimary"
         borderRadius={24}
         isDisabled={isBridging || isValidInput === false}
         innerText={{
