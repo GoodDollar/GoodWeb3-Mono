@@ -40,7 +40,7 @@ const WizardWrapper: FC<PropsWithChildren<{ skipOffer: Error | boolean | undefin
 
   const customTitle = {
     title: /*i18n*/ {
-      id: "Please sign with \n your wallet \n({remainingClaims} transactions left)",
+      id: "Please sign with \n your wallet \n({remainingClaims} transaction(s) left)",
       values: { remainingClaims: remainingClaims }
     }
   };
@@ -90,7 +90,7 @@ const WizardWrapper: FC<PropsWithChildren<{ skipOffer: Error | boolean | undefin
       {error ? <ErrorModal error={error} onClose={handleClose} overlay="dark" /> : null}
 
       {isClaiming && withSignModals ? (
-        <TxModal type="sign" customTitle={customTitle} isPending={isClaiming} />
+        <TxModal type="signMultiClaim" customTitle={customTitle} isPending={isClaiming} />
       ) : remainingClaims !== undefined ? (
         <TxModal
           type="send"

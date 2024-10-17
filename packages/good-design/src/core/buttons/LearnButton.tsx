@@ -7,8 +7,6 @@ import { Image } from "../images";
 import { linksNew } from "../constants";
 import { TransText } from "../layout";
 
-export type learnSources = "send" | "bridging" | "network" | "sign" | "identity";
-
 type LearnButtonType = {
   icon?: any;
   label?: string;
