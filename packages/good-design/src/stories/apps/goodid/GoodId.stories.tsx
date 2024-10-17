@@ -125,7 +125,7 @@ export const SegmentationFlow = {
   args: {
     width: "100%",
     account: "0x00",
-    env: "staging"
+    env: "fuse"
   }
 };
 

@@ -1,7 +1,7 @@
 import BillyWaiting from "../assets/images/billy-waiting.png";
 import BillySign from "../assets/images/billy-sign.png";
 
-export type learnSources = "send" | "bridging" | "network" | "sign" | "identity";
+export type learnSources = "send" | "bridging" | "network" | "sign" | "signMultiClaim" | "identity";
 type links = { link: string; label: string; icon: any };
 
 export const linksNew: Record<learnSources, links> = {
@@ -25,8 +25,13 @@ export const linksNew: Record<learnSources, links> = {
     label: /*i18n*/ "What is signing?",
     icon: BillySign
   },
+  signMultiClaim: {
+    link: "https://gooddollar.notion.site/What-is-signing-b0019fe6c43241068050c9aa16e87ee1",
+    label: /*i18n*/ "What is signing?",
+    icon: BillySign
+  },
   identity: {
-    link: "https://www.notion.so/gooddollar/Get-G-873391f31aee4a18ab5ad7fb7467acb3",
+    link: "https://docs.gooddollar.org/about-the-protocol/sybil-resistance",
     label: /*i18n*/ "Learn about the identification process",
     icon: BillySign
   }

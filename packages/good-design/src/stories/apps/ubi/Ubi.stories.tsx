@@ -27,8 +27,8 @@ export default {
   component: ClaimWizard,
   decorators: [
     (Story: any) => (
-      <W3Wrapper withMetaMask={true} env="staging">
-        <NativeBaseProvider theme={theme}>
+      <W3Wrapper withMetaMask={true} env="fuse">
+        <NativeBaseProvider theme={theme} config={{ suppressColorAccessibilityWarning: true }}>
           <NewsFeedProvider env="qa" limit={1}>
             <VStack alignItems="center">
               <Story />
