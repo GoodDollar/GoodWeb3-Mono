@@ -110,8 +110,6 @@ export const useMultiClaim = (poolsDetails: PoolDetails[] | undefined) => {
 
   // once the next contract is set (status === "None"), perform claim
   useEffect(() => {
-    // there can be a delay between sending claim request to wallet and balance update being triggered.
-    // this can result in state.status still on none, while the original send promise is being handled.
     // to prevent re-sending the same promise,
     // we check if the contract is already in the claimedContracts[] array.
     const isAlreadyPending = claimedContracts.some(c => c.contract === contract);
