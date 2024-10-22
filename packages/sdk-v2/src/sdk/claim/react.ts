@@ -161,8 +161,9 @@ export const useGetMemberUBIPools = () => {
   const [poolsDetails, setPoolsDetails] = useState<PoolDetails[] | undefined>(undefined);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { defaultEnv } = useGetEnvChainId();
   //todo: change to take current envs name, awaiting staging/production contracts to be deployed.
-  const pool = GoodCollectiveContracts["42220"]?.find(envs => envs.name === "development-celo")?.contracts.UBIPool;
+  const pool = GoodCollectiveContracts["42220"]?.find(envs => envs.name === defaultEnv)?.contracts.UBIPool;
 
   const fetchPools = useCallback(async () => {
     setLoading(true);
@@ -179,7 +180,7 @@ export const useGetMemberUBIPools = () => {
         return;
       }
 
-      const sdk = new GoodCollectiveSDK("42220", library as ethers.providers.Provider, { network: "development-celo" });
+      const sdk = new GoodCollectiveSDK("42220", library as ethers.providers.Provider, { network: defaultEnv });
 
       const memberUbiPools = await sdk.getMemberUBIPools(account);
 
@@ -197,7 +198,7 @@ export const useGetMemberUBIPools = () => {
     } finally {
       setLoading(false);
     }
-  }, [account, library, chainId]);
+  }, [account, library, chainId, defaultEnv]);
 
   useEffect(() => {
     if (poolsDetails === undefined) {

@@ -32,13 +32,6 @@ const redtentOffer = [
     },
     Gender: "Female"
   }
-  // {
-  //   campaign: "RedTent",
-  //   Location: {
-  //     countryCode: "PH" // not confirmed yet
-  //   },
-  //   Gender: "Female"
-  // }
 ];
 
 const CheckAvailableOffers: FC<CheckAvailableOffersProps> = ({
