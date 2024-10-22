@@ -110,11 +110,6 @@ export const useMultiClaim = (poolsDetails: PoolDetails[] | undefined) => {
 
   // once the next contract is set (status === "None"), perform claim
   useEffect(() => {
-    // to prevent re-sending the same promise,
-    // we check if the contract is already in the claimedContracts[] array.
-    const isAlreadyPending = claimedContracts.some(c => c.contract === contract);
-    if (isAlreadyPending) return;
-
     void getBalance().then(balance => {
       if (!contract || state.status !== "None" || balance?.lte(minBalance)) return;
 
