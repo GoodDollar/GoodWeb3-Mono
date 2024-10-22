@@ -110,8 +110,9 @@ export const useMultiClaim = (poolsDetails: PoolDetails[] | undefined) => {
 
   // once the next contract is set (status === "None"), perform claim
   useEffect(() => {
+    if (!contract || state.status !== "None") return;
     void getBalance().then(balance => {
-      if (!contract || state.status !== "None" || balance?.lte(minBalance)) return;
+      if (balance?.lte(minBalance)) return;
 
       const promise = send();
 
