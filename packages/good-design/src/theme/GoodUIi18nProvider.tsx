@@ -28,7 +28,7 @@ export const GoodUIi18nProvider: FC<PropsWithChildren<{ defaultLanguage?: string
   const [language, setLanguage] = useState(defaultLanguage);
 
   useEffect(() => {
-    locali18n.activate(language);
+    locali18n.activate(["en", "es-419"].includes(language) ? language : defaultLanguage);
   }, [/*used*/ language]);
 
   return (

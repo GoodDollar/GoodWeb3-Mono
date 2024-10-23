@@ -19,11 +19,6 @@ msgstr ""
 "X-Crowdin-File-ID: 140\n"
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/wizards/RedtentWizard.tsx:136
-msgid "You are eligible to claim more GoodDollars!"
-msgstr "You are eligible to claim more GoodDollars!"
-
-#. js-lingui-explicit-id
 #: src/apps/goodid/components/GoodIdCard.tsx:31
 msgid "Age"
 msgstr "Age"
@@ -357,6 +352,11 @@ msgid "Submit a video selfie saying: "
 msgstr ""
 
 #. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:136
+msgid "You are eligible to claim more GoodDollars!"
+msgstr "You are eligible to claim more GoodDollars!"
+
+#. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:144
 msgid "Learn more>>"
 msgstr ""
@@ -414,19 +414,19 @@ msgid "GoodCollective. You can claim this additional UBI daily."
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/wizards/SegmentationWizard.tsx:61
+#: src/apps/goodid/wizards/SegmentationWizard.tsx:60
 msgid ""
 "We're checking \n"
 " your information"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/wizards/SegmentationWizard.tsx:73
+#: src/apps/goodid/wizards/SegmentationWizard.tsx:71
 msgid "yes, i am"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/wizards/SegmentationWizard.tsx:76
+#: src/apps/goodid/wizards/SegmentationWizard.tsx:74
 msgid "no, i am not"
 msgstr ""
 
@@ -436,7 +436,7 @@ msgid "News"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/components/TransactionStateCard.tsx:83
+#: src/apps/ubi/components/TransactionStateCard.tsx:81
 msgid "Your Daily Basic Income"
 msgstr ""
 
@@ -446,22 +446,22 @@ msgid "An unknown error occurred while claiming"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/screens/PostClaim.tsx:62
+#: src/apps/ubi/screens/PostClaim.tsx:63
 msgid "Your Next Claim"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/screens/PostClaim.tsx:108
+#: src/apps/ubi/screens/PostClaim.tsx:109
 msgid "You've claimed today"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/screens/PostClaim.tsx:116
+#: src/apps/ubi/screens/PostClaim.tsx:117
 msgid "CLAIM ON {altChain}"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/screens/PostClaim.tsx:131
+#: src/apps/ubi/screens/PostClaim.tsx:132
 msgid "See all news >"
 msgstr ""
 
