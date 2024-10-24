@@ -2,8 +2,12 @@ import { NativeBaseProvider as BaseProvider, NativeBaseProviderProps } from "nat
 import React, { ReactElement } from "react";
 import { Helmet } from "react-helmet";
 
+// Polyfills required for react-native and lingui
+import "@formatjs/intl-locale/polyfill";
+import "@formatjs/intl-pluralrules/polyfill";
+
 import { chain, keys, mapValues, omit, pick, toLower } from "lodash";
-import { fontConfig, FontID, getFamiliesUrl } from "./fonts";
+import { fontConfig, FontID, getFamiliesUrl } from "./utils/fonts";
 
 type ILoadFonts = {
   [fontId in FontID]?: boolean;
