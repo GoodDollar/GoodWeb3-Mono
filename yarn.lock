@@ -5576,7 +5576,7 @@ __metadata:
     react-inlinesvg: 2.3.0
     react-native: 0.70.4
     react-native-fs: ^2.20.0
-    react-native-image-picker: ^7.1.2
+    react-native-image-picker: 5.3.1
     react-native-mask-input: ^1.2.2
     react-native-paper: 3.12.0
     react-native-safe-area-context: ^3.3.2
@@ -5726,7 +5726,7 @@ __metadata:
 
 "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2::locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design":
   version: 0.2.35-beta.d4ddc54b
-  resolution: "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2#.yalc/@gooddollar/web3sdk-v2::hash=ae1617&locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design"
+  resolution: "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2#.yalc/@gooddollar/web3sdk-v2::hash=5deac3&locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design"
   dependencies:
     "@amplitude/analytics-browser": ^1.6.4
     "@amplitude/analytics-react-native": ^0.7.0
@@ -5777,7 +5777,7 @@ __metadata:
     "@usedapp/core": "*"
     react-native: "*"
     react-native-web: "*"
-  checksum: fd55f54aacd75ac8c8b0e689eecbaf4ba9ccd99c03c57c14349249a6a38febc576afd915468d7fc5faee3022c81c1b3f161f4b2ed6b88310dc1b06f2500f8af9
+  checksum: 7e94ac67f87126d3ef527b818026222282ecc2ad8446287d0676a137daed95cdbf1364345da4f5fae7a3fc5519d3b56c2bf6a9ce34067144fc98877f91cec09c
   languageName: node
   linkType: hard
 
@@ -34431,13 +34431,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-image-picker@npm:^7.1.2":
-  version: 7.1.2
-  resolution: "react-native-image-picker@npm:7.1.2"
+"react-native-image-picker@npm:5.3.1":
+  version: 5.3.1
+  resolution: "react-native-image-picker@npm:5.3.1"
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: af52328b7cb06c28549442f0d923cfa92dde8d5a968a642336df4c882f81adbf0e5e606a14de27f96883a76fa1e03230061c4080011c9107942edebc8e09c478
+  checksum: 183485e9bab619938ab608fbca019c53c049e73bc798ea5ab4ab38d54ee2b7b9dc923b27f26ae070c9b4844af2b521fbd310e1c2f5aea99e851b7abbbcf7f166
   languageName: node
   linkType: hard
 
