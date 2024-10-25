@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from "react";
-import { Box, Checkbox, Center, HStack, View, VStack, Spinner } from "native-base";
+import { Box, Checkbox, Center, HStack, Text, View, VStack, Spinner } from "native-base";
 import { Wizard, useWizard } from "react-use-wizard";
+import { Platform } from "react-native";
 import { isEmpty } from "lodash";
 
 import { RedTentProps } from "../types";
@@ -124,7 +125,7 @@ const RedtentOffer = ({
   if (isEmpty(offer)) return <Spinner variant="lg" />;
 
   return (
-    <View maxWidth="343" margin="auto">
+    <View maxWidth="343" margin="auto" paddingBottom={6}>
       <YouSureModal
         open={showModal}
         action={handleOnDone}
@@ -155,7 +156,11 @@ const RedtentOffer = ({
               paddingBottom: 2
             }
           }}
-          style={cardShadow}
+          {...Platform.select({
+            web: {
+              style: cardShadow
+            }
+          })}
           borderRadius={20}
         />
       </VStack>
@@ -193,7 +198,7 @@ const RedtentVideoInstructions = withTheme({ name: "RedtentVideoInstructions" })
     );
 
     return (
-      <VStack space={6} {...props}>
+      <VStack space={6} paddingBottom={6} {...props}>
         <TransTitle t={/*i18n*/ "Video instructions"} variant="title-gdblue" />
         <Center>
           <Image source={BillyPhone} width={126} height={156} />
@@ -216,18 +221,17 @@ const RedtentVideoInstructions = withTheme({ name: "RedtentVideoInstructions" })
   }
 );
 
-const RedtentThanks = ({ onDone }: { onDone: RedTentProps["onDone"] }) => {
+const RedtentThanks = ({ onDone, offer }: { onDone: RedTentProps["onDone"]; offer: any }) => {
   // when passed down directly into an inline callback, for some reason the onDone is not being called
   const onPress = async () => {
     void onDone(true);
   };
 
   return (
-    <VStack space={200}>
-      <VStack space={6} maxWidth={343} margin="auto">
+    <VStack space={200} paddingBottom={6}>
+      <VStack space={6} maxWidth={360} margin="auto">
         <TransTitle t={/*i18n*/ "Thanks you for submitting your video!"} variant="title-gdblue" />
         <Box
-          display="block"
           justifyContent="flex-start"
           paddingBottom={8}
           borderBottomWidth={1}
@@ -235,14 +239,19 @@ const RedtentThanks = ({ onDone }: { onDone: RedTentProps["onDone"] }) => {
           ml="auto"
           mr="auto"
         >
-          <TransText t={/*i18n*/ "You are now in the"} variant="sm-grey-650" />
-          <TransText
-            t={/*i18n*/ " Red Tent Woman in Nigeria \n"}
-            variant="sm-grey-650"
-            fontWeight="bold"
-            color="gdPrimary"
-          />
-          <TransText t={/*i18n*/ "GoodCollective. You can claim this additional UBI daily."} variant="sm-grey-650" />
+          <Text variant="sm-grey-650">
+            <TransText t={/*i18n*/ "You are now in the"} variant="sm-grey-650" />
+            <TransText
+              t={
+                /*i18n*/ " Red Tent Woman in " +
+                offerCriteria.location[offer.Location.countryCode as keyof typeof offerCriteria.location]
+              }
+              variant="sm-grey-650"
+              fontWeight="bold"
+              color="gdPrimary"
+            />
+            <TransText t={/*i18n*/ " GoodCollective. You can claim this additional UBI daily."} variant="sm-grey-650" />
+          </Text>
         </Box>
       </VStack>
       <TransButton t={/*i18n*/ "Next"} onPress={onPress} variant="standard" />
@@ -281,7 +290,7 @@ export const RedtentWizard: React.FC<RedTentProps> = (props: RedTentProps) => {
           onError={props.onError}
           {...videoInstructStyles}
         />
-        <RedtentThanks onDone={modalOnDone} />
+        <RedtentThanks onDone={modalOnDone} offer={props.availableOffers?.[0]} />
       </Wizard>
     </WizardContextProvider>
   );
