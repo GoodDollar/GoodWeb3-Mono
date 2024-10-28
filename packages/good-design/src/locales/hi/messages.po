@@ -5,38 +5,43 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
-"Language: en_GB\n"
+"Language: hi\n"
 "Project-Id-Version: goodui\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-10-22 17:42\n"
+"PO-Revision-Date: 2024-10-22 16:24\n"
 "Last-Translator: \n"
-"Language-Team: English, United Kingdom\n"
+"Language-Team: Hindi\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: goodui\n"
 "X-Crowdin-Project-ID: 691741\n"
-"X-Crowdin-Language: en-GB\n"
+"X-Crowdin-Language: hi\n"
 "X-Crowdin-File: /116-credential-storage/packages/good-design/src/locales/en/messages.po\n"
 "X-Crowdin-File-ID: 154\n"
 
 #. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:136
+msgid "You are eligible to claim more GoodDollars!"
+msgstr ""
+
+#. js-lingui-explicit-id
 #: src/apps/goodid/components/GoodIdCard.tsx:31
 msgid "Age"
-msgstr "Age"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/components/GoodIdCard.tsx:32
 msgid "Gender"
-msgstr "Gender"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/components/GoodIdCard.tsx:33
 msgid "Location"
-msgstr "Location"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/components/GoodIdCard.tsx:52
 msgid "Unverified"
-msgstr "Unverified"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/components/GoodIdCard.tsx:135
@@ -208,7 +213,7 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/OnboardScreen.tsx:146
 msgid "By clicking on ”I accept, verify me”, you are accepting our {tos} and {privy}. Per this policy you agree to let us collect information such as your gender and age."
-msgstr "By clicking on ”I accept, verify me”, you are accepting our {tos} and {privy}. Per this policy you agree to let us collect information such as your gender and age."
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/OnboardScreen.tsx:181
@@ -218,7 +223,7 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/OnboardScreen.tsx:183
 msgid "Powered by GoodDollar"
-msgstr "Powered by GoodDollar"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/SegmentationConfirmation.tsx:30
@@ -345,11 +350,6 @@ msgid "Submit a video selfie saying: "
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/wizards/RedtentWizard.tsx:136
-msgid "You are eligible to claim more GoodDollars!"
-msgstr "You are eligible to claim more GoodDollars!"
-
-#. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:144
 msgid "Learn more>>"
 msgstr ""
@@ -405,19 +405,18 @@ msgid "GoodCollective. You can claim this additional UBI daily."
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/wizards/SegmentationWizard.tsx:60
-msgid ""
-"We're checking \n"
+#: src/apps/goodid/wizards/SegmentationWizard.tsx:61
+msgid "We're checking \n"
 " your information"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/wizards/SegmentationWizard.tsx:71
+#: src/apps/goodid/wizards/SegmentationWizard.tsx:73
 msgid "yes, i am"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/wizards/SegmentationWizard.tsx:74
+#: src/apps/goodid/wizards/SegmentationWizard.tsx:76
 msgid "no, i am not"
 msgstr ""
 
@@ -427,7 +426,7 @@ msgid "News"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/components/TransactionStateCard.tsx:81
+#: src/apps/ubi/components/TransactionStateCard.tsx:83
 msgid "Your Daily Basic Income"
 msgstr ""
 
@@ -437,22 +436,22 @@ msgid "An unknown error occurred while claiming"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/screens/PostClaim.tsx:63
+#: src/apps/ubi/screens/PostClaim.tsx:62
 msgid "Your Next Claim"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/screens/PostClaim.tsx:109
+#: src/apps/ubi/screens/PostClaim.tsx:108
 msgid "You've claimed today"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/screens/PostClaim.tsx:117
+#: src/apps/ubi/screens/PostClaim.tsx:116
 msgid "CLAIM ON {altChain}"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/screens/PostClaim.tsx:132
+#: src/apps/ubi/screens/PostClaim.tsx:131
 msgid "See all news >"
 msgstr ""
 
@@ -531,8 +530,7 @@ msgstr ""
 
 #. js-lingui-explicit-id
 #: src/core/inputs/WebVideoUploader.tsx:40
-msgid ""
-"It seems the video format you uploaded is unsupported. 😕\n"
+msgid "It seems the video format you uploaded is unsupported. 😕\n"
 "Supported formats include: MP4, WEBM, OGG, MOV, 3GP, M4V, AVI, and MKV.\n"
 " Please upload your video in one of these formats. Thank you!"
 msgstr ""
