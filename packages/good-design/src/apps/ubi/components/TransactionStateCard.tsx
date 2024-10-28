@@ -107,9 +107,10 @@ type TransactionListProps = {
 export const TransactionList = ({ transactions, onTxDetailsPress }: TransactionListProps) => (
   <ScrollView
     style={{
+      marginTop: 4,
       ...Platform.select({
         web: { scrollBarWidth: "thin", maxHeight: 550 },
-        android: { maxWidth: 360, margin: "auto", marginTop: 4, height: 300, maxHeight: 300 }
+        android: { maxWidth: 360, margin: "auto", height: 300, maxHeight: 300 }
       })
     }}
     contentContainerStyle={{ flexGrow: 1, alignItems: "center", justifyContent: "center" }}

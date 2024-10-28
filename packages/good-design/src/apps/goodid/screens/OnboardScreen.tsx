@@ -147,7 +147,7 @@ export const OnboardScreen = withTheme({ name: "OnboardScreen" })(
             }
             values={{
               tos: (
-                <Link href="https://www.gooddollar.org/terms-of-use">
+                <Link href="https://www.gooddollar.org/terms-of-use" isExternal>
                   <Text
                     style={{
                       fontFamily: "Roboto",
@@ -161,7 +161,7 @@ export const OnboardScreen = withTheme({ name: "OnboardScreen" })(
                 </Link>
               ),
               privy: (
-                <Link href="https://www.gooddollar.org/privacy-policy">
+                <Link href="https://www.gooddollar.org/privacy-policy" isExternal>
                   <Text
                     style={{
                       fontFamily: "Roboto",

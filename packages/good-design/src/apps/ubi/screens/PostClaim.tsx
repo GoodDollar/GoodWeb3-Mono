@@ -147,12 +147,12 @@ export const PostClaim: FC = () => {
           web: { width: 375 }
         })}
       >
-        <VStack width="375">
+        <VStack width="375" mb={2}>
           <TransTitle t={/*i18n*/ "Recent claims (Last 30 days):"} variant="title-gdblue" fontSize="l" width="100%" />
         </VStack>
 
         {transactionList === undefined ? (
-          <Spinner variant="page-loader" size="lg" />
+          <Spinner variant="page-loader" size="lg" mt={2} />
         ) : (
           <TransactionList transactions={transactionList} onTxDetailsPress={onTxDetailsPress} />
         )}

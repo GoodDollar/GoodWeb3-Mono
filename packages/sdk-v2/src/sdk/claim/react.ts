@@ -174,10 +174,9 @@ export const useGetMemberUBIPools = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { defaultEnv } = useGetEnvChainId();
+  const gcEnv = defaultEnv === "production-celo" ? "production-celo" : "development-celo";
 
-  const pool = GoodCollectiveContracts["42220"]?.find(
-    envs => envs.name === (defaultEnv === "production-celo" ? "production-celo" : "development-celo")
-  )?.contracts.UBIPool;
+  const pool = GoodCollectiveContracts["42220"]?.find(envs => envs.name === gcEnv)?.contracts.UBIPool;
 
   const fetchPools = useCallback(async () => {
     setLoading(true);
@@ -194,7 +193,7 @@ export const useGetMemberUBIPools = () => {
         return;
       }
 
-      const sdk = new GoodCollectiveSDK("42220", library as ethers.providers.Provider, { network: defaultEnv });
+      const sdk = new GoodCollectiveSDK("42220", library as ethers.providers.Provider, { network: gcEnv });
 
       const memberUbiPools = await sdk.getMemberUBIPools(account);
 

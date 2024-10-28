@@ -55,6 +55,7 @@ const SegmentationConfirmation = withTheme({ name: "SegmentationConfirmation" })
                       padding={0}
                       background="none"
                       href="https://gooddapp.org"
+                      isExternal
                       _text={{
                         fontSize: "2xs",
                         isTruncated: true,

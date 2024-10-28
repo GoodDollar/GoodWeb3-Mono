@@ -46,7 +46,7 @@ export const OffersAgreement = withTheme({ name: "OffersAgreement" })(
               variant="browse-wrap"
               values={{
                 privy: (
-                  <Link href="https://gooddollar.org/privacy-policy">
+                  <Link href="https://gooddollar.org/privacy-policy" isExternal>
                     <Text
                       style={{ fontFamily: "Roboto", fontSize: 12, color: "#7A88A5", textDecorationLine: "underline" }}
                     >
