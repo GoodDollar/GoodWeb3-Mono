@@ -2,7 +2,6 @@ import React, { FC, PropsWithChildren, useCallback, useEffect, useState } from "
 import { useWizard, Wizard } from "react-use-wizard";
 import { View } from "native-base";
 import { useEthers } from "@usedapp/core";
-import ethers from "ethers";
 import { isEmpty, noop } from "lodash";
 import { SupportedChains } from "@gooddollar/web3sdk-v2";
 
@@ -34,13 +33,13 @@ const WizardWrapper: FC<PropsWithChildren<{ skipOffer: Error | boolean | undefin
   const { account, chainId } = useEthers();
   const { goToStep, stepCount } = useWizard();
   const lastStep = stepCount - 1;
-  const { isClaiming, isClaimingDone, error: claimError, remainingClaims, claimReceipts } = claimFlowStatus;
+  const { isClaiming, isClaimingDone, error: claimError, remainingClaims } = claimFlowStatus;
   const { transaction, isOpen } = txDetails;
   const { certificates } = useGoodId(account ?? "");
 
   const customTitle = {
     title: /*i18n*/ {
-      id: "Please sign with \n your wallet \n({remainingClaims} transactions left)",
+      id: "Please sign with \n your wallet \n({remainingClaims} transaction(s) left)",
       values: { remainingClaims: remainingClaims }
     }
   };
@@ -90,20 +89,11 @@ const WizardWrapper: FC<PropsWithChildren<{ skipOffer: Error | boolean | undefin
       {error ? <ErrorModal error={error} onClose={handleClose} overlay="dark" /> : null}
 
       {isClaiming && withSignModals ? (
-        <TxModal type="sign" customTitle={customTitle} isPending={isClaiming} />
+        <TxModal type="signMultiClaim" customTitle={customTitle} isPending={isClaiming} />
       ) : remainingClaims !== undefined ? (
-        <TxModal
-          type="send"
-          isPending={
-            !isClaimingDone &&
-            remainingClaims > 0 &&
-            claimReceipts?.every((tx: ethers.providers.TransactionReceipt) => tx?.confirmations > 0)
-          }
-          onClose={handleClose}
-        />
+        <TxModal type="send" isPending={!isClaimingDone && remainingClaims > 0} onClose={handleClose} />
       ) : null}
 
-      {/* TxDetailsModal */}
       {isOpen ? (
         <TxDetailsModal
           open={isOpen}

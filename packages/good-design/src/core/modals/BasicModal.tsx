@@ -86,7 +86,7 @@ const BasicModal: FC<BasicModalProps> = ({
             ..._modalContainer,
             maxWidth: 343,
             paddingTop: 0,
-            paddingBottom: 0,
+            paddingBottom: footer ? 0 : 24,
             paddingLeft: 0,
             paddingRight: 0
           }}
@@ -103,29 +103,34 @@ const BasicModal: FC<BasicModalProps> = ({
               </Button>
             </NBModal.Actions>
           ) : null}
-          <VStack space={6}>
+          <VStack width="100%">
             {header ? (
               <NBModal.Title
-                backgroundColor={bgColor}
                 borderBottomWidth={hasTopBorder ? 1 : 0}
-                {..._header}
                 style={{
+                  marginLeft: "auto",
+                  marginRight: "auto",
+                  textAlign: "center",
+                  padding: 0,
                   ...Platform.select({
-                    web: { marginTop: 22, marginBottom: 0, marginLeft: 0, marginRight: 0, padding: 0 },
-                    android: { marginBottom: 0, padding: 10 }
+                    web: { marginTop: 22, padding: 0 }
                   })
                 }}
+                {..._header}
               >
                 {header}
               </NBModal.Title>
             ) : null}
 
-            <NBModal.Content {..._body} bgColor={bgColor}>
+            <NBModal.Content {..._body} bgColor={bgColor} style={{ padding: 0, margin: 0 }}>
               {body}
             </NBModal.Content>
           </VStack>
           {footer ? (
-            <VStack paddingLeft={6} paddingRight={6} paddingBottom={6}>
+            <VStack
+              paddingTop={0}
+              style={{ ...Platform.select({ android: { paddingLeft: 6, paddingRight: 6, paddingBottom: 6 } }) }}
+            >
               <NBModal.Actions borderTopWidth={hasBottomBorder ? 1 : 0} {..._footer} padding="0" bgColor={bgColor}>
                 {footer}
                 {actionButton ? <Button.Group space={2}>{actionButton}</Button.Group> : null}

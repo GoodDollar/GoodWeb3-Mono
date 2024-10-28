@@ -125,7 +125,7 @@ export const SegmentationFlow = {
   args: {
     width: "100%",
     account: "0x00",
-    env: "staging"
+    env: "fuse"
   }
 };
 
@@ -339,37 +339,39 @@ export const CheckAvailableOffersExample: Meta<AvailableOffersPropsAndArgs & Cla
     if (!chainId) return <Spinner variant="page-loader" />;
 
     return (
-      <ClaimProvider
-        {...args.claimArgs}
-        //dev pools
-        activePoolAddresses={[
-          "0x77253761353271813c1aca275de8eec768b217c5",
-          "0x627dbf00ce1a54067f5a34d6596a217a029c1532"
-        ]}
-        explorerEndPoints={explorerEndPoints}
-        supportedChains={[SupportedChains.CELO, SupportedChains.FUSE]}
-        withSignModals
-        withNewsFeed
-      >
-        <VStack>
-          <HStack width="200">
-            <GoodButton onPress={() => setLanguage("en")}>English</GoodButton>
-            <GoodButton onPress={() => setLanguage("es-419")}>Spanish</GoodButton>
-          </HStack>
-          <Text fontWeight="bold" my="4" textAlign="center" w="100%">
-            {`If you see finished demo change in the controls the country-code the country of your certificate. \n If you have no certificates, go through the segmentation or onboard flow stories to get one.`}
-          </Text>
-          <CheckAvailableOffers
-            chainId={chainId}
-            account={account ?? args.account}
-            onDone={async () => {
-              alert("Finished demo");
-            }}
-            withNavBar={true}
-            isDev={true}
-          />
-        </VStack>
-      </ClaimProvider>
+      <Provider>
+        <ClaimProvider
+          {...args.claimArgs}
+          //dev pools
+          activePoolAddresses={[
+            "0x77253761353271813c1aca275de8eec768b217c5",
+            "0x627dbf00ce1a54067f5a34d6596a217a029c1532"
+          ]}
+          explorerEndPoints={explorerEndPoints}
+          supportedChains={[SupportedChains.CELO, SupportedChains.FUSE]}
+          withSignModals
+          withNewsFeed
+        >
+          <VStack>
+            <HStack width="200">
+              <GoodButton onPress={() => setLanguage("en")}>English</GoodButton>
+              <GoodButton onPress={() => setLanguage("es-419")}>Spanish</GoodButton>
+            </HStack>
+            <Text fontWeight="bold" my="4" textAlign="center" w="100%">
+              {`If you see finished demo change in the controls the country-code the country of your certificate. \n If you have no certificates, go through the segmentation or onboard flow stories to get one.`}
+            </Text>
+            <CheckAvailableOffers
+              chainId={chainId}
+              account={account ?? args.account}
+              onDone={async () => {
+                alert("Finished demo");
+              }}
+              withNavBar={true}
+              isDev={true}
+            />
+          </VStack>
+        </ClaimProvider>
+      </Provider>
     );
   },
   args: {

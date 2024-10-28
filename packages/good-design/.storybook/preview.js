@@ -17,7 +17,7 @@ export const parameters = {
 export const decorators = [
   Story => (
     <GoodUIi18nProvider>
-      <NativeBaseProvider theme={theme}>
+      <NativeBaseProvider theme={theme} config={{ suppressColorAccessibilityWarning: true }}>
         <Story />
       </NativeBaseProvider>
     </GoodUIi18nProvider>

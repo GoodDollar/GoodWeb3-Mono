@@ -5521,7 +5521,7 @@ __metadata:
     "@formatjs/intl-locale": ^4.0.0
     "@formatjs/intl-pluralrules": ^5.2.14
     "@gooddollar/goodprotocol": ^2.0.24
-    "@gooddollar/web3sdk-v2": 0.2.32-beta.a841f10d
+    "@gooddollar/web3sdk-v2": 0.2.35-beta.f993e4cd
     "@lingui/core": ^4.11.2
     "@lingui/react": ^4.11.2
     "@magiklabs/react-sdk": ^1.0.8
@@ -5576,7 +5576,7 @@ __metadata:
     react-inlinesvg: 2.3.0
     react-native: 0.70.4
     react-native-fs: ^2.20.0
-    react-native-image-picker: ^7.1.2
+    react-native-image-picker: 5.3.1
     react-native-mask-input: ^1.2.2
     react-native-paper: 3.12.0
     react-native-safe-area-context: ^3.3.2
@@ -5724,7 +5724,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/web3sdk-v2@0.2.32-beta.a841f10d, @gooddollar/web3sdk-v2@workspace:packages/sdk-v2":
+"@gooddollar/web3sdk-v2@0.2.35-beta.f993e4cd, @gooddollar/web3sdk-v2@workspace:packages/sdk-v2":
   version: 0.0.0-use.local
   resolution: "@gooddollar/web3sdk-v2@workspace:packages/sdk-v2"
   dependencies:
@@ -34374,13 +34374,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-image-picker@npm:^7.1.2":
-  version: 7.1.2
-  resolution: "react-native-image-picker@npm:7.1.2"
+"react-native-image-picker@npm:5.3.1":
+  version: 5.3.1
+  resolution: "react-native-image-picker@npm:5.3.1"
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: af52328b7cb06c28549442f0d923cfa92dde8d5a968a642336df4c882f81adbf0e5e606a14de27f96883a76fa1e03230061c4080011c9107942edebc8e09c478
+  checksum: 183485e9bab619938ab608fbca019c53c049e73bc798ea5ab4ab38d54ee2b7b9dc923b27f26ae070c9b4844af2b521fbd310e1c2f5aea99e851b7abbbcf7f166
   languageName: node
   linkType: hard
 

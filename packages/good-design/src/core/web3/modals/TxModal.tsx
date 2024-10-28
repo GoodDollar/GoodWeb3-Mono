@@ -1,13 +1,14 @@
 import React, { FC } from "react";
 import { noop } from "lodash";
 import { TransactionStatus } from "@usedapp/core";
+import { VStack } from "native-base";
 
 import { TransText } from "../../layout";
 import BasicStyledModal from "./BasicStyledModal";
 import { LearnButton } from "../../buttons";
 
 interface ITxModalProps {
-  type: "send" | "sign" | "identity";
+  type: "send" | "sign" | "signMultiClaim" | "identity";
   isPending: boolean;
   customTitle?: { title: { id: string; values: any } };
   onClose?: () => void;
@@ -21,10 +22,14 @@ const txModalCopy = {
     content:
       /*i18n*/ "To complete this action, sign with your wallet. It can take a moment for a transaction to be validated."
   },
+  signMultiClaim: {
+    title: "",
+    content: /*i18n*/ "To complete this action, sign with your wallet."
+  },
   identity: {
-    title: /*i18n*/ "Please sign with \n your wallet",
+    title: /*i18n*/ "Sign to Verify Uniqueness",
     content:
-      /*i18n*/ "We need to know you’re you! Please sign\nwith your wallet to verify your identity.\n Don’t worry, no link is kept between your\nidentity record and your wallet address."
+      /*i18n*/ "You’ll be asked to sign with your wallet to begin the verification.You may have to do this again from time to time."
   },
   send: {
     title: /*i18n*/ "Waiting for \n confirmation",
@@ -34,6 +39,35 @@ const txModalCopy = {
 
 const TxModalContent = ({ content }: { content: string }) => <TransText t={content} variant="sm-grey-650" />;
 
+const TxContentMultiClaim = ({ content }: { content: string }) => (
+  <VStack space={2} paddingX={2}>
+    <TransText t={content} variant="sm-grey-650" />
+    <TransText
+      t={/*i18n*/ "It may take over a minute for transaction(s) to be signed."}
+      variant="sm-grey-650"
+      fontWeight="bold"
+    />
+  </VStack>
+);
+
+const TxContentIdentity = ({ content }: { content: string }) => (
+  <VStack space={2} paddingX={2}>
+    <TransText
+      t={/*i18n*/ "You’re almost there! To claim G$, you need prove you are a unique human."}
+      variant="sm-grey-650"
+      fontWeight="bold"
+    />
+    <TransText t={content} variant="sm-grey-650" />
+  </VStack>
+);
+
+const ContentComponent = {
+  sign: TxModalContent,
+  signMultiClaim: TxContentMultiClaim,
+  identity: TxContentIdentity,
+  send: TxModalContent
+};
+
 export const TxModal: FC<ITxModalProps> = ({
   isPending,
   onClose = noop,
@@ -42,6 +76,8 @@ export const TxModal: FC<ITxModalProps> = ({
   ...props
 }: ITxModalProps) => {
   const { title, content } = txModalCopy[type];
+  const Content = ContentComponent[type];
+
   return (
     <BasicStyledModal
       {...props}
@@ -49,7 +85,7 @@ export const TxModal: FC<ITxModalProps> = ({
       show={isPending}
       onClose={onClose}
       title={customTitle ?? title}
-      body={<TxModalContent content={content} />}
+      body={<Content content={content} />}
       footer={<LearnButton type={type} />}
       withOverlay="dark"
       withCloseButton={false}

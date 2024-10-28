@@ -41,7 +41,7 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/apps/goodid/components/GoodIdCard.tsx:135
 msgid "To upgrade your GoodID, please"
-msgstr ""
+msgstr "Para actualizar tu GoodID, por favor"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/components/GoodIdCard.tsx:146
@@ -211,8 +211,18 @@ msgid "By clicking on ”I accept, verify me”, you are accepting our {tos} and
 msgstr ""
 
 #. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreen.tsx:146
+msgid "By clicking on ”I accept, verify me”, you are accepting our {tos} and {privy}. Per this policy you agree to let us collect information such as your gender and age."
+msgstr ""
+
+#. js-lingui-explicit-id
 #: src/apps/goodid/screens/OnboardScreen.tsx:181
 msgid "I ACCEPT, VERIFY ME"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreen.tsx:183
+msgid "Powered by GoodDollar"
 msgstr ""
 
 #. js-lingui-explicit-id
@@ -406,7 +416,8 @@ msgstr ""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/SegmentationWizard.tsx:60
-msgid "We're checking \n"
+msgid ""
+"We're checking \n"
 " your information"
 msgstr ""
 
@@ -530,7 +541,8 @@ msgstr ""
 
 #. js-lingui-explicit-id
 #: src/core/inputs/WebVideoUploader.tsx:40
-msgid "It seems the video format you uploaded is unsupported. 😕\n"
+msgid ""
+"It seems the video format you uploaded is unsupported. 😕\n"
 "Supported formats include: MP4, WEBM, OGG, MOV, 3GP, M4V, AVI, and MKV.\n"
 " Please upload your video in one of these formats. Thank you!"
 msgstr ""

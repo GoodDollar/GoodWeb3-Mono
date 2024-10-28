@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { Center, IStackProps, HStack, Text, View, VStack } from "native-base";
+import { Center, IStackProps, HStack, Spinner, Text, View, VStack } from "native-base";
 import { CredentialType, CredentialSubjectsByType, AsyncStorage } from "@gooddollar/web3sdk-v2";
 import usePromise from "react-use-promise";
 
@@ -27,6 +27,12 @@ interface GoodIdCardProps extends IStackProps {
   fontStyles?: any;
 }
 
+const idTypeLabels = {
+  Age: /*i18n*/ "Age",
+  Gender: /*i18n*/ "Gender",
+  Location: /*i18n*/ "Location"
+};
+
 const CardRowItem = withTheme({ name: "CardRowItem" })(
   ({
     credentialLabel,
@@ -43,14 +49,11 @@ const CardRowItem = withTheme({ name: "CardRowItem" })(
     const { subHeading, subContent } = fontStyles ?? {};
     const verifiedValue = useMemo(() => formatVerifiedValues(credential), [credential]);
 
-    const verifiedCopy =
-      verifiedValue === `Unverified-${credentialLabel}` ? verifiedValue.split("-")[0] : verifiedValue;
+    const verifiedCopy = verifiedValue === `Unverified-${credentialLabel}` ? /*i18n*/ "Unverified" : verifiedValue;
 
     return (
       <VStack {...props}>
-        <Text variant="sm-grey-650" fontWeight="600" {...subHeading}>
-          {credentialLabel}
-        </Text>
+        <TransText t={credentialLabel} variant="sm-grey-650" fontWeight="600" {...subHeading} />
         <HStack space={1} alignItems="center">
           <Text variant="sm-grey-650" {...subContent}>
             {isNew ? "-" : verifiedCopy}
@@ -77,6 +80,8 @@ const GoodIdCard = withTheme({ name: "GoodIdCard", skipProps: "certificates" })(
     const { title, subHeading, subContent, footer } = props.fontStyles ?? {};
     const truncatedAccount = truncateMiddle(account, 11);
     const [disputedSubjects] = usePromise(() => AsyncStorage.getItem("goodid_disputedSubjects"), []);
+
+    if (disputedSubjects === undefined) return <Spinner variant="page-loader" size="lg" />;
 
     return (
       <VStack variant="shadow-card" paddingBottom={2} {...props}>
@@ -112,7 +117,7 @@ const GoodIdCard = withTheme({ name: "GoodIdCard", skipProps: "certificates" })(
             .map(typeName => (
               <View mb="2" width={typeName === "Location" ? "300%" : "48%"} key={typeName}>
                 <CardRowItem
-                  credentialLabel={typeName}
+                  credentialLabel={idTypeLabels[typeName]}
                   credential={{
                     credentialSubject: certificateSubjects?.[typeName],
                     typeName: CredentialType[typeName],

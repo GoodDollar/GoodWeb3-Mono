@@ -1,15 +1,15 @@
 import React, { useCallback } from "react";
-import { Center, HStack, ICenterProps } from "native-base";
+import { HStack, ICenterProps, VStack } from "native-base";
 import { openLink } from "@gooddollar/web3sdk-v2";
+import { Platform } from "react-native";
 
 import { BasePressable } from "../buttons";
 import { Image } from "../images";
-import { cardShadow } from "../../theme/shadows";
 import { withTheme } from "../../theme/hoc/withTheme";
 import { TransText } from "./Trans";
 
 interface IImageCard extends ICenterProps {
-  picture?: string;
+  picture?: any;
   title: string;
   content: object;
   link: string;
@@ -40,15 +40,17 @@ export const theme = {
       picture: {
         minWidth: "325",
         width: "100%",
-        paddingBottom: "56.25%" // 16:9 ratio
+        paddingBottom: "56.25%"
       }
     }
   },
   variants: {
     "offer-card": () => ({
       borderRadius: 20,
-      ...cardShadow,
       styles: {
+        button: {
+          marginBottom: 4
+        },
         content: {
           paddingY: 4,
           paddingX: 4,
@@ -56,9 +58,18 @@ export const theme = {
           alignItems: "flex-start"
         },
         picture: {
-          minWidth: "325",
-          width: "100%",
-          paddingBottom: "56.25%", // 16:9 ratio
+          ...Platform.select({
+            web: {
+              minWidth: "325",
+              width: "100%",
+              paddingBottom: "56.25%"
+            },
+            android: {
+              maxWidth: "100%",
+              height: "auto",
+              aspectRatio: 16 / 9
+            }
+          }),
           resizeMode: "cover"
         },
         title: {
@@ -71,8 +82,7 @@ export const theme = {
       }
     }),
     "news-card": () => ({
-      shadow: 1,
-      borderLeftWidth: "10px",
+      borderLeftWidth: 10,
       borderLeftColor: "gdPrimary",
       borderRadius: 6,
       styles: {
@@ -105,9 +115,15 @@ export const theme = {
           paddingX: 2
         },
         picture: {
-          minWidth: "375",
           width: "100%",
-          paddingBottom: "56.25%",
+          ...Platform.select({
+            web: {
+              paddingBottom: "56.25%"
+            },
+            android: {
+              aspectRatio: 16 / 9
+            }
+          }),
           resizeMode: "contain"
         },
         title: {
@@ -131,14 +147,18 @@ const ImageCard = withTheme({ name: "ImageCard", skipProps: ["content", "footer"
 
     return (
       <BasePressable onPress={handlePress} {...styles.button}>
-        <Center {...props} {...styles.container}>
-          {picture && <Image src={picture} alt="Image" {...styles.picture} />}
-          <Center width="100%" alignItems="flex-start" {...styles.content}>
+        <VStack
+          {...props}
+          {...styles.container}
+          {...Platform.select({ web: { ...styles.container }, android: { shadow: 1, backgroundColor: "white" } })}
+        >
+          {picture && <Image source={picture} alt="Image" {...styles.picture} />}
+          <VStack width="100%" alignItems="flex-start" {...styles.content}>
             <TransText t={title} fontFamily="subheading" {...styles.title} />
             {content}
             <HStack {...styles.footer}>{footer}</HStack>
-          </Center>
-        </Center>
+          </VStack>
+        </VStack>
       </BasePressable>
     );
   }

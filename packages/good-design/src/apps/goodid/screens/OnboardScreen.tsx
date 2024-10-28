@@ -143,7 +143,7 @@ export const OnboardScreen = withTheme({ name: "OnboardScreen" })(
             variant="browse-wrap"
             alignSelf={"center"}
             t={
-              /*18n*/ "By clicking on ”I accept, verify me”, you are accepting our {tos} and {privy}. Per this policy you agree to let us collect information such as your gender and age."
+              /*i18n*/ "By clicking on ”I accept, verify me”, you are accepting our {tos} and {privy}. Per this policy you agree to let us collect information such as your gender and age."
             }
             values={{
               tos: (

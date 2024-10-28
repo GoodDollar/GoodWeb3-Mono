@@ -48,20 +48,21 @@ const SegmentationScreenWrapper = (
     if ((error || geoLocation?.location) && account) {
       updateDataValue("segmentation", "locationPermission", !error);
       void props.onLocationRequest(geoLocation, account).then(() => {
-        setLoading(false);
+        // add a small delay to make sure certificates are retrieved correctly.
+        setTimeout(() => {
+          setLoading(false);
+        }, 2500);
       });
     }
   }, [geoLocation, account, error]);
 
   return !account || loading || !props.certificateSubjects ? (
-    <Center height="100%">
-      <Trans
-        id={"We're checking \n your information"}
-        render={({ translation }: { translation: any }) => (
-          <LoaderModal title={translation} overlay="dark" loading={true} onClose={noop} />
-        )}
-      />
-    </Center>
+    <Trans
+      id={"We're checking \n your information"}
+      render={({ translation }: { translation: any }) => (
+        <LoaderModal title={translation} overlay="dark" loading={true} onClose={noop} />
+      )}
+    />
   ) : (
     <Center width={"100%"}>
       <VStack paddingY={6} space={10}>

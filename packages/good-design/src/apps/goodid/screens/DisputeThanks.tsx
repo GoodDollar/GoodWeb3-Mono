@@ -12,7 +12,7 @@ export const DisputeThanks = () => {
 
   return (
     <VStack space={8} width="100%">
-      <VStack space={8}>
+      <VStack space={8} maxW="343" margin="auto">
         <TransTitle t={/*i18n*/ "Thanks for letting us know!"} variant="title-gdblue" />
         <TransText
           t={

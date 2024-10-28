@@ -20,7 +20,7 @@ export const useIdentityExpiryDate = (account: string) => {
         formattedExpiryTimestamp = moment(timestamp).format("MMMM DD, YYYY");
       }
 
-      return { expiryTimestamp, authPeriod, formattedExpiryTimestamp };
+      return { authPeriod, expiryTimestamp, formattedExpiryTimestamp, lastAuthenticated };
     }
 
     return Promise.resolve(undefined);

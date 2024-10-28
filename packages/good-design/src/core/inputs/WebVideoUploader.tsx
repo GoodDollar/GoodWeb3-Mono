@@ -18,6 +18,7 @@ export const WebVideoUploader = ({ onUpload, isLoading }: { onUpload: Props["onD
     (event: any) => {
       event.preventDefault();
       const [videoFile] = event.target.files;
+
       if (videoFile.size > maxSize) {
         fileRef.current.value = "";
         void onUpload(undefined, new Error("File size is too large."));
@@ -28,7 +29,7 @@ export const WebVideoUploader = ({ onUpload, isLoading }: { onUpload: Props["onD
         readAsDataURL(videoFile)
           .then((dataUrl: any) => {
             const base64 = dataUrl.split(",")[1];
-            const extension = extname(videoFile.name) ?? "mp4";
+            const extension = extname(videoFile.name)?.toLowerCase() ?? "mp4";
 
             if (["mp4", "webm", "ogg", "mov", "3gp", "m4v", "avi", "mkv"].includes(extension)) {
               void onUpload({ base64, extension });

@@ -15,7 +15,7 @@ import { ClaimSDK } from "./sdk";
 import useRefreshOrNever from "../../hooks/useRefreshOrNever";
 import { useGetContract, useGetEnvChainId, useReadOnlySDK, useSDK } from "../base/react";
 import { Envs, SupportedChains, SupportedV2Networks } from "../constants";
-import { useContractFunctionWithDefaultGasFees } from "../base/hooks/useGasFees";
+import { useContractFunctionWithDefaultGasFees, useGasFees } from "../base/hooks/useGasFees";
 
 import { getContractsFromClaimPools, getPoolsDetails } from "./utils/pools";
 import { PoolDetails } from "./types";
@@ -41,7 +41,7 @@ export const useIsAddressVerified = (address: string, env?: EnvKey) => {
 };
 
 export const useMultiClaim = (poolsDetails: PoolDetails[] | undefined) => {
-  const { account, chainId } = useEthers();
+  const { account, chainId, library } = useEthers();
   const [claimFlowStatus, setStatus] = useState<{
     isClaimingDone: boolean;
     remainingClaims: number | undefined;
@@ -61,9 +61,18 @@ export const useMultiClaim = (poolsDetails: PoolDetails[] | undefined) => {
     }[]
   >([]);
 
+  const { gasPrice = BigNumber.from(5e9) } = useGasFees();
+  const minBalance = BigNumber.from(chainId === 42220 ? "250000" : "150000").mul(gasPrice);
+  const signer = (library as ethers.providers.JsonRpcProvider)?.getSigner();
+
   const { resetState, state, send } = useContractFunctionWithDefaultGasFees(contract, "claim", {
     transactionName: "Claimed UBI"
   });
+
+  const getBalance = useCallback(async () => {
+    const balance = await signer?.getBalance();
+    return balance;
+  }, [signer]);
 
   // initialize the state
   useEffect(() => {
@@ -85,13 +94,13 @@ export const useMultiClaim = (poolsDetails: PoolDetails[] | undefined) => {
     const { errorMessage = "", status } = state;
     const isError = isTxReject(errorMessage) || status === "Exception";
 
+    if (claimedContracts.length === poolContracts?.length && !["None", "PendingSignature"].includes(status)) {
+      setStatus(prev => ({ ...prev, isClaiming: false }));
+    }
+
     // Error here indicates a transaction failed to be submitted to the blockchain
     if (status === "Success" || isError) {
       const next = poolContracts?.find(c => !claimedContracts.find(cc => cc.contract === c) && c !== contract);
-
-      if (!next) {
-        setStatus(prev => ({ ...prev, isClaiming: false }));
-      }
 
       // if you don't reset state, the next claim call will not be called.
       resetState();
@@ -101,11 +110,14 @@ export const useMultiClaim = (poolsDetails: PoolDetails[] | undefined) => {
 
   // once the next contract is set (status === "None"), perform claim
   useEffect(() => {
-    if (state.status !== "None" || !contract) return;
+    if (!contract || state.status !== "None") return;
+    void getBalance().then(balance => {
+      if (balance?.lte(minBalance)) return;
 
-    const promise = send();
+      const promise = send();
 
-    setClaimedContracts(prev => [{ contract, promise }, ...prev]);
+      setClaimedContracts(prev => [{ contract, promise }, ...prev]);
+    });
   }, [contract, state.status]);
 
   const updateStatus = useCallback(async () => {
@@ -161,8 +173,9 @@ export const useGetMemberUBIPools = () => {
   const [poolsDetails, setPoolsDetails] = useState<PoolDetails[] | undefined>(undefined);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { defaultEnv } = useGetEnvChainId();
   //todo: change to take current envs name, awaiting staging/production contracts to be deployed.
-  const pool = GoodCollectiveContracts["42220"]?.find(envs => envs.name === "development-celo")?.contracts.UBIPool;
+  const pool = GoodCollectiveContracts["42220"]?.find(envs => envs.name === defaultEnv)?.contracts.UBIPool;
 
   const fetchPools = useCallback(async () => {
     setLoading(true);
@@ -179,7 +192,7 @@ export const useGetMemberUBIPools = () => {
         return;
       }
 
-      const sdk = new GoodCollectiveSDK("42220", library as ethers.providers.Provider, { network: "development-celo" });
+      const sdk = new GoodCollectiveSDK("42220", library as ethers.providers.Provider, { network: defaultEnv });
 
       const memberUbiPools = await sdk.getMemberUBIPools(account);
 
@@ -197,7 +210,7 @@ export const useGetMemberUBIPools = () => {
     } finally {
       setLoading(false);
     }
-  }, [account, library, chainId]);
+  }, [account, library, chainId, defaultEnv]);
 
   useEffect(() => {
     if (poolsDetails === undefined) {

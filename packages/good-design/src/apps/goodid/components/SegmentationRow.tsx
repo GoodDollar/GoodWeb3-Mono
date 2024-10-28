@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Checkbox, HStack, VStack } from "native-base";
 import { CredentialSubject, CredentialType } from "@gooddollar/web3sdk-v2";
 
@@ -26,7 +26,10 @@ const SegmentationRow = ({
   typeName: keyof typeof typeLabelsSegmentation | keyof typeof typeLabelsDispute;
   onCheck?: (checked: boolean) => void;
 }) => {
-  const verifiedValue = formatVerifiedValues({ credentialSubject, typeName: CredentialType[typeName] });
+  const verifiedValue = useMemo(
+    () => formatVerifiedValues({ credentialSubject, typeName: CredentialType[typeName] }),
+    [credentialSubject, typeName]
+  );
   const typeLabels = onCheck ? typeLabelsDispute : typeLabelsSegmentation;
 
   return (
