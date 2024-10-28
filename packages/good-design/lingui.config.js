@@ -1,6 +1,6 @@
 /** @type {import('@lingui/conf').LinguiConfig} */
 module.exports = {
-  locales: ["en", "es-419"],
+  locales: ["en", "es", "es-419", "fr", "hi", "id", "it", "ko", "pt", "tr", "uk", "vi", "zh"],
   sourceLocale: "en",
   catalogs: [
     {
