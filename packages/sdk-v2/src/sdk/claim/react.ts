@@ -174,8 +174,10 @@ export const useGetMemberUBIPools = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { defaultEnv } = useGetEnvChainId();
-  //todo: change to take current envs name, awaiting staging/production contracts to be deployed.
-  const pool = GoodCollectiveContracts["42220"]?.find(envs => envs.name === defaultEnv)?.contracts.UBIPool;
+
+  const pool = GoodCollectiveContracts["42220"]?.find(
+    envs => envs.name === (defaultEnv === "production-celo" ? "production-celo" : "development-celo")
+  )?.contracts.UBIPool;
 
   const fetchPools = useCallback(async () => {
     setLoading(true);
