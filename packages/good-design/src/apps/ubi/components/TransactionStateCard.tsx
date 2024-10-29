@@ -109,7 +109,7 @@ export const TransactionList = ({ transactions, onTxDetailsPress }: TransactionL
     style={{
       marginTop: 4,
       ...Platform.select({
-        web: { scrollBarWidth: "thin", maxHeight: 550 },
+        web: { scrollbarWidth: "thin", maxHeight: 550 },
         android: { maxWidth: 360, margin: "auto", height: 300, maxHeight: 300 }
       })
     }}
