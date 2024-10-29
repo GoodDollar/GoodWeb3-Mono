@@ -8,7 +8,7 @@ msgstr ""
 "Language: es_ES\n"
 "Project-Id-Version: goodui\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-10-28 20:26\n"
+"PO-Revision-Date: 2024-10-29 16:12\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -21,59 +21,61 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:253
 msgid " GoodCollective. You can claim this additional UBI daily."
-msgstr ""
+msgstr " GoodCollective. Puedes reclamar tu UBI adicional cada día."
 
 #. js-lingui-explicit-id
 #: src/apps/ubi/wizard/ClaimWizard.tsx:41
 msgid "Please sign with \n"
 " your wallet \n"
 "({remainingClaims} transaction(s) left)"
-msgstr ""
+msgstr "Por favor firma con,\n"
+"tu billetera\n"
+"({remainingClaims} transacciones restantes"
 
 #. js-lingui-explicit-id
 #: src/core/web3/modals/TxModal.tsx:27
 msgid "To complete this action, sign with your wallet."
-msgstr ""
+msgstr "Para completar esta acción, firma con tu billetera."
 
 #. js-lingui-explicit-id
 #: src/core/web3/modals/TxModal.tsx:30
 msgid "Sign to Verify Uniqueness"
-msgstr ""
+msgstr "Firmar para verificar tu unicidad"
 
 #. js-lingui-explicit-id
 #: src/core/web3/modals/TxModal.tsx:32
 msgid "You’ll be asked to sign with your wallet to begin the verification.You may have to do this again from time to time."
-msgstr ""
+msgstr "Se te pedirá que firmes con tu billetera para comenzar la verificación. Es posible que, de vez en cuando, tengas que repetir este proceso."
 
 #. js-lingui-explicit-id
 #: src/core/web3/modals/TxModal.tsx:46
 msgid "It may take over a minute for transaction(s) to be signed."
-msgstr ""
+msgstr "Puede tardar más de un minuto en firmarse la o las transacciones."
 
 #. js-lingui-explicit-id
 #: src/core/web3/modals/TxModal.tsx:56
 msgid "You’re almost there! To claim G$, you need prove you are a unique human."
-msgstr ""
+msgstr "¡Ya casi estás! Para reclamar G$, necesitas demostrar que eres un ser humano único."
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/components/GoodIdCard.tsx:31
 msgid "Age"
-msgstr ""
+msgstr "Edad"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/components/GoodIdCard.tsx:32
 msgid "Gender"
-msgstr ""
+msgstr "Género"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/components/GoodIdCard.tsx:33
 msgid "Location"
-msgstr ""
+msgstr "Ubicación"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/components/GoodIdCard.tsx:52
 msgid "Unverified"
-msgstr ""
+msgstr "No verificada"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/components/GoodIdCard.tsx:135
@@ -168,7 +170,7 @@ msgstr "Dirección de mi billetera"
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/GoodIdDetails.tsx:197
 msgid "Attention: GoodDollar-verifying a new wallet address can only be done 24h after deleting your old face-id"
-msgstr ""
+msgstr "Atención: la verificación de GoodDolar de una nueva dirección de billetera solo se puede realizar 24 horas después de eliminar su antigua Face Id"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/OffersAgreement.tsx:31
@@ -247,7 +249,7 @@ msgstr "Tu GoodID vive en tu almacenamiento local. Si utiliza otros dispositivos
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/OnboardScreen.tsx:146
 msgid "By clicking on ”I accept, verify me”, you are accepting our {tos} and {privy}. Per this policy you agree to let us collect information such as your gender and age."
-msgstr ""
+msgstr "Al hacer clic en \"Acepto, verificarme\", aceptas nuestros {tos} y {privy}. Por esta política usted acepta permitirnos recopilar información como su género y edad."
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/OnboardScreen.tsx:181
@@ -257,7 +259,7 @@ msgstr "ACEPTO, VERIFIQUE ME"
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/OnboardScreen.tsx:183
 msgid "Powered by GoodDollar"
-msgstr ""
+msgstr "Powered by GoodDollar"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/SegmentationConfirmation.tsx:30
@@ -345,22 +347,22 @@ msgstr "Tu vídeo puede ser revisado por el \n"
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:34
 msgid "Nigeria"
-msgstr ""
+msgstr "Nigeria"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:35
 msgid "Colombia"
-msgstr ""
+msgstr "Colombia"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:38
 msgid "Female"
-msgstr ""
+msgstr "Mujer"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:39
 msgid "Male"
-msgstr ""
+msgstr "Hombre"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:46
@@ -375,12 +377,12 @@ msgstr "Para calificar para esta \"pool\" necesitas: "
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:74
 msgid "Have verified your gender as {gender} in your GoodID"
-msgstr ""
+msgstr "Has verificado tu género como {gender} en tu GoodID"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:86
 msgid "Have verified your country as {country} in your GoodID"
-msgstr ""
+msgstr "Has verificado tu género como {country} en tu GoodID"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:96
@@ -390,7 +392,7 @@ msgstr "Enviar un video selfie diciendo: "
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:137
 msgid "You are eligible to claim more GoodDollars!"
-msgstr ""
+msgstr "¡Eres elegible para reclamar más GoodDollars!"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:145
@@ -568,7 +570,7 @@ msgstr "Parece ser que el formato de vídeo que has subido no es compatible. �
 #. js-lingui-explicit-id
 #: src/core/layout/UbiWizardHeader.tsx:12
 msgid "GoodID Upgrade"
-msgstr ""
+msgstr "Actualizar nuevo GoodID"
 
 #. js-lingui-explicit-id
 #: src/core/web3/modals/RedirectModal.tsx:13
@@ -599,7 +601,7 @@ msgstr "Por favor, regístrate con \n"
 #. js-lingui-explicit-id
 #: src/core/web3/modals/TxModal.tsx:23
 msgid "To complete this action, sign with your wallet. It can take a moment for a transaction to be validated."
-msgstr ""
+msgstr "Para completar esta acción, firma con tu billetera. Puede que tengas que esperar unos minutos para validar una transacción."
 
 #. js-lingui-explicit-id
 #: src/core/web3/modals/TxModal.tsx:35
