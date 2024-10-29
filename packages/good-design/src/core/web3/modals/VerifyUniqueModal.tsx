@@ -12,16 +12,17 @@ const ModalContent = () => (
     <Link
       _text={{ color: "main" }}
       mt="5"
-      href="https://www.notion.so/gooddollar/Get-G-873391f31aee4a18ab5ad7fb7467acb3"
+      href="https://docs.gooddollar.org/about-the-protocol/sybil-resistance"
       isExternal
     >
-      Learn more about the identification process.
+      Learn more.
     </Link>
     {`
       
-Verifying your identity is easy. You'll be asked to sign with your wallet.
+You’re almost there! To claim G$, you need prove you are a unique human.
 
-Don't worry, no link is kept between your identity record and your wallet address.
+You’ll be asked to sign with your wallet to begin the verification.
+You may have to do this again from time to time.
       `}
   </>
 );
