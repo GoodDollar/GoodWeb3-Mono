@@ -22,7 +22,7 @@ export const RedirectModal = withTheme({ name: "BasicStyledModal" })(
       show={open}
       onClose={onClose}
       title="Redirect Notice"
-      body={<Text variant="sm-grey">{RedirectCopy}</Text>}
+      body={<Text>{RedirectCopy}</Text>}
       footer={<ModalFooterCtaX extUrl={url} buttonText="Go to website" />}
       withOverlay="dark"
       withCloseButton

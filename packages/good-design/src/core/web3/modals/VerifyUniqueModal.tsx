@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "native-base";
+import { Link, Text, VStack } from "native-base";
 
 import { useFVModalAction } from "../../../hooks/useFVModalAction";
 import { withTheme } from "../../../theme";
@@ -7,24 +7,21 @@ import BasicStyledModal, { ModalFooterCta } from "./BasicStyledModal";
 import { TxModal } from "./TxModal";
 
 const ModalContent = () => (
-  <>
-    You're almost there! To claim G$, you need to be a unique human and prove it with your camera.
+  <VStack justifyContent="center" space={4} textAlign="center">
+    <Text fontWeight="bold">{`You’re almost there! To claim G$, you need prove you are a unique human.`}</Text>
+    <Text>
+      {`You’ll be asked to sign with your wallet to begin the verification. You may have to do this again from time to time.`}
+    </Text>
     <Link
+      justifyContent="center"
       _text={{ color: "main" }}
       mt="5"
       href="https://docs.gooddollar.org/about-the-protocol/sybil-resistance"
       isExternal
     >
-      Learn more.
+      Learn more
     </Link>
-    {`
-      
-You’re almost there! To claim G$, you need prove you are a unique human.
-
-You’ll be asked to sign with your wallet to begin the verification.
-You may have to do this again from time to time.
-      `}
-  </>
+  </VStack>
 );
 
 export const VerifyUniqueModal = withTheme({ name: "BasicStyledModal" })(

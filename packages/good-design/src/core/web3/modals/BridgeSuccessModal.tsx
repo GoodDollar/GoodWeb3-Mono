@@ -10,7 +10,7 @@ import BillyHearts from "../../../assets/images/billy-hearts.png";
 export const BridgeSuccessContent = () => (
   <VStack space={6} justifyContent="center" alignItems="center">
     <Image source={BillyHearts} w={137} h={135} style={{ resizeMode: "contain" }} />
-    <Text variant="sm-grey">Your bridging process is complete.</Text>
+    <Text>Your bridging process is complete.</Text>
   </VStack>
 );
 
