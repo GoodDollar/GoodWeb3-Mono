@@ -5521,7 +5521,7 @@ __metadata:
     "@formatjs/intl-locale": ^4.0.0
     "@formatjs/intl-pluralrules": ^5.2.14
     "@gooddollar/goodprotocol": ^2.0.24
-    "@gooddollar/web3sdk-v2": 0.2.35-beta.f2e0636f
+    "@gooddollar/web3sdk-v2": "file:.yalc/@gooddollar/web3sdk-v2"
     "@lingui/core": ^4.11.2
     "@lingui/react": ^4.11.2
     "@magiklabs/react-sdk": ^1.0.8
@@ -5608,9 +5608,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/goodcollective-sdk@npm:^1.2.0":
-  version: 1.2.0
-  resolution: "@gooddollar/goodcollective-sdk@npm:1.2.0"
+"@gooddollar/goodcollective-sdk@npm:^1.2.1":
+  version: 1.2.1
+  resolution: "@gooddollar/goodcollective-sdk@npm:1.2.1"
   dependencies:
     "@gooddollar/goodcollective-contracts": ^1.2.0
     "@superfluid-finance/sdk-core": ^0.6.12
@@ -5619,7 +5619,7 @@ __metadata:
     graphql: ^16.7.1
   peerDependencies:
     ethers: ^5.*
-  checksum: c9edfccc1b636a58a36b6a2dc3a711e5e3343fa4757c3b967e7efde461db46914f923ea0ee0a5cfbb35d0d0c0fd006af58e616cadc343032a38cc7e1a2611960
+  checksum: 5637adb5ee8651e8a0b0dc37984ec27fefe73d427116bb1498b19de6ce440d391be209184a68c323f3b2a2ab09f1cd6bd88d0b0e99c1572b2e4815167cb31caf
   languageName: node
   linkType: hard
 
@@ -5724,7 +5724,64 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/web3sdk-v2@0.2.35-beta.f2e0636f, @gooddollar/web3sdk-v2@workspace:packages/sdk-v2":
+"@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2::locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design":
+  version: 0.2.35-beta.f2e0636f
+  resolution: "@gooddollar/web3sdk-v2@file:.yalc/@gooddollar/web3sdk-v2#.yalc/@gooddollar/web3sdk-v2::hash=a5f089&locator=%40gooddollar%2Fgood-design%40workspace%3Apackages%2Fgood-design"
+  dependencies:
+    "@amplitude/analytics-browser": ^1.6.4
+    "@amplitude/analytics-react-native": ^0.7.0
+    "@aws-sdk/client-s3": ^3.550.0
+    "@ceramicnetwork/http-client": ^2.32.0
+    "@ceramicnetwork/stream-tile": ^2.31.0
+    "@gooddollar/bridge-app": ^1.5.0
+    "@gooddollar/bridge-contracts": ^1.0.17
+    "@gooddollar/goodcollective-contracts": ^1.2.0
+    "@gooddollar/goodcollective-sdk": ^1.2.1
+    "@gooddollar/goodprotocol": ^2.0.24
+    "@orbisclub/orbis-sdk": ^0.4.87
+    "@react-native-community/geolocation": 3.1.0
+    "@react-native-firebase/analytics": ^16.4.6
+    "@sentry/browser": 7.16.0
+    "@sentry/react-native": ^5.15.1
+    "@solana/web3.js": ^1.72.0
+    "@types/react": ^18.2.28
+    "@walletconnect/client": ^1.8.0
+    "@walletconnect/qrcode-modal": ^1.8.0
+    "@web3-onboard/coinbase": ^2.4.1
+    "@web3-onboard/core": ^2.22.2
+    "@web3-onboard/injected-wallets": ^2.11.2
+    "@web3-onboard/react": ^2.9.2
+    "@web3-onboard/torus": ^2.3.1
+    "@web3-onboard/walletconnect": ^2.6.1
+    "@web3auth/base": ^4.0.0
+    "@web3auth/core": ^4.0.0
+    "@web3auth/openlogin-adapter": ^4.1.0
+    "@web3auth/torus-wallet-connector-plugin": ^4.0.0
+    "@web3modal/ethereum": ^2.6.2
+    "@web3modal/react": ^2.6.2
+    base-64: ^1.0.0
+    dexie: ^3.2.4
+    dexie-react-hooks: ^1.1.7
+    ethers: 5.7.2
+    eventemitter3: ^4.0.7
+    moment: 2.29.4
+    multiformats: 9.9.0
+    posthog-react-native: 2.8.1
+    react-native-indicative: ^0.2.1
+    react-native-restart: ^0.0.24
+    react-use-promise: ^0.5.0
+    viem: ^1.2.13
+    wagmi: ^1.3.8
+  peerDependencies:
+    "@react-native-async-storage/async-storage": 1.17.10
+    "@usedapp/core": "*"
+    react-native: "*"
+    react-native-web: "*"
+  checksum: 0cbee3d9b7dff47e148029290b73ff92a910c2898729a21832cea2545b8557d3b0c52141b8045383a02194758fb3daf720d974c5bf09506bd643d1f450510706
+  languageName: node
+  linkType: hard
+
+"@gooddollar/web3sdk-v2@workspace:packages/sdk-v2":
   version: 0.0.0-use.local
   resolution: "@gooddollar/web3sdk-v2@workspace:packages/sdk-v2"
   dependencies:
@@ -5741,7 +5798,7 @@ __metadata:
     "@gooddollar/bridge-app": ^1.5.0
     "@gooddollar/bridge-contracts": ^1.0.17
     "@gooddollar/goodcollective-contracts": ^1.2.0
-    "@gooddollar/goodcollective-sdk": ^1.2.0
+    "@gooddollar/goodcollective-sdk": ^1.2.1
     "@gooddollar/goodprotocol": ^2.0.24
     "@orbisclub/orbis-sdk": ^0.4.87
     "@react-native-async-storage/async-storage": 1.17.10
