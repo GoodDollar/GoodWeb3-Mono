@@ -1,21 +1,28 @@
-import React, { useState } from "react";
+import React from "react";
 import { W3Wrapper } from "../W3Wrapper";
 import { ComponentStory, ComponentMeta } from "@storybook/react";
+import { useEthers, useSendTransaction } from "@usedapp/core";
 import { useFaucet } from "../../sdk/faucet/react";
-import { useNetwork } from "@usedapp/core";
 
 export interface PageProps {
   address?: string;
   firstName?: string;
 }
 
-const Web3Component = (params: PageProps) => {
-  useFaucet();
-  return <div></div>;
+const Web3Component = () => {
+  const { account } = useEthers();
+
+  const send = useSendTransaction({ transactionName: "x" });
+  const onSend = async () => {
+    const res = await send.sendTransaction({ to: account, value: 0 });
+    console.log({ res });
+  };
+  void useFaucet();
+  return <div onClick={onSend}>Send test tx</div>;
 };
-const Page = (params: PageProps) => (
+const Page = () => (
   <W3Wrapper withMetaMask>
-    <Web3Component {...params} />
+    <Web3Component />
   </W3Wrapper>
 );
 

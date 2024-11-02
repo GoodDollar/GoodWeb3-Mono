@@ -1,8 +1,7 @@
 import React from "react";
-import { Text } from "native-base";
 
-import { withTheme } from "../../../theme";
 import BasicStyledModal, { ModalFooterCtaX } from "./BasicStyledModal";
+import { TransText } from "../../layout";
 
 interface RedirectModalProps {
   open: boolean;
@@ -10,22 +9,19 @@ interface RedirectModalProps {
   onClose: () => void;
 }
 
-const RedirectCopy = `By accessing this link you are leaving
-gooddapp.org and are being redirected to a 
-third-party, independent website.`;
+const redirectCopy =
+  /*i18n*/ "By accessing this link you are leaving \n gooddapp.org and are being redirected to a \n third-party, independent website.";
 
-export const RedirectModal = withTheme({ name: "BasicStyledModal" })(
-  ({ open, url, onClose, ...props }: RedirectModalProps) => (
-    <BasicStyledModal
-      {...props}
-      type="ctaX"
-      show={open}
-      onClose={onClose}
-      title="Redirect Notice"
-      body={<Text>{RedirectCopy}</Text>}
-      footer={<ModalFooterCtaX extUrl={url} buttonText="Go to website" />}
-      withOverlay="dark"
-      withCloseButton
-    />
-  )
+export const RedirectModal = ({ open, url, onClose, ...props }: RedirectModalProps) => (
+  <BasicStyledModal
+    {...props}
+    type="ctaX"
+    show={open}
+    onClose={onClose}
+    title={/*i18n*/ "Redirect Notice"}
+    body={<TransText t={redirectCopy} />}
+    footer={<ModalFooterCtaX extUrl={url} buttonText={/*i18n*/ "Go to website"} />}
+    withOverlay="dark"
+    withCloseButton
+  />
 );

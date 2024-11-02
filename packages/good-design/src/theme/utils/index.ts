@@ -1,1 +1,2 @@
-export * from './themingTools';
+export * from "./themingTools";
+export * from "./fonts";

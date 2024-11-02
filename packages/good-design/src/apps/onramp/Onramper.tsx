@@ -56,7 +56,7 @@ const Stepper = memo(({ step = 0 }: { step: number }) => (
     <StepsProgress step={step} />
     <HStack alignItems="center" h="70" justifyContent="space-between" w="300">
       <Stack width={"1/3"} alignItems={"center"}>
-        <Circle size="10" bgColor={step > 0 ? "primary" : "goodGrey.300"}>
+        <Circle size="10" bgColor={step > 0 ? "gdPrimary" : "goodGrey.300"}>
           <Text color={step > 0 ? "white" : "goodGrey.700"}> 1 </Text>
         </Circle>
         <Text color="goodGrey.700" fontFamily="subheading" fontWeight={400} fontSize="2xs">
@@ -64,7 +64,7 @@ const Stepper = memo(({ step = 0 }: { step: number }) => (
         </Text>
       </Stack>
       <Stack width={"1/3"} alignItems={"center"}>
-        <Circle size="10" bgColor={step <= 2 ? "goodGrey.300" : "primary"}>
+        <Circle size="10" bgColor={step <= 2 ? "goodGrey.300" : "gdPrimary"}>
           <Text color={step <= 2 ? "goodGrey.700" : "white"}> 2 </Text>
         </Circle>
         <Text w="112" color="goodGrey.700" fontFamily="subheading" fontWeight={400} fontSize="2xs">
@@ -72,7 +72,7 @@ const Stepper = memo(({ step = 0 }: { step: number }) => (
         </Text>
       </Stack>
       <Stack width={"1/3"} alignItems={"center"}>
-        <Circle size="10" bgColor={step < 5 ? "goodGrey.300" : "primary"}>
+        <Circle size="10" bgColor={step < 5 ? "goodGrey.300" : "gdPrimary"}>
           <Text color={step < 5 ? "goodGrey.700" : "white"}> 3 </Text>
         </Circle>
         <Text color="goodGrey.700" fontFamily="subheading" fontWeight={400} fontSize="2xs">
@@ -177,20 +177,20 @@ export const Onramper = ({
         ></WebView>
       </CentreBox>
       {isTesting && (
-        <Box w={200} h={40} bg="primary" display="flex">
+        <Box w={200} h={40} bg="gdPrimary" display="flex">
           <BaseButton
-            bg="primary"
-            _focus={{ bg: "primary" }}
-            _hover={{ bg: "primary" }}
+            bg="gdPrimary"
+            _focus={{ bg: "gdPrimary" }}
+            _hover={{ bg: "gdPrimary" }}
             w={200}
             h={20}
             onPress={devNextStep}
             text="Next step"
           />
           <BaseButton
-            bg="primary"
-            _focus={{ bg: "primary" }}
-            _hover={{ bg: "primary" }}
+            bg="gdPrimary"
+            _focus={{ bg: "gdPrimary" }}
+            _hover={{ bg: "gdPrimary" }}
             w="200"
             h="20"
             onPress={resetStep}

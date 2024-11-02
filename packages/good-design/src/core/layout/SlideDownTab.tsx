@@ -33,7 +33,7 @@ const SlideDownTab = ({ tabTitle, styles, children, ...props }: ISlideDownTabPro
   return (
     <Box w="100%" maxW="363" style={container}>
       <BasePressable
-        {...(isOpen && { bgColor: "primary" })}
+        {...(isOpen && { bgColor: "gdPrimary" })}
         onPress={toggleContent}
         borderRadius="6"
         style={button}
