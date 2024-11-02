@@ -1,28 +1,26 @@
 import React from "react";
-import { Link, Text } from "native-base";
+import { Link, Text, VStack } from "native-base";
 
 import { useFVModalAction } from "../../../hooks/useFVModalAction";
 import BasicStyledModal, { ModalFooterCta } from "./BasicStyledModal";
 import { TxModal } from "./TxModal";
 
 const ModalContent = () => (
-  <Text variant="sm-grey-650">
-    You're almost there! To claim G$, you need to be a unique human and prove it with your camera.
+  <VStack justifyContent="center" space={4} textAlign="center">
+    <Text fontWeight="bold">{`You’re almost there! To claim G$, you need prove you are a unique human.`}</Text>
+    <Text>
+      {`You’ll be asked to sign with your wallet to begin the verification. You may have to do this again from time to time.`}
+    </Text>
     <Link
-      _text={{ color: "gdPrimary" }}
+      justifyContent="center"
+      _text={{ color: "main" }}
       mt="5"
-      href="https://www.notion.so/gooddollar/Get-G-873391f31aee4a18ab5ad7fb7467acb3"
+      href="https://docs.gooddollar.org/about-the-protocol/sybil-resistance"
       isExternal
     >
-      Learn more about the identification process.
+      Learn more
     </Link>
-    {`
-      
-Verifying your identity is easy. You'll be asked to sign with your wallet.
-
-Don't worry, no link is kept between your identity record and your wallet address.
-      `}
-  </Text>
+  </VStack>
 );
 
 export const VerifyUniqueModal = ({ open, url, onClose, chainId, firstName, method, ...props }: any) => {

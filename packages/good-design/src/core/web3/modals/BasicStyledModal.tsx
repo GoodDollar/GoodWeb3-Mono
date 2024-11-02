@@ -54,7 +54,7 @@ export const ModalLoaderBody = () => <SpinnerCheckMark />;
 export const ModalErrorBody = ({ error }: { error: string }) => (
   <VStack space={6} justifyContent="center" alignItems="center">
     <Image source={BillyOops} w={137} h={135} style={{ resizeMode: "contain" }} />
-    <TransText textAlign="center" variant="sm-grey-650" color="goodRed.100" t={error} />
+    <TransText textAlign="center" color="goodRed.100" t={error} />
   </VStack>
 );
 

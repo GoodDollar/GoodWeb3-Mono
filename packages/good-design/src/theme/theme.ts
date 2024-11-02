@@ -126,6 +126,14 @@ export const theme = extendTheme({
       }
     },
     Text: {
+      baseStyle: {
+        color: "goodGrey.600",
+        fontFamily: "subheading",
+        fontSize: "sm",
+        fontStyle: "normal",
+        fontWeight: 400,
+        lineHeight: "130%" /* 20.8px */
+      },
       variants: {
         "browse-wrap": () => ({
           fontFamily: "subheading",
@@ -167,13 +175,6 @@ export const theme = extendTheme({
           fontWeight: 400,
           color: "goodGrey.600",
           lineHeight: 17.5
-        }),
-        "sm-grey": () => ({
-          fontFamily: "subheading",
-          fontSize: "sm",
-          fontWeight: 400,
-          color: "goodGrey.600",
-          lineHeight: 20.8
         }),
         "sm-grey-650": () => ({
           fontFamily: "subheading",
