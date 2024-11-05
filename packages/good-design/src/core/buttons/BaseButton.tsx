@@ -42,7 +42,8 @@ export const theme = {
       },
       innerText: {
         fontWeight: "hairline",
-        color: "white"
+        color: "white",
+        textAlign: "center"
       }
     };
   })

@@ -1,41 +1,19 @@
 import * as React from "react";
-import { EthereumClient, w3mConnectors, w3mProvider } from "@web3modal/ethereum";
-import { Web3Modal } from "@web3modal/react";
-import { configureChains, createConfig, WagmiConfig, WalletClient, useWalletClient } from "wagmi";
-import { mainnet, celo, celoAlfajores } from "wagmi/chains";
+import { createAppKit } from "@reown/appkit/react";
+import { mainnet, celo, fuse, AppKitNetwork } from "@reown/appkit/networks";
+import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
+import { useWalletClient, WagmiProvider } from "wagmi";
+export { useAppKit as useWeb3Modal, useDisconnect } from "@reown/appkit/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { providers } from "ethers";
 import { Web3Provider, Props } from "../Web3Context";
-export { useWeb3Modal } from "@web3modal/react";
-export { useDisconnect } from "wagmi";
+import { WalletClient } from "viem";
 
-import { Chain } from "@wagmi/core";
-
-export const fuse: Chain = {
-  id: 122,
-  name: "Fuse",
-  network: "fuse",
-  nativeCurrency: {
-    decimals: 18,
-    name: "Fuse",
-    symbol: "FUSE"
-  },
-  rpcUrls: {
-    public: { http: ["https://rpc.fuse.io"] },
-    default: { http: ["https://rpc.fuse.io"] }
-  },
-  blockExplorers: {
-    default: { name: "Fuse Explore", url: "https://explorer.fuse.io" }
-  },
-  contracts: {
-    multicall3: {
-      address: "0xcA11bde05977b3631167028862bE2a173976CA11",
-      blockCreated: 16146628
-    }
-  }
-};
+const queryClient = new QueryClient();
 
 const walletClientToWeb3Provider = (walletClient: WalletClient) => {
   const { chain, transport } = walletClient;
+  if (!chain) return;
   const network = {
     chainId: chain.id,
     name: chain.name,
@@ -59,34 +37,41 @@ const Web3ProviderWrapper = ({ children, config, env = "production" }: Props) =>
     </Web3Provider>
   );
 };
+
 export const Web3ModalProvider = ({
   projectId,
-  wagmiChains,
+  reownMetadata,
+  appkitChains,
   children,
   config,
   env = "production"
-}: Props & { wagmiChains?: Array<Chain>; projectId?: string }) => {
-  const chains = wagmiChains || [mainnet, celo, fuse, celoAlfajores];
+}: Props & { appkitChains?: [AppKitNetwork, ...AppKitNetwork[]]; projectId?: string; reownMetadata?: any }) => {
+  const chains: [AppKitNetwork, ...AppKitNetwork[]] = appkitChains || [mainnet, celo, fuse];
   projectId = projectId || process.env.REACT_APP_WC_PROJECTID || "62745569abcb6c8962cadf4d8568aad9";
 
-  const { publicClient } = configureChains(chains, [w3mProvider({ projectId })]);
-  const wagmiConfig = createConfig({
-    autoConnect: true,
-    connectors: w3mConnectors({ projectId, chains }),
-    publicClient
+  const wagmiAdapter = new WagmiAdapter({
+    networks: chains,
+    projectId
   });
-
-  const ethereumClient = new EthereumClient(wagmiConfig, chains);
+  createAppKit({
+    adapters: [wagmiAdapter],
+    networks: chains,
+    metadata: reownMetadata,
+    projectId,
+    features: {
+      analytics: true
+    }
+  });
 
   return (
     <>
-      <WagmiConfig config={wagmiConfig}>
-        <Web3ProviderWrapper config={config} env={env}>
-          {children}
-        </Web3ProviderWrapper>
-      </WagmiConfig>
-
-      <Web3Modal projectId={projectId} ethereumClient={ethereumClient} />
+      <WagmiProvider config={wagmiAdapter.wagmiConfig}>
+        <QueryClientProvider client={queryClient}>
+          <Web3ProviderWrapper config={config} env={env}>
+            {children}
+          </Web3ProviderWrapper>
+        </QueryClientProvider>
+      </WagmiProvider>
     </>
   );
 };
