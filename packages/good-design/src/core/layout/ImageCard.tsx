@@ -108,7 +108,7 @@ export const theme = {
           fontFamily: "subheading",
           fontSize: "2xs",
           fontWeight: "400",
-          lineHeight: "130%",
+          lineHeight: 14.4, // "130%"
           paddingBottom: 2,
           maxWidth: 400,
           paddingTop: 2,

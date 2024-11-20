@@ -15,7 +15,7 @@ export const theme = {
   baseStyle: {
     fontFamily: "heading",
     fontWeight: "bold",
-    lineHeight: "md"
+    lineHeight: 27.6
   },
   sizes: {
     lg: {

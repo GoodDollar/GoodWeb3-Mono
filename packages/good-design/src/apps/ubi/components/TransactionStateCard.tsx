@@ -82,7 +82,7 @@ export const TransactionCard = withTheme({ name: "TransactionCard" })(
                   fontSize="4xs"
                   fontFamily="subheading"
                   fontWeight="400"
-                  lineHeight="12"
+                  lineHeight={12}
                   color="goodGrey.600"
                 />
                 {/* Todo: should read subtitle from pool details*/}
