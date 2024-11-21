@@ -3,7 +3,7 @@ import { useWizard, Wizard } from "react-use-wizard";
 import { Center, VStack } from "native-base";
 import { useEthers } from "@usedapp/core";
 import { noop } from "lodash";
-import { AsyncStorage, GeoLocation, useGeoLocation } from "@gooddollar/web3sdk-v2";
+import { AsyncStorage, GeoLocation, useGeoLocation, useSendAnalytics } from "@gooddollar/web3sdk-v2";
 import { Trans } from "@lingui/react";
 
 import { TransButton } from "../../../core/layout";
@@ -33,13 +33,16 @@ const SegmentationScreenWrapper = (
   const { updateDataValue } = useContext(WizardContext);
   const [loading, setLoading] = useState(true);
   const [geoLocation, error] = useGeoLocation();
+  const { track } = useSendAnalytics();
   const { account } = props;
 
   const proceed = async () => {
+    track("goodid_confirm");
     void goToStep(3);
   };
 
   const handleDispute = () => {
+    track("goodid_decline");
     void goToStep(1);
   };
 
@@ -86,6 +89,7 @@ export const SegmentationWizard = (props: SegmentationProps) => {
   const [error, setError] = useState<string | null>(null);
   const { account = "" } = useEthers();
   const [stepHistory, setStepHistory] = useState<number[]>([0]);
+  const { track } = useSendAnalytics();
 
   // inject show modal on callbacks exceptions
   const modalOnDone: SegmentationProps["onDone"] = async error => {
@@ -105,10 +109,8 @@ export const SegmentationWizard = (props: SegmentationProps) => {
   };
 
   const onDispute = async (disputedValues: string[]) => {
-    // should report analytics
-    // todo: replace with analytics report, log for 'unused var' eslint
-    console.log("disputedValues", disputedValues);
     await AsyncStorage.setItem("goodid_disputedSubjects", JSON.stringify(disputedValues));
+    track("goodid_dispute_confirm", { disputedValues });
   };
 
   const onStepChange = useCallback(

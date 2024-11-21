@@ -115,10 +115,9 @@ export const ClaimProvider: FC<PropsWithChildren<ClaimProviderProps>> = ({
     void fetchPools();
   }, [onSuccess, chainId, account]);
 
+  // should handle what happens after all claims are done (eg. showing a next-task modal)
+  // if nothing is done, it will just silently finish
   const onClaimSuccess = useCallback(async () => {
-    // should handle what happens after all claims are done (eg. showing a next-task modal)
-    // if nothing is done, it will just silently finish
-
     setClaimPools(undefined);
     setRefreshRate("everyBlock");
     void fetchPools();

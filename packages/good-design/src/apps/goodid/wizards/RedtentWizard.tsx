@@ -1,8 +1,8 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Box, Checkbox, Center, HStack, Text, View, VStack, Spinner } from "native-base";
 import { Wizard, useWizard } from "react-use-wizard";
 import { Platform } from "react-native";
-import { isEmpty } from "lodash";
+import { isBoolean, isEmpty } from "lodash";
 
 import { RedTentProps } from "../types";
 import { withTheme } from "../../../theme/hoc/withTheme";
@@ -16,6 +16,7 @@ import { YouSureModal } from "../../../core/web3/modals";
 import RedTentCard from "../../../assets/images/redtentcard.png";
 import BillyPhone from "../../../assets/images/billy-phone.png";
 import { cardShadow } from "../../../theme";
+import { useSendAnalytics } from "@gooddollar/web3sdk-v2";
 
 const videoRequirements = [
   /*i18n*/ "Your first name",
@@ -112,15 +113,34 @@ const RedtentOffer = ({
 }) => {
   const { nextStep } = useWizard();
   const [showModal, setShowModal] = useState(false);
+  const { track } = useSendAnalytics();
+  const [hasFired, setHasFired] = useState(false);
+
+  const offerTitle =
+    /*i18n*/ "Red Tent Women in " +
+    offerCriteria.location[offer.Location.countryCode as keyof typeof offerCriteria.location];
 
   const handleSkip = () => {
+    track("offer_declined", { offer: offerTitle });
     setShowModal(true);
+  };
+
+  const handleStart = () => {
+    track("offer_start", { offer: offerTitle });
+    void nextStep();
   };
 
   const handleOnDone = () => {
     setShowModal(false);
     void onDone(true);
   };
+
+  useEffect(() => {
+    if (!hasFired) {
+      track("offer_show", { offer: offerTitle });
+      setHasFired(true);
+    }
+  }, []);
 
   if (isEmpty(offer)) return <Spinner variant="lg" />;
 
@@ -137,10 +157,7 @@ const RedtentOffer = ({
         <TransTitle t={/*i18n*/ "You are eligible to claim more GoodDollars!"} variant="title-gdblue" />
         <ImageCard
           variant="offer-card"
-          title={
-            /*i18n*/ "Red Tent Women in " +
-            offerCriteria.location[offer.Location.countryCode as keyof typeof offerCriteria.location]
-          }
+          title={offerTitle}
           content={<CardContent />}
           footer={<CardFooter linkText={/*i18n*/ "Learn more>>"} />}
           picture={RedTentCard}
@@ -166,7 +183,7 @@ const RedtentOffer = ({
       </VStack>
       <PoolRequirements {...{ offer }} />
       <VStack space={4}>
-        <TransButton t={/*i18n*/ "Upload Video Selfie"} onPress={nextStep} />
+        <TransButton t={/*i18n*/ "Upload Video Selfie"} onPress={handleStart} />
         <TransButton t={/*i18n*/ "Skip for now"} onPress={handleSkip} variant={"link-like"} padding={0} />
       </VStack>
     </View>
@@ -177,9 +194,11 @@ const RedtentVideoInstructions = withTheme({ name: "RedtentVideoInstructions" })
   ({ onDone, onVideo, ...props }: { onDone: RedTentProps["onDone"]; onVideo: RedTentProps["onVideo"] }) => {
     const { nextStep } = useWizard();
     const [isLoading, setLoading] = useState(false);
+    const { track } = useSendAnalytics();
 
     const onUpload = useCallback(
       async (video?: { base64: string; extension: string }, error?: Error) => {
+        track("offer_confirm");
         if (!video || error) {
           void onDone(error || new Error("Video upload failed"));
           return;
@@ -263,10 +282,17 @@ export const RedtentWizard: React.FC<RedTentProps> = (props: RedTentProps) => {
   const [error, setError] = useState<Error | undefined>(undefined);
   const { videoInstructStyles } = props;
   const dontShowAgainKey = "goodid_noOffersModalAgain";
+  const { track } = useSendAnalytics();
   // inject show modal on callbacks exceptions
 
   const modalOnDone: RedTentProps["onDone"] = async errorOnDone => {
     try {
+      if (!isBoolean(errorOnDone)) {
+        track("offer_video_error", { error: errorOnDone });
+      }
+
+      track("offer_success");
+
       await props.onDone(errorOnDone);
     } catch (e: any) {
       props.onError && props.onError(error);

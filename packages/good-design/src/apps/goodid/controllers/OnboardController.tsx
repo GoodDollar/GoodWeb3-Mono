@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { AsyncStorage } from "@gooddollar/web3sdk-v2";
+import { AsyncStorage, useSendAnalytics } from "@gooddollar/web3sdk-v2";
 import { isEmpty, noop } from "lodash";
 import moment from "moment";
 import { IContainerProps, Spinner } from "native-base";
@@ -32,6 +32,7 @@ export const OnboardController = (
   const [isPending, setPendingSignTx] = useState(false);
   const [accepedTos, setAcceptedTos] = useState(false);
   const [alreadyChecked, setAlreadyChecked] = useState(false);
+  const { track } = useSendAnalytics();
 
   useEffect(() => {
     if (isEmpty(certificates)) return;
@@ -83,7 +84,16 @@ export const OnboardController = (
     }
   };
 
+  const onCompleted = useCallback(
+    async (error?: Error | boolean) => {
+      track("goodid_success");
+      void onDone(error);
+    },
+    [onDone]
+  );
+
   const handleShouldFV = useCallback(async () => {
+    track("goodid_start");
     await AsyncStorage.setItem("tos-accepted", true);
     const { expiryTimestamp } = expiryDate ?? {};
 
@@ -115,7 +125,7 @@ export const OnboardController = (
           expiryFormatted,
           fvSig,
           isWhitelisted,
-          onDone,
+          onDone: onCompleted,
           withNavBar,
           isDev,
           isWallet
