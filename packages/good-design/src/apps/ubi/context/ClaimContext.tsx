@@ -178,6 +178,7 @@ export const ClaimProvider: FC<PropsWithChildren<ClaimProviderProps>> = ({
           account,
           endpoints,
           provider ?? library,
+          poolContracts?.map(_ => _.address) || [],
           isArray(poolsDetails) && poolsDetails?.length > 0
         )
           .then(res => {
