@@ -184,6 +184,10 @@ export const ClaimProvider: FC<PropsWithChildren<ClaimProviderProps>> = ({
           .then(res => {
             return res;
           })
+          .catch(e => {
+            console.error("getRecentClaims failed:", e);
+            return [];
+          })
           .finally(() => {
             explorerPollLock.release("pollLock");
           });

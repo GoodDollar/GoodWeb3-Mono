@@ -22,7 +22,7 @@ export const getRecentClaims = async (
 ): Promise<RecentClaims[] | undefined> => {
   if (!library || !account) return undefined;
   const { chainId } = await library.getNetwork();
-  const cacheKey = `GD_RecentClaims_${account}_${chainId}_${withPools}_${pools}`
+  const cacheKey = `GD_RecentClaims_${account}_${chainId}_${withPools}_${pools}`;
   const { lastBlock = 0, claimsCache = [] } = (await AsyncStorage.getItem(cacheKey)) || {};
   const sender32 = ethers.utils.hexZeroPad(account, 32).toLowerCase();
 
