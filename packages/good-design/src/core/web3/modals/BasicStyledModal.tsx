@@ -46,7 +46,7 @@ export type StyledModalProps = CtaOrLearnModalProps | AltModalProps;
 const ModalHeader = ({ title, variant = "title-gdblue" }: { title: any; variant: any }) => {
   const transTitle = typeof title === "object" ? title.title : { id: title, values: {} };
 
-  return <TransTitle t={transTitle.id} variant={variant} fontSize="xl" values={transTitle.values} lineHeight="27.5" />;
+  return <TransTitle t={transTitle.id} variant={variant} fontSize="xl" values={transTitle.values} lineHeight={27.5} />;
 };
 
 export const ModalLoaderBody = () => <SpinnerCheckMark />;

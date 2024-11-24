@@ -132,7 +132,7 @@ export const theme = extendTheme({
         fontSize: "sm",
         fontStyle: "normal",
         fontWeight: 400,
-        lineHeight: "130%" /* 20.8px */
+        lineHeight: 20.8 //"130%"
       },
       variants: {
         "browse-wrap": () => ({
