@@ -48,6 +48,7 @@ export const PreClaim: FC = () => {
               supportedChains={supportedChains}
               w="160"
               h="160"
+              // onEvent={onEvent} <-- todo: add event handling
             />
           </VStack>
         </Center>
