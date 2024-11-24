@@ -66,13 +66,11 @@ const WizardWrapper: FC<PropsWithChildren<{ skipOffer: Error | boolean | undefin
   useEffect(() => {
     if (!account) {
       goToStep(0);
-    } else if (chainId === SupportedChains.FUSE) {
-      goToStep(1);
     } else if (account && chainId && !isEmpty(certificates)) {
       const hasValidCertificates = certificates.some(cert => cert.certificate);
 
       if (hasValidCertificates) {
-        if (skipOffer) {
+        if (skipOffer || chainId !== SupportedChains.CELO) {
           onReset();
           goToStep(2);
         } else {
