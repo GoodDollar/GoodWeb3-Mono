@@ -8,7 +8,7 @@ import { AsyncStorage } from "../../storage";
 
 export interface RecentClaims {
   address: string;
-  claimAmount: ethers.BigNumber;
+  claimAmount: string;
   date: string;
   transactionHash: string;
 }
@@ -103,7 +103,7 @@ export const getRecentClaims = async (
 
       const isGdPool = tx.topics[0] === claimHash;
 
-      const claimAmount = ethers.BigNumber.from(data);
+      const claimAmount = data;
       const date = moment(ethers.BigNumber.from(timeStamp).toNumber() * 1000)
         .utc()
         .format();
