@@ -5,14 +5,14 @@ const defaultOnFallback = error => {
   return true;
 };
 
-export const fallback = async (asyncFns, onFallback = defaultOnFallback) => {
+export const fallback = async (asyncFns: any, onFallback = defaultOnFallback) => {
   if (asyncFns.length < 2) {
     // if no function passed - return undefined
     // if one function passed - immediately return its value
     // because reducer will return fn itself without invocation
     // passiing Promise.resolve as initial accumulator won't help
     // as we're reducing fns only in .catch
-    return first(asyncFns) || noop;
+    return ((first(asyncFns) as any) || noop)();
   }
 
   return asyncFns.reduce(async (current, next) => {

@@ -1,6 +1,7 @@
 import React, { useCallback } from "react";
 import { Center, HStack, Pressable, ScrollView, Text, VStack } from "native-base";
 import { Platform } from "react-native";
+import moment from "moment";
 
 import { withTheme } from "../../../theme/hoc";
 import { Image } from "../../../core/images";
@@ -29,7 +30,7 @@ export const TransactionCard = withTheme({ name: "TransactionCard" })(
 
     const isReceive = isReceiveTransaction(transaction);
     const amountPrefix = isClaimStart ? "" : isReceive ? "+" : "-";
-    const txDate = date ? date.local().format?.("MM.DD.YYYY HH:mm") : "";
+    const txDate = date ? moment(date).local().format?.("MM.DD.YYYY HH:mm") : "";
     const colorAmount = isClaimStart ? null : isReceive ? "txGreen" : "goodRed.200";
 
     const { txIcon, networkIcon, contractIcon } = getTxIcons(transaction);

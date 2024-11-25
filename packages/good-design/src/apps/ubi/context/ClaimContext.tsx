@@ -173,15 +173,21 @@ export const ClaimProvider: FC<PropsWithChildren<ClaimProviderProps>> = ({
 
       if (account && hasClaimed && !noUnclaimedPools && !loading) {
         await explorerPollLock.acquire("pollLock");
+        const poolContracts = [claimDetails.address, ...activePoolAddresses];
 
         const claimTransactionList = await getRecentClaims(
           account,
           endpoints,
           provider ?? library,
+          poolContracts,
           isArray(poolsDetails) && poolsDetails?.length > 0
         )
           .then(res => {
             return res;
+          })
+          .catch(e => {
+            console.error("getRecentClaims failed:", e);
+            return [];
           })
           .finally(() => {
             explorerPollLock.release("pollLock");
