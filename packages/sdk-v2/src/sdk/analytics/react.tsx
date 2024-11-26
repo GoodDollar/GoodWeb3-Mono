@@ -1,5 +1,5 @@
 import { createContext, FC, useCallback, useContext, useEffect, useRef, useState } from "react";
-import { assign, noop } from "lodash";
+import { noop } from "lodash";
 
 import { Analytics, IAnalyticsConfig } from "./sdk";
 import { IAbstractProvider, IAnalyticsProvider, IAppProps, IMonitoringProvider, IProvider } from "./types";
@@ -7,14 +7,12 @@ import { IAbstractProvider, IAnalyticsProvider, IAppProps, IMonitoringProvider, 
 export interface IAnalyticsContext
   extends Pick<IAbstractProvider, "identify">,
     IAnalyticsProvider,
-    IMonitoringProvider {
-  productEnv: string;
-}
+    IMonitoringProvider {}
 
 export interface IAnaliticsProviderProps {
   config: IAnalyticsConfig;
   appProps: IAppProps;
-  productEnv: "gw" | "ngw" | "dapp" | string;
+
   children?: any;
 }
 
@@ -23,13 +21,12 @@ export interface IAnaliticsProviderProps {
 export const AnalyticsContext = createContext<IAnalyticsContext>({
   identify: (identifier: string | number, email?: string, props?: object): void => {},
   send: (event: string, data?: object): void => {},
-  capture: (exception: Error, fingerprint?: string[], tags?: object, extra?: object): void => {},
-  productEnv: ""
+  capture: (exception: Error, fingerprint?: string[], tags?: object, extra?: object): void => {}
 });
 
 /* eslint-enable @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function */
 
-export const AnalyticsProvider: FC<IAnaliticsProviderProps> = ({ config, appProps, productEnv, children }) => {
+export const AnalyticsProvider: FC<IAnaliticsProviderProps> = ({ config, appProps, children }) => {
   const [sdk, setSDK] = useState<IProvider | null>(null);
   const configRef = useRef(config);
   const appPropsRef = useRef(appProps);
@@ -65,7 +62,7 @@ export const AnalyticsProvider: FC<IAnaliticsProviderProps> = ({ config, appProp
   }, [setSDK]);
 
   return !sdk ? null : (
-    <AnalyticsContext.Provider value={{ send, capture, identify, productEnv }}>{children}</AnalyticsContext.Provider>
+    <AnalyticsContext.Provider value={{ send, capture, identify }}>{children}</AnalyticsContext.Provider>
   );
 };
 
@@ -77,15 +74,7 @@ export interface IAnalyticsData {
 }
 
 export const useSendAnalytics = (): { track: IAnalyticsContext["send"] } => {
-  const { productEnv, send } = useAnalytics(); // eslint-disable-line @typescript-eslint/unbound-method
+  const { send } = useAnalytics(); // eslint-disable-line @typescript-eslint/unbound-method
 
-  const onSend = useCallback(
-    (event: string, data?: IAnalyticsData) => {
-      assign(data, { product: productEnv });
-      send(event, data);
-    },
-    [send]
-  );
-
-  return { track: onSend };
+  return { track: send };
 };
