@@ -52,7 +52,7 @@ export const YouSureModal = ({ open, action, onClose, dontShowAgainKey, stylePro
     void (async () => {
       if (dontShowAgainKey) {
         const dontShowProp = await AsyncStorage.getItem(dontShowAgainKey);
-        track("dont_remind_me", { type: props.type, remindMe: dontShowProp });
+        track("goodid_dont_remind_me", { type: props.type, remindMe: dontShowProp });
         setDontShowAgain(dontShowProp === "true");
       }
     })();
