@@ -41,7 +41,7 @@ const SegmentationScreenWrapper = (
     void goToStep(3);
   };
 
-  const handleDispute = () => {
+  const handleDecline = () => {
     track("goodid_decline");
     void goToStep(1);
   };
@@ -75,7 +75,7 @@ const SegmentationScreenWrapper = (
 
           <TransButton
             t={/*i18n*/ "no, i am not"}
-            onPress={handleDispute}
+            onPress={handleDecline}
             _text={{ underline: false }}
             variant="link-like"
           />

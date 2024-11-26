@@ -198,7 +198,7 @@ const RedtentVideoInstructions = withTheme({ name: "RedtentVideoInstructions" })
 
     const onUpload = useCallback(
       async (video?: { base64: string; extension: string }, error?: Error) => {
-        track("offer_confirm");
+        track("offer_video_upload_start");
         if (!video || error) {
           void onDone(error || new Error("Video upload failed"));
           return;
@@ -291,7 +291,7 @@ export const RedtentWizard: React.FC<RedTentProps> = (props: RedTentProps) => {
         track("offer_video_error", { error: errorOnDone });
       }
 
-      track("offer_success");
+      track("offer_video_success");
 
       await props.onDone(errorOnDone);
     } catch (e: any) {
