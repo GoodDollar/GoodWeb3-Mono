@@ -5,6 +5,7 @@ import { useWizard } from "react-use-wizard";
 import { Web3ActionButton } from "../../../advanced";
 import { Image } from "../../../core/images";
 import { GdAmount, TransTitle } from "../../../core/layout";
+import { useGoodId } from "../../../hooks";
 import { TransactionList } from "../components/TransactionStateCard";
 
 import BillyGrin from "../../../assets/images/billy-grin.png";
@@ -13,13 +14,26 @@ import { useClaimContext } from "../context";
 
 export const PreClaim: FC = () => {
   const { goToStep, stepCount } = useWizard();
-  const { claimPools, claimDetails, supportedChains, onClaim, onTxDetailsPress } = useClaimContext();
+  const {
+    account = "",
+    claimPools,
+    claimDetails,
+    supportedChains,
+    onClaim,
+    onTxDetailsPress,
+    onUpgrade
+  } = useClaimContext();
   const { totalAmount, transactionList } = claimPools ?? {};
+  const { isWhitelisted } = useGoodId(account);
 
   useEffect(() => {
     const claimConfirmed = transactionList?.some(tx => tx.type === "claim-confirmed");
     if (claimConfirmed) {
       goToStep(stepCount - 1);
+    }
+
+    if (isWhitelisted === false) {
+      onUpgrade();
     }
   }, [transactionList]);
 
