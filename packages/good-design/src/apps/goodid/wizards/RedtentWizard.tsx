@@ -291,7 +291,7 @@ export const RedtentWizard: React.FC<RedTentProps> = (props: RedTentProps) => {
         track("offer_video_error", { error: errorOnDone });
       }
 
-      track("offer_video_success");
+      track("offer_success");
 
       await props.onDone(errorOnDone);
     } catch (e: any) {
