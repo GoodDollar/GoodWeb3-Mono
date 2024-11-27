@@ -3,7 +3,7 @@ import { useWizard, Wizard } from "react-use-wizard";
 import { View } from "native-base";
 import { useEthers } from "@usedapp/core";
 import { isEmpty, noop } from "lodash";
-import { SupportedChains } from "@gooddollar/web3sdk-v2";
+import { SupportedChains, useSendAnalytics } from "@gooddollar/web3sdk-v2";
 
 // import { isTxReject } from "../utils/transactionType";
 import { CheckAvailableOffers, CheckAvailableOffersProps } from "../../goodid";
@@ -13,6 +13,7 @@ import { PostClaim } from "../screens/PostClaim";
 import { ErrorModal, TxDetailsModal, TxModal } from "../../../core/web3/modals";
 import { useClaimContext } from "../context/ClaimContext";
 import { UbiWizardHeader } from "../../../core/layout";
+import { ethers } from "ethers";
 
 const WizardWrapper: FC<PropsWithChildren<{ skipOffer: Error | boolean | undefined }>> = ({ skipOffer, children }) => {
   const {
@@ -33,9 +34,10 @@ const WizardWrapper: FC<PropsWithChildren<{ skipOffer: Error | boolean | undefin
   const { account, chainId } = useEthers();
   const { goToStep, stepCount } = useWizard();
   const lastStep = stepCount - 1;
-  const { isClaiming, isClaimingDone, error: claimError, remainingClaims } = claimFlowStatus;
+  const { isClaiming, isClaimingDone, error: claimError, remainingClaims, claimReceipts } = claimFlowStatus;
   const { transaction, isOpen } = txDetails;
   const { certificates } = useGoodId(account ?? "");
+  const { track } = useSendAnalytics();
 
   const customTitle = {
     title: /*i18n*/ {
@@ -49,13 +51,23 @@ const WizardWrapper: FC<PropsWithChildren<{ skipOffer: Error | boolean | undefin
   }, [claimFlowStatus]);
 
   const handleNext = useCallback(async () => {
+    if (remainingClaims === 0 && claimReceipts) {
+      claimReceipts.every((receipt: ethers.providers.TransactionReceipt | undefined) => {
+        if (!receipt) {
+          track("CLAIM_FAILED", { user: account });
+        } else {
+          track("CLAIM_SUCCESS", { contract: receipt.contractAddress, user: account });
+        }
+      });
+    }
+
     if (isClaimingDone) {
       await onClaimSuccess();
       goToStep(lastStep);
     } else if (remainingClaims === 0 && claimError) {
       await onClaimFailed();
     }
-  }, [account, claimDetails, claimFlowStatus, loading, poolsDetails]);
+  }, [account, claimDetails, claimFlowStatus, claimReceipts, loading, poolsDetails]);
 
   useEffect(() => {
     void (async () => {

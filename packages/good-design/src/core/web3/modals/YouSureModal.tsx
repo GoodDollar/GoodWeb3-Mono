@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { AsyncStorage } from "@gooddollar/web3sdk-v2";
+import { AsyncStorage, useSendAnalytics } from "@gooddollar/web3sdk-v2";
 import { Text } from "native-base";
 
 import BasicStyledModal, { ModalFooterCta } from "./BasicStyledModal";
@@ -46,11 +46,13 @@ export const YouSureModal = ({ open, action, onClose, dontShowAgainKey, stylePro
   const [dontShowAgain, setDontShowAgain] = useState(false);
   const { buttonStyle } = styleProps || {};
   const { title, content, buttonText } = youSureContent[props.type as keyof typeof youSureContent];
+  const { track } = useSendAnalytics();
 
   useEffect(() => {
     void (async () => {
       if (dontShowAgainKey) {
         const dontShowProp = await AsyncStorage.getItem(dontShowAgainKey);
+        track("goodid_dont_remind_me", { type: props.type, remindMe: dontShowProp });
         setDontShowAgain(dontShowProp === "true");
       }
     })();

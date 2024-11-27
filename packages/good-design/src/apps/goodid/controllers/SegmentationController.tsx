@@ -4,7 +4,8 @@ import {
   useFVLink,
   useIssueCertificates,
   useGetEnvChainId,
-  AggregatedCertificate
+  AggregatedCertificate,
+  useSendAnalytics
 } from "@gooddollar/web3sdk-v2";
 import { isEmpty } from "lodash";
 
@@ -28,6 +29,7 @@ export const SegmentationController = ({
   const { baseEnv } = useGetEnvChainId();
   const issueCertificate = useIssueCertificates(account, baseEnv);
   const fvLink = useFVLink();
+  const { track } = useSendAnalytics();
 
   const onLocationRequest = useCallback(
     async (locationState: any, account: string) => {
@@ -49,6 +51,8 @@ export const SegmentationController = ({
   );
 
   const onDataPermission = async (accepted: string) => {
+    const event = accepted === "true" ? "goodid_agree_receive_offer" : "goodid_decline_receive_offer";
+    track(event);
     await AsyncStorage.setItem("goodid_permission", accepted);
   };
 

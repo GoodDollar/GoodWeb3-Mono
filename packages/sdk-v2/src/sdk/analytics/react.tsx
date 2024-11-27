@@ -1,5 +1,6 @@
 import { createContext, FC, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { noop } from "lodash";
+
 import { Analytics, IAnalyticsConfig } from "./sdk";
 import { IAbstractProvider, IAnalyticsProvider, IAppProps, IMonitoringProvider, IProvider } from "./types";
 
@@ -11,6 +12,7 @@ export interface IAnalyticsContext
 export interface IAnaliticsProviderProps {
   config: IAnalyticsConfig;
   appProps: IAppProps;
+
   children?: any;
 }
 
@@ -66,8 +68,13 @@ export const AnalyticsProvider: FC<IAnaliticsProviderProps> = ({ config, appProp
 
 export const useAnalytics = (): IAnalyticsContext => useContext(AnalyticsContext);
 
-export const useSendAnalytics = (): IAnalyticsContext["send"] => {
+export interface IAnalyticsData {
+  action: string;
+  [key: string]: string | number | [string | undefined, string | undefined] | undefined;
+}
+
+export const useSendAnalytics = (): { track: IAnalyticsContext["send"] } => {
   const { send } = useAnalytics(); // eslint-disable-line @typescript-eslint/unbound-method
 
-  return send;
+  return { track: send };
 };
