@@ -1,5 +1,4 @@
 import { createContext, FC, useCallback, useContext, useEffect, useRef, useState } from "react";
-import { noop } from "lodash";
 
 import { Analytics, IAnalyticsConfig } from "./sdk";
 import { IAbstractProvider, IAnalyticsProvider, IAppProps, IMonitoringProvider, IProvider } from "./types";
@@ -58,7 +57,7 @@ export const AnalyticsProvider: FC<IAnaliticsProviderProps> = ({ config, appProp
     sdk
       .initialize(appPropsRef.current)
       .then(() => setSDK(sdk))
-      .catch(noop);
+      .catch(e => console.error(e));
   }, [setSDK]);
 
   return !sdk ? null : (
