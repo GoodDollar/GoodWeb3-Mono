@@ -3590,7 +3590,7 @@ __metadata:
     "@types/react-native": 0.70.4
     "@uniswap/sdk-core": ^3.1.0
     "@usedapp/core": ^1.2.16
-    "@web3-onboard/react": ^2.8.7
+    "@web3-onboard/react": ^2.10.0
     async-await-mutex-lock: ^1.0.11
     babel-jest: ^27.3.1
     babel-loader: ^8.2.3
@@ -3833,9 +3833,9 @@ __metadata:
     "@walletconnect/client": ^1.8.0
     "@walletconnect/qrcode-modal": ^1.8.0
     "@web3-onboard/coinbase": ^2.4.1
-    "@web3-onboard/core": ^2.22.2
+    "@web3-onboard/core": ^2.23.0
     "@web3-onboard/injected-wallets": ^2.11.2
-    "@web3-onboard/react": ^2.9.2
+    "@web3-onboard/react": ^2.10.0
     "@web3-onboard/torus": ^2.3.1
     "@web3-onboard/walletconnect": ^2.6.1
     "@web3auth/base": ^4.0.0
@@ -12695,7 +12695,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@web3-onboard/core@npm:2.23.0, @web3-onboard/core@npm:^2.22.2":
+"@web3-onboard/core@npm:2.23.0, @web3-onboard/core@npm:^2.23.0":
   version: 2.23.0
   resolution: "@web3-onboard/core@npm:2.23.0"
   dependencies:
@@ -12758,20 +12758,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@web3-onboard/react@npm:^2.8.13, @web3-onboard/react@npm:^2.8.7":
-  version: 2.8.13
-  resolution: "@web3-onboard/react@npm:2.8.13"
-  dependencies:
-    "@web3-onboard/common": ^2.3.3
-    "@web3-onboard/core": ^2.21.2
-    use-sync-external-store: 1.0.0
-  peerDependencies:
-    react: ">=16.8"
-  checksum: b88171c8b8de902060398630411dd2663b3b1da79a4b638af0f3293a7090bd1c58d487917fa7db137aa6cc4084d8fb1e9eab593b4e796289f6ea3b1e8fbba604
-  languageName: node
-  linkType: hard
-
-"@web3-onboard/react@npm:^2.9.2":
+"@web3-onboard/react@npm:^2.10.0":
   version: 2.10.0
   resolution: "@web3-onboard/react@npm:2.10.0"
   dependencies:
@@ -12781,6 +12768,19 @@ __metadata:
   peerDependencies:
     react: ">=16.8"
   checksum: 0271bb5c654a78050a479c397ca23366a93eabf45470c24fb34eb952ddaca5268b3a1ff63508082c57512f32e1cdfb775f8c233bf86a1759abb3b9bf96ca6aa5
+  languageName: node
+  linkType: hard
+
+"@web3-onboard/react@npm:^2.8.13":
+  version: 2.8.13
+  resolution: "@web3-onboard/react@npm:2.8.13"
+  dependencies:
+    "@web3-onboard/common": ^2.3.3
+    "@web3-onboard/core": ^2.21.2
+    use-sync-external-store: 1.0.0
+  peerDependencies:
+    react: ">=16.8"
+  checksum: b88171c8b8de902060398630411dd2663b3b1da79a4b638af0f3293a7090bd1c58d487917fa7db137aa6cc4084d8fb1e9eab593b4e796289f6ea3b1e8fbba604
   languageName: node
   linkType: hard
 
