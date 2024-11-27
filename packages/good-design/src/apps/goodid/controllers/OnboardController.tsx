@@ -93,23 +93,28 @@ export const OnboardController = (
   );
 
   const handleShouldFV = useCallback(async () => {
-    track("goodid_start");
-    await AsyncStorage.setItem("tos-accepted", true);
-    const { expiryTimestamp } = expiryDate ?? {};
+    try {
+      track("goodid_start");
+      await AsyncStorage.setItem("tos-accepted", true);
+      const { expiryTimestamp } = expiryDate ?? {};
 
-    // if someone is whitelisted we want to verify their timestamp
-    // to determine if they should re-do the fv-flow
-    if (isWhitelisted !== undefined && expiryTimestamp !== undefined) {
-      const expiry = moment(expiryTimestamp.toNumber());
-      const threeMonthsFromNow = moment().clone().add(3, "months");
-      const shouldDoFV = isWhitelisted === false || expiry.isBefore(threeMonthsFromNow);
+      // if someone is whitelisted we want to verify their timestamp
+      // to determine if they should re-do the fv-flow
+      if (isWhitelisted !== undefined && expiryTimestamp !== undefined) {
+        const expiry = moment(expiryTimestamp.toNumber());
+        const threeMonthsFromNow = moment().clone().add(3, "months");
+        const shouldDoFV = isWhitelisted === false || expiry.isBefore(threeMonthsFromNow);
 
-      // if the expiry date is within 3 months, we should re-do the fv-flow
-      if (shouldDoFV) {
-        void doFV();
-      } else {
-        setAcceptedTos(true);
+        // if the expiry date is within 3 months, we should re-do the fv-flow
+        if (shouldDoFV) {
+          void doFV();
+        } else {
+          setAcceptedTos(true);
+        }
       }
+    } catch (e: any) {
+      console.error(e);
+      throw new Error(e);
     }
   }, [doFV, isWhitelisted, expiryDate]);
 
