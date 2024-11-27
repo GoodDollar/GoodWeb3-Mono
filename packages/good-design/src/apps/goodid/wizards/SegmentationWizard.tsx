@@ -42,7 +42,7 @@ const SegmentationScreenWrapper = (
   };
 
   const handleDecline = () => {
-    track("goodid_decline");
+    track("goodid_dispute_start");
     void goToStep(1);
   };
 
