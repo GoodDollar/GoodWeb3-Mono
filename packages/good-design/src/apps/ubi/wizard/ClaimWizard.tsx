@@ -142,7 +142,7 @@ export const ClaimWizard: FC<Omit<CheckAvailableOffersProps, "onDone">> = ({
   return (
     <Wizard
       wrapper={<WizardWrapper skipOffer={skipOffer} />}
-      header={<UbiWizardHeader onDone={onDone} onExit={onExit ?? noop} />}
+      header={<UbiWizardHeader onDone={onDone} onExit={onExit ?? noop} withNavBar={withNavBar} />}
     >
       <StartClaim connectedAccount={account} />
       {chainId === SupportedChains.CELO ? (
