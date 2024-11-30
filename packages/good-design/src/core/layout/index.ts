@@ -7,6 +7,7 @@ export { default as ActionHeader } from "./ActionHeader";
 export { default as SlideDownTab } from "./SlideDownTab";
 export { default as CentreBox } from "./CentreBox";
 export { default as ImageCard } from "./ImageCard";
+export { default as BalanceGD } from "./BalanceGD";
 export * from "./BulletPoint";
 export * from "./BalanceGD";
 export * from "./Trans";
