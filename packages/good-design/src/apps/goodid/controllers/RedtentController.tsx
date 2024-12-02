@@ -3,7 +3,7 @@ import { uploadToS3, useAggregatedCertificates, useRegisterRedtent } from "@good
 
 import { RedtentWizard } from "../wizards/RedtentWizard";
 import { RedTentProps } from "../types";
-import uuid from "uuid";
+import { v4 } from "uuid";
 
 export const RedtentController = (props: Omit<RedTentProps, "onVideo"> & { account: string }) => {
   const registerRedtent = useRegisterRedtent();
@@ -15,7 +15,7 @@ export const RedtentController = (props: Omit<RedTentProps, "onVideo"> & { accou
 
   const onVideo: RedTentProps["onVideo"] = async (base64, extension) => {
     if (base64) {
-      const videoFilename = `${uuid.v4()}.${extension}`;
+      const videoFilename = `${v4()}.${extension}`;
       const s3res = await uploadToS3(base64, videoFilename);
       const registerRes = await registerRedtent({ videoFilename, certificates });
       console.log(s3res, registerRes);
