@@ -29,7 +29,7 @@ export const useClaimContext = () => {
 const explorerPollLock = new Lock();
 
 interface ClaimProviderProps {
-  activePoolAddresses?: string[];
+  activePoolAddresses?: { [key: string]: string };
   explorerEndPoints: { [key in keyof typeof SupportedChains]: string };
   supportedChains: SupportedChains[];
   withSignModals: boolean;
@@ -44,7 +44,7 @@ interface ClaimProviderProps {
 }
 
 export const ClaimProvider: FC<PropsWithChildren<ClaimProviderProps>> = ({
-  activePoolAddresses = [],
+  activePoolAddresses = {},
   children,
   explorerEndPoints = {
     MAINNET: "https://api.etherscan.io/api?",
@@ -172,7 +172,8 @@ export const ClaimProvider: FC<PropsWithChildren<ClaimProviderProps>> = ({
 
       if (account && hasClaimed && !noUnclaimedPools && !loading) {
         await explorerPollLock.acquire("pollLock");
-        const poolContracts = [claimDetails.address, ...activePoolAddresses];
+        const poolAddresses = Object.values(activePoolAddresses);
+        const poolContracts = [claimDetails.address, ...poolAddresses];
 
         const claimTransactionList = await getRecentClaims(
           account,

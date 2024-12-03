@@ -50,7 +50,11 @@ export const PreClaim: FC = () => {
               <GdAmount amount={totalAmount} withDefaultSuffix />
             </Center>
           </VStack>
-          <TransactionList transactions={transactionList} onTxDetailsPress={onTxDetailsPress} />
+          <TransactionList
+            transactions={transactionList}
+            onTxDetailsPress={onTxDetailsPress}
+            limit={transactionList.length}
+          />
         </VStack>
         <Center>
           <VStack space={0} alignItems="center">

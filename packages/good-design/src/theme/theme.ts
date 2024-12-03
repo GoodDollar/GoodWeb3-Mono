@@ -1,4 +1,5 @@
 import { extendTheme } from "native-base";
+import { Platform } from "react-native";
 import * as layout from "../core/layout/theme";
 import * as buttons from "../core/buttons/theme";
 import * as animated from "../core/animated/theme";
@@ -132,7 +133,7 @@ export const theme = extendTheme({
         fontSize: "sm",
         fontStyle: "normal",
         fontWeight: 400,
-        lineHeight: 20.8 //"130%"
+        ...Platform.select({ web: { lineHeight: 20.8, android: { lineHeight: 22 } } }) // "130%"
       },
       variants: {
         "browse-wrap": () => ({

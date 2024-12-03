@@ -15,7 +15,7 @@ export const theme = {
   baseStyle: {
     fontFamily: "heading",
     fontWeight: "bold",
-    lineHeight: 27.6
+    lineHeight: Platform.select({ web: 27.6, android: 29 })
   },
   sizes: {
     lg: {
@@ -45,7 +45,7 @@ export const theme = {
       fontFamily: "heading",
       fontSize: "xl",
       textAlign: "center",
-      lineHeight: 27.6
+      lineHeight: Platform.select({ web: 27.6, android: 30 })
     })
   }
 };

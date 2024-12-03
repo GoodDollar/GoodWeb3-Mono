@@ -3,6 +3,7 @@ import { Box, Checkbox, Center, HStack, Text, View, VStack, Spinner } from "nati
 import { Wizard, useWizard } from "react-use-wizard";
 import { Platform } from "react-native";
 import { isBoolean, isEmpty } from "lodash";
+import { Envs, useGetEnvChainId } from "@gooddollar/web3sdk-v2";
 
 import { RedTentProps } from "../types";
 import { withTheme } from "../../../theme/hoc/withTheme";
@@ -12,6 +13,7 @@ import { WebVideoUploader } from "../../../core/inputs/WebVideoUploader";
 import { WizardContextProvider } from "../../../utils/WizardContext";
 import { BulletPointList, TransButton, TransText, TransTitle } from "../../../core/layout";
 import { YouSureModal } from "../../../core/web3/modals";
+import { useClaimContext } from "../../ubi";
 
 import RedTentCard from "../../../assets/images/redtentcard.png";
 import BillyPhone from "../../../assets/images/billy-phone.png";
@@ -116,9 +118,16 @@ const RedtentOffer = ({
   const { track } = useSendAnalytics();
   const [hasFired, setHasFired] = useState(false);
 
+  const { activePoolAddresses } = useClaimContext();
+  const { baseEnv } = useGetEnvChainId();
+  const devEnv = baseEnv === "fuse" ? "development" : baseEnv;
+  const { goodCollectiveUrl } = Envs[devEnv];
+
   const offerTitle =
     /*i18n*/ "Red Tent Women in " +
     offerCriteria.location[offer.Location.countryCode as keyof typeof offerCriteria.location];
+
+  const offerLink = `${goodCollectiveUrl}collective/${activePoolAddresses[offer.Location.countryCode]}`;
 
   const handleSkip = () => {
     track("offer_declined", { offer: offerTitle });
@@ -161,7 +170,7 @@ const RedtentOffer = ({
           content={<CardContent />}
           footer={<CardFooter linkText={/*i18n*/ "Learn more>>"} />}
           picture={RedTentCard}
-          link="https://www.google.com" // todo: add link to good-collective pool page
+          link={offerLink}
           styles={{
             picture: { resizeMode: "cover" },
             container: { width: "100%", alignItems: "flex-start" },
@@ -247,8 +256,8 @@ const RedtentThanks = ({ onDone, offer }: { onDone: RedTentProps["onDone"]; offe
   };
 
   return (
-    <VStack paddingBottom={6} justifyContent="space-between" height="100%">
-      <VStack space={6} maxWidth={360} margin="auto">
+    <VStack paddingBottom={6} {...Platform.select({ web: { height: "100%", justifyContent: "space-between" } })}>
+      <VStack space={6} maxWidth={360} marginX="auto" {...Platform.select({ android: { marginY: "auto" } })}>
         <TransTitle t={/*i18n*/ "Thanks you for submitting your video!"} variant="title-gdblue" />
         <Box
           justifyContent="flex-start"
@@ -272,8 +281,8 @@ const RedtentThanks = ({ onDone, offer }: { onDone: RedTentProps["onDone"]; offe
             <TransText t={/*i18n*/ " GoodCollective. You can claim this additional UBI daily."} variant="sm-grey-650" />
           </Text>
         </Box>
+        <TransButton t={/*i18n*/ "Next"} onPress={onPress} variant="standard" />
       </VStack>
-      <TransButton t={/*i18n*/ "Next"} onPress={onPress} variant="standard" />
     </VStack>
   );
 };

@@ -103,15 +103,21 @@ export const TransactionCard = withTheme({ name: "TransactionCard" })(
 type TransactionListProps = {
   transactions: Transaction[] | undefined;
   onTxDetailsPress: ClaimContextProps["onTxDetailsPress"];
+  limit?: number;
 };
 
-export const TransactionList = ({ transactions, onTxDetailsPress }: TransactionListProps) => (
+export const TransactionList = ({ transactions, onTxDetailsPress, limit = 3 }: TransactionListProps) => (
   <ScrollView
     style={{
       marginTop: 4,
       ...Platform.select({
         web: { scrollbarWidth: "thin", maxHeight: 550 },
-        android: { maxWidth: 360, margin: "auto", height: 300, maxHeight: 300 }
+        android: {
+          maxWidth: 360,
+          margin: "auto",
+          height: limit < 3 ? "auto" : 300,
+          maxHeight: limit < 3 ? "auto" : 300
+        }
       })
     }}
     contentContainerStyle={{ flexGrow: 1, alignItems: "center", justifyContent: "center" }}

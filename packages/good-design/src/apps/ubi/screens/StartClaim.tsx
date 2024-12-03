@@ -1,6 +1,7 @@
 import React, { FC } from "react";
 import { Center, Spinner, VStack } from "native-base";
 import { isEmpty, noop } from "lodash";
+import { Platform } from "react-native";
 
 import { TransTitle, TransText } from "../../../core/layout";
 import { Web3ActionButton } from "../../../advanced";
@@ -26,6 +27,7 @@ export const StartClaim: FC<{ connectedAccount: string }> = ({ connectedAccount 
         fontWeight="extrabold"
         pb="2"
         textAlign="center"
+        lineHeight={Platform.select({ android: 35 })}
       />
 
       <TransText
