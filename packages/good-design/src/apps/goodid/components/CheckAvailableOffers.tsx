@@ -53,7 +53,7 @@ const CheckAvailableOffers: FC<CheckAvailableOffersProps> = ({
   const { activePoolAddresses, poolContracts } = useClaimContext();
   const poolsDetails = useGetUBIPoolsDetails(Object.values(redtentPools));
   const availableOffers = useCheckAvailableOffers({ account, pools: redtentOffer, isDev, onDone });
-  const [hasOffer, setHasOffer] = useState<UBIPoolOffer[] | undefined>(undefined);
+  const [hasOffer, setHasOffer] = useState([] as UBIPoolOffer[]);
 
   useEffect(() => {
     const isMember = poolContracts?.some(pool =>
@@ -62,15 +62,30 @@ const CheckAvailableOffers: FC<CheckAvailableOffersProps> = ({
 
     if (availableOffers === false || availableOffers?.length === 0 || isMember) {
       void onDone?.(true);
+      return;
     }
     if (availableOffers && poolsDetails) {
-      const pool = redtentPools[availableOffers[0].Location?.countryCode || ""];
-      const poolDetails = poolsDetails.find(_ => _.contract.toLowerCase() === pool.toLowerCase());
-      const isAvailable =
-        poolDetails?.ubiSettings.onlyMembers === false ||
-        Number(poolDetails?.ubiSettings.maxClaimers) <= Number(poolDetails?.status.membersCount);
-      if (isAvailable) {
-        setHasOffer(true);
+      const offers = availableOffers
+        .map(offer => {
+          const pool = redtentPools[offer.Location?.countryCode || ""];
+          const poolDetails = poolsDetails.find(_ => _.contract.toLowerCase() === pool.toLowerCase());
+          const isAvailable =
+            poolDetails?.ubiSettings.onlyMembers === false ||
+            Number(poolDetails?.ubiSettings.maxClaimers) <= Number(poolDetails?.status.membersCount);
+          if (isAvailable) {
+            return {
+              ...offer,
+              claimAmount: poolDetails?.nextClaimAmount as string,
+              claimDayFrequency: poolDetails?.ubiSettings.claimPeriodDays as string
+            } as UBIPoolOffer;
+          }
+          return undefined;
+        })
+        .filter(_ => _ !== undefined) as UBIPoolOffer[];
+
+      if (offers.length > 0) {
+        setHasOffer(offers);
+        return;
       }
       void onDone?.(true);
     }
@@ -86,7 +101,7 @@ const CheckAvailableOffers: FC<CheckAvailableOffersProps> = ({
       {...{
         withNavBar,
         account,
-        availableOffers,
+        availableOffers: hasOffer,
         onDone,
         onError
       }}
