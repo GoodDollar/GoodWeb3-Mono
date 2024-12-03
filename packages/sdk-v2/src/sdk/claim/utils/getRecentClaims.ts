@@ -116,8 +116,10 @@ export const getRecentClaims = async (
     });
 
     const merged = formatted.concat(claimsCache);
+    const onlyUnique = Array.from(new Map(merged.map(item => [item.transactionHash, item])).values());
     void AsyncStorage.setItem(cacheKey, { lastBlock: lastBlockNo, claimsCache: merged });
-    return merged;
+
+    return onlyUnique;
   } catch (e) {
     throw new Error(`getRecentClaims -- Failed to fetch recent-claims: ${e}`);
   }
