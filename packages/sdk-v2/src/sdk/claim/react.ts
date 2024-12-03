@@ -20,6 +20,8 @@ import { useContractFunctionWithDefaultGasFees, useGasFees } from "../base/hooks
 import { getContractsFromClaimPools, getPoolsDetails } from "./utils/pools";
 import { PoolDetails } from "./types";
 
+type UBIPoolsDetails = Awaited<ReturnType<GoodCollectiveSDK["getUBIPoolsDetails"]>>;
+
 export const useFVLink = (chainId?: number) => {
   const { chainId: defaultChainId } = useGetEnvChainId();
   const sdk = useSDK(false, "claim", chainId ?? defaultChainId) as ClaimSDK;
@@ -202,7 +204,7 @@ export const useGetMemberUBIPools = () => {
         return;
       }
 
-      const details = getPoolsDetails(memberUbiPools as PoolDetails[], pool.abi, library);
+      const details = getPoolsDetails(memberUbiPools, pool.abi, library);
 
       setPoolsDetails(details);
     } catch (err: any) {
@@ -220,6 +222,51 @@ export const useGetMemberUBIPools = () => {
   }, [fetchPools, poolsDetails]);
 
   return { poolsDetails, loading, error, fetchPools };
+};
+
+export const useGetUBIPoolsDetails = (poolAddress: string[]) => {
+  const { account, library, chainId } = useEthers();
+  const [availablePools, setAvailablePools] = useState<UBIPoolsDetails>();
+  const { defaultEnv } = useGetEnvChainId();
+  const gcEnv = defaultEnv === "production-celo" ? "production-celo" : "development-celo";
+
+  const pool = GoodCollectiveContracts["42220"]?.find(envs => envs.name === gcEnv)?.contracts.UBIPool;
+
+  const fetchPools = useCallback(async () => {
+    try {
+      if (!library || !account || !pool) {
+        setAvailablePools(undefined);
+        return;
+      }
+
+      if (chainId !== 42220) {
+        setAvailablePools([]);
+        return;
+      }
+
+      const sdk = new GoodCollectiveSDK("42220", library as ethers.providers.Provider, { network: gcEnv });
+
+      const poolsDetails = await sdk.getUBIPoolsDetails(poolAddress);
+
+      if (!poolsDetails || !poolsDetails.length) {
+        setAvailablePools([]);
+        return;
+      }
+      // poolsDetails.filter(details => details.ubiSettings.onlyMembers === false || details.ubiSettings);
+
+      setAvailablePools(poolsDetails);
+    } catch (err: any) {
+      console.error("Error fetching pools:", err);
+    }
+  }, [library, chainId, defaultEnv]);
+
+  useEffect(() => {
+    if (availablePools === undefined) {
+      void fetchPools();
+    }
+  }, [fetchPools, availablePools]);
+
+  return availablePools;
 };
 
 export const useClaim = (refresh: QueryParams["refresh"] = "never") => {

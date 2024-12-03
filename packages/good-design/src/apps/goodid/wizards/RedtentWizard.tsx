@@ -3,7 +3,7 @@ import { Box, Checkbox, Center, HStack, Text, View, VStack, Spinner } from "nati
 import { Wizard, useWizard } from "react-use-wizard";
 import { Platform } from "react-native";
 import { isBoolean, isEmpty } from "lodash";
-import { Envs, useGetEnvChainId } from "@gooddollar/web3sdk-v2";
+import { Envs, useG$Formatted, useGetEnvChainId } from "@gooddollar/web3sdk-v2";
 
 import { RedTentProps } from "../types";
 import { withTheme } from "../../../theme/hoc/withTheme";
@@ -19,6 +19,8 @@ import RedTentCard from "../../../assets/images/redtentcard.png";
 import BillyPhone from "../../../assets/images/billy-phone.png";
 import { cardShadow } from "../../../theme";
 import { useSendAnalytics } from "@gooddollar/web3sdk-v2";
+import { BigNumber } from "ethers";
+import { UBIPoolOffer } from "../components";
 
 const videoRequirements = [
   /*i18n*/ "Your first name",
@@ -43,18 +45,22 @@ const offerCriteria = {
   }
 };
 
-const CardContent = () => (
-  <VStack space="0">
-    <TransText
-      t={/*i18n*/ "Claim weekly:"}
-      fontFamily="subheading"
-      fontSize="sm"
-      fontWeight="400"
-      color="goodGrey.600"
-    />
-    <TransText t={"8G$"} fontFamily="heading" color="gdPrimary" fontSize="l" fontWeight="700" />
-  </VStack>
-);
+const CardContent = ({ offer }: { offer: UBIPoolOffer }) => {
+  const formattedAmount = useG$Formatted(BigNumber.from(offer.claimAmount));
+
+  return (
+    <VStack space="0">
+      <TransText
+        t={/*i18n*/ `Claim every ${offer.claimDayFrequency} days`}
+        fontFamily="subheading"
+        fontSize="sm"
+        fontWeight="400"
+        color="goodGrey.600"
+      />
+      <TransText t={`${formattedAmount} G$`} fontFamily="heading" color="gdPrimary" fontSize="l" fontWeight="700" />
+    </VStack>
+  );
+};
 
 const CardFooter = ({ linkText }: { linkText: string }) => (
   <TransText t={linkText} mr="auto" fontSize="sm" fontFamily="subheading" fontWeight="400" color="gdPrimary">
@@ -111,7 +117,7 @@ const RedtentOffer = ({
 }: {
   onDone: RedTentProps["onDone"];
   dontShowAgainKey: string;
-  offer: any;
+  offer: UBIPoolOffer;
 }) => {
   const { nextStep } = useWizard();
   const [showModal, setShowModal] = useState(false);
@@ -125,9 +131,9 @@ const RedtentOffer = ({
 
   const offerTitle =
     /*i18n*/ "Red Tent Women in " +
-    offerCriteria.location[offer.Location.countryCode as keyof typeof offerCriteria.location];
+    offerCriteria.location[offer.Location?.countryCode as keyof typeof offerCriteria.location];
 
-  const offerLink = `${goodCollectiveUrl}collective/${activePoolAddresses[offer.Location.countryCode]}`;
+  const offerLink = `${goodCollectiveUrl}collective/${activePoolAddresses[offer.Location?.countryCode || ""]}`;
 
   const handleSkip = () => {
     track("offer_declined", { offer: offerTitle });
@@ -167,7 +173,7 @@ const RedtentOffer = ({
         <ImageCard
           variant="offer-card"
           title={offerTitle}
-          content={<CardContent />}
+          content={<CardContent offer={offer} />}
           footer={<CardFooter linkText={/*i18n*/ "Learn more>>"} />}
           picture={RedTentCard}
           link={offerLink}
