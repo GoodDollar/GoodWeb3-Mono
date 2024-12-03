@@ -153,6 +153,15 @@ export const PostClaim: FC = () => {
 
         {transactionList === undefined ? (
           <Spinner variant="page-loader" size="lg" mt={2} />
+        ) : transactionList.length === 0 ? (
+          <VStack>
+            <TransText
+              my={6}
+              t={/*i18n*/ "Unable to load your recent claims, try again later"}
+              variant="browse-wrap"
+              fontSize="sm"
+            />
+          </VStack>
         ) : (
           <TransactionList transactions={transactionList} onTxDetailsPress={onTxDetailsPress} />
         )}
