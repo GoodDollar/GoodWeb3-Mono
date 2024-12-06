@@ -117,7 +117,10 @@ export const getRecentClaims = async (
 
     const merged = formatted.concat(claimsCache);
     const onlyUnique = Array.from(new Map(merged.map(item => [item.transactionHash, item])).values());
-    void AsyncStorage.setItem(cacheKey, { lastBlock: lastBlockNo, claimsCache: merged });
+
+    if (merged.length > 0) {
+      void AsyncStorage.setItem(cacheKey, { lastBlock: lastBlockNo, claimsCache: merged });
+    }
 
     return onlyUnique;
   } catch (e) {
