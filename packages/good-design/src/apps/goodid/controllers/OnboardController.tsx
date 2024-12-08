@@ -30,7 +30,6 @@ export const OnboardController = (
   const { certificates, certificateSubjects, expiryDate, expiryFormatted, isWhitelisted } = useGoodId(account);
 
   const [isPending, setPendingSignTx] = useState(false);
-  const [accepedTos, setAcceptedTos] = useState(false);
   const [alreadyChecked, setAlreadyChecked] = useState(false);
   const { track } = useSendAnalytics();
 
@@ -47,7 +46,7 @@ export const OnboardController = (
 
   useEffect(() => {
     // segmentation flow
-    if (isEmpty(certificates || expiryDate === undefined || !alreadyChecked)) return;
+    if (isEmpty(certificates) || expiryDate === undefined) return;
 
     const shouldFv = expiryWithin1Month();
 
@@ -58,7 +57,7 @@ export const OnboardController = (
 
     const hasValidCertificates = certificates.some(cert => cert.certificate);
 
-    if (hasValidCertificates) {
+    if (hasValidCertificates && !alreadyChecked) {
       onSkip();
       return;
     } else {
@@ -68,9 +67,7 @@ export const OnboardController = (
     }
 
     void (async () => {
-      const accepted = await AsyncStorage.getItem("tos-accepted");
       await AsyncStorage.setItem("goodid_permission", "false");
-      setAcceptedTos(accepted);
     })();
   }, [certificates, expiryDate, alreadyChecked]);
 
@@ -125,8 +122,6 @@ export const OnboardController = (
         // if the expiry date is within 1 month, we should re-do the fv-flow
         if (shouldDoFV) {
           void doFV();
-        } else {
-          setAcceptedTos(true);
         }
       }
     } catch (e: any) {
@@ -135,9 +130,9 @@ export const OnboardController = (
     }
   }, [doFV, isWhitelisted, expiryDate]);
 
-  if (isEmpty(certificates)) return <Spinner variant="page-loader" size="lg" />;
+  if (isEmpty(certificates) || isWhitelisted === undefined) return <Spinner variant="page-loader" size="lg" />;
 
-  if (accepedTos && isWhitelisted === true)
+  if (isWhitelisted === true)
     return (
       <SegmentationController
         {...{
