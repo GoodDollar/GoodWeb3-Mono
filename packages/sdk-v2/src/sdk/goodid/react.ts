@@ -282,7 +282,7 @@ export const useCheckAvailableOffers = ({ account, pools, isDev, onDone }: Check
           isDev &&
           (key !== "Location" ||
             (certificatesSubjects.Gender?.gender === "Male" &&
-              ["TH", "JP", "UA", "IL", "BR", "NG"].includes(certificateSubject.countryCode) &&
+              ["TH", "JP", "UA", "IL", "BR", "NG", "NL"].includes(certificateSubject.countryCode) &&
               (criteria as { countryCode: string }).countryCode === "CO") ||
             (certificatesSubjects.Gender?.gender === "Female" &&
               ["US", "IL", "ES", "CO"].includes(certificateSubject.countryCode) &&
