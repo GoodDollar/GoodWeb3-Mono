@@ -34,11 +34,31 @@ export const OnboardController = (
   const [alreadyChecked, setAlreadyChecked] = useState(false);
   const { track } = useSendAnalytics();
 
+  const expiryWithin1Month = useCallback(() => {
+    const { expiryTimestamp } = expiryDate ?? {};
+
+    if (expiryTimestamp === undefined) return false;
+
+    const expiry = moment(expiryTimestamp.toNumber());
+    const oneMonthFromNow = moment().clone().add(1, "months");
+    const shouldDoFV = isWhitelisted === false || expiry.isBefore(oneMonthFromNow);
+    return shouldDoFV;
+  }, [expiryDate, isWhitelisted]);
+
   useEffect(() => {
-    if (isEmpty(certificates)) return;
+    // segmentation flow
+    if (isEmpty(certificates || expiryDate === undefined || !alreadyChecked)) return;
+
+    const shouldFv = expiryWithin1Month();
+
+    if (shouldFv) {
+      void doFV();
+      return;
+    }
+
     const hasValidCertificates = certificates.some(cert => cert.certificate);
 
-    if (hasValidCertificates && !alreadyChecked) {
+    if (hasValidCertificates) {
       onSkip();
       return;
     } else {
@@ -52,7 +72,7 @@ export const OnboardController = (
       await AsyncStorage.setItem("goodid_permission", "false");
       setAcceptedTos(accepted);
     })();
-  }, [certificates]);
+  }, [certificates, expiryDate, alreadyChecked]);
 
   const storeFvSig = async (fvSig: string) => {
     // the link will be requested to send a user to the fv-flow
@@ -101,11 +121,8 @@ export const OnboardController = (
       // if someone is whitelisted we want to verify their timestamp
       // to determine if they should re-do the fv-flow
       if (isWhitelisted !== undefined && expiryTimestamp !== undefined) {
-        const expiry = moment(expiryTimestamp.toNumber());
-        const threeMonthsFromNow = moment().clone().add(3, "months");
-        const shouldDoFV = isWhitelisted === false || expiry.isBefore(threeMonthsFromNow);
-
-        // if the expiry date is within 3 months, we should re-do the fv-flow
+        const shouldDoFV = expiryWithin1Month();
+        // if the expiry date is within 1 month, we should re-do the fv-flow
         if (shouldDoFV) {
           void doFV();
         } else {
