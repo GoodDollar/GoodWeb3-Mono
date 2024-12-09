@@ -9,6 +9,7 @@ import { WizardHeader } from "../wizards";
 import { OnboardScreen, OnboardScreenProps } from "../screens/OnboardScreen";
 import { useFVModalAction, useGoodId } from "../../../hooks";
 import { SegmentationController } from "./SegmentationController";
+import usePromise from "react-use-promise";
 
 export interface OnboardControllerProps {
   account: string;
@@ -32,6 +33,9 @@ export const OnboardController = (
   const [isPending, setPendingSignTx] = useState(false);
   const [doingSegmentation, setDoingSegmentation] = useState(false);
   const [shouldUpgrade, setShouldUpgrade] = useState(false);
+
+  const [tosAccepted] = usePromise(async () => await AsyncStorage.getItem("tos-accepted"), []);
+
   const { track } = useSendAnalytics();
 
   const expiryWithin1Month = useCallback(() => {
@@ -131,9 +135,10 @@ export const OnboardController = (
     }
   }, [doFV, isWhitelisted, expiryDate]);
 
-  if (isEmpty(certificates) || isWhitelisted === undefined) return <Spinner variant="page-loader" size="lg" />;
+  if (isEmpty(certificates) || isWhitelisted === undefined || tosAccepted === undefined)
+    return <Spinner variant="page-loader" size="lg" />;
 
-  if (isWhitelisted === true && !shouldUpgrade)
+  if (isWhitelisted === true && tosAccepted && !shouldUpgrade)
     return (
       <SegmentationController
         {...{
