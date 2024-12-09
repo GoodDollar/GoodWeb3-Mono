@@ -5609,9 +5609,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/goodcollective-sdk@npm:^1.2.1":
-  version: 1.2.1
-  resolution: "@gooddollar/goodcollective-sdk@npm:1.2.1"
+"@gooddollar/goodcollective-sdk@npm:^1.3.1":
+  version: 1.3.1
+  resolution: "@gooddollar/goodcollective-sdk@npm:1.3.1"
   dependencies:
     "@gooddollar/goodcollective-contracts": ^1.2.0
     "@superfluid-finance/sdk-core": ^0.6.12
@@ -5620,7 +5620,7 @@ __metadata:
     graphql: ^16.7.1
   peerDependencies:
     ethers: ^5.*
-  checksum: 5637adb5ee8651e8a0b0dc37984ec27fefe73d427116bb1498b19de6ce440d391be209184a68c323f3b2a2ab09f1cd6bd88d0b0e99c1572b2e4815167cb31caf
+  checksum: 85826938ba54c0c73e46ab179a28d30f6d9e503d8b818cdd509548e214db605dd64a24c4f5ac2e0bbbc95a34c3cf05f76cc0c3461cb2a7d26b96b6a539a4b2ab
   languageName: node
   linkType: hard
 
@@ -5742,7 +5742,7 @@ __metadata:
     "@gooddollar/bridge-app": ^1.5.0
     "@gooddollar/bridge-contracts": ^1.0.17
     "@gooddollar/goodcollective-contracts": ^1.2.0
-    "@gooddollar/goodcollective-sdk": ^1.2.1
+    "@gooddollar/goodcollective-sdk": ^1.3.1
     "@gooddollar/goodprotocol": ^2.0.24
     "@orbisclub/orbis-sdk": ^0.4.87
     "@react-native-async-storage/async-storage": 1.17.10
