@@ -30,7 +30,8 @@ export const OnboardController = (
   const { certificates, certificateSubjects, expiryDate, expiryFormatted, isWhitelisted } = useGoodId(account);
 
   const [isPending, setPendingSignTx] = useState(false);
-  const [alreadyChecked, setAlreadyChecked] = useState(false);
+  const [doingSegmentation, setDoingSegmentation] = useState(false);
+  const [shouldUpgrade, setShouldUpgrade] = useState(false);
   const { track } = useSendAnalytics();
 
   const expiryWithin1Month = useCallback(() => {
@@ -51,25 +52,25 @@ export const OnboardController = (
     const shouldFv = expiryWithin1Month();
 
     if (shouldFv) {
-      void doFV();
+      setShouldUpgrade(true);
       return;
     }
 
     const hasValidCertificates = certificates.some(cert => cert.certificate);
 
-    if (hasValidCertificates && !alreadyChecked) {
+    if (hasValidCertificates && !doingSegmentation) {
       onSkip();
       return;
     } else {
       // because of the reactivity of the certificates query,
       // we need to prevent onSkip being triggered during segmentation flow
-      setAlreadyChecked(true);
+      setDoingSegmentation(true);
     }
 
     void (async () => {
       await AsyncStorage.setItem("goodid_permission", "false");
     })();
-  }, [certificates, expiryDate, alreadyChecked]);
+  }, [certificates, expiryDate, doingSegmentation]);
 
   const storeFvSig = async (fvSig: string) => {
     // the link will be requested to send a user to the fv-flow
@@ -132,7 +133,7 @@ export const OnboardController = (
 
   if (isEmpty(certificates) || isWhitelisted === undefined) return <Spinner variant="page-loader" size="lg" />;
 
-  if (isWhitelisted === true)
+  if (isWhitelisted === true && !shouldUpgrade)
     return (
       <SegmentationController
         {...{

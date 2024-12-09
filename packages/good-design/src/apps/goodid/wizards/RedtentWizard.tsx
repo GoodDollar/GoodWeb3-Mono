@@ -46,13 +46,13 @@ const offerCriteria = {
 const CardContent = () => (
   <VStack space="0">
     <TransText
-      t={/*i18n*/ "Claim weekly:"}
+      t={/*i18n*/ "Claim Daily:"}
       fontFamily="subheading"
       fontSize="sm"
       fontWeight="400"
       color="goodGrey.600"
     />
-    <TransText t={"8G$"} fontFamily="heading" color="gdPrimary" fontSize="l" fontWeight="700" />
+    <TransText t={"1000G$"} fontFamily="heading" color="gdPrimary" fontSize="l" fontWeight="700" />
   </VStack>
 );
 

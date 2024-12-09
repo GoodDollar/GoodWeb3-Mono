@@ -146,7 +146,7 @@ export const GoodIdDetails = withTheme({ name: "GoodIdDetails" })(
             <Title variant="title-gdblue" fontSize="2xl">{`GoodID`}</Title>
             <TransText
               t={
-                /*i18n*/ "Your GoodID unlocks access to UBI, financial services, humanitarian funds and \n other special offers and opportunities to earn GoodDollars.`"
+                /*i18n*/ "Your GoodID unlocks access to UBI, financial services, humanitarian funds and \n other special offers and opportunities to earn GoodDollars."
               }
               variant="sm-grey-650"
               textAlign="center"
