@@ -132,7 +132,7 @@ export const ClaimWizard: FC<Omit<CheckAvailableOffersProps, "onDone">> = ({
   const onDone = useCallback(
     async (e: Error | boolean | undefined) => {
       if (e instanceof Error && e.message) {
-        track("goodid_error", { error: "Check Available offers failed", message: e.message, e });
+        track("goodid_error", { error: "CHECKOFFERS_FAILED", message: e.message, e });
         setError(e.message);
       } else {
         setSkipOffer(e);
