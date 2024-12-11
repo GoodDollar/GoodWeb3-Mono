@@ -96,6 +96,7 @@ export const SegmentationWizard = (props: SegmentationProps) => {
     try {
       await props.onDone(error);
     } catch (e: any) {
+      track("goodid_error", { error: "SEGMENTATION_FAILED", message: e?.message, e });
       setError(e.message);
     }
   };
@@ -104,6 +105,7 @@ export const SegmentationWizard = (props: SegmentationProps) => {
     try {
       await props.onLocationRequest(...args);
     } catch (e: any) {
+      track("goodid_error", { error: "SEGMENTATION_FAILED", message: e?.message, e });
       setError(e.message);
     }
   };
