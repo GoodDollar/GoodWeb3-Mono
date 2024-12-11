@@ -216,7 +216,11 @@ export const useIssueCertificates = (account: string | undefined, baseEnv: any) 
           }
         }
       } catch (e: any) {
-        track("goodid_error", { error: "SEGMENTATION_FAILED", message: "Failed to request or store a certificate", e });
+        track("goodid_error", {
+          error: "issueCertificates failed",
+          message: "Failed to request or store a certificate",
+          e
+        });
         console.error("Unexpected error:", e);
       }
     },

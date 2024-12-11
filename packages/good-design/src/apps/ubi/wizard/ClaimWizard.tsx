@@ -54,7 +54,12 @@ const WizardWrapper: FC<PropsWithChildren<{ skipOffer: Error | boolean | undefin
     if (remainingClaims === 0 && claimReceipts) {
       claimReceipts.every((receipt: ethers.providers.TransactionReceipt | undefined) => {
         if (!receipt) {
-          track("goodid_error", { error: "CLAIM_FAILED", message: "One or more claims failed", user: account });
+          track("goodid_error", {
+            error: "claimReceipts failed",
+            message: "One or more claims failed",
+            user: account,
+            chainId: chainId
+          });
         } else {
           track("CLAIM_SUCCESS", { contract: receipt.contractAddress, user: account });
         }
@@ -132,7 +137,7 @@ export const ClaimWizard: FC<Omit<CheckAvailableOffersProps, "onDone">> = ({
   const onDone = useCallback(
     async (e: Error | boolean | undefined) => {
       if (e instanceof Error && e.message) {
-        track("goodid_error", { error: "CHECKOFFERS_FAILED", message: e.message, e });
+        track("goodid_error", { error: "checkOffers failed", message: e.message, e });
         setError(e.message);
       } else {
         setSkipOffer(e);

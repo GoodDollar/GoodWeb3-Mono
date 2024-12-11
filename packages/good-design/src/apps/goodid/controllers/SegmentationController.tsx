@@ -44,10 +44,6 @@ export const SegmentationController = ({
         (await AsyncStorage.getItem("fvSig").then(async sig => (!isEmpty(sig) ? sig : await fvLink.getFvSig())));
       if (fvSig) await issueCertificate(account, locationState, fvSig);
       else {
-        track("goodid_error", {
-          error: "SEGMENTATION_FAILED",
-          message: "Issueing certificates failed because of missing a signature"
-        });
         throw new Error("missing faceid");
       }
     },
