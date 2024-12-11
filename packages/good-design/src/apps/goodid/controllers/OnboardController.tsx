@@ -9,7 +9,6 @@ import { WizardHeader } from "../wizards";
 import { OnboardScreen, OnboardScreenProps } from "../screens/OnboardScreen";
 import { useFVModalAction, useGoodId } from "../../../hooks";
 import { SegmentationController } from "./SegmentationController";
-import usePromise from "react-use-promise";
 
 export interface OnboardControllerProps {
   account: string;
@@ -34,7 +33,7 @@ export const OnboardController = (
   const [doingSegmentation, setDoingSegmentation] = useState(false);
   const [shouldUpgrade, setShouldUpgrade] = useState(false);
 
-  const [tosAccepted] = usePromise(async () => await AsyncStorage.getItem("tos-accepted"), []);
+  const [tosAccepted, setTosAccepted] = useState<boolean | undefined>(undefined);
 
   const { track } = useSendAnalytics();
 
@@ -72,7 +71,9 @@ export const OnboardController = (
     }
 
     void (async () => {
+      const accepted = await AsyncStorage.getItem("tos-accepted");
       await AsyncStorage.setItem("goodid_permission", "false");
+      setTosAccepted(accepted);
     })();
   }, [certificates, expiryDate, doingSegmentation]);
 
@@ -127,6 +128,8 @@ export const OnboardController = (
         // if the expiry date is within 1 month, we should re-do the fv-flow
         if (shouldDoFV) {
           void doFV();
+        } else {
+          setTosAccepted(true);
         }
       }
     } catch (e: any) {
