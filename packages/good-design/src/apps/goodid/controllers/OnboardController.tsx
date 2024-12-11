@@ -133,6 +133,7 @@ export const OnboardController = (
         }
       }
     } catch (e: any) {
+      track("goodid_error", { error: "handleShouldFv failed", message: e?.message, e });
       console.error(e);
       throw new Error(e);
     }
