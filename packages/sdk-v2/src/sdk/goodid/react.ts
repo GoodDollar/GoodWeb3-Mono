@@ -18,6 +18,7 @@ import {
   PoolCriteria
 } from "./types";
 import { checkCriteriaMatch, requestIdentityCertificate, requestLocationCertificate } from "./sdk";
+import { useSendAnalytics } from "@gooddollar/web3sdk-v2/src/sdk/analytics";
 
 export interface AggregatedCertificate extends Partial<CertificateItem> {
   key: string; // composite unique key to be used for lists rendering
@@ -189,6 +190,7 @@ export const useGeoLocation = (): [location: GeoLocation, error: string | null] 
  */
 export const useIssueCertificates = (account: string | undefined, baseEnv: any) => {
   const { storeCertificate } = useCertificates(account ?? "");
+  const { track } = useSendAnalytics();
 
   return useCallback(
     async (account: string, geoLocation: GeoLocation | undefined, fvsig: string) => {
@@ -210,9 +212,15 @@ export const useIssueCertificates = (account: string | undefined, baseEnv: any) 
             await storeCertificate(result.value.certificate);
           } else if (result.status === "rejected") {
             console.error("Failed to get a certificate:", result.reason);
+            throw new Error(result.reason);
           }
         }
-      } catch (e) {
+      } catch (e: any) {
+        track("goodid_error", {
+          error: "issueCertificates failed",
+          message: "Failed to request or store a certificate",
+          e
+        });
         console.error("Unexpected error:", e);
       }
     },
