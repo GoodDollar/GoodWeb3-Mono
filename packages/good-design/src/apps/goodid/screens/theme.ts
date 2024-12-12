@@ -29,15 +29,13 @@ const OnboardScreen = {
 
 const OffersAgreement = {
   baseStyle: {
-    width: 343,
     paddingX: 4,
     alignItems: "center",
     styles: {
       buttonContainer: {
         space: 4,
         justifyContent: "center",
-        alignItems: "center",
-        width: 343
+        alignItems: "center"
       },
       image: {
         width: 150,
