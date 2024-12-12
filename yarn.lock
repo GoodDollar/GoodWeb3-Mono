@@ -5521,7 +5521,7 @@ __metadata:
     "@formatjs/intl-locale": ^4.0.0
     "@formatjs/intl-pluralrules": ^5.2.14
     "@gooddollar/goodprotocol": ^2.0.24
-    "@gooddollar/web3sdk-v2": 0.4.1-beta.e0bc3f1b
+    "@gooddollar/web3sdk-v2": 0.4.1-beta.ded4393f
     "@lingui/core": ^4.11.2
     "@lingui/react": ^4.11.2
     "@magiklabs/react-sdk": ^1.0.8
@@ -5725,7 +5725,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/web3sdk-v2@0.4.1-beta.e0bc3f1b, @gooddollar/web3sdk-v2@workspace:packages/sdk-v2":
+"@gooddollar/web3sdk-v2@0.4.1-beta.ded4393f, @gooddollar/web3sdk-v2@workspace:packages/sdk-v2":
   version: 0.0.0-use.local
   resolution: "@gooddollar/web3sdk-v2@workspace:packages/sdk-v2"
   dependencies:
