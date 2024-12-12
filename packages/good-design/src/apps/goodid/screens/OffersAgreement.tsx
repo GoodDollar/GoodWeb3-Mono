@@ -1,5 +1,7 @@
 import React from "react";
-import { Center, Container, IContainerProps, Link, Text, VStack } from "native-base";
+import { Center, Link, Text, View, VStack } from "native-base";
+import type { InterfaceViewProps } from "native-base/lib/typescript/components/basic/View/types";
+
 import { useWizard } from "react-use-wizard";
 import { AsyncStorage } from "@gooddollar/web3sdk-v2";
 
@@ -10,7 +12,10 @@ import BillyGrin from "../../../assets/images/billy-grin.png";
 import { withTheme } from "../../../theme/hoc/withTheme";
 
 export const OffersAgreement = withTheme({ name: "OffersAgreement" })(
-  ({ styles, ...props }: IContainerProps & { styles?: any; onDataPermission: (accepted: string) => Promise<void> }) => {
+  ({
+    styles,
+    ...props
+  }: InterfaceViewProps & { styles?: any; onDataPermission: (accepted: string) => Promise<void> }) => {
     const { nextStep } = useWizard();
     const { buttonContainer, image } = styles ?? {};
     const resizeMode = image.resizeMode ?? "contain";
@@ -26,7 +31,7 @@ export const OffersAgreement = withTheme({ name: "OffersAgreement" })(
     };
 
     return (
-      <Container {...props}>
+      <View {...props}>
         <VStack width={"100%"} space={8} justifyContent="center" alignItems="center">
           <TransTitle t={/*i18n*/ "You might qualify for extra money disbursements"} variant="title-gdblue" />
           <TransText
@@ -69,7 +74,7 @@ export const OffersAgreement = withTheme({ name: "OffersAgreement" })(
             </VStack>
           </VStack>
         </VStack>
-      </Container>
+      </View>
     );
   }
 );
