@@ -18,7 +18,7 @@ import {
   PoolCriteria
 } from "./types";
 import { checkCriteriaMatch, requestIdentityCertificate, requestLocationCertificate } from "./sdk";
-import { useSendAnalytics } from "@gooddollar/web3sdk-v2/src/sdk/analytics";
+import { useSendAnalytics } from "../analytics";
 
 export interface AggregatedCertificate extends Partial<CertificateItem> {
   key: string; // composite unique key to be used for lists rendering
