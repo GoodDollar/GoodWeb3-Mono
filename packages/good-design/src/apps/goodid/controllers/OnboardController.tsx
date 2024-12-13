@@ -2,13 +2,14 @@ import React, { useCallback, useEffect, useState } from "react";
 import { AsyncStorage, useSendAnalytics } from "@gooddollar/web3sdk-v2";
 import { isEmpty, noop } from "lodash";
 import moment from "moment";
-import { IContainerProps, Spinner } from "native-base";
+import { IContainerProps, Spinner, Text } from "native-base";
 import { Wizard } from "react-use-wizard";
 
 import { WizardHeader } from "../wizards";
 import { OnboardScreen, OnboardScreenProps } from "../screens/OnboardScreen";
 import { useFVModalAction, useGoodId } from "../../../hooks";
 import { SegmentationController } from "./SegmentationController";
+import { BasicStyledModal, ModalFooterCta } from "../../../core/web3/modals";
 
 export interface OnboardControllerProps {
   account: string;
@@ -23,6 +24,12 @@ export interface OnboardControllerProps {
   onExit: () => void;
 }
 
+const LocationPermissionNotice = () => (
+  <Text variant="sub-grey" textAlign="center">
+    {`Sharing your location \n (even just allowing one time) \n will allow for location-based offers and other benefits.`}
+  </Text>
+);
+
 export const OnboardController = (
   props: Pick<OnboardScreenProps, "innerContainer" | "fontStyles"> & OnboardControllerProps & IContainerProps
 ) => {
@@ -32,6 +39,7 @@ export const OnboardController = (
   const [isPending, setPendingSignTx] = useState(false);
   const [doingSegmentation, setDoingSegmentation] = useState(false);
   const [shouldUpgrade, setShouldUpgrade] = useState(false);
+  const [startOnboard, setStartOnboard] = useState(false);
 
   const [tosAccepted, setTosAccepted] = useState<boolean | undefined>(undefined);
 
@@ -115,7 +123,12 @@ export const OnboardController = (
     [onDone]
   );
 
+  const locationNotice = () => {
+    setStartOnboard(true);
+  };
+
   const handleShouldFV = useCallback(async () => {
+    setStartOnboard(false);
     try {
       track("goodid_start");
       await AsyncStorage.setItem("tos-accepted", true);
@@ -161,19 +174,32 @@ export const OnboardController = (
     );
 
   return (
-    <Wizard header={<WizardHeader onExit={onExit} withNavBar={props.withNavBar} onDone={onDone} error={undefined} />}>
-      <OnboardScreen
-        {...{
-          ...props,
-          name,
-          isPending,
-          isWhitelisted,
-          certificateSubjects,
-          expiryDate: expiryFormatted,
-          onAccept: handleShouldFV,
-          paddingBottom: 8
-        }}
+    <>
+      <BasicStyledModal
+        title={/*i18n*/ "Please allow \n location access"}
+        bodyStyle={{ paddingBottom: 0 }}
+        body={<LocationPermissionNotice />}
+        footer={<ModalFooterCta action={handleShouldFV} buttonText={"OK"} />}
+        type={"cta"}
+        show={startOnboard}
+        withOverlay={"dark"}
+        onClose={handleShouldFV}
+        withCloseButton
       />
-    </Wizard>
+      <Wizard header={<WizardHeader onExit={onExit} withNavBar={props.withNavBar} onDone={onDone} error={undefined} />}>
+        <OnboardScreen
+          {...{
+            ...props,
+            name,
+            isPending,
+            isWhitelisted,
+            certificateSubjects,
+            expiryDate: expiryFormatted,
+            onAccept: locationNotice,
+            paddingBottom: 8
+          }}
+        />
+      </Wizard>
+    </>
   );
 };
