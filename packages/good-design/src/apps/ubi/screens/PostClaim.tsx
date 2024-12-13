@@ -1,5 +1,5 @@
 import React, { FC, useContext, useEffect } from "react";
-import { Center, HStack, Spinner, Text, VStack } from "native-base";
+import { Center, HStack, Spinner, Text, View, VStack } from "native-base";
 import { NewsFeedContext, useTimer } from "@gooddollar/web3sdk-v2";
 import moment from "moment";
 import { isEmpty } from "lodash";
@@ -124,9 +124,9 @@ export const PostClaim: FC = () => {
         ) : null}
         {withNewsFeed ? (
           <VStack space={6}>
-            <Center width="375">
+            <View width="375">
               <NewsFeed direction="column" {...{ feed }} />
-            </Center>
+            </View>
             <GoodButton variant="link-like" onPress={onNews}>
               <TransText
                 t={/*i18n*/ "See all news >"}

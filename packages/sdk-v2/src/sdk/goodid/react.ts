@@ -273,7 +273,7 @@ export const useCheckAvailableOffers = ({ account, pools, isDev, onDone }: Check
 
   return useMemo(() => {
     // keep null until we have fetched everything
-    if (isEmpty(certificates) || hasPermission === undefined) return null;
+    if (isEmpty(certificates) || hasPermission === undefined || skipOffer === undefined) return null;
 
     if (!hasPermission || skipOffer) {
       onDone?.(true);
