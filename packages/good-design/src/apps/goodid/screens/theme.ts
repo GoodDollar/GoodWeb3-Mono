@@ -33,9 +33,8 @@ const OffersAgreement = {
     alignItems: "center",
     styles: {
       buttonContainer: {
-        space: 4,
-        justifyContent: "center",
-        alignItems: "center"
+        width: "100%",
+        space: 4
       },
       image: {
         width: 150,

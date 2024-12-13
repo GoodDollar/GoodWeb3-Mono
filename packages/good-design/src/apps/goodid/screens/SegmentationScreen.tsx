@@ -68,7 +68,9 @@ export const SegmentationScreen = ({
                 isExternal
                 href="https://docs.gooddollar.org/wallet-and-products/goodid-and-goodoffers#why-does-my-location-show-as-unverified"
               >
-                Learn more.
+                <Text style={{ fontFamily: "Roboto", fontSize: 12, color: "#7A88A5", textDecorationLine: "underline" }}>
+                  Learn more.
+                </Text>
               </Link>
             </Text>
           </VStack>

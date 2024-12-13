@@ -57,6 +57,14 @@ export const OnboardController = (
   }, [expiryDate, isWhitelisted]);
 
   useEffect(() => {
+    if (tosAccepted === undefined) {
+      void (async () => {
+        const accepted = await AsyncStorage.getItem("tos-accepted");
+        await AsyncStorage.setItem("goodid_permission", "false");
+        setTosAccepted(accepted);
+      })();
+    }
+
     // segmentation flow
     if (isEmpty(certificates) || expiryDate === undefined) return;
 
@@ -77,12 +85,6 @@ export const OnboardController = (
       // we need to prevent onSkip being triggered during segmentation flow
       setDoingSegmentation(true);
     }
-
-    void (async () => {
-      const accepted = await AsyncStorage.getItem("tos-accepted");
-      await AsyncStorage.setItem("goodid_permission", "false");
-      setTosAccepted(accepted);
-    })();
   }, [certificates, expiryDate, doingSegmentation]);
 
   const storeFvSig = async (fvSig: string) => {
