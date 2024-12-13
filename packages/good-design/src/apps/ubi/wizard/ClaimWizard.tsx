@@ -51,21 +51,6 @@ const WizardWrapper: FC<PropsWithChildren<{ skipOffer: Error | boolean | undefin
   }, [claimFlowStatus]);
 
   const handleNext = useCallback(async () => {
-    if (remainingClaims === 0 && claimReceipts) {
-      claimReceipts.every((receipt: ethers.providers.TransactionReceipt | undefined) => {
-        if (!receipt) {
-          track("goodid_error", {
-            error: "claimReceipts failed",
-            message: "One or more claims failed",
-            user: account,
-            chainId: chainId
-          });
-        } else {
-          track("CLAIM_SUCCESS", { contract: receipt.contractAddress, user: account });
-        }
-      });
-    }
-
     if (isClaimingDone) {
       await onClaimSuccess();
       goToStep(lastStep);
@@ -79,6 +64,23 @@ const WizardWrapper: FC<PropsWithChildren<{ skipOffer: Error | boolean | undefin
       void handleNext();
     })();
   }, [/*used*/ claimFlowStatus.isClaimingDone, claimFlowStatus.remainingClaims]);
+
+  useEffect(() => {
+    if (remainingClaims === 0 && claimReceipts?.length > 0) {
+      claimReceipts.every((receipt: ethers.providers.TransactionReceipt | undefined) => {
+        if (!receipt) {
+          track("goodid_error", {
+            error: "claimReceipts failed",
+            message: "One or more claims failed",
+            user: account,
+            chainId: chainId
+          });
+        } else {
+          track("CLAIM_SUCCESS", { contract: receipt.contractAddress, user: account });
+        }
+      });
+    }
+  }, [remainingClaims, claimReceipts]);
 
   useEffect(() => {
     if (!account) {
