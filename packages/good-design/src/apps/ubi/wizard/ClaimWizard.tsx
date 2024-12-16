@@ -76,7 +76,7 @@ const WizardWrapper: FC<PropsWithChildren<{ skipOffer: Error | boolean | undefin
             chainId: chainId
           });
         } else {
-          track("CLAIM_SUCCESS", { contract: receipt.contractAddress, user: account });
+          track("CLAIM_SUCCESS", { contract: receipt.to, user: account });
         }
       });
     }
