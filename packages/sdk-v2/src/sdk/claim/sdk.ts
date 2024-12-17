@@ -1,6 +1,7 @@
 import { BigNumber } from "ethers";
-import { invokeMap, forIn } from "lodash";
+import { invokeMap } from "lodash";
 import { BaseSDK } from "../base/sdk";
+import { compressToEncodedURIComponent } from "lz-string";
 
 const DAY = 1000 * 60 * 60 * 24;
 
@@ -68,18 +69,10 @@ export class ClaimSDK extends BaseSDK {
         chain: chainId
       };
 
-      forIn(params, (value, param) => {
-        if (!value) {
-          return;
-        }
-
-        searchParams.append(param, String(value));
-      });
-
       if (callbackUrl) {
-        searchParams.append(popupMode ? "cbu" : "rdu", callbackUrl);
+        params[popupMode ? "cbu" : "rdu"] = callbackUrl;
       }
-
+      searchParams.append("lz", compressToEncodedURIComponent(JSON.stringify(params)));
       return url.toString();
     };
 
