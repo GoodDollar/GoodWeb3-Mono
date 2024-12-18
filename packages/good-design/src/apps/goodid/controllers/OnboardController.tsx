@@ -91,7 +91,7 @@ export const OnboardController = (
     // the link will be requested to send a user to the fv-flow
     // we want to prevent a user to have to sign again when it redirects
     // so we store the fv-sig locally
-    await AsyncStorage.setItem("fvsig", fvSig);
+    await AsyncStorage.setItem("fvSig", fvSig);
   };
 
   const { verify } = useFVModalAction({

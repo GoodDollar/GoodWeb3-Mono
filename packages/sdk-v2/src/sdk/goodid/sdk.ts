@@ -80,7 +80,8 @@ export async function fvAuth(
   const authEndpoint = `${backend}/auth/fv2`;
   const isSigner = "string" !== typeof account;
   const address = isSigner ? await account.getAddress() : account;
-  const fvsig = isSigner ? await account.signMessage(FV_IDENTIFIER_MSG2.replace("<account>", address)) : fvSig;
+  const fvsig =
+    !fvSig && isSigner ? await account.signMessage(FV_IDENTIFIER_MSG2.replace("<account>", address)) : fvSig;
 
   if (!fvsig) throw new Error("fvSig is required");
 
