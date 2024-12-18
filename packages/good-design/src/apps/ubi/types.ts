@@ -1,6 +1,6 @@
 import { Contract } from "ethers";
 import { BigNumber } from "@ethersproject/bignumber";
-import { PoolDetails, SupportedChains } from "@gooddollar/web3sdk-v2";
+import { INewsFeedProvider, PoolDetails, SupportedChains } from "@gooddollar/web3sdk-v2";
 import { CurrencyValue } from "@usedapp/core";
 import { Moment } from "moment";
 
@@ -55,6 +55,7 @@ export interface ClaimContextProps {
   supportedChains: SupportedChains[];
   txDetails: { transaction: any; isOpen: boolean };
   withNewsFeed?: boolean;
+  newsProps?: Omit<INewsFeedProvider, "children">;
   onNews: () => void;
   onReset: () => void;
   setTxDetails: (tx: any) => void;

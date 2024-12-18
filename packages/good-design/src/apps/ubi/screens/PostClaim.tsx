@@ -1,6 +1,6 @@
 import React, { FC, useContext, useEffect } from "react";
 import { Center, HStack, Spinner, Text, View, VStack } from "native-base";
-import { NewsFeedContext, useTimer } from "@gooddollar/web3sdk-v2";
+import { NewsFeedContext, NewsFeedProvider, useTimer } from "@gooddollar/web3sdk-v2";
 import moment from "moment";
 import { isEmpty } from "lodash";
 import { useWizard } from "react-use-wizard";
@@ -81,6 +81,7 @@ export const PostClaim: FC = () => {
     claimedAlt,
     poolsDetails,
     withNewsFeed,
+    newsProps,
     onNews,
     onReset,
     onTxDetailsPress,
@@ -123,20 +124,22 @@ export const PostClaim: FC = () => {
           </Center>
         ) : null}
         {withNewsFeed ? (
-          <VStack space={6}>
-            <View width="375">
-              <NewsFeed direction="column" {...{ feed }} />
-            </View>
-            <GoodButton variant="link-like" onPress={onNews}>
-              <TransText
-                t={/*i18n*/ "See all news >"}
-                fontFamily="subheading"
-                color="primary"
-                fontSize="ms"
-                fontWeight="700"
-              />
-            </GoodButton>
-          </VStack>
+          <NewsFeedProvider {...newsProps} limit={1}>
+            <VStack space={6}>
+              <View width="375">
+                <NewsFeed direction="column" {...{ feed }} />
+              </View>
+              <GoodButton variant="link-like" onPress={onNews}>
+                <TransText
+                  t={/*i18n*/ "See all news >"}
+                  fontFamily="subheading"
+                  color="primary"
+                  fontSize="ms"
+                  fontWeight="700"
+                />
+              </GoodButton>
+            </VStack>
+          </NewsFeedProvider>
         ) : null}
       </VStack>
       <VStack

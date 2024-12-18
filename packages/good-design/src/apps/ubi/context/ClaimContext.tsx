@@ -1,6 +1,7 @@
 import React, { createContext, FC, PropsWithChildren, useContext, useCallback, useEffect, useState } from "react";
 import {
   getRecentClaims,
+  INewsFeedProvider,
   PoolDetails,
   SupportedChains,
   useClaim,
@@ -41,6 +42,7 @@ interface ClaimProviderProps {
   onSendTx?: () => void;
   onSwitchChain?: () => Promise<void>;
   withNewsFeed: boolean;
+  newsProps?: Omit<INewsFeedProvider, "children">;
 }
 
 export const ClaimProvider: FC<PropsWithChildren<ClaimProviderProps>> = ({
@@ -55,6 +57,7 @@ export const ClaimProvider: FC<PropsWithChildren<ClaimProviderProps>> = ({
   supportedChains,
   withSignModals,
   withNewsFeed = true,
+  newsProps,
   onUpgrade,
   onConnect,
   onNews,
@@ -221,6 +224,7 @@ export const ClaimProvider: FC<PropsWithChildren<ClaimProviderProps>> = ({
         withSignModals,
         txDetails,
         withNewsFeed,
+        newsProps,
         onUpgrade,
         onReset,
         onNews,
