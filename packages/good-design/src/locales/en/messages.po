@@ -19,75 +19,6 @@ msgstr ""
 "X-Crowdin-File-ID: 154\n"
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/controllers/OnboardController.tsx:181
-msgid ""
-"Please allow \n"
-" location access"
-msgstr ""
-"Please allow \n"
-" location access"
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/screens/GoodIdDetails.tsx:149
-msgid ""
-"Your GoodID unlocks access to UBI, financial services, humanitarian funds and \n"
-" other special offers and opportunities to earn GoodDollars."
-msgstr ""
-"Your GoodID unlocks access to UBI, financial services, humanitarian funds and \n"
-" other special offers and opportunities to earn GoodDollars."
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/wizards/RedtentWizard.tsx:49
-msgid "Claim Daily:"
-msgstr "Claim Daily:"
-
-#. js-lingui-explicit-id
-#: src/apps/ubi/screens/PostClaim.tsx:160
-msgid "Unable to load your recent claims, try again later"
-msgstr "Unable to load your recent claims, try again later"
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/wizards/RedtentWizard.tsx:281
-msgid " GoodCollective. You can claim this additional UBI daily."
-msgstr " GoodCollective. You can claim this additional UBI daily."
-
-#. js-lingui-explicit-id
-#: src/apps/ubi/wizard/ClaimWizard.tsx:43
-msgid ""
-"Please sign with \n"
-" your wallet \n"
-"({remainingClaims} transaction(s) left)"
-msgstr ""
-"Please sign with \n"
-" your wallet \n"
-"({remainingClaims} transaction(s) left)"
-
-#. js-lingui-explicit-id
-#: src/core/web3/modals/TxModal.tsx:27
-msgid "To complete this action, sign with your wallet."
-msgstr "To complete this action, sign with your wallet."
-
-#. js-lingui-explicit-id
-#: src/core/web3/modals/TxModal.tsx:30
-msgid "Sign to Verify Uniqueness"
-msgstr "Sign to Verify Uniqueness"
-
-#. js-lingui-explicit-id
-#: src/core/web3/modals/TxModal.tsx:32
-msgid "You’ll be asked to sign with your wallet to begin the verification.You may have to do this again from time to time."
-msgstr "You’ll be asked to sign with your wallet to begin the verification.You may have to do this again from time to time."
-
-#. js-lingui-explicit-id
-#: src/core/web3/modals/TxModal.tsx:46
-msgid "It may take over a minute for transaction(s) to be signed."
-msgstr "It may take over a minute for transaction(s) to be signed."
-
-#. js-lingui-explicit-id
-#: src/core/web3/modals/TxModal.tsx:56
-msgid "You’re almost there! To claim G$, you need prove you are a unique human."
-msgstr "You’re almost there! To claim G$, you need prove you are a unique human."
-
-#. js-lingui-explicit-id
 #: src/apps/goodid/components/GoodIdCard.tsx:31
 msgid "Age"
 msgstr ""
@@ -156,6 +87,15 @@ msgid "In"
 msgstr ""
 
 #. js-lingui-explicit-id
+#: src/apps/goodid/controllers/OnboardController.tsx:181
+msgid ""
+"Please allow \n"
+" location access"
+msgstr ""
+"Please allow \n"
+" location access"
+
+#. js-lingui-explicit-id
 #: src/apps/goodid/screens/DisputeThanks.tsx:16
 msgid "Thanks for letting us know!"
 msgstr ""
@@ -185,6 +125,15 @@ msgstr ""
 #: src/apps/goodid/screens/GoodIdDetails.tsx:98
 msgid "Show my FaceId"
 msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/GoodIdDetails.tsx:149
+msgid ""
+"Your GoodID unlocks access to UBI, financial services, humanitarian funds and \n"
+" other special offers and opportunities to earn GoodDollars."
+msgstr ""
+"Your GoodID unlocks access to UBI, financial services, humanitarian funds and \n"
+" other special offers and opportunities to earn GoodDollars."
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/GoodIdDetails.tsx:187
@@ -389,6 +338,11 @@ msgid "Male"
 msgstr ""
 
 #. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:49
+msgid "Claim Daily:"
+msgstr "Claim Daily:"
+
+#. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:71
 msgid "To qualify for this pool you need to: "
 msgstr ""
@@ -459,6 +413,11 @@ msgid "You are now in the"
 msgstr ""
 
 #. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:281
+msgid " GoodCollective. You can claim this additional UBI daily."
+msgstr " GoodCollective. You can claim this additional UBI daily."
+
+#. js-lingui-explicit-id
 #: src/apps/goodid/wizards/SegmentationWizard.tsx:63
 msgid ""
 "We're checking \n"
@@ -486,7 +445,7 @@ msgid "Your Daily Basic Income"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/context/ClaimContext.tsx:108
+#: src/apps/ubi/context/ClaimContext.tsx:116
 msgid "An unknown error occurred while claiming"
 msgstr ""
 
@@ -496,24 +455,29 @@ msgid "Your Next Claim"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/screens/PostClaim.tsx:109
+#: src/apps/ubi/screens/PostClaim.tsx:110
 msgid "You've claimed today"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/screens/PostClaim.tsx:117
+#: src/apps/ubi/screens/PostClaim.tsx:118
 msgid "CLAIM ON {altChain}"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/screens/PostClaim.tsx:132
+#: src/apps/ubi/screens/PostClaim.tsx:134
 msgid "See all news >"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/screens/PostClaim.tsx:151
+#: src/apps/ubi/screens/PostClaim.tsx:154
 msgid "Recent claims (Last 30 days):"
 msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/ubi/screens/PostClaim.tsx:163
+msgid "Unable to load your recent claims, try again later"
+msgstr "Unable to load your recent claims, try again later"
 
 #. js-lingui-explicit-id
 #: src/apps/ubi/screens/PreClaim.tsx:45
@@ -541,6 +505,17 @@ msgstr ""
 #: src/apps/ubi/screens/StartClaim.tsx:48
 msgid "Claim G$"
 msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/ubi/wizard/ClaimWizard.tsx:43
+msgid ""
+"Please sign with \n"
+" your wallet \n"
+"({remainingClaims} transaction(s) left)"
+msgstr ""
+"Please sign with \n"
+" your wallet \n"
+"({remainingClaims} transaction(s) left)"
 
 #. js-lingui-explicit-id
 #: src/core/animated/SpinnerCheckMark.tsx:10
@@ -622,6 +597,21 @@ msgid "To complete this action, sign with your wallet. It can take a moment for 
 msgstr ""
 
 #. js-lingui-explicit-id
+#: src/core/web3/modals/TxModal.tsx:27
+msgid "To complete this action, sign with your wallet."
+msgstr "To complete this action, sign with your wallet."
+
+#. js-lingui-explicit-id
+#: src/core/web3/modals/TxModal.tsx:30
+msgid "Sign to Verify Uniqueness"
+msgstr "Sign to Verify Uniqueness"
+
+#. js-lingui-explicit-id
+#: src/core/web3/modals/TxModal.tsx:32
+msgid "You’ll be asked to sign with your wallet to begin the verification.You may have to do this again from time to time."
+msgstr "You’ll be asked to sign with your wallet to begin the verification.You may have to do this again from time to time."
+
+#. js-lingui-explicit-id
 #: src/core/web3/modals/TxModal.tsx:35
 msgid ""
 "Waiting for \n"
@@ -632,6 +622,16 @@ msgstr ""
 #: src/core/web3/modals/TxModal.tsx:36
 msgid "Please wait for the transaction to be validated."
 msgstr ""
+
+#. js-lingui-explicit-id
+#: src/core/web3/modals/TxModal.tsx:46
+msgid "It may take over a minute for transaction(s) to be signed."
+msgstr "It may take over a minute for transaction(s) to be signed."
+
+#. js-lingui-explicit-id
+#: src/core/web3/modals/TxModal.tsx:56
+msgid "You’re almost there! To claim G$, you need prove you are a unique human."
+msgstr "You’re almost there! To claim G$, you need prove you are a unique human."
 
 #. js-lingui-explicit-id
 #: src/core/web3/modals/YouSureModal.tsx:10
