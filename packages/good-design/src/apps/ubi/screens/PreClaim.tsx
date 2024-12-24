@@ -10,7 +10,7 @@ import { TransactionList } from "../components/TransactionStateCard";
 
 import BillyGrin from "../../../assets/images/billy-grin.png";
 import ClaimFooter from "../../../assets/images/claim-footer.png";
-import ClaimFooterCelebration from "../../../assets/svg/goodid/claim-footer-celebration.svg";
+import ClaimFooterCelebration from "../../../assets/images/goodid/claim-footer-celebration.png";
 import { useClaimContext } from "../context";
 import moment from "moment";
 
@@ -80,7 +80,7 @@ export const PreClaim: FC = () => {
           source={isHoliday ? ClaimFooterCelebration : ClaimFooter}
           w={isHoliday ? 440 : "100%"}
           h={isHoliday ? 230 : 140}
-          style={{ resizeMode: isHoliday ? "cover" : "contain" }}
+          style={{ resizeMode: "contain" }}
         />
       </Center>
     </VStack>
