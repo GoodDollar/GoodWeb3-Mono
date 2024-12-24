@@ -1,11 +1,12 @@
 import React, { useEffect, useCallback, useMemo, useState } from "react";
 import { SupportedChains, useClaim, useGetEnvChainId, useWhitelistSync, G$Amount } from "@gooddollar/web3sdk-v2";
 import { Text, View } from "native-base";
+import { noop, isNil } from "lodash";
+import { useEthers } from "@usedapp/core";
+
 import { useQueryParam } from "../../hooks/useQueryParam";
 import { Web3ActionButton } from "../../advanced";
 import { FVFlowProps } from "./types";
-import { noop, isNil } from "lodash";
-import { useEthers } from "@usedapp/core";
 import { TxModal, VerifyUniqueModal } from "../web3";
 
 const ClaimButton = ({
@@ -117,6 +118,8 @@ const ClaimButton = ({
           variant="round"
           supportedChains={[SupportedChains.CELO, SupportedChains.FUSE]}
           handleConnect={handleConnect}
+          w="220"
+          h="220"
           onEvent={onEvent}
         />
         <Text variant="shadowed" fontSize="md" />
