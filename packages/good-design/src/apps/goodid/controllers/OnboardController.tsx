@@ -6,7 +6,7 @@ import { IContainerProps, Spinner, Text } from "native-base";
 import { Wizard } from "react-use-wizard";
 
 import { WizardHeader } from "../wizards";
-import { OnboardScreen, OnboardScreenProps } from "../screens/OnboardScreen";
+import { OnboardScreenSimple, OnboardScreenProps } from "../screens/OnboardScreenSimple";
 import { useFVModalAction, useGoodId } from "../../../hooks";
 import { SegmentationController } from "./SegmentationController";
 import { BasicStyledModal, ModalFooterCta } from "../../../core/web3/modals";
@@ -189,13 +189,10 @@ export const OnboardController = (
         withCloseButton
       />
       <Wizard header={<WizardHeader onExit={onExit} withNavBar={props.withNavBar} onDone={onDone} error={undefined} />}>
-        <OnboardScreen
+        <OnboardScreenSimple
           {...{
-            ...props,
-            name,
             isPending,
             isWhitelisted,
-            certificateSubjects,
             expiryDate: expiryFormatted,
             onAccept: locationNotice,
             paddingBottom: 8
