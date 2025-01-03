@@ -18,6 +18,37 @@ msgstr ""
 "X-Crowdin-File: /116-credential-storage/packages/good-design/src/locales/en/messages.po\n"
 "X-Crowdin-File-ID: 154\n"
 
+#. GoodID feature access list
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreenSimple.tsx:32
+msgid "Special Offers"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreenSimple.tsx:63
+msgid "I Accept, Renew & Claim"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreenSimple.tsx:63
+msgid "I Accept, Verify & Claim"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreenSimple.tsx:76
+msgid "Your GoodID unlocks access to:"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreenSimple.tsx:91
+msgid "Your privacy is preserved."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreenSimple.tsx:107
+msgid "By clicking on ”{actionCopy}”, you are accepting our {tos} and {privy}. Per this policy you agree to let us collect information such as your gender and age."
+msgstr ""
+
 #. js-lingui-explicit-id
 #: src/apps/goodid/components/GoodIdCard.tsx:31
 msgid "Age"
@@ -170,8 +201,10 @@ msgid "no"
 msgstr "no"
 
 #. GoodID feature access list
+#. GoodID feature access list
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/OnboardScreen.tsx:35
+#: src/apps/goodid/screens/OnboardScreenSimple.tsx:28
 msgid "Crypto UBI"
 msgstr "Crypto UBI"
 
@@ -195,11 +228,13 @@ msgstr "Servicios financieros"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/OnboardScreen.tsx:81
+#: src/apps/goodid/screens/OnboardScreenSimple.tsx:60
 msgid "Renew your GoodID to claim UBI"
 msgstr "Renueve su GoodID para reclamar UBI"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/OnboardScreen.tsx:82
+#: src/apps/goodid/screens/OnboardScreenSimple.tsx:61
 msgid "Get your GoodID to claim UBI"
 msgstr "Obtén tu GoodID para reclamar UBI"
 
@@ -230,6 +265,7 @@ msgstr "ACEPTO, VERIFIQUE ME"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/OnboardScreen.tsx:183
+#: src/apps/goodid/screens/OnboardScreenSimple.tsx:145
 msgid "Powered by GoodDollar"
 msgstr ""
 
@@ -486,12 +522,12 @@ msgid "Unable to load your recent claims, try again later"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/screens/PreClaim.tsx:45
+#: src/apps/ubi/screens/PreClaim.tsx:49
 msgid "Claim your share"
 msgstr "Reclama tu parte"
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/screens/PreClaim.tsx:63
+#: src/apps/ubi/screens/PreClaim.tsx:67
 msgid "Claim Now"
 msgstr "Reclama ahora"
 
@@ -685,6 +721,6 @@ msgid "Yes, try again"
 msgstr "Sí, inténtelo de nuevo"
 
 #. js-lingui-explicit-id
-#: src/core/web3/modals/YouSureModal.tsx:74
+#: src/core/web3/modals/YouSureModal.tsx:72
 msgid "Don't show this again"
 msgstr "No mostrar esto de nuevo"
