@@ -8,7 +8,7 @@ msgstr ""
 "Language: it_IT\n"
 "Project-Id-Version: goodui\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-12-16 15:50\n"
+"PO-Revision-Date: 2025-01-03 15:59\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -18,63 +18,35 @@ msgstr ""
 "X-Crowdin-File: /116-credential-storage/packages/good-design/src/locales/en/messages.po\n"
 "X-Crowdin-File-ID: 154\n"
 
+#. GoodID feature access list
 #. js-lingui-explicit-id
-#: src/apps/goodid/controllers/OnboardController.tsx:181
-msgid "Please allow \n"
-" location access"
+#: src/apps/goodid/screens/OnboardScreenSimple.tsx:32
+msgid "Special Offers"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/screens/GoodIdDetails.tsx:149
-msgid "Your GoodID unlocks access to UBI, financial services, humanitarian funds and \n"
-" other special offers and opportunities to earn GoodDollars."
+#: src/apps/goodid/screens/OnboardScreenSimple.tsx:63
+msgid "I Accept, Renew & Claim"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/wizards/RedtentWizard.tsx:49
-msgid "Claim Daily:"
+#: src/apps/goodid/screens/OnboardScreenSimple.tsx:63
+msgid "I Accept, Verify & Claim"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/screens/PostClaim.tsx:160
-msgid "Unable to load your recent claims, try again later"
+#: src/apps/goodid/screens/OnboardScreenSimple.tsx:76
+msgid "Your GoodID unlocks access to:"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/wizards/RedtentWizard.tsx:281
-msgid " GoodCollective. You can claim this additional UBI daily."
+#: src/apps/goodid/screens/OnboardScreenSimple.tsx:91
+msgid "Your privacy is preserved."
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/wizard/ClaimWizard.tsx:43
-msgid "Please sign with \n"
-" your wallet \n"
-"({remainingClaims} transaction(s) left)"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/core/web3/modals/TxModal.tsx:27
-msgid "To complete this action, sign with your wallet."
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/core/web3/modals/TxModal.tsx:30
-msgid "Sign to Verify Uniqueness"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/core/web3/modals/TxModal.tsx:32
-msgid "You’ll be asked to sign with your wallet to begin the verification.You may have to do this again from time to time."
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/core/web3/modals/TxModal.tsx:46
-msgid "It may take over a minute for transaction(s) to be signed."
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/core/web3/modals/TxModal.tsx:56
-msgid "You’re almost there! To claim G$, you need prove you are a unique human."
+#: src/apps/goodid/screens/OnboardScreenSimple.tsx:107
+msgid "By clicking on ”{actionCopy}”, you are accepting our {tos} and {privy}. Per this policy you agree to let us collect information such as your gender and age."
 msgstr ""
 
 #. js-lingui-explicit-id
@@ -146,6 +118,12 @@ msgid "In"
 msgstr ""
 
 #. js-lingui-explicit-id
+#: src/apps/goodid/controllers/OnboardController.tsx:181
+msgid "Please allow \n"
+" location access"
+msgstr ""
+
+#. js-lingui-explicit-id
 #: src/apps/goodid/screens/DisputeThanks.tsx:16
 msgid "Thanks for letting us know!"
 msgstr ""
@@ -172,6 +150,12 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/GoodIdDetails.tsx:98
 msgid "Show my FaceId"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/GoodIdDetails.tsx:149
+msgid "Your GoodID unlocks access to UBI, financial services, humanitarian funds and \n"
+" other special offers and opportunities to earn GoodDollars."
 msgstr ""
 
 #. js-lingui-explicit-id
@@ -210,8 +194,10 @@ msgid "no"
 msgstr ""
 
 #. GoodID feature access list
+#. GoodID feature access list
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/OnboardScreen.tsx:35
+#: src/apps/goodid/screens/OnboardScreenSimple.tsx:28
 msgid "Crypto UBI"
 msgstr ""
 
@@ -235,11 +221,13 @@ msgstr ""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/OnboardScreen.tsx:81
+#: src/apps/goodid/screens/OnboardScreenSimple.tsx:60
 msgid "Renew your GoodID to claim UBI"
 msgstr ""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/OnboardScreen.tsx:82
+#: src/apps/goodid/screens/OnboardScreenSimple.tsx:61
 msgid "Get your GoodID to claim UBI"
 msgstr ""
 
@@ -270,6 +258,7 @@ msgstr ""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/OnboardScreen.tsx:183
+#: src/apps/goodid/screens/OnboardScreenSimple.tsx:145
 msgid "Powered by GoodDollar"
 msgstr ""
 
@@ -373,6 +362,11 @@ msgid "Male"
 msgstr ""
 
 #. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:49
+msgid "Claim Daily:"
+msgstr ""
+
+#. js-lingui-explicit-id
 #: src/apps/goodid/wizards/RedtentWizard.tsx:71
 msgid "To qualify for this pool you need to: "
 msgstr ""
@@ -443,6 +437,11 @@ msgid "You are now in the"
 msgstr ""
 
 #. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:281
+msgid " GoodCollective. You can claim this additional UBI daily."
+msgstr ""
+
+#. js-lingui-explicit-id
 #: src/apps/goodid/wizards/SegmentationWizard.tsx:63
 msgid "We're checking \n"
 " your information"
@@ -469,7 +468,7 @@ msgid "Your Daily Basic Income"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/context/ClaimContext.tsx:108
+#: src/apps/ubi/context/ClaimContext.tsx:116
 msgid "An unknown error occurred while claiming"
 msgstr ""
 
@@ -479,32 +478,37 @@ msgid "Your Next Claim"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/screens/PostClaim.tsx:109
+#: src/apps/ubi/screens/PostClaim.tsx:110
 msgid "You've claimed today"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/screens/PostClaim.tsx:117
+#: src/apps/ubi/screens/PostClaim.tsx:118
 msgid "CLAIM ON {altChain}"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/screens/PostClaim.tsx:132
+#: src/apps/ubi/screens/PostClaim.tsx:134
 msgid "See all news >"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/screens/PostClaim.tsx:151
+#: src/apps/ubi/screens/PostClaim.tsx:154
 msgid "Recent claims (Last 30 days):"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/screens/PreClaim.tsx:45
+#: src/apps/ubi/screens/PostClaim.tsx:163
+msgid "Unable to load your recent claims, try again later"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/ubi/screens/PreClaim.tsx:49
 msgid "Claim your share"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/screens/PreClaim.tsx:63
+#: src/apps/ubi/screens/PreClaim.tsx:67
 msgid "Claim Now"
 msgstr ""
 
@@ -522,6 +526,13 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/apps/ubi/screens/StartClaim.tsx:48
 msgid "Claim G$"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/ubi/wizard/ClaimWizard.tsx:43
+msgid "Please sign with \n"
+" your wallet \n"
+"({remainingClaims} transaction(s) left)"
 msgstr ""
 
 #. js-lingui-explicit-id
@@ -601,6 +612,21 @@ msgid "To complete this action, sign with your wallet. It can take a moment for 
 msgstr ""
 
 #. js-lingui-explicit-id
+#: src/core/web3/modals/TxModal.tsx:27
+msgid "To complete this action, sign with your wallet."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/core/web3/modals/TxModal.tsx:30
+msgid "Sign to Verify Uniqueness"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/core/web3/modals/TxModal.tsx:32
+msgid "You’ll be asked to sign with your wallet to begin the verification.You may have to do this again from time to time."
+msgstr ""
+
+#. js-lingui-explicit-id
 #: src/core/web3/modals/TxModal.tsx:35
 msgid "Waiting for \n"
 " confirmation"
@@ -609,6 +635,16 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/core/web3/modals/TxModal.tsx:36
 msgid "Please wait for the transaction to be validated."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/core/web3/modals/TxModal.tsx:46
+msgid "It may take over a minute for transaction(s) to be signed."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/core/web3/modals/TxModal.tsx:56
+msgid "You’re almost there! To claim G$, you need prove you are a unique human."
 msgstr ""
 
 #. js-lingui-explicit-id
@@ -649,7 +685,7 @@ msgid "Yes, try again"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/core/web3/modals/YouSureModal.tsx:74
+#: src/core/web3/modals/YouSureModal.tsx:72
 msgid "Don't show this again"
 msgstr ""
 
