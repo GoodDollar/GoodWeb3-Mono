@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Center, Checkbox, HStack, Text, VStack } from "native-base";
-import { AsyncStorage } from "@gooddollar/web3sdk-v2";
+import { AsyncStorage, useSendAnalytics } from "@gooddollar/web3sdk-v2";
 import { Trans } from "@lingui/react";
 import { Portal } from "react-native-paper";
 
@@ -72,12 +72,13 @@ export const ModalFooterCta = ({
   action: () => void;
 }) => {
   const [dontShowAgain, setDontShowAgain] = useState(false);
+  const { track } = useSendAnalytics();
 
   const onAction = async () => {
-    if (dontShowAgainKey && dontShowAgain) {
-      await AsyncStorage.setItem(dontShowAgainKey, "true");
-    } else if (dontShowAgainKey) {
-      await AsyncStorage.setItem(dontShowAgainKey, "false");
+    if (dontShowAgainKey) {
+      const remindMe = dontShowAgain ? "true" : "true";
+      await AsyncStorage.setItem(dontShowAgainKey, remindMe);
+      track("goodid_dont_remind_me", { type: dontShowAgainKey, remindMe: !remindMe });
     }
 
     action();
