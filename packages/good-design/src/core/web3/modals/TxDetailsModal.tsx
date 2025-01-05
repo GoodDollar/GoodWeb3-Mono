@@ -2,6 +2,7 @@ import React from "react";
 import { noop } from "lodash";
 import { Box, Center, HStack, Text, VStack } from "native-base";
 import { SupportedChains } from "@gooddollar/web3sdk-v2";
+import moment from "moment";
 
 import { Image } from "../../images";
 
@@ -22,7 +23,7 @@ const TxDetailsContent = ({ tx, color, network }: { tx: Transaction; color: stri
   const { account, contractAddress, contractName, date, isPool, tokenValue, type } = tx;
 
   const { txIcon, networkIcon, contractIcon } = getTxIcons(tx);
-  const txDate = date ? date.local().format?.("MM.DD.YYYY HH:mm") : "";
+  const txDate = date ? moment(date).local().format?.("MM.DD.YYYY HH:mm") : "";
   const trunContractAddr = truncateMiddle(contractAddress, 11);
   const trunAccountAddr = truncateMiddle(account, 11);
 

@@ -3,7 +3,7 @@ import { useWizard, Wizard } from "react-use-wizard";
 import { View } from "native-base";
 import { useEthers } from "@usedapp/core";
 import { isEmpty, noop } from "lodash";
-import { SupportedChains } from "@gooddollar/web3sdk-v2";
+import { SupportedChains, useSendAnalytics } from "@gooddollar/web3sdk-v2";
 
 // import { isTxReject } from "../utils/transactionType";
 import { CheckAvailableOffers, CheckAvailableOffersProps } from "../../goodid";
@@ -13,6 +13,7 @@ import { PostClaim } from "../screens/PostClaim";
 import { ErrorModal, TxDetailsModal, TxModal } from "../../../core/web3/modals";
 import { useClaimContext } from "../context/ClaimContext";
 import { UbiWizardHeader } from "../../../core/layout";
+import { ethers } from "ethers";
 
 const WizardWrapper: FC<PropsWithChildren<{ skipOffer: Error | boolean | undefined }>> = ({ skipOffer, children }) => {
   const {
@@ -33,9 +34,10 @@ const WizardWrapper: FC<PropsWithChildren<{ skipOffer: Error | boolean | undefin
   const { account, chainId } = useEthers();
   const { goToStep, stepCount } = useWizard();
   const lastStep = stepCount - 1;
-  const { isClaiming, isClaimingDone, error: claimError, remainingClaims } = claimFlowStatus;
+  const { isClaiming, isClaimingDone, error: claimError, remainingClaims, claimReceipts } = claimFlowStatus;
   const { transaction, isOpen } = txDetails;
   const { certificates } = useGoodId(account ?? "");
+  const { track } = useSendAnalytics();
 
   const customTitle = {
     title: /*i18n*/ {
@@ -55,13 +57,30 @@ const WizardWrapper: FC<PropsWithChildren<{ skipOffer: Error | boolean | undefin
     } else if (remainingClaims === 0 && claimError) {
       await onClaimFailed();
     }
-  }, [account, claimDetails, claimFlowStatus, loading, poolsDetails]);
+  }, [account, claimDetails, claimFlowStatus, claimReceipts, loading, poolsDetails]);
 
   useEffect(() => {
     void (async () => {
       void handleNext();
     })();
   }, [/*used*/ claimFlowStatus.isClaimingDone, claimFlowStatus.remainingClaims]);
+
+  useEffect(() => {
+    if (remainingClaims === 0 && claimReceipts?.length > 0) {
+      claimReceipts.every((receipt: ethers.providers.TransactionReceipt | undefined) => {
+        if (!receipt) {
+          track("goodid_error", {
+            error: "claimReceipts failed",
+            message: "One or more claims failed",
+            user: account,
+            chainId: chainId
+          });
+        } else {
+          track("CLAIM_SUCCESS", { contract: receipt.to, user: account });
+        }
+      });
+    }
+  }, [remainingClaims, claimReceipts]);
 
   useEffect(() => {
     if (!account) {
@@ -115,10 +134,12 @@ export const ClaimWizard: FC<Omit<CheckAvailableOffersProps, "onDone">> = ({
 }) => {
   const { setError } = useClaimContext();
   const [skipOffer, setSkipOffer] = useState<Error | boolean | undefined>(false);
+  const { track } = useSendAnalytics();
 
   const onDone = useCallback(
     async (e: Error | boolean | undefined) => {
       if (e instanceof Error && e.message) {
+        track("goodid_error", { error: "checkOffers failed", message: e.message, e });
         setError(e.message);
       } else {
         setSkipOffer(e);
@@ -130,7 +151,7 @@ export const ClaimWizard: FC<Omit<CheckAvailableOffersProps, "onDone">> = ({
   return (
     <Wizard
       wrapper={<WizardWrapper skipOffer={skipOffer} />}
-      header={<UbiWizardHeader onDone={onDone} onExit={onExit ?? noop} />}
+      header={<UbiWizardHeader onDone={onDone} onExit={onExit ?? noop} withNavBar={withNavBar} />}
     >
       <StartClaim connectedAccount={account} />
       {chainId === SupportedChains.CELO ? (

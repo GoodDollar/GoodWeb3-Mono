@@ -1,8 +1,9 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Box, Checkbox, Center, HStack, Text, View, VStack, Spinner } from "native-base";
 import { Wizard, useWizard } from "react-use-wizard";
 import { Platform } from "react-native";
-import { isEmpty } from "lodash";
+import { isBoolean, isEmpty } from "lodash";
+import { Envs, useGetEnvChainId } from "@gooddollar/web3sdk-v2";
 
 import { RedTentProps } from "../types";
 import { withTheme } from "../../../theme/hoc/withTheme";
@@ -12,10 +13,12 @@ import { WebVideoUploader } from "../../../core/inputs/WebVideoUploader";
 import { WizardContextProvider } from "../../../utils/WizardContext";
 import { BulletPointList, TransButton, TransText, TransTitle } from "../../../core/layout";
 import { YouSureModal } from "../../../core/web3/modals";
+import { useClaimContext } from "../../ubi";
 
 import RedTentCard from "../../../assets/images/redtentcard.png";
 import BillyPhone from "../../../assets/images/billy-phone.png";
 import { cardShadow } from "../../../theme";
+import { useSendAnalytics } from "@gooddollar/web3sdk-v2";
 
 const videoRequirements = [
   /*i18n*/ "Your first name",
@@ -43,13 +46,13 @@ const offerCriteria = {
 const CardContent = () => (
   <VStack space="0">
     <TransText
-      t={/*i18n*/ "Claim weekly:"}
+      t={/*i18n*/ "Claim Daily:"}
       fontFamily="subheading"
       fontSize="sm"
       fontWeight="400"
       color="goodGrey.600"
     />
-    <TransText t={"8G$"} fontFamily="heading" color="gdPrimary" fontSize="l" fontWeight="700" />
+    <TransText t={"1000G$"} fontFamily="heading" color="gdPrimary" fontSize="l" fontWeight="700" />
   </VStack>
 );
 
@@ -112,15 +115,41 @@ const RedtentOffer = ({
 }) => {
   const { nextStep } = useWizard();
   const [showModal, setShowModal] = useState(false);
+  const { track } = useSendAnalytics();
+  const [hasFired, setHasFired] = useState(false);
+
+  const { activePoolAddresses } = useClaimContext();
+  const { baseEnv } = useGetEnvChainId();
+  const devEnv = baseEnv === "fuse" ? "development" : baseEnv;
+  const { goodCollectiveUrl } = Envs[devEnv];
+
+  const offerTitle =
+    /*i18n*/ "Red Tent Women in " +
+    offerCriteria.location[offer.Location.countryCode as keyof typeof offerCriteria.location];
+
+  const offerLink = `${goodCollectiveUrl}collective/${activePoolAddresses[offer.Location.countryCode]}`;
 
   const handleSkip = () => {
+    track("offer_declined", { offer: offerTitle });
     setShowModal(true);
+  };
+
+  const handleStart = () => {
+    track("offer_start", { offer: offerTitle });
+    void nextStep();
   };
 
   const handleOnDone = () => {
     setShowModal(false);
     void onDone(true);
   };
+
+  useEffect(() => {
+    if (!hasFired) {
+      track("offer_show", { offer: offerTitle });
+      setHasFired(true);
+    }
+  }, []);
 
   if (isEmpty(offer)) return <Spinner variant="lg" />;
 
@@ -137,14 +166,11 @@ const RedtentOffer = ({
         <TransTitle t={/*i18n*/ "You are eligible to claim more GoodDollars!"} variant="title-gdblue" />
         <ImageCard
           variant="offer-card"
-          title={
-            /*i18n*/ "Red Tent Women in " +
-            offerCriteria.location[offer.Location.countryCode as keyof typeof offerCriteria.location]
-          }
+          title={offerTitle}
           content={<CardContent />}
           footer={<CardFooter linkText={/*i18n*/ "Learn more>>"} />}
           picture={RedTentCard}
-          link="https://www.google.com" // todo: add link to good-collective pool page
+          link={offerLink}
           styles={{
             picture: { resizeMode: "cover" },
             container: { width: "100%", alignItems: "flex-start" },
@@ -166,7 +192,7 @@ const RedtentOffer = ({
       </VStack>
       <PoolRequirements {...{ offer }} />
       <VStack space={4}>
-        <TransButton t={/*i18n*/ "Upload Video Selfie"} onPress={nextStep} />
+        <TransButton t={/*i18n*/ "Upload Video Selfie"} onPress={handleStart} />
         <TransButton t={/*i18n*/ "Skip for now"} onPress={handleSkip} variant={"link-like"} padding={0} />
       </VStack>
     </View>
@@ -177,9 +203,11 @@ const RedtentVideoInstructions = withTheme({ name: "RedtentVideoInstructions" })
   ({ onDone, onVideo, ...props }: { onDone: RedTentProps["onDone"]; onVideo: RedTentProps["onVideo"] }) => {
     const { nextStep } = useWizard();
     const [isLoading, setLoading] = useState(false);
+    const { track } = useSendAnalytics();
 
     const onUpload = useCallback(
       async (video?: { base64: string; extension: string }, error?: Error) => {
+        track("offer_video_upload_start");
         if (!video || error) {
           void onDone(error || new Error("Video upload failed"));
           return;
@@ -187,11 +215,11 @@ const RedtentVideoInstructions = withTheme({ name: "RedtentVideoInstructions" })
         setLoading(true);
         try {
           await onVideo(video.base64, video.extension);
+          void nextStep();
         } catch (e) {
           void onDone(e as Error);
         } finally {
           setLoading(false);
-          void nextStep();
         }
       },
       [onDone]
@@ -228,8 +256,8 @@ const RedtentThanks = ({ onDone, offer }: { onDone: RedTentProps["onDone"]; offe
   };
 
   return (
-    <VStack paddingBottom={6} justifyContent="space-between" height="100%">
-      <VStack space={6} maxWidth={360} margin="auto">
+    <VStack paddingBottom={6} {...Platform.select({ web: { height: "100%", justifyContent: "space-between" } })}>
+      <VStack space={6} maxWidth={360} marginX="auto" {...Platform.select({ android: { marginY: "auto" } })}>
         <TransTitle t={/*i18n*/ "Thanks you for submitting your video!"} variant="title-gdblue" />
         <Box
           justifyContent="flex-start"
@@ -253,8 +281,8 @@ const RedtentThanks = ({ onDone, offer }: { onDone: RedTentProps["onDone"]; offe
             <TransText t={/*i18n*/ " GoodCollective. You can claim this additional UBI daily."} variant="sm-grey-650" />
           </Text>
         </Box>
+        <TransButton t={/*i18n*/ "Next"} onPress={onPress} variant="standard" />
       </VStack>
-      <TransButton t={/*i18n*/ "Next"} onPress={onPress} variant="standard" />
     </VStack>
   );
 };
@@ -263,10 +291,17 @@ export const RedtentWizard: React.FC<RedTentProps> = (props: RedTentProps) => {
   const [error, setError] = useState<Error | undefined>(undefined);
   const { videoInstructStyles } = props;
   const dontShowAgainKey = "goodid_noOffersModalAgain";
+  const { track } = useSendAnalytics();
   // inject show modal on callbacks exceptions
 
   const modalOnDone: RedTentProps["onDone"] = async errorOnDone => {
     try {
+      if (!isBoolean(errorOnDone)) {
+        track("offer_video_error", { error: errorOnDone });
+      }
+
+      track("offer_success");
+
       await props.onDone(errorOnDone);
     } catch (e: any) {
       props.onError && props.onError(error);
@@ -277,6 +312,7 @@ export const RedtentWizard: React.FC<RedTentProps> = (props: RedTentProps) => {
       await props.onVideo(...args);
     } catch (e: any) {
       setError(e.message);
+      throw new Error(e);
     }
   };
 

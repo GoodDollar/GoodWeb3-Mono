@@ -46,7 +46,9 @@ const CheckAvailableOffers: FC<CheckAvailableOffersProps> = ({
   const [alreadyMember, setAlreadyMember] = useState<boolean | undefined>(undefined);
 
   useEffect(() => {
-    const isMember = poolContracts?.some(pool => activePoolAddresses.includes(pool.address.toLowerCase()));
+    const isMember = poolContracts?.some(pool =>
+      Object.values(activePoolAddresses).includes(pool.address.toLowerCase())
+    );
     setAlreadyMember(isMember);
 
     if (availableOffers === false || availableOffers?.length === 0 || isMember) {

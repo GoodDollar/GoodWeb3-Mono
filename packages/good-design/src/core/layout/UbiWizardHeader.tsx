@@ -12,11 +12,9 @@ const HeaderTitles = {
   redtent: /*i18n*/ "GoodID Upgrade"
 };
 
-export const UbiWizardHeader: FC<PropsWithChildren<{ onDone: RedTentProps["onDone"]; onExit: () => void }>> = ({
-  onDone,
-  onExit,
-  ...props
-}) => {
+export const UbiWizardHeader: FC<
+  PropsWithChildren<{ onDone: RedTentProps["onDone"]; onExit: () => void; withNavBar: boolean }>
+> = ({ onDone, onExit, withNavBar = false, ...props }) => {
   const { activeStep } = useWizard();
   const { chainId } = useEthers();
 
@@ -28,7 +26,7 @@ export const UbiWizardHeader: FC<PropsWithChildren<{ onDone: RedTentProps["onDon
     }
   }, [activeStep]);
 
-  return (
+  return withNavBar ? (
     <View
       bg="gdPrimary"
       justifyContent={"center"}
@@ -57,5 +55,5 @@ export const UbiWizardHeader: FC<PropsWithChildren<{ onDone: RedTentProps["onDon
         />
       </View>
     </View>
-  );
+  ) : null;
 };

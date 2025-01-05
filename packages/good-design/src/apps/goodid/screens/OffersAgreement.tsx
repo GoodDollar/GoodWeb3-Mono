@@ -1,5 +1,7 @@
 import React from "react";
-import { Center, Container, IContainerProps, Link, Text, VStack } from "native-base";
+import { Center, Link, Text, View, VStack } from "native-base";
+import type { InterfaceViewProps } from "native-base/lib/typescript/components/basic/View/types";
+
 import { useWizard } from "react-use-wizard";
 import { AsyncStorage } from "@gooddollar/web3sdk-v2";
 
@@ -8,9 +10,13 @@ import { Image } from "../../../core/images";
 
 import BillyGrin from "../../../assets/images/billy-grin.png";
 import { withTheme } from "../../../theme/hoc/withTheme";
+import { Platform } from "react-native";
 
 export const OffersAgreement = withTheme({ name: "OffersAgreement" })(
-  ({ styles, ...props }: IContainerProps & { styles?: any; onDataPermission: (accepted: string) => Promise<void> }) => {
+  ({
+    styles,
+    ...props
+  }: InterfaceViewProps & { styles?: any; onDataPermission: (accepted: string) => Promise<void> }) => {
     const { nextStep } = useWizard();
     const { buttonContainer, image } = styles ?? {};
     const resizeMode = image.resizeMode ?? "contain";
@@ -26,7 +32,7 @@ export const OffersAgreement = withTheme({ name: "OffersAgreement" })(
     };
 
     return (
-      <Container {...props}>
+      <View {...props}>
         <VStack width={"100%"} space={8} justifyContent="center" alignItems="center">
           <TransTitle t={/*i18n*/ "You might qualify for extra money disbursements"} variant="title-gdblue" />
           <TransText
@@ -38,7 +44,7 @@ export const OffersAgreement = withTheme({ name: "OffersAgreement" })(
           <Center>
             <Image {...image} source={BillyGrin} style={{ resizeMode: resizeMode }} />
           </Center>
-          <VStack space={6} alignItems="center">
+          <VStack space={6} justifyContent="flex-start" alignItems="center" width="100%">
             <TransText
               t={
                 /*i18n*/ "By tapping “Yes” you’re allowing GoodLabs Ltd to read your GoodID until its expiration date only to show you offers relevant to you. We will not share your information with anyone. To read  our full Privacy Policy, go to {privy}"
@@ -57,19 +63,27 @@ export const OffersAgreement = withTheme({ name: "OffersAgreement" })(
               }}
             />
 
-            <VStack {...buttonContainer}>
-              <TransButton t={/*i18n*/ "yes, i accept"} onPress={handleYes} width="100%" />
+            <Center {...buttonContainer} justifyContent="flex-start">
+              <TransButton
+                t={/*i18n*/ "yes, i accept"}
+                onPress={handleYes}
+                width="100%"
+                _text={{ textAlign: "left" }}
+                textAlign="left"
+                {...Platform.select({ android: { justifyContent: "flex-start" } })}
+              />
               <TransButton
                 t={/*i18n*/ "no"}
-                width="100%"
                 onPress={handleNo}
                 variant="link-like"
                 _text={{ underline: false }}
+                width="100%"
+                {...Platform.select({ android: { justifyContent: "flex-start" } })}
               />
-            </VStack>
+            </Center>
           </VStack>
         </VStack>
-      </Container>
+      </View>
     );
   }
 );

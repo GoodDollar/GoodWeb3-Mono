@@ -1,4 +1,5 @@
 export { default as BasicStyledModal } from "./BasicStyledModal";
+export * from "./BasicStyledModal";
 export * from "./RedirectModal";
 export * from "./ClaimSuccessModal";
 export * from "./VerifyUniqueModal";

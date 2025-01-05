@@ -1,7 +1,7 @@
 {
   "name": "@gooddollar/good-design",
   "repository": "https://github.com/GoodDollar/GoodWeb3-mono/packages/good-design",
-  "version": "0.1.60-beta.6bdc3f93",
+  "version": "0.4.1-beta.523b9c2b",
   "scripts": {
     "build": "yarn install && yarn dev:clean && tsc && yarn copy:assets && yalc publish --push",
     "build:release": "yarn dev:clean && tsc -p tsconfig.release.json && yarn copy:assets",
@@ -31,7 +31,7 @@
     "@babel/preset-react": "^7.16.0",
     "@babel/preset-typescript": "^7.16.0",
     "@babel/runtime": "^7.18.9",
-    "@gooddollar/web3sdk-v2": "file:.yalc/@gooddollar/web3sdk-v2",
+    "@gooddollar/web3sdk-v2": "0.4.1-beta.523b9c2b",
     "@storybook/addon-actions": "^6.5.12",
     "@storybook/addon-essentials": "^6.5.12",
     "@storybook/addon-links": "^6.5.12",
@@ -65,17 +65,21 @@
     "raw-loader": "^4.0.2",
     "react-device-detect": "^2.2.3",
     "react-docgen-typescript-plugin": "^1.0.1",
+    "react-native-paper": "3.12.0",
     "sass-loader": "^13.0.2",
     "storybook-addon-linguijs": "^1.0.10",
     "style-loader": "^3.3.1",
     "ts-loader": "^9.3.1",
     "typescript": "^5.1.3",
+    "uuid": "^11.0.3",
     "webpack": "^5.74.0"
   },
   "peerDepedencies": {
-    "@usedapp/core": "^1.2.16",
-    "@gooddollar/web3sdk-v2": "^0.2.25",
-    "ethers": "5.7.2"
+    "@usedapp/core": "1.*",
+    "@gooddollar/web3sdk-v2": "*",
+    "ethers": "5.*",
+    "react-native-paper": "*",
+    "uuid": "*"
   },
   "packageManager": "yarn@3.2.1",
   "dependencies": {
@@ -107,7 +111,6 @@
     "react-native-fs": "^2.20.0",
     "react-native-image-picker": "5.3.1",
     "react-native-mask-input": "^1.2.2",
-    "react-native-paper": "3.12.0",
     "react-native-safe-area-context": "^3.3.2",
     "react-native-svg": "13.14.0",
     "react-native-svg-transformer": "^1.5.0",

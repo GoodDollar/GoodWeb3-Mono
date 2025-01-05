@@ -6,7 +6,7 @@ type links = { link: string; label: string; icon: any };
 
 export const linksNew: Record<learnSources, links> = {
   send: {
-    link: "https://gooddollar.notion.site/How-do-transactions-work-in-web3-ccf11b4e16874a1682722a20c4e24742",
+    link: "https://docs.gooddollar.org/frequently-asked-questions/using-gooddollar#how-do-transactions-work-in-web3",
     label: /*i18n*/ "How do transactions work?",
     icon: BillyWaiting
   },
