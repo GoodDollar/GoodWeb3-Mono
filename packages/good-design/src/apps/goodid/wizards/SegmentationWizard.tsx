@@ -115,6 +115,7 @@ export const SegmentationWizard = (props: SegmentationProps) => {
 
   const modalOnLocation: SegmentationProps["onLocationRequest"] = async (...args) => {
     try {
+      // after location request is done, we trigger the request of certificates
       await props.onLocationRequest(...args);
     } catch (e: any) {
       track("goodid_error", { error: "onLocationRequest failed", message: e?.message, e });
