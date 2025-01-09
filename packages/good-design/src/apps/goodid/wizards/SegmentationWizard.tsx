@@ -8,10 +8,27 @@ import { Trans } from "@lingui/react";
 
 import { TransButton } from "../../../core/layout";
 import { DisputeThanks, OffersAgreement, SegmentationConfirmation, SegmentationScreen } from "../screens";
-import { LoaderModal } from "../../../core/web3/modals";
+import { LoaderModal, TxModal } from "../../../core/web3/modals";
 import { WizardContext, WizardContextProvider } from "../../../utils/WizardContext";
 import { WizardHeader } from "./WizardHeader";
 import { SegmentationDispute } from "../screens/SegmentationDispute";
+
+const SegmentationLoaderModal = ({ isWallet }: { isWallet: boolean | undefined }) => {
+  return isWallet || false ? (
+    <Trans
+      id={"We're checking \n your information"}
+      render={({ translation }: { translation: any }) => (
+        <LoaderModal title={translation} overlay="dark" loading={true} onClose={noop} />
+      )}
+    />
+  ) : (
+    <TxModal
+      customTitle={{ title: { id: "Please sign with your wallet to continue your GoodID upgrade", values: {} } }}
+      type="goodid"
+      isPending={true}
+    />
+  );
+};
 
 export type SegmentationProps = {
   onLocationRequest: (locationState: GeoLocation, account: string) => Promise<void>;
@@ -60,12 +77,7 @@ const SegmentationScreenWrapper = (
   }, [geoLocation, account, error]);
 
   return !account || loading || !props.certificateSubjects ? (
-    <Trans
-      id={"We're checking \n your information"}
-      render={({ translation }: { translation: any }) => (
-        <LoaderModal title={translation} overlay="dark" loading={true} onClose={noop} />
-      )}
-    />
+    <SegmentationLoaderModal {...{ isWallet: props.isWallet }} />
   ) : (
     <Center width={"100%"}>
       <VStack paddingY={6} space={10}>
@@ -135,6 +147,7 @@ export const SegmentationWizard = (props: SegmentationProps) => {
           onLocationRequest={modalOnLocation}
           account={props.account}
           certificateSubjects={props.certificateSubjects}
+          isWallet={props.isWallet}
         />
         {/* Optional paths, only shown to users who think there data is wrong */}
         <SegmentationDispute certificateSubjects={props.certificateSubjects} onDispute={onDispute} />

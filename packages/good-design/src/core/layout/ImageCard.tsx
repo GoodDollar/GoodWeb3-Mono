@@ -93,7 +93,7 @@ export const theme = {
         },
         container: {
           flexDirection: "column",
-          height: "310",
+          height: "350",
           justifyContent: "flex-start"
         },
         button: {

@@ -99,7 +99,7 @@ const BasicModal: FC<BasicModalProps> = ({
               </Button>
             </NBModal.Actions>
           ) : null}
-          <VStack width="100%">
+          <VStack width="100%" paddingX={2}>
             {header ? (
               <NBModal.Title
                 borderBottomWidth={hasTopBorder ? 1 : 0}
