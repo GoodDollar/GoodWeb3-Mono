@@ -8,7 +8,7 @@ msgstr ""
 "Language: es_419\n"
 "Project-Id-Version: goodui\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-01-03 15:59\n"
+"PO-Revision-Date: 2025-01-09 13:55\n"
 "Last-Translator: \n"
 "Language-Team: Spanish, Latin America\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -17,6 +17,11 @@ msgstr ""
 "X-Crowdin-Language: es-419\n"
 "X-Crowdin-File: /116-credential-storage/packages/good-design/src/locales/en/messages.po\n"
 "X-Crowdin-File-ID: 154\n"
+
+#. js-lingui-explicit-id
+#: src/core/constants.ts:40
+msgid "What is GoodID?"
+msgstr ""
 
 #. GoodID feature access list
 #. js-lingui-explicit-id
@@ -447,19 +452,19 @@ msgid " GoodCollective. You can claim this additional UBI daily."
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/wizards/SegmentationWizard.tsx:63
+#: src/apps/goodid/wizards/SegmentationWizard.tsx:18
 msgid "We're checking \n"
 " your information"
 msgstr "Estamos comprobando \n"
 " tu información"
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/wizards/SegmentationWizard.tsx:74
+#: src/apps/goodid/wizards/SegmentationWizard.tsx:86
 msgid "yes, i am"
 msgstr "sí, soy"
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/wizards/SegmentationWizard.tsx:77
+#: src/apps/goodid/wizards/SegmentationWizard.tsx:89
 msgid "no, i am not"
 msgstr "no, no soy"
 
@@ -612,6 +617,7 @@ msgstr "Ir al sitio web"
 
 #. js-lingui-explicit-id
 #: src/core/web3/modals/TxModal.tsx:21
+#: src/core/web3/modals/TxModal.tsx:30
 msgid "Please sign with \n"
 " your wallet"
 msgstr "Por favor, regístrate con \n"
@@ -619,6 +625,7 @@ msgstr "Por favor, regístrate con \n"
 
 #. js-lingui-explicit-id
 #: src/core/web3/modals/TxModal.tsx:23
+#: src/core/web3/modals/TxModal.tsx:32
 msgid "To complete this action, sign with your wallet. It can take a moment for a transaction to be validated."
 msgstr ""
 
@@ -628,33 +635,33 @@ msgid "To complete this action, sign with your wallet."
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/core/web3/modals/TxModal.tsx:30
+#: src/core/web3/modals/TxModal.tsx:35
 msgid "Sign to Verify Uniqueness"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/core/web3/modals/TxModal.tsx:32
+#: src/core/web3/modals/TxModal.tsx:37
 msgid "You’ll be asked to sign with your wallet to begin the verification.You may have to do this again from time to time."
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/core/web3/modals/TxModal.tsx:35
+#: src/core/web3/modals/TxModal.tsx:40
 msgid "Waiting for \n"
 " confirmation"
 msgstr "Esperando confirmación"
 
 #. js-lingui-explicit-id
-#: src/core/web3/modals/TxModal.tsx:36
+#: src/core/web3/modals/TxModal.tsx:41
 msgid "Please wait for the transaction to be validated."
 msgstr "Por favor, espere a que la transacción sea validada."
 
 #. js-lingui-explicit-id
-#: src/core/web3/modals/TxModal.tsx:46
+#: src/core/web3/modals/TxModal.tsx:53
 msgid "It may take over a minute for transaction(s) to be signed."
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/core/web3/modals/TxModal.tsx:56
+#: src/core/web3/modals/TxModal.tsx:63
 msgid "You’re almost there! To claim G$, you need prove you are a unique human."
 msgstr ""
 
