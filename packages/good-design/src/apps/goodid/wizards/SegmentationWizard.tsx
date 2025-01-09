@@ -14,7 +14,7 @@ import { WizardHeader } from "./WizardHeader";
 import { SegmentationDispute } from "../screens/SegmentationDispute";
 
 const SegmentationLoaderModal = ({ isWallet }: { isWallet: boolean | undefined }) => {
-  return isWallet || false ? (
+  return isWallet ? (
     <Trans
       id={"We're checking \n your information"}
       render={({ translation }: { translation: any }) => (
