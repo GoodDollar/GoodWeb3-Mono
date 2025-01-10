@@ -68,35 +68,29 @@ const SegmentationScreenWrapper = (
     if ((error || geoLocation?.location) && account) {
       updateDataValue("segmentation", "locationPermission", !error);
       void props.onLocationRequest(geoLocation, account).then(() => {
-        // add a small delay to make sure certificates are retrieved correctly.
-        setTimeout(() => {
-          setLoading(false);
-        }, 2500);
+        setLoading(false);
       });
     }
   }, [geoLocation, account, error]);
 
-  return (
-    <>
-      {!account || loading || !props.certificateSubjects ? (
-        <SegmentationLoaderModal {...{ isWallet: props.isWallet }} />
-      ) : null}
-      <Center width={"100%"}>
-        <VStack paddingY={6} space={10}>
-          <SegmentationScreen certificateSubjects={props.certificateSubjects} />
-          <VStack space={3}>
-            <TransButton t={/*i18n*/ "yes, i am"} onPress={proceed} />
+  return !account || loading || !props.certificateSubjects ? (
+    <SegmentationLoaderModal {...{ isWallet: props.isWallet }} />
+  ) : (
+    <Center width={"100%"}>
+      <VStack paddingY={6} space={10}>
+        <SegmentationScreen certificateSubjects={props.certificateSubjects} />
+        <VStack space={3}>
+          <TransButton t={/*i18n*/ "yes, i am"} onPress={proceed} />
 
-            <TransButton
-              t={/*i18n*/ "no, i am not"}
-              onPress={handleDecline}
-              _text={{ underline: false }}
-              variant="link-like"
-            />
-          </VStack>
+          <TransButton
+            t={/*i18n*/ "no, i am not"}
+            onPress={handleDecline}
+            _text={{ underline: false }}
+            variant="link-like"
+          />
         </VStack>
-      </Center>
-    </>
+      </VStack>
+    </Center>
   );
 };
 
