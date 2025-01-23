@@ -93,13 +93,13 @@ export const theme = {
         },
         container: {
           flexDirection: "column",
-          height: "310",
+          height: "350",
           justifyContent: "flex-start"
         },
         button: {
           width: "340",
-          height: "310",
-          marginBottom: 4
+          height: "350",
+          marginBottom: 14
         },
         content: {
           flex: 1,

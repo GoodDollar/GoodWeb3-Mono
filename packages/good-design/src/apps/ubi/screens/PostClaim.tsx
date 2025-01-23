@@ -74,6 +74,27 @@ const NextClaim = ({
   );
 };
 
+const NewsFeedWrapper = ({ onNews }: { onNews: () => void }) => {
+  const { feed } = useContext(NewsFeedContext);
+
+  return (
+    <VStack space={6}>
+      <View width="375">
+        <NewsFeed direction="column" {...{ feed }} />
+      </View>
+      <GoodButton variant="link-like" onPress={onNews}>
+        <TransText
+          t={/*i18n*/ "See all news >"}
+          fontFamily="subheading"
+          color="primary"
+          fontSize="ms"
+          fontWeight="700"
+        />
+      </GoodButton>
+    </VStack>
+  );
+};
+
 export const PostClaim: FC = () => {
   const {
     claimPools,
@@ -87,7 +108,6 @@ export const PostClaim: FC = () => {
     onTxDetailsPress,
     switchChain
   } = useClaimContext();
-  const { feed } = useContext(NewsFeedContext);
   const { transactionList } = claimPools ?? {};
 
   const { hasClaimed, altChain } = claimedAlt ?? {};
@@ -125,20 +145,7 @@ export const PostClaim: FC = () => {
         ) : null}
         {withNewsFeed ? (
           <NewsFeedProvider {...newsProps} limit={1}>
-            <VStack space={6}>
-              <View width="375">
-                <NewsFeed direction="column" {...{ feed }} />
-              </View>
-              <GoodButton variant="link-like" onPress={onNews}>
-                <TransText
-                  t={/*i18n*/ "See all news >"}
-                  fontFamily="subheading"
-                  color="primary"
-                  fontSize="ms"
-                  fontWeight="700"
-                />
-              </GoodButton>
-            </VStack>
+            <NewsFeedWrapper onNews={onNews} />
           </NewsFeedProvider>
         ) : null}
       </VStack>

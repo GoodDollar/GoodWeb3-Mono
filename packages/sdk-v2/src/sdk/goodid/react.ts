@@ -206,14 +206,19 @@ export const useIssueCertificates = (account: string | undefined, baseEnv: any) 
         promises.push(requestIdentityCertificate(baseEnv, fvsig, account));
 
         const results = await Promise.allSettled(promises);
+        const errors = [] as string[];
 
         for (const result of results) {
           if (result.status === "fulfilled" && result.value && result.value.certificate) {
             await storeCertificate(result.value.certificate);
           } else if (result.status === "rejected") {
             console.error("Failed to get a certificate:", result.reason);
-            throw new Error(result.reason);
+            errors.push(result.reason);
           }
+        }
+
+        if (errors.length > 0) {
+          throw new Error(errors.join(", "));
         }
       } catch (e: any) {
         track("goodid_error", {
@@ -222,6 +227,7 @@ export const useIssueCertificates = (account: string | undefined, baseEnv: any) 
           e
         });
         console.error("Unexpected error:", e);
+        throw e;
       }
     },
     [baseEnv, storeCertificate]

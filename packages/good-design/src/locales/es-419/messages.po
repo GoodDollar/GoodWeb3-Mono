@@ -18,37 +18,6 @@ msgstr ""
 "X-Crowdin-File: /116-credential-storage/packages/good-design/src/locales/en/messages.po\n"
 "X-Crowdin-File-ID: 154\n"
 
-#. GoodID feature access list
-#. js-lingui-explicit-id
-#: src/apps/goodid/screens/OnboardScreenSimple.tsx:32
-msgid "Special Offers"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/screens/OnboardScreenSimple.tsx:63
-msgid "I Accept, Renew & Claim"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/screens/OnboardScreenSimple.tsx:63
-msgid "I Accept, Verify & Claim"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/screens/OnboardScreenSimple.tsx:76
-msgid "Your GoodID unlocks access to:"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/screens/OnboardScreenSimple.tsx:91
-msgid "Your privacy is preserved."
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/screens/OnboardScreenSimple.tsx:107
-msgid "By clicking on ”{actionCopy}”, you are accepting our {tos} and {privy}. Per this policy you agree to let us collect information such as your gender and age."
-msgstr ""
-
 #. js-lingui-explicit-id
 #: src/apps/goodid/components/GoodIdCard.tsx:31
 msgid "Age"
@@ -269,6 +238,37 @@ msgstr "ACEPTO, VERIFIQUE ME"
 msgid "Powered by GoodDollar"
 msgstr ""
 
+#. GoodID feature access list
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreenSimple.tsx:32
+msgid "Special Offers"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreenSimple.tsx:63
+msgid "I Accept, Renew & Claim"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreenSimple.tsx:63
+msgid "I Accept, Verify & Claim"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreenSimple.tsx:76
+msgid "Your GoodID unlocks access to:"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreenSimple.tsx:91
+msgid "Your privacy is preserved."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreenSimple.tsx:107
+msgid "By clicking on ”{actionCopy}”, you are accepting our {tos} and {privy}. Per this policy you agree to let us collect information such as your gender and age."
+msgstr ""
+
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/SegmentationConfirmation.tsx:30
 msgid ""
@@ -458,7 +458,7 @@ msgid " GoodCollective. You can claim this additional UBI daily."
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/wizards/SegmentationWizard.tsx:63
+#: src/apps/goodid/wizards/SegmentationWizard.tsx:18
 msgid ""
 "We're checking \n"
 " your information"
@@ -467,12 +467,12 @@ msgstr ""
 " tu información"
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/wizards/SegmentationWizard.tsx:74
+#: src/apps/goodid/wizards/SegmentationWizard.tsx:83
 msgid "yes, i am"
 msgstr "sí, soy"
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/wizards/SegmentationWizard.tsx:77
+#: src/apps/goodid/wizards/SegmentationWizard.tsx:86
 msgid "no, i am not"
 msgstr "no, no soy"
 
@@ -497,27 +497,27 @@ msgid "Your Next Claim"
 msgstr "Tu próximo reclamo"
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/screens/PostClaim.tsx:110
-msgid "You've claimed today"
-msgstr "Has reclamado hoy"
-
-#. js-lingui-explicit-id
-#: src/apps/ubi/screens/PostClaim.tsx:118
-msgid "CLAIM ON {altChain}"
-msgstr "Reclamar en {altChain}"
-
-#. js-lingui-explicit-id
-#: src/apps/ubi/screens/PostClaim.tsx:134
+#: src/apps/ubi/screens/PostClaim.tsx:87
 msgid "See all news >"
 msgstr "Ver todas las noticias >"
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/screens/PostClaim.tsx:154
+#: src/apps/ubi/screens/PostClaim.tsx:130
+msgid "You've claimed today"
+msgstr "Has reclamado hoy"
+
+#. js-lingui-explicit-id
+#: src/apps/ubi/screens/PostClaim.tsx:138
+msgid "CLAIM ON {altChain}"
+msgstr "Reclamar en {altChain}"
+
+#. js-lingui-explicit-id
+#: src/apps/ubi/screens/PostClaim.tsx:161
 msgid "Recent claims (Last 30 days):"
 msgstr "Reclamos recientes (últimos 30 días):"
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/screens/PostClaim.tsx:163
+#: src/apps/ubi/screens/PostClaim.tsx:170
 msgid "Unable to load your recent claims, try again later"
 msgstr ""
 
@@ -593,6 +593,11 @@ msgid "Learn about the identification process"
 msgstr "Aprende sobre el proceso de identificación"
 
 #. js-lingui-explicit-id
+#: src/core/constants.ts:40
+msgid "What is GoodID?"
+msgstr ""
+
+#. js-lingui-explicit-id
 #: src/core/inputs/WebVideoUploader.tsx:40
 msgid ""
 "It seems the video format you uploaded is unsupported. 😕\n"
@@ -631,6 +636,7 @@ msgstr "Ir al sitio web"
 
 #. js-lingui-explicit-id
 #: src/core/web3/modals/TxModal.tsx:21
+#: src/core/web3/modals/TxModal.tsx:30
 msgid ""
 "Please sign with \n"
 " your wallet"
@@ -640,6 +646,7 @@ msgstr ""
 
 #. js-lingui-explicit-id
 #: src/core/web3/modals/TxModal.tsx:23
+#: src/core/web3/modals/TxModal.tsx:32
 msgid "To complete this action, sign with your wallet. It can take a moment for a transaction to be validated."
 msgstr ""
 
@@ -649,34 +656,34 @@ msgid "To complete this action, sign with your wallet."
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/core/web3/modals/TxModal.tsx:30
+#: src/core/web3/modals/TxModal.tsx:35
 msgid "Sign to Verify Uniqueness"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/core/web3/modals/TxModal.tsx:32
+#: src/core/web3/modals/TxModal.tsx:37
 msgid "You’ll be asked to sign with your wallet to begin the verification.You may have to do this again from time to time."
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/core/web3/modals/TxModal.tsx:35
+#: src/core/web3/modals/TxModal.tsx:40
 msgid ""
 "Waiting for \n"
 " confirmation"
 msgstr "Esperando confirmación"
 
 #. js-lingui-explicit-id
-#: src/core/web3/modals/TxModal.tsx:36
+#: src/core/web3/modals/TxModal.tsx:41
 msgid "Please wait for the transaction to be validated."
 msgstr "Por favor, espere a que la transacción sea validada."
 
 #. js-lingui-explicit-id
-#: src/core/web3/modals/TxModal.tsx:46
+#: src/core/web3/modals/TxModal.tsx:53
 msgid "It may take over a minute for transaction(s) to be signed."
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/core/web3/modals/TxModal.tsx:56
+#: src/core/web3/modals/TxModal.tsx:63
 msgid "You’re almost there! To claim G$, you need prove you are a unique human."
 msgstr ""
 
