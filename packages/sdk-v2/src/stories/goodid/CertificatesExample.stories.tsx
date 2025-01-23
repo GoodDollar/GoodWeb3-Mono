@@ -2,6 +2,7 @@ import React, { useEffect, useCallback, useState } from "react";
 import { ComponentStory, ComponentMeta } from "@storybook/react";
 import { View, Text, Button } from "react-native";
 import { useEthers } from "@usedapp/core";
+import { isEmpty } from "lodash";
 
 import { Certificate, CredentialType } from "../../sdk/goodid/types";
 import { W3Wrapper } from "../W3Wrapper";
@@ -114,7 +115,7 @@ const CertificatesFlowExample = () => {
   // const certificateSubjects = useCertificatesSubject(certificates);
   const issueCertificate = useIssueCertificates(account, baseEnv);
 
-  const fvLink = useFVLink();
+  const fvLink = useFVLink() as any;
 
   const [loading, setLoading] = useState(true);
 
@@ -125,8 +126,7 @@ const CertificatesFlowExample = () => {
       if (hasValidCertificates) {
         return;
       }
-      const fvSig = await fvLink.getFvSig();
-      // (await AsyncStorage.getItem("fvSig").then(async sig => (!isEmpty(sig) ? sig : await fvLink.getFvSig())));
+      const fvSig = !isEmpty(fvLink) ? await fvLink.getFvSig() : undefined;
       if (fvSig) await issueCertificate(account, locationState, fvSig);
       // from this point on, we can assume that the user has a certificate stored in the database
       else {
