@@ -1,12 +1,24 @@
-import React, { useEffect, useCallback } from "react";
+import React, { useEffect, useCallback, useState } from "react";
 import { ComponentStory, ComponentMeta } from "@storybook/react";
 import { View, Text, Button } from "react-native";
 import { useEthers } from "@usedapp/core";
+import { isEmpty } from "lodash";
 
 import { Certificate, CredentialType } from "../../sdk/goodid/types";
 import { W3Wrapper } from "../W3Wrapper";
 import { GoodIdContextProvider } from "../../contexts/goodid/GoodIdContext";
-import { useAggregatedCertificates, useCertificates } from "../../sdk";
+import {
+  useAggregatedCertificates,
+  useCertificates,
+  // useCertificatesSubject,
+  useGeoLocation,
+  // useIsAddressVerified,
+  useFVLink,
+  useIssueCertificates,
+  useGetEnvChainId
+} from "../../sdk";
+
+// import { useIdentityExpiryDate } from "../../hooks";
 
 const { Location, Identity, Age, Gender } = CredentialType;
 
@@ -49,7 +61,7 @@ const mockCertificate = (account: string, typesSet: "location" | "basicidentity"
   return mock;
 };
 
-const CertificatesView = () => {
+const MockCertificatesView = () => {
   const { account } = useEthers();
   const { storeCertificate, deleteCertificate } = useCertificates(account ?? "");
   const certificates = useAggregatedCertificates(account ?? "");
@@ -84,18 +96,86 @@ const CertificatesView = () => {
           <View key={key}>
             <Text style={{ fontWeight: "bold" }}>{typeName}</Text>
             <Text>{JSON.stringify(certificate, null, 2)}</Text>
-            <Button title="Delete" onPress={() => deleteCertificate([id])} />
+            <Button title="Delete" onPress={() => deleteCertificate([id ?? ""])} />
           </View>
         );
       })}
     </View>
   );
 };
+
+// expects a whitelisted user connecting
+const CertificatesFlowExample = () => {
+  const [geoLocation, error] = useGeoLocation();
+  const { baseEnv } = useGetEnvChainId();
+  const { account = "" } = useEthers();
+  // const [isWhitelisted] = useIsAddressVerified(account);
+  // const [expiryDate, , state] = useIdentityExpiryDate(account ?? "");
+  const certificates = useAggregatedCertificates(account);
+  // const certificateSubjects = useCertificatesSubject(certificates);
+  const issueCertificate = useIssueCertificates(account, baseEnv);
+
+  const fvLink = useFVLink() as any;
+
+  const [loading, setLoading] = useState(true);
+
+  const onLocationRequest = useCallback(
+    async (locationState: any, account: string) => {
+      // verify if we already have a certificate
+      const hasValidCertificates = certificates.some(cert => cert.certificate);
+      if (hasValidCertificates) {
+        return;
+      }
+      const fvSig = !isEmpty(fvLink) ? await fvLink.getFvSig() : undefined;
+      if (fvSig) await issueCertificate(account, locationState, fvSig);
+      // from this point on, we can assume that the user has a certificate stored in the database
+      else {
+        throw new Error("missing faceid");
+      }
+    },
+    [issueCertificate, account, certificates]
+  );
+
+  useEffect(() => {
+    // if neither error or location is set means a user has not given or denied the permission yet
+    if ((error || geoLocation?.location) && account) {
+      void onLocationRequest(geoLocation, account).then(() => {
+        // add a small delay to make sure certificates are retrieved correctly.
+        setTimeout(() => {
+          setLoading(false);
+        }, 2500);
+      });
+    }
+  }, [geoLocation, account, error]);
+
+  if (loading) <>Loading...</>;
+
+  return certificates?.map(({ typeName, key, certificate }) => {
+    return (
+      <View key={key}>
+        <Text style={{ fontWeight: "bold" }}>{typeName}</Text>
+        <Text>{JSON.stringify(certificate, null, 2)}</Text>
+        {/* <Button title="Delete" onPress={() => deleteCertificate([id])} /> */}
+      </View>
+    );
+  });
+};
+
+export const FlowWrapper = () => {
+  return (
+    <W3Wrapper withMetaMask={true}>
+      <GoodIdWrapper>
+        <CertificatesFlowExample />
+      </GoodIdWrapper>
+    </W3Wrapper>
+  );
+};
+
 const Page = (params: object) => {
   return (
     <W3Wrapper withMetaMask={true}>
       <GoodIdWrapper>
-        <CertificatesView {...params} />
+        <MockCertificatesView {...params} />
       </GoodIdWrapper>
     </W3Wrapper>
   );
