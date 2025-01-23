@@ -8,7 +8,7 @@ msgstr ""
 "Language: en_GB\n"
 "Project-Id-Version: goodui\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-01-09 13:55\n"
+"PO-Revision-Date: 2025-01-23 10:03\n"
 "Last-Translator: \n"
 "Language-Team: English, United Kingdom\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -17,42 +17,6 @@ msgstr ""
 "X-Crowdin-Language: en-GB\n"
 "X-Crowdin-File: /116-credential-storage/packages/good-design/src/locales/en/messages.po\n"
 "X-Crowdin-File-ID: 154\n"
-
-#. js-lingui-explicit-id
-#: src/core/constants.ts:40
-msgid "What is GoodID?"
-msgstr ""
-
-#. GoodID feature access list
-#. js-lingui-explicit-id
-#: src/apps/goodid/screens/OnboardScreenSimple.tsx:32
-msgid "Special Offers"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/screens/OnboardScreenSimple.tsx:63
-msgid "I Accept, Renew & Claim"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/screens/OnboardScreenSimple.tsx:63
-msgid "I Accept, Verify & Claim"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/screens/OnboardScreenSimple.tsx:76
-msgid "Your GoodID unlocks access to:"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/screens/OnboardScreenSimple.tsx:91
-msgid "Your privacy is preserved."
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/goodid/screens/OnboardScreenSimple.tsx:107
-msgid "By clicking on ”{actionCopy}”, you are accepting our {tos} and {privy}. Per this policy you agree to let us collect information such as your gender and age."
-msgstr ""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/components/GoodIdCard.tsx:31
@@ -267,6 +231,37 @@ msgstr ""
 msgid "Powered by GoodDollar"
 msgstr ""
 
+#. GoodID feature access list
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreenSimple.tsx:32
+msgid "Special Offers"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreenSimple.tsx:63
+msgid "I Accept, Renew & Claim"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreenSimple.tsx:63
+msgid "I Accept, Verify & Claim"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreenSimple.tsx:76
+msgid "Your GoodID unlocks access to:"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreenSimple.tsx:91
+msgid "Your privacy is preserved."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreenSimple.tsx:107
+msgid "By clicking on ”{actionCopy}”, you are accepting our {tos} and {privy}. Per this policy you agree to let us collect information such as your gender and age."
+msgstr ""
+
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/SegmentationConfirmation.tsx:30
 msgid "We are creating \n"
@@ -453,12 +448,12 @@ msgid "We're checking \n"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/wizards/SegmentationWizard.tsx:86
+#: src/apps/goodid/wizards/SegmentationWizard.tsx:83
 msgid "yes, i am"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/wizards/SegmentationWizard.tsx:89
+#: src/apps/goodid/wizards/SegmentationWizard.tsx:86
 msgid "no, i am not"
 msgstr ""
 
@@ -483,27 +478,27 @@ msgid "Your Next Claim"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/screens/PostClaim.tsx:110
-msgid "You've claimed today"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/ubi/screens/PostClaim.tsx:118
-msgid "CLAIM ON {altChain}"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/apps/ubi/screens/PostClaim.tsx:134
+#: src/apps/ubi/screens/PostClaim.tsx:87
 msgid "See all news >"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/screens/PostClaim.tsx:154
+#: src/apps/ubi/screens/PostClaim.tsx:130
+msgid "You've claimed today"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/ubi/screens/PostClaim.tsx:138
+msgid "CLAIM ON {altChain}"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/ubi/screens/PostClaim.tsx:161
 msgid "Recent claims (Last 30 days):"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/apps/ubi/screens/PostClaim.tsx:163
+#: src/apps/ubi/screens/PostClaim.tsx:170
 msgid "Unable to load your recent claims, try again later"
 msgstr ""
 
@@ -574,6 +569,11 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/core/constants.ts:35
 msgid "Learn about the identification process"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/core/constants.ts:40
+msgid "What is GoodID?"
 msgstr ""
 
 #. js-lingui-explicit-id
