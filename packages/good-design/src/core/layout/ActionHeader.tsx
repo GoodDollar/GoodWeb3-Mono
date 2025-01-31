@@ -10,7 +10,7 @@ interface ActionHeaderProps {
 
 const ActionHeader = memo(({ textColor, actionText }: ActionHeaderProps) => (
   <Box backgroundColor={"white"}>
-    <Title fontSize="xl" mb="2" fontWeight="bold" lineHeight="36px">
+    <Title fontSize="xl" mb="2" fontWeight="bold" lineHeight={36}>
       Action Required
     </Title>
     <Text color={textColor} fontFamily="subheading" fontWeight="normal" fontSize="md">

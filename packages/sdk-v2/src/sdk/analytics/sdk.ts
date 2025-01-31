@@ -86,16 +86,20 @@ export class Analytics implements IAbstractProvider, IAnalyticsProvider, IMonito
   }
 
   send(event: string, data?: object): void {
-    if (!this.initialized) {
-      return;
-    }
-
-    for (const provider of this.providers) {
-      if (!supportsAnalytics(provider)) {
-        continue;
+    try {
+      if (!this.initialized) {
+        return;
       }
 
-      provider.send(event, data);
+      for (const provider of this.providers) {
+        if (!supportsAnalytics(provider)) {
+          continue;
+        }
+
+        provider.send(event, data);
+      }
+    } catch (e) {
+      console.error(e);
     }
   }
 

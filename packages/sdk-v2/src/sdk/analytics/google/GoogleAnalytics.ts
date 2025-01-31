@@ -19,7 +19,12 @@ export class GoogleAnalytics implements IAbstractProvider, IAnalyticsProvider {
     const initialized = !!api;
 
     if (initialized) {
-      api.setDefaultEventParams(omit(appProps, "$once"));
+      const defaultEventParams = omit(appProps, "$once");
+      if (api.setDefaultEventParams) {
+        api.setDefaultEventParams(defaultEventParams);
+      } else if (api.setDefaultEventParameters) {
+        await api.setDefaultEventParameters(defaultEventParams);
+      }
     }
 
     return initialized;

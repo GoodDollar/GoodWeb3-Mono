@@ -634,6 +634,11 @@ msgid "To complete this action, sign with your wallet."
 msgstr "Para completar esta acción, firma con tu billetera."
 
 #. js-lingui-explicit-id
+#: src/core/web3/modals/TxModal.tsx:27
+msgid "To complete this action, sign with your wallet."
+msgstr ""
+
+#. js-lingui-explicit-id
 #: src/core/web3/modals/TxModal.tsx:35
 msgid "Sign to Verify Uniqueness"
 msgstr "Firmar para verificar tu unicidad"

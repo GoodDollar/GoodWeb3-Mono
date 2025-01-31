@@ -1,12 +1,12 @@
 import BillyWaiting from "../assets/images/billy-waiting.png";
 import BillySign from "../assets/images/billy-sign.png";
 
-export type learnSources = "send" | "bridging" | "network" | "sign" | "signMultiClaim" | "identity";
+export type learnSources = "send" | "bridging" | "network" | "sign" | "signMultiClaim" | "identity" | "goodid";
 type links = { link: string; label: string; icon: any };
 
 export const linksNew: Record<learnSources, links> = {
   send: {
-    link: "https://gooddollar.notion.site/How-do-transactions-work-in-web3-ccf11b4e16874a1682722a20c4e24742",
+    link: "https://docs.gooddollar.org/frequently-asked-questions/using-gooddollar#how-do-transactions-work-in-web3",
     label: /*i18n*/ "How do transactions work?",
     icon: BillyWaiting
   },
@@ -33,6 +33,11 @@ export const linksNew: Record<learnSources, links> = {
   identity: {
     link: "https://docs.gooddollar.org/about-the-protocol/sybil-resistance",
     label: /*i18n*/ "Learn about the identification process",
+    icon: BillySign
+  },
+  goodid: {
+    link: "https://docs.gooddollar.org/wallet-and-products/goodid-and-goodoffers#what-is-goodid",
+    label: /*i18n*/ "What is GoodID?",
     icon: BillySign
   }
 };

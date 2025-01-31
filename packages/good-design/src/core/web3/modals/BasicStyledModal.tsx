@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Center, Checkbox, HStack, Text, VStack } from "native-base";
-import { AsyncStorage } from "@gooddollar/web3sdk-v2";
+import { AsyncStorage, useSendAnalytics } from "@gooddollar/web3sdk-v2";
 import { Trans } from "@lingui/react";
 import { Portal } from "react-native-paper";
 
@@ -46,7 +46,7 @@ export type StyledModalProps = CtaOrLearnModalProps | AltModalProps;
 const ModalHeader = ({ title, variant = "title-gdblue" }: { title: any; variant: any }) => {
   const transTitle = typeof title === "object" ? title.title : { id: title, values: {} };
 
-  return <TransTitle t={transTitle.id} variant={variant} fontSize="xl" values={transTitle.values} lineHeight="27.5" />;
+  return <TransTitle t={transTitle.id} variant={variant} fontSize="xl" values={transTitle.values} lineHeight={27.5} />;
 };
 
 export const ModalLoaderBody = () => <SpinnerCheckMark />;
@@ -54,7 +54,7 @@ export const ModalLoaderBody = () => <SpinnerCheckMark />;
 export const ModalErrorBody = ({ error }: { error: string }) => (
   <VStack space={6} justifyContent="center" alignItems="center">
     <Image source={BillyOops} w={137} h={135} style={{ resizeMode: "contain" }} />
-    <TransText textAlign="center" variant="sm-grey-650" color="goodRed.100" t={error} />
+    <TransText textAlign="center" color="goodRed.100" t={error} />
   </VStack>
 );
 
@@ -72,12 +72,13 @@ export const ModalFooterCta = ({
   action: () => void;
 }) => {
   const [dontShowAgain, setDontShowAgain] = useState(false);
+  const { track } = useSendAnalytics();
 
   const onAction = async () => {
-    if (dontShowAgainKey && dontShowAgain) {
-      await AsyncStorage.setItem(dontShowAgainKey, "true");
-    } else if (dontShowAgainKey) {
-      await AsyncStorage.setItem(dontShowAgainKey, "false");
+    if (dontShowAgainKey) {
+      const remindMe = dontShowAgain ? "true" : "true";
+      await AsyncStorage.setItem(dontShowAgainKey, remindMe);
+      track("goodid_dont_remind_me", { type: dontShowAgainKey, remindMe: !remindMe });
     }
 
     action();

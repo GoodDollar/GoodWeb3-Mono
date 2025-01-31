@@ -66,7 +66,7 @@ const ClaimCard: FC<ClaimCardProps> = ({ content = [], title, bgColor, externalL
       }}
       viewInteraction={{ hover: { shadow: "3" } }}
     >
-      <Title fontSize="xl" lineHeight="36" pb="2" fontWeight="bold" fontFamily="heading" color={title.color}>
+      <Title fontSize="xl" lineHeight={36} pb={2} fontWeight="bold" fontFamily="heading" color={title.color}>
         {title.text}
       </Title>
 

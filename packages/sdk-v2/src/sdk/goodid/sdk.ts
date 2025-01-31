@@ -73,14 +73,14 @@ export async function fvAuth(env: EnvKey, address: string, fvSig: string): Promi
 export async function fvAuth(env: EnvKey, signer: Signer): Promise<{ token: string; fvsig: string }>;
 export async function fvAuth(
   env: EnvKey,
-  account: Signer | string,
+  signer: Signer | string,
   fvSig?: string
 ): Promise<{ token: string; fvsig: string }> {
   const { backend } = Envs[env];
   const authEndpoint = `${backend}/auth/fv2`;
-  const isSigner = "string" !== typeof account;
-  const address = isSigner ? await account.getAddress() : account;
-  const fvsig = isSigner ? await account.signMessage(FV_IDENTIFIER_MSG2.replace("<account>", address)) : fvSig;
+  const isSigner = "string" !== typeof signer;
+  const account = isSigner ? await signer.getAddress() : signer;
+  const fvsig = !fvSig && isSigner ? await signer.signMessage(FV_IDENTIFIER_MSG2.replace("<account>", account)) : fvSig;
 
   if (!fvsig) throw new Error("fvSig is required");
 

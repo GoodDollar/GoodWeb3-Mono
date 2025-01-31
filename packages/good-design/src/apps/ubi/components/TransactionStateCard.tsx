@@ -1,6 +1,7 @@
 import React, { useCallback } from "react";
 import { Center, HStack, Pressable, ScrollView, Text, VStack } from "native-base";
 import { Platform } from "react-native";
+import moment from "moment";
 
 import { withTheme } from "../../../theme/hoc";
 import { Image } from "../../../core/images";
@@ -29,7 +30,7 @@ export const TransactionCard = withTheme({ name: "TransactionCard" })(
 
     const isReceive = isReceiveTransaction(transaction);
     const amountPrefix = isClaimStart ? "" : isReceive ? "+" : "-";
-    const txDate = date ? date.local().format?.("MM.DD.YYYY HH:mm") : "";
+    const txDate = date ? moment(date).local().format?.("MM.DD.YYYY HH:mm") : "";
     const colorAmount = isClaimStart ? null : isReceive ? "txGreen" : "goodRed.200";
 
     const { txIcon, networkIcon, contractIcon } = getTxIcons(transaction);
@@ -82,7 +83,7 @@ export const TransactionCard = withTheme({ name: "TransactionCard" })(
                   fontSize="4xs"
                   fontFamily="subheading"
                   fontWeight="400"
-                  lineHeight="12"
+                  lineHeight={12}
                   color="goodGrey.600"
                 />
                 {/* Todo: should read subtitle from pool details*/}
@@ -102,15 +103,21 @@ export const TransactionCard = withTheme({ name: "TransactionCard" })(
 type TransactionListProps = {
   transactions: Transaction[] | undefined;
   onTxDetailsPress: ClaimContextProps["onTxDetailsPress"];
+  limit?: number;
 };
 
-export const TransactionList = ({ transactions, onTxDetailsPress }: TransactionListProps) => (
+export const TransactionList = ({ transactions, onTxDetailsPress, limit = 3 }: TransactionListProps) => (
   <ScrollView
     style={{
       marginTop: 4,
       ...Platform.select({
-        web: { scrollBarWidth: "thin", maxHeight: 550 },
-        android: { maxWidth: 360, margin: "auto", height: 300, maxHeight: 300 }
+        web: { scrollbarWidth: "thin", maxHeight: 550 },
+        android: {
+          maxWidth: 360,
+          margin: "auto",
+          height: limit < 3 ? "auto" : 300,
+          maxHeight: limit < 3 ? "auto" : 300
+        }
       })
     }}
     contentContainerStyle={{ flexGrow: 1, alignItems: "center", justifyContent: "center" }}

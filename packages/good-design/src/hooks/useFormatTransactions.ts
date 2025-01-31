@@ -19,15 +19,9 @@ export const useFormatClaimTransactions = (
 
     pools?.map((pool: PoolDetails | RecentClaims) => {
       const formatTransaction = (transaction: any) => {
-        const {
-          address,
-          claimAmount = BigNumber.from("0"),
-          contractName,
-          date = undefined,
-          isPool = false,
-          transactionHash = undefined
-        } = transaction;
+        const { address, contractName, date = undefined, isPool = false, transactionHash = undefined } = transaction;
 
+        const claimAmount = BigNumber.from(transaction.claimAmount || "0");
         const tokenValue = G$Amount("G$", claimAmount, chainId, defaultEnv);
         const trunAddr = truncateMiddle(address, 11);
 

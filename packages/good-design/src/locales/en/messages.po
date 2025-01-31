@@ -126,6 +126,8 @@ msgstr ""
 msgid "Your GoodID unlocks access to UBI, financial services, humanitarian funds and \n"
 " other special offers and opportunities to earn GoodDollars."
 msgstr ""
+"Your GoodID unlocks access to UBI, financial services, humanitarian funds and \n"
+" other special offers and opportunities to earn GoodDollars."
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/GoodIdDetails.tsx:166

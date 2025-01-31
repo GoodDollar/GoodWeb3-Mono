@@ -93,13 +93,13 @@ export const theme = {
         },
         container: {
           flexDirection: "column",
-          height: "310",
+          height: "350",
           justifyContent: "flex-start"
         },
         button: {
           width: "340",
-          height: "310",
-          marginBottom: 4
+          height: "350",
+          marginBottom: 14
         },
         content: {
           flex: 1,
@@ -108,7 +108,7 @@ export const theme = {
           fontFamily: "subheading",
           fontSize: "2xs",
           fontWeight: "400",
-          lineHeight: "130%",
+          lineHeight: 14.4, // "130%"
           paddingBottom: 2,
           maxWidth: 400,
           paddingTop: 2,
@@ -130,7 +130,7 @@ export const theme = {
           fontFamily: "subheading",
           fontSize: "sm",
           fontWeight: 600,
-          lineHeight: "110%",
+          lineHeight: Platform.select({ web: 20.8, android: 22 }),
           color: "heading:alpha.80",
           paddingBottom: 2
         }

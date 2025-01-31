@@ -10,6 +10,7 @@ export type IAppProps = Record<string, string> & {
   env: string;
   version: string;
   osVersion: string;
+  productEnv: "gw" | "ngw" | "dapp" | string;
   $once?: Record<string, string>;
 };
 

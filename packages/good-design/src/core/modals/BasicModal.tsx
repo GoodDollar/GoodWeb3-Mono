@@ -1,5 +1,5 @@
 import { noop } from "lodash";
-import { Button, useColorModeValue, Text, View, VStack } from "native-base";
+import { Button, Text, View, VStack } from "native-base";
 import React, { FC, ReactNode, useCallback } from "react";
 import { Platform } from "react-native";
 import { Dialog as NBModal } from "react-native-paper";
@@ -38,7 +38,8 @@ const BasicModal: FC<BasicModalProps> = ({
   hasBottomBorder = true,
   onClose = noop,
   onAction = noop,
-  withOverlay,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  withOverlay = false,
   bgColor = "white",
   _modal = {},
   _modalContainer = {},
@@ -50,11 +51,6 @@ const BasicModal: FC<BasicModalProps> = ({
     onAction();
     onClose();
   }, [onAction, onClose]);
-
-  const overlayDark = useColorModeValue("mainDarkContrast:alpha.40", "white:alpha.40");
-  const overlayBlur = "purple.300"; //todo: add blur overlay
-
-  const bgOverlay = withOverlay === "dark" ? overlayDark : withOverlay === "blur" ? overlayBlur : "transparent";
 
   const actionButton = actionText ? <Button onPress={onActionButtonPress}>{actionText}</Button> : null;
 
@@ -77,9 +73,9 @@ const BasicModal: FC<BasicModalProps> = ({
           padding: 0,
           marginHorizontal: "auto",
           marginLeft: "auto",
-          marginRight: "auto"
+          marginRight: "auto",
+          backgroundColor: "white"
         }}
-        bgColor={bgOverlay}
       >
         <NBModal.Content
           style={{
@@ -103,7 +99,7 @@ const BasicModal: FC<BasicModalProps> = ({
               </Button>
             </NBModal.Actions>
           ) : null}
-          <VStack width="100%">
+          <VStack width="100%" paddingX={2}>
             {header ? (
               <NBModal.Title
                 borderBottomWidth={hasTopBorder ? 1 : 0}

@@ -44,6 +44,11 @@ export const useFaucet = (refresh: QueryParams["refresh"] = 12) => {
     [
       {
         contract: faucet,
+        method: "minTopping",
+        args: []
+      },
+      {
+        contract: faucet,
         method: "getToppingAmount",
         args: []
       }
@@ -57,8 +62,9 @@ export const useFaucet = (refresh: QueryParams["refresh"] = 12) => {
     }
     const check = async () => {
       const balance = await library?.getBalance(account);
-      const [toppingAmount] = faucetResult.map(_ => _?.value?.[0] as boolean | BigNumber | undefined) || [];
-      const threshold = (toppingAmount as BigNumber)?.mul(50)?.div(100) || minBalance;
+      const [minTopping, toppingAmount] =
+        faucetResult.map(_ => _?.value?.[0] as boolean | BigNumber | number | undefined) || [];
+      const threshold = (toppingAmount as BigNumber)?.mul(100 - (minTopping as number))?.div(100) || minBalance;
 
       // console.log("useFacuet:", { canTop, toppingAmount, balance, threshold, minBalance, refreshOrNever });
 

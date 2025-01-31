@@ -265,6 +265,37 @@ msgstr "Tu privacidad se preserva."
 msgid "By clicking on ”{actionCopy}”, you are accepting our {tos} and {privy}. Per this policy you agree to let us collect information such as your gender and age."
 msgstr "Al hacer clic en \"Acepto, verificarme\", aceptas nuestros {tos} y {privy}. Por esta política usted acepta permitirnos recopilar información como su género y edad."
 
+#. GoodID feature access list
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreenSimple.tsx:32
+msgid "Special Offers"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreenSimple.tsx:63
+msgid "I Accept, Renew & Claim"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreenSimple.tsx:63
+msgid "I Accept, Verify & Claim"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreenSimple.tsx:76
+msgid "Your GoodID unlocks access to:"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreenSimple.tsx:91
+msgid "Your privacy is preserved."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreenSimple.tsx:107
+msgid "By clicking on ”{actionCopy}”, you are accepting our {tos} and {privy}. Per this policy you agree to let us collect information such as your gender and age."
+msgstr ""
+
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/SegmentationConfirmation.tsx:30
 msgid "We are creating \n"
@@ -632,6 +663,11 @@ msgstr "Para completar esta acción, firma con tu billetera. Puede que tengas qu
 #: src/core/web3/modals/TxModal.tsx:27
 msgid "To complete this action, sign with your wallet."
 msgstr "Para completar esta acción, firma con tu billetera."
+
+#. js-lingui-explicit-id
+#: src/core/web3/modals/TxModal.tsx:27
+msgid "To complete this action, sign with your wallet."
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/core/web3/modals/TxModal.tsx:35
