@@ -64,14 +64,17 @@ const CheckAvailableOffers: FC<CheckAvailableOffersProps> = ({
       void onDone?.(true);
       return;
     }
+
     if (availableOffers && poolsDetails) {
       const offers = availableOffers
         .map(offer => {
           const pool = redtentPools[offer.Location?.countryCode || ""];
           const poolDetails = poolsDetails.find(_ => _.contract.toLowerCase() === pool.toLowerCase());
+
           const isAvailable =
             poolDetails?.ubiSettings.onlyMembers === false ||
-            Number(poolDetails?.ubiSettings.maxClaimers) <= Number(poolDetails?.status.membersCount);
+            Number(poolDetails?.ubiSettings.maxMembers) >= Number(poolDetails?.status.membersCount);
+
           if (isAvailable) {
             return {
               ...offer,
@@ -89,11 +92,11 @@ const CheckAvailableOffers: FC<CheckAvailableOffersProps> = ({
       }
       void onDone?.(true);
     }
-  }, [availableOffers, activePoolAddresses, poolContracts, poolsDetails]);
+  }, [availableOffers, /*used*/ activePoolAddresses, /*used*/ poolContracts, poolsDetails]);
 
   // If isNull means we are still waiting for the availableOffers to be fetched
   // else we are just waiting on onDone to handle the next step / navigation
-  if (!hasOffer) return <Spinner variant="page-loader" size="lg" />;
+  if (!hasOffer || hasOffer.length === 0) return <Spinner variant="page-loader" size="lg" />;
 
   return (
     /* todo-next: Currently hardcoded for redtent campaign, this should handle showing list of offers. needs design */

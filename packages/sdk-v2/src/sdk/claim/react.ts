@@ -226,7 +226,7 @@ export const useGetMemberUBIPools = () => {
 
 export const useGetUBIPoolsDetails = (poolAddress: string[]) => {
   const { account, library, chainId } = useEthers();
-  const [availablePools, setAvailablePools] = useState<UBIPoolsDetails>();
+  const [availablePools, setAvailablePools] = useState<UBIPoolsDetails | undefined>(undefined);
   const { defaultEnv } = useGetEnvChainId();
   const gcEnv = defaultEnv === "production-celo" ? "production-celo" : "development-celo";
 
@@ -258,7 +258,7 @@ export const useGetUBIPoolsDetails = (poolAddress: string[]) => {
     } catch (err: any) {
       console.error("Error fetching pools:", err);
     }
-  }, [library, chainId, defaultEnv]);
+  }, [account, library, chainId, defaultEnv]);
 
   useEffect(() => {
     if (availablePools === undefined) {
