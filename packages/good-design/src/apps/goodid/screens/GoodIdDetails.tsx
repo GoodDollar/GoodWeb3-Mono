@@ -5,7 +5,6 @@ import Clipboard from "@react-native-clipboard/clipboard";
 
 import { useGoodId } from "../../../hooks/useGoodId";
 import { GoodIdCard } from "../components";
-import { YouSureModal } from "../../../core/web3/modals";
 
 import { Image } from "../../../core/images";
 import { Title, TransText } from "../../../core/layout";
@@ -16,7 +15,6 @@ import { withTheme } from "../../../theme/hoc/withTheme";
 import FaceIcon from "../../../assets/images/face.png";
 import CopyIcon from "../../../assets/images/copy.png";
 import WalletIcon from "../../../assets/images/wallet.png";
-import TrashIcon from "../../../assets/images/trash.png";
 
 const ActionButtonRound = ({ ...props }) => (
   <Pressable
@@ -33,9 +31,8 @@ const ActionButtonRound = ({ ...props }) => (
 );
 
 const FaceId = ({ ...props }) => {
-  const { getFvSig, deleteFvId } = useFVLink();
+  const { getFvSig } = useFVLink();
   const [fvId, setFvId] = useState<string | undefined>(undefined);
-  const [pendingDelete, setPendingDelete] = useState(false);
 
   const truncFaceId = truncateMiddle(fvId, 11);
 
@@ -43,16 +40,6 @@ const FaceId = ({ ...props }) => {
     const sig = await getFvSig();
     setFvId(sig.slice(0, 42));
   }, [getFvSig]);
-
-  const handleDeleteFaceId = useCallback(() => {
-    setPendingDelete(true);
-  }, [deleteFvId]);
-
-  const deleteFaceId = useCallback(async () => {
-    setPendingDelete(false);
-
-    await deleteFvId();
-  }, [fvId, deleteFvId]);
 
   const margin = useBreakpointValue({
     base: "1",
@@ -66,13 +53,6 @@ const FaceId = ({ ...props }) => {
 
   return (
     <VStack width="100%">
-      <YouSureModal
-        open={pendingDelete}
-        type="deleteAccount"
-        action={deleteFaceId}
-        onClose={() => setPendingDelete(false)}
-        styleProps={{ buttonStyle: { backgroundColor: "goodRed.100" } }}
-      />
       <HStack {...props}>
         <HStack
           backgroundColor="goodBlack.400"
@@ -104,7 +84,6 @@ const FaceId = ({ ...props }) => {
           />
         ) : (
           <HStack space={2}>
-            <ActionButtonRound onPress={handleDeleteFaceId} icon={TrashIcon} color="goodRed.100" />
             <ActionButtonRound onPress={copyFvId} icon={CopyIcon} color="gdPrimary" />
           </HStack>
         )}
@@ -194,7 +173,7 @@ export const GoodIdDetails = withTheme({ name: "GoodIdDetails" })(
         </VStack>
         <TransText
           t={
-            /*i18n*/ "Attention: GoodDollar-verifying a new wallet address can only be done 24h after deleting your old face-id"
+            /*i18n*/ "This is the only wallet that is verified and that you may use to claim GoodDollars. If you want to verify and claim with another wallet, you may do so after the expiry date shown above."
           }
           variant="browse-wrap"
           textAlign="center"
