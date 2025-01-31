@@ -8,7 +8,7 @@ import BasicStyledModal from "./BasicStyledModal";
 import { LearnButton } from "../../buttons";
 
 interface ITxModalProps {
-  type: "send" | "sign" | "signMultiClaim" | "identity";
+  type: "send" | "sign" | "signMultiClaim" | "identity" | "goodid";
   isPending: boolean;
   customTitle?: { title: { id: string; values: any } };
   onClose?: () => void;
@@ -26,6 +26,11 @@ const txModalCopy = {
     title: "",
     content: /*i18n*/ "To complete this action, sign with your wallet."
   },
+  goodid: {
+    title: /*i18n*/ "Please sign with \n your wallet",
+    content:
+      /*i18n*/ "To complete this action, sign with your wallet. It can take a moment for a transaction to be validated."
+  },
   identity: {
     title: /*i18n*/ "Sign to Verify Uniqueness",
     content:
@@ -37,7 +42,9 @@ const txModalCopy = {
   }
 };
 
-const TxModalContent = ({ content }: { content: string }) => <TransText t={content} variant="sm-grey-650" />;
+const TxModalContent = ({ content }: { content: string }) => (
+  <TransText t={content} variant="sm-grey-650" paddingLeft={2} paddingRight={2} />
+);
 
 const TxContentMultiClaim = ({ content }: { content: string }) => (
   <VStack space={2} paddingX={2}>
@@ -65,7 +72,8 @@ const ContentComponent = {
   sign: TxModalContent,
   signMultiClaim: TxContentMultiClaim,
   identity: TxContentIdentity,
-  send: TxModalContent
+  send: TxModalContent,
+  goodid: TxModalContent
 };
 
 export const TxModal: FC<ITxModalProps> = ({

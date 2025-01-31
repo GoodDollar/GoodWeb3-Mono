@@ -11,7 +11,7 @@ export const NewsFeedContext = createContext<INewsFeedContext>({
   feed: []
 });
 
-interface INewsFeedProvider {
+export interface INewsFeedProvider {
   children: any;
   feedFilter?: FeedFilter;
   env?: string;

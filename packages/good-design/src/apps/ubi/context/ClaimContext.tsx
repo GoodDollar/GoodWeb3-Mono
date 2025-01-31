@@ -1,6 +1,7 @@
 import React, { createContext, FC, PropsWithChildren, useContext, useCallback, useEffect, useState } from "react";
 import {
   getRecentClaims,
+  INewsFeedProvider,
   PoolDetails,
   SupportedChains,
   useClaim,
@@ -31,7 +32,7 @@ const explorerPollLock = new Lock();
 interface ClaimProviderProps {
   activePoolAddresses?: { [key: string]: string };
   explorerEndPoints: { [key in keyof typeof SupportedChains]: string };
-  supportedChains: SupportedChains[];
+  supportedChains?: SupportedChains[];
   withSignModals: boolean;
   provider?: any;
   onNews: () => void;
@@ -41,20 +42,27 @@ interface ClaimProviderProps {
   onSendTx?: () => void;
   onSwitchChain?: () => Promise<void>;
   withNewsFeed: boolean;
+  newsProps?: Omit<INewsFeedProvider, "children">;
 }
 
 export const ClaimProvider: FC<PropsWithChildren<ClaimProviderProps>> = ({
-  activePoolAddresses = {},
+  activePoolAddresses = {
+    ALT: "0xa6d77aa130e729886c90a48e0ee539d6c6795df7",
+    NG: "0x77253761353271813c1aca275de8eec768b217c5",
+    CO: "0x627dbf00ce1a54067f5a34d6596a217a029c1532"
+  },
   children,
   explorerEndPoints = {
     MAINNET: "https://api.etherscan.io/api?",
-    CELO: "https://explorer.celo.org/api?",
-    FUSE: "https://explorer.fuse.io/api?"
+    CELO: "https://celo.blockscout.com/api?",
+    FUSE: "https://explorer.fuse.io/api?",
+    GOODCOLLECTIVE: "'https://dev-goodcollective.vercel.app/'"
   },
   provider,
-  supportedChains,
+  supportedChains = [SupportedChains.CELO, SupportedChains.FUSE],
   withSignModals,
   withNewsFeed = true,
+  newsProps,
   onUpgrade,
   onConnect,
   onNews,
@@ -221,6 +229,7 @@ export const ClaimProvider: FC<PropsWithChildren<ClaimProviderProps>> = ({
         withSignModals,
         txDetails,
         withNewsFeed,
+        newsProps,
         onUpgrade,
         onReset,
         onNews,

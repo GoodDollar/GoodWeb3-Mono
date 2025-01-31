@@ -2,13 +2,14 @@ import React, { useCallback, useEffect, useState } from "react";
 import { AsyncStorage, useSendAnalytics } from "@gooddollar/web3sdk-v2";
 import { isEmpty, noop } from "lodash";
 import moment from "moment";
-import { IContainerProps, Spinner } from "native-base";
+import { IContainerProps, Spinner, Text } from "native-base";
 import { Wizard } from "react-use-wizard";
 
 import { WizardHeader } from "../wizards";
-import { OnboardScreen, OnboardScreenProps } from "../screens/OnboardScreen";
+import { OnboardScreenSimple, OnboardScreenProps } from "../screens/OnboardScreenSimple";
 import { useFVModalAction, useGoodId } from "../../../hooks";
 import { SegmentationController } from "./SegmentationController";
+import { BasicStyledModal, ModalFooterCta } from "../../../core/web3/modals";
 
 export interface OnboardControllerProps {
   account: string;
@@ -23,6 +24,12 @@ export interface OnboardControllerProps {
   onExit: () => void;
 }
 
+const LocationPermissionNotice = () => (
+  <Text variant="sub-grey" textAlign="center">
+    {`Sharing your location \n (even just allowing one time) \n will allow for location-based offers and other benefits.`}
+  </Text>
+);
+
 export const OnboardController = (
   props: Pick<OnboardScreenProps, "innerContainer" | "fontStyles"> & OnboardControllerProps & IContainerProps
 ) => {
@@ -30,35 +37,61 @@ export const OnboardController = (
   const { certificates, certificateSubjects, expiryDate, expiryFormatted, isWhitelisted } = useGoodId(account);
 
   const [isPending, setPendingSignTx] = useState(false);
-  const [accepedTos, setAcceptedTos] = useState(false);
-  const [alreadyChecked, setAlreadyChecked] = useState(false);
+  const [doingSegmentation, setDoingSegmentation] = useState(false);
+  const [shouldUpgrade, setShouldUpgrade] = useState(false);
+  const [startOnboard, setStartOnboard] = useState(false);
+
+  const [tosAccepted, setTosAccepted] = useState<boolean | undefined>(undefined);
+
   const { track } = useSendAnalytics();
 
+  const expiryWithin1Month = useCallback(() => {
+    const { expiryTimestamp } = expiryDate ?? {};
+
+    if (expiryTimestamp === undefined) return false;
+
+    const expiry = moment(expiryTimestamp.toNumber());
+    const oneMonthFromNow = moment().clone().add(1, "months");
+    const shouldDoFV = isWhitelisted === false || expiry.isBefore(oneMonthFromNow);
+    return shouldDoFV;
+  }, [expiryDate, isWhitelisted]);
+
   useEffect(() => {
-    if (isEmpty(certificates)) return;
+    if (tosAccepted === undefined) {
+      void (async () => {
+        const accepted = await AsyncStorage.getItem("tos-accepted");
+        await AsyncStorage.setItem("goodid_permission", "false");
+        setTosAccepted(accepted);
+      })();
+    }
+
+    // segmentation flow
+    if (isEmpty(certificates) || expiryDate === undefined) return;
+
+    const shouldFv = expiryWithin1Month();
+
+    if (shouldFv) {
+      setShouldUpgrade(true);
+      return;
+    }
+
     const hasValidCertificates = certificates.some(cert => cert.certificate);
 
-    if (hasValidCertificates && !alreadyChecked) {
+    if (hasValidCertificates && !doingSegmentation) {
       onSkip();
       return;
     } else {
       // because of the reactivity of the certificates query,
       // we need to prevent onSkip being triggered during segmentation flow
-      setAlreadyChecked(true);
+      setDoingSegmentation(true);
     }
-
-    void (async () => {
-      const accepted = await AsyncStorage.getItem("tos-accepted");
-      await AsyncStorage.setItem("goodid_permission", "false");
-      setAcceptedTos(accepted);
-    })();
-  }, [certificates]);
+  }, [certificates, expiryDate, doingSegmentation]);
 
   const storeFvSig = async (fvSig: string) => {
     // the link will be requested to send a user to the fv-flow
     // we want to prevent a user to have to sign again when it redirects
     // so we store the fv-sig locally
-    await AsyncStorage.setItem("fvsig", fvSig);
+    await AsyncStorage.setItem("fvSig", fvSig);
   };
 
   const { verify } = useFVModalAction({
@@ -92,7 +125,12 @@ export const OnboardController = (
     [onDone]
   );
 
+  const locationNotice = () => {
+    setStartOnboard(true);
+  };
+
   const handleShouldFV = useCallback(async () => {
+    setStartOnboard(false);
     try {
       track("goodid_start");
       await AsyncStorage.setItem("tos-accepted", true);
@@ -101,26 +139,25 @@ export const OnboardController = (
       // if someone is whitelisted we want to verify their timestamp
       // to determine if they should re-do the fv-flow
       if (isWhitelisted !== undefined && expiryTimestamp !== undefined) {
-        const expiry = moment(expiryTimestamp.toNumber());
-        const threeMonthsFromNow = moment().clone().add(3, "months");
-        const shouldDoFV = isWhitelisted === false || expiry.isBefore(threeMonthsFromNow);
-
-        // if the expiry date is within 3 months, we should re-do the fv-flow
+        const shouldDoFV = expiryWithin1Month();
+        // if the expiry date is within 1 month, we should re-do the fv-flow
         if (shouldDoFV) {
           void doFV();
         } else {
-          setAcceptedTos(true);
+          setTosAccepted(true);
         }
       }
     } catch (e: any) {
+      track("goodid_error", { error: "handleShouldFv failed", message: e?.message, e });
       console.error(e);
       throw new Error(e);
     }
   }, [doFV, isWhitelisted, expiryDate]);
 
-  if (isEmpty(certificates)) return <Spinner variant="page-loader" size="lg" />;
+  if (isEmpty(certificates) || isWhitelisted === undefined || tosAccepted === undefined)
+    return <Spinner variant="page-loader" size="lg" />;
 
-  if (accepedTos && isWhitelisted === true)
+  if (isWhitelisted === true && tosAccepted && !shouldUpgrade)
     return (
       <SegmentationController
         {...{
@@ -139,19 +176,29 @@ export const OnboardController = (
     );
 
   return (
-    <Wizard header={<WizardHeader onExit={onExit} withNavBar={props.withNavBar} onDone={onDone} error={undefined} />}>
-      <OnboardScreen
-        {...{
-          ...props,
-          name,
-          isPending,
-          isWhitelisted,
-          certificateSubjects,
-          expiryDate: expiryFormatted,
-          onAccept: handleShouldFV,
-          paddingBottom: 8
-        }}
+    <>
+      <BasicStyledModal
+        title={/*i18n*/ "Please allow \n location access"}
+        bodyStyle={{ paddingBottom: 0 }}
+        body={<LocationPermissionNotice />}
+        footer={<ModalFooterCta action={handleShouldFV} buttonText={"OK"} />}
+        type={"cta"}
+        show={startOnboard}
+        withOverlay={"dark"}
+        onClose={handleShouldFV}
+        withCloseButton
       />
-    </Wizard>
+      <Wizard header={<WizardHeader onExit={onExit} withNavBar={props.withNavBar} onDone={onDone} error={undefined} />}>
+        <OnboardScreenSimple
+          {...{
+            isPending,
+            isWhitelisted,
+            expiryDate: expiryFormatted,
+            onAccept: locationNotice,
+            paddingBottom: 8
+          }}
+        />
+      </Wizard>
+    </>
   );
 };

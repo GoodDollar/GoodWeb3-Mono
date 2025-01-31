@@ -221,11 +221,11 @@ const RedtentVideoInstructions = withTheme({ name: "RedtentVideoInstructions" })
         setLoading(true);
         try {
           await onVideo(video.base64, video.extension);
+          void nextStep();
         } catch (e) {
           void onDone(e as Error);
         } finally {
           setLoading(false);
-          void nextStep();
         }
       },
       [onDone]
@@ -318,6 +318,7 @@ export const RedtentWizard: React.FC<RedTentProps> = (props: RedTentProps) => {
       await props.onVideo(...args);
     } catch (e: any) {
       setError(e.message);
+      throw new Error(e);
     }
   };
 

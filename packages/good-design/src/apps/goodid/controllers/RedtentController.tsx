@@ -15,10 +15,14 @@ export const RedtentController = (props: Omit<RedTentProps, "onVideo"> & { accou
 
   const onVideo: RedTentProps["onVideo"] = async (base64, extension) => {
     if (base64) {
-      const videoFilename = `${v4()}.${extension}`;
-      const s3res = await uploadToS3(base64, videoFilename);
-      const registerRes = await registerRedtent({ videoFilename, certificates });
-      console.log(s3res, registerRes);
+      try {
+        const videoFilename = `${v4()}.${extension}`;
+        const s3res = await uploadToS3(base64, videoFilename);
+        const registerRes = await registerRedtent({ videoFilename, certificates });
+        console.log(s3res, registerRes);
+      } catch (e: any) {
+        throw new Error(e);
+      }
     }
   };
   return <RedtentWizard {...props} onVideo={onVideo}></RedtentWizard>;

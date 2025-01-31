@@ -10,7 +10,9 @@ import { TransactionList } from "../components/TransactionStateCard";
 
 import BillyGrin from "../../../assets/images/billy-grin.png";
 import ClaimFooter from "../../../assets/images/claim-footer.png";
+import ClaimFooterCelebration from "../../../assets/images/goodid/claim-footer-celebration.png";
 import { useClaimContext } from "../context";
+import moment from "moment";
 
 export const PreClaim: FC = () => {
   const { goToStep, stepCount } = useWizard();
@@ -25,6 +27,8 @@ export const PreClaim: FC = () => {
   } = useClaimContext();
   const { totalAmount, transactionList } = claimPools ?? {};
   const { isWhitelisted } = useGoodId(account);
+  const holiday = moment().format("MM-DD");
+  const isHoliday = holiday >= "12-24" || holiday <= "01-01";
 
   useEffect(() => {
     const claimConfirmed = transactionList?.some(tx => tx.type === "claim-confirmed");
@@ -72,7 +76,12 @@ export const PreClaim: FC = () => {
         </Center>
       </VStack>
       <Center w="full">
-        <Image source={ClaimFooter} w="100%" h="140" style={{ resizeMode: "contain" }} />
+        <Image
+          source={isHoliday ? ClaimFooterCelebration : ClaimFooter}
+          w={isHoliday ? 440 : "100%"}
+          h={isHoliday ? 230 : 140}
+          style={{ resizeMode: "contain" }}
+        />
       </Center>
     </VStack>
   );

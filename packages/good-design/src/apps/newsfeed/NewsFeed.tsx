@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { FeedPost } from "@gooddollar/web3sdk-v2";
-import { Heading, Spinner, Stack, Text } from "native-base";
+import { Center, Heading, Spinner, Stack, Text, VStack } from "native-base";
 import { Trans } from "@lingui/react";
 
 import { withTheme } from "../../theme/hoc/withTheme";
@@ -9,6 +9,7 @@ import { CentreBox } from "../../core/layout/CentreBox";
 import ImageCard from "../../core/layout/ImageCard";
 import { IHStackProps } from "native-base/lib/typescript/components/primitives/Stack/HStack";
 import { IVStackProps } from "native-base/lib/typescript/components/primitives/Stack/VStack";
+import { Platform } from "react-native";
 
 const NewsCardContent = ({ content }: { content: any }) => (
   <Text
@@ -75,9 +76,9 @@ export const NewsFeed = withTheme({ name: "NewsFeed", skipProps: "feed" })(
     styles = {}
   }: { feed: FeedPost[]; direction: "row" | "column"; styles?: { item?: object } } & IHStackProps & IVStackProps) => {
     return (
-      <CentreBox flexDir="column" minWidth="340" maxWidth="100%">
+      <VStack flexDir="column" minWidth="340" maxWidth="100%" alignItems="center">
         <Stack w="100%">
-          <CentreBox
+          <Center
             w="100%"
             justifyContent="center"
             alignItems="center"
@@ -86,11 +87,20 @@ export const NewsFeed = withTheme({ name: "NewsFeed", skipProps: "feed" })(
             marginBottom={4}
             backgroundColor="rgba(0,175,255,0.1)"
           >
-            <Heading size="sm" fontFamily="subheading" fontWeight="400" lineHeight="130%" color="gdPrimary">
+            <Heading
+              width="100%"
+              size="sm"
+              fontFamily="subheading"
+              fontWeight="400"
+              {...Platform.select({ web: { lineHeight: 20.8 }, android: { lineHeight: 22 } })}
+              color="gdPrimary"
+              alignItems="center"
+              textAlign="center"
+            >
               <Trans id="News" />
             </Heading>
-          </CentreBox>
-          <Stack {...{ direction }} {...styles.item}>
+          </Center>
+          <Stack {...{ direction }} {...styles.item} alignItems="center">
             {feed && feed.length > 0 ? (
               feed.map((item: FeedPost) => <NewsCardWrapper key={item.id} item={item} />)
             ) : (
@@ -98,7 +108,7 @@ export const NewsFeed = withTheme({ name: "NewsFeed", skipProps: "feed" })(
             )}
           </Stack>
         </Stack>
-      </CentreBox>
+      </VStack>
     );
   }
 );

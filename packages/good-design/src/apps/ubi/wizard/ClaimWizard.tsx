@@ -51,16 +51,6 @@ const WizardWrapper: FC<PropsWithChildren<{ skipOffer: Error | boolean | undefin
   }, [claimFlowStatus]);
 
   const handleNext = useCallback(async () => {
-    if (remainingClaims === 0 && claimReceipts) {
-      claimReceipts.every((receipt: ethers.providers.TransactionReceipt | undefined) => {
-        if (!receipt) {
-          track("CLAIM_FAILED", { user: account });
-        } else {
-          track("CLAIM_SUCCESS", { contract: receipt.contractAddress, user: account });
-        }
-      });
-    }
-
     if (isClaimingDone) {
       await onClaimSuccess();
       goToStep(lastStep);
@@ -74,6 +64,23 @@ const WizardWrapper: FC<PropsWithChildren<{ skipOffer: Error | boolean | undefin
       void handleNext();
     })();
   }, [/*used*/ claimFlowStatus.isClaimingDone, claimFlowStatus.remainingClaims]);
+
+  useEffect(() => {
+    if (remainingClaims === 0 && claimReceipts?.length > 0) {
+      claimReceipts.every((receipt: ethers.providers.TransactionReceipt | undefined) => {
+        if (!receipt) {
+          track("goodid_error", {
+            error: "claimReceipts failed",
+            message: "One or more claims failed",
+            user: account,
+            chainId: chainId
+          });
+        } else {
+          track("CLAIM_SUCCESS", { contract: receipt.to, user: account });
+        }
+      });
+    }
+  }, [remainingClaims, claimReceipts]);
 
   useEffect(() => {
     if (!account) {
@@ -127,10 +134,12 @@ export const ClaimWizard: FC<Omit<CheckAvailableOffersProps, "onDone">> = ({
 }) => {
   const { setError } = useClaimContext();
   const [skipOffer, setSkipOffer] = useState<Error | boolean | undefined>(false);
+  const { track } = useSendAnalytics();
 
   const onDone = useCallback(
     async (e: Error | boolean | undefined) => {
       if (e instanceof Error && e.message) {
+        track("goodid_error", { error: "checkOffers failed", message: e.message, e });
         setError(e.message);
       } else {
         setSkipOffer(e);
