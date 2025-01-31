@@ -51,7 +51,9 @@ const CardContent = ({ offer }: { offer: UBIPoolOffer }) => {
   return (
     <VStack space="0">
       <TransText
-        t={/*i18n*/ `Claim every ${offer.claimDayFrequency} days`}
+        t={
+          /*i18n*/ `Claim every ${Number(offer.claimDayFrequency) === 1 ? `day:` : `${offer.claimDayFrequency} days:`}`
+        }
         fontFamily="subheading"
         fontSize="sm"
         fontWeight="400"
