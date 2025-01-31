@@ -8,7 +8,7 @@ msgstr ""
 "Language: es_ES\n"
 "Project-Id-Version: goodui\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-01-31 10:34\n"
+"PO-Revision-Date: 2025-01-31 10:59\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -90,7 +90,8 @@ msgstr "En"
 #: src/apps/goodid/controllers/OnboardController.tsx:181
 msgid "Please allow \n"
 " location access"
-msgstr ""
+msgstr "Permitir acceso a \n"
+" ubicación"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/DisputeThanks.tsx:16
@@ -126,7 +127,8 @@ msgstr "Mostrar mi FaceId"
 #: src/apps/goodid/screens/GoodIdDetails.tsx:128
 msgid "Your GoodID unlocks access to UBI, financial services, humanitarian funds and \n"
 " other special offers and opportunities to earn GoodDollars."
-msgstr ""
+msgstr "Tu GoodID desbloquea el acceso a UBI, servicios financieros, fondos humanitarios y \n"
+" otras ofertas especiales y oportunidades para ganar GoodDollars."
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/GoodIdDetails.tsx:166
@@ -136,7 +138,7 @@ msgstr "Dirección de mi billetera"
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/GoodIdDetails.tsx:176
 msgid "This is the only wallet that is verified and that you may use to claim GoodDollars. If you want to verify and claim with another wallet, you may do so after the expiry date shown above."
-msgstr ""
+msgstr "Esta es la única cartera que se verifica y que puede utilizar para reclamar GoodDollars. Si desea verificar y reclamar con otra cartera, puede hacerlo después de la fecha de caducidad mostrada arriba."
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/OffersAgreement.tsx:37
@@ -236,32 +238,32 @@ msgstr "Powered by GoodDollar"
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/OnboardScreenSimple.tsx:32
 msgid "Special Offers"
-msgstr ""
+msgstr "Ofertas especiales"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/OnboardScreenSimple.tsx:63
 msgid "I Accept, Renew & Claim"
-msgstr ""
+msgstr "Acepto, renuevo y reclamo"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/OnboardScreenSimple.tsx:63
 msgid "I Accept, Verify & Claim"
-msgstr ""
+msgstr "Acepto, verifico y reclamo"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/OnboardScreenSimple.tsx:76
 msgid "Your GoodID unlocks access to:"
-msgstr ""
+msgstr "Tu GoodID desbloquea acceso a:"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/OnboardScreenSimple.tsx:91
 msgid "Your privacy is preserved."
-msgstr ""
+msgstr "Tu privacidad se preserva."
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/OnboardScreenSimple.tsx:107
 msgid "By clicking on ”{actionCopy}”, you are accepting our {tos} and {privy}. Per this policy you agree to let us collect information such as your gender and age."
-msgstr ""
+msgstr "Al hacer clic en \"Acepto, verificarme\", aceptas nuestros {tos} y {privy}. Por esta política usted acepta permitirnos recopilar información como su género y edad."
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/screens/SegmentationConfirmation.tsx:30
@@ -501,7 +503,7 @@ msgstr "Reclamos recientes (últimos 30 días):"
 #. js-lingui-explicit-id
 #: src/apps/ubi/screens/PostClaim.tsx:170
 msgid "Unable to load your recent claims, try again later"
-msgstr ""
+msgstr "No se puede cargar tus reclamaciones recientes, inténtalo de nuevo más tarde"
 
 #. js-lingui-explicit-id
 #: src/apps/ubi/screens/PreClaim.tsx:49
@@ -577,7 +579,7 @@ msgstr "Aprende sobre el proceso de identificación"
 #. js-lingui-explicit-id
 #: src/core/constants.ts:40
 msgid "What is GoodID?"
-msgstr ""
+msgstr "¿Qué es GoodID?"
 
 #. js-lingui-explicit-id
 #: src/core/inputs/WebVideoUploader.tsx:40
