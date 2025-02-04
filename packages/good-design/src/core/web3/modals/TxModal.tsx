@@ -1,36 +1,90 @@
-import React from "react";
+import React, { FC } from "react";
 import { noop } from "lodash";
-import { Text } from "native-base";
 import { TransactionStatus } from "@usedapp/core";
+import { VStack } from "native-base";
 
-import BasicStyledModal, { ModalFooterLearn } from "./BasicStyledModal";
+import { TransText } from "../../layout";
+import BasicStyledModal from "./BasicStyledModal";
+import { LearnButton } from "../../buttons";
 
 interface ITxModalProps {
-  type: "send" | "sign" | "identity";
+  type: "send" | "sign" | "signMultiClaim" | "identity" | "goodid";
   isPending: boolean;
+  customTitle?: { title: { id: string; values: any } };
   onClose?: () => void;
+  title?: string;
+  content?: string;
 }
 
 const txModalCopy = {
   sign: {
-    title: "Please sign with \n your wallet",
-    content: "To complete this action, sign with your wallet."
+    title: /*i18n*/ "Please sign with \n your wallet",
+    content:
+      /*i18n*/ "To complete this action, sign with your wallet. It can take a moment for a transaction to be validated."
+  },
+  signMultiClaim: {
+    title: "",
+    content: /*i18n*/ "To complete this action, sign with your wallet."
+  },
+  goodid: {
+    title: /*i18n*/ "Please sign with \n your wallet",
+    content:
+      /*i18n*/ "To complete this action, sign with your wallet. It can take a moment for a transaction to be validated."
   },
   identity: {
-    title: "Please sign with \n your wallet",
-    content: `We need to know youre you! Please sign\nwith your wallet to verify your identity.\n 
-Don’t worry, no link is kept between your\nidentity record and your wallet address.`
+    title: /*i18n*/ "Sign to Verify Uniqueness",
+    content:
+      /*i18n*/ "You’ll be asked to sign with your wallet to begin the verification.You may have to do this again from time to time."
   },
   send: {
-    title: "Waiting for \n confirmation",
-    content: "Please wait for the transaction to be validated."
+    title: /*i18n*/ "Waiting for \n confirmation",
+    content: /*i18n*/ "Please wait for the transaction to be validated."
   }
 };
 
-const TxModalContent = ({ content }: { content: string }) => <Text>{content}</Text>;
+const TxModalContent = ({ content }: { content: string }) => (
+  <TransText t={content} variant="sm-grey-650" paddingLeft={2} paddingRight={2} />
+);
 
-export const TxModal = ({ type, isPending, onClose = noop, ...props }: ITxModalProps) => {
+const TxContentMultiClaim = ({ content }: { content: string }) => (
+  <VStack space={2} paddingX={2}>
+    <TransText t={content} variant="sm-grey-650" />
+    <TransText
+      t={/*i18n*/ "It may take over a minute for transaction(s) to be signed."}
+      variant="sm-grey-650"
+      fontWeight="bold"
+    />
+  </VStack>
+);
+
+const TxContentIdentity = ({ content }: { content: string }) => (
+  <VStack space={2} paddingX={2}>
+    <TransText
+      t={/*i18n*/ "You’re almost there! To claim G$, you need prove you are a unique human."}
+      variant="sm-grey-650"
+      fontWeight="bold"
+    />
+    <TransText t={content} variant="sm-grey-650" />
+  </VStack>
+);
+
+const ContentComponent = {
+  sign: TxModalContent,
+  signMultiClaim: TxContentMultiClaim,
+  identity: TxContentIdentity,
+  send: TxModalContent,
+  goodid: TxModalContent
+};
+
+export const TxModal: FC<ITxModalProps> = ({
+  isPending,
+  onClose = noop,
+  customTitle,
+  type,
+  ...props
+}: ITxModalProps) => {
   const { title, content } = txModalCopy[type];
+  const Content = ContentComponent[type];
 
   return (
     <BasicStyledModal
@@ -38,11 +92,11 @@ export const TxModal = ({ type, isPending, onClose = noop, ...props }: ITxModalP
       type="learn"
       show={isPending}
       onClose={onClose}
-      title={title}
-      body={<TxModalContent content={content} />}
-      footer={<ModalFooterLearn source={type} />}
+      title={customTitle ?? title}
+      body={<Content content={content} />}
+      footer={<LearnButton type={type} />}
       withOverlay="dark"
-      withCloseButton
+      withCloseButton={false}
     />
   );
 };

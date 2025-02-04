@@ -1,6 +1,8 @@
 import { noop } from "lodash";
-import { Button, Center, Modal as NBModal, useColorModeValue, VStack } from "native-base";
+import { Button, Text, View, VStack } from "native-base";
 import React, { FC, ReactNode, useCallback } from "react";
+import { Platform } from "react-native";
+import { Dialog as NBModal } from "react-native-paper";
 
 export interface BasicModalProps {
   modalVisible: boolean;
@@ -24,22 +26,6 @@ export interface BasicModalProps {
   _header?: any;
 }
 
-const CloseButton = () => (
-  <NBModal.CloseButton
-    padding={0}
-    width={6}
-    height={6}
-    justifyContent="center"
-    alignItems={"center"}
-    position="relative"
-    top="0"
-    left="0"
-    right="0"
-    bottom="0"
-    _icon={{ size: 5 }}
-  />
-);
-
 const BasicModal: FC<BasicModalProps> = ({
   modalVisible,
   header,
@@ -48,60 +34,109 @@ const BasicModal: FC<BasicModalProps> = ({
   actionText,
   closeText,
   hasCloseButton = !!closeText,
-  hasTopBorder = true,
+  hasTopBorder = false,
   hasBottomBorder = true,
   onClose = noop,
   onAction = noop,
-  withOverlay,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  withOverlay = false,
   bgColor = "white",
-  type,
   _modal = {},
   _modalContainer = {},
-  _header = {},
+  _header,
   _body = {},
-  _footer = {}
+  _footer
 }) => {
   const onActionButtonPress = useCallback(() => {
     onAction();
     onClose();
   }, [onAction, onClose]);
 
-  const overlayDark = useColorModeValue("mainDarkContracts:alpha.40", "white:alpha.40");
-  const overlayBlur = "purple.300"; //todo: add blur overlay
+  const actionButton = actionText ? <Button onPress={onActionButtonPress}>{actionText}</Button> : null;
 
-  const bgOverlay = withOverlay === "dark" ? overlayDark : withOverlay === "blur" ? overlayBlur : "transparent";
+  return modalVisible ? (
+    <View
+      {...Platform.select({
+        web: { height: "100vh" }
+      })}
+      flex={1}
+      justifyContent="center"
+      alignItems="center"
+    >
+      <NBModal
+        visible={modalVisible}
+        onDismiss={onClose}
+        dismissable={hasCloseButton}
+        {..._modal}
+        style={{
+          width: 343,
+          padding: 0,
+          marginHorizontal: "auto",
+          marginLeft: "auto",
+          marginRight: "auto",
+          backgroundColor: "white"
+        }}
+      >
+        <NBModal.Content
+          style={{
+            ..._modalContainer,
+            maxWidth: 343,
+            paddingTop: 0,
+            paddingBottom: footer ? 0 : 24,
+            paddingLeft: 0,
+            paddingRight: 0
+          }}
+        >
+          {hasCloseButton ? (
+            <NBModal.Actions style={{ position: "absolute", top: 0, right: 0, zIndex: 1 }}>
+              <Button
+                onPress={onClose}
+                {...Platform.select({ web: { backgroundColor: "none" }, android: { backgroundColor: "transparent" } })}
+                color="goodGrey.400"
+                _hover={{ backgroundColor: "goodGrey.400:alpha.40" }}
+              >
+                <Text>X</Text>
+              </Button>
+            </NBModal.Actions>
+          ) : null}
+          <VStack width="100%" paddingX={2}>
+            {header ? (
+              <NBModal.Title
+                borderBottomWidth={hasTopBorder ? 1 : 0}
+                style={{
+                  marginLeft: "auto",
+                  marginRight: "auto",
+                  textAlign: "center",
+                  padding: 0,
+                  ...Platform.select({
+                    web: { marginTop: 22, padding: 0 }
+                  })
+                }}
+                {..._header}
+              >
+                {header}
+              </NBModal.Title>
+            ) : null}
 
-  const actionButton = actionText ? <Button onPress={onActionButtonPress}>{actionText}</Button> : <React.Fragment />;
-
-  return (
-    /* height 100vh is required so modal always shows in the middle */
-    <NBModal isOpen={modalVisible} onClose={onClose} {..._modal} minH="100vh" bgColor={bgOverlay}>
-      <NBModal.Content {..._modalContainer} w={"100%"} bgColor={bgColor}>
-        {hasCloseButton && (
-          <Center marginLeft="auto">
-            <CloseButton />
-          </Center>
-        )}
-        <VStack {...(type !== "loader" && { space: 6 })}>
-          {!!header && (
-            <NBModal.Header backgroundColor={bgColor} borderBottomWidth={hasTopBorder ? "px" : "0"} {..._header}>
-              {header}
-            </NBModal.Header>
-          )}
-
-          <NBModal.Body {..._body} bgColor={bgColor}>
-            {body}
-          </NBModal.Body>
-          {(!!footer || !!actionText) && (
-            <NBModal.Footer borderTopWidth={hasBottomBorder ? "px" : "0"} {..._footer} padding="0" bgColor={bgColor}>
-              {footer}
-              <Button.Group space={2}>{actionButton}</Button.Group>
-            </NBModal.Footer>
-          )}
-        </VStack>
-      </NBModal.Content>
-    </NBModal>
-  );
+            <NBModal.Content {..._body} bgColor={bgColor} style={{ padding: 0, margin: 0 }}>
+              {body}
+            </NBModal.Content>
+          </VStack>
+          {footer ? (
+            <VStack
+              paddingTop={0}
+              style={{ ...Platform.select({ android: { paddingLeft: 6, paddingRight: 6, paddingBottom: 6 } }) }}
+            >
+              <NBModal.Actions borderTopWidth={hasBottomBorder ? 1 : 0} {..._footer} padding="0" bgColor={bgColor}>
+                {footer}
+                {actionButton ? <Button.Group space={2}>{actionButton}</Button.Group> : null}
+              </NBModal.Actions>
+            </VStack>
+          ) : null}
+        </NBModal.Content>
+      </NBModal>
+    </View>
+  ) : null;
 };
 
 export default BasicModal;

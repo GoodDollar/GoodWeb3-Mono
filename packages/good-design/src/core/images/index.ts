@@ -1,2 +1,2 @@
 export { default as Image } from "./Image";
-export { default as SvgXml } from "./SvgXml";
+export { default as SvgXml } from "./SvgXml.web";

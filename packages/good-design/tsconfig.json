@@ -5,6 +5,7 @@
     "module": "commonjs",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
+    "moduleSuffixes": ["",".native",".web"],
     "strict": true,
     "skipLibCheck": true,
     "jsx": "react",
@@ -14,7 +15,6 @@
     "rootDir": "src",
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
-    "resolveJsonModule": true,
     "typeRoots": ["./node_modules/@types", "../../node_modules/@types", "src/custom.d.ts"],
     "noEmit": false,
     "isolatedModules": true,
@@ -23,6 +23,7 @@
     "declarationMap": true,
     "composite": true,
   },
-  "include": ["src/**/*", "src/**/*.json"],
-  "exclude": ["node_modules", "../../node_modules", "src/stories", "**/*.stories.tsx"]
+  "include": ["src/**/*", "src/**/*.json", "src/locales/**/*", "src/locales/index.ts"],
+  "exclude": ["node_modules", "../../node_modules", "src/stories", "**/*.stories.tsx", "src/locales/gen_supported_locales.js",],
+  "resolveJsonModule": true,
 }

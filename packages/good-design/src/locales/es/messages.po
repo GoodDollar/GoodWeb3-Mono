@@ -1,0 +1,745 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2024-07-05 09:37+0900\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: es_ES\n"
+"Project-Id-Version: goodui\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2025-01-31 10:59\n"
+"Last-Translator: \n"
+"Language-Team: Spanish\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: goodui\n"
+"X-Crowdin-Project-ID: 691741\n"
+"X-Crowdin-Language: es-ES\n"
+"X-Crowdin-File: /116-credential-storage/packages/good-design/src/locales/en/messages.po\n"
+"X-Crowdin-File-ID: 154\n"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/components/GoodIdCard.tsx:31
+msgid "Age"
+msgstr "Edad"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/components/GoodIdCard.tsx:32
+msgid "Gender"
+msgstr "Género"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/components/GoodIdCard.tsx:33
+msgid "Location"
+msgstr "Ubicación"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/components/GoodIdCard.tsx:52
+msgid "Unverified"
+msgstr "No verificada"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/components/GoodIdCard.tsx:135
+msgid "To upgrade your GoodID, please"
+msgstr "Para actualizar tu GoodID, por favor"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/components/GoodIdCard.tsx:146
+#: src/core/layout/UbiWizardHeader.tsx:11
+msgid "Claim"
+msgstr "Reclamar"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/components/GoodIdCard.tsx:155
+msgid "Expires on {expiryDate}"
+msgstr "Expira el {expiryDate}"
+
+#. context: I am (Male/Female)
+#. js-lingui-explicit-id
+#: src/apps/goodid/components/SegmentationRow.tsx:9
+msgid "I am"
+msgstr "Yo soy"
+
+#. context: Aged (X years of age)
+#. context: Aged (X years of age)
+#. js-lingui-explicit-id
+#: src/apps/goodid/components/SegmentationRow.tsx:10
+#: src/apps/goodid/components/SegmentationRow.tsx:16
+msgid "Aged"
+msgstr "Antigüedad"
+
+#. context: From (Location)
+#. js-lingui-explicit-id
+#: src/apps/goodid/components/SegmentationRow.tsx:11
+msgid "From"
+msgstr "Desde"
+
+#. context: Are you (Male/Female)
+#. js-lingui-explicit-id
+#: src/apps/goodid/components/SegmentationRow.tsx:15
+msgid "Are you"
+msgstr "Es usted"
+
+#. context: In (Location)
+#. js-lingui-explicit-id
+#: src/apps/goodid/components/SegmentationRow.tsx:17
+msgid "In"
+msgstr "En"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/controllers/OnboardController.tsx:181
+msgid "Please allow \n"
+" location access"
+msgstr "Permitir acceso a \n"
+" ubicación"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/DisputeThanks.tsx:16
+msgid "Thanks for letting us know!"
+msgstr "¡Gracias por avisarnos!"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/DisputeThanks.tsx:19
+msgid "Heads-up that information you’ve corrected may show as “Unverified” on your GoodID. \n\n"
+" This will not affect your ability to claim UBI!"
+msgstr "Atención: La información que has corregido puede mostrarse como \"sin verificar\" en tu GoodID.\n\n"
+"¡Esto no afectará a tu capacidad de reclamar UBI!"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/DisputeThanks.tsx:30
+#: src/apps/goodid/screens/SegmentationConfirmation.tsx:79
+#: src/apps/goodid/screens/SegmentationDispute.tsx:54
+#: src/apps/goodid/wizards/RedtentWizard.tsx:292
+msgid "Next"
+msgstr "Siguiente"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/GoodIdDetails.tsx:69
+msgid "FaceId"
+msgstr "Face ID"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/GoodIdDetails.tsx:78
+msgid "Show my FaceId"
+msgstr "Mostrar mi FaceId"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/GoodIdDetails.tsx:128
+msgid "Your GoodID unlocks access to UBI, financial services, humanitarian funds and \n"
+" other special offers and opportunities to earn GoodDollars."
+msgstr "Tu GoodID desbloquea el acceso a UBI, servicios financieros, fondos humanitarios y \n"
+" otras ofertas especiales y oportunidades para ganar GoodDollars."
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/GoodIdDetails.tsx:166
+msgid "My Wallet Address"
+msgstr "Dirección de mi billetera"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/GoodIdDetails.tsx:176
+msgid "This is the only wallet that is verified and that you may use to claim GoodDollars. If you want to verify and claim with another wallet, you may do so after the expiry date shown above."
+msgstr "Esta es la única cartera que se verifica y que puede utilizar para reclamar GoodDollars. Si desea verificar y reclamar con otra cartera, puede hacerlo después de la fecha de caducidad mostrada arriba."
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OffersAgreement.tsx:37
+msgid "You might qualify for extra money disbursements"
+msgstr "Podría calificar para desembolsos de dinero adicionales"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OffersAgreement.tsx:40
+msgid "Would you like to receive offers specific to you, such as special rewards offers, humanitarian funds, climate relief disbursements, and financial services?"
+msgstr "¿Te gustaría recibir ofertas específicas, tales como ofertas de recompensas especiales, fondos humanitarios, desembolsos de ayuda climática y servicios financieros?"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OffersAgreement.tsx:50
+msgid "By tapping “Yes” you’re allowing GoodLabs Ltd to read your GoodID until its expiration date only to show you offers relevant to you. We will not share your information with anyone. To read  our full Privacy Policy, go to {privy}"
+msgstr "Pulsando \"Sí\" acepta que GoodLabs Ltd lea su GoodID hasta su fecha de caducidad para mostrarle ofertas relevantes para usted. No compartiremos tu información con nadie. Para leer nuestra Política de Privacidad completa, ve a {privy}"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OffersAgreement.tsx:68
+msgid "yes, i accept"
+msgstr "sí, acepto"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OffersAgreement.tsx:76
+msgid "no"
+msgstr "no"
+
+#. GoodID feature access list
+#. GoodID feature access list
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreen.tsx:35
+#: src/apps/goodid/screens/OnboardScreenSimple.tsx:28
+msgid "Crypto UBI"
+msgstr "Crypto UBI"
+
+#. GoodID feature access list
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreen.tsx:39
+msgid "Humanitarian funds"
+msgstr "Fondos humanitarios"
+
+#. GoodID feature access list
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreen.tsx:43
+msgid "Climate relief disbursements"
+msgstr "Desembolsos de ayuda climática"
+
+#. GoodID feature access list
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreen.tsx:47
+msgid "Financial services"
+msgstr "Servicios financieros"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreen.tsx:81
+#: src/apps/goodid/screens/OnboardScreenSimple.tsx:60
+msgid "Renew your GoodID to claim UBI"
+msgstr "Renueve su GoodID para reclamar UBI"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreen.tsx:82
+#: src/apps/goodid/screens/OnboardScreenSimple.tsx:61
+msgid "Get your GoodID to claim UBI"
+msgstr "Obtén tu GoodID para reclamar UBI"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreen.tsx:104
+msgid "It unlocks access to:"
+msgstr "Desbloquea el acceso a:"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreen.tsx:119
+msgid "Verification takes 2 minutes"
+msgstr "La verificación tarda 2 minutos"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreen.tsx:129
+msgid "Your GoodID lives in your local storage. If you use other devices, browsers or browser sessions to access GoodDollar, you will be asked to upgrade again."
+msgstr "Tu GoodID vive en tu almacenamiento local. Si utiliza otros dispositivos, navegadores o sesiones de navegador para acceder a GoodDollar, se le pedirá que actualice de nuevo."
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreen.tsx:146
+msgid "By clicking on ”I accept, verify me”, you are accepting our {tos} and {privy}. Per this policy you agree to let us collect information such as your gender and age."
+msgstr "Al hacer clic en \"Acepto, verificarme\", aceptas nuestros {tos} y {privy}. Por esta política usted acepta permitirnos recopilar información como su género y edad."
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreen.tsx:181
+msgid "I ACCEPT, VERIFY ME"
+msgstr "ACEPTO, VERIFIQUE ME"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreen.tsx:183
+#: src/apps/goodid/screens/OnboardScreenSimple.tsx:145
+msgid "Powered by GoodDollar"
+msgstr "Powered by GoodDollar"
+
+#. GoodID feature access list
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreenSimple.tsx:32
+msgid "Special Offers"
+msgstr "Ofertas especiales"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreenSimple.tsx:63
+msgid "I Accept, Renew & Claim"
+msgstr "Acepto, renuevo y reclamo"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreenSimple.tsx:63
+msgid "I Accept, Verify & Claim"
+msgstr "Acepto, verifico y reclamo"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreenSimple.tsx:76
+msgid "Your GoodID unlocks access to:"
+msgstr "Tu GoodID desbloquea acceso a:"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreenSimple.tsx:91
+msgid "Your privacy is preserved."
+msgstr "Tu privacidad se preserva."
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreenSimple.tsx:107
+msgid "By clicking on ”{actionCopy}”, you are accepting our {tos} and {privy}. Per this policy you agree to let us collect information such as your gender and age."
+msgstr "Al hacer clic en \"Acepto, verificarme\", aceptas nuestros {tos} y {privy}. Por esta política usted acepta permitirnos recopilar información como su género y edad."
+
+#. GoodID feature access list
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreenSimple.tsx:32
+msgid "Special Offers"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreenSimple.tsx:63
+msgid "I Accept, Renew & Claim"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreenSimple.tsx:63
+msgid "I Accept, Verify & Claim"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreenSimple.tsx:76
+msgid "Your GoodID unlocks access to:"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreenSimple.tsx:91
+msgid "Your privacy is preserved."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/OnboardScreenSimple.tsx:107
+msgid "By clicking on ”{actionCopy}”, you are accepting our {tos} and {privy}. Per this policy you agree to let us collect information such as your gender and age."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/SegmentationConfirmation.tsx:30
+msgid "We are creating \n"
+" your GoodID"
+msgstr "Estamos creando tu GoodID"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/SegmentationConfirmation.tsx:34
+msgid "Your GoodID is ready"
+msgstr "Tu GoodID está listo"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/SegmentationConfirmation.tsx:44
+msgid "You can always access your GoodID in your Profile."
+msgstr "Siempre puedes acceder a tu GoodID en tu perfil."
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/SegmentationConfirmation.tsx:50
+msgid "You can always access this GoodID \n"
+" by connecting your current wallet to {gooddapp}"
+msgstr "Siempre puedes acceder a este GoodID conectando tu billetera actual a {gooddapp}"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/SegmentationDispute.tsx:39
+msgid "Please indicate which is incorrect"
+msgstr "Por favor, indique que es incorrecto"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/SegmentationScreen.tsx:40
+msgid "We could not \n"
+" confirm your \n"
+" location"
+msgstr "No hemos podido confirmar tu localización"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/SegmentationScreen.tsx:50
+msgid "Please confirm"
+msgstr "Por favor, confirma"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:26
+msgid "Your first name"
+msgstr "Tu nombre"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:27
+msgid "Your age"
+msgstr "Tu edad"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:28
+msgid "Your location"
+msgstr "Tu ubicación"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:29
+msgid "What you plan to do with the money you receive"
+msgstr "Que planeas hacer con el dinero que recibes?"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:32
+msgid "Maximum video length 30sec"
+msgstr "Duración máxima del vídeo 30s"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:32
+msgid "Maximum size 20mb"
+msgstr "Tamaño máximo 20mb"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:34
+msgid "Your video may be reviewed by the \n"
+" GoodLabs or partner teams for \n"
+" verification purposes. Your video \n"
+" will not be shared or used publicly, \n"
+" and will be erased after a period of \n"
+" time."
+msgstr "Tu vídeo puede ser revisado por el \n"
+" GoodLabs o equipos asociados con fines de verificación. Tu video \n"
+" no será compartido o usado públicamente, \n"
+" y será borrado después de un periodo de \n"
+" tiempo."
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:39
+msgid "Nigeria"
+msgstr "Nigeria"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:40
+msgid "Colombia"
+msgstr "Colombia"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:43
+msgid "Female"
+msgstr "Mujer"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:44
+msgid "Male"
+msgstr "Hombre"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:79
+msgid "To qualify for this pool you need to: "
+msgstr "Para calificar para esta \"pool\" necesitas: "
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:85
+msgid "Have verified your gender as {gender} in your GoodID"
+msgstr "Has verificado tu género como {gender} en tu GoodID"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:97
+msgid "Have verified your country as {country} in your GoodID"
+msgstr "Has verificado tu género como {country} en tu GoodID"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:107
+msgid "Submit a video selfie saying: "
+msgstr "Enviar un video selfie diciendo: "
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:174
+msgid "You are eligible to claim more GoodDollars!"
+msgstr "¡Eres elegible para reclamar más GoodDollars!"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:179
+msgid "Learn more>>"
+msgstr "Más información>>"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:203
+msgid "Upload Video Selfie"
+msgstr "Subir video selfie"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:204
+msgid "Skip for now"
+msgstr "Saltar por ahora"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:238
+msgid "Video instructions"
+msgstr "Video instructivo"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:244
+msgid "Submit a video selfie"
+msgstr "Enviar un video selfie"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:245
+msgid "Restrictions"
+msgstr "Restricciones"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:246
+msgid "How will my video be used?"
+msgstr "¿Cómo se usará mi video?"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:269
+msgid "Thanks you for submitting your video!"
+msgstr "¡Gracias por enviar su video!"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:279
+msgid "You are now in the"
+msgstr "Ahora estás en el"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/wizards/RedtentWizard.tsx:289
+msgid " GoodCollective. You can claim this additional UBI daily."
+msgstr " GoodCollective. Puedes reclamar tu UBI adicional cada día."
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/wizards/SegmentationWizard.tsx:18
+msgid "We're checking \n"
+" your information"
+msgstr "Estamos comprobando \n"
+" tu información"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/wizards/SegmentationWizard.tsx:83
+msgid "yes, i am"
+msgstr "sí, soy"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/wizards/SegmentationWizard.tsx:86
+msgid "no, i am not"
+msgstr "no, no soy"
+
+#. js-lingui-explicit-id
+#: src/apps/newsfeed/NewsFeed.tsx:100
+msgid "News"
+msgstr "Noticias"
+
+#. js-lingui-explicit-id
+#: src/apps/ubi/components/TransactionStateCard.tsx:82
+msgid "Your Daily Basic Income"
+msgstr "Su ingreso básico diario"
+
+#. js-lingui-explicit-id
+#: src/apps/ubi/context/ClaimContext.tsx:116
+msgid "An unknown error occurred while claiming"
+msgstr "Se ha producido un error desconocido al reclamar"
+
+#. js-lingui-explicit-id
+#: src/apps/ubi/screens/PostClaim.tsx:63
+msgid "Your Next Claim"
+msgstr "Tu próximo reclamo"
+
+#. js-lingui-explicit-id
+#: src/apps/ubi/screens/PostClaim.tsx:87
+msgid "See all news >"
+msgstr "Ver todas las noticias >"
+
+#. js-lingui-explicit-id
+#: src/apps/ubi/screens/PostClaim.tsx:130
+msgid "You've claimed today"
+msgstr "Has reclamado hoy"
+
+#. js-lingui-explicit-id
+#: src/apps/ubi/screens/PostClaim.tsx:138
+msgid "CLAIM ON {altChain}"
+msgstr "Reclamar en {altChain}"
+
+#. js-lingui-explicit-id
+#: src/apps/ubi/screens/PostClaim.tsx:161
+msgid "Recent claims (Last 30 days):"
+msgstr "Reclamos recientes (últimos 30 días):"
+
+#. js-lingui-explicit-id
+#: src/apps/ubi/screens/PostClaim.tsx:170
+msgid "Unable to load your recent claims, try again later"
+msgstr "No se puede cargar tus reclamaciones recientes, inténtalo de nuevo más tarde"
+
+#. js-lingui-explicit-id
+#: src/apps/ubi/screens/PreClaim.tsx:49
+msgid "Claim your share"
+msgstr "Reclama tu parte"
+
+#. js-lingui-explicit-id
+#: src/apps/ubi/screens/PreClaim.tsx:67
+msgid "Claim Now"
+msgstr "Reclama ahora"
+
+#. js-lingui-explicit-id
+#: src/apps/ubi/screens/StartClaim.tsx:24
+msgid "Collect G$"
+msgstr "Recolecta G$"
+
+#. js-lingui-explicit-id
+#: src/apps/ubi/screens/StartClaim.tsx:34
+msgid "GoodDollar creates free money as a public \n"
+" good, G$ tokens, which you can collect daily."
+msgstr "GoodDollar crea dinero gratuito como bien público, tokens G$, que puedes recolectar diariamente."
+
+#. js-lingui-explicit-id
+#: src/apps/ubi/screens/StartClaim.tsx:48
+msgid "Claim G$"
+msgstr "Reclamar $"
+
+#. js-lingui-explicit-id
+#: src/apps/ubi/wizard/ClaimWizard.tsx:43
+msgid "Please sign with \n"
+" your wallet \n"
+"({remainingClaims} transaction(s) left)"
+msgstr "Por favor firma con,\n"
+"tu billetera\n"
+"({remainingClaims} transacciones restantes"
+
+#. js-lingui-explicit-id
+#: src/core/animated/SpinnerCheckMark.tsx:10
+msgid "Please wait while processing..."
+msgstr "Por favor espere mientras se procesa..."
+
+#. js-lingui-explicit-id
+#: src/core/buttons/LearnButton.tsx:28
+msgid "Learn"
+msgstr "Aprender"
+
+#. js-lingui-explicit-id
+#: src/core/constants.ts:10
+msgid "How do transactions work?"
+msgstr "¿Cómo funcionan las transacciones?"
+
+#. js-lingui-explicit-id
+#: src/core/constants.ts:15
+msgid "How does bridging work?"
+msgstr "¿Cómo funciona el puente?"
+
+#. js-lingui-explicit-id
+#: src/core/constants.ts:20
+msgid "What is a web3 network?"
+msgstr "¿Qué es una red web3?"
+
+#. js-lingui-explicit-id
+#: src/core/constants.ts:25
+#: src/core/constants.ts:30
+msgid "What is signing?"
+msgstr "¿Qué es firmar?"
+
+#. js-lingui-explicit-id
+#: src/core/constants.ts:35
+msgid "Learn about the identification process"
+msgstr "Aprende sobre el proceso de identificación"
+
+#. js-lingui-explicit-id
+#: src/core/constants.ts:40
+msgid "What is GoodID?"
+msgstr "¿Qué es GoodID?"
+
+#. js-lingui-explicit-id
+#: src/core/inputs/WebVideoUploader.tsx:40
+msgid "It seems the video format you uploaded is unsupported. 😕\n"
+"Supported formats include: MP4, WEBM, OGG, MOV, 3GP, M4V, AVI, and MKV.\n"
+" Please upload your video in one of these formats. Thank you!"
+msgstr "Parece ser que el formato de vídeo que has subido no es compatible. 😕\n"
+"Los formatos soportados son: MP4, WEBM, OGG, MOV, 3GP, M4V, AVI y MKV.\n"
+"Por favor, sube tu vídeo en uno de estos formatos. ¡Gracias!"
+
+#. js-lingui-explicit-id
+#: src/core/layout/UbiWizardHeader.tsx:12
+msgid "GoodID Upgrade"
+msgstr "Actualizar nuevo GoodID"
+
+#. js-lingui-explicit-id
+#: src/core/web3/modals/RedirectModal.tsx:13
+msgid "By accessing this link you are leaving \n"
+" gooddapp.org and are being redirected to a \n"
+" third-party, independent website."
+msgstr "Al acceder a este enlace, usted está saliendo de \n"
+" gooddapp.org y está siendo redirigido a un \n"
+" sitio web de terceros y independiente."
+
+#. js-lingui-explicit-id
+#: src/core/web3/modals/RedirectModal.tsx:21
+msgid "Redirect Notice"
+msgstr "Redirigir Aviso"
+
+#. js-lingui-explicit-id
+#: src/core/web3/modals/RedirectModal.tsx:23
+msgid "Go to website"
+msgstr "Ir al sitio web"
+
+#. js-lingui-explicit-id
+#: src/core/web3/modals/TxModal.tsx:21
+#: src/core/web3/modals/TxModal.tsx:30
+msgid "Please sign with \n"
+" your wallet"
+msgstr "Por favor, regístrate con \n"
+" su billetera"
+
+#. js-lingui-explicit-id
+#: src/core/web3/modals/TxModal.tsx:23
+#: src/core/web3/modals/TxModal.tsx:32
+msgid "To complete this action, sign with your wallet. It can take a moment for a transaction to be validated."
+msgstr "Para completar esta acción, firma con tu billetera. Puede que tengas que esperar unos minutos para validar una transacción."
+
+#. js-lingui-explicit-id
+#: src/core/web3/modals/TxModal.tsx:27
+msgid "To complete this action, sign with your wallet."
+msgstr "Para completar esta acción, firma con tu billetera."
+
+#. js-lingui-explicit-id
+#: src/core/web3/modals/TxModal.tsx:27
+msgid "To complete this action, sign with your wallet."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/core/web3/modals/TxModal.tsx:35
+msgid "Sign to Verify Uniqueness"
+msgstr "Firmar para verificar tu unicidad"
+
+#. js-lingui-explicit-id
+#: src/core/web3/modals/TxModal.tsx:37
+msgid "You’ll be asked to sign with your wallet to begin the verification.You may have to do this again from time to time."
+msgstr "Se te pedirá que firmes con tu billetera para comenzar la verificación. Es posible que, de vez en cuando, tengas que repetir este proceso."
+
+#. js-lingui-explicit-id
+#: src/core/web3/modals/TxModal.tsx:40
+msgid "Waiting for \n"
+" confirmation"
+msgstr "Esperando confirmación"
+
+#. js-lingui-explicit-id
+#: src/core/web3/modals/TxModal.tsx:41
+msgid "Please wait for the transaction to be validated."
+msgstr "Por favor, espere a que la transacción sea validada."
+
+#. js-lingui-explicit-id
+#: src/core/web3/modals/TxModal.tsx:53
+msgid "It may take over a minute for transaction(s) to be signed."
+msgstr "Puede tardar más de un minuto en firmarse la o las transacciones."
+
+#. js-lingui-explicit-id
+#: src/core/web3/modals/TxModal.tsx:63
+msgid "You’re almost there! To claim G$, you need prove you are a unique human."
+msgstr "¡Ya casi estás! Para reclamar G$, necesitas demostrar que eres un ser humano único."
+
+#. js-lingui-explicit-id
+#: src/core/web3/modals/YouSureModal.tsx:10
+#: src/core/web3/modals/YouSureModal.tsx:21
+msgid "Are you sure?"
+msgstr "¿Estás seguro?"
+
+#. js-lingui-explicit-id
+#: src/core/web3/modals/YouSureModal.tsx:12
+msgid "This cannot be undone! \n"
+"After deleting your Face ID, you must wait 24 hours before going through the face verification flow again. After 24 hours, you can verify again by pressing the “claim” button."
+msgstr "¡Esto no se puede deshacer! \n"
+"Después de eliminar tu Face ID, deberas esperar 24 horas antes de poder volver a realizar el proceso de verifiación. Después de 24 horas, podras verificar de nuevo pulsando el botón “reclamar”."
+
+#. js-lingui-explicit-id
+#: src/core/web3/modals/YouSureModal.tsx:13
+msgid "Delete Account"
+msgstr "Eliminar cuenta"
+
+#. js-lingui-explicit-id
+#: src/core/web3/modals/YouSureModal.tsx:16
+msgid "Are you sure you want to skip this offer for now?"
+msgstr "¿Estás seguro de que quieres saltarte esta oferta por ahora?"
+
+#. js-lingui-explicit-id
+#: src/core/web3/modals/YouSureModal.tsx:18
+msgid "Skip"
+msgstr "Saltar"
+
+#. js-lingui-explicit-id
+#: src/core/web3/modals/YouSureModal.tsx:22
+msgid "Keep in mind that even unsuccessful and failed transactions cost you gas. "
+msgstr "Tenga en cuenta que incluso las transacciones no exitosas y fallidas le cuestan gas. "
+
+#. js-lingui-explicit-id
+#: src/core/web3/modals/YouSureModal.tsx:23
+msgid "Yes, try again"
+msgstr "Sí, inténtelo de nuevo"
+
+#. js-lingui-explicit-id
+#: src/core/web3/modals/YouSureModal.tsx:72
+msgid "Don't show this again"
+msgstr "No mostrar esto de nuevo"
+

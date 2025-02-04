@@ -1,4 +1,5 @@
 import { extendTheme } from "native-base";
+import { Platform } from "react-native";
 import * as layout from "../core/layout/theme";
 import * as buttons from "../core/buttons/theme";
 import * as animated from "../core/animated/theme";
@@ -6,7 +7,7 @@ import * as web3modals from "../core/web3/modals/theme";
 import * as advanced from "../advanced/theme";
 import * as nativebase from "./nativebase";
 import * as apps from "../apps/theme";
-import { fontConfig, getPlatformFamilies } from "./fonts";
+import { fontConfig, getPlatformFamilies } from "./utils/fonts";
 
 export const theme = extendTheme({
   fontConfig: getPlatformFamilies(fontConfig),
@@ -22,20 +23,22 @@ export const theme = extendTheme({
     main: "#00AEFF",
     mainDark: "#151a30",
     mainDarkContrast: "#1a1f38",
-    text: "#0D182D",
     paragraph: "#0005376",
     heading: "#42454A",
     headingBlack: "#303030",
     headingGrey: "#999",
-    lightBlue: "#8499BB",
     txGreen: "#00C3AE",
 
     // UI
     buttonBackground: "#40C4FFCC",
 
     /* g$ design system */
-    primary: "#00AFFF",
+    gdPrimary: "#00AFFF",
     primaryHoverDark: "#0075AC",
+
+    goodLightBlue: {
+      100: "#8499BB"
+    },
     // text
     goodGrey: {
       300: "#D4D4D4",
@@ -54,6 +57,7 @@ export const theme = extendTheme({
       100: "#505661",
       200: "#3F444E",
       300: "#2F3338",
+      400: "#A5AEC0",
       500: "#26292F"
     },
 
@@ -98,6 +102,7 @@ export const theme = extendTheme({
     "2xs": 12,
     xs: 14,
     sm: 16,
+    ms: 18,
     md: 20,
     l: 24,
     xl: 30,
@@ -111,6 +116,16 @@ export const theme = extendTheme({
     ...animated,
     ...web3modals,
     ...nativebase,
+    Link: {
+      variants: {
+        "browse-wrap": () => ({
+          fontFamily: "subheading",
+          fontSize: "2xs",
+          color: "goodGrey.400",
+          textAlign: "center"
+        })
+      }
+    },
     Text: {
       baseStyle: {
         color: "goodGrey.600",
@@ -118,7 +133,7 @@ export const theme = extendTheme({
         fontSize: "sm",
         fontStyle: "normal",
         fontWeight: 400,
-        lineHeight: "130%" /* 20.8px */
+        ...Platform.select({ web: { lineHeight: 20.8, android: { lineHeight: 22 } } }) // "130%"
       },
       variants: {
         "browse-wrap": () => ({
@@ -127,12 +142,33 @@ export const theme = extendTheme({
           color: "goodGrey.400",
           textAlign: "center"
         }),
+        "sm-grey-400": () => ({
+          fontFamily: "subheading",
+          fontSize: "sm",
+          fontWeight: 400,
+          color: "goodGrey.400",
+          lineHeight: 17.5
+        }),
         "xs-green": () => ({
           fontFamily: "subheading",
           fontSize: "xs",
           fontWeight: 700,
           color: "goodGreen.300",
-          lineHeight: "18.2"
+          lineHeight: 18.2
+        }),
+        "4xs-grey-400": () => ({
+          fontFamily: "subheading",
+          fontSize: "4xs",
+          color: "goodGrey.400",
+          fontWeight: 500,
+          lineHeight: 19
+        }),
+        "4xs-grey-600": () => ({
+          fontFamily: "subheading",
+          fontSize: "4xs",
+          color: "goodGrey.600",
+          fontWeight: 500,
+          lineHeight: 19
         }),
         "xs-grey": () => ({
           fontFamily: "subheading",
@@ -153,6 +189,13 @@ export const theme = extendTheme({
           fontSize: "sm",
           fontWeight: 400,
           color: "goodGrey.700",
+          lineHeight: 20.8
+        }),
+        "sm-white-normal": () => ({
+          fontFamily: "subheading",
+          fontSize: "sm",
+          fontWeight: "normal",
+          color: "white",
           lineHeight: 20.8
         }),
         "md-grey-700": () => ({
@@ -202,7 +245,7 @@ export const theme = extendTheme({
       variants: {
         "page-loader": () => ({
           borderWidth: "0",
-          color: "primary",
+          color: "gdPrimary",
           paddingBottom: 4
         })
       }

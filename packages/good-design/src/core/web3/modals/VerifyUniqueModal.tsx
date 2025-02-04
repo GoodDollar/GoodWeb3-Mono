@@ -2,7 +2,6 @@ import React from "react";
 import { Link, Text, VStack } from "native-base";
 
 import { useFVModalAction } from "../../../hooks/useFVModalAction";
-import { withTheme } from "../../../theme";
 import BasicStyledModal, { ModalFooterCta } from "./BasicStyledModal";
 import { TxModal } from "./TxModal";
 
@@ -24,34 +23,32 @@ const ModalContent = () => (
   </VStack>
 );
 
-export const VerifyUniqueModal = withTheme({ name: "BasicStyledModal" })(
-  ({ open, url, onClose, chainId, firstName, method, ...props }: any) => {
-    const { loading, verify } = useFVModalAction({
-      firstName,
-      method,
-      chainId,
-      onClose: onClose,
-      redirectUrl: url
-    });
+export const VerifyUniqueModal = ({ open, url, onClose, chainId, firstName, method, ...props }: any) => {
+  const { loading, verify } = useFVModalAction({
+    firstName,
+    method,
+    chainId,
+    onClose: onClose,
+    redirectUrl: url
+  });
 
-    return (
-      <>
-        {!loading ? (
-          <BasicStyledModal
-            {...props}
-            type="cta"
-            show={open}
-            onClose={onClose}
-            title={`Verify \n Uniqueness`}
-            body={<ModalContent />}
-            footer={<ModalFooterCta buttonText="VERIFY I'M HUMAN" action={verify} />}
-            withOverlay="dark"
-            withCloseButton
-          />
-        ) : (
-          <TxModal type="sign" isPending={loading} />
-        )}
-      </>
-    );
-  }
-);
+  return (
+    <>
+      {!loading ? (
+        <BasicStyledModal
+          {...props}
+          type="cta"
+          show={open}
+          onClose={onClose}
+          title={`Verify \n Uniqueness`}
+          body={<ModalContent />}
+          footer={<ModalFooterCta buttonText="VERIFY I'M HUMAN" action={verify} />}
+          withOverlay="dark"
+          withCloseButton
+        />
+      ) : (
+        <TxModal type="sign" isPending={loading} />
+      )}
+    </>
+  );
+};

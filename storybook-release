@@ -2,7 +2,7 @@
 rm -rf packages/good-design/storybook-static
 rm -rf packages/sdk-v2/storybook-static
 rm -rf dist/storybook
-(cp yarn.lock packages/good-design; cp yarn.lock packages/sdk-v2)
+#(cp yarn.lock packages/good-design; cp yarn.lock packages/sdk-v2)
 
 export YARN_FLAGS=
 export YARN_ENABLE_IMMUTABLE_INSTALLS=false

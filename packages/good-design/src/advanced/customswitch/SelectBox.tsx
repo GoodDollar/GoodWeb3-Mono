@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { withTheme } from "../../theme";
+import { withTheme } from "../../theme/hoc/withTheme";
 import { Pressable, ChevronDownIcon, Text } from "native-base";
 import FuseIcon from "../../assets/svg/fuse.svg";
 import CeloIcon from "../../assets/svg/celo.svg";

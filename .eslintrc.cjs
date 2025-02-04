@@ -3,7 +3,8 @@ module.exports = {
   parser: "@typescript-eslint/parser",
   env: {
     browser: true,
-    node: true
+    node: true,
+    es6: true
   },
   extends: [
     "eslint:recommended",
@@ -15,7 +16,8 @@ module.exports = {
   plugins: ["@typescript-eslint", "prettier", "react-hooks", "react-hooks-addons"],
   parserOptions: {
     tsconfigRootDir: __dirname,
-    project: ["./tsconfig.json", "./packages/*/tsconfig.json"]
+    project: ["./tsconfig.json", "./packages/*/tsconfig.json"],
+    ecmaVersion: 6
   },
   rules: {
     "no-undef": "error",

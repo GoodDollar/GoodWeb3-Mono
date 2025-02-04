@@ -7,7 +7,7 @@ import { IClaimCard } from "../buttons";
 import ClaimCard from "./ClaimCard";
 import ArrowLeft from "../../assets/svg/arrow-left.svg";
 import ArrowRight from "../../assets/svg/arrow-right.svg";
-import SvgXml from "../../core/images/SvgXml";
+import SvgXml from "../images/SvgXml.web";
 
 interface ClaimCarouselProps {
   cards: Array<IClaimCard>;

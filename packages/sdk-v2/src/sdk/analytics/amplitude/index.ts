@@ -1,3 +1,3 @@
-export * from './Amplitude';
-export * from './api';
-export * from './types';
+export * from "./Amplitude";
+export * from "./api";
+export * from "./types";

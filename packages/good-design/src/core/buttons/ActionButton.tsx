@@ -27,7 +27,6 @@ export const theme = {
   defaultProps: {},
   baseStyle: {
     fontSize: "xl",
-    lineHeight: "2xs",
     fontWeight: "black",
     textTransform: "capitalize",
     boxShadow: "3px 3px 10px -1px rgba(11, 27, 102, 0.304824)",

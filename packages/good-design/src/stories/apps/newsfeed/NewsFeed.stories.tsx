@@ -13,7 +13,7 @@ const NewsFeedWidget = () => {
 
   if (!feed) return null;
 
-  return <NewsFeed feed={feed} variant="multiRow" />;
+  return <NewsFeed feed={feed} direction="row" variant="multiRow" />;
 };
 
 export default {

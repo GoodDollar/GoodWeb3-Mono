@@ -1,9 +1,9 @@
 import { IButtonProps, ITextProps, View } from "native-base";
-import { Button, Text } from "native-base";
 import { IViewProps } from "native-base/lib/typescript/components/basic/View/types";
 import React from "react";
+
+import { GoodButton, TransText } from "../";
 import { withTheme } from "../../theme/hoc/withTheme";
-import { withThemingTools } from "../../theme/utils/themingTools";
 
 export interface BaseButtonProps extends IButtonProps {
   /**
@@ -19,26 +19,23 @@ export interface BaseButtonProps extends IButtonProps {
 
 const BaseButton = withTheme({ name: "BaseButton" })(
   ({ text, innerText, innerView, onPress, children, ...props }: BaseButtonProps) => (
-    <Button onPress={onPress} px={100} {...props}>
+    <GoodButton onPress={onPress} _text={{ color: "gdPrimary" }} variant="standard-blue" {...props}>
       <View {...innerView}>
-        <Text {...innerText}>{text}</Text>
+        {text ? <TransText t={text} {...innerText} /> : null}
         {children}
       </View>
-    </Button>
+    </GoodButton>
   )
 );
 
 export const theme = {
   defaultProps: {},
-  baseStyle: withThemingTools(({ colorModeValue }: { colorModeValue: any }) => {
-    const colors = ["lightBlue.400", "lightBlue.700"];
-    const [bg, bgHover] = colorModeValue(colors, [...colors].reverse());
-
+  baseStyle: () => {
     return {
       maxWidth: 750,
-      bg,
+      backgroundColor: "white",
       _hover: {
-        bg: bgHover
+        bg: "gdPrimary:alpha.80"
       },
       innerText: {
         fontWeight: "hairline",
@@ -46,7 +43,41 @@ export const theme = {
         textAlign: "center"
       }
     };
-  })
+  },
+  variants: {
+    "standard-blue": () => ({
+      innerView: {
+        backgroundColor: "gdPrimary",
+        borderRadius: 24,
+        width: 343,
+        textAlign: "center"
+      },
+      innerText: {
+        fontFamily: "subheading",
+        fontSize: "sm",
+        fontWeight: "bold",
+        textTransform: "uppercase"
+      }
+    }),
+    "link-like": () => ({
+      innerView: {
+        backgroundColor: "none",
+        paddingY: 0,
+        paddingX: 8,
+        width: 343,
+        textAlign: "center"
+      },
+      innerText: {
+        fontFamily: "subheading",
+        fontSize: "sm",
+        fontWeight: "700",
+        lineHeight: 20.8,
+        color: "goodGrey.400",
+        underline: true,
+        textTransform: "uppercase"
+      }
+    })
+  }
 };
 
 export default BaseButton;
