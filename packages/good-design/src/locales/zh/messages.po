@@ -8,15 +8,15 @@ msgstr ""
 "Language: zh_CN\n"
 "Project-Id-Version: goodui\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-01-31 10:35\n"
+"PO-Revision-Date: 2025-02-04 09:20\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Crowdin-Project: goodui\n"
 "X-Crowdin-Project-ID: 691741\n"
 "X-Crowdin-Language: zh-CN\n"
-"X-Crowdin-File: /116-credential-storage/packages/good-design/src/locales/en/messages.po\n"
-"X-Crowdin-File-ID: 154\n"
+"X-Crowdin-File: /master/packages/good-design/src/locales/en/messages.po\n"
+"X-Crowdin-File-ID: 168\n"
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/components/GoodIdCard.tsx:31
