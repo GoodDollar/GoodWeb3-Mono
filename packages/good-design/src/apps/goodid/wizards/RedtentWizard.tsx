@@ -59,7 +59,7 @@ const CardContent = ({ offer }: { offer: UBIPoolOffer }) => {
         fontWeight="400"
         color="goodGrey.600"
       />
-      <TransText t={`${formattedAmount} G$`} fontFamily="heading" color="gdPrimary" fontSize="l" fontWeight="700" />
+      <TransText t={`${formattedAmount}`} fontFamily="heading" color="gdPrimary" fontSize="l" fontWeight="700" />
     </VStack>
   );
 };
