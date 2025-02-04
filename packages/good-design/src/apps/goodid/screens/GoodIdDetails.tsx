@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { HStack, Pressable, Spinner, Text, useBreakpointValue, VStack } from "native-base";
+import { HStack, Link, Pressable, Spinner, Text, useBreakpointValue, VStack } from "native-base";
 import { SupportedChains, useFVLink } from "@gooddollar/web3sdk-v2";
 import Clipboard from "@react-native-clipboard/clipboard";
 
@@ -171,13 +171,40 @@ export const GoodIdDetails = withTheme({ name: "GoodIdDetails" })(
             <FaceId {...section} />
           </VStack>
         </VStack>
-        <TransText
-          t={
-            /*i18n*/ "This is the only wallet that is verified and that you may use to claim GoodDollars. If you want to verify and claim with another wallet, you may do so after the expiry date shown above."
-          }
-          variant="browse-wrap"
-          textAlign="center"
-        />
+        <VStack space={0}>
+          <TransText
+            t={
+              /*i18n*/ "This is the only wallet that is verified and that you may use to claim GoodDollars. If you want to verify and claim with another wallet, you may do so after the expiry date shown above."
+            }
+            variant="browse-wrap"
+            textAlign="center"
+          />
+          <TransText
+            variant="browse-wrap"
+            t={
+              /*i18n*/ "Or you may connect another wallet address to your identity by following {guideLink} and using {helperLink}."
+            }
+            values={{
+              guideLink: (
+                <Link
+                  href="https://docs.gooddollar.org/user-guides/connect-another-wallet-address-to-identity"
+                  isExternal
+                >
+                  <Text variant="browse-wrap" style={{ textDecorationLine: "underline" }}>
+                    {`this guide`}
+                  </Text>
+                </Link>
+              ),
+              helperLink: (
+                <Link href="https://vksjkg.csb.app/" isExternal>
+                  <Text variant="browse-wrap" style={{ textDecorationLine: "underline" }}>
+                    {`this helper app`}
+                  </Text>
+                </Link>
+              )
+            }}
+          />
+        </VStack>
       </VStack>
     );
   }
