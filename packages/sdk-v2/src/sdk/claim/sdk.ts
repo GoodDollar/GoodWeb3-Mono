@@ -1,5 +1,7 @@
 import { BigNumber } from "ethers";
-import { invokeMap, forIn } from "lodash";
+import { invokeMap } from "lodash";
+import { compressToEncodedURIComponent } from "lz-string";
+
 import { fvAuth, g$Response, g$AuthRequest } from "../goodid/";
 import { BaseSDK } from "../base/sdk";
 import { FV_LOGIN_MSG, FV_IDENTIFIER_MSG2 } from "../constants";
@@ -62,18 +64,10 @@ export class ClaimSDK extends BaseSDK {
         chain: chainId
       };
 
-      forIn(params, (value, param) => {
-        if (!value) {
-          return;
-        }
-
-        searchParams.append(param, String(value));
-      });
-
       if (callbackUrl) {
-        searchParams.append(popupMode ? "cbu" : "rdu", callbackUrl);
+        params[popupMode ? "cbu" : "rdu"] = callbackUrl;
       }
-
+      searchParams.append("lz", compressToEncodedURIComponent(JSON.stringify(params)));
       return url.toString();
     };
 
