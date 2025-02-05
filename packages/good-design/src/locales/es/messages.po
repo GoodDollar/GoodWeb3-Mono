@@ -8,7 +8,7 @@ msgstr ""
 "Language: es_ES\n"
 "Project-Id-Version: goodui\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-02-04 09:26\n"
+"PO-Revision-Date: 2025-02-05 15:55\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -17,6 +17,11 @@ msgstr ""
 "X-Crowdin-Language: es-ES\n"
 "X-Crowdin-File: /master/packages/good-design/src/locales/en/messages.po\n"
 "X-Crowdin-File-ID: 168\n"
+
+#. js-lingui-explicit-id
+#: src/apps/goodid/screens/GoodIdDetails.tsx:185
+msgid "Or you may connect another wallet address to your identity by following {guideLink} and using {helperLink}."
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/apps/goodid/components/GoodIdCard.tsx:31
@@ -136,7 +141,7 @@ msgid "My Wallet Address"
 msgstr "Dirección de mi billetera"
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/screens/GoodIdDetails.tsx:176
+#: src/apps/goodid/screens/GoodIdDetails.tsx:177
 msgid "This is the only wallet that is verified and that you may use to claim GoodDollars. If you want to verify and claim with another wallet, you may do so after the expiry date shown above."
 msgstr "Esta es la única cartera que se verifica y que puede utilizar para reclamar GoodDollars. Si desea verificar y reclamar con otra cartera, puede hacerlo después de la fecha de caducidad mostrada arriba."
 
