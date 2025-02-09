@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import { VStack } from "native-base";
 import { MicroBridgeController } from "../../../apps/bridge/MicroBridgeController";
 import { W3Wrapper } from "../../W3Wrapper";
