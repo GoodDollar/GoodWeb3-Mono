@@ -2,17 +2,9 @@ import { useState, useEffect } from "react";
 import Onboard from "@web3-onboard/core";
 import injectedModule from "@web3-onboard/injected-wallets";
 import { ethers, Contract, utils } from "ethers";
-import CallContractGasEstimation from "./contracts/CallContractGasEstimation.json";
-import CallContractWithToken from "./contracts/CallContractWithToken.json";
-import CallContract from "./contracts/CallContract.json";
+
 import gooddollar from "./contracts/gooddollar.json";
 import gooddollar2 from "./contracts/gooddollar2.json";
-
-import CallContractGasEstimationBinary from "./contracts/CallContractGasEstimation.txt";
-import CallContractWithTokenBinary from "./contracts/CallContractWithToken.txt";
-import CallContractBinary from "./contracts/CallContract.txt";
-import gooddollarBinary from "./contracts/gooddollar.txt";
-import setChain from "@web3-onboard/core/dist/chain";
 
 const MAINNET_RPC_URL = "https://rpc.ankr.com/eth";
 
@@ -71,6 +63,8 @@ const MPB = ({ srcNetwork, dstNetwork, provider }) => {
   const [userAddress, setUserAddress] = useState("");
   const [balance, setBalance] = useState("");
   const [fee, setFee] = useState("");
+  const [txHash, setTxHash] = useState("");
+  const [expLnk, setExpLnk] = useState("");
   const calculateFee = () => {
     var tFee = "";
     var tProvider = "";
@@ -215,10 +209,22 @@ const MPB = ({ srcNetwork, dstNetwork, provider }) => {
           var apr = await GooddollarContract.callStatic.approve("0xa3247276dbcc76dd7705273f766eb3e8a5ecf4a5", amt);
           apr = apr.wait();
           if (apr.transactionHash) {
+            const nfee = fee.match(/-?\d{1,3}(?:,\d{3})*(?:\.\d+)?/g).map(parseFloat)[0];
+            if ("undefined" == typeof provider || provider == "Axelar") {
+              const bp = 0;
+            } else {
+              const bp = 1;
+            }
             try {
-              apr = await GooddollarContract.callStatic.bridgeTo(userAddress, amt);
+              apr = await GooddollarContract.callStatic.bridgeTo(nfee, userAddress, dstChainId, amount, bp);
               apr = apr.wait();
               if (apr.transactionHash) {
+                setTxHash("Bridged successfully " + apr.transactionHash);
+                if (bp == 0) {
+                  setExpLnk("https://axelarscan.io/tx/" + apr.transactionHash.replace("0x", "").toUpperCase());
+                } else {
+                  setExpLnk("https://layerzeroscan.com/tx/" + apr.transactionHash);
+                }
               }
             } catch (err) {
               console.log(err);
@@ -230,33 +236,6 @@ const MPB = ({ srcNetwork, dstNetwork, provider }) => {
           alert("An error occured");
         }
       }
-
-      //console.log(b.toString());
-
-      /*const CallContractGasEstimationContract = new Contract(
-        "0x18460C4f98368EDaD279fA5A154C5cc80c2bB9Ff",
-        CallContractGasEstimation,
-        signer
-      );*/
-      //console.log(CallContractGasEstimationContract)
-      /*const fee = await CallContractGasEstimationContract.callStatic.estimateGasFee(
-        "base-sepolia",
-        "0xe432150cce91c13a887f7D836923d5597adD8E31",
-        amount
-      );*/
-      //console.log(utils.formatEther(fee.toString()));
-      //console.log(fee._hex)
-      /*const CallContractContract = new Contract("0x809bF4D3CD832355E92474c1cC01E60D8B3A705a", CallContract, signer);
-      var tx = await CallContractContract.setRemoteValue(
-        "base-sepolia",
-        "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
-        amount,
-        { value: fee }
-      );
-      tx = await tx.wait();
-      if (tx.transactionHash) {
-        console.log("ok, tx hash is: " + tx.transactionHash);
-      }*/
     }
   };
   return (
@@ -272,7 +251,11 @@ const MPB = ({ srcNetwork, dstNetwork, provider }) => {
       />
       <pre>{fee}</pre>
       <button onClick={handleOnClick}>{label}</button>
-      <pre>{txHash}</pre>
+      <pre>
+        <a target="_blank" href={expLnk}>
+          {txHash}
+        </a>
+      </pre>
     </>
   );
 };
