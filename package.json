@@ -41,7 +41,6 @@
     "ethers": "5.7.2"
   },
   "dependencies": {
-    "connectkit": "^1.8.2",
     "vercel": "^35.0.2"
   }
 }
