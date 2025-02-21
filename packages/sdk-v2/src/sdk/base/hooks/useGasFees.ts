@@ -19,7 +19,7 @@ export const useGasFees = () => {
       case 122:
         return BigNumber.from(11e9);
       case 42220:
-        return BigNumber.from(5e9);
+        return BigNumber.from(25e9);
     }
   }, [chainId]);
 

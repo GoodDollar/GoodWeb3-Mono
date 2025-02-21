@@ -63,7 +63,7 @@ export const useMultiClaim = (poolsDetails: PoolDetails[] | undefined) => {
     }[]
   >([]);
 
-  const { gasPrice = BigNumber.from(5e9) } = useGasFees();
+  const { gasPrice = BigNumber.from(25e9) } = useGasFees();
   const minBalance = BigNumber.from(chainId === 42220 ? "250000" : "150000").mul(gasPrice);
   const signer = (library as ethers.providers.JsonRpcProvider)?.getSigner();
 
