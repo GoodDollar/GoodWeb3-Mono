@@ -4,8 +4,8 @@ import MPB from "../../../apps/MBP/MPB";
 
 export default {
   title: "Components/MPB",
-  component: MPB,
-  argTypes: {
+  component: MPB
+  /*argTypes: {
     srcNetwork: {
       control: {
         type: "inline-radio",
@@ -24,13 +24,14 @@ export default {
         options: ["Axelar", "LayerZero"]
       }
     }
-  }
+  }*/
 };
 
 const Template = args => <MPB {...args} />;
 
 export const Primary = Template.bind({});
-Primary.args = {};
-
-export const Secondary = Template.bind({});
-Secondary.args = {};
+Primary.args = {
+  ethereumBalance: 5000654.454,
+  celoBalance: 54654.546,
+  fuseBalance: 54645.578
+};
