@@ -82,11 +82,12 @@
     "uuid": "*"
   },
   "packageManager": "yarn@3.2.1",
-  "dependencies": {   
+  "dependencies": {
     "@babel/core": "^7.18.10",
     "@babel/runtime": "^7.18.9",
     "@formatjs/intl-locale": "^4.0.0",
     "@formatjs/intl-pluralrules": "^5.2.14",
+    "@gooddollar/bridge-contracts": "^1.1.2",
     "@gooddollar/goodprotocol": "^2.0.24",
     "@lingui/core": "^4.11.2",
     "@lingui/react": "^4.11.2",
@@ -125,6 +126,6 @@
     "react-native-webview": "^13.2.2",
     "react-number-format": "^5.1.1",
     "react-use-promise": "^0.5.0",
-    "react-use-wizard": "^2.3.0"  
+    "react-use-wizard": "^2.3.0"
   }
 }
