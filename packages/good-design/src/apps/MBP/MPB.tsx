@@ -3,6 +3,7 @@ import Onboard from "@web3-onboard/core";
 import injectedModule from "@web3-onboard/injected-wallets";
 import { ethers, Contract } from "ethers";
 import { useG$Balance } from "@gooddollar/web3sdk-v2";
+import { useGetContract, useGetEnvChainId } from "@gooddollar/web3sdk-v2";
 import celo from "../../assets/svg/celo.svg";
 import fuse from "../../assets/svg/fuse.svg";
 import ethereum from "../../assets/svg/ethereum.svg";
@@ -11,7 +12,7 @@ import layerzero from "../../assets/svg/layerzero.svg";
 import sync from "../../assets/svg/sync.svg";
 import gooddollar from "./contracts/gooddollar.json";
 import gooddollar2 from "./contracts/gooddollar2.json";
-
+import Notification from "./Notification";
 const MAINNET_RPC_URL = "https://rpc.ankr.com/eth";
 
 const injected = injectedModule();
@@ -52,7 +53,37 @@ const onboard = Onboard({
   ]
 });
 
-const MPB = ({ ethereumBalance, celoBalance, fuseBalance }) => {
+const useNotification = () => {
+  const [notification, setNotification] = useState(null);
+
+  const showNotification = (type, message) => {
+    setNotification({ type, message });
+  };
+
+  useEffect(() => {
+    if (notification) {
+      const timer = setTimeout(() => {
+        setNotification(null);
+      }, 3000); // 3 seconds
+      return () => clearTimeout(timer);
+    }
+  }, [notification]);
+
+  const onClose = () => {
+    setNotification(null);
+  };
+
+  return { showNotification, notification, onClose };
+};
+
+export default useNotification;
+
+const MPB = ({ ethereumBalance, celoBalance, fuseBalance, useCanBridge, onBridge, relayStatus, bridgeStatus }) => {
+  /*const gdFuse = useGetContract("GoodDollar", true, "base", 122) as IGoodDollar;
+  const gdCelo = useGetContract("GoodDollar", true, "base", 42220) as IGoodDollar;
+  console.log(gdFuse);
+  console.log(gdCelo);*/
+  const { showNotification, notification, onClose } = useNotification();
   const [visibility, setVisibility] = useState("none");
   const [amount, setAmount] = useState("");
   const [label, setLabel] = useState("Connect Wallet");
@@ -109,6 +140,7 @@ const MPB = ({ ethereumBalance, celoBalance, fuseBalance }) => {
       borderColor: "rgb(0, 174, 255)"
     }
   });
+
   const handleSelect = buttonName => {
     const nets = ["ethereum", "celo", "fuse"];
     const providers = ["axelar", "layerzero"];
@@ -122,6 +154,7 @@ const MPB = ({ ethereumBalance, celoBalance, fuseBalance }) => {
         [buttonName]: "3px"
       }));
       if (nets.includes(buttonName)) {
+        setDstNetwork(buttonName.charAt(0).toUpperCase() + buttonName.slice(1));
         nets.map((net, index) => {
           if (buttonColors[net].backgroundColor !== "#ededed") {
             if (buttonName == net) {
@@ -146,6 +179,7 @@ const MPB = ({ ethereumBalance, celoBalance, fuseBalance }) => {
       }
 
       if (providers.includes(buttonName)) {
+        setProvider(buttonName.charAt(0).toUpperCase() + buttonName.slice(1));
         providers.map((provider, index) => {
           if (buttonColors[provider].backgroundColor !== "#ededed") {
             if (buttonName == provider) {
@@ -169,7 +203,6 @@ const MPB = ({ ethereumBalance, celoBalance, fuseBalance }) => {
         });
       }
     }
-    calculateFee();
 
     // Use setTimeout to revert the border width after 1 second
     setTimeout(() => {
@@ -246,62 +279,109 @@ const MPB = ({ ethereumBalance, celoBalance, fuseBalance }) => {
     setAngel(angel - 360);
   };
 
-  const calculateFee = () => {
+  const calculateFee = async () => {
     var tFee = "";
     var tProvider = "";
-    /*
-    /  This is CORS issue, try to authorize this origin from your express server
-    /  or run the request from the backend via another proxy server
-    const url = 'https://goodserver.gooddollar.org/bridge/estimatefees';
-    const response = await fetch(url);    
-    const text = await response.text();
-    */
-    const text = {
-      AXELAR: {
-        AXL_CELO_TO_ETH: "4.386499783337742 Celo",
-        AXL_ETH_TO_CELO: "0.000040911855813545 ETH"
-      },
-      LAYERZERO: {
-        LZ_ETH_TO_CELO: "0.000441359200711697 ETH",
-        LZ_ETH_TO_FUSE: "0.000320624723154988 ETH",
-        LZ_CELO_TO_ETH: "32.215487970930646 Celo",
-        LZ_CELO_TO_FUSE: "0.08875872068155444 CELO",
-        LZ_FUSE_TO_ETH: "157.674306032853 Fuse",
-        LZ_FUSE_TO_CELO: "2.20834510912 Fuse"
+    let text;
+    //  This is CORS issue, try to authorize this origin from your express server
+    //  or run the request from the backend via another proxy server
+    const url = "https://goodserver.gooddollar.org/bridge/estimatefees";
+    try {
+      const response = await fetch(url);
+      text = await response.json();
+      if ("undefined" == typeof text.AXELAR) {
+        showNotification("error", "Could not get estimation from the server");
+        text = {
+          AXELAR: {
+            AXL_CELO_TO_ETH: "4.386499783337742 Celo",
+            AXL_ETH_TO_CELO: "0.000040911855813545 ETH"
+          },
+          LAYERZERO: {
+            LZ_ETH_TO_CELO: "0.000441359200711697 ETH",
+            LZ_ETH_TO_FUSE: "0.000320624723154988 ETH",
+            LZ_CELO_TO_ETH: "32.215487970930646 Celo",
+            LZ_CELO_TO_FUSE: "0.08875872068155444 CELO",
+            LZ_FUSE_TO_ETH: "157.674306032853 Fuse",
+            LZ_FUSE_TO_CELO: "2.20834510912 Fuse"
+          }
+        };
       }
-    };
-    if ("undefined" == typeof provider || provider == "Axelar") {
-      tFee = "AXL_";
-      tProvider = "AXELAR";
-    } else {
-      tFee = "LZ_";
-      tProvider = "LAYERZERO";
+
+      if ("undefined" == typeof provider || provider == "Axelar") {
+        tFee = "AXL_";
+        tProvider = "AXELAR";
+      } else {
+        tFee = "LZ_";
+        tProvider = "LAYERZERO";
+      }
+      if ("undefined" == typeof srcNetwork || srcNetwork == "Ethereum") {
+        tFee += "ETH_TO_";
+      } else if (srcNetwork == "Celo") {
+        tFee += "CELO_TO_";
+      } else if (srcNetwork == "Fuse") {
+        tFee += "FUSE_TO_";
+      }
+      if ("undefined" == typeof dstNetwork || dstNetwork == "Celo") {
+        tFee += "CELO";
+      } else if (dstNetwork == "Ethereum") {
+        tFee += "ETH";
+      } else if (dstNetwork == "Fuse") {
+        tFee += "FUSE";
+      }
+      console.log(tFee);
+      console.log(tProvider);
+      setFee(text[tProvider][tFee]);
+      console.log(text[tProvider][tFee]);
+    } catch (err) {
+      showNotification("error", "Could not get estimation from the server");
+      // Using stored data, just to let you know how it looks like, you can remove it when ever you want
+      text = {
+        AXELAR: {
+          AXL_CELO_TO_ETH: "4.386499783337742 Celo",
+          AXL_ETH_TO_CELO: "0.000040911855813545 ETH"
+        },
+        LAYERZERO: {
+          LZ_ETH_TO_CELO: "0.000441359200711697 ETH",
+          LZ_ETH_TO_FUSE: "0.000320624723154988 ETH",
+          LZ_CELO_TO_ETH: "32.215487970930646 Celo",
+          LZ_CELO_TO_FUSE: "0.08875872068155444 CELO",
+          LZ_FUSE_TO_ETH: "157.674306032853 Fuse",
+          LZ_FUSE_TO_CELO: "2.20834510912 Fuse"
+        }
+      };
+      if ("undefined" == typeof provider || provider == "Axelar") {
+        tFee = "AXL_";
+        tProvider = "AXELAR";
+      } else {
+        tFee = "LZ_";
+        tProvider = "LAYERZERO";
+      }
+      if ("undefined" == typeof srcNetwork || srcNetwork == "Ethereum") {
+        tFee += "ETH_TO_";
+      } else if (srcNetwork == "Celo") {
+        tFee += "CELO_TO_";
+      } else if (srcNetwork == "Fuse") {
+        tFee += "FUSE_TO_";
+      }
+      if ("undefined" == typeof dstNetwork || dstNetwork == "Celo") {
+        tFee += "CELO";
+      } else if (dstNetwork == "Ethereum") {
+        tFee += "ETH";
+      } else if (dstNetwork == "Fuse") {
+        tFee += "FUSE";
+      }
+      console.log(tFee);
+      console.log(tProvider);
+      setFee(text[tProvider][tFee]);
+      console.log(text[tProvider][tFee]);
     }
-    if ("undefined" == typeof srcNetwork || srcNetwork == "Ethereum") {
-      tFee += "ETH_TO_";
-    } else if (srcNetwork == "Celo") {
-      tFee += "CELO_TO_";
-    } else if (srcNetwork == "Fuse") {
-      tFee += "FUSE_TO_";
-    }
-    if ("undefined" == typeof dstNetwork || dstNetwork == "Celo") {
-      tFee += "CELO";
-    } else if (dstNetwork == "Ethereum") {
-      tFee += "ETH";
-    } else if (dstNetwork == "Fuse") {
-      tFee += "FUSE";
-    }
-    console.log(tFee);
-    console.log(tProvider);
-    setFee(text[tProvider][tFee]);
-    console.log(text[tProvider][tFee]);
   };
   const handleChange = async event => {
     let numb = event.target.value.match(/^([0-9]+\.?[0-9]*|\.[0-9]+)?$/);
     console.log(numb);
     setAmount(numb[0].replace(/^0+/, ""));
     console.log(amount);
-    calculateFee();
+    await calculateFee();
   };
   const handleDstAddress = async event => {
     let address = event.target.value.match(/^0x[a-fA-F0-9]{0,40}$/);
@@ -326,7 +406,9 @@ const MPB = ({ ethereumBalance, celoBalance, fuseBalance }) => {
     } else if (dstNetwork === "Fuse") {
       setDstChainId(122);
     }
-
+    const recalculateFee = async () => {
+      await calculateFee();
+    };
     /*const checkBalance = async () => {
       const GooddollarContract = new Contract(contractAddress, gooddollar, signer);
       let ethaddress = userAddress.match(/0x[a-fA-F0-9]{40}/);
@@ -342,9 +424,11 @@ const MPB = ({ ethereumBalance, celoBalance, fuseBalance }) => {
       console.log(signer);
       setVisibility("block");
       setLabel("Review");
+      recalculateFee();
+
       //checkBalance();
       if (amount !== "") {
-        calculateFee();
+        recalculateFee();
         console.log(provider);
       }
     }
@@ -359,8 +443,15 @@ const MPB = ({ ethereumBalance, celoBalance, fuseBalance }) => {
 
       setUserAddress(wallets[0].accounts[0].address);
     } else {
-      if (label == "Review") {
-        if ("undefined" == typeof dstChainId) {
+      if (amount !== "") {
+        if (label == "Review") {
+          const canBridge = useCanBridge(srcNetwork, balance);
+          if (canBridge.isValid === true) {
+            setLabel("Bridge G$");
+          } else {
+            showNotification("error", canBridge.reason);
+          }
+          /*if ("undefined" == typeof dstChainId) {
           cId = 42220;
         } else {
           cId = dstChainId;
@@ -379,9 +470,26 @@ const MPB = ({ ethereumBalance, celoBalance, fuseBalance }) => {
           setLabel("Bridge G$");
         } else {
           alert("Sorry you can't bridge!");
-        }
-      } else {
-        const GooddollarContract = new Contract(contractAddress, gooddollar, signer);
+        }*/
+        } else {
+          const onBridgeResult = await onBridge();
+          var bp;
+          if ("undefined" == typeof provider || provider == "Axelar") {
+            bp = 0;
+          } else {
+            bp = 1;
+          }
+          if (onBridgeResult.success === true) {
+            if (bp == 0) {
+              setExpLnk("https://axelarscan.io/tx/" + onBridgeResult.txHash.replace("0x", "").toUpperCase());
+            } else {
+              setExpLnk("https://layerzeroscan.com/tx/" + onBridgeResult.txHash);
+            }
+            setTxHash("Bridged successfully " + onBridgeResult.txHash);
+            showNotification("success", "Bridged successfully!");
+          }
+
+          /*const GooddollarContract = new Contract(contractAddress, gooddollar, signer);
         let ethaddress = userAddress.match(/0x[a-fA-F0-9]{40}/);
         console.log(ethaddress[0]);
         console.log(GooddollarContract);
@@ -420,7 +528,10 @@ const MPB = ({ ethereumBalance, celoBalance, fuseBalance }) => {
         } catch (err) {
           console.log(err);
           alert("An error occured");
+        }*/
         }
+      } else {
+        showNotification("error", "You should insert amount");
       }
     }
   };
@@ -431,6 +542,7 @@ const MPB = ({ ethereumBalance, celoBalance, fuseBalance }) => {
   const providers = { Axelar: axelar, LayerZero: layerzero };
   return (
     <>
+      {notification && <Notification type={notification.type} message={notification.message} onClose={onClose} />}
       <div id="network" style={{ width: "100px", marginRight: "auto", marginLeft: "auto", display: visibility }}>
         <img style={{ width: "50px", height: "50px" }} src={srcNetworkImg} />
         <img
@@ -739,7 +851,14 @@ const MPB = ({ ethereumBalance, celoBalance, fuseBalance }) => {
       >
         {label}
       </button>
-      <pre>
+      <pre
+        style={{
+          fontFamily: "Roboto",
+          fontSize: "x-large",
+          fontWeight: "400",
+          textAlign: "center"
+        }}
+      >
         <a target="_blank" href={expLnk}>
           {txHash}
         </a>
