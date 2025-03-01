@@ -43,3 +43,20 @@ MicroBridgeFail.args = {
   relayStatus: undefined,
   bridgeStatus: undefined
 };
+export const MicroBridgeWaiting = Template.bind({});
+MicroBridgeWaiting.args = {
+  ethereumBalance: 5000654.454,
+  celoBalance: 54654.546,
+  fuseBalance: 54645.578,
+  useCanBridge: (chain: string, amountWei: string) => ({
+    isValid: true,
+    reason: ""
+  }),
+  onBridge: async () => ({
+    success: false,
+    txHash: "",
+    relayPromise: Promise.resolve({ txHash: "0xrelay", success: true })
+  }),
+  relayStatus: undefined,
+  bridgeStatus: undefined
+};
