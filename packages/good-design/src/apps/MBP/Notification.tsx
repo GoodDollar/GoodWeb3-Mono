@@ -2,14 +2,17 @@ import React from "react";
 import success from "../../assets/images/billy-celebration.png";
 import warning from "../../assets/images/billy-grin.png";
 import error from "../../assets/images/billy-oops.png";
+import waiting from "../../assets/images/billy-waiting.png";
 const Notification = ({ type, message, onClose }) => {
   var img;
   if (type == "success") {
     img = success;
   } else if (type == "warning") {
     img = warning;
-  } else {
+  } else if (type == "error") {
     img = error;
+  } else {
+    img = waiting;
   }
   return (
     <div

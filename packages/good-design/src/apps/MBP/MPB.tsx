@@ -472,7 +472,9 @@ const MPB = ({ ethereumBalance, celoBalance, fuseBalance, useCanBridge, onBridge
           alert("Sorry you can't bridge!");
         }*/
         } else {
+          const waiting = setInterval(showNotification("waiting", "Your transaction is pending..."), 1000);
           const onBridgeResult = await onBridge();
+          clearInterval(waiting);
           var bp;
           if ("undefined" == typeof provider || provider == "Axelar") {
             bp = 0;
