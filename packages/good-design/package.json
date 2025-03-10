@@ -88,7 +88,7 @@
     "@formatjs/intl-locale": "^4.0.0",
     "@formatjs/intl-pluralrules": "^5.2.14",
     "@gooddollar/bridge-contracts": "^1.1.2",
-    "@gooddollar/goodprotocol": "^2.0.24",
+    "@gooddollar/goodprotocol": "^2.0.31",
     "@lingui/core": "^4.11.2",
     "@lingui/react": "^4.11.2",
     "@magiklabs/react-sdk": "^1.0.8",
