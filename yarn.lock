@@ -5597,7 +5597,7 @@ __metadata:
     "@formatjs/intl-locale": ^4.0.0
     "@formatjs/intl-pluralrules": ^5.2.14
     "@gooddollar/bridge-contracts": ^1.1.2
-    "@gooddollar/goodprotocol": ^2.0.24
+    "@gooddollar/goodprotocol": ^2.0.31
     "@gooddollar/web3sdk-v2": ^0.4.1
     "@lingui/core": ^4.11.2
     "@lingui/react": ^4.11.2
@@ -5801,6 +5801,13 @@ __metadata:
     truffle-plugin-verify: ^0.6.1
     truffle-source-verify: ^0.0.6
   checksum: b1ba09ac716da3eddfe9f841ce540cc7b277a3806415f873605a3d548642eb459abd7acb6a7ac68316696f2e48b1c2ab3b3aa056a40653db5561a00592fb7e24
+  languageName: node
+  linkType: hard
+
+"@gooddollar/goodprotocol@npm:^2.0.31":
+  version: 2.0.31
+  resolution: "@gooddollar/goodprotocol@npm:2.0.31"
+  checksum: 28e0108c6552df4c3503f1f22c966796df7e1c5be7fb12153d1302cd6591daa8e82e38231b78177ad002a55f73861f6920e57ed6f628147d842e276eee795c2c
   languageName: node
   linkType: hard
 

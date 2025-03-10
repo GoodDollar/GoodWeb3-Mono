@@ -11,9 +11,7 @@ const Template = args => <MPB {...args} />;
 
 export const MicroBridgeSuccess = Template.bind({});
 MicroBridgeSuccess.args = {
-  ethereumBalance: 5000654.454,
-  celoBalance: 54654.546,
-  fuseBalance: 54645.578,
+  balance: 987968509,
   useCanBridge: (chain: string, amountWei: string) => ({
     isValid: true,
     reason: ""
@@ -28,9 +26,8 @@ MicroBridgeSuccess.args = {
 };
 export const MicroBridgeFail = Template.bind({});
 MicroBridgeFail.args = {
-  ethereumBalance: 5000654.454,
-  celoBalance: 54654.546,
-  fuseBalance: 54645.578,
+  balance: 50006544,
+ 
   useCanBridge: (chain: string, amountWei: string) => ({
     isValid: false,
     reason: "Insuficent funds to cover bridging fee"
@@ -44,10 +41,8 @@ MicroBridgeFail.args = {
   bridgeStatus: undefined
 };
 export const MicroBridgeWaiting = Template.bind({});
-MicroBridgeWaiting.args = {
-  ethereumBalance: 5000654.454,
-  celoBalance: 54654.546,
-  fuseBalance: 54645.578,
+MicroBridgeWaiting.args = {  
+  balance: 54645578,
   useCanBridge: (chain: string, amountWei: string) => ({
     isValid: true,
     reason: ""
