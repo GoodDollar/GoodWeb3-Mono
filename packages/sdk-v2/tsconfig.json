@@ -10,7 +10,7 @@
     "jsx": "react-jsx",
     "declarationDir": "types",
     "sourceMap": true,
-    "outDir": "dist",
+    "outDir": "dist/cjs",
     "rootDir": "src",
     "baseUrl": ".",
     "moduleResolution": "node",
@@ -23,7 +23,8 @@
     "emitDeclarationOnly": false,
     "declarationMap": true,
     "noImplicitAny": false,
-    "composite": true
+    "composite": true,
+    "removeComments": true,
   },
   "include": ["src/**/*"],
   "exclude": [

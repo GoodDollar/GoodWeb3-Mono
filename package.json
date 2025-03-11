@@ -41,6 +41,6 @@
     "ethers": "5.7.2"
   },
   "dependencies": {
-    "vercel": "^35.0.2"
+    "vercel": "^41.0.2"
   }
 }
