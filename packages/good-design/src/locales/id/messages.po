@@ -8,7 +8,7 @@ msgstr ""
 "Language: id_ID\n"
 "Project-Id-Version: goodui\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-02-05 17:24\n"
+"PO-Revision-Date: 2025-03-17 13:04\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -19,8 +19,18 @@ msgstr ""
 "X-Crowdin-File-ID: 168\n"
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/screens/GoodIdDetails.tsx:185
-msgid "Or you may connect another wallet address to your identity by following {guideLink} and using {helperLink}."
+#: src/advanced/web3action/Web3Action.tsx:28
+msgid "Connecting wallet..."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/advanced/web3action/Web3Action.tsx:29
+msgid "Switching network..."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/advanced/web3action/Web3Action.tsx:30
+msgid "Sign transaction..."
 msgstr ""
 
 #. js-lingui-explicit-id
