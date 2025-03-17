@@ -255,7 +255,7 @@ export const theme = extendTheme({
 
 // extend the theme
 export type MyThemeType = typeof theme;
-
 declare module "native-base" {
+  //@ts-ignore
   type ICustomTheme = MyThemeType;
 }

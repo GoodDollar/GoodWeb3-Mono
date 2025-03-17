@@ -19,7 +19,7 @@ export interface BaseButtonProps extends IButtonProps {
 
 const BaseButton = withTheme({ name: "BaseButton" })(
   ({ text, innerText, innerView, onPress, children, ...props }: BaseButtonProps) => (
-    <GoodButton onPress={onPress} _text={{ color: "gdPrimary" }} variant="standard-blue" {...props}>
+    <GoodButton onPress={onPress} _text={{ color: "gdPrimary" }} isLoadingText={text} {...props}>
       <View {...innerView}>
         {text ? <TransText t={text} {...innerText} /> : null}
         {children}
