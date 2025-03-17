@@ -19,8 +19,18 @@ msgstr ""
 "X-Crowdin-File-ID: 168\n"
 
 #. js-lingui-explicit-id
-#: src/apps/goodid/screens/GoodIdDetails.tsx:185
-msgid "Or you may connect another wallet address to your identity by following {guideLink} and using {helperLink}."
+#: src/advanced/web3action/Web3Action.tsx:28
+msgid "Connecting wallet..."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/advanced/web3action/Web3Action.tsx:29
+msgid "Switching network..."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/advanced/web3action/Web3Action.tsx:30
+msgid "Sign transaction..."
 msgstr ""
 
 #. js-lingui-explicit-id
