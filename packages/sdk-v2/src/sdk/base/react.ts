@@ -2,15 +2,15 @@ import { useContext, useMemo, useState } from "react";
 import { Signer, providers, BigNumber } from "ethers";
 import { BaseSDK, EnvKey, EnvValue } from "./sdk";
 import { TokenContext, Web3Context } from "../../contexts";
-import { QueryParams, useCalls, useEthers, ChainId, CurrencyValue } from "@usedapp/core";
+import { QueryParams, useCalls, useEthers, CurrencyValue } from "@usedapp/core";
 import { ClaimSDK } from "../claim/sdk";
 import { SavingsSDK } from "../savings/sdk";
 import Contracts from "@gooddollar/goodprotocol/releases/deployment.json";
 import { useReadOnlyProvider } from "../../hooks/useMulticallAtChain";
 import useUpdateEffect from "../../hooks/useUpdateEffect";
 import { useRefreshOrNever } from "../../hooks";
-import { SupportedChains, G$Balances, G$Tokens, G$Token, G$Amount } from "../constants";
-import { GoodReserveCDai, GReputation, IGoodDollar } from "@gooddollar/goodprotocol/types";
+import { G$Balances, G$Tokens, G$Token, G$Amount } from "../constants";
+import { GReputation, IGoodDollar } from "@gooddollar/goodprotocol/types";
 
 export const NAME_TO_SDK: { [key: string]: typeof ClaimSDK | typeof SavingsSDK | typeof BaseSDK } = {
   claim: ClaimSDK,
@@ -178,7 +178,7 @@ export function useG$Amount(value?: BigNumber, token: G$Token = "G$", requiredCh
  * you can destructure the return based on your input keys in values
  * @example const { key1, key2 } = useG$Amounts({ key1: BigNumber.from("100"), key2: BigNumber.from("200") })
  * @param values key value pair of amounts to convert
- * @param token which token, currently supports: "G%" / "GOOD" / "GDX"
+ * @param token which token, currently supports: "G%" / "GOOD"
  * @param requiredChainId
  * @returns
  */
@@ -216,8 +216,6 @@ export function useG$Decimals(token: G$Token = "G$", requiredChainId?: number): 
   const decimals = useContext(TokenContext)[token];
 
   switch (token) {
-    case "GDX":
-      return decimals[SupportedChains.MAINNET] || 2;
     default:
       return decimals[chainId];
   }
@@ -230,9 +228,6 @@ export function useG$Balance(refresh: QueryParams["refresh"] = "never", required
 
   const g$Contract = useGetContract("GoodDollar", true, "base", chainId) as IGoodDollar;
   const goodContract = useGetContract("GReputation", true, "base", chainId) as GReputation;
-  const gdxContract = useGetContract("GoodReserveCDai", true, "base", 1) as GoodReserveCDai;
-
-  const { MAINNET } = SupportedChains;
 
   const results = useCalls(
     [
@@ -253,29 +248,14 @@ export function useG$Balance(refresh: QueryParams["refresh"] = "never", required
     }
   );
 
-  const [mainnetGdx] = useCalls(
-    [
-      {
-        contract: gdxContract,
-        method: "balanceOf",
-        args: [account]
-      }
-    ].filter(_ => _.contract && chainId == MAINNET),
-    { refresh: refreshOrNever, chainId: MAINNET as unknown as ChainId }
-  );
-
-  const [g$Value, goodValue, gdxValue] = [...results, mainnetGdx].map(
-    result => result?.value?.[0] as BigNumber | undefined
-  );
+  const [g$Value, goodValue] = [...results].map(result => result?.value?.[0] as BigNumber | undefined);
 
   const g$Balance = useG$Amount(g$Value, "G$", chainId) as CurrencyValue;
   const goodBalance = useG$Amount(goodValue, "GOOD", chainId) as CurrencyValue;
-  const gdxBalance = useG$Amount(gdxValue, "GDX", 1) as CurrencyValue;
 
   const balances: G$Balances = {
     G$: g$Balance,
-    GOOD: goodBalance,
-    GDX: gdxBalance
+    GOOD: goodBalance
   };
 
   return balances;
