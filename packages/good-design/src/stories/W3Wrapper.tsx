@@ -1,6 +1,5 @@
 import { ExternalProvider, JsonRpcProvider } from "@ethersproject/providers";
 import { Web3Provider } from "@gooddollar/web3sdk-v2";
-import { Provider as PaperProvider } from "react-native-paper";
 import * as ethers from "ethers";
 import { View } from "react-native";
 import React, { useState } from "react";
@@ -45,10 +44,8 @@ export const W3Wrapper = ({ children, withMetaMask, env = "fuse" }: PageProps) =
   }
 
   return (
-    <PaperProvider>
-      <Web3Provider env={env} web3Provider={newProvider} config={config}>
-        <View>{children}</View>
-      </Web3Provider>
-    </PaperProvider>
+    <Web3Provider env={env} web3Provider={newProvider} config={config}>
+      <View>{children}</View>
+    </Web3Provider>
   );
 };
