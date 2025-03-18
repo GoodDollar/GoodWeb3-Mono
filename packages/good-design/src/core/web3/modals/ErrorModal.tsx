@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from "react";
+import { View, Text, Center } from "native-base";
 import { isEmpty } from "lodash";
 
 import BasicStyledModal, { ModalErrorBody } from "./BasicStyledModal";
 
 export const ErrorModal = ({
   error,
+  reason,
   overlay,
   onClose,
   ...props
 }: {
   error: string;
+  reason?: string;
   overlay: "dark" | "blur";
   onClose: () => void;
 }) => {
@@ -37,6 +40,13 @@ export const ErrorModal = ({
       withOverlay={overlay}
       titleVariant="title-gdred"
       body={<ModalErrorBody error={error} />}
+      footer={
+        <View w={"100%"}>
+          <Center>
+            <Text>{reason}</Text>
+          </Center>
+        </View>
+      }
     />
   );
 };
