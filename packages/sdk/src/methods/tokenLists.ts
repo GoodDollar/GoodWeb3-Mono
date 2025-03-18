@@ -4,7 +4,7 @@ import { Currency, Ether, Token } from "@uniswap/sdk-core";
 import flatMap from "lodash/flatMap";
 
 import { SupportedChainId } from "constants/chains";
-import { FUSE, G$, GDAO, GDX, TOKEN_LISTS } from "constants/tokens";
+import { FUSE, G$, GDAO, TOKEN_LISTS } from "constants/tokens";
 import { UnsupportedChainId } from "utils/errors";
 import { getChainId } from "utils/web3";
 import { ERC20Contract } from "contracts/ERC20Contract";
@@ -14,7 +14,7 @@ import FuseTokenList from "tokens/voltage-default.tokenlist.json";
 import { debug } from "utils/debug";
 
 const cachedTokens: Map<SupportedChainId, Map<string, Currency>> = new Map();
-const cachedTokensByAddress: Map<SupportedChainId, Map<string, Currency>> = new Map();
+const cachedTokenLogos: Map<SupportedChainId, Map<string, string>> = new Map();
 
 type TokenType = {
   chainId: number;
@@ -48,15 +48,14 @@ async function fetchURL(url: string): Promise<TokenType[]> {
  * @param {Token} token Necessary token.
  */
 export async function cacheToken(supportedChainId: SupportedChainId, token: Token): Promise<void> {
-  const [tokenList, tokenListByAddress] = await getTokens(supportedChainId);
+  const [tokenList, tokenLogos] = await getTokens(supportedChainId);
 
-  if (!tokenListByAddress || !tokenList) {
+  if (!tokenLogos || !tokenList) {
     throw new UnsupportedChainId(supportedChainId);
   }
 
-  if (!tokenList.has(token.symbol!) && !tokenListByAddress.has(token.address)) {
+  if (!tokenList.has(token.symbol!)) {
     tokenList.set(token.symbol!, token);
-    tokenListByAddress.set(token.address, token);
   }
 }
 
@@ -91,22 +90,20 @@ export async function getTokenByAddress(web3: Web3, address: string): Promise<To
  */
 export async function getTokens(
   supportedChainId: SupportedChainId
-): Promise<[Map<string, Currency>, Map<string, Currency>]> {
+): Promise<[Map<string, Currency>, Map<string, string>]> {
   const list = TOKEN_LISTS[supportedChainId] || [];
 
   if (cachedTokens.has(supportedChainId)) {
-    return [cachedTokens.get(supportedChainId)!, cachedTokensByAddress.get(supportedChainId)!];
+    return [cachedTokens.get(supportedChainId)!, cachedTokenLogos.get(supportedChainId)!];
   }
 
   const tokenList = new Map<string, Currency>();
-  const tokenListByAddress = new Map<string, Currency>();
+  const tokenLogos = new Map<string, string>();
 
   if (supportedChainId !== SupportedChainId.FUSE) {
     tokenList.set("ETH", Ether.onChain(supportedChainId));
-    tokenListByAddress.set(ethers.constants.AddressZero, Ether.onChain(supportedChainId));
   } else {
     tokenList.set("FUSE", FUSE);
-    tokenListByAddress.set(ethers.constants.AddressZero, FUSE);
   }
 
   const tokens = flatMap(
@@ -124,31 +121,23 @@ export async function getTokens(
 
     const _token = new Token(chainId, address, decimals, symbol, name);
     tokenList.set(symbol, _token);
-    tokenListByAddress.set(address, _token);
+    tokenLogos.set(symbol, token.logoURI);
   }
 
   // Add G$ support.
   if (G$[supportedChainId]) {
     tokenList.set("G$", G$[supportedChainId]);
-    tokenListByAddress.set(G$[supportedChainId].address, G$[supportedChainId]);
-  }
-
-  // Add G$X support.
-  if (GDX[supportedChainId]) {
-    tokenList.set("GDX", GDX[supportedChainId]);
-    tokenListByAddress.set(GDX[supportedChainId].address, GDX[supportedChainId]);
   }
 
   // Add GDAO support.
   if (GDAO[supportedChainId]) {
     tokenList.set("GDAO", GDAO[supportedChainId]);
-    tokenListByAddress.set(GDAO[supportedChainId].address, GDAO[supportedChainId]);
   }
 
   cachedTokens.set(supportedChainId, tokenList);
-  cachedTokensByAddress.set(supportedChainId, tokenListByAddress);
+  cachedTokenLogos.set(supportedChainId, tokenLogos);
 
-  return [tokenList, tokenListByAddress];
+  return [tokenList, tokenLogos];
 }
 
 /**
@@ -171,5 +160,7 @@ export async function getTokenByAddressFromList(
   supportedChainId: SupportedChainId,
   address: string
 ): Promise<Currency | undefined> {
-  return getTokens(supportedChainId).then(([, map]) => map.get(address));
+  return getTokens(supportedChainId).then(([tokens]) =>
+    Array.from(tokens.values()).find(_ => (_ as Token).address === address)
+  );
 }

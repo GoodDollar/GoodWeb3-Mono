@@ -25,7 +25,6 @@ export type SwapInfo = {
 
   DAIAmount: CurrencyAmount<Currency> | null;
   cDAIAmount: CurrencyAmount<Currency> | null;
-  GDXAmount: CurrencyAmount<Currency> | Fraction;
 
   priceImpact: Fraction;
   slippageTolerance: Percent;

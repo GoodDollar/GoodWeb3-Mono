@@ -316,7 +316,6 @@ export async function getBuyMeta(
 
     DAIAmount,
     cDAIAmount,
-    GDXAmount: outputAmount,
 
     priceImpact,
     slippageTolerance: slippageTolerancePercent,
