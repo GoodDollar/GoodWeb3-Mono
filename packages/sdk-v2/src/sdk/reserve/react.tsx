@@ -23,9 +23,7 @@ export const useExchangeId = () => {
   const { connectedEnv } = useGetEnvChainId(chainId);
 
   const mentoExchange = new Contract(
-    //TODO: remove
-    // contractAddresses[connectedEnv].MentoExchangeProvider || "0x558eC7E55855FAC9403De3ADB3aa1e588234A92C",
-    "0x558eC7E55855FAC9403De3ADB3aa1e588234A92C",
+    contractAddresses[connectedEnv].MentoExchangeProvider || "0x558eC7E55855FAC9403De3ADB3aa1e588234A92C",
     exchangeAbi
   );
   const exchanges = useCall(
@@ -44,12 +42,10 @@ export const useExchangeId = () => {
 
 export const useG$Price = (refresh: QueryParams["refresh"] = 12): BigNumber | undefined => {
   const refreshOrNever = useRefreshOrNever(refresh);
-  // const { connectedEnv } = useGetEnvChainId(chainId);
+  const { connectedEnv } = useGetEnvChainId(chainId);
 
   const mentoReserve = new Contract(
-    //TODO: remove
-    "0x558eC7E55855FAC9403De3ADB3aa1e588234A92C",
-    // contractAddresses[connectedEnv].MentoExchangeProvider || "0x02C5e6FfeC49Dca92af50A0718d2c4944DAaCb05",
+    contractAddresses[connectedEnv].MentoExchangeProvider || "0x558eC7E55855FAC9403De3ADB3aa1e588234A92C",
     exchangeAbi
   );
 
@@ -75,19 +71,16 @@ export const useSwapMeta = (
   output?: BigNumber,
   refresh: QueryParams["refresh"] = 5
 ) => {
-  // const { connectedEnv } = useGetEnvChainId(42220);
+  const { connectedEnv } = useGetEnvChainId(42220);
 
   const g$Price = useG$Price(refresh);
-  //TODO: remove
-  const cUSD = "0xeed145D8d962146AFc568E9579948576f63D5Dc2";
-  //contractAddresses[connectedEnv].CUSD || "0xeed145D8d962146AFc568E9579948576f63D5Dc2";
-  const exchangeProviderAddress = "0x558eC7E55855FAC9403De3ADB3aa1e588234A92C";
-  // contractAddresses[connectedEnv].MentoExchangeProvider || "0x558eC7E55855FAC9403De3ADB3aa1e588234A92C";
+  const cUSD = contractAddresses[connectedEnv].CUSD || "0xeed145D8d962146AFc568E9579948576f63D5Dc2";
+  const exchangeProviderAddress =
+    contractAddresses[connectedEnv].MentoExchangeProvider || "0x558eC7E55855FAC9403De3ADB3aa1e588234A92C";
   const [G$] = useG$Tokens();
 
   const mentoBroker = new Contract(
-    "0xE60cf1cb6a56131CE135c604D0BD67e84B57CA3C",
-    // contractAddresses[connectedEnv].MentoBroker || "0xE60cf1cb6a56131CE135c604D0BD67e84B57CA3C",
+    contractAddresses[connectedEnv].MentoBroker || "0xE60cf1cb6a56131CE135c604D0BD67e84B57CA3C",
     brokerAbi
   );
 
@@ -140,14 +133,13 @@ export const useSwap = (
 ) => {
   if (exactInput && exactOutput) throw new Error("Only one of exactInput or exactOutput can be specified");
 
-  // const { connectedEnv } = useGetEnvChainId(42220);
+  const { connectedEnv } = useGetEnvChainId(42220);
   const exchangeId = useExchangeId();
 
-  const exchangeProviderAddress = "0x558eC7E55855FAC9403De3ADB3aa1e588234A92C";
-  // contractAddresses[connectedEnv].MentoExchangeProvider || "0x558eC7E55855FAC9403De3ADB3aa1e588234A92C";
+  const exchangeProviderAddress =
+    contractAddresses[connectedEnv].MentoExchangeProvider || "0x558eC7E55855FAC9403De3ADB3aa1e588234A92C";
   const mentoBroker = new Contract(
-    "0xE60cf1cb6a56131CE135c604D0BD67e84B57CA3C",
-    // contractAddresses[connectedEnv].MentoBroker || "0xE60cf1cb6a56131CE135c604D0BD67e84B57CA3C",
+    contractAddresses[connectedEnv].MentoBroker || "0xE60cf1cb6a56131CE135c604D0BD67e84B57CA3C",
     brokerAbi
   );
   const approve = useContractFunctionWithDefaultGasFees(new Contract(inputToken, ERC20Interface), "approve");
