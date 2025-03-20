@@ -23,17 +23,17 @@ export type SwapInfo = {
   outputAmount: CurrencyAmount<Currency>;
   minimumOutputAmount: CurrencyAmount<Currency>;
 
-  DAIAmount: CurrencyAmount<Currency> | null;
-  cDAIAmount: CurrencyAmount<Currency> | null;
+  DAIAmount?: CurrencyAmount<Currency>;
+  cDAIAmount?: CurrencyAmount<Currency>;
 
-  priceImpact: Fraction;
-  slippageTolerance: Percent;
+  priceImpact?: Fraction;
+  slippageTolerance?: Percent;
 
-  liquidityFee: CurrencyAmount<Currency>;
-  liquidityToken: Currency;
+  liquidityFee?: CurrencyAmount<Currency>;
+  liquidityToken?: Currency;
 
-  route: Token[];
-  trade: Trade<Currency, Currency, TradeType> | null;
+  route?: Token[];
+  trade?: Trade<Currency, Currency, TradeType>;
 };
 
 //-- Buy
