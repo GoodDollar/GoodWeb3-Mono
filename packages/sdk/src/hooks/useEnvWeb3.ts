@@ -21,7 +21,7 @@ export const getRpc = (chainId: number): string => {
       return defaultRPC[chainId];
     default:
     case 1:
-      return "https://rpc.ankr.com/eth";
+      return "https://eth.llamarpc.com";
   }
 };
 
