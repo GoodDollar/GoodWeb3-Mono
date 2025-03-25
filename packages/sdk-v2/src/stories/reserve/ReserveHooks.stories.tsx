@@ -1,9 +1,10 @@
-import React from "react";
-import { W3Wrapper } from "../W3Wrapper";
+import React, { useEffect, useState } from "react";
 import { ComponentStory, ComponentMeta } from "@storybook/react";
-import { useExchangeId, useG$Price, useSwapMeta, useSwap } from "../../sdk/reserve/react";
 import { useEthers } from "@usedapp/core";
 import { ethers } from "ethers";
+
+import { useExchangeId, useG$Price, useSwapMeta, useSwap } from "../../sdk/reserve/react";
+import { W3Wrapper } from "../W3Wrapper";
 
 export interface PageProps {
   inputToken: string;
@@ -13,8 +14,10 @@ export interface PageProps {
 }
 
 const Web3Component = (props: PageProps) => {
-  const price = useG$Price();
   const { account = "0x" } = useEthers();
+  const [swapError, setError] = useState(undefined);
+
+  const price = useG$Price();
   const buyingMeta = useSwapMeta(account, true, 0.1, ethers.utils.parseEther("1000"), undefined);
   const sellingMeta = useSwapMeta(account, false, 0.1, ethers.utils.parseEther("1000"), undefined);
   const exchangeId = useExchangeId();
@@ -26,6 +29,15 @@ const Web3Component = (props: PageProps) => {
       minAmountOut: ethers.utils.parseEther(String(props.minAmountOut)).toString()
     }
   );
+
+  useEffect(() => {
+    const { state } = swap.swap;
+
+    if (state.status === "Exception") {
+      setError(state.errorMessage);
+    }
+  }, [swap]);
+
   return (
     <>
       <div>
@@ -34,17 +46,27 @@ const Web3Component = (props: PageProps) => {
       <div>
         <h3>exchangeId: {exchangeId}</h3>
       </div>
-      <div>
-        <h3>
-          <pre>{JSON.stringify(buyingMeta)}</pre>
-        </h3>
+      <div style={{ flexDirection: "row", display: "flex" }}>
+        <div>
+          <h3>
+            Buying Meta
+            <pre>{JSON.stringify(buyingMeta, null, 2)}</pre>
+          </h3>
+        </div>
+        <div>
+          <h3>
+            Selling Meta:
+            <pre>{JSON.stringify(sellingMeta, null, 2)}</pre>
+          </h3>
+        </div>
       </div>
       <div>
-        <h3>
-          <pre>{JSON.stringify(sellingMeta)}</pre>
-        </h3>
-      </div>
-      <div>
+        {swapError ? (
+          <div>
+            <h3>Swap Error</h3>
+            <pre>{swapError}</pre>
+          </div>
+        ) : null}
         <button
           onClick={async () => {
             const tx = await swap.swap.send();
