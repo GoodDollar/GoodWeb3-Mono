@@ -20,7 +20,6 @@ export enum SupportedV2Networks {
 export interface G$Balances {
   G$: CurrencyValue;
   GOOD: CurrencyValue;
-  GDX: CurrencyValue;
 }
 
 export type G$Token = keyof G$Balances;
@@ -30,7 +29,6 @@ export type G$DecimalsByChain = Partial<Record<SupportedChains, number>>;
 export type G$DecimalsMap = {
   G$: G$DecimalsByChain;
   GOOD: G$DecimalsByChain;
-  GDX: G$DecimalsByChain;
 };
 
 // will be used as default (fallback) values
@@ -44,9 +42,6 @@ export const G$Decimals: G$DecimalsMap = {
     [SupportedChains.MAINNET]: 18,
     [SupportedChains.FUSE]: 18,
     [SupportedChains.CELO]: 18
-  },
-  GDX: {
-    [SupportedChains.MAINNET]: 2
   }
 };
 
@@ -88,26 +83,22 @@ export const G$TokenContracts = {
     contract: "GReputation",
     name: "GOOD",
     ticker: "GOOD"
-  },
-  GDX: {
-    contract: "GoodReserveCDai",
-    name: "G$X",
-    ticker: "GDX"
   }
 };
 
 const CURRENCIES_CASH = {};
-export function G$Token(tokenName: G$Token, chainId: number, env: string, decimalsMap: G$DecimalsMap = G$Decimals) {
+export function G$Token(
+  tokenName: G$Token,
+  chainId: number,
+  env: string,
+  decimalsMap: G$DecimalsMap = G$Decimals
+): Token {
   const { contract, name, ticker } = G$TokenContracts[tokenName];
 
-  let tokenEnv: string = env;
-  let tokenChain: number = chainId;
+  const tokenEnv: string = env;
+  const tokenChain: number = chainId;
 
   switch (tokenName) {
-    case "GDX":
-      tokenEnv = "production-mainnet"; // only hardcoded because of missing dev contracts (deprecated ropsten/kovan)
-      tokenChain = SupportedChains.MAINNET;
-      break;
     default:
       break;
   }

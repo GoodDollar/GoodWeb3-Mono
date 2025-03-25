@@ -1,17 +1,21 @@
-import React from "react";
+import * as React from "react";
 import { noop } from "lodash";
 import { Meta } from "@storybook/react";
-import { Text } from "native-base";
-import moment from "moment";
+import { Text, View, Center } from "native-base";
+import * as moment from "moment";
 
 import { G$Amount } from "@gooddollar/web3sdk-v2";
 import { ethers } from "ethers";
 
-import { BasicStyledModal, ClaimSuccessModal, TxDetailsModal } from "../../../core/web3/modals";
+import {
+  BasicStyledModal,
+  ClaimSuccessModal,
+  TxDetailsModal,
+  ErrorModal as ErrorModalComponent
+} from "../../../core/web3/modals";
 import {
   ModalFooterCta,
   ModalFooterCtaX,
-  ModalFooterLearn,
   ModalFooterSocial,
   ModalErrorBody
 } from "../../../core/web3/modals/BasicStyledModal";
@@ -27,12 +31,10 @@ const meta: Meta<PagePropsAndCustomArgs> = {
         <ModalFooterCta buttonText="VERIFY I'M HUMAN" action={noop} />
       ) : args.type === "ctaX" ? (
         <ModalFooterCtaX extUrl="https://www.google.com" buttonText="Click me" />
-      ) : args.type === "learn" ? (
-        <ModalFooterLearn source="sign" />
       ) : args.type === "social" ? (
         <ModalFooterSocial />
       ) : (
-        <></>
+        args.footer || <></>
       );
     return <BasicStyledModal {...args} footer={footer} />;
   },
@@ -87,14 +89,24 @@ export const BasicModal = {
   }
 };
 
-export const ErrorModal = {
+export const ErrorModalBody = {
   args: {
     withCloseButton: true,
     withOverlay: "dark",
     type: "loader",
     titleVariant: "title-gdred",
     title: "Oops!",
-    body: <ModalErrorBody error="This is an error message" />
+    body: <ModalErrorBody error="This is an error message" />,
+    footer: (
+      <View w={"100%"} ta={"center"}>
+        <Center>
+          <Text>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+            dolore magna aliqua.
+          </Text>
+        </Center>
+      </View>
+    )
   }
 };
 
@@ -119,3 +131,12 @@ export const TransactionDetailsModal = () => {
 };
 
 export const SuccessModal = () => <ClaimSuccessModal open={true} />;
+
+export const ErrorModal = () => (
+  <ErrorModalComponent
+    error="This is an error message"
+    reason="This is a reason message"
+    overlay="blur"
+    onClose={() => undefined}
+  />
+);

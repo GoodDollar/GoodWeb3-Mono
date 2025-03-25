@@ -12,6 +12,6 @@ export async function getTokenList(chainId: SupportedChainId): Promise<Currency[
   const [tokens] = await getTokens(chainId);
 
   return Array.from(tokens.values()).filter(
-    token => token.name && token.symbol && !["G$", "GDX", "GDAO"].includes(token.symbol)
+    token => token.name && token.symbol && !["G$", "GDAO"].includes(token.symbol)
   );
 }

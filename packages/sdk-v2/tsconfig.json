@@ -2,7 +2,8 @@
   "compilerOptions": {
     "target": "es2019",
     "lib": ["es2019", "dom", "dom.iterable"],
-    "module": "commonjs",
+    "module": "ESNext",
+    "outDir": "dist/esm",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
@@ -10,7 +11,6 @@
     "jsx": "react-jsx",
     "declarationDir": "types",
     "sourceMap": true,
-    "outDir": "dist/cjs",
     "rootDir": "src",
     "baseUrl": ".",
     "moduleResolution": "node",

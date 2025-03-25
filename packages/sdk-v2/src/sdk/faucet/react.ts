@@ -37,7 +37,7 @@ export const useFaucet = (refresh: QueryParams["refresh"] = 12) => {
   const { baseEnv } = useGetEnvChainId(); // get the env the user is connected to
   const faucet = useGetContract(chainId === SupportedChains.FUSE ? "FuseFaucet" : "Faucet", true, "base") as Faucet;
 
-  const { gasPrice = BigNumber.from(5e9) } = useGasFees();
+  const { gasPrice = BigNumber.from(25e9) } = useGasFees();
   const minBalance = BigNumber.from(chainId === 42220 ? "250000" : "150000").mul(gasPrice);
 
   const faucetResult = useCalls(

@@ -10,5 +10,6 @@ export * from "./microbridge";
 export * from "./newsfeed";
 export * from "./onboard";
 export * from "./redtent";
+export * from "./reserve";
 export * from "./savings";
 export * from "./storage";

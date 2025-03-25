@@ -35,14 +35,18 @@ export function G$ContractAddresses<T = ObjectLike>(chainId: SupportedChainId, n
         deploymentName = CURRENT_NETWORK;
       }
       break;
+    case SupportedChainId.CELO:
+      deploymentName = CURRENT_NETWORK;
+      break;
   }
 
   if (!contractsAddresses[deploymentName]) {
     console.warn(`tokens: Unsupported chain ID ${deploymentName}`, CURRENT_NETWORK);
-    deploymentName = deploymentName.includes("mainnet") ? CURRENT_NETWORK + "-mainnet" : CURRENT_NETWORK;
+    deploymentName = deploymentName?.includes("mainnet") ? CURRENT_NETWORK + "-mainnet" : CURRENT_NETWORK;
   }
   if (!contractsAddresses[deploymentName][name]) {
-    throw new Error(`Inappropriate contract name ${name} in ${deploymentName} ${chainId}`);
+    console.warn(`Inappropriate contract name ${name} in ${deploymentName} ${chainId}`);
+    return undefined;
   }
 
   return contractsAddresses[deploymentName][name] as unknown as T;
