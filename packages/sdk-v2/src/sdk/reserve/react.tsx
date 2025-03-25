@@ -72,20 +72,20 @@ export const useSwapMeta = (
   refresh: QueryParams["refresh"] = 5
 ) => {
   const { connectedEnv } = useGetEnvChainId(42220);
+  const refreshOrNever = useRefreshOrNever(refresh);
 
   const g$Price = useG$Price(refresh);
+  const [G$] = useG$Tokens();
   const cUSD = contractAddresses[connectedEnv].CUSD || "0xeed145D8d962146AFc568E9579948576f63D5Dc2";
+
   const exchangeProviderAddress =
     contractAddresses[connectedEnv].MentoExchangeProvider || "0x558eC7E55855FAC9403De3ADB3aa1e588234A92C";
-  const [G$] = useG$Tokens();
-
   const mentoBroker = new Contract(
     contractAddresses[connectedEnv].MentoBroker || "0xE60cf1cb6a56131CE135c604D0BD67e84B57CA3C",
     brokerAbi
   );
-
   const mentoProvider = new Contract(exchangeProviderAddress, exchangeAbi);
-  const refreshOrNever = useRefreshOrNever(refresh);
+
   const g$Allowance = useTokenAllowance(G$.address, account, mentoBroker.address, { refresh: refreshOrNever });
   const cusdAllowance = useTokenAllowance(cUSD, account, mentoBroker.address, { refresh: refreshOrNever });
 
@@ -142,11 +142,12 @@ export const useSwap = (
     contractAddresses[connectedEnv].MentoBroker || "0xE60cf1cb6a56131CE135c604D0BD67e84B57CA3C",
     brokerAbi
   );
+
   const approve = useContractFunctionWithDefaultGasFees(new Contract(inputToken, ERC20Interface), "approve");
-  const swap = useContractFunctionWithDefaultGasFees(mentoBroker, exactInput ? "swapIn" : "swapOut");
   const { send } = approve;
   approve.send = () => send(mentoBroker.address, exactInput ? exactInput.input : exactOutput?.maxAmountIn);
 
+  const swap = useContractFunctionWithDefaultGasFees(mentoBroker, exactInput ? "swapIn" : "swapOut");
   const { send: swapSend } = swap;
   // address exchangeProvider,bytes32 exchangeId,address tokenIn,address tokenOut,uint256 amountIn,uint256 amountOutMin
   swap.send = async () => {

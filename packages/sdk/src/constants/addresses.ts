@@ -42,7 +42,7 @@ export function G$ContractAddresses<T = ObjectLike>(chainId: SupportedChainId, n
 
   if (!contractsAddresses[deploymentName]) {
     console.warn(`tokens: Unsupported chain ID ${deploymentName}`, CURRENT_NETWORK);
-    deploymentName = deploymentName.includes("mainnet") ? CURRENT_NETWORK + "-mainnet" : CURRENT_NETWORK;
+    deploymentName = deploymentName?.includes("mainnet") ? CURRENT_NETWORK + "-mainnet" : CURRENT_NETWORK;
   }
   if (!contractsAddresses[deploymentName][name]) {
     console.warn(`Inappropriate contract name ${name} in ${deploymentName} ${chainId}`);

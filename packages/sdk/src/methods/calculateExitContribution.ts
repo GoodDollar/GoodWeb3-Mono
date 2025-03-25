@@ -2,7 +2,6 @@ import Web3 from "web3";
 import { Currency, CurrencyAmount } from "@uniswap/sdk-core";
 import { BigNumber, ethers } from "ethers";
 
-import { tokenBalance } from "utils/tokenBalance";
 import { ContributionCalcContract } from "contracts/ContributionCalcContract";
 import { debug, debugGroup, debugGroupEnd } from "utils/debug";
 
