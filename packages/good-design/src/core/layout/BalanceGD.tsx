@@ -1,5 +1,5 @@
 import React, { FC, memo } from "react";
-import { Box, HStack, ITextProps, Text, View } from "native-base";
+import { VStack, HStack, ITextProps, Text, View } from "native-base";
 import { useG$Balance, useGetEnvChainId } from "@gooddollar/web3sdk-v2";
 import { CurrencyValue, QueryParams } from "@usedapp/core";
 
@@ -11,14 +11,14 @@ interface BalanceGDProps {
 }
 
 const BalanceCopy = ({ heading, subHeading }: { heading: string; subHeading: string }) => (
-  <Box mb="4">
+  <VStack mb="4" space={4} alignItems="center">
     <Text fontSize="2xl" fontWeight="extrabold" fontFamily="heading" mb="0.5" color="gdPrimary">
       {heading}
     </Text>
     <Text fontSize="sm" fontWeight="normal" fontFamily="subheading" color="goodGrey.500">
       {subHeading}
     </Text>
-  </Box>
+  </VStack>
 );
 
 const BalanceView: FC<Required<BalanceGDProps> & { amount: CurrencyValue }> = memo(
