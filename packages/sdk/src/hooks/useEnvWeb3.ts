@@ -11,7 +11,7 @@ export interface RPC {
 }
 
 export const defaultRPC = {
-  [SupportedChainId.MAINNET]: sample(["https://cloudflare-eth.com", "https://rpc.ankr.com/eth"]),
+  [SupportedChainId.MAINNET]: sample(["https://cloudflare-eth.com", "https://eth.llamarpc.com", "https://1rpc.io/eth"]),
   [SupportedChainId.FUSE]: sample(["https://fuse.liquify.com", "https://rpc.fuse.io"])
 };
 
@@ -21,7 +21,7 @@ export const getRpc = (chainId: number): string => {
       return defaultRPC[chainId];
     default:
     case 1:
-      return "https://rpc.ankr.com/eth";
+      return defaultRPC[chainId];
   }
 };
 
