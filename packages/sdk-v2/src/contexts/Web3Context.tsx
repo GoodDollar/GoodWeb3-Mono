@@ -229,7 +229,7 @@ export const Web3Provider = ({ children, config: inConfig, web3Provider, env = "
   config.readOnlyUrls = {
     122: sample(["https://rpc.fuse.io", "https://fuse-rpc.gateway.pokt.network"]) as string,
     42220: sample(["https://forno.celo.org"]) as string,
-    1: sample(["https://cloudflare-eth.com", "https://rpc.ankr.com/eth"]) as string,
+    1: sample(["https://cloudflare-eth.com", "https://eth.llamarpc.com"]) as string,
     ...config.readOnlyUrls
   };
 
