@@ -32,6 +32,7 @@ export function useContractFunctionWithDefaultGasFees<T extends TypedContract, F
   functionName: FN,
   options?: TransactionOptions
 ) {
+  const { chainId } = useEthers();
   const { send, ...rest } = useContractFunction(contract, functionName, options);
   const gasFees = useGasFees();
   const newSend = useCallback(
@@ -41,7 +42,16 @@ export function useContractFunctionWithDefaultGasFees<T extends TypedContract, F
         const hasOpts = args.length > numberOfArgs;
         const opts = hasOpts ? args[args.length - 1] : {};
         const modifiedArgs = hasOpts ? args.slice(0, args.length - 1) : args;
-        modifiedArgs.push(pickBy("maxFeePerGas" in opts ? { ...opts } : { ...gasFees, ...opts }, _ => _ != null));
+        const chainHex = "0x" + chainId?.toString(16);
+
+        modifiedArgs.push(
+          pickBy(
+            "maxFeePerGas" in opts
+              ? { ...opts, ...(chainId === 42220 ? { maxFeePerGas: 25e9 } : {}), chainId: chainHex }
+              : { ...gasFees, ...opts, chainId: chainHex },
+            _ => _ != null
+          )
+        );
         return send(...(modifiedArgs as any));
       }
     },
