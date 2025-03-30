@@ -19,7 +19,7 @@ export const useGasFees = () => {
       case 122:
         return BigNumber.from(11e9);
       case 42220:
-        return BigNumber.from(25e9);
+        return BigNumber.from(25.001e9);
     }
   }, [chainId]);
 
@@ -43,10 +43,12 @@ export function useContractFunctionWithDefaultGasFees<T extends TypedContract, F
         const opts = hasOpts ? args[args.length - 1] : {};
         const modifiedArgs = hasOpts ? args.slice(0, args.length - 1) : args;
 
+        console.log("arguments useGasFees -->", { opts, modifiedArgs });
+
         modifiedArgs.push(
           pickBy(
             "maxFeePerGas" in opts
-              ? { ...opts, ...(chainId === 42220 ? { maxFeePerGas: 25e9 } : {}) }
+              ? { ...opts, ...(chainId === 42220 ? { maxFeePerGas: 25.001e9, maxPriorityFeePerGas: 1e8 } : {}) }
               : { ...gasFees, ...opts },
             _ => _ != null
           )
