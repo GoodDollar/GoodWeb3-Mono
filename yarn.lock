@@ -5533,7 +5533,7 @@ __metadata:
     "@babel/runtime": ^7.18.9
     "@formatjs/intl-locale": ^4.0.0
     "@formatjs/intl-pluralrules": ^5.2.14
-    "@gooddollar/goodprotocol": ^2.0.24
+    "@gooddollar/goodprotocol": ^2.0.32
     "@gooddollar/web3sdk-v2": 0.4.1-beta.0464b4b8
     "@lingui/core": ^4.11.2
     "@lingui/react": ^4.11.2
@@ -5716,25 +5716,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/goodprotocol@npm:^2.0.24":
-  version: 2.0.24
-  resolution: "@gooddollar/goodprotocol@npm:2.0.24"
-  dependencies:
-    "@gooddollar/goodcontracts": ^2.6.6
-    "@jsier/retrier": ^1.2.4
-    "@openzeppelin/contracts": ^4.8.0
-    "@openzeppelin/contracts-upgradeable": ^4.8.0
-    "@openzeppelin/hardhat-upgrades": ^1.22.1
-    "@superfluid-finance/ethereum-contracts": ^1.8.1
-    "@superfluid-finance/sdk-core": ^0.5.8
-    "@typechain/hardhat": ^6.1.5
-    async-promise-pool: ^1.0.4
-    openzeppelin-solidity: ^4.3.2
-    patch-package: latest
-    press-any-key: ^0.1.1
-    truffle-plugin-verify: ^0.6.1
-    truffle-source-verify: ^0.0.6
-  checksum: b1ba09ac716da3eddfe9f841ce540cc7b277a3806415f873605a3d548642eb459abd7acb6a7ac68316696f2e48b1c2ab3b3aa056a40653db5561a00592fb7e24
+"@gooddollar/goodprotocol@npm:^2.0.32":
+  version: 2.0.32
+  resolution: "@gooddollar/goodprotocol@npm:2.0.32"
+  checksum: aeb8e066c110f1167a29528610dfe57ee1a4ea9a7d7d45f84b1494fc002efc966032b0959ab524b404f212fcad2ebcc0c85b2b6154f9010b42c2ecb797daf6e2
   languageName: node
   linkType: hard
 
@@ -5756,7 +5741,7 @@ __metadata:
     "@gooddollar/bridge-contracts": ^1.0.17
     "@gooddollar/goodcollective-contracts": ^1.3.0
     "@gooddollar/goodcollective-sdk": ^1.3.3
-    "@gooddollar/goodprotocol": ^2.0.24
+    "@gooddollar/goodprotocol": ^2.0.32
     "@orbisclub/orbis-sdk": ^0.4.87
     "@react-native-async-storage/async-storage": 1.17.10
     "@react-native-community/geolocation": 3.1.0
