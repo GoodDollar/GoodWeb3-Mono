@@ -128,7 +128,7 @@ export const useMultiClaim = (poolsDetails: PoolDetails[] | undefined) => {
     const hasError = results.some(_ => _ === undefined);
 
     if (!hasError) {
-      const isDivviDone = await AsyncStorage.getItem("GD_divvi");
+      const isDivviDone = await AsyncStorage.getItem(`GD_divvi_${account}`);
 
       if (!isDivviDone) {
         // filter out the UBIPool results
@@ -139,7 +139,7 @@ export const useMultiClaim = (poolsDetails: PoolDetails[] | undefined) => {
         if (chain?.chainId === 42220 && ubiClaim?.[0]?.transactionHash) {
           void submitReferral({ txHash: ubiClaim?.[0]?.transactionHash, chainId: 42220 })
             .then(async () => {
-              await AsyncStorage.setItem("GD_divvi", "true");
+              await AsyncStorage.setItem(`GD_divvi_${account}`, "true");
             })
             .catch(e => {
               console.error("divvi failed", { e });
