@@ -7,6 +7,7 @@ import { noop } from "lodash";
 import usePromise from "react-use-promise";
 import GoodCollectiveContracts from "@gooddollar/goodcollective-contracts/releases/deployment.json";
 import { GoodCollectiveSDK } from "@gooddollar/goodcollective-sdk";
+import { submitReferral } from "../constants";
 
 import { AsyncStorage } from "../storage/sdk";
 import { EnvKey } from "../base/sdk";
@@ -125,6 +126,27 @@ export const useMultiClaim = (poolsDetails: PoolDetails[] | undefined) => {
   const updateStatus = useCallback(async () => {
     const results = await Promise.all(claimedContracts.map(_ => _.promise)).catch(() => [undefined]);
     const hasError = results.some(_ => _ === undefined);
+
+    if (!hasError) {
+      const isDivviDone = await AsyncStorage.getItem(`GD_divvi_${account}`);
+
+      if (!isDivviDone) {
+        // filter out the UBIPool results
+        const ubiContract = claimedContracts.find(_ => !!_?.contract?.interface.functions["getDailyStats"]);
+        const ubiClaim = results.filter(_ => _?.to === ubiContract?.contract?.address);
+        const chain = await ubiContract?.contract?.provider.getNetwork();
+
+        if (chain?.chainId === 42220 && ubiClaim?.[0]?.transactionHash) {
+          void submitReferral({ txHash: ubiClaim?.[0]?.transactionHash, chainId: 42220 })
+            .then(async () => {
+              await AsyncStorage.setItem(`GD_divvi_${account}`, "true");
+            })
+            .catch(e => {
+              console.error("divvi failed", { e });
+            });
+        }
+      }
+    }
 
     setStatus(prev => ({
       ...prev,
