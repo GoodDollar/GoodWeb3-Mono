@@ -100,19 +100,21 @@ export class BaseSDK {
           this.signer || this.provider
         ) as UBIScheme;
 
-        // for a divvi campaign, we add a suffix used registering a claimer for referal
-        const encodeFunctionDataPrev = contract.interface.encodeFunctionData.bind(contract.interface) as any;
+        if (this.contracts.chainId === 42220) {
+          // for a divvi campaign, we add a suffix used registering a claimer for referal
+          const encodeFunctionDataPrev = contract.interface.encodeFunctionData.bind(contract.interface) as any;
 
-        contract.interface.encodeFunctionData = function (
-          functionFragment: FunctionFragment | string,
-          values?: ReadonlyArray<any>
-        ): string {
-          if (functionFragment === "claim" || (functionFragment as FunctionFragment).name === "claim") {
-            return encodeFunctionDataPrev(functionFragment, values) + DIVVI_SUFFIX;
-          } else {
-            return encodeFunctionDataPrev(functionFragment, values);
-          }
-        };
+          contract.interface.encodeFunctionData = function (
+            functionFragment: FunctionFragment | string,
+            values?: ReadonlyArray<any>
+          ): string {
+            if (functionFragment === "claim" || (functionFragment as FunctionFragment).name === "claim") {
+              return encodeFunctionDataPrev(functionFragment, values) + DIVVI_SUFFIX;
+            } else {
+              return encodeFunctionDataPrev(functionFragment, values);
+            }
+          };
+        }
 
         return contract;
       }
