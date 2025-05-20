@@ -100,7 +100,7 @@ export class BaseSDK {
           this.signer || this.provider
         ) as UBIScheme;
 
-        if (this.contracts.chainId === 42220) {
+        if (this.contracts.networkId === 42220) {
           // for a divvi campaign, we add a suffix used registering a claimer for referal
           const encodeFunctionDataPrev = contract.interface.encodeFunctionData.bind(contract.interface) as any;
 
