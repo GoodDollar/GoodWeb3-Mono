@@ -134,10 +134,13 @@ export const useMultiClaim = (poolsDetails: PoolDetails[] | undefined) => {
         // filter out the UBIPool results
         const ubiContract = claimedContracts.find(_ => !!_?.contract?.interface.functions["getDailyStats"]);
         const ubiClaim = results.filter(_ => _?.to === ubiContract?.contract?.address);
+        const chain = await ubiContract?.contract?.provider.getNetwork();
 
-        await submitReferral({ txHash: ubiClaim?.[0]?.transactionHash, chainId: 42220 }).then(async () => {
-          await AsyncStorage.setItem("GD_divvi", "true");
-        });
+        if (chain?.chainId === 42220 && ubiClaim?.[0]?.transactionHash) {
+          await submitReferral({ txHash: ubiClaim?.[0]?.transactionHash, chainId: 42220 }).then(async () => {
+            await AsyncStorage.setItem("GD_divvi", "true");
+          });
+        }
       }
     }
 
