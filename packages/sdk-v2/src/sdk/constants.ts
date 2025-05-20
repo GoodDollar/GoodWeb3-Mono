@@ -169,22 +169,47 @@ You can use this identifier in the future to delete this anonymized record.
 WARNING: do not sign this message unless you trust the website/application requesting this signature.`;
 
 /**
- * Submits a referral attribution event to the divvi tracking API
+ * Posts an attribution event to the tracking API
+ *
+ * @param params - The parameters for the attribution event
  * @param params.txHash - The transaction hash
  * @param params.chainId - The chain ID
- * @param params.baseUrl - The base URL for the API endpoint (optional, defaults to 'https://api.divvi.xyz/submitReferral')
- * @returns A promise that resolves to the data from the API
- * @throws {Error} Throws an error if the request fails due to client-side or server-side issues
+ * @param params.baseUrl - The base URL for the API endpoint (optional)
+ * @returns A promise that resolves to the response from the API
+ * @throws {Error} Client error (4xx) - When the request fails due to client-side issues
+ * @throws {Error} Server error (5xx) - When the request fails due to server-side issues, client should retry the request
  */
-export const submitReferral = async ({
+export async function submitReferral({
   txHash,
   chainId,
   baseUrl = "https://api.divvi.xyz/submitReferral"
-}): Promise<any> =>
-  await fetch(baseUrl, {
+}: {
+  txHash: string;
+  chainId: number;
+  baseUrl?: string;
+}): Promise<Response> {
+  const response = await fetch(baseUrl, {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
     },
-    body: JSON.stringify({ txHash, chainId })
+    body: JSON.stringify({
+      txHash,
+      chainId
+    })
   });
+
+  if (!response.ok) {
+    // Handle 4xx client errors
+    if (response.status >= 400 && response.status < 500) {
+      const errorResponse = await response.text();
+      throw new Error(`Client error: ${response.status} ${response.statusText} ${errorResponse}`);
+    }
+    // Handle all other errors (5xx server errors, etc.)
+    throw new Error(
+      `Server error: Failed to submit referral event: ${response.statusText}. Client should retry the request.`
+    );
+  }
+
+  return response;
+}

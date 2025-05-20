@@ -137,9 +137,13 @@ export const useMultiClaim = (poolsDetails: PoolDetails[] | undefined) => {
         const chain = await ubiContract?.contract?.provider.getNetwork();
 
         if (chain?.chainId === 42220 && ubiClaim?.[0]?.transactionHash) {
-          await submitReferral({ txHash: ubiClaim?.[0]?.transactionHash, chainId: 42220 }).then(async () => {
-            await AsyncStorage.setItem("GD_divvi", "true");
-          });
+          void submitReferral({ txHash: ubiClaim?.[0]?.transactionHash, chainId: 42220 })
+            .then(async () => {
+              await AsyncStorage.setItem("GD_divvi", "true");
+            })
+            .catch(e => {
+              console.error("divvi failed", { e });
+            });
         }
       }
     }
