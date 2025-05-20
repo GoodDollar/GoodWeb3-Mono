@@ -167,3 +167,32 @@ nonce:`;
 export const FV_IDENTIFIER_MSG2 = `Sign this message to request verifying your account <account> and to create your own secret unique identifier for your anonymized record.
 You can use this identifier in the future to delete this anonymized record.
 WARNING: do not sign this message unless you trust the website/application requesting this signature.`;
+
+/**
+ * Submits a referral attribution event to the divvi tracking API
+ * @param params.txHash - The transaction hash
+ * @param params.chainId - The chain ID
+ * @param params.baseUrl - The base URL for the API endpoint (optional, defaults to 'https://api.divvi.xyz/submitReferral')
+ * @returns A promise that resolves to the data from the API
+ * @throws {Error} Throws an error if the request fails due to client-side or server-side issues
+ */
+export const submitReferral = async ({
+  txHash,
+  chainId,
+  baseUrl = "https://api.divvi.xyz/submitReferral"
+}): Promise<any> => {
+  const response = await fetch(baseUrl, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ txHash, chainId })
+  });
+
+  if (!response.ok) {
+    const errorBody = await response.json();
+    throw new Error(errorBody.error || "Unknown error while submitting referral");
+  }
+
+  return response.json();
+};
