@@ -135,8 +135,9 @@ export const useMultiClaim = (poolsDetails: PoolDetails[] | undefined) => {
         const ubiContract = claimedContracts.find(_ => !!_?.contract?.interface.functions["getDailyStats"]);
         const ubiClaim = results.filter(_ => _?.to === ubiContract?.contract?.address);
 
-        await AsyncStorage.setItem("GD_divvi", "true");
-        await submitReferral({ txHash: ubiClaim?.[0]?.transactionHash, chainId });
+        await submitReferral({ txHash: ubiClaim?.[0]?.transactionHash, chainId: 42220 }).then(async () => {
+          await AsyncStorage.setItem("GD_divvi", "true");
+        });
       }
     }
 
