@@ -110,6 +110,7 @@ function sdkFactory(
     // the only reason why there is no provider when a read-only one is requested is because there
     // are no read-only urls set for the chain data is requested from
     console.error("No read-only provider could be found", { type });
+    return;
   }
 
   if (!provider && !readOnly) {
