@@ -103,6 +103,24 @@ export const useMultiClaim = (poolsDetails: PoolDetails[] | undefined) => {
 
     // Error here indicates a transaction failed to be submitted to the blockchain
     if (status === "Success" || isError) {
+      void (async () => {
+        const isDivviDone = await AsyncStorage.getItem(`GD_divvi_${account}`);
+        const txHash = state.transaction?.hash;
+
+        console.log("divvidone -->", { isDivviDone, txHash, state });
+        if (!isDivviDone && state.chainId === 42220 && txHash) {
+          if (txHash) {
+            submitReferral({ txHash, chainId: 42220 })
+              .then(() => {
+                console.log("divvi-referral", { txHash });
+              })
+              .catch(e => {
+                console.error("divvi failed", { e });
+              });
+          }
+        }
+      })();
+
       const next = poolContracts?.find(c => !claimedContracts.find(cc => cc.contract === c) && c !== contract);
 
       // if you don't reset state, the next claim call will not be called.
@@ -126,27 +144,6 @@ export const useMultiClaim = (poolsDetails: PoolDetails[] | undefined) => {
   const updateStatus = useCallback(async () => {
     const results = await Promise.all(claimedContracts.map(_ => _.promise)).catch(() => [undefined]);
     const hasError = results.some(_ => _ === undefined);
-
-    if (!hasError) {
-      const isDivviDone = await AsyncStorage.getItem(`GD_divvi_${account}`);
-
-      if (!isDivviDone) {
-        // filter out the UBIPool results
-        const ubiContract = claimedContracts.find(_ => !!_?.contract?.interface.functions["getDailyStats"]);
-        const ubiClaim = results.filter(_ => _?.to === ubiContract?.contract?.address);
-        const chain = await ubiContract?.contract?.provider.getNetwork();
-
-        if (chain?.chainId === 42220 && ubiClaim?.[0]?.transactionHash) {
-          void submitReferral({ txHash: ubiClaim?.[0]?.transactionHash, chainId: 42220 })
-            .then(async () => {
-              await AsyncStorage.setItem(`GD_divvi_${account}`, "true");
-            })
-            .catch(e => {
-              console.error("divvi failed", { e });
-            });
-        }
-      }
-    }
 
     setStatus(prev => ({
       ...prev,
