@@ -193,7 +193,7 @@ const defaultConfig: Config = {
   readOnlyUrls: {
     122: "https://rpc.fuse.io",
     42220: "https://forno.celo.org",
-    1: "https://cloudflare-eth.com"
+    1: "https://eth.drpc.org"
   }
 };
 
@@ -229,7 +229,7 @@ export const Web3Provider = ({ children, config: inConfig, web3Provider, env = "
   config.readOnlyUrls = {
     122: sample(["https://rpc.fuse.io", "https://fuse-rpc.gateway.pokt.network"]) as string,
     42220: sample(["https://forno.celo.org"]) as string,
-    1: sample(["https://cloudflare-eth.com", "https://eth.llamarpc.com"]) as string,
+    1: sample(["https://eth.drpc.org", "https://eth.llamarpc.com"]) as string,
     ...config.readOnlyUrls
   };
 

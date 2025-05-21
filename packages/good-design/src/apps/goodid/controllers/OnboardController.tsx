@@ -114,6 +114,8 @@ export const OnboardController = (
     } catch (e) {
       setPendingSignTx(false);
       await AsyncStorage.removeItem("tos-accepted");
+    } finally {
+      setPendingSignTx(false);
     }
   };
 
