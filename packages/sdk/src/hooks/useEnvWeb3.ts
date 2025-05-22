@@ -11,7 +11,7 @@ export interface RPC {
 }
 
 export const defaultRPC = {
-  [SupportedChainId.MAINNET]: sample(["https://cloudflare-eth.com", "https://eth.llamarpc.com", "https://1rpc.io/eth"]),
+  [SupportedChainId.MAINNET]: sample(["https://eth.llamarpc.com", "https://1rpc.io/eth"]),
   [SupportedChainId.FUSE]: sample(["https://fuse.liquify.com", "https://rpc.fuse.io"])
 };
 

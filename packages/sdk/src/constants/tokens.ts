@@ -215,7 +215,7 @@ export const WBTC: { [chainId: number]: Token } = {
 
 export const TOKEN_LISTS: { [chainId: number]: string[] } = {
   [SupportedChainId.MAINNET]: [
-    "https://gateway.ipfs.io/ipns/tokens.uniswap.org",
+    "https://ipfs.io/ipns/tokens.uniswap.org",
     "https://www.gemini.com/uniswap/manifest.json",
     "https://raw.githubusercontent.com/voltfinance/swap-default-token-list/master/build/voltage-swap-default.tokenlist.json",
     "https://raw.githubusercontent.com/compound-finance/token-list/master/compound.tokenlist.json"

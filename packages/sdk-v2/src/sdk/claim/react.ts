@@ -7,6 +7,7 @@ import { noop } from "lodash";
 import usePromise from "react-use-promise";
 import GoodCollectiveContracts from "@gooddollar/goodcollective-contracts/releases/deployment.json";
 import { GoodCollectiveSDK } from "@gooddollar/goodcollective-sdk";
+import { submitReferral } from "../constants";
 
 import { AsyncStorage } from "../storage/sdk";
 import { EnvKey } from "../base/sdk";
@@ -102,6 +103,24 @@ export const useMultiClaim = (poolsDetails: PoolDetails[] | undefined) => {
 
     // Error here indicates a transaction failed to be submitted to the blockchain
     if (status === "Success" || isError) {
+      void (async () => {
+        const isDivviDone = await AsyncStorage.getItem(`GD_divvi_${account}`);
+        const txHash = state.transaction?.hash;
+
+        console.log("divvidone -->", { isDivviDone, txHash, state });
+        if (!isDivviDone && state.chainId === 42220 && txHash) {
+          if (txHash) {
+            submitReferral({ txHash, chainId: 42220 })
+              .then(() => {
+                console.log("divvi-referral", { txHash });
+              })
+              .catch(e => {
+                console.error("divvi failed", { e });
+              });
+          }
+        }
+      })();
+
       const next = poolContracts?.find(c => !claimedContracts.find(cc => cc.contract === c) && c !== contract);
 
       // if you don't reset state, the next claim call will not be called.

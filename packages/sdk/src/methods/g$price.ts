@@ -14,7 +14,7 @@ import { DAI, CDAI, G$ } from "constants/tokens";
 export const g$ReservePrice = memoize<
   () => Promise<{ DAI: Price<Currency, Currency>; cDAI: Price<Currency, Currency> }>
 >(async (): Promise<{ DAI: Price<Currency, Currency>; cDAI: Price<Currency, Currency> }> => {
-  const httpProvider = new Web3.providers.HttpProvider("https://eth.llamarpc.com");
+  const httpProvider = new Web3.providers.HttpProvider("https://ethereum-rpc.publicnode.com");
   const mainnetWeb3 = new Web3(httpProvider);
   const contract = getContract(
     1,
