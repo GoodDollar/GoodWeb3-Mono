@@ -17,3 +17,4 @@ yalc.lock
 /dist/
 .vercel
 .continueignore
+e2e.log

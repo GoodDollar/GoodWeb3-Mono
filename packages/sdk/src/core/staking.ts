@@ -20,13 +20,12 @@ import { compoundDaiStakingAPY } from "./rest";
 import { LIQUIDITY_PROTOCOL } from "constants/protocols";
 import { debug, debugGroup, debugGroupEnd } from "utils/debug";
 import { stakersDistributionContract } from "contracts/StakersDistributionContract";
-import { CDAI, G$, GDAO, USDC } from "constants/tokens";
+import { CDAI, DAI, G$, GDAO, USDC } from "constants/tokens";
 import { cacheClear } from "utils/memoize";
 import { decimalPercentToPercent } from "utils/converter";
 import { ERC20Contract } from "contracts/ERC20Contract";
 import { compoundPrice } from "methods/compoundPrice";
 import { v2TradeExactIn } from "methods/v2TradeExactIn";
-import { cDaiPrice } from "methods/cDaiPrice";
 import { TransactionDetails } from "constants/transactions";
 import { DAO_NETWORK, SupportedChainId } from "constants/chains";
 import { getContract } from "utils/getContract";
@@ -95,21 +94,31 @@ export async function getList(web3: Web3): Promise<Stake[]> {
  * @param {string} account account address to get staking data for.
  * @returns {Promise<Stake[]>}
  */
-export async function getMyList(mainnetWeb3: Web3, fuseWeb3: Web3, account: string): Promise<MyStake[]> {
+export async function getMyList(
+  mainnetWeb3: Web3,
+  fuseWeb3: Web3,
+  account: string,
+  gdPrice: BigNumber | undefined
+): Promise<MyStake[]> {
   const simpleStakingReleases = await getSimpleStakingContractAddressesV3(mainnetWeb3);
   const governanceStakingAddresses = await getGovernanceStakingContracts();
 
   cacheClear(getTokenPriceInUSDC);
 
   let stakes: MyStake[] = [];
+
+  const daiToken = DAI[SupportedChainId.MAINNET];
+  const price = CurrencyAmount.fromRawAmount(daiToken, gdPrice?.toString() || "0");
+
   try {
     const govStake = governanceStakingAddresses.map(stake =>
-      stake.address ? metaMyGovStake(fuseWeb3, account, stake.address, stake.release) : null
+      stake.address ? metaMyGovStake(fuseWeb3, account, price, stake.address, stake.release) : null
     );
+
     for (const releases of simpleStakingReleases) {
       if (releases.release) {
         for (const address of Object.values(releases.addresses)) {
-          govStake.push(metaMyStake(mainnetWeb3, address, account, releases.release));
+          govStake.push(metaMyStake(mainnetWeb3, address, account, price, releases.release));
         }
       }
     }
@@ -173,15 +182,19 @@ async function metaStake(web3: Web3, address: string): Promise<Stake> {
  *  @param {string} account account details to fetch.
  * @returns {Promise<Stake | null>}
  */
-async function metaMyStake(web3: Web3, address: string, account: string, release: string): Promise<MyStake | null> {
+async function metaMyStake(
+  web3: Web3,
+  address: string,
+  account: string,
+  gdPrice: CurrencyAmount<Token>,
+  release: string
+): Promise<MyStake | null> {
   debugGroup(`My stake for ${address}`);
 
   const isDeprecated = release !== "v3";
   const isSimpleNew = release !== "v1";
 
   const simpleStaking = isSimpleNew ? simpleStakingContractV2(web3, address) : simpleStakingContract(web3, address);
-
-  const chainId = await getChainId(web3);
 
   const users = await simpleStaking.methods.users(account).call();
 
@@ -232,17 +245,10 @@ async function metaMyStake(web3: Web3, address: string, account: string, release
     getRewardGDAO(web3, address, account)
   ]);
 
-  const { cDAI: cdaiPrice } = await g$ReservePrice();
-  const cDAI = cdaiPrice.asFraction;
-  const ratio = await cDaiPrice(web3, chainId);
-
   const rewardUSDC = {
-    claimed: rewardG$.claimed.multiply(cDAI).multiply(ratio),
-    unclaimed: rewardG$.unclaimed.multiply(cDAI).multiply(ratio)
+    claimed: gdPrice.multiply(rewardG$.claimed).divide(1e2),
+    unclaimed: gdPrice.multiply(rewardG$.unclaimed).divide(1e2)
   };
-
-  // const DAI = (await getToken(SupportedChainId.MAINNET, 'DAI')) as Token
-  const G$MainNet = G$[SupportedChainId.MAINNET];
 
   const result = {
     address,
@@ -250,18 +256,7 @@ async function metaMyStake(web3: Web3, address: string, account: string, release
     multiplier,
     rewards: {
       reward: rewardG$,
-      reward$: {
-        claimed: CurrencyAmount.fromFractionalAmount(
-          G$MainNet,
-          rewardUSDC.claimed.numerator,
-          rewardUSDC.claimed.denominator
-        ),
-        unclaimed: CurrencyAmount.fromFractionalAmount(
-          G$MainNet,
-          rewardUSDC.unclaimed.numerator,
-          rewardUSDC.unclaimed.denominator
-        )
-      },
+      reward$: rewardUSDC,
       GDAO: rewardGDAO
     },
     stake: { amount, amount$ },
@@ -290,30 +285,19 @@ async function metaMyStake(web3: Web3, address: string, account: string, release
 async function metaMyGovStake(
   web3: Web3,
   account: string,
+  gdPrice: CurrencyAmount<Token>,
   address?: string,
   release?: string
 ): Promise<MyStake | null> {
   const govStaking = governanceStakingContract(web3, address);
 
   const G$Token = G$[SupportedChainId.FUSE]; //gov is always on fuse
-  const usdcToken = USDC[SupportedChainId.MAINNET];
   const users = await govStaking.methods.users(account).call();
   if (!users || parseInt(users.amount.toString()) === 0) {
     return null;
   }
-  const chainId = await getChainId(web3);
-
   const amount = CurrencyAmount.fromRawAmount(G$Token, users.amount.toString());
-
-  const tokenPrice = await g$ReservePrice();
-
-  let amount$ = CurrencyAmount.fromRawAmount(G$Token, 0);
-  if (tokenPrice) {
-    const value = amount.multiply(tokenPrice.DAI.asFraction).multiply(1e4);
-    amount$ = CurrencyAmount.fromFractionalAmount(usdcToken, value.numerator, value.denominator);
-  } else {
-    amount$ = CurrencyAmount.fromRawAmount(usdcToken, 0);
-  }
+  const amount$ = gdPrice.multiply(amount).divide(1e2); //reduce 2 decimals from G$ when multiplying
 
   const mainNet = SupportedChainId.MAINNET;
 
