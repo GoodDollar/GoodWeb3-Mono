@@ -308,7 +308,7 @@ export const DisputeThanksScreenExample = {
 type AvailableOffersPropsAndArgs = React.ComponentProps<typeof CheckAvailableOffers> & { countryCode?: string };
 
 const explorerEndPoints = {
-  CELO: "https://api.celoscan.io/v2/api?apikey=WIX677MWRWNYWXTRCFKBK2NZAB2XHYBQ3K&chainid=42220&",
+  CELO: "https://celo.blockscout.com/api?",
   FUSE: "https://explorer.fuse.io/api?",
   MAINNET: ""
 };
