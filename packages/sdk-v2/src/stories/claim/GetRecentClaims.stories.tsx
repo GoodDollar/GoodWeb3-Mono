@@ -47,5 +47,5 @@ getRecentClaimsExample.args = {
     "0x43d72Ff17701B2DA814620735C39C620Ce0ea4A1"
   ],
   account: "0xA48840D89a761502A4a7d995c74f3864D651A87F",
-  explorers: "https://celo.blockscout.com/api?,https://api.celoscan.io/api?chainid=42220&"
+  explorers: "https://celo.blockscout.com/api?,https://api.celoscan.io/v2/api?chainid=42220&"
 };

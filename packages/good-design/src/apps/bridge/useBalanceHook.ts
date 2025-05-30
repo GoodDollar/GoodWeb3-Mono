@@ -11,7 +11,7 @@ const pollLock = new Lock();
 
 const g$BalanceFromExplorer = async (account: string | undefined, contracts: string[]) => {
   if (!account || pollLock.isAcquired("balancePoll")) return null;
-  const explorerEndpoint = "https://api.celoscan.io/api?chainid=42220";
+  const explorerEndpoint = "https://api.celoscan.io/v2/api?chainid=42220";
   const fuseExplorer = "https://explorer.fuse.io/api?";
 
   await pollLock.acquire("balancePoll");
