@@ -17,7 +17,7 @@ import { TxDetailsModal } from "../../../core/web3";
 import { GoodButton } from "../../../core";
 
 const explorerEndPoints = {
-  CELO: "https://api.celoscan.io/api?apikey=WIX677MWRWNYWXTRCFKBK2NZAB2XHYBQ3K&",
+  CELO: "https://api.celoscan.io/api?apikey=WIX677MWRWNYWXTRCFKBK2NZAB2XHYBQ3K&chainid=42220&",
   FUSE: "https://explorer.fuse.io/api?",
   MAINNET: ""
 };
