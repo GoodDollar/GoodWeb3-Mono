@@ -3,3 +3,4 @@ export * from "./newsfeed";
 export * from "./onramp";
 export * from "./goodid";
 export * from "./ubi";
+export * from "./userTasks";
