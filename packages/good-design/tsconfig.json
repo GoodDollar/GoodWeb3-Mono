@@ -22,8 +22,8 @@
     "emitDeclarationOnly": false,
     "declarationMap": true,
     "composite": true,
+    "resolveJsonModule": true
   },
   "include": ["src/**/*", "src/**/*.json", "src/locales/**/*", "src/locales/index.ts"],
-  "exclude": ["node_modules", "../../node_modules", "src/stories", "**/*.stories.tsx", "src/locales/gen_supported_locales.js",],
-  "resolveJsonModule": true,
+  "exclude": ["node_modules", "../../node_modules", "src/stories", "**/*.stories.tsx", "src/locales/gen_supported_locales.js"]
 }

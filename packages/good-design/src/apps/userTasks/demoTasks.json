@@ -1,0 +1,55 @@
+[
+  {
+    "id": "1",
+    "title": "Donate to GoodCollective",
+    "description": "Support amazing projects in our community.",
+    "isMain": true,
+    "reward": "10 G$",
+    "durationDays": 7,
+    "actionUrl": "https://goodcollective.org/donate",
+    "type": "community",
+    "creationDate": "2024-07-25T10:00:00Z"
+  },
+  {
+    "id": "2",
+    "title": "Invite a Friend",
+    "description": "Share GoodDollar with your friends and earn G$.",
+    "isMain": false,
+    "reward": "5 G$ per invite",
+    "durationDays": 30,
+    "actionUrl": "/invite",
+    "type": "referral",
+    "creationDate": "2024-07-20T10:00:00Z"
+  },
+  {
+    "id": "3",
+    "title": "Share on Social Media (Recent)",
+    "description": "Tell the world about your latest claim!",
+    "isMain": false,
+    "durationDays": 3,
+    "actionUrl": "/social-share",
+    "type": "social-share",
+    "creationDate": "2024-07-27T12:00:00Z"
+  },
+  {
+    "id": "4",
+    "title": "Vote in Governance (Expired Task)",
+    "description": "This task was for a past proposal and should be expired.",
+    "isMain": false,
+    "reward": "Participation Badge",
+    "durationDays": 5,
+    "actionUrl": "/vote",
+    "type": "vote",
+    "creationDate": "2024-07-01T00:00:00Z"
+  },
+  {
+    "id": "5",
+    "title": "Check out the new Blog Post!",
+    "description": "Read our latest update on the GoodDollar journey.",
+    "isMain": false,
+    "durationDays": 10,
+    "actionUrl": "/blog/latest-update",
+    "type": "news",
+    "creationDate": "2024-07-26T00:00:00Z"
+  }
+] 
