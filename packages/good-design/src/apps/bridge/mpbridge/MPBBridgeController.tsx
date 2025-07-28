@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useMemo } from "react";
 
 import { SupportedChains } from "@gooddollar/web3sdk-v2";
 
@@ -9,59 +9,56 @@ import { Box, Spinner, VStack, Text, HStack } from "native-base";
 import { Title } from "../../../core/layout";
 
 // Import MPB functions from the mpbridge module
-import { useGetMPBBridgeData } from "@gooddollar/web3sdk-v2";
+import { useMPBBridgeHistory, useGetMPBBridgeData } from "@gooddollar/web3sdk-v2";
 
 import { BridgeTransactionList, BridgeTransaction } from "./MPBBridgeTransactionCard";
 
-// Mock bridge transaction data for demonstration
-const mockBridgeTransactions: BridgeTransaction[] = [
-  {
-    id: "1",
-    transactionHash: "0x1234567890abcdef1234567890abcdef12345678",
-    sourceChain: "Celo",
-    targetChain: "Fuse",
-    amount: "100,000",
-    bridgeProvider: "axelar",
-    status: "completed",
-    date: new Date("2025-07-13T16:06:00"),
-    chainId: 42220
-  },
-  {
-    id: "2",
-    transactionHash: "0xabcdef1234567890abcdef1234567890abcdef12",
-    sourceChain: "Celo",
-    targetChain: "Ethereum",
-    amount: "5,000",
-    bridgeProvider: "layerzero",
-    status: "completed",
-    date: new Date("2025-07-11T13:21:00"),
-    chainId: 42220
-  },
-  {
-    id: "3",
-    transactionHash: "0x7890abcdef1234567890abcdef1234567890abcd",
-    sourceChain: "Fuse",
-    targetChain: "Celo",
-    amount: "50,000",
-    bridgeProvider: "axelar",
-    status: "completed",
-    date: new Date("2025-07-10T09:15:00"),
-    chainId: 122
-  }
-];
-
 const MPBBridgeHistory = () => {
+  const { historySorted } = useMPBBridgeHistory() ?? {};
+
+  // Transform SDK history data to BridgeTransaction format
+  const bridgeTransactions: BridgeTransaction[] = useMemo(() => {
+    if (!historySorted || !Array.isArray(historySorted)) {
+      return [];
+    }
+
+    return historySorted.map((tx: any, index: number) => {
+      // Use bridge provider from SDK data, fallback to chain-based logic
+      const bridgeProvider: "axelar" | "layerzero" =
+        tx.bridgeProvider || (tx.sourceChain === "Fuse" ? "axelar" : "layerzero");
+
+      // Determine status based on transaction data
+      const status: "completed" | "pending" | "failed" = tx.status || "completed";
+
+      return {
+        id: tx.transactionHash || `tx-${index}`,
+        transactionHash: tx.transactionHash || "",
+        sourceChain: tx.sourceChain || "Unknown",
+        targetChain: tx.targetChain || "Unknown",
+        amount: tx.amount || "0",
+        bridgeProvider,
+        status,
+        date: new Date(), // Use current date as fallback since blockTimestamp is not available
+        chainId: tx.chainId || 122
+      };
+    });
+  }, [historySorted]);
+
   return (
     <Box borderRadius="md" mt="4" borderWidth="1" padding="5">
       <Title variant="title-gdblue" mb={4}>
         Recent Bridge Transactions (Last 30 days)
       </Title>
 
-      <BridgeTransactionList
-        transactions={mockBridgeTransactions}
-        onTxDetailsPress={tx => console.log("Transaction details:", tx)}
-        limit={5}
-      />
+      {!historySorted ? (
+        <Spinner variant="page-loader" size="lg" />
+      ) : (
+        <BridgeTransactionList
+          transactions={bridgeTransactions}
+          onTxDetailsPress={tx => console.log("Transaction details:", tx)}
+          limit={5}
+        />
+      )}
     </Box>
   );
 };

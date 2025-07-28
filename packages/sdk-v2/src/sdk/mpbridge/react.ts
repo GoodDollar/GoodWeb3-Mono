@@ -250,21 +250,27 @@ export const useMPBBridgeHistory = () => {
     ...e,
     amount: formatAmount(e.data.amount, 18),
     sourceChain: "Fuse",
-    targetChain: "Celo"
+    targetChain: "Celo",
+    bridgeProvider: "axelar", // Fuse typically uses Axelar
+    chainId: 122
   }));
 
   const celoHistory = celoOut?.value?.map(e => ({
     ...e,
     amount: formatAmount(e.data.amount, 18),
     sourceChain: "Celo",
-    targetChain: "Mainnet"
+    targetChain: "Mainnet",
+    bridgeProvider: "layerzero", // Celo typically uses LayerZero
+    chainId: 42220
   }));
 
   const mainnetHistory = mainnetOut?.value?.map(e => ({
     ...e,
     amount: formatAmount(e.data.amount, 18),
     sourceChain: "Mainnet",
-    targetChain: "Fuse"
+    targetChain: "Fuse",
+    bridgeProvider: "axelar", // Mainnet typically uses Axelar
+    chainId: 1
   }));
 
   const historySorted = sortBy(
