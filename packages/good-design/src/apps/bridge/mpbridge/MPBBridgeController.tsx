@@ -4,100 +4,64 @@ import { SupportedChains } from "@gooddollar/web3sdk-v2";
 
 import { ethers } from "ethers";
 
-import { Box, FlatList, Flex, Heading, HStack, Spinner, Stack, VStack, Text } from "native-base";
+import { Box, Spinner, VStack, Text, HStack } from "native-base";
 
 import { Title } from "../../../core/layout";
-import { ExplorerLink } from "../../../core/web3/ExplorerLink";
-import { truncateMiddle } from "../../../utils";
 
 // Import MPB functions from the mpbridge module
-import { useMPBBridgeHistory, useGetMPBBridgeData } from "@gooddollar/web3sdk-v2";
+import { useGetMPBBridgeData } from "@gooddollar/web3sdk-v2";
+
+import { BridgeTransactionList, BridgeTransaction } from "./MPBBridgeTransactionCard";
+
+// Mock bridge transaction data for demonstration
+const mockBridgeTransactions: BridgeTransaction[] = [
+  {
+    id: "1",
+    transactionHash: "0x1234567890abcdef1234567890abcdef12345678",
+    sourceChain: "Celo",
+    targetChain: "Fuse",
+    amount: "100,000",
+    bridgeProvider: "axelar",
+    status: "completed",
+    date: new Date("2025-07-13T16:06:00"),
+    chainId: 42220
+  },
+  {
+    id: "2",
+    transactionHash: "0xabcdef1234567890abcdef1234567890abcdef12",
+    sourceChain: "Celo",
+    targetChain: "Ethereum",
+    amount: "5,000",
+    bridgeProvider: "layerzero",
+    status: "completed",
+    date: new Date("2025-07-11T13:21:00"),
+    chainId: 42220
+  },
+  {
+    id: "3",
+    transactionHash: "0x7890abcdef1234567890abcdef1234567890abcd",
+    sourceChain: "Fuse",
+    targetChain: "Celo",
+    amount: "50,000",
+    bridgeProvider: "axelar",
+    status: "completed",
+    date: new Date("2025-07-10T09:15:00"),
+    chainId: 122
+  }
+];
 
 const MPBBridgeHistory = () => {
-  const { historySorted } = useMPBBridgeHistory() ?? {};
-
   return (
     <Box borderRadius="md" mt="4" borderWidth="1" padding="5">
-      <Heading size="sm">MPB Bridge History</Heading>
-      <Stack
-        direction={["column", "column", "row"]}
-        alignContent="center"
-        alignItems="center"
-        justifyContent="center"
-        mt="5"
-      >
-        <Flex flex="1 1"></Flex>
-        <Flex flex="2 1">
-          <Heading size="xs">Transaction Hash</Heading>
-        </Flex>
-        <Flex flex="2 0">
-          <Heading size="xs">From</Heading>
-        </Flex>
-        <Flex flex="2 0">
-          <Heading size="xs">To</Heading>
-        </Flex>
-        <Flex flex="1 0">
-          <Heading size="xs">Amount</Heading>
-        </Flex>
-        <Flex flex="1 0">
-          <Heading size="xs">Status</Heading>
-        </Flex>
-      </Stack>
+      <Title variant="title-gdblue" mb={4}>
+        Recent Bridge Transactions (Last 30 days)
+      </Title>
 
-      {!historySorted ? (
-        <Spinner variant="page-loader" size="lg" />
-      ) : (
-        <FlatList
-          shadow="1"
-          _contentContainerStyle={{
-            flexDirection: "column",
-            width: "100%",
-            minWidth: "384"
-          }}
-          data={historySorted}
-          renderItem={({ item }: { item: any }) => (
-            <HStack
-              key={item.transactionHash}
-              alignItems="center"
-              justifyContent="space-between"
-              p="2"
-              borderBottomWidth="1"
-              borderColor="goodGrey.300"
-            >
-              <Flex flex="1 1">
-                <ExplorerLink
-                  addressOrTx={item.transactionHash}
-                  chainId={item.chainId}
-                  text={truncateMiddle(item.transactionHash, 8)}
-                />
-              </Flex>
-              <Flex flex="2 1">
-                <Text fontSize="xs" color="goodGrey.600">
-                  {item.sourceChain}
-                </Text>
-              </Flex>
-              <Flex flex="2 0">
-                <Text fontSize="xs" color="goodGrey.600">
-                  {item.targetChain}
-                </Text>
-              </Flex>
-              <Flex flex="1 0">
-                <Text fontSize="xs" color="goodGrey.600">
-                  {item.amount}
-                </Text>
-              </Flex>
-              <Flex flex="1 0">
-                <Text fontSize="xs" color="goodGrey.600">
-                  {item.status || "Completed"}
-                </Text>
-              </Flex>
-            </HStack>
-          )}
-          maxH="250"
-          scrollEnabled={true}
-          horizontal={false}
-        />
-      )}
+      <BridgeTransactionList
+        transactions={mockBridgeTransactions}
+        onTxDetailsPress={tx => console.log("Transaction details:", tx)}
+        limit={5}
+      />
     </Box>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback, useState } from "react";
-import { Box, FormControl, HStack, Pressable, Spinner, Text, VStack, WarningOutlineIcon } from "native-base";
+import { Box, FormControl, HStack, Pressable, Spinner, Text, VStack, WarningOutlineIcon, Button } from "native-base";
 import { CurrencyValue } from "@usedapp/core";
 import { SupportedChains, useG$Amounts, useG$Balance, G$Amount, useGetEnvChainId } from "@gooddollar/web3sdk-v2";
 import { isEmpty } from "lodash";
@@ -11,7 +11,7 @@ import { GdAmount } from "../../../core/layout/BalanceGD";
 
 import ArrowTabLightRight from "../../../assets/svg/arrow-tab-light-right.svg";
 
-import type { IMPBFees, IMPBLimits, MPBBridgeProps } from "./types";
+import type { IMPBFees, IMPBLimits, MPBBridgeProps, BridgeProvider } from "./types";
 import { useWizard } from "react-use-wizard";
 
 const useMPBBridgeEstimate = ({
@@ -83,6 +83,7 @@ export const MPBBridge = ({
   onBridgeSuccess
 }: MPBBridgeProps) => {
   const [isBridging, setBridging] = useState(false);
+  const [bridgeProvider, setBridgeProvider] = useState<BridgeProvider>("axelar");
   const { nextStep } = useWizard();
   const [sourceChain, setSourceChain] = originChain;
   const targetChain = sourceChain === "fuse" ? "celo" : sourceChain === "celo" ? "mainnet" : "fuse";
@@ -129,9 +130,9 @@ export const MPBBridge = ({
   }, [setSourceChain, onSetChain, targetChain]);
 
   const triggerBridge = useCallback(async () => {
-    setPendingTransaction({ bridgeWeiAmount, expectedToReceive, nativeFee });
+    setPendingTransaction({ bridgeWeiAmount, expectedToReceive, nativeFee, bridgeProvider });
     onBridgeStart?.();
-  }, [setPendingTransaction, onBridgeStart, bridgeWeiAmount, expectedToReceive, nativeFee]);
+  }, [setPendingTransaction, onBridgeStart, bridgeWeiAmount, expectedToReceive, nativeFee, bridgeProvider]);
 
   useEffect(() => {
     const { status = "" } = bridgeStatus ?? {};
@@ -176,6 +177,39 @@ export const MPBBridge = ({
 
   return (
     <VStack padding={4} width="100%" alignSelf="center" backgroundColor="goodWhite.100">
+      {/* Bridge Provider Selection */}
+      <VStack space={4} mb={6}>
+        <Text fontFamily="heading" fontSize="md" fontWeight="700" textAlign="center">
+          Select Bridge Provider
+        </Text>
+        <HStack space={3} justifyContent="center">
+          <Button
+            variant={bridgeProvider === "axelar" ? "solid" : "outline"}
+            bg={bridgeProvider === "axelar" ? "blue.500" : "transparent"}
+            borderColor="blue.500"
+            borderRadius="full"
+            onPress={() => setBridgeProvider("axelar")}
+            _pressed={{ bg: bridgeProvider === "axelar" ? "blue.600" : "gray.100" }}
+          >
+            <Text color={bridgeProvider === "axelar" ? "white" : "blue.500"} fontWeight="semibold">
+              Axelar
+            </Text>
+          </Button>
+          <Button
+            variant={bridgeProvider === "layerzero" ? "solid" : "outline"}
+            bg={bridgeProvider === "layerzero" ? "blue.500" : "transparent"}
+            borderColor="blue.500"
+            borderRadius="full"
+            onPress={() => setBridgeProvider("layerzero")}
+            _pressed={{ bg: bridgeProvider === "layerzero" ? "blue.600" : "gray.100" }}
+          >
+            <Text color={bridgeProvider === "layerzero" ? "white" : "blue.500"} fontWeight="semibold">
+              LayerZero
+            </Text>
+          </Button>
+        </HStack>
+      </VStack>
+
       <VStack marginBottom={10}>
         <HStack zIndex="100" justifyContent="space-between" flexWrap="wrap">
           <VStack flex="1" minW="120px">
@@ -269,13 +303,13 @@ export const MPBBridge = ({
           Bridge Fee: {nativeFee ? `${nativeFee.value.toString()} ETH` : "Calculating..."}
         </Text>
         <Text fontFamily="subheading" fontSize="xs" color="goodGrey.400">
-          Powered by LayerZero/Axelar
+          Powered by {bridgeProvider === "axelar" ? "Axelar" : "LayerZero"}
         </Text>
       </VStack>
 
       <Web3ActionButton
         mt="5"
-        text={`Bridge to ${targetChain}`}
+        text={`Bridge to ${targetChain} via ${bridgeProvider}`}
         supportedChains={[SupportedChains[sourceChain.toUpperCase() as keyof typeof SupportedChains]]}
         web3Action={triggerBridge}
         disabled={isBridging}
