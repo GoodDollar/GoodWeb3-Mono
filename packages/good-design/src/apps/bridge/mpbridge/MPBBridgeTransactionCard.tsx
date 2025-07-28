@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Center, HStack, Pressable, ScrollView, Text, VStack, Box } from "native-base";
+import { Center, HStack, Pressable, ScrollView, Text, VStack, Box, Spinner } from "native-base";
 import { Platform } from "react-native";
 import moment from "moment";
 
@@ -12,7 +12,7 @@ export type BridgeTransaction = {
   targetChain: string;
   amount: string;
   bridgeProvider: "axelar" | "layerzero";
-  status: "completed" | "pending" | "failed";
+  status: "completed" | "pending" | "failed" | "bridging";
   date: Date;
   chainId: number;
 };
@@ -41,6 +41,59 @@ export const BridgeTransactionCard = withTheme({ name: "BridgeTransactionCard" }
 
     const getProviderColor = () => {
       return bridgeProvider === "axelar" ? "green.500" : "blue.500";
+    };
+
+    // Get status icon based on transaction status
+    const getStatusIcon = () => {
+      switch (status) {
+        case "bridging":
+          return (
+            <Box w="34" h="34" borderRadius="full" bg="blue.400" alignItems="center" justifyContent="center">
+              <Spinner size="xs" color="white" />
+            </Box>
+          );
+        case "completed":
+          return (
+            <Box w="34" h="34" borderRadius="full" bg="green.400" alignItems="center" justifyContent="center">
+              <Text fontSize="xs" color="white">
+                ✓
+              </Text>
+            </Box>
+          );
+        case "failed":
+          return (
+            <Box w="34" h="34" borderRadius="full" bg="red.400" alignItems="center" justifyContent="center">
+              <Text fontSize="xs" color="white">
+                ✕
+              </Text>
+            </Box>
+          );
+        case "pending":
+          return (
+            <Box w="34" h="34" borderRadius="full" bg="yellow.400" alignItems="center" justifyContent="center">
+              <Text fontSize="xs" color="white">
+                ⏳
+              </Text>
+            </Box>
+          );
+        default:
+          return null;
+      }
+    };
+
+    const getStatusText = () => {
+      switch (status) {
+        case "bridging":
+          return "Bridging in progress...";
+        case "completed":
+          return "Bridge completed";
+        case "failed":
+          return "Bridge failed";
+        case "pending":
+          return "Pending confirmation";
+        default:
+          return "";
+      }
     };
 
     return (
@@ -95,16 +148,14 @@ export const BridgeTransactionCard = withTheme({ name: "BridgeTransactionCard" }
                 <Text fontSize="4xs" fontFamily="subheading" fontWeight="400" lineHeight={12} color="goodGrey.600">
                   From {sourceChain} to {targetChain}
                 </Text>
-                {status === "failed" ? <Text>Transaction Failed</Text> : null}
+                {status !== "completed" && (
+                  <Text fontSize="4xs" color={status === "failed" ? "red.500" : "blue.500"}>
+                    {getStatusText()}
+                  </Text>
+                )}
               </VStack>
               <Center h={Platform.select({ web: "100%" })} justifyContent="center" alignItems="center">
-                {status !== "failed" ? (
-                  <Box w="34" h="34" borderRadius="full" bg="green.400" alignItems="center" justifyContent="center">
-                    <Text fontSize="xs" color="white">
-                      ✓
-                    </Text>
-                  </Box>
-                ) : null}
+                {getStatusIcon()}
               </Center>
             </HStack>
           </HStack>

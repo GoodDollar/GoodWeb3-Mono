@@ -28,7 +28,8 @@ const MPBBridgeHistory = () => {
         tx.bridgeProvider || (tx.sourceChain === "Fuse" ? "axelar" : "layerzero");
 
       // Determine status based on transaction data
-      const status: "completed" | "pending" | "failed" = tx.status || "completed";
+      // In a real implementation, this would come from the transaction status
+      const status: "completed" | "pending" | "failed" | "bridging" = tx.status || "completed";
 
       return {
         id: tx.transactionHash || `tx-${index}`,

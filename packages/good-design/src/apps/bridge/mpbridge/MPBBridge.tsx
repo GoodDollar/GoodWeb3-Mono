@@ -84,6 +84,7 @@ export const MPBBridge = ({
 }: MPBBridgeProps) => {
   const [isBridging, setBridging] = useState(false);
   const [bridgeProvider, setBridgeProvider] = useState<BridgeProvider>("axelar");
+  const [bridgingStatus, setBridgingStatus] = useState<string>("");
   const { nextStep } = useWizard();
   const [sourceChain, setSourceChain] = originChain;
   const targetChain = sourceChain === "fuse" ? "celo" : sourceChain === "celo" ? "mainnet" : "fuse";
@@ -130,6 +131,8 @@ export const MPBBridge = ({
   }, [setSourceChain, onSetChain, targetChain]);
 
   const triggerBridge = useCallback(async () => {
+    setBridging(true);
+    setBridgingStatus("Initiating bridge transaction...");
     setPendingTransaction({ bridgeWeiAmount, expectedToReceive, nativeFee, bridgeProvider });
     onBridgeStart?.();
   }, [setPendingTransaction, onBridgeStart, bridgeWeiAmount, expectedToReceive, nativeFee, bridgeProvider]);
@@ -138,18 +141,34 @@ export const MPBBridge = ({
     const { status = "" } = bridgeStatus ?? {};
     const isSuccess = status === "Success";
     const isFailed = ["Fail", "Exception"].includes(status);
-    const isBridging = !isFailed && !isSuccess && ["Mining", "PendingSignature", "Success"].includes(status);
+    const isBridgingActive = !isFailed && !isSuccess && ["Mining", "PendingSignature", "Success"].includes(status);
 
-    setBridging(isBridging);
+    setBridging(isBridgingActive);
 
     if (bridgeStatus?.status === "Mining") {
+      setBridgingStatus("Bridging in progress...");
       void nextStep();
     }
-    if (isSuccess) {
+
+    if (bridgeStatus?.status === "PendingSignature") {
+      setBridgingStatus("Waiting for signature...");
+    }
+
+    if (bridgeStatus?.status === "Success") {
+      setBridgingStatus("Bridge completed successfully!");
+      setTimeout(() => {
+        setBridging(false);
+        setBridgingStatus("");
+      }, 3000);
       onBridgeSuccess?.();
     }
 
     if (isFailed) {
+      setBridgingStatus("Bridge failed");
+      setTimeout(() => {
+        setBridging(false);
+        setBridgingStatus("");
+      }, 3000);
       const exception = new Error(bridgeStatus?.errorMessage ?? "Failed to bridge");
       onBridgeFailed?.(exception);
     }
@@ -209,6 +228,18 @@ export const MPBBridge = ({
           </Button>
         </HStack>
       </VStack>
+
+      {/* Bridging Status Display */}
+      {isBridging && (
+        <Box bg="blue.50" borderWidth="1" borderColor="blue.200" borderRadius="md" p="3" mb="4">
+          <HStack space={2} alignItems="center">
+            <Spinner size="sm" color="blue.500" />
+            <Text color="blue.700" fontWeight="medium">
+              {bridgingStatus}
+            </Text>
+          </HStack>
+        </Box>
+      )}
 
       <VStack marginBottom={10}>
         <HStack zIndex="100" justifyContent="space-between" flexWrap="wrap">
@@ -309,7 +340,7 @@ export const MPBBridge = ({
 
       <Web3ActionButton
         mt="5"
-        text={`Bridge to ${targetChain} via ${bridgeProvider}`}
+        text={isBridging ? "Bridging..." : `Bridge to ${targetChain} via ${bridgeProvider}`}
         supportedChains={[SupportedChains[sourceChain.toUpperCase() as keyof typeof SupportedChains]]}
         web3Action={triggerBridge}
         disabled={isBridging}
