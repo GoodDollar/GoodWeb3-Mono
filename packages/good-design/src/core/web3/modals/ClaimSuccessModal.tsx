@@ -42,7 +42,7 @@ export const ClaimSuccessModal = ({
   }, [open]);
 
   const title = isFirstTimeClaimer
-    ? "Congrats! \n You claimed your \n first G$'s today"
+    ? "Congrats! \n You claimed your \n first G$s today"
     : "Congrats! \n You claimed \n G$ today";
 
   return (

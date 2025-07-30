@@ -1,4 +1,5 @@
 interface SocialPlatform {
+  id: string;
   name: string;
   color: string;
   icon: string;
@@ -8,6 +9,7 @@ interface SocialPlatform {
 
 const SOCIALS: SocialPlatform[] = [
   {
+    id: "facebook",
     name: "Facebook",
     color: "#1877F2",
     icon: "facebook",
@@ -15,6 +17,7 @@ const SOCIALS: SocialPlatform[] = [
       `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(message)}`
   },
   {
+    id: "x",
     name: "X",
     color: "#000000",
     icon: "x",
@@ -22,6 +25,7 @@ const SOCIALS: SocialPlatform[] = [
       `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}&url=${encodeURIComponent(url)}`
   },
   {
+    id: "linkedin",
     name: "LinkedIn",
     color: "#0A66C2",
     icon: "linkedin",
@@ -29,6 +33,7 @@ const SOCIALS: SocialPlatform[] = [
       `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`
   },
   {
+    id: "instagram",
     name: "Instagram",
     color: "#E4405F",
     icon: "instagram",
@@ -43,15 +48,22 @@ export interface SocialShareWidgetOptions {
   containerId?: string;
   className?: string;
   iconSize?: number;
+  platforms?: string[];
+  iconBasePath?: string;
 }
 
 export class SocialShareWidget {
   private options: SocialShareWidgetOptions;
   private container: HTMLElement | null = null;
   private modal: HTMLElement | null = null;
+  private static instanceCount = 0;
 
   constructor(options: SocialShareWidgetOptions) {
-    this.options = options;
+    this.options = {
+      iconBasePath: "/assets/svg",
+      ...options
+    };
+    SocialShareWidget.instanceCount++;
   }
 
   private createStyles(): string {
@@ -171,36 +183,50 @@ export class SocialShareWidget {
     `;
   }
 
-  private copyToClipboard(text: string): void {
-    if (navigator.clipboard) {
-      navigator.clipboard
-        .writeText(text)
-        .then(() => {
-          console.log("Message copied to clipboard!");
-        })
-        .catch(err => {
-          console.error("Failed to copy to clipboard:", err);
-        });
-    } else {
-      const textArea = document.createElement("textarea");
-      textArea.value = text;
-      document.body.appendChild(textArea);
-      textArea.select();
-      document.execCommand("copy");
-      document.body.removeChild(textArea);
-      console.log("Message copied to clipboard!");
-    }
+  private copyToClipboard(text: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      if (navigator.clipboard) {
+        navigator.clipboard
+          .writeText(text)
+          .then(() => {
+            console.log("Message copied to clipboard!");
+            resolve();
+          })
+          .catch(err => {
+            console.error("Failed to copy to clipboard:", err);
+            reject(err);
+          });
+      } else {
+        try {
+          const textArea = document.createElement("textarea");
+          textArea.value = text;
+          document.body.appendChild(textArea);
+          textArea.select();
+          const success = document.execCommand("copy");
+          document.body.removeChild(textArea);
+
+          if (success) {
+            console.log("Message copied to clipboard!");
+            resolve();
+          } else {
+            reject(new Error("Failed to copy to clipboard"));
+          }
+        } catch (err) {
+          reject(err);
+        }
+      }
+    });
   }
 
   private createSocialButton(social: SocialPlatform): HTMLElement {
     const button = document.createElement("button");
     button.className = "social-button";
     button.style.backgroundColor = social.color;
-    button.style.backgroundImage = `url('/assets/svg/${social.icon}.svg')`;
+    button.style.backgroundImage = `url('${this.options.iconBasePath}/${social.icon}.svg')`;
     button.title = `Share on ${social.name}`;
 
     button.addEventListener("click", () => {
-      if (social.name === "Instagram") {
+      if (social.id === "instagram") {
         this.showInstagramModal();
       } else {
         void window.open(social.getUrl(this.options.message, this.options.url), "_blank", "noopener,noreferrer");
@@ -210,50 +236,144 @@ export class SocialShareWidget {
     return button;
   }
 
+  private createInstagramModal(): HTMLElement {
+    const modal = document.createElement("div");
+    modal.className = "instagram-modal";
+
+    const modalContent = document.createElement("div");
+    modalContent.className = "instagram-modal-content";
+
+    // Create header
+    const header = document.createElement("div");
+    header.className = "instagram-modal-header";
+    header.textContent = "Share on Instagram";
+    modalContent.appendChild(header);
+
+    // Create body
+    const body = document.createElement("div");
+    body.className = "instagram-modal-body";
+
+    const icon = document.createElement("div");
+    icon.className = "instagram-icon";
+    icon.style.backgroundImage = `url('${this.options.iconBasePath}/instagram.svg')`;
+    body.appendChild(icon);
+
+    const text = document.createElement("div");
+    text.className = "instagram-modal-text";
+    text.textContent = "Your message has been copied to clipboard. You can now paste it on Instagram!";
+    body.appendChild(text);
+
+    const note = document.createElement("div");
+    note.className = "instagram-modal-note";
+    note.textContent = "Copy your message and share it on Instagram!";
+    body.appendChild(note);
+
+    modalContent.appendChild(body);
+
+    // Create footer
+    const footer = document.createElement("div");
+    footer.className = "instagram-modal-footer";
+
+    const cancelButton = document.createElement("button");
+    cancelButton.className = "modal-button modal-button-cancel";
+    cancelButton.textContent = "Cancel";
+    cancelButton.addEventListener("click", () => {
+      this.closeInstagramModal();
+    });
+    footer.appendChild(cancelButton);
+
+    const copyButton = document.createElement("button");
+    copyButton.className = "modal-button modal-button-copy";
+    copyButton.textContent = "Copy Message";
+    copyButton.addEventListener("click", async () => {
+      try {
+        await this.copyToClipboard(this.options.message);
+        this.showCopySuccess();
+        this.closeInstagramModal();
+      } catch (err) {
+        this.showCopyError();
+      }
+    });
+    footer.appendChild(copyButton);
+
+    modalContent.appendChild(footer);
+    modal.appendChild(modalContent);
+
+    // Close modal when clicking outside
+    modal.addEventListener("click", e => {
+      if (e.target === modal) {
+        this.closeInstagramModal();
+      }
+    });
+
+    return modal;
+  }
+
+  private showCopySuccess(): void {
+    // Create a simple success notification
+    const notification = document.createElement("div");
+    notification.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #4CAF50;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 4px;
+      z-index: 1001;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+    `;
+    notification.textContent = "Message copied to clipboard!";
+    document.body.appendChild(notification);
+
+    setTimeout(() => {
+      if (notification.parentNode) {
+        document.body.removeChild(notification);
+      }
+    }, 2000);
+  }
+
+  private showCopyError(): void {
+    // Create a simple error notification
+    const notification = document.createElement("div");
+    notification.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #f44336;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 4px;
+      z-index: 1001;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+    `;
+    notification.textContent = "Failed to copy message. Please try again.";
+    document.body.appendChild(notification);
+
+    setTimeout(() => {
+      if (notification.parentNode) {
+        document.body.removeChild(notification);
+      }
+    }, 3000);
+  }
+
   private showInstagramModal(): void {
     // Remove existing modal if any
     if (this.modal) {
       document.body.removeChild(this.modal);
     }
 
-    this.modal = document.createElement("div");
-    this.modal.className = "instagram-modal";
-
-    const modalContent = document.createElement("div");
-    modalContent.className = "instagram-modal-content";
-
-    modalContent.innerHTML = `
-      <div class="instagram-modal-header">Share on Instagram</div>
-      <div class="instagram-modal-body">
-        <div class="instagram-icon" style="background-image: url('/assets/svg/instagram.svg')"></div>
-        <div class="instagram-modal-text">
-          Your message has been copied to clipboard. You can now paste it on Instagram!
-        </div>
-        <div class="instagram-modal-note">
-          Copy your message and share it on Instagram!
-        </div>
-      </div>
-      <div class="instagram-modal-footer">
-        <button class="modal-button modal-button-cancel" onclick="this.closest('.instagram-modal').remove()">Cancel</button>
-        <button class="modal-button modal-button-copy" onclick="this.closest('.instagram-modal').remove(); this.copyMessage()">Copy Message</button>
-      </div>
-    `;
-
-    this.modal.appendChild(modalContent);
+    this.modal = this.createInstagramModal();
     document.body.appendChild(this.modal);
+  }
 
-    // Add copy function to window
-    (window as any).copyMessage = () => {
-      this.copyToClipboard(this.options.message);
-    };
-
-    // Close modal when clicking outside
-    this.modal.addEventListener("click", e => {
-      if (e.target === this.modal && this.modal) {
-        document.body.removeChild(this.modal);
-        this.modal = null;
-      }
-    });
+  private closeInstagramModal(): void {
+    if (this.modal) {
+      document.body.removeChild(this.modal);
+      this.modal = null;
+    }
   }
 
   render(container?: HTMLElement | null): HTMLElement {
@@ -263,6 +383,12 @@ export class SocialShareWidget {
       styleElement.id = "social-share-widget-styles";
       styleElement.textContent = this.createStyles();
       document.head.appendChild(styleElement);
+    }
+
+    // Determine which platforms to show
+    let socialsToShow = SOCIALS;
+    if (this.options.platforms && Array.isArray(this.options.platforms)) {
+      socialsToShow = SOCIALS.filter(social => this.options.platforms?.includes(social.id) || false);
     }
 
     // Create container if not provided
@@ -286,20 +412,22 @@ export class SocialShareWidget {
     socialShareBar.className = "social-share-widget";
 
     // Add Facebook, X, LinkedIn buttons
-    SOCIALS.slice(0, 3).forEach(social => {
+    socialsToShow.slice(0, 3).forEach(social => {
       const button = this.createSocialButton(social);
       socialShareBar.appendChild(button);
     });
 
-    // Add More button
-    const moreButton = document.createElement("button");
-    moreButton.className = "more-button";
-    moreButton.style.backgroundImage = "url('/assets/svg/more-button.svg')";
-    moreButton.title = "More sharing options";
-    moreButton.addEventListener("click", () => {
-      this.showInstagramModal();
-    });
-    socialShareBar.appendChild(moreButton);
+    // Add More button if there are additional platforms
+    if (socialsToShow.length > 3) {
+      const moreButton = document.createElement("button");
+      moreButton.className = "more-button";
+      moreButton.style.backgroundImage = `url('${this.options.iconBasePath}/more-button.svg')`;
+      moreButton.title = "More sharing options";
+      moreButton.addEventListener("click", () => {
+        this.showInstagramModal();
+      });
+      socialShareBar.appendChild(moreButton);
+    }
 
     container.appendChild(socialShareBar);
     this.container = container;
@@ -315,6 +443,15 @@ export class SocialShareWidget {
     if (this.container) {
       this.container.innerHTML = "";
     }
+
+    // Remove styles if this is the last instance
+    SocialShareWidget.instanceCount--;
+    if (SocialShareWidget.instanceCount === 0) {
+      const styleElement = document.getElementById("social-share-widget-styles");
+      if (styleElement) {
+        document.head.removeChild(styleElement);
+      }
+    }
   }
 }
 
@@ -328,11 +465,13 @@ document.addEventListener("DOMContentLoaded", () => {
   widgets.forEach(element => {
     const message = element.getAttribute("data-message") || "I just did my first claim(s) of G$ this week!";
     const url = element.getAttribute("data-url") || "https://gooddollar.org";
+    const platforms = element.getAttribute("data-platforms")?.split(",") || undefined;
 
     const widget = new SocialShareWidget({
       message,
       url,
-      containerId: element.id
+      containerId: element.id,
+      platforms
     });
 
     widget.render(element as HTMLElement);

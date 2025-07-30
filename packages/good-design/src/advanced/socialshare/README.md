@@ -126,7 +126,7 @@ widget.render(document.getElementById('container'));
 The `ClaimSuccessModal` now supports first-time claimer detection:
 
 - When `isFirstTimeClaimer={true}`, the modal shows:
-  - Title: "Congrats! \n You claimed your \n first G$'s today"
+  - Title: "Congrats! \n You claimed your \n first G$s today"
   - Social share widget with configurable message
 - When `isFirstTimeClaimer={false}`, the modal shows:
   - Title: "Congrats! \n You claimed \n G$ today"

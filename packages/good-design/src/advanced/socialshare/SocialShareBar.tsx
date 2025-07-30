@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { HStack, IconButton, Text, VStack, Button, Modal } from "native-base";
+import { HStack, IconButton, Text, VStack, Button, Modal, useToast } from "native-base";
 import { Image } from "../../core/images";
 
 // Import SVG icons
@@ -48,6 +48,7 @@ export interface SocialShareBarProps {
 
 export const SocialShareBar: React.FC<SocialShareBarProps> = ({ message, url }) => {
   const [showInstagramModal, setShowInstagramModal] = useState(false);
+  const toast = useToast();
 
   const copyToClipboard = async (text: string) => {
     try {
@@ -77,9 +78,21 @@ export const SocialShareBar: React.FC<SocialShareBarProps> = ({ message, url }) 
   };
 
   const handleInstagramShare = async () => {
-    await copyToClipboard(message);
-    setShowInstagramModal(false);
-    // You could add a success notification here
+    try {
+      await copyToClipboard(message);
+      toast.show({
+        title: "Copied!",
+        description: "Message copied to clipboard.",
+        duration: 2000
+      });
+      setShowInstagramModal(false);
+    } catch (err) {
+      toast.show({
+        title: "Error",
+        description: "Failed to copy message. Please try again.",
+        duration: 3000
+      });
+    }
   };
 
   return (
