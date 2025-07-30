@@ -70,7 +70,22 @@ const widget = createSocialShareWidget({
 widget.render();
 ```
 
-### Method 3: Custom Configuration
+### Method 3: Dynamic Initialization
+
+For dynamically added content, use the `initializeSocialShareWidgets` function:
+
+```javascript
+import { initializeSocialShareWidgets } from '@gooddollar/good-design';
+
+// Initialize widgets in a specific container
+const container = document.getElementById('dynamic-content');
+initializeSocialShareWidgets(container);
+
+// Or initialize all widgets in the document
+initializeSocialShareWidgets();
+```
+
+### Method 4: Custom Configuration
 
 ```javascript
 const widget = new SocialShareWidget({
@@ -93,9 +108,7 @@ widget.render(document.getElementById('container'));
 |------|------|---------|-------------|
 | `message` | `string` | - | The message to share |
 | `url` | `string` | - | The URL to share |
-| `platforms` | `string[]` | `["Facebook", "X", "LinkedIn", "WhatsApp", "Telegram", "Instagram"]` | Platforms to show |
 | `className` | `string` | - | Custom CSS class |
-| `showMoreButton` | `boolean` | `true` | Show "More" button for additional platforms |
 
 ### ClaimSuccessModal Props
 
@@ -113,11 +126,11 @@ widget.render(document.getElementById('container'));
 |--------|------|---------|-------------|
 | `message` | `string` | - | The message to share |
 | `url` | `string` | - | The URL to share |
-| `platforms` | `string[]` | `["Facebook", "X", "LinkedIn", "WhatsApp", "Telegram", "Instagram"]` | Platforms to show |
-| `containerId` | `string` | `"social-share-widget"` | Container element ID |
-| `className` | `string` | `"social-share-bar"` | CSS class name |
+| `platforms` | `string[]` | `["facebook", "x", "linkedin", "instagram"]` | Platforms to show |
+| `containerId` | `string` | - | Container element ID |
+| `className` | `string` | `"social-share-widget"` | CSS class name |
 | `iconSize` | `number` | `40` | Icon size in pixels |
-| `showMoreButton` | `boolean` | `true` | Show "More" button for additional platforms |
+| `iconBasePath` | `string` | `"/assets/svg"` | Base path for icon files |
 
 ## Implementation Details
 
@@ -134,12 +147,10 @@ The `ClaimSuccessModal` now supports first-time claimer detection:
 
 ### Social Platforms
 
-1. **Facebook**: Opens Facebook share dialog (Blue circular button with "f")
-2. **X (Twitter)**: Opens Twitter share dialog (Black circular button with "X")
-3. **LinkedIn**: Opens LinkedIn share dialog (Blue circular button with "in")
-4. **WhatsApp**: Opens WhatsApp share dialog (Green circular button with "W")
-5. **Telegram**: Opens Telegram share dialog (Blue circular button with "T")
-6. **Instagram**: Copies message to clipboard (Pink circular button with "I")
+1. **Facebook**: Opens Facebook share dialog (Blue circular button with Facebook icon)
+2. **X (Twitter)**: Opens Twitter share dialog (Black circular button with X icon)
+3. **LinkedIn**: Opens LinkedIn share dialog (Blue circular button with LinkedIn icon)
+4. **Instagram**: Copies message to clipboard (Pink circular button with Instagram icon, accessed via More button)
 
 ### Design Features
 

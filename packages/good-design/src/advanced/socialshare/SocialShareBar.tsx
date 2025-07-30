@@ -9,36 +9,23 @@ import LinkedInIcon from "../../assets/svg/linkedin.svg";
 import InstagramIcon from "../../assets/svg/instagram.svg";
 import MoreButtonIcon from "../../assets/svg/more-button.svg";
 
-const SOCIALS = [
-  {
-    name: "Facebook",
-    icon: FacebookIcon,
-    color: "#1877F2",
-    getUrl: (msg: string, url: string) =>
-      `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(msg)}`
-  },
-  {
-    name: "X",
-    icon: XIcon,
-    color: "#000000",
-    getUrl: (msg: string, url: string) =>
-      `https://twitter.com/intent/tweet?text=${encodeURIComponent(msg)}&url=${encodeURIComponent(url)}`
-  },
-  {
-    name: "LinkedIn",
-    icon: LinkedInIcon,
-    color: "#0A66C2",
-    getUrl: (msg: string, url: string) =>
-      `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`
-  },
-  {
-    name: "Instagram",
-    icon: InstagramIcon,
-    color: "#E4405F",
-    getUrl: () => "https://www.instagram.com/",
-    note: "Copy your message and share it on Instagram!"
-  }
-];
+// Import shared configuration
+import { SOCIALS as SHARED_SOCIALS } from "./config";
+
+// Map shared config to React component format
+const SOCIALS = SHARED_SOCIALS.map(social => ({
+  ...social,
+  icon:
+    social.id === "facebook"
+      ? FacebookIcon
+      : social.id === "x"
+      ? XIcon
+      : social.id === "linkedin"
+      ? LinkedInIcon
+      : social.id === "instagram"
+      ? InstagramIcon
+      : FacebookIcon
+}));
 
 export interface SocialShareBarProps {
   message: string;

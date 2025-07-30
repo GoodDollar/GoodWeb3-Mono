@@ -1,46 +1,5 @@
-interface SocialPlatform {
-  id: string;
-  name: string;
-  color: string;
-  icon: string;
-  getUrl: (message: string, url: string) => string;
-  note?: string;
-}
-
-const SOCIALS: SocialPlatform[] = [
-  {
-    id: "facebook",
-    name: "Facebook",
-    color: "#1877F2",
-    icon: "facebook",
-    getUrl: (message: string, url: string) =>
-      `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(message)}`
-  },
-  {
-    id: "x",
-    name: "X",
-    color: "#000000",
-    icon: "x",
-    getUrl: (message: string, url: string) =>
-      `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}&url=${encodeURIComponent(url)}`
-  },
-  {
-    id: "linkedin",
-    name: "LinkedIn",
-    color: "#0A66C2",
-    icon: "linkedin",
-    getUrl: (message: string, url: string) =>
-      `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`
-  },
-  {
-    id: "instagram",
-    name: "Instagram",
-    color: "#E4405F",
-    icon: "instagram",
-    getUrl: () => "https://www.instagram.com/",
-    note: "Copy your message and share it on Instagram!"
-  }
-];
+// Import shared configuration
+import { SOCIALS, type SocialPlatform, DEFAULT_MESSAGE, DEFAULT_URL, DEFAULT_ICON_BASE_PATH } from "./config";
 
 export interface SocialShareWidgetOptions {
   message: string;
@@ -60,7 +19,7 @@ export class SocialShareWidget {
 
   constructor(options: SocialShareWidgetOptions) {
     this.options = {
-      iconBasePath: "/assets/svg",
+      iconBasePath: DEFAULT_ICON_BASE_PATH,
       ...options
     };
     SocialShareWidget.instanceCount++;
@@ -459,12 +418,13 @@ export function createSocialShareWidget(options: SocialShareWidgetOptions): Soci
   return new SocialShareWidget(options);
 }
 
-// Auto-initialize widgets with data-social-share attribute
-document.addEventListener("DOMContentLoaded", () => {
-  const widgets = document.querySelectorAll("[data-social-share]");
+// Public method to initialize widgets dynamically
+export function initializeSocialShareWidgets(container?: HTMLElement | Document) {
+  const targetContainer = container || document;
+  const widgets = targetContainer.querySelectorAll("[data-social-share]");
   widgets.forEach(element => {
-    const message = element.getAttribute("data-message") || "I just did my first claim(s) of G$ this week!";
-    const url = element.getAttribute("data-url") || "https://gooddollar.org";
+    const message = element.getAttribute("data-message") || DEFAULT_MESSAGE;
+    const url = element.getAttribute("data-url") || DEFAULT_URL;
     const platforms = element.getAttribute("data-platforms")?.split(",") || undefined;
 
     const widget = new SocialShareWidget({
@@ -476,4 +436,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     widget.render(element as HTMLElement);
   });
+}
+
+// Auto-initialize widgets with data-social-share attribute on DOMContentLoaded
+document.addEventListener("DOMContentLoaded", () => {
+  initializeSocialShareWidgets();
 });

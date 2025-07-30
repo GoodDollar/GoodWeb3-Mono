@@ -44,7 +44,7 @@ export async function tokenBalance(
   );
 }
 
-export const formatBalance = (value: any, decimals = 18, maxFraction = 0) => {
+export const formatBalance = (value: ethers.BigNumberish, decimals = 18, maxFraction = 0) => {
   const formatted = utils.formatUnits(value, decimals);
   if (maxFraction > 0) {
     const split = formatted.split(".");
