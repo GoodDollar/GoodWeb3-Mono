@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Share Widget Example</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .example-section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Social Share Widget Examples</h1>
+    
+    <div class="example-section">
+        <h2>Method 1: Using data attributes (Auto-initialization)</h2>
+        <p>This widget will be automatically initialized when the page loads:</p>
+        <div 
+            id="auto-widget"
+            data-social-share
+            data-message="I just did my first claim(s) of G$ this week!"
+            data-url="https://gooddollar.org"
+            data-platforms="Facebook,X,LinkedIn,WhatsApp,Telegram,Instagram">
+        </div>
+    </div>
+
+    <div class="example-section">
+        <h2>Method 2: Programmatic initialization</h2>
+        <p>This widget is created and rendered programmatically:</p>
+        <div id="programmatic-widget"></div>
+        <button onclick="createWidget()">Create Widget</button>
+    </div>
+
+    <div class="example-section">
+        <h2>Method 3: Custom configuration</h2>
+        <p>This widget uses custom styling and only specific platforms:</p>
+        <div id="custom-widget"></div>
+        <button onclick="createCustomWidget()">Create Custom Widget</button>
+    </div>
+
+    <script>
+        // Example 2: Programmatic initialization
+        function createWidget() {
+            const widget = new SocialShareWidget({
+                message: "I just did my first claim(s) of G$ this week!",
+                url: "https://gooddollar.org",
+                platforms: ["Facebook", "X", "LinkedIn", "WhatsApp", "Telegram", "Instagram"],
+                containerId: "programmatic-widget"
+            });
+            widget.render();
+        }
+
+        // Example 3: Custom configuration
+        function createCustomWidget() {
+            const widget = new SocialShareWidget({
+                message: "Check out GoodDollar - Universal Basic Income on blockchain!",
+                url: "https://gooddollar.org",
+                platforms: ["Facebook", "X", "WhatsApp"],
+                containerId: "custom-widget",
+                className: "custom-social-share",
+                iconSize: 40
+            });
+            widget.render();
+        }
+
+        // Load the widget script (in a real implementation, this would be a separate file)
+        // For this example, we'll assume the SocialShareWidget class is available globally
+    </script>
+</body>
+</html> 

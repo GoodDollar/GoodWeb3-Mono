@@ -4,16 +4,33 @@ import { Text } from "native-base";
 
 import BasicStyledModal, { ModalFooterSocial } from "./BasicStyledModal";
 
-const ClaimSuccessContent = () => (
+const ClaimSuccessContent = ({ isFirstTimeClaimer = false }: { isFirstTimeClaimer?: boolean }) => (
   <Text variant="sm-grey-650">
-    Why not tell your friends on social media?
+    {isFirstTimeClaimer
+      ? "Why not tell your friends about your first G$ claim?"
+      : "Why not tell your friends on social media?"}
     <Text fontFamily="subheading" fontSize="sm" color="gdPrimary">
-      {` Don't forget to tag use`}
+      {` Don't forget to tag us`}
     </Text>
   </Text>
 );
 
-export const ClaimSuccessModal = ({ open, onClose = noop, ...props }: { open: boolean; onClose?: () => void }) => {
+export interface ClaimSuccessModalProps {
+  open: boolean;
+  onClose?: () => void;
+  isFirstTimeClaimer?: boolean;
+  socialShareMessage?: string;
+  socialShareUrl?: string;
+}
+
+export const ClaimSuccessModal = ({
+  open,
+  onClose = noop,
+  isFirstTimeClaimer = false,
+  socialShareMessage = "I just did my first claim(s) of G$ this week!",
+  socialShareUrl = "https://gooddollar.org",
+  ...props
+}: ClaimSuccessModalProps) => {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
@@ -24,15 +41,25 @@ export const ClaimSuccessModal = ({ open, onClose = noop, ...props }: { open: bo
     }
   }, [open]);
 
+  const title = isFirstTimeClaimer
+    ? "Congrats! \n You claimed your \n first G$'s today"
+    : "Congrats! \n You claimed \n G$ today";
+
   return (
     <BasicStyledModal
       {...props}
       type="social"
       show={show}
       onClose={onClose}
-      title={`Congrats! \n You claimed \n G$ today`}
-      body={<ClaimSuccessContent />}
-      footer={<ModalFooterSocial />}
+      title={title}
+      body={<ClaimSuccessContent isFirstTimeClaimer={isFirstTimeClaimer} />}
+      footer={
+        isFirstTimeClaimer ? (
+          <ModalFooterSocial message={socialShareMessage} url={socialShareUrl} />
+        ) : (
+          <ModalFooterSocial />
+        )
+      }
       withOverlay="dark"
       withCloseButton
     />

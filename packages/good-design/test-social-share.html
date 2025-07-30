@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Share Test - Updated</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .modal {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            text-align: center;
+        }
+        .title {
+            color: #00AFFF;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            line-height: 1.3;
+        }
+        .description {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+        .social-share-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        .social-button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.2s ease;
+            background-size: 20px 20px;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+        .social-button:hover {
+            opacity: 0.8;
+        }
+        .more-button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #EBF8FF;
+            transition: opacity 0.2s ease;
+            background-size: 20px 20px;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+        .more-button:hover {
+            opacity: 0.8;
+        }
+        .test-buttons {
+            margin-top: 30px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        .test-button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .primary {
+            background: #00AFFF;
+            color: white;
+        }
+        .secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+        .instagram-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .instagram-modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+        .instagram-modal-header {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .instagram-modal-body {
+            margin-bottom: 20px;
+        }
+        .instagram-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 20px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+        .instagram-modal-text {
+            color: #666;
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+        .instagram-modal-note {
+            color: #999;
+            font-size: 12px;
+        }
+        .instagram-modal-footer {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        .modal-button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .modal-button-cancel {
+            background: #f0f0f0;
+            color: #333;
+        }
+        .modal-button-copy {
+            background: #00AFFF;
+            color: white;
+        }
+        .modal-button:hover {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Social Share Widget Test - Updated</h1>
+        <p>This page demonstrates the updated social share functionality with only Facebook, X, LinkedIn, and Instagram (via More button).</p>
+        
+        <div class="test-buttons">
+            <button class="test-button primary" onclick="showFirstTimeClaimer()">Show First-Time Claimer Modal</button>
+            <button class="test-button secondary" onclick="showRegularClaimer()">Show Regular Claimer Modal</button>
+        </div>
+
+        <div id="modal" style="display: none;" class="modal">
+            <div class="title" id="modalTitle">Congrats!<br>You claimed your<br>first G$'s today</div>
+            <div class="description" id="modalDescription">
+                Why not tell your friends about your first G$ claim?<br>
+                <strong>Don't forget to tag us</strong>
+            </div>
+            
+            <div class="social-share-bar" id="socialShareBar">
+                <!-- Social buttons will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const SOCIALS = [
+            {
+                name: "Facebook",
+                color: "#1877F2",
+                icon: "facebook",
+                getUrl: (msg, url) => `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(msg)}`
+            },
+            {
+                name: "X",
+                color: "#000000",
+                icon: "x",
+                getUrl: (msg, url) => `https://twitter.com/intent/tweet?text=${encodeURIComponent(msg)}&url=${encodeURIComponent(url)}`
+            },
+            {
+                name: "LinkedIn",
+                color: "#0A66C2",
+                icon: "linkedin",
+                getUrl: (msg, url) => `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`
+            },
+            {
+                name: "Instagram",
+                color: "#E4405F",
+                icon: "instagram",
+                getUrl: () => "https://www.instagram.com/",
+                note: "Copy your message and share it on Instagram!"
+            }
+        ];
+
+        function createSocialButtons() {
+            const container = document.getElementById('socialShareBar');
+            container.innerHTML = '';
+            
+            const message = "I just did my first claim(s) of G$ this week!";
+            const url = "https://gooddollar.org";
+            
+            // Show Facebook, X, LinkedIn buttons
+            SOCIALS.slice(0, 3).forEach(social => {
+                const button = document.createElement('button');
+                button.className = 'social-button';
+                button.style.backgroundColor = social.color;
+                button.style.backgroundImage = `url('/assets/svg/${social.icon}.svg')`;
+                button.title = `Share on ${social.name}`;
+                
+                button.onclick = () => {
+                    window.open(social.getUrl(message, url), "_blank", "noopener,noreferrer");
+                };
+                
+                container.appendChild(button);
+            });
+            
+            // Add More button
+            const moreButton = document.createElement('button');
+            moreButton.className = 'more-button';
+            moreButton.style.backgroundImage = "url('/assets/svg/more-button.svg')";
+            moreButton.title = "More sharing options";
+            moreButton.onclick = () => {
+                showInstagramModal();
+            };
+            container.appendChild(moreButton);
+        }
+
+        function showInstagramModal() {
+            // Remove existing modal if any
+            const existingModal = document.querySelector('.instagram-modal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+
+            const modal = document.createElement('div');
+            modal.className = 'instagram-modal';
+            
+            const modalContent = document.createElement('div');
+            modalContent.className = 'instagram-modal-content';
+            
+            modalContent.innerHTML = `
+                <div class="instagram-modal-header">Share on Instagram</div>
+                <div class="instagram-modal-body">
+                    <div class="instagram-icon" style="background-image: url('/assets/svg/instagram.svg')"></div>
+                    <div class="instagram-modal-text">
+                        Your message has been copied to clipboard. You can now paste it on Instagram!
+                    </div>
+                    <div class="instagram-modal-note">
+                        Copy your message and share it on Instagram!
+                    </div>
+                </div>
+                <div class="instagram-modal-footer">
+                    <button class="modal-button modal-button-cancel" onclick="this.closest('.instagram-modal').remove()">Cancel</button>
+                    <button class="modal-button modal-button-copy" onclick="copyMessageAndClose()">Copy Message</button>
+                </div>
+            `;
+            
+            modal.appendChild(modalContent);
+            document.body.appendChild(modal);
+            
+            // Close modal when clicking outside
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.remove();
+                }
+            });
+        }
+
+        function copyMessageAndClose() {
+            const message = "I just did my first claim(s) of G$ this week!";
+            copyToClipboard(message);
+            document.querySelector('.instagram-modal').remove();
+        }
+
+        function copyToClipboard(text) {
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text).then(() => {
+                    console.log("Message copied to clipboard!");
+                    alert("Message copied to clipboard for Instagram!");
+                }).catch(err => {
+                    console.error("Failed to copy to clipboard:", err);
+                });
+            } else {
+                const textArea = document.createElement("textarea");
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand("copy");
+                document.body.removeChild(textArea);
+                console.log("Message copied to clipboard!");
+                alert("Message copied to clipboard for Instagram!");
+            }
+        }
+
+        function showFirstTimeClaimer() {
+            document.getElementById('modalTitle').innerHTML = "Congrats!<br>You claimed your<br>first G$'s today";
+            document.getElementById('modalDescription').innerHTML = 
+                "Why not tell your friends about your first G$ claim?<br><strong>Don't forget to tag us</strong>";
+            document.getElementById('modal').style.display = 'block';
+            createSocialButtons();
+        }
+
+        function showRegularClaimer() {
+            document.getElementById('modalTitle').innerHTML = "Congrats!<br>You claimed<br>G$ today";
+            document.getElementById('modalDescription').innerHTML = 
+                "Why not tell your friends on social media?<br><strong>Don't forget to tag us</strong>";
+            document.getElementById('modal').style.display = 'block';
+            // Don't show social share for regular claimers
+            document.getElementById('socialShareBar').innerHTML = '';
+        }
+
+        // Initialize the page
+        createSocialButtons();
+    </script>
+</body>
+</html> 

@@ -46,7 +46,7 @@ const injected = injectedModule({
       // Returns a valid EIP1193 provider. In some cases the provider will need to be patched to satisfy the EIP1193 Provider interface
       getInterface: () =>
         Promise.resolve({
-          provider: window["ethereum"]
+          provider: window["ethereum"] as any
         })
     }
   ]

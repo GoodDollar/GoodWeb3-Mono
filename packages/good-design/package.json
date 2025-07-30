@@ -97,6 +97,7 @@
     "@magiklabs/react-sdk": "^1.0.8",
     "@react-native-clipboard/clipboard": "^1.14.1",
     "@uniswap/sdk-core": "^3.1.0",
+    "@wagmi/core": "^2.18.0",
     "async-await-mutex-lock": "^1.0.11",
     "buffer": "^6.0.3",
     "country-data": "^0.0.31",
@@ -128,6 +129,7 @@
     "react-number-format": "^5.1.1",
     "react-use-promise": "^0.5.0",
     "react-use-wizard": "^2.3.0",
-    "require-from-string": "^2.0.2"
+    "require-from-string": "^2.0.2",
+    "viem": "^2.33.1"
   }
 }
