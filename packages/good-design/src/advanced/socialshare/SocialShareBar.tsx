@@ -62,13 +62,6 @@ export const SocialShareBar: React.FC<SocialShareBarProps> = ({ message, url }) 
     setShowInstagramModal(true);
   }, []);
 
-  const handleSocialButtonClick = useCallback(
-    (social: (typeof SOCIALS)[0]) => {
-      handleSocialClick(social);
-    },
-    [handleSocialClick]
-  );
-
   const handleInstagramShare = () => {
     try {
       copyToClipboard(message);
@@ -97,7 +90,7 @@ export const SocialShareBar: React.FC<SocialShareBarProps> = ({ message, url }) 
               key={social.name}
               variant="ghost"
               size="lg"
-              onPress={() => handleSocialButtonClick(social)}
+              onPress={() => handleSocialClick(social)}
               _pressed={{ opacity: 0.7 }}
               _icon={{
                 as: () => (
