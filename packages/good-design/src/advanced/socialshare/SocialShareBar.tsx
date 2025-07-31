@@ -47,13 +47,20 @@ export const SocialShareBar: React.FC<SocialShareBarProps> = ({ message, url }) 
     }
   }, []);
 
-  const handleSocialClick = (social: (typeof SOCIALS)[0]) => {
-    if (social.name === "Instagram") {
-      setShowInstagramModal(true);
-    } else {
-      void window.open(social.getUrl(message, url), "_blank", "noopener,noreferrer");
-    }
-  };
+  const handleSocialClick = useCallback(
+    (social: (typeof SOCIALS)[0]) => {
+      if (social.name === "Instagram") {
+        setShowInstagramModal(true);
+      } else {
+        void window.open(social.getUrl(message, url), "_blank", "noopener,noreferrer");
+      }
+    },
+    [message, url]
+  );
+
+  const handleMoreClick = useCallback(() => {
+    setShowInstagramModal(true);
+  }, []);
 
   const handleInstagramShare = () => {
     try {
@@ -90,12 +97,12 @@ export const SocialShareBar: React.FC<SocialShareBarProps> = ({ message, url }) 
                   <VStack
                     bg={social.color}
                     borderRadius="full"
-                    w="40px"
-                    h="40px"
+                    w={10}
+                    h={10}
                     alignItems="center"
                     justifyContent="center"
                   >
-                    <Image source={social.icon} w="20px" h="20px" style={{ resizeMode: "contain" }} />
+                    <Image source={social.icon} w={5} h={5} style={{ resizeMode: "contain" }} />
                   </VStack>
                 )
               }}
@@ -107,12 +114,12 @@ export const SocialShareBar: React.FC<SocialShareBarProps> = ({ message, url }) 
           <IconButton
             variant="ghost"
             size="lg"
-            onPress={() => setShowInstagramModal(true)}
+            onPress={handleMoreClick}
             _pressed={{ opacity: 0.7 }}
             _icon={{
               as: () => (
-                <VStack bg="#EBF8FF" borderRadius="full" w="40px" h="40px" alignItems="center" justifyContent="center">
-                  <Image source={MoreButtonIcon} w="20px" h="20px" style={{ resizeMode: "contain" }} />
+                <VStack bg="blue.50" borderRadius="full" w={10} h={10} alignItems="center" justifyContent="center">
+                  <Image source={MoreButtonIcon} w={5} h={5} style={{ resizeMode: "contain" }} />
                 </VStack>
               )
             }}

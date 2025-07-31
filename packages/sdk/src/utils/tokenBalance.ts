@@ -1,6 +1,6 @@
 import Web3 from "web3";
 import { Currency, CurrencyAmount, NativeCurrency, Token } from "@uniswap/sdk-core";
-import { BigNumber, utils } from "ethers";
+import { ethers } from "ethers";
 import { ERC20Contract } from "contracts/ERC20Contract";
 import { getChainId } from "./web3";
 import { getToken } from "methods/tokenLists";
@@ -45,7 +45,7 @@ export async function tokenBalance(
 }
 
 export const formatBalance = (value: any, decimals = 18, maxFraction = 0) => {
-  const formatted = utils.formatUnits(value, decimals);
+  const formatted = ethers.utils.formatUnits(value, decimals);
   if (maxFraction > 0) {
     const split = formatted.split(".");
     if (split.length > 1) {
@@ -56,10 +56,10 @@ export const formatBalance = (value: any, decimals = 18, maxFraction = 0) => {
 };
 
 export const parseBalance = (value: string, decimals = 18) => {
-  return utils.parseUnits(value || "0", decimals);
+  return ethers.utils.parseUnits(value || "0", decimals);
 };
 
 export const isEmptyValue = (text: string) =>
-  BigNumber.isBigNumber(text)
-    ? BigNumber.from(text).isZero()
+  ethers.BigNumber.isBigNumber(text)
+    ? ethers.BigNumber.from(text).isZero()
     : text === "" || text.replace(/0/g, "").replace(/\./, "") === "";
