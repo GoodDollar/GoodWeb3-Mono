@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { HStack, IconButton, Text, VStack, Button, Modal, useToast } from "native-base";
 import { Image } from "../../core/images";
+import Clipboard from "@react-native-clipboard/clipboard";
 
 // Import SVG icons
 import FacebookIcon from "../../assets/svg/facebook.svg";
@@ -37,24 +38,14 @@ export const SocialShareBar: React.FC<SocialShareBarProps> = ({ message, url }) 
   const [showInstagramModal, setShowInstagramModal] = useState(false);
   const toast = useToast();
 
-  const copyToClipboard = async (text: string) => {
+  const copyToClipboard = useCallback((text: string) => {
     try {
-      if (navigator.clipboard) {
-        await navigator.clipboard.writeText(text);
-      } else {
-        const textArea = document.createElement("textarea");
-        textArea.value = text;
-        document.body.appendChild(textArea);
-        textArea.select();
-        document.execCommand("copy");
-        document.body.removeChild(textArea);
-      }
-      // You could add a toast notification here
+      Clipboard.setString(text);
       console.log("Message copied to clipboard!");
     } catch (err) {
       console.error("Failed to copy to clipboard:", err);
     }
-  };
+  }, []);
 
   const handleSocialClick = (social: (typeof SOCIALS)[0]) => {
     if (social.name === "Instagram") {
@@ -64,9 +55,9 @@ export const SocialShareBar: React.FC<SocialShareBarProps> = ({ message, url }) 
     }
   };
 
-  const handleInstagramShare = async () => {
+  const handleInstagramShare = () => {
     try {
-      await copyToClipboard(message);
+      copyToClipboard(message);
       toast.show({
         title: "Copied!",
         description: "Message copied to clipboard.",
