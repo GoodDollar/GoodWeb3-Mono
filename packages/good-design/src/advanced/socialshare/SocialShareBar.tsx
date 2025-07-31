@@ -62,6 +62,13 @@ export const SocialShareBar: React.FC<SocialShareBarProps> = ({ message, url }) 
     setShowInstagramModal(true);
   }, []);
 
+  const handleSocialButtonClick = useCallback(
+    (social: (typeof SOCIALS)[0]) => {
+      handleSocialClick(social);
+    },
+    [handleSocialClick]
+  );
+
   const handleInstagramShare = () => {
     try {
       copyToClipboard(message);
@@ -90,7 +97,7 @@ export const SocialShareBar: React.FC<SocialShareBarProps> = ({ message, url }) 
               key={social.name}
               variant="ghost"
               size="lg"
-              onPress={() => handleSocialClick(social)}
+              onPress={() => handleSocialButtonClick(social)}
               _pressed={{ opacity: 0.7 }}
               _icon={{
                 as: () => (
@@ -130,11 +137,11 @@ export const SocialShareBar: React.FC<SocialShareBarProps> = ({ message, url }) 
 
       {/* Instagram Modal */}
       <Modal isOpen={showInstagramModal} onClose={() => setShowInstagramModal(false)}>
-        <Modal.Content maxWidth="400px">
+        <Modal.Content maxW="400px">
           <Modal.Header>Share on Instagram</Modal.Header>
           <Modal.Body>
             <VStack space={4} alignItems="center">
-              <Image source={InstagramIcon} w="60px" h="60px" style={{ resizeMode: "contain" }} />
+              <Image source={InstagramIcon} w={15} h={15} style={{ resizeMode: "contain" }} />
               <Text textAlign="center">
                 Your message has been copied to clipboard. You can now paste it on Instagram!
               </Text>
