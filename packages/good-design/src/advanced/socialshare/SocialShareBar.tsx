@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { HStack, IconButton, Text, VStack, Button, Modal, useToast } from "native-base";
+import { HStack, IconButton, Text, VStack, Button, Modal, useToast, Pressable } from "native-base";
 import { Image } from "../../core/images";
 import Clipboard from "@react-native-clipboard/clipboard";
 
@@ -8,7 +8,7 @@ import FacebookIcon from "../../assets/svg/facebook.svg";
 import XIcon from "../../assets/svg/x.svg";
 import LinkedInIcon from "../../assets/svg/linkedin.svg";
 import InstagramIcon from "../../assets/svg/instagram.svg";
-import MoreButtonIcon from "../../assets/svg/more-button.svg";
+import ArrowDownIcon from "../../assets/svg/arrow-down.svg";
 
 // Import shared configuration
 import { SOCIALS as SHARED_SOCIALS } from "./config";
@@ -84,7 +84,7 @@ export const SocialShareBar: React.FC<SocialShareBarProps> = ({ message, url }) 
     <>
       <VStack space={4} alignItems="center" mt={4} w="100%">
         <HStack space={3} alignItems="center" justifyContent="center" w="100%">
-          {/* Facebook, X, LinkedIn buttons */}
+          {/* Facebook, X, LinkedIn buttons - standalone icons without background */}
           {SOCIALS.slice(0, 3).map(social => (
             <IconButton
               key={social.name}
@@ -93,38 +93,30 @@ export const SocialShareBar: React.FC<SocialShareBarProps> = ({ message, url }) 
               onPress={() => handleSocialClick(social)}
               _pressed={{ opacity: 0.7 }}
               _icon={{
-                as: () => (
-                  <VStack
-                    bg={social.color}
-                    borderRadius="full"
-                    w={10}
-                    h={10}
-                    alignItems="center"
-                    justifyContent="center"
-                  >
-                    <Image source={social.icon} w={5} h={5} style={{ resizeMode: "contain" }} />
-                  </VStack>
-                )
+                as: () => <Image source={social.icon} w={6} h={6} style={{ resizeMode: "contain" }} />
               }}
               accessibilityLabel={`Share on ${social.name}`}
             />
           ))}
 
-          {/* More button */}
-          <IconButton
-            variant="ghost"
-            size="lg"
-            onPress={handleMoreClick}
-            _pressed={{ opacity: 0.7 }}
-            _icon={{
-              as: () => (
-                <VStack bg="blue.50" borderRadius="full" w={10} h={10} alignItems="center" justifyContent="center">
-                  <Image source={MoreButtonIcon} w={5} h={5} style={{ resizeMode: "contain" }} />
-                </VStack>
-              )
-            }}
-            accessibilityLabel="More sharing options"
-          />
+          {/* More button - styled according to Figma specs */}
+          <Pressable onPress={handleMoreClick} _pressed={{ opacity: 0.7 }} accessibilityLabel="More sharing options">
+            <HStack
+              borderWidth={1}
+              borderColor="blue.400"
+              borderRadius={8}
+              px={4}
+              py={2}
+              alignItems="center"
+              justifyContent="center"
+              space={1}
+            >
+              <Text fontSize="sm" fontWeight="normal" color="blue.400" textAlign="center">
+                More
+              </Text>
+              <Image source={ArrowDownIcon} w={4} h={4} style={{ resizeMode: "contain" }} />
+            </HStack>
+          </Pressable>
         </HStack>
       </VStack>
 
