@@ -8,7 +8,7 @@ export const SAMPLE_TASKS: ClaimerTask[] = [
     priority: "main",
     reward: { type: "tokens", amount: 10, description: "Vote on" },
     duration: { startDate: "2025-07-23", endDate: "2025-08-23" },
-    actionUrl: ""
+    actionUrl: "https://www.gooddollar.org/"
   },
   {
     id: "goodcollective-donate",
@@ -18,7 +18,7 @@ export const SAMPLE_TASKS: ClaimerTask[] = [
     priority: "secondary",
     reward: { type: "tokens", amount: 50, description: "50 G$" },
     duration: { startDate: "2025-07-23", endDate: "2025-08-30" },
-    actionUrl: "https://goodcollective.com/donate"
+    actionUrl: "https://www.gooddollar.org/"
   },
   {
     id: "invite-friend",
@@ -28,6 +28,6 @@ export const SAMPLE_TASKS: ClaimerTask[] = [
     priority: "secondary",
     reward: { type: "tokens", amount: 20, description: "20 G$" },
     duration: { startDate: "2025-07-23", endDate: "2025-08-30" },
-    actionUrl: ""
+    actionUrl: "https://www.gooddollar.org/"
   }
 ];

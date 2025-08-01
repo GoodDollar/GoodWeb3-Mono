@@ -1,24 +1,18 @@
-import React from "react";
-import { ClaimerTasksCompact } from "./claimerTaskCard";
+import { ClaimerTasksCompact } from "./managerTaskCard";
 import { NativeBaseProvider } from "native-base";
-
+import { action } from "@storybook/addon-actions";
+import { SAMPLE_TASKS } from "./mockData";
 export default {
-  title: "UserTasks/ClaimerTasksCard",
+  title: "UserTasks/ClaimerTasksCompact",
   component: ClaimerTasksCompact
 };
 
 export const WithMockData = () => (
   <NativeBaseProvider>
     <ClaimerTasksCompact
-      //tasks={tasksData}
-      onTaskComplete={taskId => console.log("Task completed:", taskId)}
-      onTaskDismiss={taskId => console.log("Task dismissed:", taskId)}
+      tasks={SAMPLE_TASKS}
+      onTaskComplete={action("task-completed")}
+      onTaskDismiss={action("task-dismissed")}
     />
-  </NativeBaseProvider>
-);
-
-export const WithInternalData = () => (
-  <NativeBaseProvider>
-    <ClaimerTasksCompact />
   </NativeBaseProvider>
 );
