@@ -1,4 +1,4 @@
-import { FACTORY_ADDRESS_MAP, INIT_CODE_HASH } from "@uniswap/v2-sdk";
+import { FACTORY_ADDRESS as V2_FACTORY_ADDRESS, INIT_CODE_HASH } from "@uniswap/v2-sdk";
 import contractsAddresses from "@gooddollar/goodprotocol/releases/deployment.json";
 
 import { constructSameAddressMap } from "../utils/constructSameAddressMap";
@@ -57,7 +57,7 @@ export const UNI_ADDRESS: AddressMap = constructSameAddressMap("0x1f9840a85d5aF5
 
 /* Uniswap's factory addresses per network. */
 export const UNISWAP_FACTORY_ADDRESSES: AddressMap = {
-  ...FACTORY_ADDRESS_MAP,
+  ...constructSameAddressMap(V2_FACTORY_ADDRESS),
   [SupportedChainId.FUSE]: "0x1998E4b0F1F922367d8Ec20600ea2b86df55f34E"
 };
 
