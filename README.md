@@ -19,6 +19,10 @@ To install WSL (with default Ubuntu):
 wsl --install
 ```
 
+After that, proceed with the general setup below.
+
+### General (All Platforms)
+
 To install dependencies and build the initial package(s)
 ```bash
 yarn
