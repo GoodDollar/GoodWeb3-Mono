@@ -5613,6 +5613,7 @@ __metadata:
     react-number-format: ^5.1.1
     react-use-promise: ^0.5.0
     react-use-wizard: ^2.3.0
+    require-from-string: ^2.0.2
     sass-loader: ^13.0.2
     storybook-addon-linguijs: ^1.0.10
     style-loader: ^3.3.1

@@ -13,8 +13,8 @@ export const SOCIALS: SocialPlatform[] = [
     name: "Facebook",
     color: "#1877F2",
     icon: "facebook",
-    getUrl: (message: string, url: string) => `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
-    note: "Copy your message and paste it in the post!"
+    getUrl: (message: string, url: string) =>
+      `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&hashtag=${encodeURIComponent(message)}`
   },
   {
     id: "x",
@@ -30,8 +30,7 @@ export const SOCIALS: SocialPlatform[] = [
     color: "#0A66C2",
     icon: "linkedin",
     getUrl: (message: string, url: string) =>
-      `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
-    note: "Copy your message and paste it in the post!"
+      `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`
   },
   {
     id: "instagram",
