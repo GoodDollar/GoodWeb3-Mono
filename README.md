@@ -9,8 +9,10 @@ The mono-repo currently holds:
 
 ### Setup
 
-We recommend using WSL (Windows Subsystem for Linux) for better compatibility with Yarn Workspaces and symlinks.
-This avoids common permission issues and path inconsistencies on Windows.
+### Windows
+For Windows users, we recommend using WSL (Windows Subsystem for Linux) for better compatibility with Yarn Workspaces and symlinks.
+
+This avoids common permission issues and path inconsistencies.
 
 To install WSL (with default Ubuntu):
 ```bash
