@@ -14,7 +14,7 @@ This avoids common permission issues and path inconsistencies on Windows.
 
 To install WSL (with default Ubuntu):
 ```bash
-wsl -install
+wsl --install
 ```
 
 To install dependencies and build the initial package(s)
