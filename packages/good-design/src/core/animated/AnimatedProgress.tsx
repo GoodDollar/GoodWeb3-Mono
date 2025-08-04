@@ -78,7 +78,6 @@ const AnimatedProgress = withTheme({ name: "AnimatedProgress" })(
       extrapolate: "clamp"
     });
 
-    const AnimatedView = Animated.View as any;
 
     return (
       <View {...containerStyles}>
