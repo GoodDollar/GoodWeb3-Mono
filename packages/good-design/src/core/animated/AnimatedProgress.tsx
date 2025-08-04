@@ -82,7 +82,7 @@ const AnimatedProgress = withTheme({ name: "AnimatedProgress" })(
     return (
       <View {...containerStyles}>
         <View {...progressStyles}>
-          <AnimatedView style={[progressBar, { width: progressWidth }]} />
+          <Animated.View style={[progressBar, { width: progressWidth }]} />
         </View>
       </View>
     );
