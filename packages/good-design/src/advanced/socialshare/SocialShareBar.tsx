@@ -51,11 +51,21 @@ export const SocialShareBar: React.FC<SocialShareBarProps> = ({ message, url }) 
     (social: (typeof SOCIALS)[0]) => {
       if (social.name === "Instagram") {
         setShowInstagramModal(true);
+      } else if (social.name === "Facebook" || social.name === "LinkedIn") {
+        // Copy message to clipboard and show toast
+        copyToClipboard(message);
+        toast.show({
+          title: "Message Copied!",
+          description: social.note || "Copy your message and paste it in the post!",
+          duration: 3000
+        });
+        // Open the social platform
+        void window.open(social.getUrl(message, url), "_blank", "noopener,noreferrer");
       } else {
         void window.open(social.getUrl(message, url), "_blank", "noopener,noreferrer");
       }
     },
-    [message, url]
+    [message, url, copyToClipboard]
   );
 
   const handleMoreClick = useCallback(() => {
