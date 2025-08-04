@@ -26,7 +26,7 @@ export const getPoolsDetails = (
     details.nextClaimTime = new Date(+nextClaimTime * 1000);
     details.isPool = true;
     details.contract = contract;
-    details.contractName = "RedTent";
+    details.contractName = "GoodDollar UBI+";
 
     return details as PoolDetails;
   });
