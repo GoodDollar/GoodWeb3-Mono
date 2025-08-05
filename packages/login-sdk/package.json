@@ -36,7 +36,7 @@
     "react": ">=17"
   },
   "dependencies": {
-    "@gooddollar/goodprotocol": "^2.*",
+    "@gooddollar/goodprotocol": "^2.0.32",
     "lodash": "^4.17.21",
     "web3": "^1.7.4"
   }
