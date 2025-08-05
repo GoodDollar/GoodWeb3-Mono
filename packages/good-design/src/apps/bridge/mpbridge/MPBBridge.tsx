@@ -8,7 +8,6 @@ import { TokenInput } from "../../../core";
 import { BigNumber } from "ethers";
 
 import type { IMPBFees, IMPBLimits, MPBBridgeProps, BridgeProvider } from "./types";
-import { useWizard } from "react-use-wizard";
 import { fetchBridgeFees } from "@gooddollar/web3sdk-v2";
 
 // Hook to get real bridge fees
@@ -101,7 +100,6 @@ export const MPBBridge = ({
   const [isBridging, setBridging] = useState(false);
   const [bridgeProvider, setBridgeProvider] = useState<BridgeProvider>("axelar");
   const [bridgingStatus, setBridgingStatus] = useState<string>("");
-  const { nextStep } = useWizard();
   const [sourceChain, setSourceChain] = originChain;
   const targetChain = sourceChain === "fuse" ? "celo" : sourceChain === "celo" ? "mainnet" : "fuse";
 
@@ -198,7 +196,6 @@ export const MPBBridge = ({
 
     if (bridgeStatus?.status === "Mining") {
       setBridgingStatus("Bridging in progress...");
-      void nextStep();
     }
 
     if (bridgeStatus?.status === "PendingSignature") {

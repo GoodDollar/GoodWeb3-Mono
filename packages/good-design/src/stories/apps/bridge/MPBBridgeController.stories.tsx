@@ -1,7 +1,6 @@
 import * as React from "react";
 import { VStack } from "native-base";
 import { MPBBridge } from "../../../apps/bridge/mpbridge/MPBBridge";
-import { MPBBridgeController } from "../../../apps/bridge/mpbridge/MPBBridgeController";
 import { W3Wrapper } from "../../W3Wrapper";
 import { SwitchChainModal } from "../../../core/web3/modals/SwitchChainModal";
 
@@ -75,9 +74,4 @@ export const MPBBridgeStory = {
     onBridgeFailed: (error: Error) => console.log("Bridge failed:", error),
     onBridgeSuccess: () => console.log("Bridge succeeded")
   }
-};
-
-export const MPBBridgeControllerStory = {
-  render: () => <MPBBridgeController />,
-  args: {}
 };
