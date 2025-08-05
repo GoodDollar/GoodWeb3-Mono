@@ -1,18 +1,35 @@
 import React, { useEffect, useCallback, useState } from "react";
-import { Box, FormControl, HStack, Pressable, Spinner, Text, VStack, WarningOutlineIcon, Button } from "native-base";
+import { Box, HStack, Pressable, Spinner, Text, VStack } from "native-base";
 import { CurrencyValue } from "@usedapp/core";
 import { SupportedChains, useG$Amounts, useG$Balance, G$Amount, useGetEnvChainId } from "@gooddollar/web3sdk-v2";
-import { isEmpty } from "lodash";
 
 import { Web3ActionButton } from "../../../advanced";
-import { Image, TokenInput, TokenOutput } from "../../../core";
+import { TokenInput } from "../../../core";
 import { BigNumber } from "ethers";
-import { GdAmount } from "../../../core/layout/BalanceGD";
-
-import ArrowTabLightRight from "../../../assets/svg/arrow-tab-light-right.svg";
 
 import type { IMPBFees, IMPBLimits, MPBBridgeProps, BridgeProvider } from "./types";
 import { useWizard } from "react-use-wizard";
+import { fetchBridgeFees } from "@gooddollar/web3sdk-v2";
+
+// Hook to get real bridge fees
+const useBridgeFees = () => {
+  const [fees, setFees] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchBridgeFees()
+      .then(feesData => {
+        setFees(feesData);
+        setLoading(false);
+      })
+      .catch(error => {
+        console.error("Error fetching bridge fees:", error);
+        setLoading(false);
+      });
+  }, []);
+
+  return { fees, loading };
+};
 
 const useMPBBridgeEstimate = ({
   limits,
@@ -71,7 +88,6 @@ const useMPBBridgeEstimate = ({
 
 export const MPBBridge = ({
   useCanMPBBridge,
-  onSetChain,
   originChain,
   inputTransaction,
   pendingTransaction,
@@ -88,7 +104,9 @@ export const MPBBridge = ({
   const { nextStep } = useWizard();
   const [sourceChain, setSourceChain] = originChain;
   const targetChain = sourceChain === "fuse" ? "celo" : sourceChain === "celo" ? "mainnet" : "fuse";
-  const [toggleState, setToggleState] = useState<boolean>(false);
+
+  // Get real bridge fees
+  const { fees: bridgeFees, loading: feesLoading } = useBridgeFees();
 
   // Query balances every 5 blocks, so balance is updated after bridging
   const { G$: fuseBalance } = useG$Balance(5, 122);
@@ -112,7 +130,7 @@ export const MPBBridge = ({
   const wei = gdValue.value.toString();
   const [bridgeWeiAmount, setBridgeAmount] = inputTransaction;
   const [, setPendingTransaction] = pendingTransaction;
-  const { isValid, reason } = useCanMPBBridge(sourceChain, bridgeWeiAmount);
+  const { isValid } = useCanMPBBridge(sourceChain, bridgeWeiAmount);
   const { minimumAmount, expectedToReceive, nativeFee } = useMPBBridgeEstimate({
     limits,
     fees,
@@ -122,13 +140,46 @@ export const MPBBridge = ({
 
   const hasBalance = Number(bridgeWeiAmount) <= Number(wei);
   const isValidInput = isValid && hasBalance;
-  const reasonOf = reason || (!hasBalance && "Not enough balance") || "";
 
-  const toggleChains = useCallback(() => {
-    setSourceChain(targetChain);
-    setToggleState(prevState => !prevState);
-    onSetChain?.(targetChain);
-  }, [setSourceChain, onSetChain, targetChain]);
+  // Get current bridge fee for display
+  const getCurrentBridgeFee = () => {
+    if (!bridgeFees || feesLoading) return "Loading...";
+
+    const sourceUpper = sourceChain.toUpperCase();
+    const targetUpper = targetChain.toUpperCase();
+
+    if (bridgeProvider === "axelar") {
+      const axelarFees = bridgeFees.AXELAR;
+      if (sourceUpper === "CELO" && targetUpper === "ETH") {
+        return axelarFees.AXL_CELO_TO_ETH;
+      }
+      if (sourceUpper === "ETH" && targetUpper === "CELO") {
+        return axelarFees.AXL_ETH_TO_CELO;
+      }
+    } else if (bridgeProvider === "layerzero") {
+      const layerzeroFees = bridgeFees.LAYERZERO;
+      if (sourceUpper === "ETH" && targetUpper === "CELO") {
+        return layerzeroFees.LZ_ETH_TO_CELO;
+      }
+      if (sourceUpper === "ETH" && targetUpper === "FUSE") {
+        return layerzeroFees.LZ_ETH_TO_FUSE;
+      }
+      if (sourceUpper === "CELO" && targetUpper === "ETH") {
+        return layerzeroFees.LZ_CELO_TO_ETH;
+      }
+      if (sourceUpper === "CELO" && targetUpper === "FUSE") {
+        return layerzeroFees.LZ_CELO_TO_FUSE;
+      }
+      if (sourceUpper === "FUSE" && targetUpper === "ETH") {
+        return layerzeroFees.LZ_FUSE_TO_ETH;
+      }
+      if (sourceUpper === "FUSE" && targetUpper === "CELO") {
+        return layerzeroFees.LZ_FUSE_TO_CELO;
+      }
+    }
+
+    return "Fee not available";
+  };
 
   const triggerBridge = useCallback(async () => {
     setBridging(true);
@@ -174,200 +225,172 @@ export const MPBBridge = ({
     }
   }, [bridgeStatus, onBridgeSuccess, onBridgeFailed]);
 
-  const reasonMinAmount =
-    reason === "minAmount"
-      ? ` Minimum amount is ${Number(minimumAmount) / (sourceChain === "fuse" ? 1e2 : 1e18)} G$`
-      : undefined;
-
   const getActiveColor = useCallback(
     (chain: string) => {
-      return sourceChain === chain ? "goodGrey.700" : "goodGrey.400";
+      return sourceChain === chain ? "goodBlue.500" : "goodGrey.400";
     },
     [sourceChain]
   );
 
-  if (isEmpty(fuseBalance) || isEmpty(celoBalance) || isEmpty(mainnetBalance)) {
-    return <Spinner variant="page-loader" size="lg" />;
-  }
-
-  const fuseActiveColor = getActiveColor("fuse");
-  const celoActiveColor = getActiveColor("celo");
-  const mainnetActiveColor = getActiveColor("mainnet");
+  const getActiveTextColor = useCallback(
+    (chain: string) => {
+      return sourceChain === chain ? "goodBlue.500" : "goodGrey.600";
+    },
+    [sourceChain]
+  );
 
   return (
-    <VStack padding={4} width="100%" alignSelf="center" backgroundColor="goodWhite.100">
+    <VStack space={4} width="100%" alignSelf="center">
       {/* Bridge Provider Selection */}
-      <VStack space={4} mb={6}>
-        <Text fontFamily="heading" fontSize="md" fontWeight="700" textAlign="center">
-          Select Bridge Provider
-        </Text>
-        <HStack space={3} justifyContent="center">
-          <Button
-            variant={bridgeProvider === "axelar" ? "solid" : "outline"}
-            bg={bridgeProvider === "axelar" ? "blue.500" : "transparent"}
-            borderColor="blue.500"
-            borderRadius="full"
-            onPress={() => setBridgeProvider("axelar")}
-            _pressed={{ bg: bridgeProvider === "axelar" ? "blue.600" : "gray.100" }}
-          >
-            <Text color={bridgeProvider === "axelar" ? "white" : "blue.500"} fontWeight="semibold">
-              Axelar
+      <Box borderRadius="md" borderWidth="1" padding="5" backgroundColor="goodWhite.100">
+        <VStack space={4}>
+          <HStack justifyContent="space-between" alignItems="center">
+            <Text fontFamily="heading" fontSize="md" fontWeight="700">
+              Bridge Provider
             </Text>
-          </Button>
-          <Button
-            variant={bridgeProvider === "layerzero" ? "solid" : "outline"}
-            bg={bridgeProvider === "layerzero" ? "blue.500" : "transparent"}
-            borderColor="blue.500"
-            borderRadius="full"
-            onPress={() => setBridgeProvider("layerzero")}
-            _pressed={{ bg: bridgeProvider === "layerzero" ? "blue.600" : "gray.100" }}
-          >
-            <Text color={bridgeProvider === "layerzero" ? "white" : "blue.500"} fontWeight="semibold">
-              LayerZero
-            </Text>
-          </Button>
-        </HStack>
-      </VStack>
+          </HStack>
+          <HStack space={2}>
+            <Pressable
+              flex={1}
+              onPress={() => setBridgeProvider("axelar")}
+              bg={bridgeProvider === "axelar" ? "goodBlue.500" : "goodGrey.100"}
+              borderRadius="md"
+              padding={3}
+              alignItems="center"
+            >
+              <Text color={bridgeProvider === "axelar" ? "white" : "goodGrey.700"} fontWeight="600" fontSize="sm">
+                Axelar
+              </Text>
+            </Pressable>
+            <Pressable
+              flex={1}
+              onPress={() => setBridgeProvider("layerzero")}
+              bg={bridgeProvider === "layerzero" ? "goodBlue.500" : "goodGrey.100"}
+              borderRadius="md"
+              padding={3}
+              alignItems="center"
+            >
+              <Text color={bridgeProvider === "layerzero" ? "white" : "goodGrey.700"} fontWeight="600" fontSize="sm">
+                LayerZero
+              </Text>
+            </Pressable>
+          </HStack>
 
-      {/* Bridging Status Display */}
+          {/* Bridge Fee Display */}
+          <VStack space={1}>
+            <Text fontFamily="subheading" fontSize="xs" color="goodGrey.600">
+              Bridge Fee:
+            </Text>
+            <Text fontFamily="subheading" fontSize="sm" color="goodBlue.600" fontWeight="600">
+              {getCurrentBridgeFee()}
+            </Text>
+          </VStack>
+        </VStack>
+      </Box>
+
+      {/* Bridging Status Banner */}
       {isBridging && (
-        <Box bg="blue.50" borderWidth="1" borderColor="blue.200" borderRadius="md" p="3" mb="4">
+        <Box borderRadius="md" padding={3} backgroundColor="goodBlue.100" borderWidth="1" borderColor="goodBlue.300">
           <HStack space={2} alignItems="center">
-            <Spinner size="sm" color="blue.500" />
-            <Text color="blue.700" fontWeight="medium">
+            <Spinner size="sm" color="goodBlue.500" />
+            <Text color="goodBlue.700" fontSize="sm" fontWeight="500">
               {bridgingStatus}
             </Text>
           </HStack>
         </Box>
       )}
 
-      <VStack marginBottom={10}>
-        <HStack zIndex="100" justifyContent="space-between" flexWrap="wrap">
-          <VStack flex="1" minW="120px">
-            <Text color={fuseActiveColor} fontSize="l" fontFamily="heading" fontWeight="700">
-              G$ Fuse
+      {/* Token Input/Output */}
+      <Box borderRadius="md" borderWidth="1" padding="5" backgroundColor="goodWhite.100">
+        <VStack space={4}>
+          <HStack justifyContent="space-between" alignItems="center">
+            <Text fontFamily="heading" fontSize="md" fontWeight="700">
+              Bridge G$ Tokens
             </Text>
-            <GdAmount
-              color={fuseActiveColor}
-              amount={fuseBalance}
-              withDefaultSuffix={false}
-              withFullBalance
-              fontSize="xs"
+          </HStack>
+
+          {/* Source Chain */}
+          <VStack space={2}>
+            <Text fontFamily="subheading" fontSize="xs" color="goodGrey.600">
+              From
+            </Text>
+            <HStack space={2}>
+              <Pressable
+                onPress={() => setSourceChain("fuse")}
+                bg={getActiveColor("fuse")}
+                borderRadius="md"
+                padding={2}
+                flex={1}
+                alignItems="center"
+              >
+                <Text color={getActiveTextColor("fuse")} fontSize="xs" fontWeight="600">
+                  Fuse
+                </Text>
+              </Pressable>
+              <Pressable
+                onPress={() => setSourceChain("celo")}
+                bg={getActiveColor("celo")}
+                borderRadius="md"
+                padding={2}
+                flex={1}
+                alignItems="center"
+              >
+                <Text color={getActiveTextColor("celo")} fontSize="xs" fontWeight="600">
+                  Celo
+                </Text>
+              </Pressable>
+              <Pressable
+                onPress={() => setSourceChain("mainnet")}
+                bg={getActiveColor("mainnet")}
+                borderRadius="md"
+                padding={2}
+                flex={1}
+                alignItems="center"
+              >
+                <Text color={getActiveTextColor("mainnet")} fontSize="xs" fontWeight="600">
+                  Mainnet
+                </Text>
+              </Pressable>
+            </HStack>
+          </VStack>
+
+          {/* Amount Input */}
+          <VStack space={2}>
+            <Text fontFamily="subheading" fontSize="xs" color="goodGrey.600">
+              Amount (G$)
+            </Text>
+            <TokenInput
+              balanceWei={wei}
+              onChange={setBridgeAmount}
+              gdValue={gdValue}
+              minAmountWei={minimumAmount?.toString()}
             />
           </VStack>
 
-          <Box w="60px" height="64px" pl="2" pr="2" display="flex" justifyContent={"center"} alignItems="center">
-            <Pressable onPress={toggleChains} backgroundColor="gdPrimary" borderRadius="50" p="2">
-              <Image
-                source={ArrowTabLightRight}
-                w="4"
-                h="4"
-                style={{ transform: [{ rotate: sourceChain === "fuse" ? "180deg" : "0" }] }}
-              />
-            </Pressable>
-          </Box>
-
-          <VStack flex="1" minW="120px">
-            <Text color={celoActiveColor} fontSize="l" fontFamily="heading" fontWeight="700">
-              G$ Celo
+          {/* Target Chain */}
+          <VStack space={2}>
+            <Text fontFamily="subheading" fontSize="xs" color="goodGrey.600">
+              To
             </Text>
-            <GdAmount
-              color={celoActiveColor}
-              amount={celoBalance}
-              withDefaultSuffix={false}
-              withFullBalance
-              fontSize="xs"
-            />
+            <Box bg="goodGrey.100" borderRadius="md" padding={3} alignItems="center">
+              <Text color="goodGrey.700" fontSize="sm" fontWeight="600">
+                {targetChain.charAt(0).toUpperCase() + targetChain.slice(1)}
+              </Text>
+            </Box>
           </VStack>
 
-          <Box w="60px" height="64px" pl="2" pr="2" display="flex" justifyContent={"center"} alignItems="center">
-            <Pressable onPress={toggleChains} backgroundColor="gdPrimary" borderRadius="50" p="2">
-              <Image
-                source={ArrowTabLightRight}
-                w="4"
-                h="4"
-                style={{ transform: [{ rotate: sourceChain === "celo" ? "180deg" : "0" }] }}
-              />
-            </Pressable>
-          </Box>
-
-          <VStack flex="1" minW="120px">
-            <Text color={mainnetActiveColor} fontSize="l" fontFamily="heading" fontWeight="700">
-              G$ Mainnet
-            </Text>
-            <GdAmount
-              color={mainnetActiveColor}
-              amount={mainnetBalance}
-              withDefaultSuffix={false}
-              withFullBalance
-              fontSize="xs"
-            />
-          </VStack>
-        </HStack>
-      </VStack>
-
-      <VStack alignItems="flex-start" justifyContent="flex-start" width="100%">
-        <TokenInput
-          balanceWei={wei}
-          gdValue={gdValue}
-          onChange={setBridgeAmount}
-          minAmountWei={minimumAmount?.toString()}
-          toggleState={toggleState}
-        />
-      </VStack>
-
-      <FormControl isInvalid={!!reasonOf}>
-        <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon variant="outline" />}>
-          {reasonMinAmount ?? reasonOf}
-        </FormControl.ErrorMessage>
-      </FormControl>
-
-      <VStack mt="4" direction="column" alignItems="flex-start" justifyContent="flex-start" width="100%">
-        <Text fontFamily="subheading" color="lightGrey:alpha.80" textTransform="uppercase" bold>
-          You will receive on {targetChain}
-        </Text>
-        <TokenOutput outputValue={expectedToReceive ?? "0"} />
-      </VStack>
-
-      <VStack mt="4" space={2}>
-        <Text fontFamily="subheading" fontSize="xs" color="goodGrey.400">
-          Bridge Fee: {nativeFee ? `${nativeFee.value.toString()} ETH` : "Calculating..."}
-        </Text>
-        <Text fontFamily="subheading" fontSize="xs" color="goodGrey.400">
-          Powered by {bridgeProvider === "axelar" ? "Axelar" : "LayerZero"}
-        </Text>
-      </VStack>
-
-      <Web3ActionButton
-        mt="5"
-        text={isBridging ? "Bridging..." : `Bridge to ${targetChain} via ${bridgeProvider}`}
-        supportedChains={[SupportedChains[sourceChain.toUpperCase() as keyof typeof SupportedChains]]}
-        web3Action={triggerBridge}
-        disabled={isBridging}
-        backgroundColor="gdPrimary"
-        borderRadius={24}
-        isDisabled={isBridging || isValidInput === false}
-        innerText={{
-          fontSize: "sm",
-          color: "white",
-          fontFamily: "subheading",
-          textTransform: "capitalize"
-        }}
-        innerIndicatorText={{
-          fontSize: "sm",
-          color: "white",
-          fontFamily: "subheading"
-        }}
-      />
-
-      <VStack space={1} mt={4} textAlign="left" width="100%">
-        <Text fontFamily="subheading" fontSize="xs" color="goodGrey.400">
-          Minimum amount to bridge: 1 G$
-        </Text>
-        <Text fontFamily="subheading" fontSize="xs" color="goodGrey.400">
-          Bridge Fee: <b>Variable fee in native token</b> <i>(See FAQs for more on Fees)</i>
-        </Text>
-      </VStack>
+          {/* Bridge Button */}
+          <Web3ActionButton
+            web3Action={triggerBridge}
+            disabled={!isValidInput || isBridging}
+            isLoading={isBridging}
+            text={isBridging ? "Bridging..." : `Bridge via ${bridgeProvider === "axelar" ? "Axelar" : "LayerZero"}`}
+            supportedChains={[SupportedChains[sourceChain.toUpperCase() as keyof typeof SupportedChains]]}
+            variant="primary"
+            size="lg"
+          />
+        </VStack>
+      </Box>
     </VStack>
   );
 };
