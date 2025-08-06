@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { VStack, HStack, Pressable, Box, Divider, Spinner, useToast } from "native-base";
+import { VStack, HStack, Pressable, Box, Spinner, useToast } from "native-base";
 import { Linking } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -21,6 +21,9 @@ export interface ClaimerTask {
   reward?: TaskReward;
   duration: { startDate: string; endDate: string };
   actionUrl?: string;
+  icon?: string;
+  rewardAmount?: string;
+  rewardColor?: string;
 }
 
 export const useClaimerTasks = () => {
@@ -165,19 +168,56 @@ const SimpleTaskItem: React.FC<{
   return (
     <Pressable
       onPress={onPress}
-      _pressed={{ bg: "gdPrimary.50" }}
+      _pressed={{ bg: "gray.50" }}
       px={4}
-      py={3}
+      py={4}
       bg="white"
-      borderRadius="lg"
+      borderRadius="xl"
+      borderWidth={1}
+      borderColor="gray.200"
       testID={`task-${task.id}`}
     >
-      <HStack alignItems="center" space={3} justifyContent="space-between">
-        <VStack flex={1}>
-          <TransText t={task.title} fontSize="md" color="goodGrey.800" {...subHeading} />
-          {task.reward?.description && (
-            <TransText t={task.reward.description} fontSize="sm" color="goodGrey.400" {...subContent} />
-          )}
+      <HStack alignItems="center" space={4} justifyContent="space-between">
+        {/* Icon */}
+        <Box
+          w={10}
+          h={10}
+          borderRadius="full"
+          bg="gray.100"
+          alignItems="center"
+          justifyContent="center"
+        >
+          <TransText 
+            t={task.icon || "🎯"} 
+            fontSize="lg"
+          />
+        </Box>
+        
+        {/* Task content */}
+        <VStack flex={1} space={1}>
+          <TransText 
+            t={task.title} 
+            fontSize="md" 
+            fontWeight="semibold"
+            color="gray.800" 
+            {...subHeading} 
+          />
+          <TransText 
+            t={task.description} 
+            fontSize="sm" 
+            color="gray.500" 
+            {...subContent} 
+          />
+        </VStack>
+
+        {/* Reward */}
+        <VStack alignItems="flex-end">
+          <TransText 
+            t={task.rewardAmount || task.reward?.description || "+0 G$"}
+            fontSize="md"
+            fontWeight="bold"
+            color={task.rewardColor || (task.rewardAmount?.includes('-') ? "red.500" : "green.500")}
+          />
         </VStack>
       </HStack>
     </Pressable>
@@ -215,10 +255,10 @@ export const ClaimerTasksCard: React.FC<ClaimerTasksCardProps> = ({ onTaskComple
 
   if (loading) {
     return (
-      <Box bg="white" borderRadius="2xl" p={6} shadow="1" mx={4}>
+      <Box bg="white" borderRadius="3xl" p={6} shadow="sm" mx={4}>
         <HStack space={2} justifyContent="center" alignItems="center">
-          <Spinner color="gdPrimary" size="sm" />
-          <TransText t="Loading Tasks..." color="goodGrey.500" {...subContent} />
+          <Spinner color="cyan.400" size="sm" />
+          <TransText t="Loading Tasks..." color="gray.500" {...subContent} />
         </HStack>
       </Box>
     );
@@ -226,13 +266,13 @@ export const ClaimerTasksCard: React.FC<ClaimerTasksCardProps> = ({ onTaskComple
 
   if (!hasActiveTasks) {
     return (
-      <Box bg="white" borderRadius="2xl" p={6} shadow="1" mx={4}>
-        <VStack alignItems="center" space={2}>
-          <TransText t="🎉" fontSize="2xl" textAlign="center" />
-          <TransText t="All caught up!" fontWeight="bold" textAlign="center" {...title} />
+      <Box bg="white" borderRadius="3xl" p={8} shadow="sm" mx={4}>
+        <VStack alignItems="center" space={3}>
+          <TransText t="🎉" fontSize="4xl" textAlign="center" />
+          <TransText t="All caught up!" fontSize="lg" fontWeight="bold" textAlign="center" {...title} />
           <TransText
             t="Check back later for new tasks and rewards"
-            color="goodGrey.500"
+            color="gray.500"
             textAlign="center"
             fontSize="sm"
             {...footer}
@@ -243,54 +283,118 @@ export const ClaimerTasksCard: React.FC<ClaimerTasksCardProps> = ({ onTaskComple
   }
 
   return (
-    <Box bg="white" borderRadius="2xl" shadow="1" mx={4} overflow="hidden">
+    <Box bg="white" borderRadius="3xl" shadow="sm" mx={4} overflow="hidden">
+      {/* Header */}
+      <VStack space={2} p={6} pb={4} alignItems="center">
+        <TransText 
+          t="Keep the momentum going!" 
+          fontSize="xl" 
+          fontWeight="bold" 
+          color="gray.800" 
+          textAlign="center"
+          {...title} 
+        />
+        <TransText 
+          t="Here's what you can do next." 
+          fontSize="md" 
+          color="gray.500" 
+          textAlign="center"
+          {...subContent} 
+        />
+      </VStack>
+
+      {/* Main Task */}
       {mainTask && (
-        <VStack space={4} p={6} pb={4}>
-          <HStack alignItems="center" space={3} justifyContent="space-between">
-            <TransText t={mainTask.title} fontSize="lg" fontWeight="bold" color="goodGrey.800" flex={1} {...title} />
-          </HStack>
-          <TransText t={mainTask.description} fontSize="sm" color="goodGrey.500" {...subContent} />
+        <VStack space={4} px={6} pb={6}>
+          {/* Icon */}
+          <Box alignSelf="center">
+            <Box
+              w={16}
+              h={16}
+              borderRadius="xl"
+              bg="blue.500"
+              alignItems="center"
+              justifyContent="center"
+            >
+              <TransText t={mainTask.icon || "🗳️"} fontSize="2xl" />
+            </Box>
+          </Box>
+
+          {/* Task Title */}
+          <VStack space={2} alignItems="center">
+            <TransText 
+              t={mainTask.title} 
+              fontSize="lg" 
+              fontWeight="bold" 
+              color="gray.800" 
+              textAlign="center"
+              {...title} 
+            />
+            <TransText 
+              t={mainTask.description} 
+              fontSize="sm" 
+              color="gray.500" 
+              textAlign="center"
+              {...subContent} 
+            />
+          </VStack>
+
+          {/* CTA Button */}
           <TransButton
-            t={mainTask.reward?.description || "Start Task"}
+            t={mainTask.reward?.description || "Cast My Vote"}
             onPress={() => openTask(mainTask)}
             testID="main-task-button"
-            borderRadius="3xl"
-            bg="gdPrimary.500"
+            borderRadius="2xl"
+            bg="cyan.400"
+            _text={{ 
+              color: "white", 
+              fontSize: "md", 
+              fontWeight: "semibold" 
+            }}
+            py={4}
           />
         </VStack>
       )}
 
+      {/* Secondary Tasks */}
       {secondaryTasks.length > 0 && (
-        <>
-          <Divider bg="goodGrey.400" thickness="2" />
-          <VStack space={3} px={6} py={4}>
-            <TransText
-              t="MORE WAYS TO USE G$:"
-              fontSize="sm"
-              textAlign="center"
-              fontWeight="medium"
-              letterSpacing="wider"
-              {...subContent}
-            />
-            <VStack space={2}>
-              {secondaryTasks.map(task => (
-                <SimpleTaskItem key={task.id} task={task} onPress={() => openTask(task)} />
-              ))}
-            </VStack>
+        <VStack space={4} px={6} pb={6}>
+          <TransText
+            t="More ways to use G$:"
+            fontSize="sm"
+            textAlign="center"
+            fontWeight="medium"
+            color="gray.600"
+            letterSpacing="wide"
+            {...subContent}
+          />
+          <VStack space={3}>
+            {secondaryTasks.map(task => (
+              <SimpleTaskItem 
+                key={task.id} 
+                task={task} 
+                onPress={() => openTask(task)} 
+                fontStyles={fontStyles}
+              />
+            ))}
           </VStack>
-        </>
+        </VStack>
       )}
-      <VStack p={6}>
+
+      {/* Footer Button */}
+      <VStack px={6} pb={6}>
         <TransButton
-          t="Maybe Later"
+          t="Maybe later"
           onPress={handleDismissAll}
           testID="maybe-later-button"
-          variant="outline"
-          borderColor="goodGrey.300"
-          _text={{ color: "goodGrey.600", ...subContent }}
+          variant="ghost"
+          _text={{ 
+            color: "gray.500", 
+            fontSize: "md",
+            ...subContent 
+          }}
           isDisabled={dismissing}
           isLoading={dismissing}
-          borderRadius="3xl"
           isLoadingText="Dismissing..."
         />
       </VStack>
