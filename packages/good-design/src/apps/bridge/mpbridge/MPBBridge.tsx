@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback, useState } from "react";
-import { Box, HStack, Pressable, Spinner, Text, VStack, Select, Input } from "native-base";
+import { Box, HStack, Pressable, Spinner, ChevronDownIcon, Text, VStack, Input } from "native-base";
 import { CurrencyValue } from "@usedapp/core";
 import { SupportedChains, useG$Amounts, useG$Balance, G$Amount, useGetEnvChainId } from "@gooddollar/web3sdk-v2";
 
@@ -101,7 +101,11 @@ export const MPBBridge = ({
   const [bridgeProvider, setBridgeProvider] = useState<BridgeProvider>("axelar");
   const [bridgingStatus, setBridgingStatus] = useState<string>("");
   const [sourceChain, setSourceChain] = originChain;
-  const targetChain = sourceChain === "fuse" ? "celo" : sourceChain === "celo" ? "mainnet" : "fuse";
+  const [targetChain, setTargetChain] = useState(
+    sourceChain === "fuse" ? "celo" : sourceChain === "celo" ? "mainnet" : "fuse"
+  );
+  const [showSourceDropdown, setShowSourceDropdown] = useState(false);
+  const [showTargetDropdown, setShowTargetDropdown] = useState(false);
 
   // Get real bridge fees
   const { fees: bridgeFees, loading: feesLoading } = useBridgeFees();
@@ -139,6 +143,121 @@ export const MPBBridge = ({
   const hasBalance = Number(bridgeWeiAmount) <= Number(wei);
   const isValidInput = isValid && hasBalance;
 
+  // Get valid target chains for the selected source chain based on available bridge fees
+  const getValidTargetChains = (source: string) => {
+    if (!bridgeFees || feesLoading) {
+      // Fallback to default valid chains if fees are not loaded yet
+      switch (source) {
+        case "fuse":
+          return ["celo", "mainnet"];
+        case "celo":
+          return ["fuse", "mainnet"];
+        case "mainnet":
+          return ["fuse", "celo"];
+        default:
+          return ["celo", "mainnet"];
+      }
+    }
+
+    const validTargets: string[] = [];
+    const sourceUpper = source.toUpperCase();
+
+    // Check Axelar fees - only Celo ↔ Mainnet
+    if (bridgeProvider === "axelar" && bridgeFees.AXELAR) {
+      const axelarFees = bridgeFees.AXELAR;
+      if (sourceUpper === "CELO" && axelarFees.AXL_CELO_TO_ETH) {
+        validTargets.push("mainnet");
+      }
+      if (sourceUpper === "MAINNET" && axelarFees.AXL_ETH_TO_CELO) {
+        validTargets.push("celo");
+      }
+      // Axelar only supports Celo ↔ Mainnet, so return only these options
+      return validTargets;
+    }
+
+    // Check LayerZero fees - all combinations
+    if (bridgeProvider === "layerzero" && bridgeFees.LAYERZERO) {
+      const layerzeroFees = bridgeFees.LAYERZERO;
+      if (sourceUpper === "MAINNET") {
+        if (layerzeroFees.LZ_ETH_TO_CELO) validTargets.push("celo");
+        if (layerzeroFees.LZ_ETH_TO_FUSE) validTargets.push("fuse");
+      }
+      if (sourceUpper === "CELO") {
+        if (layerzeroFees.LZ_CELO_TO_ETH) validTargets.push("mainnet");
+        if (layerzeroFees.LZ_CELO_TO_FUSE) validTargets.push("fuse");
+      }
+      if (sourceUpper === "FUSE") {
+        if (layerzeroFees.LZ_FUSE_TO_ETH) validTargets.push("mainnet");
+        if (layerzeroFees.LZ_FUSE_TO_CELO) validTargets.push("celo");
+      }
+      return validTargets;
+    }
+
+    // If no valid targets found for current provider, return empty array
+    return validTargets;
+  };
+
+  // Update target chain when bridge provider changes
+  useEffect(() => {
+    const validTargets = getValidTargetChains(sourceChain);
+    if (validTargets.length > 0 && !validTargets.includes(targetChain)) {
+      setTargetChain(validTargets[0]);
+    } else if (validTargets.length === 0) {
+      // If no valid targets for current provider, switch to LayerZero
+      if (bridgeProvider === "axelar" && sourceChain === "fuse") {
+        setBridgeProvider("layerzero");
+        setTargetChain("celo");
+      }
+    }
+  }, [bridgeProvider, sourceChain, targetChain]);
+
+  // Swap functionality
+  const handleSwap = useCallback(() => {
+    const newSourceChain = targetChain;
+    const newTargetChain = sourceChain;
+    setSourceChain(newSourceChain);
+    setTargetChain(newTargetChain);
+    setShowSourceDropdown(false);
+    setShowTargetDropdown(false);
+  }, [targetChain, sourceChain]);
+
+  // Handle source chain selection
+  const handleSourceChainSelect = useCallback(
+    (chain: string) => {
+      setSourceChain(chain);
+      // Reset target chain to first valid option based on current bridge provider
+      const validTargets = getValidTargetChains(chain);
+      if (validTargets.length > 0) {
+        setTargetChain(validTargets[0]);
+      } else {
+        // If no valid targets for current provider, switch to LayerZero (which supports more routes)
+        if (bridgeProvider === "axelar") {
+          setBridgeProvider("layerzero");
+          // Set a default target for LayerZero
+          if (chain === "fuse") {
+            setTargetChain("celo");
+          } else if (chain === "celo") {
+            setTargetChain("mainnet");
+          } else if (chain === "mainnet") {
+            setTargetChain("celo");
+          } else {
+            setTargetChain("celo");
+          }
+        } else {
+          setTargetChain("celo");
+        }
+      }
+      setShowSourceDropdown(false);
+    },
+    [bridgeProvider]
+  );
+
+  // Handle target chain selection
+  const handleTargetChainSelect = useCallback((chain: string) => {
+    setTargetChain(chain);
+    setShowTargetDropdown(false);
+  }, []);
+
   // Get current bridge fee for display
   const getCurrentBridgeFee = () => {
     if (!bridgeFees || feesLoading) return "Loading...";
@@ -148,30 +267,30 @@ export const MPBBridge = ({
 
     if (bridgeProvider === "axelar") {
       const axelarFees = bridgeFees.AXELAR;
-      if (sourceUpper === "CELO" && targetUpper === "ETH") {
+      if (sourceUpper === "CELO" && targetUpper === "MAINNET" && axelarFees.AXL_CELO_TO_ETH) {
         return axelarFees.AXL_CELO_TO_ETH;
       }
-      if (sourceUpper === "ETH" && targetUpper === "CELO") {
+      if (sourceUpper === "MAINNET" && targetUpper === "CELO" && axelarFees.AXL_ETH_TO_CELO) {
         return axelarFees.AXL_ETH_TO_CELO;
       }
     } else if (bridgeProvider === "layerzero") {
       const layerzeroFees = bridgeFees.LAYERZERO;
-      if (sourceUpper === "ETH" && targetUpper === "CELO") {
+      if (sourceUpper === "MAINNET" && targetUpper === "CELO" && layerzeroFees.LZ_ETH_TO_CELO) {
         return layerzeroFees.LZ_ETH_TO_CELO;
       }
-      if (sourceUpper === "ETH" && targetUpper === "FUSE") {
+      if (sourceUpper === "MAINNET" && targetUpper === "FUSE" && layerzeroFees.LZ_ETH_TO_FUSE) {
         return layerzeroFees.LZ_ETH_TO_FUSE;
       }
-      if (sourceUpper === "CELO" && targetUpper === "ETH") {
+      if (sourceUpper === "CELO" && targetUpper === "MAINNET" && layerzeroFees.LZ_CELO_TO_ETH) {
         return layerzeroFees.LZ_CELO_TO_ETH;
       }
-      if (sourceUpper === "CELO" && targetUpper === "FUSE") {
+      if (sourceUpper === "CELO" && targetUpper === "FUSE" && layerzeroFees.LZ_CELO_TO_FUSE) {
         return layerzeroFees.LZ_CELO_TO_FUSE;
       }
-      if (sourceUpper === "FUSE" && targetUpper === "ETH") {
+      if (sourceUpper === "FUSE" && targetUpper === "MAINNET" && layerzeroFees.LZ_FUSE_TO_ETH) {
         return layerzeroFees.LZ_FUSE_TO_ETH;
       }
-      if (sourceUpper === "FUSE" && targetUpper === "CELO") {
+      if (sourceUpper === "FUSE" && targetUpper === "CELO" && layerzeroFees.LZ_FUSE_TO_CELO) {
         return layerzeroFees.LZ_FUSE_TO_CELO;
       }
     }
@@ -222,6 +341,19 @@ export const MPBBridge = ({
     }
   }, [bridgeStatus, onBridgeSuccess, onBridgeFailed]);
 
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = () => {
+      setShowSourceDropdown(false);
+      setShowTargetDropdown(false);
+    };
+
+    if (showSourceDropdown || showTargetDropdown) {
+      document.addEventListener("click", handleClickOutside);
+      return () => document.removeEventListener("click", handleClickOutside);
+    }
+  }, [showSourceDropdown, showTargetDropdown]);
+
   const getChainIcon = (chain: string) => {
     switch (chain) {
       case "celo":
@@ -248,6 +380,21 @@ export const MPBBridge = ({
     }
   };
 
+  const getChainLabel = (chain: string) => {
+    switch (chain) {
+      case "celo":
+        return "G$ Celo";
+      case "fuse":
+        return "G$ Fuse";
+      case "mainnet":
+        return "G$ Ethereum";
+      default:
+        return "G$ Unknown";
+    }
+  };
+
+  const availableChains = ["fuse", "celo", "mainnet"];
+
   return (
     <VStack space={8} alignSelf="center" maxWidth="800">
       {/* Header */}
@@ -263,8 +410,8 @@ export const MPBBridge = ({
           maxWidth="600"
           lineHeight="lg"
         >
-          Bridge G$ tokens between Fuse, Celo, and Ethereum Mainnet using LayerZero or Axelar for secure cross-chain
-          transfers.
+          Seamlessly convert between Fuse G$ tokens to Celo and vice versa, enabling versatile use of G$ tokens across
+          various platforms and ecosystems.
         </Text>
       </VStack>
 
@@ -322,91 +469,233 @@ export const MPBBridge = ({
 
           {/* Token Exchange Interface */}
           <VStack space={6}>
-            {/* Source Chain */}
-            <VStack space={3}>
-              <Text fontFamily="subheading" fontSize="md" color="goodGrey.600" fontWeight="600">
-                From
-              </Text>
-              <HStack space={4} alignItems="center">
-                <Box
-                  bg={getChainColor(sourceChain)}
-                  borderRadius="full"
-                  width="10"
-                  height="10"
-                  alignItems="center"
-                  justifyContent="center"
-                  shadow="sm"
-                >
-                  <Text color="white" fontSize="sm" fontWeight="bold">
-                    {getChainIcon(sourceChain)}
-                  </Text>
-                </Box>
-                <Select
-                  selectedValue={sourceChain}
-                  onValueChange={setSourceChain}
-                  flex={1}
-                  borderRadius="lg"
-                  borderColor="goodGrey.300"
-                  fontSize="md"
-                  padding={4}
-                >
-                  <Select.Item label="G$ Fuse" value="fuse" />
-                  <Select.Item label="G$ Celo" value="celo" />
-                  <Select.Item label="G$ Ethereum" value="mainnet" />
-                </Select>
-              </HStack>
-            </VStack>
+            {/* Token Selection Row */}
+            <HStack space={4} alignItems="center" zIndex={1000}>
+              {/* Source Chain */}
+              <VStack
+                flex={1}
+                bg="white"
+                borderRadius="lg"
+                padding={2}
+                borderWidth="1"
+                borderColor="goodGrey.300"
+                position="relative"
+                style={{ overflow: "visible" }}
+              >
+                <HStack space={3} alignItems="center">
+                  <Box
+                    bg={getChainColor(sourceChain)}
+                    borderRadius="full"
+                    width="8"
+                    height="8"
+                    alignItems="center"
+                    justifyContent="center"
+                    shadow="sm"
+                  >
+                    <Text color="white" fontSize="sm" fontWeight="bold">
+                      {getChainIcon(sourceChain)}
+                    </Text>
+                  </Box>
+                  <Pressable
+                    flex={1}
+                    onPress={() => setShowSourceDropdown(!showSourceDropdown)}
+                    flexDirection="row"
+                    alignItems="center"
+                    justifyContent="space-between"
+                  >
+                    <Text color="goodGrey.700" fontSize="md" fontWeight="600">
+                      {getChainLabel(sourceChain)}
+                    </Text>
+                    <Box style={{ transform: [{ rotate: showSourceDropdown ? "180deg" : "0deg" }] }}>
+                      <ChevronDownIcon size="sm" color="goodGrey.400" />
+                    </Box>
+                  </Pressable>
+                </HStack>
 
-            {/* Swap Arrow */}
-            <Box alignItems="center">
-              <Box
+                {/* Source Chain Dropdown */}
+                {showSourceDropdown && (
+                  <Box
+                    position="absolute"
+                    top="100%"
+                    left={0}
+                    right={0}
+                    bg="white"
+                    borderRadius="lg"
+                    borderWidth="1"
+                    borderColor="goodGrey.300"
+                    shadow="xl"
+                    zIndex={999999}
+                    mt={1}
+                    minWidth="200px"
+                    maxWidth="300px"
+                    style={{
+                      position: "absolute",
+                      zIndex: 999999,
+                      top: "100%",
+                      left: 0,
+                      right: 0,
+                      marginTop: 4,
+                      backgroundColor: "white",
+                      borderRadius: 8,
+                      borderWidth: 1,
+                      borderColor: "#e2e8f0",
+                      minWidth: "200px",
+                      maxWidth: "300px"
+                    }}
+                  >
+                    {availableChains.map(chain => (
+                      <Pressable
+                        key={chain}
+                        onPress={() => handleSourceChainSelect(chain)}
+                        padding={4}
+                        borderBottomWidth={chain === availableChains[availableChains.length - 1] ? 0 : 1}
+                        borderBottomColor="goodGrey.200"
+                        _pressed={{ bg: "goodGrey.100" }}
+                      >
+                        <HStack space={3} alignItems="center">
+                          <Box
+                            bg={getChainColor(chain)}
+                            borderRadius="full"
+                            width="6"
+                            height="6"
+                            alignItems="center"
+                            justifyContent="center"
+                          >
+                            <Text color="white" fontSize="xs" fontWeight="bold">
+                              {getChainIcon(chain)}
+                            </Text>
+                          </Box>
+                          <Text color="goodGrey.700" fontSize="md" fontWeight="500">
+                            {getChainLabel(chain)}
+                          </Text>
+                        </HStack>
+                      </Pressable>
+                    ))}
+                  </Box>
+                )}
+              </VStack>
+
+              {/* Swap Arrow */}
+              <Pressable
+                onPress={handleSwap}
                 bg="goodGrey.200"
                 borderRadius="full"
-                width="12"
-                height="12"
+                width="8"
+                height="8"
                 alignItems="center"
                 justifyContent="center"
                 shadow="sm"
+                _pressed={{ bg: "goodGrey.300" }}
               >
                 <Text fontSize="xl" color="goodGrey.600" fontWeight="bold">
                   ⇄
                 </Text>
-              </Box>
-            </Box>
+              </Pressable>
 
-            {/* Target Chain */}
-            <VStack space={3}>
-              <Text fontFamily="subheading" fontSize="md" color="goodGrey.600" fontWeight="600">
-                To
-              </Text>
-              <HStack space={4} alignItems="center">
-                <Box
-                  bg={getChainColor(targetChain)}
-                  borderRadius="full"
-                  width="10"
-                  height="10"
-                  alignItems="center"
-                  justifyContent="center"
-                  shadow="sm"
-                >
-                  <Text color="white" fontSize="sm" fontWeight="bold">
-                    {getChainIcon(targetChain)}
-                  </Text>
-                </Box>
-                <Box
-                  bg="goodGrey.100"
-                  borderRadius="lg"
-                  padding={4}
-                  flex={1}
-                  borderWidth="1"
-                  borderColor="goodGrey.300"
-                >
-                  <Text color="goodGrey.700" fontSize="md" fontWeight="600">
-                    G$ {targetChain.charAt(0).toUpperCase() + targetChain.slice(1)}
-                  </Text>
-                </Box>
-              </HStack>
-            </VStack>
+              {/* Target Chain */}
+              <VStack
+                bg="white"
+                borderRadius="lg"
+                padding={2}
+                borderWidth="1"
+                borderColor="goodGrey.300"
+                flex={1}
+                position="relative"
+                style={{ overflow: "visible" }}
+              >
+                <HStack space={3} alignItems="center">
+                  <Box
+                    bg={getChainColor(targetChain)}
+                    borderRadius="full"
+                    width="8"
+                    height="8"
+                    alignItems="center"
+                    justifyContent="center"
+                    shadow="sm"
+                  >
+                    <Text color="white" fontSize="sm" fontWeight="bold">
+                      {getChainIcon(targetChain)}
+                    </Text>
+                  </Box>
+                  <Pressable
+                    flex={1}
+                    onPress={() => setShowTargetDropdown(!showTargetDropdown)}
+                    flexDirection="row"
+                    alignItems="center"
+                    justifyContent="space-between"
+                  >
+                    <Text color="goodGrey.700" fontSize="md" fontWeight="600">
+                      {getChainLabel(targetChain)}
+                    </Text>
+                    <Box style={{ transform: [{ rotate: showTargetDropdown ? "180deg" : "0deg" }] }}>
+                      <ChevronDownIcon size="sm" color="goodGrey.400" />
+                    </Box>
+                  </Pressable>
+                </HStack>
+
+                {/* Target Chain Dropdown */}
+                {showTargetDropdown && (
+                  <Box
+                    position="absolute"
+                    top="100%"
+                    left={0}
+                    right={0}
+                    bg="white"
+                    borderRadius="lg"
+                    borderWidth="1"
+                    borderColor="goodGrey.300"
+                    shadow="xl"
+                    zIndex={999999}
+                    mt={1}
+                    minWidth="200px"
+                    maxWidth="300px"
+                    style={{
+                      position: "absolute",
+                      zIndex: 999999,
+                      top: "100%",
+                      left: 0,
+                      right: 0,
+                      marginTop: 4,
+                      backgroundColor: "white",
+                      borderRadius: 8,
+                      borderWidth: 1,
+                      borderColor: "#e2e8f0",
+                      minWidth: "200px",
+                      maxWidth: "300px"
+                    }}
+                  >
+                    {getValidTargetChains(sourceChain).map(chain => (
+                      <Pressable
+                        key={chain}
+                        onPress={() => handleTargetChainSelect(chain)}
+                        padding={4}
+                        borderBottomWidth={chain === getValidTargetChains(sourceChain).slice(-1)[0] ? 0 : 1}
+                        borderBottomColor="goodGrey.200"
+                        _pressed={{ bg: "goodGrey.100" }}
+                      >
+                        <HStack space={3} alignItems="center">
+                          <Box
+                            bg={getChainColor(chain)}
+                            borderRadius="full"
+                            width="6"
+                            height="6"
+                            alignItems="center"
+                            justifyContent="center"
+                          >
+                            <Text color="white" fontSize="xs" fontWeight="bold">
+                              {getChainIcon(chain)}
+                            </Text>
+                          </Box>
+                          <Text color="goodGrey.700" fontSize="md" fontWeight="500">
+                            {getChainLabel(chain)}
+                          </Text>
+                        </HStack>
+                      </Pressable>
+                    ))}
+                  </Box>
+                )}
+              </VStack>
+            </HStack>
 
             {/* Amount Input */}
             <VStack space={3}>
@@ -438,7 +727,7 @@ export const MPBBridge = ({
                 borderColor="goodGrey.300"
                 bg="goodGrey.50"
                 fontSize="md"
-                padding={4}
+                padding={2}
                 fontWeight="500"
               />
             </VStack>
