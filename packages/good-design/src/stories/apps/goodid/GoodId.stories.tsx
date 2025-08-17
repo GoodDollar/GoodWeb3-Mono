@@ -348,7 +348,7 @@ export const CheckAvailableOffersExample: Meta<AvailableOffersPropsAndArgs & Cla
             "0x627dbf00ce1a54067f5a34d6596a217a029c1532"
           ]}
           explorerEndPoints={explorerEndPoints}
-          supportedChains={[SupportedChains.CELO, SupportedChains.FUSE]}
+          supportedChains={[SupportedChains.CELO, SupportedChains.FUSE, SupportedChains.XDC]}
           withSignModals
           withNewsFeed
         >

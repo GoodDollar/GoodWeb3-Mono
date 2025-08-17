@@ -366,14 +366,20 @@ export const useHasClaimed = (requiredNetwork: keyof typeof SupportedV2Networks)
 export const useClaimedAlt = (chainId: number | undefined) => {
   const claimedCelo = useHasClaimed("CELO");
   const claimedFuse = useHasClaimed("FUSE");
+  const claimedXdc = useHasClaimed("XDC");
 
   const claimedAlt = useMemo(() => {
-    if (chainId === SupportedChains.FUSE) {
-      return { hasClaimed: (claimedCelo as unknown as BigNumber)?.isZero(), altChain: "CELO" };
-    } else {
-      return { hasClaimed: (claimedFuse as unknown as BigNumber)?.isZero(), altChain: "FUSE" };
+    if (!claimedCelo && chainId !== SupportedChains.CELO) {
+      return { hasClaimed: false, altChain: Number(SupportedChains.CELO) };
     }
-  }, [chainId, claimedCelo, claimedFuse]);
+    if (!claimedXdc && chainId !== SupportedChains.XDC) {
+      return { hasClaimed: false, altChain: Number(SupportedChains.XDC) };
+    }
+    if (!claimedFuse && chainId !== SupportedChains.FUSE) {
+      return { hasClaimed: false, altChain: Number(SupportedChains.FUSE) };
+    }
+    return { hasClaimed: true, altChain: 0 };
+  }, [claimedCelo, claimedFuse, claimedXdc]);
 
   return claimedAlt;
 };

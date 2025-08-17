@@ -6,7 +6,7 @@ import { filter } from "lodash";
 import { useModal } from "../../hooks/useModal";
 
 export const WalletAndChainGuard = ({
-  validChains = [SupportedChains.FUSE, SupportedChains.CELO, SupportedChains.MAINNET],
+  validChains = [SupportedChains.FUSE, SupportedChains.CELO, SupportedChains.MAINNET, SupportedChains.XDC],
   children
 }: {
   connectWallet?: () => void;
