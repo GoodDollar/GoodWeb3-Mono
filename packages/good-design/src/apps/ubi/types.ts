@@ -50,7 +50,7 @@ export interface ClaimContextProps {
   poolContracts: Contract[] | undefined;
   claimPools: { totalAmount: CurrencyValue; transactionList: Transaction[] | undefined };
   claimFlowStatus: any;
-  claimedAlt: { hasClaimed: boolean; altChain: string };
+  claimedAlt: { hasClaimed: boolean; altChain: number };
   error?: string;
   supportedChains: SupportedChains[];
   txDetails: { transaction: any; isOpen: boolean };
@@ -64,7 +64,7 @@ export interface ClaimContextProps {
   onClaimSuccess: () => Promise<void>;
   onClaimFailed: () => Promise<void>;
   onUpgrade: () => void;
-  switchChain: (network: string) => void;
+  switchChain: (chainId: number) => void;
   onTxDetailsPress?: (transaction: Transaction) => void;
   onConnect?: () => Promise<boolean>;
 }

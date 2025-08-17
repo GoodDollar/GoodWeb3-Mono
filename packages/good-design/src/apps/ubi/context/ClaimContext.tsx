@@ -40,7 +40,7 @@ interface ClaimProviderProps {
   onConnect?: () => Promise<boolean>;
   onSuccess?: () => Promise<void>;
   onSendTx?: () => void;
-  onSwitchChain?: () => Promise<void>;
+  onSwitchChain?: (chainId: number) => Promise<void>;
   withNewsFeed: boolean;
   newsProps?: Omit<INewsFeedProvider, "children">;
 }
@@ -56,10 +56,10 @@ export const ClaimProvider: FC<PropsWithChildren<ClaimProviderProps>> = ({
     MAINNET: "https://api.etherscan.io/v2/api?chainid=1&",
     CELO: "https://celo.blockscout.com/api?",
     FUSE: "https://explorer.fuse.io/api?",
-    GOODCOLLECTIVE: "'https://dev-goodcollective.vercel.app/'"
+    XDC: "https://api.etherscan.io/v2/api?chainid=50&" // TODO: does this work without api key?
   },
   provider,
-  supportedChains = [SupportedChains.CELO, SupportedChains.FUSE],
+  supportedChains = [SupportedChains.CELO, SupportedChains.FUSE, SupportedChains.XDC],
   withSignModals,
   withNewsFeed = true,
   newsProps,
@@ -94,16 +94,19 @@ export const ClaimProvider: FC<PropsWithChildren<ClaimProviderProps>> = ({
 
   const { poolContracts, startClaiming: onClaim, claimFlowStatus } = useMultiClaim(preClaimPools);
 
-  const switchChain = useCallback(() => {
-    // 4902: Network is not added, and should be done manually
-    // explanation to user is shown through network modal
-    switchNetwork(SupportedChains[claimedAlt.altChain as keyof typeof SupportedChains]).catch((e: any) => {
-      if (e.code === 4902) {
-        // toggleNetworkModal()
-        //todo: add network modal for gooddapp
-      }
-    });
-  }, [switchNetwork, claimedAlt]);
+  const switchChain = useCallback(
+    (chainId: number) => {
+      // 4902: Network is not added, and should be done manually
+      // explanation to user is shown through network modal
+      switchNetwork(chainId).catch((e: any) => {
+        if (e.code === 4902) {
+          // toggleNetworkModal()
+          //todo: add network modal for gooddapp
+        }
+      });
+    },
+    [switchNetwork, claimedAlt]
+  );
 
   const onTxDetailsPress = useCallback(
     (transaction: any) => {
@@ -225,7 +228,7 @@ export const ClaimProvider: FC<PropsWithChildren<ClaimProviderProps>> = ({
         poolContracts,
         claimedAlt,
         error,
-        supportedChains: supportedChains ?? [SupportedChains.CELO, SupportedChains.FUSE],
+        supportedChains: supportedChains ?? [SupportedChains.CELO, SupportedChains.FUSE, SupportedChains.XDC],
         withSignModals,
         txDetails,
         withNewsFeed,

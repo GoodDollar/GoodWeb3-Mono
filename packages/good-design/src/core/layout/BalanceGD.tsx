@@ -1,6 +1,6 @@
 import React, { FC, memo } from "react";
 import { VStack, HStack, ITextProps, Text, View } from "native-base";
-import { useG$Balance, useGetEnvChainId } from "@gooddollar/web3sdk-v2";
+import { SupportedChains, useG$Balance, useGetEnvChainId } from "@gooddollar/web3sdk-v2";
 import { CurrencyValue, QueryParams } from "@usedapp/core";
 
 interface BalanceGDProps {
@@ -23,7 +23,7 @@ const BalanceCopy = ({ heading, subHeading }: { heading: string; subHeading: str
 
 const BalanceView: FC<Required<BalanceGDProps> & { amount: CurrencyValue }> = memo(
   ({ gdPrice, amount, requiredChainId, showUsd }) => {
-    const network = requiredChainId === 122 ? "Fuse" : "Celo";
+    const network = SupportedChains[requiredChainId];
     const usdValue = ((+amount.value / 10 ** amount.currency.decimals) * gdPrice).toFixed(2);
 
     const copies = [

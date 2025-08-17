@@ -89,6 +89,17 @@ export const Celo: Chain = {
   getExplorerTransactionLink: (transactionHash: string) => `https://celoscan.io/tx/${transactionHash}`
 };
 
+export const Xdc: Chain = {
+  chainId: 50,
+  chainName: "Xdc",
+  isTestChain: false,
+  isLocalChain: false,
+  multicallAddress: "0x0B1795ccA8E4eC4df02346a082df54D437F8D9aF",
+  multicall2Address: "0x0B1795ccA8E4eC4df02346a082df54D437F8D9aF",
+  getExplorerAddressLink: (address: string) => `https://xdcscan.com/address/${address}`,
+  getExplorerTransactionLink: (transactionHash: string) => `https://xdcscan.com/tx/${transactionHash}`
+};
+
 const getMulticallAddresses = (networks: Chain[] | undefined) => {
   const result: { [index: number]: string } = {};
 

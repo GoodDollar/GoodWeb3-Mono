@@ -2,6 +2,7 @@ import { isReceiveTransaction } from "../apps/ubi/utils/transactionType";
 
 import CeloIcon from "../assets/images/celonetwork.png";
 import FuseIcon from "../assets/images/fusenetwork.png";
+import XdcIcon from "../assets/images/xdcnetwork.png";
 
 import GdIcon from "../assets/images/goodid/gd-icon.png";
 
@@ -13,7 +14,8 @@ import PendingIcon from "../assets/images/pending-icon.png";
 export const networkIcons = {
   // 1: EthIcon,
   FUSE: FuseIcon,
-  CELO: CeloIcon
+  CELO: CeloIcon,
+  XDC: XdcIcon
 };
 
 export const contractIcons = {

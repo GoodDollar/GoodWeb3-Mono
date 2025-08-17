@@ -7,14 +7,16 @@ import { BigNumber } from "ethers";
 export enum SupportedChains {
   MAINNET = 1,
   FUSE = 122,
-  CELO = 42220
+  CELO = 42220,
+  XDC = 50
 }
 
-export type SUPPORTED_NETWORKS = "FUSE" | "CELO" | "MAINNET";
+export type SUPPORTED_NETWORKS = "FUSE" | "CELO" | "MAINNET" | "XDC";
 
 export enum SupportedV2Networks {
   FUSE = 122,
-  CELO = 42220
+  CELO = 42220,
+  XDC = 50
 }
 
 export interface G$Balances {
@@ -36,12 +38,14 @@ export const G$Decimals: G$DecimalsMap = {
   G$: {
     [SupportedChains.MAINNET]: 2,
     [SupportedChains.FUSE]: 2,
-    [SupportedChains.CELO]: 18
+    [SupportedChains.CELO]: 18,
+    [SupportedChains.XDC]: 18
   },
   GOOD: {
     [SupportedChains.MAINNET]: 18,
     [SupportedChains.FUSE]: 18,
-    [SupportedChains.CELO]: 18
+    [SupportedChains.CELO]: 18,
+    [SupportedChains.XDC]: 18
   }
 };
 
@@ -54,7 +58,7 @@ export const Envs: { [key: EnvKey]: { [key: string]: string } } = {
     dappUrl: "https://wallet.gooddollar.org",
     identityUrl: "https://goodid.gooddollar.org",
     backend: "https://goodserver.gooddollar.org",
-    goodCollectiveUrl: "https://goodcollective.vercel.app/"
+    goodCollectiveUrl: "https://goodcollective.xyz/"
   },
   staging: {
     dappUrl: "https://qa.gooddollar.org",

@@ -58,7 +58,7 @@ export const ClaimFlow = {
               ]}
               withSignModals
               explorerEndPoints={explorerEndPoints}
-              supportedChains={[SupportedChains.CELO, SupportedChains.FUSE]}
+              supportedChains={[SupportedChains.CELO, SupportedChains.FUSE, SupportedChains.XDC]}
               {...args}
             >
               <HStack>

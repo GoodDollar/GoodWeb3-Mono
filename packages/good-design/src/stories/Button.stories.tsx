@@ -1,5 +1,5 @@
 import { ExternalProvider } from "@ethersproject/providers";
-import { Celo, Fuse, Web3Provider } from "@gooddollar/web3sdk-v2";
+import { Celo, Fuse, Xdc, Web3Provider } from "@gooddollar/web3sdk-v2";
 import { Config, DAppProvider, Mainnet, useEthers } from "@usedapp/core";
 import { ethers, getDefaultProvider } from "ethers";
 import React, { useCallback, useEffect, useState } from "react";
@@ -55,7 +55,7 @@ const LinguiExample = () => {
 export const LearnButtonWithTranslation = () => <LinguiExample />;
 
 const config: Config = {
-  networks: [Mainnet, Fuse, Celo],
+  networks: [Mainnet, Fuse, Celo, Xdc],
   readOnlyChainId: Mainnet.chainId,
   readOnlyUrls: {
     [Mainnet.chainId]: getDefaultProvider("https://mainnet.infura.io/v3/12207372b62941dfb1efd4fe26b95ccc"),
