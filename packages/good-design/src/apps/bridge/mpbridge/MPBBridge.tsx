@@ -134,7 +134,7 @@ export const MPBBridge = ({
   const wei = gdValue.value.toString();
   const [bridgeWeiAmount, setBridgeAmount] = inputTransaction;
   const [, setPendingTransaction] = pendingTransaction;
-  const { isValid } = useCanMPBBridge(sourceChain, bridgeWeiAmount);
+  const { isValid, reason } = useCanMPBBridge(sourceChain, bridgeWeiAmount);
   const { minimumAmount, expectedToReceive, nativeFee } = useMPBBridgeEstimate({
     limits,
     fees,
@@ -712,7 +712,15 @@ export const MPBBridge = ({
               />
               {!isValid && bridgeWeiAmount && (
                 <Text color="red.500" fontSize="sm" fontWeight="500">
-                  Minimum amount is 1 G$
+                  {reason === "minAmount"
+                    ? `Minimum amount is ${
+                        minimumAmount ? (Number(minimumAmount) / 1e18).toFixed(2) + " G$" : "1000 G$"
+                      } (raw: ${minimumAmount?.toString()}, chain: ${sourceChain}, calc: ${
+                        minimumAmount ? Number(minimumAmount) / 1e18 : "N/A"
+                      })`
+                    : reason === "maxAmount"
+                    ? `Maximum amount is ${minimumAmount ? (Number(minimumAmount) / 1e18).toFixed(2) + " G$" : "1M G$"}`
+                    : "Invalid amount"}
                 </Text>
               )}
             </VStack>
@@ -750,7 +758,8 @@ export const MPBBridge = ({
             {/* Fee Information */}
             <VStack space={2} padding={4} bg="goodGrey.50" borderRadius="lg" borderWidth="1" borderColor="goodGrey.200">
               <Text fontFamily="subheading" fontSize="sm" color="goodGrey.600">
-                Minimum amount to bridge: 1 G$
+                Minimum amount to bridge: {minimumAmount ? (Number(minimumAmount) / 1e18).toFixed(2) + " G$" : "1 G$"}{" "}
+                (raw: {minimumAmount?.toString()}, chain: {sourceChain})
               </Text>
               <Text fontFamily="subheading" fontSize="sm" color="goodGrey.600">
                 Bridge Fee: {getCurrentBridgeFee()}

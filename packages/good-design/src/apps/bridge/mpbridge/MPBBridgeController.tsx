@@ -48,8 +48,8 @@ export const MPBBridgeController: React.FC<IMPBBridgeControllerProps> = ({ onBri
       <MPBBridge
         useCanMPBBridge={(chain: string, amountWei: string) => {
           const amount = Number(amountWei);
-          const minAmount = 1000000000000000000; // 1 G$
-          const maxAmount = 1000000000000000000000000; // 1M G$
+          const minAmount = Number(bridgeLimits.minAmount) || 1000000000000000000000;
+          const maxAmount = Number(bridgeLimits.maxAmount) || 1000000000000000000000000;
 
           if (amount < minAmount) {
             return { isValid: false, reason: "minAmount" };
