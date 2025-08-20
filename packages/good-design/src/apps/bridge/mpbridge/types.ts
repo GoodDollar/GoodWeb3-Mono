@@ -27,6 +27,7 @@ export interface MPBBridgeProps {
   bridgeStatus?: {
     status?: string;
     errorMessage?: string;
+    transaction?: { hash: string };
   };
   onBridgeStart?: () => void;
   onBridgeFailed?: (error: Error) => void;

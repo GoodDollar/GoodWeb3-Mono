@@ -10,6 +10,8 @@ import { BigNumber } from "ethers";
 
 import type { IMPBFees, IMPBLimits, MPBBridgeProps, BridgeProvider } from "./types";
 import { fetchBridgeFees } from "@gooddollar/web3sdk-v2";
+import { TransactionList } from "../../ubi/components/TransactionStateCard";
+import { TxDetailsModal } from "../../../core/web3/modals/TxDetailsModal";
 
 // Hook to get real bridge fees
 const useBridgeFees = () => {
@@ -409,8 +411,38 @@ export const MPBBridge = ({
 
   const availableChains = ["fuse", "celo", "mainnet"];
 
+  // Temporary placeholder transactions until SDK exposes MPB history hook
+  const recentTransactions = [
+    {
+      address: "",
+      account: "",
+      network: sourceChain.toUpperCase(),
+      contractAddress: "",
+      token: "G$",
+      status: "pending",
+      type: "bridge-in", // or "bridge-out" depending on direction
+      contractName: "GoodDollar",
+      displayName: `Bridged via ${bridgeProvider === "axelar" ? "Axelar" : "LayerZero"}`,
+      tokenValue: expectedToReceive,
+      transactionHash: bridgeStatus?.transaction?.hash
+    }
+  ] as any;
+
+  // Tx details modal state
+  const [txDetailsOpen, setTxDetailsOpen] = useState(false);
+  const [txDetails, setTxDetails] = useState<any | undefined>();
+  const onTxDetailsPress = useCallback((tx: any) => {
+    setTxDetails(tx);
+    setTxDetailsOpen(true);
+  }, []);
+  const onTxDetailsClose = useCallback(() => setTxDetailsOpen(false), []);
+
   return (
     <VStack space={8} alignSelf="center" maxWidth="800">
+      {/* Transaction Details Modal */}
+      {txDetailsOpen && txDetails ? (
+        <TxDetailsModal open={txDetailsOpen} onClose={onTxDetailsClose} tx={txDetails} />
+      ) : null}
       {/* Header */}
       <VStack space={3} alignItems="center">
         <Text fontFamily="heading" fontSize="4xl" fontWeight="700" color="goodBlue.600">
@@ -775,6 +807,14 @@ export const MPBBridge = ({
               <Text fontFamily="subheading" fontSize="sm" color="goodGrey.600">
                 Provider: {bridgeProvider.charAt(0).toUpperCase() + bridgeProvider.slice(1)}
               </Text>
+            </VStack>
+
+            {/* Recent Transactions */}
+            <VStack space={3} mt={6}>
+              <Text fontFamily="heading" fontSize="lg" fontWeight="700" color="goodBlue.600">
+                Recent Transactions (Last 30 days):
+              </Text>
+              <TransactionList transactions={recentTransactions} onTxDetailsPress={onTxDetailsPress} />
             </VStack>
           </VStack>
         </VStack>
