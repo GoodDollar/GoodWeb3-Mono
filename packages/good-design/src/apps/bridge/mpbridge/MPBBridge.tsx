@@ -2,6 +2,7 @@ import React, { useEffect, useCallback, useState } from "react";
 import { Box, HStack, Pressable, Spinner, ChevronDownIcon, Text, VStack, Input } from "native-base";
 import { CurrencyValue } from "@usedapp/core";
 import { SupportedChains, useG$Amounts, useG$Balance, G$Amount, useGetEnvChainId } from "@gooddollar/web3sdk-v2";
+import { ethers } from "ethers";
 
 import { Web3ActionButton } from "../../../advanced";
 import { TokenInput } from "../../../core";
@@ -142,8 +143,20 @@ export const MPBBridge = ({
     sourceChain
   });
 
-  const hasBalance = Number(bridgeWeiAmount) <= Number(wei);
+  const hasBalance = ethers.BigNumber.from(bridgeWeiAmount).lte(ethers.BigNumber.from(wei));
   const isValidInput = isValid && hasBalance;
+
+  // Debug logging
+  console.log("MPBBridge validation debug:", {
+    bridgeWeiAmount,
+    wei,
+    isValid,
+    reason,
+    hasBalance,
+    isValidInput,
+    minimumAmount: minimumAmount?.toString(),
+    sourceChain
+  });
 
   // Get valid target chains for the selected source chain based on available bridge fees
   const getValidTargetChains = (source: string) => {
