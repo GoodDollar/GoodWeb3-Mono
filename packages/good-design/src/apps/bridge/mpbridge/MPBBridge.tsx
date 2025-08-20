@@ -71,7 +71,6 @@ const useMPBBridgeEstimate = ({
     ? G$Amount("G$", fees[sourceChain].nativeFee, chain, defaultEnv)
     : G$Amount("G$", BigNumber.from(0), chain, defaultEnv);
 
-  // For G$ bridging, user should receive the same amount they send
   // The fee is paid in the native token (CELO, ETH, etc.), not in G$
   const expectedToReceive = input;
 
@@ -726,14 +725,10 @@ export const MPBBridge = ({
               {!isValid && bridgeWeiAmount && (
                 <Text color="red.500" fontSize="sm" fontWeight="500">
                   {reason === "minAmount"
-                    ? `Minimum amount is ${
-                        minimumAmount ? (Number(minimumAmount) / 1e18).toFixed(2) + " G$" : "1000 G$"
-                      } (raw: ${minimumAmount?.toString()}, chain: ${sourceChain}, calc: ${
-                        minimumAmount ? Number(minimumAmount) / 1e18 : "N/A"
-                      })`
-                    : reason === "maxAmount"
-                    ? `Maximum amount is ${minimumAmount ? (Number(minimumAmount) / 1e18).toFixed(2) + " G$" : "1M G$"}`
-                    : "Invalid amount"}
+                    ? " Minimum amount is " +
+                      (Number(minimumAmount) / (sourceChain === "fuse" ? 1e2 : 1e18)).toFixed(2) +
+                      " G$"
+                    : undefined}
                 </Text>
               )}
             </VStack>
@@ -771,8 +766,8 @@ export const MPBBridge = ({
             {/* Fee Information */}
             <VStack space={2} padding={4} bg="goodGrey.50" borderRadius="lg" borderWidth="1" borderColor="goodGrey.200">
               <Text fontFamily="subheading" fontSize="sm" color="goodGrey.600">
-                Minimum amount to bridge: {minimumAmount ? (Number(minimumAmount) / 1e18).toFixed(2) + " G$" : "1 G$"}{" "}
-                (raw: {minimumAmount?.toString()}, chain: {sourceChain})
+                Minimum amount to bridge: {(Number(minimumAmount) / (sourceChain === "fuse" ? 1e2 : 1e18)).toFixed(2)}{" "}
+                G$
               </Text>
               <Text fontFamily="subheading" fontSize="sm" color="goodGrey.600">
                 Bridge Fee: {getCurrentBridgeFee()}
