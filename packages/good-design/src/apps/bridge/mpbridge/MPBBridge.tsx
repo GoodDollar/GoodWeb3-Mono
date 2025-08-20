@@ -70,7 +70,9 @@ const useMPBBridgeEstimate = ({
     ? G$Amount("G$", fees[sourceChain].nativeFee, chain, defaultEnv)
     : G$Amount("G$", BigNumber.from(0), chain, defaultEnv);
 
-  const expectedToReceive = input.sub(expectedFee);
+  // For G$ bridging, user should receive the same amount they send
+  // The fee is paid in the native token (CELO, ETH, etc.), not in G$
+  const expectedToReceive = input;
 
   return {
     expectedFee,
@@ -721,7 +723,7 @@ export const MPBBridge = ({
                 You will receive on {targetChain.toUpperCase()}
               </Text>
               <Input
-                value={expectedToReceive ? expectedToReceive.toString() : "0"}
+                value={expectedToReceive ? expectedToReceive.format() : "0"}
                 isReadOnly
                 borderRadius="lg"
                 borderColor="goodGrey.300"

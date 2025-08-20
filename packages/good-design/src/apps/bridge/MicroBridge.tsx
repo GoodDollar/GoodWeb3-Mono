@@ -52,7 +52,9 @@ const useBridgeEstimate = ({
   //bridge fee is in BPS so divide by 10000
   const expectedFee = bridgeFee.mul(input.value).div(10000);
 
-  const expectedToReceive = input.sub(expectedFee.gt(minFee) ? expectedFee : minFee);
+  // For G$ bridging, user should receive the same amount they send
+  // The fee is paid separately, not deducted from the G$ amount
+  const expectedToReceive = input;
 
   return { expectedFee, expectedToReceive, minimumAmount, maximumAmount, bridgeFee, minFee, maxFee };
 };
