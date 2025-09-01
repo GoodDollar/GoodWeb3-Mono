@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { VStack, HStack, Pressable, Box, Spinner, useToast } from "native-base";
 import { Linking } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import moment from "moment";
 import { TransText, TransButton } from "../../core/layout";
 import { SAMPLE_TASKS } from "./mockData";
+
 
 export interface TaskReward {
   type: "points" | "tokens" | "badge";
@@ -101,7 +102,7 @@ export const useClaimerTasks = () => {
     }
   };
 
-  const completeTask = async (taskId: string) => {
+  const completeTask = useCallback(async (taskId: string) => {
     if (completedTasks.includes(taskId)) {
       toast.show({
         title: "Task Already Completed",
@@ -124,20 +125,25 @@ export const useClaimerTasks = () => {
         description: "Failed to mark task as completed. Please try again."
       });
     }
-  };
+  }, [completedTasks, toast]);
 
   const availableTasks = useMemo(() => {
-    const now = Date.now();
-    const fourDaysMs = 4 * 24 * 60 * 60 * 1000;
+    const now = moment();
+    const fourDaysDuration = moment.duration(4, 'days');
 
     return SAMPLE_TASKS.filter(task => {
-      const startTime = new Date(task.duration.startDate).getTime();
-      const endTime = new Date(task.duration.endDate).getTime();
-      if (now < startTime || now > endTime) return false;
+      const startTime = moment(task.duration.startDate);
+      const endTime = moment(task.duration.endDate);
+      
+      if (now.isBefore(startTime) || now.isAfter(endTime)) return false;
+
       if (completedTasks.includes(task.id)) return false;
 
       const dismissed = dismissedTasks[task.id];
-      if (dismissed && now - dismissed < fourDaysMs) return false;
+      if (dismissed) {
+        const dismissedTime = moment(dismissed);
+        if (now.diff(dismissedTime) < fourDaysDuration.asMilliseconds()) return false;
+      }
 
       return true;
     });
@@ -232,7 +238,7 @@ interface ClaimerTasksCardProps {
 }
 
 export const ClaimerTasksCard: React.FC<ClaimerTasksCardProps> = ({ onTaskComplete, onTaskDismiss, fontStyles }) => {
-  const { mainTask, secondaryTasks, loading, dismissing, hasActiveTasks, dismissAllTasks } = useClaimerTasks();
+  const { mainTask, secondaryTasks, loading, dismissing, hasActiveTasks, dismissAllTasks, completeTask } = useClaimerTasks();
   const { title, subContent, footer } = fontStyles ?? {};
 
   const handleDismissAll = async () => {
@@ -242,16 +248,17 @@ export const ClaimerTasksCard: React.FC<ClaimerTasksCardProps> = ({ onTaskComple
     }
   };
 
-  const openTask = async (task: ClaimerTask) => {
+  const openTask = useCallback(async (task: ClaimerTask) => {
     if (task.actionUrl) {
       try {
         await Linking.openURL(task.actionUrl);
+        await completeTask(task.id);
         if (onTaskComplete) onTaskComplete(task.id);
       } catch (error) {
         console.warn("Failed to open task URL:", error);
       }
     }
-  };
+  }, [completeTask, onTaskComplete]);
 
   if (loading) {
     return (
