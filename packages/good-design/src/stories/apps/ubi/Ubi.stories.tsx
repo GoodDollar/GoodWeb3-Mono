@@ -1,7 +1,9 @@
 import { Center, HStack, Text, VStack } from "native-base";
-import React, { useCallback, useState } from "react";
+import { ClaimerTasksCard } from '../../../apps/usertasks/managerTaskCard';
+import * as React from "react";
+import { useCallback, useState } from "react";
 import { useEthers } from "@usedapp/core";
-import moment from "moment";
+import * as moment from "moment";
 import { ethers } from "ethers";
 import { G$Amount, GoodIdContextProvider, NewsFeedProvider, SupportedChains } from "@gooddollar/web3sdk-v2";
 import { Provider } from "react-native-paper";
@@ -45,6 +47,11 @@ export const ClaimFlow = {
     const { setLanguage } = useGoodUILanguage();
     const { account = "", chainId } = useEthers();
 
+    const [showNextTasks, setShowNextTasks] = useState(false);
+    const handleClaimSuccess = () => {
+      setShowNextTasks(true);
+    };
+
     return (
       //   {/* For testing purposes we have to be on qa env */}
       <GoodIdContextProvider>
@@ -59,16 +66,27 @@ export const ClaimFlow = {
               withSignModals
               explorerEndPoints={explorerEndPoints}
               supportedChains={[SupportedChains.CELO, SupportedChains.FUSE]}
+              onSuccess={handleClaimSuccess}
               {...args}
             >
-              <HStack>
-                <GoodButton onPress={() => setLanguage("en")} backgroundColor="gdPrimary" color="white">
-                  English
-                </GoodButton>
-                <GoodButton onPress={() => setLanguage("es-419")} backgroundColor="gdPrimary" color="white">
-                  spanish
-                </GoodButton>
-              </HStack>
+               <VStack space={4}>
+                <HStack>zz
+                  <GoodButton onPress={() => setLanguage("en")} backgroundColor="gdPrimary" color="white" label="English" />
+                  <GoodButton onPress={() => setLanguage("es-419")} backgroundColor="gdPrimary" color="white" label="spanish" />
+                  <GoodButton
+                    onPress={() => setShowNextTasks(!showNextTasks)}
+                    backgroundColor="orange.500"
+                    color="white"
+                    label={showNextTasks ? "Hide Tasks" : "Show Tasks"}
+                  />
+                </HStack>
+                {showNextTasks && (
+                  <ClaimerTasksCard
+                    onTaskComplete={(taskId) => console.log('Task completed:', taskId)}
+                    onTaskDismiss={(taskId) => console.log('Task dismissed:', taskId)}
+                  />
+                )}
+              </VStack>
 
               <ClaimWizard {...args} account={account} chainId={chainId} />
             </ClaimProvider>
@@ -87,6 +105,7 @@ export const ClaimFlow = {
     onExit: () => {
       alert("If wallet > should go to dashboard");
     },
+    simulateSuccess: false,
     isDev: true
   }
 };
