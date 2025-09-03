@@ -84,7 +84,7 @@
     "@gooddollar/bridge-contracts": "^1.0.17",
     "@gooddollar/goodcollective-contracts": "^1.3.0",
     "@gooddollar/goodcollective-sdk": "^1.3.3",
-    "@gooddollar/goodprotocol": "^2.0.34-beta.0",
+    "@gooddollar/goodprotocol": "^2.0.34-beta.1",
     "@orbisclub/orbis-sdk": "^0.4.87",
     "@react-native-community/geolocation": "3.1.0",
     "@react-native-firebase/analytics": "^16.4.6",

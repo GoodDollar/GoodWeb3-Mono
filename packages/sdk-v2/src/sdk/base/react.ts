@@ -50,6 +50,8 @@ export const useGetEnvChainId = (requiredChainId?: number) => {
     case 42220:
       connectedEnv = connectedEnv === "fuse" ? "development-celo" : connectedEnv + "-celo";
       break;
+    case 50:
+      connectedEnv = connectedEnv === "fuse" ? "development-xdc" : connectedEnv + "-xdc";
   }
 
   const defaultEnv = connectedEnv;
@@ -237,12 +239,17 @@ export function useG$Balance(refresh: QueryParams["refresh"] = "never", required
         method: "balanceOf",
         args: [account]
       },
-      {
-        contract: goodContract,
-        method: "balanceOf",
-        args: [account]
-      }
+      ...(chainId !== 50 && goodContract
+        ? [
+            {
+              contract: goodContract,
+              method: "balanceOf",
+              args: [account]
+            }
+          ]
+        : [])
     ],
+
     {
       refresh: refreshOrNever,
       chainId

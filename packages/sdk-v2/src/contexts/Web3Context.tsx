@@ -146,11 +146,15 @@ const TokenProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
         method: "decimals",
         args: []
       },
-      {
-        contract: goodContract,
-        method: "decimals",
-        args: []
-      }
+      ...(chainId !== 50 && goodContract
+        ? [
+            {
+              contract: goodContract,
+              method: "decimals",
+              args: []
+            }
+          ]
+        : [])
     ],
     { refresh: "never", chainId }
   );

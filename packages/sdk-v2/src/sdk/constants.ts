@@ -44,8 +44,7 @@ export const G$Decimals: G$DecimalsMap = {
   GOOD: {
     [SupportedChains.MAINNET]: 18,
     [SupportedChains.FUSE]: 18,
-    [SupportedChains.CELO]: 18,
-    [SupportedChains.XDC]: 18
+    [SupportedChains.CELO]: 18
   }
 };
 
@@ -158,6 +157,9 @@ export function G$ContractAddresses<T = ObjectLike>(name: string, env: EnvKey): 
   }
 
   if (!(contractsAddresses as any)[env][name]) {
+    if (env === "development-xdc") {
+      return "" as unknown as T;
+    }
     throw new Error(`Inappropriate contract name ${name} in ${env}`);
   }
 

@@ -30,7 +30,7 @@ const ClaimButton = ({
   const { isWhitelisted, claimAmount } = useClaim(refresh);
   const isVerified = useQueryParam("verified", true);
   const { chainId: defaultChainId, defaultEnv } = useGetEnvChainId();
-  const { fuseWhitelisted, syncStatus } = useWhitelistSync();
+  const { celoWhitelisted, syncStatus } = useWhitelistSync();
 
   const handleClaim = useCallback(async () => {
     const success = await claim();
@@ -55,7 +55,7 @@ const ClaimButton = ({
       setFaceVerifying(true);
     }
 
-    if (fuseWhitelisted && syncStatus) {
+    if (celoWhitelisted && syncStatus) {
       const success = await syncStatus;
 
       if (!success) {
@@ -64,7 +64,7 @@ const ClaimButton = ({
 
       await handleClaim();
     }
-  }, [isWhitelisted, fuseWhitelisted, syncStatus, faceVerifying, setClaimConfirming, setWhitelistLoading, handleClaim]);
+  }, [isWhitelisted, celoWhitelisted, syncStatus, faceVerifying, setClaimConfirming, setWhitelistLoading, handleClaim]);
 
   useEffect(() => {
     if (claiming?.status === "PendingSignature") {

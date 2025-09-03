@@ -89,7 +89,7 @@
     "@babel/runtime": "^7.18.9",
     "@formatjs/intl-locale": "^4.0.0",
     "@formatjs/intl-pluralrules": "^5.2.14",
-    "@gooddollar/goodprotocol": "^2.0.34-beta.0",
+    "@gooddollar/goodprotocol": "^2.0.34-beta.1",
     "@gooddollar/web3sdk-v2": "*",
     "@lingui/core": "^4.11.2",
     "@lingui/react": "^4.11.2",
