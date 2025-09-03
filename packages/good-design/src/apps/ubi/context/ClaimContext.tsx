@@ -56,7 +56,7 @@ export const ClaimProvider: FC<PropsWithChildren<ClaimProviderProps>> = ({
     MAINNET: "https://api.etherscan.io/v2/api?chainid=1&",
     CELO: "https://celo.blockscout.com/api?",
     FUSE: "https://explorer.fuse.io/api?",
-    XDC: "https://api.etherscan.io/v2/api?chainid=50&"
+    XDC: "https://explorer.xdc.network/api"
   },
   provider,
   supportedChains = [SupportedChains.CELO, SupportedChains.FUSE, SupportedChains.XDC],
