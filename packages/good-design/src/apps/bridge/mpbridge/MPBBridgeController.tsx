@@ -4,7 +4,7 @@ import { useEthers } from "@usedapp/core";
 import { ethers } from "ethers";
 
 import { MPBBridge } from "./MPBBridge";
-import { useMPBBridge, useGetMPBBridgeData, useG$Decimals } from "@gooddollar/web3sdk-v2";
+import { useMPBBridge, useGetMPBBridgeData, useG$Decimals, useMPBBridgeLimits } from "@gooddollar/web3sdk-v2";
 
 interface IMPBBridgeControllerProps {
   withHistory?: boolean;
@@ -61,45 +61,21 @@ export const MPBBridgeController: React.FC<IMPBBridgeControllerProps> = ({ onBri
     <VStack space={4} width="100%">
       <MPBBridge
         useCanMPBBridge={(chain: string, amountWei: string) => {
-          // Use BigNumber for precise comparison of large numbers
-          const amount = ethers.BigNumber.from(amountWei || "0");
-
-          // Limits come in 18-decimal units; scale to the source chain token units
-          const chainDecimals = chain === "fuse" ? fuseDecimals : chain === "celo" ? celoDecimals : mainnetDecimals;
-          const minAmount = scaleFrom18(bridgeLimits.minAmount, chainDecimals) || ethers.BigNumber.from("0");
-          const maxAmount = scaleFrom18(bridgeLimits.maxAmount, chainDecimals) || ethers.BigNumber.from("0");
+          // Use the actual contract-based validation
+          const chainId = chain === "fuse" ? 122 : chain === "celo" ? 42220 : 1;
+          const { isValid, reason } = useMPBBridgeLimits(amountWei);
 
           // Debug logging
           console.log("Bridge validation debug:", {
             inputAmount: amountWei,
-            inputAmountBN: amount.toString(),
             chain,
-            chainDecimals,
-            minAmount18: bridgeLimits.minAmount?.toString(),
-            minAmountScaled: minAmount.toString(),
-            maxAmount18: bridgeLimits.maxAmount?.toString(),
-            maxAmountScaled: maxAmount.toString(),
-            isValid: amount.gte(minAmount) && amount.lte(maxAmount)
+            chainId,
+            isValid,
+            reason,
+            amountBN: amountWei ? ethers.BigNumber.from(amountWei).toString() : "0"
           });
 
-          if (amount.lt(minAmount)) {
-            console.log("Validation failed: amount < minAmount", {
-              amount: amount.toString(),
-              minAmount: minAmount.toString(),
-              reason: "minAmount"
-            });
-            return { isValid: false, reason: "minAmount" };
-          }
-          if (amount.gt(maxAmount)) {
-            console.log("Validation failed: amount > maxAmount", {
-              amount: amount.toString(),
-              maxAmount: maxAmount.toString(),
-              reason: "maxAmount"
-            });
-            return { isValid: false, reason: "maxAmount" };
-          }
-          console.log("Validation passed");
-          return { isValid: true, reason: "" };
+          return { isValid: Boolean(isValid), reason };
         }}
         originChain={originChain}
         inputTransaction={inputTransaction}

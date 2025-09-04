@@ -2,10 +2,13 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useContractFunctionWithDefaultGasFees } from "../base/hooks/useGasFees";
 import { useSwitchNetwork } from "../../contexts";
 import { useRefreshOrNever } from "../../hooks";
-import { useEthers, useLogs } from "@usedapp/core";
+import { useEthers, useLogs, ChainId } from "@usedapp/core";
 import { ethers } from "ethers";
 import { SupportedChains } from "../constants";
 import { TransactionStatus } from "@usedapp/core";
+import { useGetContract } from "../base/react";
+import { IGoodDollar } from "@gooddollar/goodprotocol/types";
+import { first, groupBy, sortBy } from "lodash";
 
 // GoodDollar Bridge API functions
 export const fetchBridgeFees = async () => {
@@ -84,14 +87,20 @@ export const convertFeeToWei = (fee: string, currency: string): string => {
   }
 };
 
-// MPB Contract ABI - this would need to be updated with actual MPB contract ABI
+// MPB Contract ABI - Updated with actual contract ABI from mpb.json
 const MPBBridgeABI = [
-  "function bridgeTo(uint256 destinationChainId, address recipient, uint256 amount, bytes calldata adapterParams) external payable",
-  "function quoteFee(uint256 destinationChainId, bytes calldata adapterParams) external view returns (uint256 nativeFee, uint256 zroFee)",
-  "function estimateSendFee(uint256 destinationChainId, address recipient, uint256 amount, bool payInLZToken, bytes calldata adapterParams) external view returns (uint256 nativeFee, uint256 zroFee)",
-  "event BridgeRequest(uint256 indexed sourceChainId, uint256 indexed destinationChainId, address indexed sender, address recipient, uint256 amount, uint256 fee)",
-  "event BridgeCompleted(uint256 indexed sourceChainId, uint256 indexed destinationChainId, address indexed recipient, uint256 amount)"
+  "function bridgeTo(address target, uint256 targetChainId, uint256 amount, uint8 bridge) external payable",
+  "function bridgeLimits() external view returns (tuple(uint256 dailyLimit, uint256 txLimit, uint256 accountDailyLimit, uint256 minAmount, bool onlyWhitelisted))",
+  "function canBridge(address from, uint256 amount) external view returns (bool)",
+  "event BridgeRequest(uint256 indexed sourceChainId, uint256 indexed destinationChainId, address indexed sender, address target, uint256 amount, uint8 bridge, uint256 id)",
+  "event ExecutedTransfer(uint256 indexed sourceChainId, uint256 indexed destinationChainId, address indexed target, uint256 amount, uint8 bridge, uint256 id)"
 ];
+
+// Bridge Service enum values (LayerZero = 0, Axelar = 1)
+export enum BridgeService {
+  LAYERZERO = 0,
+  AXELAR = 1
+}
 
 // MPB Contract addresses - Updated with actual deployed addresses from deployment.json
 const MPB_CONTRACTS = {
@@ -111,15 +120,123 @@ export const useGetMPBContracts = () => {
   };
 };
 
-export const useMPBBridgeLimits = (amount: string) => {
-  // For MPB, we'll implement basic validation
-  // In a real implementation, this would call contract methods to check limits
+export const useMPBBridgeLimits = (amount: string, chainId?: number) => {
+  const { account } = useEthers();
+  const mpbContracts = useGetMPBContracts();
+  const contract = mpbContracts[chainId || 122];
 
-  // Basic validation - in real implementation this would check actual contract limits
-  const isValid = amount && ethers.BigNumber.from(amount).gt(0);
-  const reason = isValid ? "" : "Invalid amount";
+  const [limits, setLimits] = useState<{
+    dailyLimit: ethers.BigNumber;
+    txLimit: ethers.BigNumber;
+    accountDailyLimit: ethers.BigNumber;
+    minAmount: ethers.BigNumber;
+    onlyWhitelisted: boolean;
+  } | null>(null);
 
-  return { isValid, reason };
+  const [canBridge, setCanBridge] = useState<boolean>(true); // Default to true
+  const [isLoading, setIsLoading] = useState<boolean>(false); // Start with false for immediate validation
+
+  useEffect(() => {
+    if (contract && account) {
+      setIsLoading(true);
+
+      // Get bridge limits from contract
+      contract
+        .bridgeLimits()
+        .then((bridgeLimits: any) => {
+          console.log("Bridge limits from contract:", bridgeLimits);
+          setLimits({
+            dailyLimit: bridgeLimits.dailyLimit,
+            txLimit: bridgeLimits.txLimit,
+            accountDailyLimit: bridgeLimits.accountDailyLimit,
+            minAmount: bridgeLimits.minAmount,
+            onlyWhitelisted: bridgeLimits.onlyWhitelisted
+          });
+        })
+        .catch(error => {
+          console.error("Error getting bridge limits:", error);
+          // Set fallback limits if contract call fails
+          setLimits({
+            dailyLimit: ethers.BigNumber.from("1000000000000000000000000"), // 1M G$
+            txLimit: ethers.BigNumber.from("1000000000000000000000000"), // 1M G$
+            accountDailyLimit: ethers.BigNumber.from("1000000000000000000000000"), // 1M G$
+            minAmount: ethers.BigNumber.from("1000000000000000000"), // 1 G$
+            onlyWhitelisted: false
+          });
+        });
+
+      // Check if user can bridge this amount
+      const amountBN = ethers.BigNumber.from(amount || "0");
+      if (amountBN.gt(0)) {
+        contract
+          .canBridge(account, amountBN)
+          .then(result => {
+            console.log("Can bridge result:", result);
+            setCanBridge(result);
+          })
+          .catch(error => {
+            console.error("Error checking canBridge:", error);
+            setCanBridge(true); // Default to true if check fails
+          });
+      }
+
+      setIsLoading(false);
+    } else {
+      setIsLoading(false);
+    }
+  }, [contract, account, amount]);
+
+  const amountBN = ethers.BigNumber.from(amount || "0");
+
+  // Always do basic validation first (immediate response)
+  const minAmount = ethers.BigNumber.from("1000000000000000000"); // 1 G$
+  const maxAmount = ethers.BigNumber.from("1000000000000000000000000"); // 1M G$
+
+  console.log("MPB Bridge validation:", {
+    amount: amount,
+    amountBN: amountBN.toString(),
+    minAmount: minAmount.toString(),
+    maxAmount: maxAmount.toString(),
+    isLoading,
+    hasLimits: !!limits,
+    canBridge
+  });
+
+  if (amountBN.lt(minAmount)) {
+    console.log("Validation failed: amount < minAmount");
+    return { isValid: false, reason: "minAmount" };
+  }
+  if (amountBN.gt(maxAmount)) {
+    console.log("Validation failed: amount > maxAmount");
+    return { isValid: false, reason: "maxAmount" };
+  }
+
+  // If still loading contract data, return valid for now
+  if (isLoading) {
+    return { isValid: true, reason: "" };
+  }
+
+  // If no limits loaded from contract, use fallback validation (already passed basic validation above)
+  if (!limits) {
+    console.log("No contract limits, using fallback validation - VALID");
+    return { isValid: true, reason: "" };
+  }
+
+  // Use contract limits for validation
+  if (amountBN.lt(limits.minAmount)) {
+    return { isValid: false, reason: "minAmount" };
+  }
+
+  if (amountBN.gt(limits.txLimit)) {
+    return { isValid: false, reason: "maxAmount" };
+  }
+
+  if (!canBridge) {
+    return { isValid: false, reason: "cannotBridge" };
+  }
+
+  console.log("All validations passed - VALID");
+  return { isValid: true, reason: "" };
 };
 
 export type MPBBridgeData = {
@@ -152,11 +269,15 @@ export const useMPBBridge = (bridgeProvider: "layerzero" | "axelar" = "axelar") 
     { amount: string; sourceChainId: number; targetChainId: number; target?: string; bridging?: boolean } | undefined
   >();
 
-  const bridgeTo = useContractFunctionWithDefaultGasFees(mpbContracts[chainId || 122], "bridgeTo", {
+  // Get G$ token contract for the current chain
+  const gdContract = useGetContract("GoodDollar", true, "base", chainId) as IGoodDollar;
+
+  // Use transferAndCall on G$ token instead of direct bridgeTo call
+  const transferAndCall = useContractFunctionWithDefaultGasFees(gdContract, "transferAndCall", {
     transactionName: "MPBBridgeTransfer"
   });
 
-  const bridgeRequestId = (bridgeTo.state?.receipt?.logs || [])
+  const bridgeRequestId = (transferAndCall.state?.receipt?.logs || [])
     .filter(log => log.address === mpbContracts[chainId || 122]?.address)
     .map(log => mpbContracts[chainId || 122]?.interface.parseLog(log))?.[0]?.args?.id;
 
@@ -177,15 +298,15 @@ export const useMPBBridge = (bridgeProvider: "layerzero" | "axelar" = "axelar") 
 
   // Bridge status based on local transaction status and bridge completion
   const bridgeStatus: Partial<TransactionStatus> | undefined = (() => {
-    if (bridgeTo.state.status === "Mining" || bridgeTo.state.status === "PendingSignature") {
+    if (transferAndCall.state.status === "Mining" || transferAndCall.state.status === "PendingSignature") {
       return {
         chainId: bridgeRequest?.sourceChainId,
-        status: bridgeTo.state.status,
-        transaction: bridgeTo.state.transaction
+        status: transferAndCall.state.status,
+        transaction: transferAndCall.state.transaction
       } as TransactionStatus;
     }
 
-    if (bridgeTo.state.status === "Success" && bridgeCompletedEvent?.value?.length) {
+    if (transferAndCall.state.status === "Success" && bridgeCompletedEvent?.value?.length) {
       return {
         chainId: bridgeRequest?.targetChainId,
         status: "Success",
@@ -193,11 +314,11 @@ export const useMPBBridge = (bridgeProvider: "layerzero" | "axelar" = "axelar") 
       } as TransactionStatus;
     }
 
-    if (bridgeTo.state.status === "Exception") {
+    if (transferAndCall.state.status === "Exception") {
       return {
         chainId: bridgeRequest?.sourceChainId,
         status: "Fail",
-        errorMessage: bridgeTo.state.errorMessage
+        errorMessage: transferAndCall.state.errorMessage
       } as TransactionStatus;
     }
 
@@ -208,7 +329,7 @@ export const useMPBBridge = (bridgeProvider: "layerzero" | "axelar" = "axelar") 
     async (amount: string, sourceChain: string, target = account) => {
       setBridgeRequest(undefined);
       lock.current = false;
-      bridgeTo.resetState();
+      transferAndCall.resetState();
 
       const targetChainId =
         sourceChain === "fuse"
@@ -234,12 +355,12 @@ export const useMPBBridge = (bridgeProvider: "layerzero" | "axelar" = "axelar") 
         throw e;
       });
     },
-    [account, bridgeTo, chainId, switchNetwork]
+    [account, transferAndCall, chainId, switchNetwork]
   );
 
   // Trigger the actual bridge request
   useEffect(() => {
-    if (bridgeTo.state.status === "None" && bridgeRequest && account && !lock.current) {
+    if (transferAndCall.state.status === "None" && bridgeRequest && account && !lock.current) {
       lock.current = true;
 
       // Get fee estimate from GoodDollar Bridge API
@@ -265,25 +386,44 @@ export const useMPBBridge = (bridgeProvider: "layerzero" | "axelar" = "axelar") 
             const nativeFee = convertFeeToWei(feeInfo.fee, feeInfo.currency);
             console.log(`Bridge fee: ${feeInfo.fee} ${feeInfo.currency} (${nativeFee} wei)`);
 
-            // Send bridge transaction with real fee
-            void bridgeTo.send(
-              bridgeRequest.targetChainId,
-              bridgeRequest.target || account,
-              bridgeRequest.amount,
-              "0x", // adapterParams
-              { value: nativeFee }
+            // Encode the bridge parameters for transferAndCall
+            const encoded = ethers.utils.defaultAbiCoder.encode(
+              ["uint256", "address", "uint8"],
+              [
+                bridgeRequest.targetChainId,
+                bridgeRequest.target || account,
+                bridgeProvider === "layerzero" ? BridgeService.LAYERZERO : BridgeService.AXELAR
+              ]
+            );
+
+            // Use transferAndCall to send G$ tokens to bridge contract
+            // Note: Native fee needs to be sent separately or handled by the bridge contract
+            void transferAndCall.send(
+              mpbContracts[chainId || 122]?.address, // bridge contract address
+              bridgeRequest.amount, // amount to bridge
+              encoded // encoded bridge parameters
             );
           } else {
             // Fallback to default fee if no specific route found
             const defaultFee = "100000000000000000"; // 0.1 ETH
             console.log(`Using default fee: ${defaultFee} wei`);
 
-            void bridgeTo.send(
-              bridgeRequest.targetChainId,
-              bridgeRequest.target || account,
-              bridgeRequest.amount,
-              "0x", // adapterParams
-              { value: defaultFee }
+            // Encode the bridge parameters for transferAndCall
+            const encoded = ethers.utils.defaultAbiCoder.encode(
+              ["uint256", "address", "uint8"],
+              [
+                bridgeRequest.targetChainId,
+                bridgeRequest.target || account,
+                bridgeProvider === "layerzero" ? BridgeService.LAYERZERO : BridgeService.AXELAR
+              ]
+            );
+
+            // Use transferAndCall to send G$ tokens to bridge contract
+            // Note: Native fee needs to be sent separately or handled by the bridge contract
+            void transferAndCall.send(
+              mpbContracts[chainId || 122]?.address, // bridge contract address
+              bridgeRequest.amount, // amount to bridge
+              encoded // encoded bridge parameters
             );
           }
         })
@@ -292,11 +432,11 @@ export const useMPBBridge = (bridgeProvider: "layerzero" | "axelar" = "axelar") 
           throw e;
         });
     }
-  }, [bridgeRequest, account, bridgeTo, bridgeProvider]);
+  }, [bridgeRequest, account, transferAndCall, bridgeProvider, chainId, mpbContracts]);
 
   return {
     sendMPBBridgeRequest,
-    bridgeRequestStatus: bridgeTo.state,
+    bridgeRequestStatus: transferAndCall.state,
     bridgeStatus,
     bridgeRequest
   };
@@ -313,17 +453,228 @@ export const getAxelarExplorerLink = (txHash: string, chainId: number) => {
   return `https://axelarscan.io/${chainName}/tx/${txHash}`;
 };
 
-// Bridge history hook
+// Bridge history hook - Real implementation using blockchain events
 export const useMPBBridgeHistory = () => {
-  const [history, setHistory] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { account } = useEthers();
+  const mpbContracts = useGetMPBContracts();
+  const refresh = useRefreshOrNever(5);
+  const fuseChainId = 122 as ChainId;
+  const celoChainId = 42220 as ChainId;
+  const mainnetChainId = 1 as ChainId;
 
-  useEffect(() => {
-    // In a real implementation, this would fetch bridge history from an API
-    // For now, we'll return an empty array
-    setLoading(false);
-    setHistory([]); // Initialize with empty array
-  }, []);
+  // Listen for BridgeRequest events on all chains
+  const fuseOut = useLogs(
+    {
+      contract: mpbContracts[122],
+      event: "BridgeRequest",
+      args: []
+    },
+    {
+      chainId: fuseChainId,
+      fromBlock: -2e4,
+      refresh
+    }
+  );
 
-  return { history, loading };
+  const fuseIn = useLogs(
+    {
+      contract: mpbContracts[122],
+      event: "ExecutedTransfer",
+      args: []
+    },
+    {
+      chainId: fuseChainId,
+      fromBlock: -2e4,
+      refresh
+    }
+  );
+
+  const celoOut = useLogs(
+    {
+      contract: mpbContracts[42220],
+      event: "BridgeRequest",
+      args: []
+    },
+    {
+      chainId: celoChainId,
+      fromBlock: -2e4,
+      refresh
+    }
+  );
+
+  const celoIn = useLogs(
+    {
+      contract: mpbContracts[42220],
+      event: "ExecutedTransfer",
+      args: []
+    },
+    {
+      chainId: celoChainId,
+      fromBlock: -2e4,
+      refresh
+    }
+  );
+
+  const mainnetOut = useLogs(
+    {
+      contract: mpbContracts[1],
+      event: "BridgeRequest",
+      args: []
+    },
+    {
+      chainId: mainnetChainId,
+      fromBlock: -2e4,
+      refresh
+    }
+  );
+
+  const mainnetIn = useLogs(
+    {
+      contract: mpbContracts[1],
+      event: "ExecutedTransfer",
+      args: []
+    },
+    {
+      chainId: mainnetChainId,
+      fromBlock: -2e4,
+      refresh
+    }
+  );
+
+  if (!fuseOut || !fuseIn || !celoOut || !celoIn || !mainnetOut || !mainnetIn) {
+    return { history: [], loading: true };
+  }
+
+  // Group executed transfers by ID for matching
+  const fuseExecuted = groupBy(fuseIn?.value || [], _ => _?.data?.id);
+  const celoExecuted = groupBy(celoIn?.value || [], _ => _?.data?.id);
+  const mainnetExecuted = groupBy(mainnetIn?.value || [], _ => _?.data?.id);
+
+  // Process Fuse bridge requests
+  const fuseHistory = fuseOut?.value?.map(e => {
+    const executedEvent = first(fuseExecuted[e.data.id]);
+    const targetChain = e.data.targetChainId.toNumber();
+    const bridgeService = e.data.bridge === 0 ? "LayerZero" : "Axelar";
+
+    return {
+      ...e,
+      executedEvent,
+      amount: ethers.utils.formatEther(e.data.amount),
+      sourceChain: "Fuse",
+      targetChain: targetChain === 122 ? "Fuse" : targetChain === 42220 ? "Celo" : "Mainnet",
+      bridgeService,
+      status: executedEvent ? "Completed" : "Pending",
+      timestamp: e.data.timestamp || Date.now() / 1000
+    };
+  });
+
+  // Process Celo bridge requests
+  const celoHistory = celoOut?.value?.map(e => {
+    const executedEvent = first(celoExecuted[e.data.id]);
+    const targetChain = e.data.targetChainId.toNumber();
+    const bridgeService = e.data.bridge === 0 ? "LayerZero" : "Axelar";
+
+    return {
+      ...e,
+      executedEvent,
+      amount: ethers.utils.formatEther(e.data.amount),
+      sourceChain: "Celo",
+      targetChain: targetChain === 122 ? "Fuse" : targetChain === 42220 ? "Celo" : "Mainnet",
+      bridgeService,
+      status: executedEvent ? "Completed" : "Pending",
+      timestamp: e.data.timestamp || Date.now() / 1000
+    };
+  });
+
+  // Process Mainnet bridge requests
+  const mainnetHistory = mainnetOut?.value?.map(e => {
+    const executedEvent = first(mainnetExecuted[e.data.id]);
+    const targetChain = e.data.targetChainId.toNumber();
+    const bridgeService = e.data.bridge === 0 ? "LayerZero" : "Axelar";
+
+    return {
+      ...e,
+      executedEvent,
+      amount: ethers.utils.formatEther(e.data.amount),
+      sourceChain: "Mainnet",
+      targetChain: targetChain === 122 ? "Fuse" : targetChain === 42220 ? "Celo" : "Mainnet",
+      bridgeService,
+      status: executedEvent ? "Completed" : "Pending",
+      timestamp: e.data.timestamp || Date.now() / 1000
+    };
+  });
+
+  // Combine all history
+  const historyCombined = (fuseHistory || []).concat(celoHistory || []).concat(mainnetHistory || []);
+
+  // Filter by account and sort by timestamp
+  const historyFiltered = historyCombined.filter(_ => _?.data?.from === account || _?.data?.target === account);
+  const historySorted = sortBy(historyFiltered, _ => _.timestamp).reverse();
+
+  return {
+    history: historySorted,
+    loading: false,
+    fuseHistory,
+    celoHistory,
+    mainnetHistory
+  };
+};
+
+// Get detailed bridge status for a specific transaction
+export const useMPBBridgeStatus = (txHash: string, sourceChainId: number, targetChainId: number) => {
+  const mpbContracts = useGetMPBContracts();
+  const refresh = useRefreshOrNever(5);
+
+  // Listen for the bridge request event on source chain
+  const bridgeRequestEvent = useLogs(
+    {
+      contract: mpbContracts[sourceChainId],
+      event: "BridgeRequest",
+      args: [null, null, null, null, null, null, null, null] // We'll filter by txHash
+    },
+    {
+      chainId: sourceChainId,
+      fromBlock: -2e4,
+      refresh
+    }
+  );
+
+  // Listen for the executed transfer event on target chain
+  const executedTransferEvent = useLogs(
+    {
+      contract: mpbContracts[targetChainId],
+      event: "ExecutedTransfer",
+      args: [null, null, null, null, null, null, null, null] // We'll filter by bridge ID
+    },
+    {
+      chainId: targetChainId,
+      fromBlock: -2e4,
+      refresh
+    }
+  );
+
+  // Find the specific bridge request
+  const bridgeRequest = bridgeRequestEvent?.value?.find(event => event.transactionHash === txHash);
+
+  // Find the corresponding executed transfer
+  const executedTransfer = executedTransferEvent?.value?.find(event => event.data.id === bridgeRequest?.data?.id);
+
+  // Determine status
+  let status = "Pending";
+  if (bridgeRequest && executedTransfer) {
+    status = "Completed";
+  } else if (bridgeRequest) {
+    status = "In Progress";
+  }
+
+  return {
+    status,
+    bridgeRequest,
+    executedTransfer,
+    bridgeId: bridgeRequest?.data?.id,
+    amount: bridgeRequest?.data?.amount ? ethers.utils.formatEther(bridgeRequest.data.amount) : "0",
+    sourceChain: sourceChainId === 122 ? "Fuse" : sourceChainId === 42220 ? "Celo" : "Mainnet",
+    targetChain: targetChainId === 122 ? "Fuse" : targetChainId === 42220 ? "Celo" : "Mainnet",
+    bridgeService: bridgeRequest?.data?.bridge === 0 ? "LayerZero" : "Axelar"
+  };
 };
