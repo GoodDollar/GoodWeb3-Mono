@@ -31,7 +31,6 @@
     "@babel/preset-react": "^7.16.0",
     "@babel/preset-typescript": "^7.16.0",
     "@babel/runtime": "^7.18.9",
-    "@gooddollar/web3sdk-v2": "workspace:^",
     "@react-native-async-storage/async-storage": "1.17.10",
     "@reown/appkit": "^1.2.1",
     "@reown/appkit-adapter-wagmi": "^1.2.1",
@@ -80,7 +79,6 @@
   },
   "peerDepedencies": {
     "@usedapp/core": "*",
-    "@gooddollar/web3sdk-v2": "*",
     "ethers": "5.*",
     "react-native-paper": "*",
     "uuid": "*"
@@ -91,7 +89,8 @@
     "@babel/runtime": "^7.18.9",
     "@formatjs/intl-locale": "^4.0.0",
     "@formatjs/intl-pluralrules": "^5.2.14",
-    "@gooddollar/goodprotocol": "^2.0.32",
+    "@gooddollar/goodprotocol": "^2.0.34-beta.1",
+    "@gooddollar/web3sdk-v2": "*",
     "@lingui/core": "^4.11.2",
     "@lingui/react": "^4.11.2",
     "@magiklabs/react-sdk": "^1.0.8",

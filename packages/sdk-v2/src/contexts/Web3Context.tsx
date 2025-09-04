@@ -89,6 +89,17 @@ export const Celo: Chain = {
   getExplorerTransactionLink: (transactionHash: string) => `https://celoscan.io/tx/${transactionHash}`
 };
 
+export const Xdc: Chain = {
+  chainId: 50,
+  chainName: "Xdc",
+  isTestChain: false,
+  isLocalChain: false,
+  multicallAddress: "0x0B1795ccA8E4eC4df02346a082df54D437F8D9aF",
+  multicall2Address: "0x0B1795ccA8E4eC4df02346a082df54D437F8D9aF",
+  getExplorerAddressLink: (address: string) => `https://xdcscan.com/address/${address}`,
+  getExplorerTransactionLink: (transactionHash: string) => `https://xdcscan.com/tx/${transactionHash}`
+};
+
 const getMulticallAddresses = (networks: Chain[] | undefined) => {
   const result: { [index: number]: string } = {};
 
@@ -135,11 +146,15 @@ const TokenProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
         method: "decimals",
         args: []
       },
-      {
-        contract: goodContract,
-        method: "decimals",
-        args: []
-      }
+      ...(chainId !== 50 && goodContract
+        ? [
+            {
+              contract: goodContract,
+              method: "decimals",
+              args: []
+            }
+          ]
+        : [])
     ],
     { refresh: "never", chainId }
   );
@@ -212,6 +227,7 @@ export const Web3Provider = ({ children, config: inConfig, web3Provider, env = "
     122: sample(["https://rpc.fuse.io", "https://fuse-rpc.gateway.pokt.network"]) as string,
     42220: sample(["https://forno.celo.org"]) as string,
     1: sample(["https://eth.drpc.org", "https://eth.llamarpc.com"]) as string,
+    50: sample(["https://rpc.xdc.network", "https://rpc.ankr.com/xdc"]) as string,
     ...config.readOnlyUrls
   };
 

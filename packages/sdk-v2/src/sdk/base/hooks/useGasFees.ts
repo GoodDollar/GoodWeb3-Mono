@@ -43,12 +43,17 @@ export function useContractFunctionWithDefaultGasFees<T extends TypedContract, F
         const opts = hasOpts ? args[args.length - 1] : {};
         const modifiedArgs = hasOpts ? args.slice(0, args.length - 1) : args;
 
-        console.log("arguments useGasFees -->", { opts, modifiedArgs });
-
         modifiedArgs.push(
           pickBy(
             "maxFeePerGas" in opts
-              ? { ...opts, ...(chainId === 42220 ? { maxFeePerGas: 25.001e9, maxPriorityFeePerGas: 1e8 } : {}) }
+              ? {
+                  ...opts,
+                  ...(chainId === 42220
+                    ? { maxFeePerGas: 25.001e9, maxPriorityFeePerGas: 1e8 }
+                    : chainId === 50
+                    ? { maxFeePerGas: 12.5e9 }
+                    : {})
+                }
               : { ...gasFees, ...opts },
             _ => _ != null
           )

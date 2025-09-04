@@ -63,6 +63,7 @@ export const useMultiClaim = (poolsDetails: PoolDetails[] | undefined) => {
       promise: Promise<ethers.providers.TransactionReceipt | undefined>;
     }[]
   >([]);
+  const { celoWhitelisted, syncStatus } = useWhitelistSync();
 
   const { gasPrice = BigNumber.from(25.001e9) } = useGasFees();
   const minBalance = BigNumber.from(chainId === 42220 ? "250000" : "150000").mul(gasPrice);
@@ -107,7 +108,6 @@ export const useMultiClaim = (poolsDetails: PoolDetails[] | undefined) => {
         const isDivviDone = await AsyncStorage.getItem(`GD_divvi_${account}`);
         const txHash = state.transaction?.hash;
 
-        console.log("divvidone -->", { isDivviDone, txHash, state });
         if (!isDivviDone && state.chainId === 42220 && txHash) {
           if (txHash) {
             submitReferral({ txHash, chainId: 42220 })
@@ -166,6 +166,14 @@ export const useMultiClaim = (poolsDetails: PoolDetails[] | undefined) => {
   // set the first contract to trigger the claiming process
   const startClaiming = useCallback(async () => {
     if (!contract) {
+      if (celoWhitelisted && syncStatus) {
+        const success = await syncStatus;
+
+        if (!success) {
+          return;
+        }
+      }
+
       setStatus({
         isClaimingDone: false,
         isClaiming: true,
@@ -297,7 +305,6 @@ export const useClaim = (refresh: QueryParams["refresh"] = "never") => {
   const ubi = useGetContract("UBIScheme", true, "claim", chainId) as UBIScheme;
   const identity = useGetContract("Identity", true, "claim", chainId) as IIdentity;
   // const claimCall = useContractFunctionWithDefaultGasFees(ubi, "claim", { transactionName: "Claimed Daily UBI" });
-
   const results = useCalls(
     [
       identity &&
@@ -345,7 +352,7 @@ export const useClaim = (refresh: QueryParams["refresh"] = "never") => {
   };
 };
 
-export const useHasClaimed = (requiredNetwork: keyof typeof SupportedV2Networks): boolean => {
+export const useHasClaimed = (requiredNetwork: keyof typeof SupportedV2Networks): BigNumber | undefined => {
   const { account } = useEthers();
   const ubi = useGetContract("UBIScheme", true, "claim", SupportedV2Networks[requiredNetwork]) as UBIScheme;
 
@@ -360,20 +367,26 @@ export const useHasClaimed = (requiredNetwork: keyof typeof SupportedV2Networks)
     { refresh: 8, chainId: SupportedV2Networks[requiredNetwork] as unknown as ChainId }
   );
 
-  return first(hasClaimed?.value) as boolean;
+  return first(hasClaimed?.value);
 };
 
 export const useClaimedAlt = (chainId: number | undefined) => {
   const claimedCelo = useHasClaimed("CELO");
   const claimedFuse = useHasClaimed("FUSE");
+  const claimedXdc = useHasClaimed("XDC");
 
   const claimedAlt = useMemo(() => {
-    if (chainId === SupportedChains.FUSE) {
-      return { hasClaimed: (claimedCelo as unknown as BigNumber)?.isZero(), altChain: "CELO" };
-    } else {
-      return { hasClaimed: (claimedFuse as unknown as BigNumber)?.isZero(), altChain: "FUSE" };
+    if (!claimedCelo && chainId !== SupportedChains.CELO) {
+      return { hasClaimed: false, altChain: Number(SupportedChains.CELO) };
     }
-  }, [chainId, claimedCelo, claimedFuse]);
+    if (!claimedXdc && chainId !== SupportedChains.XDC) {
+      return { hasClaimed: false, altChain: Number(SupportedChains.XDC) };
+    }
+    if (!claimedFuse && chainId !== SupportedChains.FUSE) {
+      return { hasClaimed: false, altChain: Number(SupportedChains.FUSE) };
+    }
+    return { hasClaimed: true, altChain: 0 };
+  }, [claimedCelo, claimedFuse, claimedXdc]);
 
   return claimedAlt;
 };
@@ -384,7 +397,7 @@ export const useWhitelistSync = () => {
   const [syncStatus, setSyncStatus] = useState<Promise<boolean> | undefined>();
   const { baseEnv } = useGetEnvChainId();
   const { account, chainId } = useEthers();
-  const identity = useGetContract("Identity", true, "claim", SupportedChains.FUSE) as IIdentity;
+  const identity = useGetContract("Identity", true, "claim", SupportedChains.CELO) as IIdentity;
   const identity2 = useGetContract("Identity", true, "claim", chainId) as IIdentity;
   const baseEnvRef = useRef<typeof baseEnv>();
 
@@ -392,7 +405,7 @@ export const useWhitelistSync = () => {
     baseEnvRef.current = baseEnv;
   }, [baseEnv]);
 
-  const [fuseResult] = useCalls(
+  const [celoResult] = useCalls(
     [
       {
         contract: identity,
@@ -400,7 +413,7 @@ export const useWhitelistSync = () => {
         args: [account]
       }
     ],
-    { refresh: "never", chainId: SupportedChains.FUSE as unknown as ChainId }
+    { refresh: "never", chainId: SupportedChains.CELO as unknown as ChainId }
   );
 
   const [otherResult] = useCalls(
@@ -410,15 +423,15 @@ export const useWhitelistSync = () => {
         method: "isWhitelisted",
         args: [account]
       }
-    ].filter(_ => _.contract && chainId != SupportedChains.FUSE),
+    ].filter(_ => _.contract && chainId != SupportedChains.CELO),
     { refresh: "never", chainId }
   );
   useEffect(() => {
     const whitelistSync = async () => {
-      const isSynced = await AsyncStorage.getItem(`${account}-whitelistedSync`);
+      const isSynced = await AsyncStorage.getItem(`${account}-${chainId}-whitelistedSync`);
 
       // not need for sync when already synced or user whitelisted on both chains
-      if (isSynced || (first(fuseResult?.value) && first(otherResult?.value))) {
+      if (isSynced || (first(celoResult?.value) && first(otherResult?.value))) {
         return setSyncStatus(Promise.resolve(true));
       }
 
@@ -426,7 +439,7 @@ export const useWhitelistSync = () => {
       if (syncInProgress) return;
 
       // if whitelisted on fuse but not on celo then sync
-      if (first(fuseResult?.value) && first(otherResult?.value) === false) {
+      if (first(celoResult?.value) && first(otherResult?.value) === false) {
         syncInProgress = true;
         const { current: baseEnv } = baseEnvRef;
         const devEnv = baseEnvRef.current === "fuse" ? "development" : baseEnv;
@@ -437,7 +450,7 @@ export const useWhitelistSync = () => {
             .then(async r => {
               if (r.status === 200) {
                 await r.json();
-                AsyncStorage.safeSet(`${account}-whitelistedSync`, true);
+                AsyncStorage.safeSet(`${account}-${chainId}-whitelistedSync`, true);
 
                 return true;
               } else {
@@ -453,10 +466,10 @@ export const useWhitelistSync = () => {
     };
 
     whitelistSync().catch(noop);
-  }, [fuseResult, otherResult, account, setSyncStatus]);
+  }, [celoResult, otherResult, account, chainId, setSyncStatus]);
 
   return {
-    fuseWhitelisted: first(fuseResult?.value) as boolean,
+    celoWhitelisted: first(celoResult?.value) as boolean,
     currentWhitelisted: first(otherResult?.value) as boolean,
     syncStatus
   };
