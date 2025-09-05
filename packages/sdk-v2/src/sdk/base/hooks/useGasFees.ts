@@ -19,7 +19,7 @@ export const useGasFees = () => {
       case 122:
         return BigNumber.from(11e9);
       case 42220:
-        return BigNumber.from(25.001e9);
+        return BigNumber.from(100e9); // Increased to 100e9 to handle very high base fees
     }
   }, [chainId]);
 
@@ -43,16 +43,33 @@ export function useContractFunctionWithDefaultGasFees<T extends TypedContract, F
         const opts = hasOpts ? args[args.length - 1] : {};
         const modifiedArgs = hasOpts ? args.slice(0, args.length - 1) : args;
 
-        console.log("arguments useGasFees -->", { opts, modifiedArgs });
+        console.log("arguments useGasFees -->", { opts, modifiedArgs, chainId });
 
-        modifiedArgs.push(
-          pickBy(
-            "maxFeePerGas" in opts
-              ? { ...opts, ...(chainId === 42220 ? { maxFeePerGas: 25.001e9, maxPriorityFeePerGas: 1e8 } : {}) }
-              : { ...gasFees, ...opts },
-            _ => _ != null
-          )
-        );
+        // Add a reasonable gas limit for bridge transactions to prevent estimation failures
+        const gasOptions =
+          "maxFeePerGas" in opts
+            ? {
+                ...opts,
+                ...(chainId === 42220
+                  ? {
+                      maxFeePerGas: 100e9, // Increased to 100 gwei to handle very high base fees
+                      maxPriorityFeePerGas: 5e9 // Increased to 5 gwei priority fee
+                    }
+                  : {})
+              }
+            : { ...gasFees, ...opts };
+
+        if (!gasOptions.gasLimit) {
+          gasOptions.gasLimit = BigNumber.from("500000"); // 500k gas limit for bridge transactions
+        }
+
+        // Ensure gas price is high enough for current network conditions
+        if (chainId === 42220 && gasOptions.gasPrice && gasOptions.gasPrice.lt(BigNumber.from("100e9"))) {
+          gasOptions.gasPrice = BigNumber.from("100e9"); // Ensure minimum 100 gwei for Celo
+        }
+
+        console.log("Final gas options:", gasOptions);
+        modifiedArgs.push(pickBy(gasOptions, _ => _ != null));
         return send(...(modifiedArgs as any));
       }
     },

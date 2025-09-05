@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useContractFunctionWithDefaultGasFees } from "../base/hooks/useGasFees";
+import { useContractFunction, useEthers } from "@usedapp/core";
 import { useSwitchNetwork } from "../../contexts";
 import { useRefreshOrNever } from "../../hooks";
-import { useEthers, useLogs, ChainId } from "@usedapp/core";
+import { useLogs, ChainId } from "@usedapp/core";
 import { ethers } from "ethers";
 import { SupportedChains } from "../constants";
 import { TransactionStatus } from "@usedapp/core";
@@ -272,14 +272,20 @@ export const useMPBBridge = (bridgeProvider: "layerzero" | "axelar" = "axelar") 
   // Get G$ token contract for the current chain
   const gdContract = useGetContract("GoodDollar", true, "base", chainId) as IGoodDollar;
 
-  // Use transferAndCall on G$ token instead of direct bridgeTo call
-  const transferAndCall = useContractFunctionWithDefaultGasFees(gdContract, "transferAndCall", {
+  // Use direct bridgeTo call on the bridge contract to properly handle native fees
+  const bridgeContract = mpbContracts[chainId || 122];
+  const bridgeTo = useContractFunction(bridgeContract, "bridgeTo", {
     transactionName: "MPBBridgeTransfer"
   });
 
-  const bridgeRequestId = (transferAndCall.state?.receipt?.logs || [])
-    .filter(log => log.address === mpbContracts[chainId || 122]?.address)
-    .map(log => mpbContracts[chainId || 122]?.interface.parseLog(log))?.[0]?.args?.id;
+  // Use approve for G$ tokens if needed
+  const approve = useContractFunction(gdContract, "approve", {
+    transactionName: "ApproveG$ForBridge"
+  });
+
+  const bridgeRequestId = (bridgeTo.state?.receipt?.logs || [])
+    .filter(log => log.address === bridgeContract?.address)
+    .map(log => bridgeContract?.interface.parseLog(log))?.[0]?.args?.id;
 
   // Poll target chain for bridge completion
   const bridgeCompletedEvent = useLogs(
@@ -298,15 +304,15 @@ export const useMPBBridge = (bridgeProvider: "layerzero" | "axelar" = "axelar") 
 
   // Bridge status based on local transaction status and bridge completion
   const bridgeStatus: Partial<TransactionStatus> | undefined = (() => {
-    if (transferAndCall.state.status === "Mining" || transferAndCall.state.status === "PendingSignature") {
+    if (bridgeTo.state.status === "Mining" || bridgeTo.state.status === "PendingSignature") {
       return {
         chainId: bridgeRequest?.sourceChainId,
-        status: transferAndCall.state.status,
-        transaction: transferAndCall.state.transaction
+        status: bridgeTo.state.status,
+        transaction: bridgeTo.state.transaction
       } as TransactionStatus;
     }
 
-    if (transferAndCall.state.status === "Success" && bridgeCompletedEvent?.value?.length) {
+    if (bridgeTo.state.status === "Success" && bridgeCompletedEvent?.value?.length) {
       return {
         chainId: bridgeRequest?.targetChainId,
         status: "Success",
@@ -314,11 +320,11 @@ export const useMPBBridge = (bridgeProvider: "layerzero" | "axelar" = "axelar") 
       } as TransactionStatus;
     }
 
-    if (transferAndCall.state.status === "Exception") {
+    if (bridgeTo.state.status === "Exception") {
       return {
         chainId: bridgeRequest?.sourceChainId,
         status: "Fail",
-        errorMessage: transferAndCall.state.errorMessage
+        errorMessage: bridgeTo.state.errorMessage
       } as TransactionStatus;
     }
 
@@ -329,7 +335,8 @@ export const useMPBBridge = (bridgeProvider: "layerzero" | "axelar" = "axelar") 
     async (amount: string, sourceChain: string, target = account) => {
       setBridgeRequest(undefined);
       lock.current = false;
-      transferAndCall.resetState();
+      bridgeTo.resetState();
+      approve.resetState();
 
       const targetChainId =
         sourceChain === "fuse"
@@ -355,17 +362,59 @@ export const useMPBBridge = (bridgeProvider: "layerzero" | "axelar" = "axelar") 
         throw e;
       });
     },
-    [account, transferAndCall, chainId, switchNetwork]
+    [account, bridgeTo, approve, chainId, switchNetwork]
   );
 
-  // Trigger the actual bridge request
+  // Trigger the approval first
   useEffect(() => {
-    if (transferAndCall.state.status === "None" && bridgeRequest && account && !lock.current) {
+    if (approve.state.status === "None" && bridgeRequest && account && !lock.current) {
       lock.current = true;
+
+      console.log("Starting approval process:", {
+        bridgeContract: bridgeContract?.address,
+        amount: bridgeRequest.amount,
+        account
+      });
+
+      // First approve G$ tokens for the bridge contract
+      // Note: We might need to reset approval to 0 first if there's an existing approval
+      void approve.send(bridgeContract?.address, bridgeRequest.amount);
+    }
+  }, [bridgeRequest, account, approve, bridgeContract]);
+
+  // Handle approval errors
+  useEffect(() => {
+    if (approve.state.status === "Exception") {
+      console.error("Approval failed:", approve.state.errorMessage);
+      lock.current = false; // Reset lock so user can try again
+    }
+  }, [approve.state.status]);
+
+  // Handle bridgeTo errors
+  useEffect(() => {
+    if (bridgeTo.state.status === "Exception") {
+      console.error("BridgeTo failed:", bridgeTo.state.errorMessage);
+      lock.current = false; // Reset lock so user can try again
+    }
+  }, [bridgeTo.state.status]);
+
+  // Trigger the bridge request after approval is successful
+  useEffect(() => {
+    console.log("Bridge flow status:", {
+      approveStatus: approve.state.status,
+      bridgeToStatus: bridgeTo.state.status,
+      hasBridgeRequest: !!bridgeRequest,
+      hasAccount: !!account
+    });
+
+    if (approve.state.status === "Success" && bridgeTo.state.status === "None" && bridgeRequest && account) {
+      console.log("Approval successful, starting bridge process...");
 
       // Get fee estimate from GoodDollar Bridge API
       fetchBridgeFees()
         .then(fees => {
+          console.log("Fetched bridge fees:", fees);
+
           // Get the correct fee based on source, target, and bridge provider
           const sourceChainName =
             bridgeRequest.sourceChainId === SupportedChains.FUSE
@@ -380,50 +429,75 @@ export const useMPBBridge = (bridgeProvider: "layerzero" | "axelar" = "axelar") 
               ? "celo"
               : "mainnet";
 
+          console.log("Chain mapping:", { sourceChainName, targetChainName, bridgeProvider });
+
           const feeInfo = getBridgeFee(fees, sourceChainName, targetChainName, bridgeProvider);
+          console.log("Fee info:", feeInfo);
 
           if (feeInfo) {
             const nativeFee = convertFeeToWei(feeInfo.fee, feeInfo.currency);
             console.log(`Bridge fee: ${feeInfo.fee} ${feeInfo.currency} (${nativeFee} wei)`);
 
-            // Encode the bridge parameters for transferAndCall
-            const encoded = ethers.utils.defaultAbiCoder.encode(
-              ["uint256", "address", "uint8"],
-              [
-                bridgeRequest.targetChainId,
-                bridgeRequest.target || account,
-                bridgeProvider === "layerzero" ? BridgeService.LAYERZERO : BridgeService.AXELAR
-              ]
-            );
+            const bridgeService = bridgeProvider === "layerzero" ? BridgeService.LAYERZERO : BridgeService.AXELAR;
 
-            // Use transferAndCall to send G$ tokens to bridge contract
-            // Note: Native fee needs to be sent separately or handled by the bridge contract
-            void transferAndCall.send(
-              mpbContracts[chainId || 122]?.address, // bridge contract address
-              bridgeRequest.amount, // amount to bridge
-              encoded // encoded bridge parameters
+            console.log("MPB Bridge transaction details:", {
+              bridgeContract: bridgeContract?.address,
+              target: bridgeRequest.target || account,
+              targetChainId: bridgeRequest.targetChainId,
+              amount: bridgeRequest.amount,
+              nativeFee,
+              bridgeService,
+              bridgeServiceValue: bridgeService
+            });
+
+            // Call bridgeTo with native fee as msg.value
+            console.log("Calling bridgeTo with parameters:", {
+              target: bridgeRequest.target || account,
+              targetChainId: bridgeRequest.targetChainId,
+              amount: bridgeRequest.amount,
+              bridgeService,
+              value: nativeFee
+            });
+
+            void bridgeTo.send(
+              bridgeRequest.target || account,
+              bridgeRequest.targetChainId,
+              bridgeRequest.amount,
+              bridgeService,
+              { value: nativeFee } as any
             );
           } else {
             // Fallback to default fee if no specific route found
             const defaultFee = "100000000000000000"; // 0.1 ETH
             console.log(`Using default fee: ${defaultFee} wei`);
 
-            // Encode the bridge parameters for transferAndCall
-            const encoded = ethers.utils.defaultAbiCoder.encode(
-              ["uint256", "address", "uint8"],
-              [
-                bridgeRequest.targetChainId,
-                bridgeRequest.target || account,
-                bridgeProvider === "layerzero" ? BridgeService.LAYERZERO : BridgeService.AXELAR
-              ]
-            );
+            const bridgeService = bridgeProvider === "layerzero" ? BridgeService.LAYERZERO : BridgeService.AXELAR;
 
-            // Use transferAndCall to send G$ tokens to bridge contract
-            // Note: Native fee needs to be sent separately or handled by the bridge contract
-            void transferAndCall.send(
-              mpbContracts[chainId || 122]?.address, // bridge contract address
-              bridgeRequest.amount, // amount to bridge
-              encoded // encoded bridge parameters
+            console.log("MPB Bridge fallback transaction details:", {
+              bridgeContract: bridgeContract?.address,
+              target: bridgeRequest.target || account,
+              targetChainId: bridgeRequest.targetChainId,
+              amount: bridgeRequest.amount,
+              defaultFee,
+              bridgeService,
+              bridgeServiceValue: bridgeService
+            });
+
+            // Call bridgeTo with fallback fee as msg.value
+            console.log("Calling bridgeTo with fallback parameters:", {
+              target: bridgeRequest.target || account,
+              targetChainId: bridgeRequest.targetChainId,
+              amount: bridgeRequest.amount,
+              bridgeService,
+              value: defaultFee
+            });
+
+            void bridgeTo.send(
+              bridgeRequest.target || account,
+              bridgeRequest.targetChainId,
+              bridgeRequest.amount,
+              bridgeService,
+              { value: defaultFee } as any
             );
           }
         })
@@ -432,11 +506,11 @@ export const useMPBBridge = (bridgeProvider: "layerzero" | "axelar" = "axelar") 
           throw e;
         });
     }
-  }, [bridgeRequest, account, transferAndCall, bridgeProvider, chainId, mpbContracts]);
+  }, [approve.state.status, bridgeTo.state.status, bridgeRequest, account, bridgeProvider, bridgeContract]);
 
   return {
     sendMPBBridgeRequest,
-    bridgeRequestStatus: transferAndCall.state,
+    bridgeRequestStatus: bridgeTo.state,
     bridgeStatus,
     bridgeRequest
   };
