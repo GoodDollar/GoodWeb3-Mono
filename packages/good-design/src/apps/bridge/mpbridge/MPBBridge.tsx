@@ -150,17 +150,7 @@ export const MPBBridge = ({
   const hasBalance = ethers.BigNumber.from(bridgeWeiAmount).lte(ethers.BigNumber.from(wei));
   const isValidInput = isValid && hasBalance;
 
-  // Debug logging
-  console.log("MPBBridge validation debug:", {
-    bridgeWeiAmount,
-    wei,
-    isValid,
-    reason,
-    hasBalance,
-    isValidInput,
-    minimumAmount: minimumAmount?.toString(),
-    sourceChain
-  });
+  // Validation completed
 
   // Get valid target chains for the selected source chain based on available bridge fees
   const getValidTargetChains = (source: string) => {
@@ -228,7 +218,7 @@ export const MPBBridge = ({
         setTargetChain("celo");
       }
     }
-  }, [bridgeProvider, sourceChain, targetChain]);
+  }, [bridgeProvider, sourceChain]);
 
   // Swap functionality
   const handleSwap = useCallback(() => {
@@ -294,23 +284,24 @@ export const MPBBridge = ({
       }
     } else if (bridgeProvider === "layerzero") {
       const layerzeroFees = bridgeFees.LAYERZERO;
-      if (sourceUpper === "MAINNET" && targetUpper === "CELO" && layerzeroFees.LZ_ETH_TO_CELO) {
-        return layerzeroFees.LZ_ETH_TO_CELO;
+      // Check specific routes first to avoid wrong matches
+      if (sourceUpper === "CELO" && targetUpper === "FUSE" && layerzeroFees.LZ_CELO_TO_FUSE) {
+        return layerzeroFees.LZ_CELO_TO_FUSE;
       }
-      if (sourceUpper === "MAINNET" && targetUpper === "FUSE" && layerzeroFees.LZ_ETH_TO_FUSE) {
-        return layerzeroFees.LZ_ETH_TO_FUSE;
+      if (sourceUpper === "FUSE" && targetUpper === "CELO" && layerzeroFees.LZ_FUSE_TO_CELO) {
+        return layerzeroFees.LZ_FUSE_TO_CELO;
       }
       if (sourceUpper === "CELO" && targetUpper === "MAINNET" && layerzeroFees.LZ_CELO_TO_ETH) {
         return layerzeroFees.LZ_CELO_TO_ETH;
       }
-      if (sourceUpper === "CELO" && targetUpper === "FUSE" && layerzeroFees.LZ_CELO_TO_FUSE) {
-        return layerzeroFees.LZ_CELO_TO_FUSE;
+      if (sourceUpper === "MAINNET" && targetUpper === "CELO" && layerzeroFees.LZ_ETH_TO_CELO) {
+        return layerzeroFees.LZ_ETH_TO_CELO;
       }
       if (sourceUpper === "FUSE" && targetUpper === "MAINNET" && layerzeroFees.LZ_FUSE_TO_ETH) {
         return layerzeroFees.LZ_FUSE_TO_ETH;
       }
-      if (sourceUpper === "FUSE" && targetUpper === "CELO" && layerzeroFees.LZ_FUSE_TO_CELO) {
-        return layerzeroFees.LZ_FUSE_TO_CELO;
+      if (sourceUpper === "MAINNET" && targetUpper === "FUSE" && layerzeroFees.LZ_ETH_TO_FUSE) {
+        return layerzeroFees.LZ_ETH_TO_FUSE;
       }
     }
 
@@ -420,13 +411,18 @@ export const MPBBridge = ({
       address: tx.data?.from || "",
       account: tx.data?.target || "",
       network: tx.sourceChain?.toUpperCase() || sourceChain.toUpperCase(),
-      contractAddress: tx.address || "",
+      contractAddress: "",
       token: "G$",
       status: tx.status === "Completed" ? "success" : tx.status === "Pending" ? "pending" : "failed",
       type: "bridge-in",
       contractName: "GoodDollar",
       displayName: `Bridged via ${tx.bridgeService}`,
-      tokenValue: tx.amount,
+      tokenValue: G$Amount(
+        "G$",
+        BigNumber.from(tx.amount || "0"),
+        sourceChain === "celo" ? 42220 : sourceChain === "mainnet" ? 1 : 122,
+        useGetEnvChainId(sourceChain === "celo" ? 42220 : sourceChain === "mainnet" ? 1 : 122).defaultEnv
+      ),
       transactionHash: tx.transactionHash,
       timestamp: tx.timestamp,
       sourceChain: tx.sourceChain,

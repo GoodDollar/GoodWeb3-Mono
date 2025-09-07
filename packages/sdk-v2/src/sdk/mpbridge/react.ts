@@ -22,54 +22,7 @@ export const fetchBridgeFees = async () => {
   }
 };
 
-// Helper function to get the correct fee based on source, target, and provider
-export const getBridgeFee = (
-  fees: any, // Changed from BridgeFeesResponse to any as the interface is removed
-  sourceChain: string,
-  targetChain: string,
-  bridgeProvider: "layerzero" | "axelar"
-): { fee: string; currency: string } | null => {
-  if (!fees) return null;
-
-  const sourceUpper = sourceChain.toUpperCase();
-  const targetUpper = targetChain.toUpperCase();
-
-  if (bridgeProvider === "axelar") {
-    const axelarFees = fees.AXELAR;
-
-    // Axelar routes
-    if (sourceUpper === "CELO" && targetUpper === "ETH") {
-      return { fee: axelarFees.AXL_CELO_TO_ETH.split(" ")[0], currency: "Celo" };
-    }
-    if (sourceUpper === "ETH" && targetUpper === "CELO") {
-      return { fee: axelarFees.AXL_ETH_TO_CELO.split(" ")[0], currency: "ETH" };
-    }
-  } else if (bridgeProvider === "layerzero") {
-    const layerzeroFees = fees.LAYERZERO;
-
-    // LayerZero routes
-    if (sourceUpper === "ETH" && targetUpper === "CELO") {
-      return { fee: layerzeroFees.LZ_ETH_TO_CELO.split(" ")[0], currency: "ETH" };
-    }
-    if (sourceUpper === "ETH" && targetUpper === "FUSE") {
-      return { fee: layerzeroFees.LZ_ETH_TO_FUSE.split(" ")[0], currency: "ETH" };
-    }
-    if (sourceUpper === "CELO" && targetUpper === "ETH") {
-      return { fee: layerzeroFees.LZ_CELO_TO_ETH.split(" ")[0], currency: "Celo" };
-    }
-    if (sourceUpper === "CELO" && targetUpper === "FUSE") {
-      return { fee: layerzeroFees.LZ_CELO_TO_FUSE.split(" ")[0], currency: "CELO" };
-    }
-    if (sourceUpper === "FUSE" && targetUpper === "ETH") {
-      return { fee: layerzeroFees.LZ_FUSE_TO_ETH.split(" ")[0], currency: "Fuse" };
-    }
-    if (sourceUpper === "FUSE" && targetUpper === "CELO") {
-      return { fee: layerzeroFees.LZ_FUSE_TO_CELO.split(" ")[0], currency: "Fuse" };
-    }
-  }
-
-  return null;
-};
+// Old getBridgeFee function removed - using inline fee parsing logic
 
 // Helper function to convert fee to wei based on currency
 export const convertFeeToWei = (fee: string, currency: string): string => {
@@ -110,13 +63,18 @@ const MPB_CONTRACTS = {
 };
 
 export const useGetMPBContracts = () => {
+  const { library } = useEthers();
+
   return {
-    [SupportedChains.FUSE]: new ethers.Contract(MPB_CONTRACTS[SupportedChains.FUSE], MPBBridgeABI) as ethers.Contract,
-    [SupportedChains.CELO]: new ethers.Contract(MPB_CONTRACTS[SupportedChains.CELO], MPBBridgeABI) as ethers.Contract,
-    [SupportedChains.MAINNET]: new ethers.Contract(
-      MPB_CONTRACTS[SupportedChains.MAINNET],
-      MPBBridgeABI
-    ) as ethers.Contract
+    [SupportedChains.FUSE]: library
+      ? (new ethers.Contract(MPB_CONTRACTS[SupportedChains.FUSE], MPBBridgeABI, library) as ethers.Contract)
+      : null,
+    [SupportedChains.CELO]: library
+      ? (new ethers.Contract(MPB_CONTRACTS[SupportedChains.CELO], MPBBridgeABI, library) as ethers.Contract)
+      : null,
+    [SupportedChains.MAINNET]: library
+      ? (new ethers.Contract(MPB_CONTRACTS[SupportedChains.MAINNET], MPBBridgeABI, library) as ethers.Contract)
+      : null
   };
 };
 
@@ -144,7 +102,6 @@ export const useMPBBridgeLimits = (amount: string, chainId?: number) => {
       contract
         .bridgeLimits()
         .then((bridgeLimits: any) => {
-          console.log("Bridge limits from contract:", bridgeLimits);
           setLimits({
             dailyLimit: bridgeLimits.dailyLimit,
             txLimit: bridgeLimits.txLimit,
@@ -167,17 +124,19 @@ export const useMPBBridgeLimits = (amount: string, chainId?: number) => {
 
       // Check if user can bridge this amount
       const amountBN = ethers.BigNumber.from(amount || "0");
-      if (amountBN.gt(0)) {
+      if (amountBN.gt(0) && contract) {
         contract
           .canBridge(account, amountBN)
           .then(result => {
-            console.log("Can bridge result:", result);
             setCanBridge(result);
           })
           .catch(error => {
             console.error("Error checking canBridge:", error);
             setCanBridge(true); // Default to true if check fails
           });
+      } else if (!contract) {
+        console.error("Bridge contract is null - cannot check canBridge");
+        setCanBridge(true); // Default to true if contract is null
       }
 
       setIsLoading(false);
@@ -192,22 +151,12 @@ export const useMPBBridgeLimits = (amount: string, chainId?: number) => {
   const minAmount = ethers.BigNumber.from("1000000000000000000"); // 1 G$
   const maxAmount = ethers.BigNumber.from("1000000000000000000000000"); // 1M G$
 
-  console.log("MPB Bridge validation:", {
-    amount: amount,
-    amountBN: amountBN.toString(),
-    minAmount: minAmount.toString(),
-    maxAmount: maxAmount.toString(),
-    isLoading,
-    hasLimits: !!limits,
-    canBridge
-  });
+  // Validation in progress
 
   if (amountBN.lt(minAmount)) {
-    console.log("Validation failed: amount < minAmount");
     return { isValid: false, reason: "minAmount" };
   }
   if (amountBN.gt(maxAmount)) {
-    console.log("Validation failed: amount > maxAmount");
     return { isValid: false, reason: "maxAmount" };
   }
 
@@ -218,7 +167,6 @@ export const useMPBBridgeLimits = (amount: string, chainId?: number) => {
 
   // If no limits loaded from contract, use fallback validation (already passed basic validation above)
   if (!limits) {
-    console.log("No contract limits, using fallback validation - VALID");
     return { isValid: true, reason: "" };
   }
 
@@ -235,7 +183,6 @@ export const useMPBBridgeLimits = (amount: string, chainId?: number) => {
     return { isValid: false, reason: "cannotBridge" };
   }
 
-  console.log("All validations passed - VALID");
   return { isValid: true, reason: "" };
 };
 
@@ -277,6 +224,8 @@ export const useMPBBridge = (bridgeProvider: "layerzero" | "axelar" = "axelar") 
   const bridgeTo = useContractFunction(bridgeContract, "bridgeTo", {
     transactionName: "MPBBridgeTransfer"
   });
+
+  // Bridge contract initialized
 
   // Use approve for G$ tokens if needed
   const approve = useContractFunction(gdContract, "approve", {
@@ -370,11 +319,7 @@ export const useMPBBridge = (bridgeProvider: "layerzero" | "axelar" = "axelar") 
     if (approve.state.status === "None" && bridgeRequest && account && !lock.current) {
       lock.current = true;
 
-      console.log("Starting approval process:", {
-        bridgeContract: bridgeContract?.address,
-        amount: bridgeRequest.amount,
-        account
-      });
+      console.log("🔐 Starting approval process...");
 
       // First approve G$ tokens for the bridge contract
       // Note: We might need to reset approval to 0 first if there's an existing approval
@@ -400,20 +345,15 @@ export const useMPBBridge = (bridgeProvider: "layerzero" | "axelar" = "axelar") 
 
   // Trigger the bridge request after approval is successful
   useEffect(() => {
-    console.log("Bridge flow status:", {
-      approveStatus: approve.state.status,
-      bridgeToStatus: bridgeTo.state.status,
-      hasBridgeRequest: !!bridgeRequest,
-      hasAccount: !!account
-    });
+    // Bridge flow status check
 
     if (approve.state.status === "Success" && bridgeTo.state.status === "None" && bridgeRequest && account) {
-      console.log("Approval successful, starting bridge process...");
+      console.log("🌉 Starting bridge process...");
 
       // Get fee estimate from GoodDollar Bridge API
       fetchBridgeFees()
         .then(fees => {
-          console.log("Fetched bridge fees:", fees);
+          // Bridge fees fetched successfully
 
           // Get the correct fee based on source, target, and bridge provider
           const sourceChainName =
@@ -429,35 +369,44 @@ export const useMPBBridge = (bridgeProvider: "layerzero" | "axelar" = "axelar") 
               ? "celo"
               : "mainnet";
 
-          console.log("Chain mapping:", { sourceChainName, targetChainName, bridgeProvider });
+          // Use the same fee parsing logic as the UI component
+          const sourceUpper = sourceChainName.toUpperCase();
+          const targetUpper = targetChainName.toUpperCase();
+          let feeString: string | null = null;
 
-          const feeInfo = getBridgeFee(fees, sourceChainName, targetChainName, bridgeProvider);
-          console.log("Fee info:", feeInfo);
+          if (bridgeProvider === "axelar") {
+            const axelarFees = fees.AXELAR;
+            if (sourceUpper === "CELO" && targetUpper === "MAINNET" && axelarFees.AXL_CELO_TO_ETH) {
+              feeString = axelarFees.AXL_CELO_TO_ETH;
+            }
+            if (sourceUpper === "MAINNET" && targetUpper === "CELO" && axelarFees.AXL_ETH_TO_CELO) {
+              feeString = axelarFees.AXL_ETH_TO_CELO;
+            }
+          } else if (bridgeProvider === "layerzero") {
+            const layerzeroFees = fees.LAYERZERO;
+            // Check specific routes first to avoid wrong matches
+            if (sourceUpper === "CELO" && targetUpper === "FUSE" && layerzeroFees.LZ_CELO_TO_FUSE) {
+              feeString = layerzeroFees.LZ_CELO_TO_FUSE;
+            } else if (sourceUpper === "FUSE" && targetUpper === "CELO" && layerzeroFees.LZ_FUSE_TO_CELO) {
+              feeString = layerzeroFees.LZ_FUSE_TO_CELO;
+            } else if (sourceUpper === "CELO" && targetUpper === "MAINNET" && layerzeroFees.LZ_CELO_TO_ETH) {
+              feeString = layerzeroFees.LZ_CELO_TO_ETH;
+            } else if (sourceUpper === "MAINNET" && targetUpper === "CELO" && layerzeroFees.LZ_ETH_TO_CELO) {
+              feeString = layerzeroFees.LZ_ETH_TO_CELO;
+            } else if (sourceUpper === "FUSE" && targetUpper === "MAINNET" && layerzeroFees.LZ_FUSE_TO_ETH) {
+              feeString = layerzeroFees.LZ_FUSE_TO_ETH;
+            } else if (sourceUpper === "MAINNET" && targetUpper === "FUSE" && layerzeroFees.LZ_ETH_TO_FUSE) {
+              feeString = layerzeroFees.LZ_ETH_TO_FUSE;
+            }
+          }
 
-          if (feeInfo) {
-            const nativeFee = convertFeeToWei(feeInfo.fee, feeInfo.currency);
-            console.log(`Bridge fee: ${feeInfo.fee} ${feeInfo.currency} (${nativeFee} wei)`);
+          if (feeString && typeof feeString === "string") {
+            // Parse the fee string (e.g., "0.13447218229501165 CELO")
+            const [feeAmount, currency] = feeString.split(" ");
+            const nativeFee = convertFeeToWei(feeAmount, currency);
+            console.log(`✅ Bridge fee: ${feeAmount} ${currency}`);
 
             const bridgeService = bridgeProvider === "layerzero" ? BridgeService.LAYERZERO : BridgeService.AXELAR;
-
-            console.log("MPB Bridge transaction details:", {
-              bridgeContract: bridgeContract?.address,
-              target: bridgeRequest.target || account,
-              targetChainId: bridgeRequest.targetChainId,
-              amount: bridgeRequest.amount,
-              nativeFee,
-              bridgeService,
-              bridgeServiceValue: bridgeService
-            });
-
-            // Call bridgeTo with native fee as msg.value
-            console.log("Calling bridgeTo with parameters:", {
-              target: bridgeRequest.target || account,
-              targetChainId: bridgeRequest.targetChainId,
-              amount: bridgeRequest.amount,
-              bridgeService,
-              value: nativeFee
-            });
 
             void bridgeTo.send(
               bridgeRequest.target || account,
@@ -469,28 +418,9 @@ export const useMPBBridge = (bridgeProvider: "layerzero" | "axelar" = "axelar") 
           } else {
             // Fallback to default fee if no specific route found
             const defaultFee = "100000000000000000"; // 0.1 ETH
-            console.log(`Using default fee: ${defaultFee} wei`);
+            console.log(`❌ Using fallback fee: 0.1 ETH`);
 
             const bridgeService = bridgeProvider === "layerzero" ? BridgeService.LAYERZERO : BridgeService.AXELAR;
-
-            console.log("MPB Bridge fallback transaction details:", {
-              bridgeContract: bridgeContract?.address,
-              target: bridgeRequest.target || account,
-              targetChainId: bridgeRequest.targetChainId,
-              amount: bridgeRequest.amount,
-              defaultFee,
-              bridgeService,
-              bridgeServiceValue: bridgeService
-            });
-
-            // Call bridgeTo with fallback fee as msg.value
-            console.log("Calling bridgeTo with fallback parameters:", {
-              target: bridgeRequest.target || account,
-              targetChainId: bridgeRequest.targetChainId,
-              amount: bridgeRequest.amount,
-              bridgeService,
-              value: defaultFee
-            });
 
             void bridgeTo.send(
               bridgeRequest.target || account,
@@ -506,7 +436,7 @@ export const useMPBBridge = (bridgeProvider: "layerzero" | "axelar" = "axelar") 
           throw e;
         });
     }
-  }, [approve.state.status, bridgeTo.state.status, bridgeRequest, account, bridgeProvider, bridgeContract]);
+  }, [approve.state.status, bridgeTo.state.status, bridgeRequest, account, bridgeProvider]);
 
   return {
     sendMPBBridgeRequest,
@@ -531,87 +461,99 @@ export const getAxelarExplorerLink = (txHash: string, chainId: number) => {
 export const useMPBBridgeHistory = () => {
   const { account } = useEthers();
   const mpbContracts = useGetMPBContracts();
-  const refresh = useRefreshOrNever(5);
+  // const refresh = useRefreshOrNever(5);
   const fuseChainId = 122 as ChainId;
   const celoChainId = 42220 as ChainId;
   const mainnetChainId = 1 as ChainId;
 
-  // Listen for BridgeRequest events on all chains
+  // Listen for BridgeRequest events on all chains with smaller block range to avoid RPC limits
   const fuseOut = useLogs(
-    {
-      contract: mpbContracts[122],
-      event: "BridgeRequest",
-      args: []
-    },
+    mpbContracts[122]
+      ? {
+          contract: mpbContracts[122],
+          event: "BridgeRequest",
+          args: []
+        }
+      : undefined,
     {
       chainId: fuseChainId,
-      fromBlock: -2e4,
-      refresh
+      fromBlock: -1000, // Reduced from 20k to 1k blocks
+      refresh: "never" // Disable auto-refresh to reduce RPC calls
     }
   );
 
   const fuseIn = useLogs(
-    {
-      contract: mpbContracts[122],
-      event: "ExecutedTransfer",
-      args: []
-    },
+    mpbContracts[122]
+      ? {
+          contract: mpbContracts[122],
+          event: "ExecutedTransfer",
+          args: []
+        }
+      : undefined,
     {
       chainId: fuseChainId,
-      fromBlock: -2e4,
-      refresh
+      fromBlock: -1000,
+      refresh: "never"
     }
   );
 
   const celoOut = useLogs(
-    {
-      contract: mpbContracts[42220],
-      event: "BridgeRequest",
-      args: []
-    },
+    mpbContracts[42220]
+      ? {
+          contract: mpbContracts[42220],
+          event: "BridgeRequest",
+          args: []
+        }
+      : undefined,
     {
       chainId: celoChainId,
-      fromBlock: -2e4,
-      refresh
+      fromBlock: -1000,
+      refresh: "never"
     }
   );
 
   const celoIn = useLogs(
-    {
-      contract: mpbContracts[42220],
-      event: "ExecutedTransfer",
-      args: []
-    },
+    mpbContracts[42220]
+      ? {
+          contract: mpbContracts[42220],
+          event: "ExecutedTransfer",
+          args: []
+        }
+      : undefined,
     {
       chainId: celoChainId,
-      fromBlock: -2e4,
-      refresh
+      fromBlock: -1000,
+      refresh: "never"
     }
   );
 
   const mainnetOut = useLogs(
-    {
-      contract: mpbContracts[1],
-      event: "BridgeRequest",
-      args: []
-    },
+    mpbContracts[1]
+      ? {
+          contract: mpbContracts[1],
+          event: "BridgeRequest",
+          args: []
+        }
+      : undefined,
     {
       chainId: mainnetChainId,
-      fromBlock: -2e4,
-      refresh
+      fromBlock: -1000,
+      refresh: "never"
     }
   );
 
   const mainnetIn = useLogs(
-    {
-      contract: mpbContracts[1],
-      event: "ExecutedTransfer",
-      args: []
-    },
+    mpbContracts[1]
+      ? {
+          contract: mpbContracts[1],
+          event: "ExecutedTransfer",
+          args: []
+        }
+      : undefined,
     {
       chainId: mainnetChainId,
-      fromBlock: -2e4,
-      refresh
+      fromBlock: -1000,
+      refresh: "never"
     }
   );
 

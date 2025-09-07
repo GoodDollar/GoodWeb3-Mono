@@ -4,7 +4,7 @@ import { useEthers } from "@usedapp/core";
 import { ethers } from "ethers";
 
 import { MPBBridge } from "./MPBBridge";
-import { useMPBBridge, useGetMPBBridgeData, useG$Decimals, useMPBBridgeLimits } from "@gooddollar/web3sdk-v2";
+import { useMPBBridge, useGetMPBBridgeData, useG$Decimals } from "@gooddollar/web3sdk-v2";
 
 interface IMPBBridgeControllerProps {
   withHistory?: boolean;
@@ -15,7 +15,7 @@ interface IMPBBridgeControllerProps {
 
 export const MPBBridgeController: React.FC<IMPBBridgeControllerProps> = ({ onBridgeSuccess, onBridgeFailed }) => {
   const { chainId } = useEthers();
-  const { sendMPBBridgeRequest, bridgeRequestStatus, bridgeStatus } = useMPBBridge();
+  const { sendMPBBridgeRequest, bridgeRequestStatus, bridgeStatus } = useMPBBridge("layerzero");
   const { bridgeFees, bridgeLimits } = useGetMPBBridgeData();
 
   // Per-chain decimals to scale 18-decimal limits to the active chain units
@@ -34,6 +34,23 @@ export const MPBBridgeController: React.FC<IMPBBridgeControllerProps> = ({ onBri
   const inputTransaction = useState<string>("0");
   const pendingTransaction = useState<any>(false);
   const originChain = useState<string>(chainId === 122 ? "fuse" : chainId === 42220 ? "celo" : "mainnet");
+
+  // Create a stable validation function that doesn't use hooks inside
+  const useCanMPBBridge = useCallback((chain: string, amountWei: string) => {
+    // Basic validation without contract calls to avoid infinite loops
+    const amountBN = ethers.BigNumber.from(amountWei || "0");
+    const minAmount = ethers.BigNumber.from("1000000000000000000"); // 1 G$
+    const maxAmount = ethers.BigNumber.from("1000000000000000000000000"); // 1M G$
+
+    if (amountBN.lt(minAmount)) {
+      return { isValid: false, reason: "minAmount" };
+    }
+    if (amountBN.gt(maxAmount)) {
+      return { isValid: false, reason: "maxAmount" };
+    }
+
+    return { isValid: true, reason: "" };
+  }, []);
 
   const onBridgeStartHandler = useCallback(async () => {
     const [inputWei] = inputTransaction;
@@ -60,23 +77,7 @@ export const MPBBridgeController: React.FC<IMPBBridgeControllerProps> = ({ onBri
   return (
     <VStack space={4} width="100%">
       <MPBBridge
-        useCanMPBBridge={(chain: string, amountWei: string) => {
-          // Use the actual contract-based validation
-          const chainId = chain === "fuse" ? 122 : chain === "celo" ? 42220 : 1;
-          const { isValid, reason } = useMPBBridgeLimits(amountWei);
-
-          // Debug logging
-          console.log("Bridge validation debug:", {
-            inputAmount: amountWei,
-            chain,
-            chainId,
-            isValid,
-            reason,
-            amountBN: amountWei ? ethers.BigNumber.from(amountWei).toString() : "0"
-          });
-
-          return { isValid: Boolean(isValid), reason };
-        }}
+        useCanMPBBridge={useCanMPBBridge}
         originChain={originChain}
         inputTransaction={inputTransaction}
         pendingTransaction={pendingTransaction}
