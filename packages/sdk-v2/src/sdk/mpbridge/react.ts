@@ -281,18 +281,18 @@ export const useMPBBridge = (bridgeProvider: "layerzero" | "axelar" = "axelar") 
   })();
 
   const sendMPBBridgeRequest = useCallback(
-    async (amount: string, sourceChain: string, target = account) => {
+    async (amount: string, sourceChain: string, targetChain: string, target = account) => {
       setBridgeRequest(undefined);
       lock.current = false;
       bridgeTo.resetState();
       approve.resetState();
 
       const targetChainId =
-        sourceChain === "fuse"
+        targetChain === "fuse"
+          ? SupportedChains.FUSE
+          : targetChain === "celo"
           ? SupportedChains.CELO
-          : sourceChain === "celo"
-          ? SupportedChains.MAINNET
-          : SupportedChains.FUSE;
+          : SupportedChains.MAINNET;
       const sourceChainId =
         sourceChain === "fuse"
           ? SupportedChains.FUSE
@@ -404,7 +404,7 @@ export const useMPBBridge = (bridgeProvider: "layerzero" | "axelar" = "axelar") 
             // Parse the fee string (e.g., "0.13447218229501165 CELO")
             const [feeAmount, currency] = feeString.split(" ");
             const nativeFee = convertFeeToWei(feeAmount, currency);
-            console.log(`✅ Bridge fee: ${feeAmount} ${currency}`);
+            console.log(`✅ Bridge fee2: ${feeAmount} ${currency}`);
 
             const bridgeService = bridgeProvider === "layerzero" ? BridgeService.LAYERZERO : BridgeService.AXELAR;
 

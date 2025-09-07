@@ -29,7 +29,7 @@ export interface MPBBridgeProps {
     errorMessage?: string;
     transaction?: { hash: string };
   };
-  onBridgeStart?: () => void;
+  onBridgeStart?: (sourceChain: string, targetChain: string) => Promise<void>;
   onBridgeFailed?: (error: Error) => void;
   onBridgeSuccess?: () => void;
 }

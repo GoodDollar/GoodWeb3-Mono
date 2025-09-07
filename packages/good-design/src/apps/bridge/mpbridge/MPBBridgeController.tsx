@@ -52,15 +52,26 @@ export const MPBBridgeController: React.FC<IMPBBridgeControllerProps> = ({ onBri
     return { isValid: true, reason: "" };
   }, []);
 
-  const onBridgeStartHandler = useCallback(async () => {
-    const [inputWei] = inputTransaction;
+  const onBridgeStartHandler = useCallback(
+    async (sourceChain: string, targetChain: string) => {
+      const [inputWei] = inputTransaction;
 
-    try {
-      await sendMPBBridgeRequest(inputWei, originChain[0]);
-    } catch (e: any) {
-      onBridgeFailed?.(e);
-    }
-  }, [inputTransaction, originChain, sendMPBBridgeRequest, onBridgeFailed]);
+      console.log("🎯 Controller Bridge Start Debug:", {
+        inputWei,
+        sourceChain,
+        targetChain,
+        originChain: originChain[0],
+        currentChainId: chainId
+      });
+
+      try {
+        await sendMPBBridgeRequest(inputWei, sourceChain, targetChain);
+      } catch (e: any) {
+        onBridgeFailed?.(e);
+      }
+    },
+    [inputTransaction, sendMPBBridgeRequest, onBridgeFailed, originChain, chainId]
+  );
 
   useEffect(() => {
     if (bridgeRequestStatus?.status === "Exception") {

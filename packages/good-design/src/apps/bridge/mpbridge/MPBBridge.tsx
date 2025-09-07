@@ -233,11 +233,13 @@ export const MPBBridge = ({
   // Handle source chain selection
   const handleSourceChainSelect = useCallback(
     (chain: string) => {
+      console.log("🔄 Source Chain Selected:", chain);
       setSourceChain(chain);
       // Reset target chain to first valid option based on current bridge provider
       const validTargets = getValidTargetChains(chain);
       if (validTargets.length > 0) {
         setTargetChain(validTargets[0]);
+        console.log("🔄 Target Chain Set to:", validTargets[0]);
       } else {
         // If no valid targets for current provider, switch to LayerZero (which supports more routes)
         if (bridgeProvider === "axelar") {
@@ -263,6 +265,7 @@ export const MPBBridge = ({
 
   // Handle target chain selection
   const handleTargetChainSelect = useCallback((chain: string) => {
+    console.log("🔄 Target Chain Selected:", chain);
     setTargetChain(chain);
     setShowTargetDropdown(false);
   }, []);
@@ -309,11 +312,29 @@ export const MPBBridge = ({
   };
 
   const triggerBridge = useCallback(async () => {
+    console.log("🚀 UI Bridge Trigger Debug:", {
+      sourceChain,
+      targetChain,
+      bridgeWeiAmount,
+      bridgeProvider,
+      expectedToReceive: expectedToReceive?.format(),
+      nativeFee: nativeFee?.format()
+    });
+
     setBridging(true);
     setBridgingStatus("Initiating bridge transaction...");
     setPendingTransaction({ bridgeWeiAmount, expectedToReceive, nativeFee, bridgeProvider });
-    onBridgeStart?.();
-  }, [setPendingTransaction, onBridgeStart, bridgeWeiAmount, expectedToReceive, nativeFee, bridgeProvider]);
+    void onBridgeStart?.(sourceChain, targetChain);
+  }, [
+    setPendingTransaction,
+    onBridgeStart,
+    bridgeWeiAmount,
+    expectedToReceive,
+    nativeFee,
+    bridgeProvider,
+    sourceChain,
+    targetChain
+  ]);
 
   useEffect(() => {
     const { status = "" } = bridgeStatus ?? {};
