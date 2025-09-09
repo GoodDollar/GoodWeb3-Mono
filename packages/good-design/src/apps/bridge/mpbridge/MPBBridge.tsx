@@ -315,10 +315,11 @@ export const MPBBridge = ({
     console.log("🚀 UI Bridge Trigger Debug:", {
       sourceChain,
       targetChain,
-      bridgeWeiAmount,
+      bridgeWeiAmount: bridgeWeiAmount?.toString?.() ?? bridgeWeiAmount,
       bridgeProvider,
-      expectedToReceive: expectedToReceive?.format(),
-      nativeFee: nativeFee?.format()
+      expectedToReceiveFormatted: expectedToReceive?.format(),
+      nativeFeeFormatted: nativeFee?.format(),
+      nativeFeeWei: (nativeFee as any)?._hex ?? nativeFee?.toString?.()
     });
 
     setBridging(true);

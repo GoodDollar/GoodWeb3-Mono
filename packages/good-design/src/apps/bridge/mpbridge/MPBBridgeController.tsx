@@ -64,6 +64,14 @@ export const MPBBridgeController: React.FC<IMPBBridgeControllerProps> = ({ onBri
         currentChainId: chainId
       });
 
+      // Extra sanity logs for fees and overrides (printed by UI component as well)
+      console.log("🔎 Bridge pre-flight checks:", {
+        hasNativeFee: Boolean((bridgeFees as any)?.nativeFee),
+        hasZroFee: Boolean((bridgeFees as any)?.zroFee),
+        nativeFeeWei: (bridgeFees as any)?.nativeFee?._hex ?? (bridgeFees as any)?.nativeFee?.toString?.(),
+        zroFeeWei: (bridgeFees as any)?.zroFee?._hex ?? (bridgeFees as any)?.zroFee?.toString?.()
+      });
+
       try {
         await sendMPBBridgeRequest(inputWei, sourceChain, targetChain);
       } catch (e: any) {
