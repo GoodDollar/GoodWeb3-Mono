@@ -768,9 +768,14 @@ export const MPBBridge = ({
 
             {/* Amount Input */}
             <VStack space={3}>
-              <Text fontFamily="subheading" fontSize="md" color="goodGrey.600" fontWeight="600">
-                Amount to send
-              </Text>
+              <HStack justifyContent="space-between" alignItems="center">
+                <Text fontFamily="subheading" fontSize="md" color="goodGrey.600" fontWeight="600">
+                  Amount to send
+                </Text>
+                <Text color="goodGrey.500" fontSize="sm" fontWeight="400">
+                  Balance: {getBalanceForChain(sourceChain).format()}
+                </Text>
+              </HStack>
               <TokenInput
                 balanceWei={wei}
                 onChange={setBridgeAmount}
@@ -790,9 +795,14 @@ export const MPBBridge = ({
 
             {/* Expected Output */}
             <VStack space={3}>
-              <Text fontFamily="subheading" fontSize="md" color="goodGrey.600" fontWeight="600">
-                You will receive on {targetChain.toUpperCase()}
-              </Text>
+              <HStack justifyContent="space-between" alignItems="center">
+                <Text fontFamily="subheading" fontSize="md" color="goodGrey.600" fontWeight="600">
+                  You will receive on {targetChain.toUpperCase()}
+                </Text>
+                <Text color="goodGrey.500" fontSize="sm" fontWeight="400">
+                  Balance: {getBalanceForChain(targetChain).format()}
+                </Text>
+              </HStack>
               <Input
                 value={expectedToReceive ? expectedToReceive.format() : "0"}
                 isReadOnly
