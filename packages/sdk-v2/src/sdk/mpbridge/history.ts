@@ -9,7 +9,7 @@ import { useGetMPBContracts } from "./hooks";
 export const useMPBBridgeHistory = () => {
   const { account } = useEthers();
   const mpbContracts = useGetMPBContracts();
-  // const refresh = useRefreshOrNever(5);
+  const refresh = useRefreshOrNever(5);
   const fuseChainId = 122 as ChainId;
   const celoChainId = 42220 as ChainId;
   const mainnetChainId = 1 as ChainId;
@@ -25,8 +25,8 @@ export const useMPBBridgeHistory = () => {
       : undefined,
     {
       chainId: fuseChainId,
-      fromBlock: -1000, // Reduced from 20k to 1k blocks
-      refresh: "never" // Disable auto-refresh to reduce RPC calls
+      fromBlock: -2e4, // 20k blocks like microbridge
+      refresh
     }
   );
 
@@ -128,7 +128,12 @@ export const useMPBBridgeHistory = () => {
       targetChain: targetChain === 122 ? "Fuse" : targetChain === 42220 ? "Celo" : "Mainnet",
       bridgeService,
       status: executedEvent ? "Completed" : "Pending",
-      timestamp: e.data.timestamp || Date.now() / 1000
+      timestamp: e.data.timestamp || Date.now() / 1000,
+      data: {
+        ...e.data,
+        from: e.data.sender, // Map sender to from for compatibility
+        to: e.data.target // Map target to to for compatibility
+      }
     };
   });
 
@@ -146,7 +151,12 @@ export const useMPBBridgeHistory = () => {
       targetChain: targetChain === 122 ? "Fuse" : targetChain === 42220 ? "Celo" : "Mainnet",
       bridgeService,
       status: executedEvent ? "Completed" : "Pending",
-      timestamp: e.data.timestamp || Date.now() / 1000
+      timestamp: e.data.timestamp || Date.now() / 1000,
+      data: {
+        ...e.data,
+        from: e.data.sender, // Map sender to from for compatibility
+        to: e.data.target // Map target to to for compatibility
+      }
     };
   });
 
@@ -164,7 +174,12 @@ export const useMPBBridgeHistory = () => {
       targetChain: targetChain === 122 ? "Fuse" : targetChain === 42220 ? "Celo" : "Mainnet",
       bridgeService,
       status: executedEvent ? "Completed" : "Pending",
-      timestamp: e.data.timestamp || Date.now() / 1000
+      timestamp: e.data.timestamp || Date.now() / 1000,
+      data: {
+        ...e.data,
+        from: e.data.sender, // Map sender to from for compatibility
+        to: e.data.target // Map target to to for compatibility
+      }
     };
   });
 
@@ -172,7 +187,7 @@ export const useMPBBridgeHistory = () => {
   const historyCombined = (fuseHistory || []).concat(celoHistory || []).concat(mainnetHistory || []);
 
   // Filter by account and sort by timestamp
-  const historyFiltered = historyCombined.filter(_ => _?.data?.from === account || _?.data?.target === account);
+  const historyFiltered = historyCombined.filter(_ => _?.data?.from === account || _?.data?.to === account);
   const historySorted = sortBy(historyFiltered, _ => _.timestamp).reverse();
 
   return {

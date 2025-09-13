@@ -1,5 +1,7 @@
 import { ethers } from "ethers";
 import { SupportedChains } from "../constants";
+import bridgeContracts from "@gooddollar/bridge-contracts/release/deployment.json";
+import mpbABI from "@gooddollar/bridge-contracts/release/mpb.json";
 
 // Bridge Service enum values (LayerZero = 0, Axelar = 1)
 export enum BridgeService {
@@ -7,20 +9,15 @@ export enum BridgeService {
   AXELAR = 1
 }
 
-// MPB Contract ABI - Updated with actual contract ABI from mpb.json
-export const MPBBridgeABI = [
-  "function bridgeTo(address target, uint256 targetChainId, uint256 amount, uint8 bridge) external payable",
-  "function bridgeLimits() external view returns (tuple(uint256 dailyLimit, uint256 txLimit, uint256 accountDailyLimit, uint256 minAmount, bool onlyWhitelisted))",
-  "function canBridge(address from, uint256 amount) external view returns (bool)",
-  "event BridgeRequest(uint256 indexed sourceChainId, uint256 indexed destinationChainId, address indexed sender, address target, uint256 amount, uint8 bridge, uint256 id)",
-  "event ExecutedTransfer(uint256 indexed sourceChainId, uint256 indexed destinationChainId, address indexed target, uint256 amount, uint8 bridge, uint256 id)"
-];
+// MPB Contract ABI - Imported from @gooddollar/bridge-contracts package
+// Extract the ABI from the first chain's contracts
+export const MPBBridgeABI = mpbABI["1"][0]?.contracts?.MessagePassingBridge?.abi || [];
 
-// MPB Contract addresses - Updated with actual deployed addresses from deployment.json
+// MPB Contract addresses - Imported from @gooddollar/bridge-contracts package
 export const MPB_CONTRACTS = {
-  [SupportedChains.FUSE]: "0x5B7cEfD0e7d952F7E400416F9c98fE36F1043822", // Fuse bridge
-  [SupportedChains.CELO]: "0x165aEb4184A0cc4eFb96Cb6035341Ba2265bA564", // Celo bridge
-  [SupportedChains.MAINNET]: "0x08fdf766694C353401350c225cAEB9C631dC3288" // Mainnet bridge
+  [SupportedChains.FUSE]: bridgeContracts.fuse.fuseBridge,
+  [SupportedChains.CELO]: bridgeContracts.fuse.celoBridge,
+  [SupportedChains.MAINNET]: bridgeContracts.production.fuseBridge
 };
 
 // Types
