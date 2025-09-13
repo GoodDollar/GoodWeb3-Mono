@@ -16,6 +16,10 @@ interface IMPBBridgeControllerProps {
 export const MPBBridgeController: React.FC<IMPBBridgeControllerProps> = ({ onBridgeSuccess, onBridgeFailed }) => {
   const { chainId } = useEthers();
   const { sendMPBBridgeRequest, bridgeRequestStatus, bridgeStatus } = useMPBBridge("layerzero");
+
+  const inputTransaction = useState<string>("0");
+  const pendingTransaction = useState<any>(false);
+  const originChain = useState<string>(chainId === 122 ? "fuse" : chainId === 42220 ? "celo" : "mainnet");
   const { bridgeFees, bridgeLimits } = useGetMPBBridgeData();
 
   // Per-chain decimals to scale 18-decimal limits to the active chain units
@@ -30,10 +34,6 @@ export const MPBBridgeController: React.FC<IMPBBridgeControllerProps> = ({ onBri
     if (d < 18) return v.div(ethers.BigNumber.from(10).pow(18 - d));
     return v.mul(ethers.BigNumber.from(10).pow(d - 18));
   };
-
-  const inputTransaction = useState<string>("0");
-  const pendingTransaction = useState<any>(false);
-  const originChain = useState<string>(chainId === 122 ? "fuse" : chainId === 42220 ? "celo" : "mainnet");
 
   // Create a stable validation function that doesn't use hooks inside
   const useCanMPBBridge = useCallback((chain: string, amountWei: string) => {
@@ -66,10 +66,10 @@ export const MPBBridgeController: React.FC<IMPBBridgeControllerProps> = ({ onBri
 
       // Extra sanity logs for fees and overrides (printed by UI component as well)
       console.log("🔎 Bridge pre-flight checks:", {
-        hasNativeFee: Boolean((bridgeFees as any)?.nativeFee),
-        hasZroFee: Boolean((bridgeFees as any)?.zroFee),
-        nativeFeeWei: (bridgeFees as any)?.nativeFee?._hex ?? (bridgeFees as any)?.nativeFee?.toString?.(),
-        zroFeeWei: (bridgeFees as any)?.zroFee?._hex ?? (bridgeFees as any)?.zroFee?.toString?.()
+        hasNativeFee: Boolean(bridgeFees?.nativeFee),
+        hasZroFee: Boolean(bridgeFees?.zroFee),
+        nativeFeeWei: bridgeFees?.nativeFee?._hex ?? bridgeFees?.nativeFee?.toString?.(),
+        zroFeeWei: bridgeFees?.zroFee?._hex ?? bridgeFees?.zroFee?.toString?.()
       });
 
       try {
@@ -78,7 +78,7 @@ export const MPBBridgeController: React.FC<IMPBBridgeControllerProps> = ({ onBri
         onBridgeFailed?.(e);
       }
     },
-    [inputTransaction, sendMPBBridgeRequest, onBridgeFailed, originChain, chainId]
+    [inputTransaction, sendMPBBridgeRequest, onBridgeFailed, originChain, chainId, bridgeFees]
   );
 
   useEffect(() => {
@@ -88,8 +88,8 @@ export const MPBBridgeController: React.FC<IMPBBridgeControllerProps> = ({ onBri
     }
   }, [bridgeRequestStatus]);
 
-  // Check if bridge data is loaded
-  if (!bridgeFees || !bridgeLimits) {
+  // Check if bridge data is loaded and fees are available
+  if (!bridgeFees?.nativeFee || !bridgeLimits) {
     return <Spinner variant="page-loader" size="lg" />;
   }
 
@@ -116,16 +116,16 @@ export const MPBBridgeController: React.FC<IMPBBridgeControllerProps> = ({ onBri
         }}
         fees={{
           fuse: {
-            nativeFee: bridgeFees.nativeFee,
-            zroFee: bridgeFees.zroFee
+            nativeFee: bridgeFees.nativeFee || ethers.BigNumber.from(0),
+            zroFee: bridgeFees.zroFee || ethers.BigNumber.from(0)
           },
           celo: {
-            nativeFee: bridgeFees.nativeFee,
-            zroFee: bridgeFees.zroFee
+            nativeFee: bridgeFees.nativeFee || ethers.BigNumber.from(0),
+            zroFee: bridgeFees.zroFee || ethers.BigNumber.from(0)
           },
           mainnet: {
-            nativeFee: bridgeFees.nativeFee,
-            zroFee: bridgeFees.zroFee
+            nativeFee: bridgeFees.nativeFee || ethers.BigNumber.from(0),
+            zroFee: bridgeFees.zroFee || ethers.BigNumber.from(0)
           }
         }}
         bridgeStatus={bridgeStatus}

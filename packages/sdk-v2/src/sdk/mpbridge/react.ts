@@ -22,8 +22,6 @@ export const fetchBridgeFees = async () => {
   }
 };
 
-// Old getBridgeFee function removed - using inline fee parsing logic
-
 // Helper function to convert fee to wei based on currency
 export const convertFeeToWei = (fee: string, currency: string): string => {
   const feeValue = parseFloat(fee);
@@ -187,23 +185,114 @@ export const useMPBBridgeLimits = (amount: string, chainId?: number) => {
 };
 
 export type MPBBridgeData = {
-  bridgeFees: { nativeFee: ethers.BigNumber; zroFee: ethers.BigNumber };
+  bridgeFees: { nativeFee: ethers.BigNumber | null; zroFee: ethers.BigNumber | null };
   bridgeLimits: { minAmount: ethers.BigNumber; maxAmount: ethers.BigNumber };
+  isLoading: boolean;
 };
 
-export const useGetMPBBridgeData = (): MPBBridgeData => {
-  // In a real implementation, this would fetch data from the contracts
-  // For now, we'll return default values
-  return {
-    bridgeFees: {
-      nativeFee: ethers.BigNumber.from("100000000000000000"), // 0.1 ETH default
-      zroFee: ethers.BigNumber.from(0)
-    },
-    bridgeLimits: {
-      minAmount: ethers.BigNumber.from("1000000000000000000"), // 1 G$
-      maxAmount: ethers.BigNumber.from("1000000000000000000000000") // 1M G$
-    }
-  };
+export const useGetMPBBridgeData = (
+  sourceChain?: string,
+  targetChain?: string,
+  bridgeProvider: "layerzero" | "axelar" = "layerzero"
+): MPBBridgeData => {
+  const [bridgeFees, setBridgeFees] = useState<{
+    nativeFee: ethers.BigNumber | null;
+    zroFee: ethers.BigNumber | null;
+  }>({
+    nativeFee: null,
+    zroFee: null
+  });
+  const [bridgeLimits] = useState({
+    minAmount: ethers.BigNumber.from("1000000000000000000"), // 1 G$
+    maxAmount: ethers.BigNumber.from("1000000000000000000000000") // 1M G$
+  });
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    setIsLoading(true);
+    fetchBridgeFees()
+      .then(fees => {
+        if (!isMounted) return; // Prevent state updates if component unmounted
+
+        if (fees) {
+          console.log("🔍 Raw API fees:", fees);
+
+          // Use dynamic route-specific parsing based on parameters
+          const sourceUpper = (sourceChain || "celo").toUpperCase();
+          const targetUpper = (targetChain || "fuse").toUpperCase();
+          let feeString: string | null = null;
+
+          if (bridgeProvider === "axelar") {
+            const axelarFees = fees.AXELAR;
+            if (sourceUpper === "CELO" && targetUpper === "MAINNET" && axelarFees.AXL_CELO_TO_ETH) {
+              feeString = axelarFees.AXL_CELO_TO_ETH;
+            }
+            if (sourceUpper === "MAINNET" && targetUpper === "CELO" && axelarFees.AXL_ETH_TO_CELO) {
+              feeString = axelarFees.AXL_ETH_TO_CELO;
+            }
+          } else if (bridgeProvider === "layerzero") {
+            const layerzeroFees = fees.LAYERZERO;
+            if (sourceUpper === "CELO" && targetUpper === "FUSE" && layerzeroFees.LZ_CELO_TO_FUSE) {
+              feeString = layerzeroFees.LZ_CELO_TO_FUSE;
+            } else if (sourceUpper === "FUSE" && targetUpper === "CELO" && layerzeroFees.LZ_FUSE_TO_CELO) {
+              feeString = layerzeroFees.LZ_FUSE_TO_CELO;
+            } else if (sourceUpper === "CELO" && targetUpper === "MAINNET" && layerzeroFees.LZ_CELO_TO_ETH) {
+              feeString = layerzeroFees.LZ_CELO_TO_ETH;
+            } else if (sourceUpper === "MAINNET" && targetUpper === "CELO" && layerzeroFees.LZ_ETH_TO_CELO) {
+              feeString = layerzeroFees.LZ_ETH_TO_CELO;
+            } else if (sourceUpper === "FUSE" && targetUpper === "MAINNET" && layerzeroFees.LZ_FUSE_TO_ETH) {
+              feeString = layerzeroFees.LZ_FUSE_TO_ETH;
+            } else if (sourceUpper === "MAINNET" && targetUpper === "FUSE" && layerzeroFees.LZ_ETH_TO_FUSE) {
+              feeString = layerzeroFees.LZ_ETH_TO_FUSE;
+            }
+          }
+
+          if (feeString && typeof feeString === "string") {
+            // Parse the fee string (e.g., "0.1344273492537784 CELO")
+            const [feeAmount, currency] = feeString.split(" ");
+            const nativeFee = convertFeeToWei(feeAmount, currency);
+
+            console.log(`✅ Parsed fee for ${sourceUpper}→${targetUpper}: ${feeAmount} ${currency} = ${nativeFee} wei`);
+
+            setBridgeFees({
+              nativeFee: ethers.BigNumber.from(nativeFee),
+              zroFee: ethers.BigNumber.from(0)
+            });
+          } else {
+            console.error(`❌ No fee found for ${sourceUpper}→${targetUpper} with ${bridgeProvider}`);
+            setBridgeFees({
+              nativeFee: null,
+              zroFee: null
+            });
+          }
+        } else {
+          console.error("❌ Failed to fetch fees from API");
+          setBridgeFees({
+            nativeFee: null,
+            zroFee: null
+          });
+        }
+        setIsLoading(false);
+      })
+      .catch(error => {
+        if (!isMounted) return; // Prevent state updates if component unmounted
+
+        console.error("Failed to fetch bridge fees:", error);
+        setBridgeFees({
+          nativeFee: null,
+          zroFee: null
+        });
+        setIsLoading(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [sourceChain, targetChain, bridgeProvider]);
+
+  return { bridgeFees, bridgeLimits, isLoading };
 };
 
 export const useMPBBridge = (bridgeProvider: "layerzero" | "axelar" = "axelar") => {
@@ -219,20 +308,13 @@ export const useMPBBridge = (bridgeProvider: "layerzero" | "axelar" = "axelar") 
   // Get G$ token contract for the current chain
   const gdContract = useGetContract("GoodDollar", true, "base", chainId) as IGoodDollar;
 
-  // Use direct bridgeTo call on the bridge contract to properly handle native fees
+  // Use transferAndCall on the G$ token contract to transfer and call bridge in one transaction
   const bridgeContract = mpbContracts[chainId || 122];
-  const bridgeTo = useContractFunction(bridgeContract, "bridgeTo", {
+  const transferAndCall = useContractFunction(gdContract, "transferAndCall", {
     transactionName: "MPBBridgeTransfer"
   });
 
-  // Bridge contract initialized
-
-  // Use approve for G$ tokens if needed
-  const approve = useContractFunction(gdContract, "approve", {
-    transactionName: "ApproveG$ForBridge"
-  });
-
-  const bridgeRequestId = (bridgeTo.state?.receipt?.logs || [])
+  const bridgeRequestId = (transferAndCall.state?.receipt?.logs || [])
     .filter(log => log.address === bridgeContract?.address)
     .map(log => bridgeContract?.interface.parseLog(log))?.[0]?.args?.id;
 
@@ -253,15 +335,15 @@ export const useMPBBridge = (bridgeProvider: "layerzero" | "axelar" = "axelar") 
 
   // Bridge status based on local transaction status and bridge completion
   const bridgeStatus: Partial<TransactionStatus> | undefined = (() => {
-    if (bridgeTo.state.status === "Mining" || bridgeTo.state.status === "PendingSignature") {
+    if (transferAndCall.state.status === "Mining" || transferAndCall.state.status === "PendingSignature") {
       return {
         chainId: bridgeRequest?.sourceChainId,
-        status: bridgeTo.state.status,
-        transaction: bridgeTo.state.transaction
+        status: transferAndCall.state.status,
+        transaction: transferAndCall.state.transaction
       } as TransactionStatus;
     }
 
-    if (bridgeTo.state.status === "Success" && bridgeCompletedEvent?.value?.length) {
+    if (transferAndCall.state.status === "Success" && bridgeCompletedEvent?.value?.length) {
       return {
         chainId: bridgeRequest?.targetChainId,
         status: "Success",
@@ -269,11 +351,11 @@ export const useMPBBridge = (bridgeProvider: "layerzero" | "axelar" = "axelar") 
       } as TransactionStatus;
     }
 
-    if (bridgeTo.state.status === "Exception") {
+    if (transferAndCall.state.status === "Exception") {
       return {
         chainId: bridgeRequest?.sourceChainId,
         status: "Fail",
-        errorMessage: bridgeTo.state.errorMessage
+        errorMessage: transferAndCall.state.errorMessage
       } as TransactionStatus;
     }
 
@@ -284,8 +366,7 @@ export const useMPBBridge = (bridgeProvider: "layerzero" | "axelar" = "axelar") 
     async (amount: string, sourceChain: string, targetChain: string, target = account) => {
       setBridgeRequest(undefined);
       lock.current = false;
-      bridgeTo.resetState();
-      approve.resetState();
+      transferAndCall.resetState();
 
       const targetChainId =
         targetChain === "fuse"
@@ -311,50 +392,26 @@ export const useMPBBridge = (bridgeProvider: "layerzero" | "axelar" = "axelar") 
         throw e;
       });
     },
-    [account, bridgeTo, approve, chainId, switchNetwork]
+    [account, transferAndCall, chainId, switchNetwork]
   );
 
-  // Trigger the approval first
+  // Handle transferAndCall errors
   useEffect(() => {
-    if (approve.state.status === "None" && bridgeRequest && account && !lock.current) {
+    if (transferAndCall.state.status === "Exception") {
+      console.error("TransferAndCall failed:", transferAndCall.state.errorMessage);
+      lock.current = false; // Reset lock so user can try again
+    }
+  }, [transferAndCall.state.status]);
+
+  // Trigger the bridge request using transferAndCall
+  useEffect(() => {
+    if (transferAndCall.state.status === "None" && bridgeRequest && account && !lock.current) {
       lock.current = true;
-
-      console.log("🔐 Starting approval process...");
-
-      // First approve G$ tokens for the bridge contract
-      // Note: We might need to reset approval to 0 first if there's an existing approval
-      void approve.send(bridgeContract?.address, bridgeRequest.amount);
-    }
-  }, [bridgeRequest, account, approve, bridgeContract]);
-
-  // Handle approval errors
-  useEffect(() => {
-    if (approve.state.status === "Exception") {
-      console.error("Approval failed:", approve.state.errorMessage);
-      lock.current = false; // Reset lock so user can try again
-    }
-  }, [approve.state.status]);
-
-  // Handle bridgeTo errors
-  useEffect(() => {
-    if (bridgeTo.state.status === "Exception") {
-      console.error("BridgeTo failed:", bridgeTo.state.errorMessage);
-      lock.current = false; // Reset lock so user can try again
-    }
-  }, [bridgeTo.state.status]);
-
-  // Trigger the bridge request after approval is successful
-  useEffect(() => {
-    // Bridge flow status check
-
-    if (approve.state.status === "Success" && bridgeTo.state.status === "None" && bridgeRequest && account) {
-      console.log("🌉 Starting bridge process...");
+      console.log("🌉 Starting bridge process with transferAndCall...");
 
       // Get fee estimate from GoodDollar Bridge API
       fetchBridgeFees()
         .then(fees => {
-          // Bridge fees fetched successfully
-
           // Get the correct fee based on source, target, and bridge provider
           const sourceChainName =
             bridgeRequest.sourceChainId === SupportedChains.FUSE
@@ -404,43 +461,37 @@ export const useMPBBridge = (bridgeProvider: "layerzero" | "axelar" = "axelar") 
             // Parse the fee string (e.g., "0.13447218229501165 CELO")
             const [feeAmount, currency] = feeString.split(" ");
             const nativeFee = convertFeeToWei(feeAmount, currency);
-            console.log(`✅ Bridge fee2: ${feeAmount} ${currency}`);
+            console.log(`✅ Bridge fee: ${feeAmount} ${currency}`);
 
             const bridgeService = bridgeProvider === "layerzero" ? BridgeService.LAYERZERO : BridgeService.AXELAR;
 
-            void bridgeTo.send(
-              bridgeRequest.target || account,
-              bridgeRequest.targetChainId,
-              bridgeRequest.amount,
-              bridgeService,
-              { value: nativeFee } as any
+            // Encode the bridge parameters for transferAndCall
+            const encoded = ethers.utils.defaultAbiCoder.encode(
+              ["uint256", "address", "uint8"],
+              [bridgeRequest.targetChainId, bridgeRequest.target || account, bridgeService]
             );
+
+            // Use transferAndCall to transfer tokens and call bridge in one transaction
+            void transferAndCall.send(bridgeContract?.address, bridgeRequest.amount, encoded, {
+              value: nativeFee
+            } as any);
           } else {
-            // Fallback to default fee if no specific route found
-            const defaultFee = "100000000000000000"; // 0.1 ETH
-            console.log(`❌ Using fallback fee: 0.1 ETH`);
-
-            const bridgeService = bridgeProvider === "layerzero" ? BridgeService.LAYERZERO : BridgeService.AXELAR;
-
-            void bridgeTo.send(
-              bridgeRequest.target || account,
-              bridgeRequest.targetChainId,
-              bridgeRequest.amount,
-              bridgeService,
-              { value: defaultFee } as any
-            );
+            // No fee found for this route - throw error instead of using hardcoded fallback
+            console.error(`❌ No fee found for ${sourceUpper}→${targetUpper} with ${bridgeProvider}`);
+            throw new Error(`Bridge fee not available for ${sourceUpper}→${targetUpper} route`);
           }
         })
         .catch(e => {
           console.error("MPB Bridge error:", e);
+          lock.current = false; // Reset lock on error
           throw e;
         });
     }
-  }, [approve.state.status, bridgeTo.state.status, bridgeRequest, account, bridgeProvider]);
+  }, [transferAndCall.state.status, bridgeRequest, account, bridgeProvider, bridgeContract]);
 
   return {
     sendMPBBridgeRequest,
-    bridgeRequestStatus: bridgeTo.state,
+    bridgeRequestStatus: transferAndCall.state,
     bridgeStatus,
     bridgeRequest
   };
