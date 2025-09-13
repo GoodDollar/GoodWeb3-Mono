@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useContractFunction, useEthers } from "@usedapp/core";
 import { useSwitchNetwork } from "../../contexts";
 import { useRefreshOrNever } from "../../hooks";
@@ -115,7 +115,7 @@ export const useMPBBridgeLimits = (amount: string, chainId?: number) => {
             dailyLimit: ethers.BigNumber.from("1000000000000000000000000"), // 1M G$
             txLimit: ethers.BigNumber.from("1000000000000000000000000"), // 1M G$
             accountDailyLimit: ethers.BigNumber.from("1000000000000000000000000"), // 1M G$
-            minAmount: ethers.BigNumber.from("1000000000000000000"), // 1 G$
+            minAmount: ethers.BigNumber.from("10000000000000000000"), // 10 G$
             onlyWhitelisted: false
           });
         });
@@ -146,7 +146,8 @@ export const useMPBBridgeLimits = (amount: string, chainId?: number) => {
   const amountBN = ethers.BigNumber.from(amount || "0");
 
   // Always do basic validation first (immediate response)
-  const minAmount = ethers.BigNumber.from("1000000000000000000"); // 1 G$
+  // Use a higher minimum amount to match contract requirements
+  const minAmount = ethers.BigNumber.from("10000000000000000000"); // 10 G$ (increased from 1 G$)
   const maxAmount = ethers.BigNumber.from("1000000000000000000000000"); // 1M G$
 
   // Validation in progress
@@ -203,7 +204,7 @@ export const useGetMPBBridgeData = (
     zroFee: null
   });
   const [bridgeLimits] = useState({
-    minAmount: ethers.BigNumber.from("1000000000000000000"), // 1 G$
+    minAmount: ethers.BigNumber.from("10000000000000000000"), // 10 G$
     maxAmount: ethers.BigNumber.from("1000000000000000000000000") // 1M G$
   });
   const [isLoading, setIsLoading] = useState(true);
@@ -314,9 +315,35 @@ export const useMPBBridge = (bridgeProvider: "layerzero" | "axelar" = "axelar") 
     transactionName: "MPBBridgeTransfer"
   });
 
-  const bridgeRequestId = (transferAndCall.state?.receipt?.logs || [])
-    .filter(log => log.address === bridgeContract?.address)
-    .map(log => bridgeContract?.interface.parseLog(log))?.[0]?.args?.id;
+  // Extract bridge request ID from transferAndCall logs
+  // Only run this when we have a successful transaction
+  const bridgeRequestId = useMemo(() => {
+    if (transferAndCall.state?.status !== "Success" || !transferAndCall.state?.receipt?.logs) {
+      return undefined;
+    }
+
+    const logs = transferAndCall.state.receipt.logs;
+    console.log("🔍 TransferAndCall logs:", logs);
+
+    // Look for BridgeRequest event by checking the topic hash directly
+    // BridgeRequest event signature: BridgeRequest(uint256,uint256,address,address,uint256,uint8,uint256)
+    const bridgeRequestTopic = "0x4246d22454f5bd543c70e6ffcca20eed2dcf09d3beef6d39e415385538b02d0a";
+
+    for (const log of logs) {
+      if (log.address === bridgeContract?.address && log.topics[0] === bridgeRequestTopic) {
+        console.log("📋 Found BridgeRequest event:", log);
+        // Extract the bridge ID from the last topic (index 6)
+        if (log.topics[6]) {
+          const bridgeId = ethers.BigNumber.from(log.topics[6]).toString();
+          console.log("🆔 Bridge ID:", bridgeId);
+          return bridgeId;
+        }
+      }
+    }
+
+    console.log("❌ No BridgeRequest event found in logs");
+    return undefined;
+  }, [transferAndCall.state?.status, transferAndCall.state?.receipt?.logs, bridgeContract]);
 
   // Poll target chain for bridge completion
   const bridgeCompletedEvent = useLogs(
@@ -460,7 +487,6 @@ export const useMPBBridge = (bridgeProvider: "layerzero" | "axelar" = "axelar") 
           if (feeString && typeof feeString === "string") {
             // Parse the fee string (e.g., "0.13447218229501165 CELO")
             const [feeAmount, currency] = feeString.split(" ");
-            const nativeFee = convertFeeToWei(feeAmount, currency);
             console.log(`✅ Bridge fee: ${feeAmount} ${currency}`);
 
             const bridgeService = bridgeProvider === "layerzero" ? BridgeService.LAYERZERO : BridgeService.AXELAR;
@@ -472,9 +498,8 @@ export const useMPBBridge = (bridgeProvider: "layerzero" | "axelar" = "axelar") 
             );
 
             // Use transferAndCall to transfer tokens and call bridge in one transaction
-            void transferAndCall.send(bridgeContract?.address, bridgeRequest.amount, encoded, {
-              value: nativeFee
-            } as any);
+            // Note: Native fees are handled by the bridge contract internally
+            void transferAndCall.send(bridgeContract?.address, bridgeRequest.amount, encoded);
           } else {
             // No fee found for this route - throw error instead of using hardcoded fallback
             console.error(`❌ No fee found for ${sourceUpper}→${targetUpper} with ${bridgeProvider}`);
