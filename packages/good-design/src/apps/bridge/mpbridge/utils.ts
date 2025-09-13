@@ -1,6 +1,3 @@
-import { BigNumber } from "ethers";
-import { G$Amount, useGetEnvChainId } from "@gooddollar/web3sdk-v2";
-
 // Chain utility functions
 export const getChainIcon = (chain: string) => {
   switch (chain) {
@@ -140,31 +137,4 @@ export const getCurrentBridgeFee = (
   }
 
   return "Fee not available";
-};
-
-// Convert transaction history to format expected by TransactionList
-export const convertTransactionHistory = (realTransactionHistory: any[], sourceChain: string) => {
-  return (
-    realTransactionHistory?.slice(0, 5).map(tx => ({
-      address: tx.data?.from || "",
-      account: tx.data?.target || "",
-      network: tx.sourceChain?.toUpperCase() || sourceChain.toUpperCase(),
-      contractAddress: "",
-      token: "G$",
-      status: tx.status === "Completed" ? "success" : tx.status === "Pending" ? "pending" : "failed",
-      type: "bridge-in",
-      contractName: "GoodDollar",
-      displayName: `Bridged via ${tx.bridgeService}`,
-      tokenValue: G$Amount(
-        "G$",
-        BigNumber.from(tx.amount || "0"),
-        sourceChain === "celo" ? 42220 : sourceChain === "mainnet" ? 1 : 122,
-        useGetEnvChainId(sourceChain === "celo" ? 42220 : sourceChain === "mainnet" ? 1 : 122).defaultEnv
-      ),
-      transactionHash: tx.transactionHash,
-      timestamp: tx.timestamp,
-      sourceChain: tx.sourceChain,
-      targetChain: tx.targetChain
-    })) || []
-  );
 };

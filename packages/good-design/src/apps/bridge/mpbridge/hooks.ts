@@ -12,11 +12,11 @@ export const useBridgeFees = () => {
 
   useEffect(() => {
     fetchBridgeFees()
-      .then(feesData => {
+      .then((feesData: any) => {
         setFees(feesData);
         setLoading(false);
       })
-      .catch(error => {
+      .catch((error: any) => {
         console.error("Error fetching bridge fees:", error);
         setLoading(false);
       });
@@ -107,8 +107,48 @@ export const useChainBalances = () => {
 
 // Hook to get transaction history
 export const useTransactionHistory = () => {
+  console.log("🚀 useTransactionHistory: Starting to fetch transaction history");
+
   // Get real transaction history
   const { history: realTransactionHistory, loading: historyLoading } = useMPBBridgeHistory();
 
+  console.log("🔍 Transaction History Debug:", {
+    realTransactionHistory: realTransactionHistory?.length || 0,
+    historyLoading,
+    firstTx: realTransactionHistory?.[0]
+  });
+
   return { realTransactionHistory, historyLoading };
+};
+
+// Hook to convert transaction history to the format expected by TransactionList
+export const useConvertedTransactionHistory = (realTransactionHistory: any[], sourceChain: string) => {
+  const chain = sourceChain === "celo" ? 42220 : sourceChain === "mainnet" ? 1 : 122;
+  const { defaultEnv } = useGetEnvChainId(chain);
+
+  const converted =
+    realTransactionHistory?.slice(0, 5).map(tx => ({
+      address: tx.data?.from || "",
+      account: tx.data?.target || "",
+      network: tx.sourceChain?.toUpperCase() || sourceChain.toUpperCase(),
+      contractAddress: "",
+      token: "G$",
+      status: tx.status === "Completed" ? "success" : tx.status === "Pending" ? "pending" : "failed",
+      type: "bridge-in",
+      contractName: "GoodDollar",
+      displayName: `Bridged via ${tx.bridgeService}`,
+      tokenValue: G$Amount("G$", BigNumber.from(tx.amount || "0"), chain, defaultEnv),
+      transactionHash: tx.transactionHash,
+      timestamp: tx.timestamp,
+      sourceChain: tx.sourceChain,
+      targetChain: tx.targetChain
+    })) || [];
+
+  console.log("🔄 Converted Transaction History Debug:", {
+    originalCount: realTransactionHistory?.length || 0,
+    convertedCount: converted.length,
+    firstConverted: converted[0]
+  });
+
+  return converted;
 };

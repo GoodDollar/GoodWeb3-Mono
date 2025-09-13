@@ -7,8 +7,14 @@ import { Web3ActionButton } from "../../../advanced";
 import { TxDetailsModal } from "../../../core/web3/modals/TxDetailsModal";
 
 import type { MPBBridgeProps, BridgeProvider } from "./types";
-import { useBridgeFees, useMPBBridgeEstimate, useChainBalances, useTransactionHistory } from "./hooks";
-import { getValidTargetChains, convertTransactionHistory } from "./utils";
+import {
+  useBridgeFees,
+  useMPBBridgeEstimate,
+  useChainBalances,
+  useTransactionHistory,
+  useConvertedTransactionHistory
+} from "./hooks";
+import { getValidTargetChains } from "./utils";
 import { ChainSelector } from "./ChainSelector";
 import { BridgeProviderSelector } from "./BridgeProviderSelector";
 import { AmountInput } from "./AmountInput";
@@ -203,7 +209,7 @@ export const MPBBridge = ({
   }, [showSourceDropdown, showTargetDropdown]);
 
   // Convert real transaction history to the format expected by TransactionList
-  const recentTransactions = convertTransactionHistory(realTransactionHistory, sourceChain);
+  const recentTransactions = useConvertedTransactionHistory(realTransactionHistory, sourceChain);
 
   // Tx details modal state
   const [txDetailsOpen, setTxDetailsOpen] = useState(false);
