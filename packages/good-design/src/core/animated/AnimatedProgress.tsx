@@ -78,6 +78,7 @@ const AnimatedProgress = withTheme({ name: "AnimatedProgress" })(
       extrapolate: "clamp"
     });
 
+
     return (
       <View {...containerStyles}>
         <View {...progressStyles}>

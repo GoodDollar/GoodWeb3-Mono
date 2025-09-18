@@ -110,7 +110,7 @@ export const getRecentClaims = async (
 
       // todo: add utilty getContractName(address) to read pool name from registry
       // for now we assume its either GoodDollar or RedTent
-      const contractName = isGdPool ? "GoodDollar" : "RedTent";
+      const contractName = isGdPool ? "GoodDollar" : "GoodDollar UBI+";
 
       return { address, claimAmount, contractName, date, transactionHash, isPool: !isGdPool };
     });

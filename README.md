@@ -9,6 +9,20 @@ The mono-repo currently holds:
 
 ### Setup
 
+### Windows
+For Windows users, we recommend using WSL (Windows Subsystem for Linux) for better compatibility with Yarn Workspaces and symlinks.
+
+This avoids common permission issues and path inconsistencies.
+
+To install WSL (with default Ubuntu):
+```bash
+wsl --install
+```
+
+After that, proceed with the general setup below.
+
+### General (All Platforms)
+
 To install dependencies and build the initial package(s)
 ```bash
 yarn
@@ -47,6 +61,13 @@ yalc publish --push
 Link the package in your application
 ```bash
 yalc link @gooddollar/<package-name>
+```
+
+We use Storybook to preview and test UI components in isolation.
+
+To run Storybook locally:
+```bash
+yarn storybook
 ```
 
 ### Dependencies

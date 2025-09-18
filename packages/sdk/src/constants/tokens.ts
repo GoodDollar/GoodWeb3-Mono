@@ -160,6 +160,13 @@ export const G$: { [chainId: number]: Token } = {
     18,
     "G$",
     "GoodDollar"
+  ),
+  [SupportedChainId.XDC]: new Token(
+    SupportedChainId.XDC,
+    G$ContractAddresses(SupportedChainId.XDC, "GoodDollar"),
+    18,
+    "G$",
+    "GoodDollar"
   )
 };
 
@@ -220,5 +227,8 @@ export const TOKEN_LISTS: { [chainId: number]: string[] } = {
     "https://raw.githubusercontent.com/voltfinance/swap-default-token-list/master/build/voltage-swap-default.tokenlist.json",
     "https://raw.githubusercontent.com/compound-finance/token-list/master/compound.tokenlist.json"
   ],
-  [SupportedChainId.CELO]: ["https://raw.githubusercontent.com/celo-org/celo-token-list/main/celo.tokenlist.json"]
+  [SupportedChainId.CELO]: ["https://raw.githubusercontent.com/celo-org/celo-token-list/main/celo.tokenlist.json"],
+  [SupportedChainId.XDC]: [
+    "https://raw.githubusercontent.com/XSwapProtocol/xdc-token-list/refs/heads/master/mainnet.tokenlist.json"
+  ]
 };

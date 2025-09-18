@@ -28,8 +28,8 @@ export function G$ContractAddresses<T = ObjectLike>(chainId: SupportedChainId, n
       deploymentName = "production-mainnet";
       break;
     case SupportedChainId.FUSE:
-      if (CURRENT_NETWORK.includes("celo")) {
-        const network = CURRENT_NETWORK.split("-celo")[0];
+      if (CURRENT_NETWORK.includes("-")) {
+        const network = CURRENT_NETWORK.split("-")[0];
         deploymentName = network === "development" ? "fuse" : network;
       } else {
         deploymentName = CURRENT_NETWORK;

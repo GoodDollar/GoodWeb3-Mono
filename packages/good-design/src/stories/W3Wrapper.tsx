@@ -4,7 +4,7 @@ import * as ethers from "ethers";
 import { View } from "react-native";
 import React, { useState } from "react";
 
-import { Celo, Fuse } from "@gooddollar/web3sdk-v2";
+import { Celo, Fuse, Xdc } from "@gooddollar/web3sdk-v2";
 import { Config, Mainnet, useEthers } from "@usedapp/core";
 
 interface PageProps {
@@ -14,11 +14,12 @@ interface PageProps {
 }
 
 const config: Config = {
-  networks: [Mainnet, Fuse, Celo],
+  networks: [Mainnet, Fuse, Celo, Xdc],
   readOnlyChainId: 42220,
   readOnlyUrls: {
     122: "https://rpc.fuse.io",
-    42220: "https://forno.celo.org"
+    42220: "https://forno.celo.org",
+    50: "https://rpc.xdc.network"
   }
 };
 
