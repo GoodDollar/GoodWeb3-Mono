@@ -11,7 +11,6 @@ interface AmountInputProps {
   minimumAmount: CurrencyValue;
   isValid: boolean;
   reason: string;
-  sourceChain: string;
   balance: CurrencyValue;
 }
 
@@ -23,7 +22,6 @@ export const AmountInput: React.FC<AmountInputProps> = ({
   minimumAmount,
   isValid,
   reason,
-  sourceChain,
   balance
 }) => {
   return (
@@ -44,9 +42,7 @@ export const AmountInput: React.FC<AmountInputProps> = ({
       />
       {!isValid && bridgeWeiAmount && (
         <Text color="red.500" fontSize="sm" fontWeight="500">
-          {reason === "minAmount"
-            ? " Minimum amount is " + (Number(minimumAmount) / (sourceChain === "fuse" ? 1e2 : 1e18)).toFixed(2) + " G$"
-            : undefined}
+          {reason === "minAmount" ? " Minimum amount is 1000 G$" : undefined}
         </Text>
       )}
     </VStack>

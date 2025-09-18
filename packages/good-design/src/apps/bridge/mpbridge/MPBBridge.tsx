@@ -4,7 +4,7 @@ import { SupportedChains } from "@gooddollar/web3sdk-v2";
 import { ethers } from "ethers";
 
 import { Web3ActionButton } from "../../../advanced";
-import { TxDetailsModal } from "../../../core/web3/modals/TxDetailsModal";
+import { MPBTransactionDetailsModal } from "./MPBTransactionDetailsModal";
 
 import type { MPBBridgeProps, BridgeProvider } from "./types";
 import {
@@ -224,7 +224,7 @@ export const MPBBridge = ({
     <VStack space={8} alignSelf="center" maxWidth="800">
       {/* Transaction Details Modal */}
       {txDetailsOpen && txDetails ? (
-        <TxDetailsModal open={txDetailsOpen} onClose={onTxDetailsClose} tx={txDetails} />
+        <MPBTransactionDetailsModal open={txDetailsOpen} onClose={onTxDetailsClose} transaction={txDetails} />
       ) : null}
 
       {/* Header */}
@@ -281,7 +281,6 @@ export const MPBBridge = ({
               minimumAmount={minimumAmount}
               isValid={isValid}
               reason={reason}
-              sourceChain={sourceChain}
               balance={getBalanceForChain(sourceChain)}
             />
 

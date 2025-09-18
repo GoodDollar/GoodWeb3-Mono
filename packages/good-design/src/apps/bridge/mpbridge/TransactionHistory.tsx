@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Spinner, Text, VStack } from "native-base";
-import { TransactionList } from "../../ubi/components/TransactionStateCard";
+import { BridgeTransactionList } from "./MPBBridgeTransactionCard";
 
 interface TransactionHistoryProps {
   realTransactionHistory: any[];
@@ -26,14 +26,14 @@ export const TransactionHistory: React.FC<TransactionHistoryProps> = ({
           </Text>
         </Box>
       ) : realTransactionHistory.length > 0 ? (
-        <TransactionList transactions={realTransactionHistory} onTxDetailsPress={onTxDetailsPress} />
+        <BridgeTransactionList transactions={realTransactionHistory} onTxDetailsPress={onTxDetailsPress} />
       ) : (
         <Box p={4} bg="goodGrey.50" borderRadius="lg" alignItems="center">
           <Text fontSize="sm" color="goodGrey.600">
             No recent bridge transactions found
           </Text>
           <Text fontSize="xs" color="goodGrey.500" mt={1}>
-            Your bridge transactions will appear here
+            Make sure your wallet is connected to see your bridge transactions
           </Text>
         </Box>
       )}

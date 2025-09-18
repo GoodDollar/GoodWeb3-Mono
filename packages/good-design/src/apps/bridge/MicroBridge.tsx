@@ -141,10 +141,7 @@ export const MicroBridge = ({
     }
   }, [relayStatus, bridgeStatus, selfRelayStatus, onBridgeSuccess, onBridgeFailed]);
 
-  const reasonMinAmount =
-    reason === "minAmount"
-      ? " Minimum amount is " + Number(minimumAmount) / (sourceChain === "fuse" ? 1e2 : 1e18) + "G$"
-      : undefined;
+  const reasonMinAmount = reason === "minAmount" ? " Minimum amount is 1000G$" : undefined;
 
   const getActiveColor = useCallback(
     (chain: string) => {

@@ -38,7 +38,7 @@ import { useMPBBridge } from "@gooddollar/web3sdk-v2";
 const { sendMPBBridgeRequest, bridgeRequestStatus, bridgeStatus } = useMPBBridge();
 
 // Initiate a bridge transaction
-await sendMPBBridgeRequest("1000000000000000000", "fuse"); // 1 G$ from Fuse to Celo
+await sendMPBBridgeRequest("1000000000000000000000", "fuse"); // 1000 G$ from Fuse to Celo
 ```
 
 ### Check Bridge Limits
@@ -46,7 +46,7 @@ await sendMPBBridgeRequest("1000000000000000000", "fuse"); // 1 G$ from Fuse to 
 ```typescript
 import { useMPBBridgeLimits } from "@gooddollar/web3sdk-v2";
 
-const { isValid, reason } = useMPBBridgeLimits("1000000000000000000");
+const { isValid, reason } = useMPBBridgeLimits("1000000000000000000000");
 ```
 
 ### Get Bridge Data
@@ -77,7 +77,7 @@ const MyBridgePage = () => {
 ## Bridge Flow
 
 1. **User selects source and target chains** (Fuse ↔ Celo ↔ Mainnet)
-2. **Enter amount to bridge** (minimum 1 G$)
+2. **Enter amount to bridge** (minimum 1000 G$)
 3. **System calculates fees** (dynamic native token fees)
 4. **User approves transaction** (with fee in native token)
 5. **Bridge transaction is sent** (via LayerZero/Axelar)

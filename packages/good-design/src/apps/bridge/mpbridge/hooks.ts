@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { CurrencyValue } from "@usedapp/core";
 import { useG$Amounts, useG$Balance, G$Amount, useGetEnvChainId } from "@gooddollar/web3sdk-v2";
 import { BigNumber } from "ethers";
-import { fetchBridgeFees, useMPBBridgeHistory } from "@gooddollar/web3sdk-v2";
+import { fetchBridgeFees, useBridgeHistory } from "@gooddollar/web3sdk-v2";
 import type { IMPBFees, IMPBLimits } from "./types";
 
 // Hook to get real bridge fees
@@ -105,44 +105,74 @@ export const useChainBalances = () => {
   return { getBalanceForChain };
 };
 
-// Hook to get transaction history
+// Hook to get transaction history - Use microbridge history directly
 export const useTransactionHistory = () => {
   console.log("🚀 useTransactionHistory: Starting to fetch transaction history");
 
-  // Get real transaction history
-  const { history: realTransactionHistory, loading: historyLoading } = useMPBBridgeHistory();
+  // Use microbridge history directly
+  const { historySorted: realTransactionHistory } = useBridgeHistory() ?? {};
 
   console.log("🔍 Transaction History Debug:", {
     realTransactionHistory: realTransactionHistory?.length || 0,
-    historyLoading,
+    historyLoading: !realTransactionHistory,
     firstTx: realTransactionHistory?.[0]
   });
 
-  return { realTransactionHistory, historyLoading };
+  return { realTransactionHistory, historyLoading: !realTransactionHistory };
 };
 
-// Hook to convert transaction history to the format expected by TransactionList
-export const useConvertedTransactionHistory = (realTransactionHistory: any[], sourceChain: string) => {
+// Hook to convert transaction history to the format expected by BridgeTransactionList
+// Use microbridge data structure directly
+export const useConvertedTransactionHistory = (realTransactionHistory: any[] | undefined, sourceChain: string) => {
   const chain = sourceChain === "celo" ? 42220 : sourceChain === "mainnet" ? 1 : 122;
-  const { defaultEnv } = useGetEnvChainId(chain);
 
   const converted =
-    realTransactionHistory?.slice(0, 5).map(tx => ({
-      address: tx.data?.from || "",
-      account: tx.data?.target || "",
-      network: tx.sourceChain?.toUpperCase() || sourceChain.toUpperCase(),
-      contractAddress: "",
-      token: "G$",
-      status: tx.status === "Completed" ? "success" : tx.status === "Pending" ? "pending" : "failed",
-      type: "bridge-in",
-      contractName: "GoodDollar",
-      displayName: `Bridged via ${tx.bridgeService}`,
-      tokenValue: G$Amount("G$", BigNumber.from(tx.amount || "0"), chain, defaultEnv),
-      transactionHash: tx.transactionHash,
-      timestamp: tx.timestamp,
-      sourceChain: tx.sourceChain,
-      targetChain: tx.targetChain
-    })) || [];
+    realTransactionHistory?.slice(0, 5).map(tx => {
+      // Use microbridge data directly - it already has the correct chain information
+      // Microbridge provides: tx.data.from, tx.data.to, tx.data.targetChainId
+      const targetChainId = tx.data?.targetChainId?.toNumber();
+
+      // Determine source and target chains based on the bridge direction
+      let sourceChainName, targetChainName;
+      if (targetChainId === 122) {
+        // Bridging to Fuse, so source is Celo
+        sourceChainName = "Celo";
+        targetChainName = "Fuse";
+      } else if (targetChainId === 42220) {
+        // Bridging to Celo, so source is Fuse
+        sourceChainName = "Fuse";
+        targetChainName = "Celo";
+      } else {
+        sourceChainName = "Unknown";
+        targetChainName = "Unknown";
+      }
+
+      // Default to axelar for microbridge (since it's the microbridge)
+      const bridgeProvider = "axelar";
+
+      // Determine status based on relayEvent (microbridge pattern)
+      const status = tx.relayEvent ? "completed" : "pending";
+
+      return {
+        id: tx.data?.id || tx.transactionHash,
+        transactionHash: tx.transactionHash,
+        sourceChain: sourceChainName,
+        targetChain: targetChainName,
+        amount: tx.amount || "0",
+        bridgeProvider,
+        status,
+        date: new Date((tx.data?.timestamp || Date.now() / 1000) * 1000),
+        chainId: chain,
+        // Add fields required by TxDetailsModal
+        network: targetChainName?.toUpperCase() || "FUSE",
+        displayName: "GoodDollar Bridge",
+        contractName: "GoodDollar",
+        contractAddress: tx.data?.to || "",
+        account: tx.data?.from || "",
+        type: status === "completed" ? "bridge-in" : "bridge-pending",
+        isPool: false
+      };
+    }) || [];
 
   console.log("🔄 Converted Transaction History Debug:", {
     originalCount: realTransactionHistory?.length || 0,

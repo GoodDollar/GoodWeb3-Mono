@@ -66,7 +66,7 @@ export const useMPBBridgeLimits = (amount: string, chainId?: number) => {
             dailyLimit: ethers.BigNumber.from("1000000000000000000000000"), // 1M G$
             txLimit: ethers.BigNumber.from("1000000000000000000000000"), // 1M G$
             accountDailyLimit: ethers.BigNumber.from("1000000000000000000000000"), // 1M G$
-            minAmount: ethers.BigNumber.from("10000000000000000000"), // 10 G$
+            minAmount: ethers.BigNumber.from("1000000000000000000000"), // 1000 G$
             onlyWhitelisted: false
           });
         });
@@ -98,7 +98,7 @@ export const useMPBBridgeLimits = (amount: string, chainId?: number) => {
 
   // Always do basic validation first (immediate response)
   // Use a higher minimum amount to match contract requirements
-  const minAmount = ethers.BigNumber.from("10000000000000000000"); // 10 G$ (increased from 1 G$)
+  const minAmount = ethers.BigNumber.from("1000000000000000000000"); // 1000 G$
   const maxAmount = ethers.BigNumber.from("1000000000000000000000000"); // 1M G$
 
   // Validation in progress
@@ -149,7 +149,7 @@ export const useGetMPBBridgeData = (
     zroFee: null
   });
   const [bridgeLimits] = useState({
-    minAmount: ethers.BigNumber.from("10000000000000000000"), // 10 G$
+    minAmount: ethers.BigNumber.from("1000000000000000000000"), // 1000 G$
     maxAmount: ethers.BigNumber.from("1000000000000000000000000") // 1M G$
   });
   const [isLoading, setIsLoading] = useState(true);

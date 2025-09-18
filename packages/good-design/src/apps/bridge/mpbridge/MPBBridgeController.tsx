@@ -39,7 +39,7 @@ export const MPBBridgeController: React.FC<IMPBBridgeControllerProps> = ({ onBri
   const useCanMPBBridge = useCallback((chain: string, amountWei: string) => {
     // Basic validation without contract calls to avoid infinite loops
     const amountBN = ethers.BigNumber.from(amountWei || "0");
-    const minAmount = ethers.BigNumber.from("1000000000000000000"); // 1 G$
+    const minAmount = ethers.BigNumber.from("1000000000000000000000"); // 1000 G$
     const maxAmount = ethers.BigNumber.from("1000000000000000000000000"); // 1M G$
 
     if (amountBN.lt(minAmount)) {

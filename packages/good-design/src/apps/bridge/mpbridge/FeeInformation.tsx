@@ -14,7 +14,6 @@ interface FeeInformationProps {
 }
 
 export const FeeInformation: React.FC<FeeInformationProps> = ({
-  minimumAmount,
   sourceChain,
   targetChain,
   bridgeProvider,
@@ -24,7 +23,7 @@ export const FeeInformation: React.FC<FeeInformationProps> = ({
   return (
     <VStack space={2} padding={4} bg="goodGrey.50" borderRadius="lg" borderWidth="1" borderColor="goodGrey.200">
       <Text fontFamily="subheading" fontSize="sm" color="goodGrey.600">
-        Minimum amount to bridge: {(Number(minimumAmount) / (sourceChain === "fuse" ? 1e2 : 1e18)).toFixed(2)} G$
+        Minimum amount to bridge: 1000 G$
       </Text>
       <Text fontFamily="subheading" fontSize="sm" color="goodGrey.600">
         Bridge Fee: {getCurrentBridgeFee(sourceChain, targetChain, bridgeProvider, bridgeFees, feesLoading)}

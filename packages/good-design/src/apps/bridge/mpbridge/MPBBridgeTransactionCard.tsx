@@ -99,8 +99,7 @@ export const BridgeTransactionCard = withTheme({ name: "BridgeTransactionCard" }
     return (
       <Pressable
         onPress={openTransactionDetails}
-        marginLeft="auto"
-        marginRight="auto"
+        width="100%"
         marginBottom={2}
         {...Platform.select({ web: { marginBottom: 1 } })}
       >
@@ -111,7 +110,7 @@ export const BridgeTransactionCard = withTheme({ name: "BridgeTransactionCard" }
           backgroundColor="goodWhite.100"
           borderRadius="5"
           shadow="1"
-          width="343"
+          width="100%"
           justifyContent={"flex-start"}
         >
           <HStack justifyContent="space-between" space={2} paddingX={2} paddingY={1}>
@@ -175,17 +174,16 @@ export const BridgeTransactionList = ({ transactions, onTxDetailsPress, limit = 
   <ScrollView
     style={{
       marginTop: 4,
+      width: "100%",
       ...Platform.select({
         web: { scrollbarWidth: "thin", maxHeight: 550 },
         android: {
-          maxWidth: 360,
-          margin: "auto",
           height: limit < 3 ? "auto" : 300,
           maxHeight: limit < 3 ? "auto" : 300
         }
       })
     }}
-    contentContainerStyle={{ flexGrow: 1, alignItems: "center", justifyContent: "center" }}
+    contentContainerStyle={{ flexGrow: 1, alignItems: "stretch", justifyContent: "center" }}
     showsVerticalScrollIndicator={true}
     scrollEnabled={true}
     persistentScrollbar={true}
