@@ -16,7 +16,7 @@ export const TransactionHistory: React.FC<TransactionHistoryProps> = ({
   return (
     <VStack space={3} mt={6}>
       <Text fontFamily="heading" fontSize="lg" fontWeight="700" color="goodBlue.600">
-        Recent Transactions (Last 30 days):
+        Recent Transactions:
       </Text>
       {historyLoading ? (
         <Box p={4} bg="goodGrey.50" borderRadius="lg" alignItems="center">

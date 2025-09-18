@@ -1,8 +1,7 @@
 import React from "react";
-import { Box, Center, HStack, Text, VStack, Spinner } from "native-base";
+import { Box, HStack, Text, VStack, Spinner } from "native-base";
 
 import BasicStyledModal from "../../../core/web3/modals/BasicStyledModal";
-import { GoodButton } from "../../../core/buttons";
 import { ExplorerLink } from "../../../core";
 import { truncateMiddle } from "../../../utils/string";
 import { BridgeTransaction } from "./MPBBridgeTransactionCard";
@@ -13,63 +12,143 @@ interface MPBTransactionDetailsModalProps {
   transaction: BridgeTransaction;
 }
 
-const ProgressStep = ({
-  title,
-  isCompleted,
-  isInProgress,
-  isFirst = false
+const StepIndicator = ({
+  status,
+  text,
+  isLast = false
 }: {
-  title: string;
-  isCompleted: boolean;
-  isInProgress: boolean;
-  isFirst?: boolean;
+  status: "completed" | "pending" | "bridging" | "failed";
+  text: string;
+  isLast?: boolean;
 }) => {
-  const getStepIcon = () => {
-    if (isCompleted) {
-      return (
-        <Box w="8" h="8" borderRadius="full" bg="green.500" alignItems="center" justifyContent="center">
-          <Text color="white" fontSize="sm" fontWeight="bold">
-            ✓
-          </Text>
-        </Box>
-      );
+  const getIcon = () => {
+    switch (status) {
+      case "completed":
+        return (
+          <Box
+            w="8"
+            h="8"
+            borderRadius="50%"
+            bg="green.500"
+            alignItems="center"
+            justifyContent="center"
+            borderWidth="2px"
+            borderColor="green.300"
+            shadow="md"
+          >
+            <Text color="white" fontSize="sm" fontWeight="bold">
+              ✓
+            </Text>
+          </Box>
+        );
+      case "bridging":
+        return (
+          <Box
+            w="8"
+            h="8"
+            borderRadius="50%"
+            bg="blue.500"
+            alignItems="center"
+            justifyContent="center"
+            borderWidth="2px"
+            borderColor="blue.300"
+            shadow="md"
+          >
+            <Spinner size="sm" color="white" />
+          </Box>
+        );
+      case "pending":
+        return (
+          <Box
+            w="8"
+            h="8"
+            borderRadius="50%"
+            bg="gray.200"
+            alignItems="center"
+            justifyContent="center"
+            borderWidth="2px"
+            borderColor="gray.300"
+            shadow="md"
+          >
+            <Text color="gray.600" fontSize="sm" fontWeight="bold">
+              ○
+            </Text>
+          </Box>
+        );
+      case "failed":
+        return (
+          <Box
+            w="8"
+            h="8"
+            borderRadius="50%"
+            bg="red.500"
+            alignItems="center"
+            justifyContent="center"
+            borderWidth="2px"
+            borderColor="red.300"
+            shadow="md"
+          >
+            <Text color="white" fontSize="sm" fontWeight="bold">
+              ✕
+            </Text>
+          </Box>
+        );
+      default:
+        return (
+          <Box
+            w="8"
+            h="8"
+            borderRadius="50%"
+            bg="gray.200"
+            alignItems="center"
+            justifyContent="center"
+            borderWidth="2px"
+            borderColor="gray.300"
+            shadow="md"
+          >
+            <Text color="gray.600" fontSize="sm" fontWeight="bold">
+              ○
+            </Text>
+          </Box>
+        );
     }
-    if (isInProgress) {
-      return (
-        <Box w="8" h="8" borderRadius="full" bg="blue.500" alignItems="center" justifyContent="center">
-          <Spinner size="sm" color="white" />
-        </Box>
-      );
-    }
-    return (
-      <Box w="8" h="8" borderRadius="full" bg="gray.300" alignItems="center" justifyContent="center">
-        <Text color="gray.600" fontSize="sm" fontWeight="bold">
-          ○
-        </Text>
-      </Box>
-    );
   };
 
-  const getLineColor = () => {
-    if (isCompleted) return "blue.500";
-    return "gray.300";
-  };
+  let textColor = "goodGrey.500";
+  switch (status) {
+    case "completed":
+      textColor = "goodGrey.900";
+      break;
+    case "bridging":
+      textColor = "goodBlue.600";
+      break;
+    case "pending":
+      textColor = "goodGrey.400";
+      break;
+    case "failed":
+      textColor = "goodRed.500";
+      break;
+    default:
+      textColor = "goodGrey.400";
+  }
 
   return (
-    <VStack alignItems="center" space={2}>
-      {getStepIcon()}
-      <Text fontSize="xs" color={isCompleted || isInProgress ? "gray.700" : "gray.500"} textAlign="center">
-        {title}
-      </Text>
-      {!isFirst && (
+    <VStack alignItems="flex-start" space={2} position="relative">
+      <HStack alignItems="center" space={3}>
+        {getIcon()}
+        <Text fontSize="sm" color={textColor} fontWeight="medium">
+          {text}
+        </Text>
+      </HStack>
+      {!isLast && (
         <Box
           position="absolute"
-          top="-8"
-          left="50%"
+          top="10"
+          left="4"
           width="2px"
-          height="16"
-          bg={getLineColor()}
-          style={{ transform: [{ translateX: -8 }] }}
+          height="24"
+          bg={status === "completed" ? "goodBlue.600" : "goodGrey.300"}
+          borderRadius="full"
         />
       )}
     </VStack>
@@ -86,84 +165,72 @@ const MPBTransactionDetailsContent = ({ transaction }: { transaction: BridgeTran
     switch (status) {
       case "completed":
         return {
-          sourceGateway: true,
-          destGateway: true,
-          executed: true
+          sourceGateway: "completed" as const,
+          destGateway: "completed" as const,
+          executed: "completed" as const
         };
       case "pending":
         return {
-          sourceGateway: true,
-          destGateway: false,
-          executed: false
+          sourceGateway: "completed" as const,
+          destGateway: "pending" as const,
+          executed: "pending" as const
         };
       case "bridging":
         return {
-          sourceGateway: true,
-          destGateway: true,
-          executed: false
+          sourceGateway: "completed" as const,
+          destGateway: "bridging" as const,
+          executed: "pending" as const
         };
       case "failed":
         return {
-          sourceGateway: true,
-          destGateway: false,
-          executed: false
+          sourceGateway: "completed" as const,
+          destGateway: "failed" as const,
+          executed: "failed" as const
         };
       default:
         return {
-          sourceGateway: false,
-          destGateway: false,
-          executed: false
+          sourceGateway: "pending" as const,
+          destGateway: "pending" as const,
+          executed: "pending" as const
         };
     }
   };
 
   const progress = getProgressSteps();
-  const isDestGatewayInProgress = status === "bridging";
 
   return (
-    <VStack space={4} width="100%">
+    <VStack space={6} width="100%" paddingX={4}>
       {/* Header */}
-      <Center>
-        <VStack space={2} alignItems="center">
-          <Text fontSize="lg" fontWeight="bold" color="gray.800">
-            Bridged via {bridgeProvider === "axelar" ? "Axelar" : "LayerZero"}
-          </Text>
-          <Text fontSize="3xl" fontWeight="bold" color="green.600">
-            +{amount} G$
-          </Text>
-          <Text fontSize="sm" color="gray.600">
-            {txDate}
-          </Text>
-        </VStack>
-      </Center>
-
-      {/* Progress Steps */}
-      <VStack space={4} alignItems="center" py={4}>
-        <Text fontSize="md" fontWeight="semibold" color="gray.800" mb={2}>
-          Progress
+      <VStack space={3} alignItems="center">
+        <Text fontSize="xs" color="goodGrey.500">
+          Bridged via {bridgeProvider?.toUpperCase()}
         </Text>
-        <HStack space={8} justifyContent="center" alignItems="flex-start">
-          <ProgressStep
-            title="Source Gateway Called"
-            isCompleted={progress.sourceGateway}
-            isInProgress={false}
-            isFirst={true}
-          />
-          <ProgressStep
-            title="Dest. Gateway Approved"
-            isCompleted={progress.destGateway}
-            isInProgress={isDestGatewayInProgress}
-          />
-          <ProgressStep title="Executed" isCompleted={progress.executed} isInProgress={false} />
-        </HStack>
+        <Text fontSize="3xl" fontWeight="bold" color="goodGrey.900">
+          +{amount} G$
+        </Text>
+        <Text fontSize="sm" color="goodGrey.500">
+          {txDate}
+        </Text>
       </VStack>
 
-      {/* Transaction Hashes */}
-      <VStack space={3} pt={4}>
-        <Text fontSize="sm" fontWeight="semibold" color="gray.800">
-          Transaction Hash
+      {/* Progress Steps */}
+      <VStack space={4} bg="goodGrey.50" padding={4} borderRadius="lg">
+        <Text fontSize="sm" fontWeight="semibold" color="goodGrey.800">
+          Progress
         </Text>
-        <HStack justifyContent="center">
+        <VStack space={4} alignItems="flex-start">
+          <StepIndicator status={progress.sourceGateway} text="Source Gateway Called" />
+          <StepIndicator status={progress.destGateway} text="Dest. Gateway Approved" />
+          <StepIndicator status={progress.executed} text="Executed" isLast={true} />
+        </VStack>
+      </VStack>
+
+      {/* Transaction Details */}
+      <VStack space={4}>
+        <VStack space={2}>
+          <Text fontSize="sm" fontWeight="medium" color="goodGrey.600">
+            Source Transaction
+          </Text>
           <ExplorerLink
             addressOrTx={transactionHash}
             chainId={transaction.chainId}
@@ -171,7 +238,7 @@ const MPBTransactionDetailsContent = ({ transaction }: { transaction: BridgeTran
             fontStyle={{ fontSize: "sm", fontFamily: "mono", fontWeight: "normal" }}
             withIcon={false}
           />
-        </HStack>
+        </VStack>
       </VStack>
     </VStack>
   );
@@ -182,18 +249,18 @@ export const MPBTransactionDetailsModal = ({ open, onClose, transaction }: MPBTr
     <BasicStyledModal
       type="ctaX"
       modalStyle={{
-        borderLeftWidth: 10,
-        borderColor: transaction.status === "completed" ? "#10B981" : "#3B82F6"
+        borderRadius: "10px",
+        width: "400px",
+        maxWidth: "400px",
+        minWidth: "400px",
+        boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.15)",
+        marginLeft: "auto",
+        marginRight: "auto"
       }}
       show={open}
       onClose={onClose}
       title="Transaction Details"
       body={<MPBTransactionDetailsContent transaction={transaction} />}
-      footer={
-        <Center>
-          <GoodButton _text={{ children: "Close" }} onPress={onClose} variant="secondary" size="md" />
-        </Center>
-      }
       withOverlay="dark"
       withCloseButton
     />

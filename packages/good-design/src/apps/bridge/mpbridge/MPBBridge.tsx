@@ -221,7 +221,7 @@ export const MPBBridge = ({
   const onTxDetailsClose = useCallback(() => setTxDetailsOpen(false), []);
 
   return (
-    <VStack space={8} alignSelf="center" maxWidth="800">
+    <VStack space={8} alignSelf="center">
       {/* Transaction Details Modal */}
       {txDetailsOpen && txDetails ? (
         <MPBTransactionDetailsModal open={txDetailsOpen} onClose={onTxDetailsClose} transaction={txDetails} />
