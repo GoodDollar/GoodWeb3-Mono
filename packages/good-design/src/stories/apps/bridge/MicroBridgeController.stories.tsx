@@ -20,11 +20,6 @@ export default {
       </W3Wrapper>
     )
   ]
-  // argTypes: {
-  //   useBalanceHook: {
-  //     description: "G$ Bridge"
-  //   }
-  // }
 };
 
 export const MicroBridgeControllerWithoutRelay = {

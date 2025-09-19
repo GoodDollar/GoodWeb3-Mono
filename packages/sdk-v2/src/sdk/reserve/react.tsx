@@ -4,7 +4,6 @@ import contractAddresses from "@gooddollar/goodprotocol/releases/deployment.json
 import { useContractFunctionWithDefaultGasFees, useG$Tokens, useGetEnvChainId } from "../../sdk";
 import { useRefreshOrNever } from "../../hooks";
 
-const chainId = 42220;
 const exchangeAbi = [
   "function currentPrice(bytes32 exchangeId) external view returns (uint256 price)",
   "function getExchangeIds() external view returns (bytes32[] ids)",
@@ -20,7 +19,7 @@ const brokerAbi = [
 ];
 
 export const useExchangeId = () => {
-  const { connectedEnv } = useGetEnvChainId(chainId);
+  const { connectedEnv, chainId } = useGetEnvChainId();
 
   const mentoExchange = new Contract(
     contractAddresses[connectedEnv].MentoExchangeProvider || "0x558eC7E55855FAC9403De3ADB3aa1e588234A92C",
@@ -42,7 +41,7 @@ export const useExchangeId = () => {
 
 export const useG$Price = (refresh: QueryParams["refresh"] = 12): BigNumber | undefined => {
   const refreshOrNever = useRefreshOrNever(refresh);
-  const { connectedEnv } = useGetEnvChainId(chainId);
+  const { connectedEnv, chainId } = useGetEnvChainId();
 
   const mentoReserve = new Contract(
     contractAddresses[connectedEnv].MentoExchangeProvider || "0x558eC7E55855FAC9403De3ADB3aa1e588234A92C",
@@ -71,7 +70,7 @@ export const useSwapMeta = (
   output?: BigNumber,
   refresh: QueryParams["refresh"] = 5
 ) => {
-  const { connectedEnv } = useGetEnvChainId(42220);
+  const { connectedEnv } = useGetEnvChainId();
   const refreshOrNever = useRefreshOrNever(refresh);
 
   const g$Price = useG$Price(refresh);
@@ -133,7 +132,7 @@ export const useSwap = (
 ) => {
   if (exactInput && exactOutput) throw new Error("Only one of exactInput or exactOutput can be specified");
 
-  const { connectedEnv } = useGetEnvChainId(42220);
+  const { connectedEnv } = useGetEnvChainId();
   const exchangeId = useExchangeId();
 
   const exchangeProviderAddress =
