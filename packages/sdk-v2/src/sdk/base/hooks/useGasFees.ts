@@ -61,6 +61,7 @@ export function useContractFunctionWithDefaultGasFees<T extends TypedContract, F
         return send(...(modifiedArgs as any));
       }
     },
+    // [gasFees, send, chainId, contract, functionName]
     [gasFees, send]
   );
   return { ...rest, send: newSend };
