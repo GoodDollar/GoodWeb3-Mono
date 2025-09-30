@@ -39,9 +39,6 @@ export const CONTRACT_TO_ABI: { [key: string]: any } = {
   GoodReserveCDai: GoodReserveCDaiABI
 };
 
-// export type EnvKey = keyof typeof Contracts;
-// export type EnvValue = typeof Contracts[EnvKey] & { networkId: number };
-// export type ContractKey = keyof EnvValue;
 export type EnvKey = string;
 export type EnvValue = any;
 

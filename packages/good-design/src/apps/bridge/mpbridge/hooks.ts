@@ -1,11 +1,29 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { CurrencyValue } from "@usedapp/core";
 import { useG$Amounts, useG$Balance, G$Amount, useGetEnvChainId } from "@gooddollar/web3sdk-v2";
 import { BigNumber } from "ethers";
 import { fetchBridgeFees, useBridgeHistory } from "@gooddollar/web3sdk-v2";
 import type { IMPBFees, IMPBLimits } from "./types";
 
-// Hook to get real bridge fees
+// Chain configuration for bridge direction mapping
+const CHAIN_MAPPING = {
+  122: { source: "Celo", target: "Fuse" },
+  42220: { source: "Fuse", target: "Celo" },
+  1: { source: "Unknown", target: "Unknown" }
+} as const;
+
+// Bridge service mapping (0 = LayerZero, 1 = Axelar)
+const BRIDGE_SERVICE_MAPPING = {
+  0: "layerzero",
+  1: "axelar"
+} as const;
+
+// Default bridge provider fallback
+const DEFAULT_BRIDGE_PROVIDER = "layerzero";
+
+// Recent transaction threshold (30 days in seconds)
+const RECENT_TRANSACTION_THRESHOLD = 30 * 24 * 60 * 60;
+
 export const useBridgeFees = () => {
   const [fees, setFees] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -107,78 +125,105 @@ export const useChainBalances = () => {
 
 // Hook to get transaction history - Use microbridge history directly
 export const useTransactionHistory = () => {
-  console.log("🚀 useTransactionHistory: Starting to fetch transaction history");
-
   // Use microbridge history directly
   const { historySorted: realTransactionHistory } = useBridgeHistory() ?? {};
 
-  console.log("🔍 Transaction History Debug:", {
-    realTransactionHistory: realTransactionHistory?.length || 0,
-    historyLoading: !realTransactionHistory,
-    firstTx: realTransactionHistory?.[0]
-  });
-
-  return { realTransactionHistory, historyLoading: !realTransactionHistory };
+  // Memoize the result to prevent unnecessary re-renders
+  return useMemo(() => {
+    return {
+      realTransactionHistory,
+      historyLoading: !realTransactionHistory
+    };
+  }, [realTransactionHistory]);
 };
 
-// Hook to convert transaction history to the format expected by BridgeTransactionList
-// Use microbridge data structure directly
+export const useDebouncedTransactionHistory = (delay = 1000) => {
+  const { realTransactionHistory, historyLoading } = useTransactionHistory();
+  const [debouncedHistory, setDebouncedHistory] = useState(realTransactionHistory);
+  const timeoutRef = useRef<NodeJS.Timeout>();
+
+  useEffect(() => {
+    // Clear existing timeout
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    // Set new timeout
+    timeoutRef.current = setTimeout(() => {
+      setDebouncedHistory(realTransactionHistory);
+    }, delay);
+
+    // Cleanup on unmount
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, [realTransactionHistory, delay]);
+
+  return {
+    realTransactionHistory: debouncedHistory,
+    historyLoading
+  };
+};
+
 export const useConvertedTransactionHistory = (realTransactionHistory: any[] | undefined, sourceChain: string) => {
   const chain = sourceChain === "celo" ? 42220 : sourceChain === "mainnet" ? 1 : 122;
 
-  const converted =
-    realTransactionHistory?.slice(0, 5).map(tx => {
-      // Use microbridge data directly - it already has the correct chain information
-      // Microbridge provides: tx.data.from, tx.data.to, tx.data.targetChainId
-      const targetChainId = tx.data?.targetChainId?.toNumber();
+  // Memoize the conversion to prevent unnecessary re-computations
+  return useMemo(() => {
+    const converted =
+      realTransactionHistory?.slice(0, 5).map(tx => {
+        const targetChainId = tx.data?.targetChainId?.toNumber();
 
-      // Determine source and target chains based on the bridge direction
-      let sourceChainName, targetChainName;
-      if (targetChainId === 122) {
-        // Bridging to Fuse, so source is Celo
-        sourceChainName = "Celo";
-        targetChainName = "Fuse";
-      } else if (targetChainId === 42220) {
-        // Bridging to Celo, so source is Fuse
-        sourceChainName = "Fuse";
-        targetChainName = "Celo";
-      } else {
-        sourceChainName = "Unknown";
-        targetChainName = "Unknown";
-      }
+        // Determine source and target chains based on the bridge direction using dictionary lookup
+        const chainInfo =
+          CHAIN_MAPPING[targetChainId as keyof typeof CHAIN_MAPPING] ||
+          ({
+            source: "Unknown",
+            target: "Unknown"
+          } as const);
+        const { source: sourceChainName, target: targetChainName } = chainInfo;
 
-      // Default to axelar for microbridge (since it's the microbridge)
-      const bridgeProvider = "axelar";
+        // Get bridge provider from transaction data using dictionary lookup
+        const bridgeService = tx.data?.bridge;
+        let bridgeProvider = DEFAULT_BRIDGE_PROVIDER;
 
-      // Determine status based on relayEvent (microbridge pattern)
-      const status = tx.relayEvent ? "completed" : "pending";
+        if (bridgeService !== undefined) {
+          // MPB bridge data includes bridge service information
+          const serviceKey = bridgeService as keyof typeof BRIDGE_SERVICE_MAPPING;
+          bridgeProvider = BRIDGE_SERVICE_MAPPING[serviceKey] || DEFAULT_BRIDGE_PROVIDER;
+        } else {
+          const txTimestamp = tx.data?.timestamp || tx.timestamp || 0;
+          const now = Math.floor(Date.now() / 1000);
+          const isRecent = now - txTimestamp < RECENT_TRANSACTION_THRESHOLD;
 
-      return {
-        id: tx.data?.id || tx.transactionHash,
-        transactionHash: tx.transactionHash,
-        sourceChain: sourceChainName,
-        targetChain: targetChainName,
-        amount: tx.amount || "0",
-        bridgeProvider,
-        status,
-        date: new Date((tx.data?.timestamp || Date.now() / 1000) * 1000),
-        chainId: chain,
-        // Add fields required by TxDetailsModal
-        network: targetChainName?.toUpperCase() || "FUSE",
-        displayName: "GoodDollar Bridge",
-        contractName: "GoodDollar",
-        contractAddress: tx.data?.to || "",
-        account: tx.data?.from || "",
-        type: status === "completed" ? "bridge-in" : "bridge-pending",
-        isPool: false
-      };
-    }) || [];
+          bridgeProvider = isRecent ? "layerzero" : "axelar";
+        }
 
-  console.log("🔄 Converted Transaction History Debug:", {
-    originalCount: realTransactionHistory?.length || 0,
-    convertedCount: converted.length,
-    firstConverted: converted[0]
-  });
+        // Determine status based on relayEvent (microbridge pattern)
+        const status = tx.relayEvent ? "completed" : "pending";
 
-  return converted;
+        return {
+          id: tx.data?.id || tx.transactionHash,
+          transactionHash: tx.transactionHash,
+          sourceChain: sourceChainName,
+          targetChain: targetChainName,
+          amount: tx.amount || "0",
+          bridgeProvider,
+          status,
+          date: new Date((tx.data?.timestamp || Date.now() / 1000) * 1000),
+          chainId: chain,
+          network: targetChainName?.toUpperCase() || "FUSE",
+          displayName: "GoodDollar Bridge",
+          contractName: "GoodDollar",
+          contractAddress: tx.data?.to || "",
+          account: tx.data?.from || "",
+          type: status === "completed" ? "bridge-in" : "bridge-pending",
+          isPool: false
+        };
+      }) || [];
+
+    return converted;
+  }, [realTransactionHistory, chain]);
 };

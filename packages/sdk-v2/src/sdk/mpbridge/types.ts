@@ -3,14 +3,11 @@ import { SupportedChains } from "../constants";
 import bridgeContracts from "@gooddollar/bridge-contracts/release/deployment.json";
 import mpbABI from "@gooddollar/bridge-contracts/release/mpb.json";
 
-// Bridge Service enum values (LayerZero = 0, Axelar = 1)
 export enum BridgeService {
   LAYERZERO = 0,
   AXELAR = 1
 }
 
-// MPB Contract ABI - Imported from @gooddollar/bridge-contracts package
-// Extract the ABI from the first chain's contracts
 export const MPBBridgeABI = mpbABI["1"][0]?.contracts?.MessagePassingBridge?.abi || [];
 
 // MPB Contract addresses - Imported from @gooddollar/bridge-contracts package
@@ -23,8 +20,9 @@ export const MPB_CONTRACTS = {
 // Types
 export type MPBBridgeData = {
   bridgeFees: { nativeFee: ethers.BigNumber | null; zroFee: ethers.BigNumber | null };
-  bridgeLimits: { minAmount: ethers.BigNumber; maxAmount: ethers.BigNumber };
+  bridgeLimits: { minAmount: ethers.BigNumber; maxAmount: ethers.BigNumber } | null;
   isLoading: boolean;
+  error: string | null;
 };
 
 export type BridgeRequest = {

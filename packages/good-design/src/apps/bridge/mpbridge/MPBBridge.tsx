@@ -11,7 +11,7 @@ import {
   useBridgeFees,
   useMPBBridgeEstimate,
   useChainBalances,
-  useTransactionHistory,
+  useDebouncedTransactionHistory,
   useConvertedTransactionHistory
 } from "./hooks";
 import { getValidTargetChains } from "./utils";
@@ -45,13 +45,10 @@ export const MPBBridge = ({
   const [showSourceDropdown, setShowSourceDropdown] = useState(false);
   const [showTargetDropdown, setShowTargetDropdown] = useState(false);
 
-  // Get real bridge fees
   const { fees: bridgeFees, loading: feesLoading } = useBridgeFees();
 
-  // Get real transaction history
-  const { realTransactionHistory, historyLoading } = useTransactionHistory();
+  const { realTransactionHistory, historyLoading } = useDebouncedTransactionHistory(2000);
 
-  // Get balances for all chains
   const { getBalanceForChain } = useChainBalances();
 
   const gdValue = getBalanceForChain(sourceChain);
@@ -69,17 +66,13 @@ export const MPBBridge = ({
   const hasBalance = ethers.BigNumber.from(bridgeWeiAmount).lte(ethers.BigNumber.from(wei));
   const isValidInput = isValid && hasBalance;
 
-  // Update target chain when bridge provider changes
   useEffect(() => {
     const validTargets = getValidTargetChains(sourceChain, bridgeFees, bridgeProvider, feesLoading);
     if (validTargets.length > 0 && !validTargets.includes(targetChain)) {
       setTargetChain(validTargets[0]);
-    } else if (validTargets.length === 0) {
-      // If no valid targets for current provider, switch to LayerZero
-      if (bridgeProvider === "axelar" && sourceChain === "fuse") {
-        setBridgeProvider("layerzero");
-        setTargetChain("celo");
-      }
+    } else if (validTargets.length === 0 && bridgeProvider === "axelar" && sourceChain === "fuse") {
+      setBridgeProvider("layerzero");
+      setTargetChain("celo");
     }
   }, [bridgeProvider, sourceChain, bridgeFees, feesLoading, targetChain]);
 
@@ -126,7 +119,6 @@ export const MPBBridge = ({
     [bridgeProvider, bridgeFees, feesLoading]
   );
 
-  // Handle target chain selection
   const handleTargetChainSelect = useCallback((chain: string) => {
     console.log("🔄 Target Chain Selected:", chain);
     setTargetChain(chain);
@@ -195,7 +187,6 @@ export const MPBBridge = ({
     }
   }, [bridgeStatus, onBridgeSuccess, onBridgeFailed]);
 
-  // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = () => {
       setShowSourceDropdown(false);

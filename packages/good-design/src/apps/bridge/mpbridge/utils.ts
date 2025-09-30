@@ -38,59 +38,85 @@ export const getChainLabel = (chain: string) => {
   }
 };
 
-// Get valid target chains based on bridge provider and available fees
-export const getValidTargetChains = (source: string, bridgeFees: any, bridgeProvider: string, feesLoading: boolean) => {
+// Default target chains for each source chain
+const DEFAULT_TARGET_CHAINS = {
+  fuse: ["celo", "mainnet"],
+  celo: ["fuse", "mainnet"],
+  mainnet: ["fuse", "celo"]
+} as const;
+
+// Route to fee property mapping for valid target chain detection
+const ROUTE_TO_FEE_PROPERTY = {
+  axelar: {
+    CELO_MAINNET: "AXL_CELO_TO_ETH",
+    MAINNET_CELO: "AXL_ETH_TO_CELO"
+  },
+  layerzero: {
+    CELO_FUSE: "LZ_CELO_TO_FUSE",
+    FUSE_CELO: "LZ_FUSE_TO_CELO",
+    CELO_MAINNET: "LZ_CELO_TO_ETH",
+    MAINNET_CELO: "LZ_ETH_TO_CELO",
+    FUSE_MAINNET: "LZ_FUSE_TO_ETH",
+    MAINNET_FUSE: "LZ_ETH_TO_FUSE"
+  }
+} as const;
+
+export const getValidTargetChains = (
+  source: string,
+  bridgeFees: any,
+  bridgeProvider: string,
+  feesLoading: boolean
+): string[] => {
   if (!bridgeFees || feesLoading) {
-    // Fallback to default valid chains if fees are not loaded yet
-    switch (source) {
-      case "fuse":
-        return ["celo", "mainnet"];
-      case "celo":
-        return ["fuse", "mainnet"];
-      case "mainnet":
-        return ["fuse", "celo"];
-      default:
-        return ["celo", "mainnet"];
-    }
+    return [...(DEFAULT_TARGET_CHAINS[source as keyof typeof DEFAULT_TARGET_CHAINS] || ["celo", "mainnet"])];
   }
 
-  const validTargets: string[] = [];
   const sourceUpper = source.toUpperCase();
+  const validTargets: string[] = [];
 
-  // Check Axelar fees - only Celo ↔ Mainnet
-  if (bridgeProvider === "axelar" && bridgeFees.AXELAR) {
-    const axelarFees = bridgeFees.AXELAR;
-    if (sourceUpper === "CELO" && axelarFees.AXL_CELO_TO_ETH) {
-      validTargets.push("mainnet");
-    }
-    if (sourceUpper === "MAINNET" && axelarFees.AXL_ETH_TO_CELO) {
-      validTargets.push("celo");
-    }
-    // Axelar only supports Celo ↔ Mainnet, so return only these options
+  // Get the route mappings for this provider
+  const routeMappings = ROUTE_TO_FEE_PROPERTY[bridgeProvider as keyof typeof ROUTE_TO_FEE_PROPERTY];
+  if (!routeMappings) {
     return validTargets;
   }
 
-  // Check LayerZero fees - all combinations
-  if (bridgeProvider === "layerzero" && bridgeFees.LAYERZERO) {
-    const layerzeroFees = bridgeFees.LAYERZERO;
-    if (sourceUpper === "MAINNET") {
-      if (layerzeroFees.LZ_ETH_TO_CELO) validTargets.push("celo");
-      if (layerzeroFees.LZ_ETH_TO_FUSE) validTargets.push("fuse");
-    }
-    if (sourceUpper === "CELO") {
-      if (layerzeroFees.LZ_CELO_TO_ETH) validTargets.push("mainnet");
-      if (layerzeroFees.LZ_CELO_TO_FUSE) validTargets.push("fuse");
-    }
-    if (sourceUpper === "FUSE") {
-      if (layerzeroFees.LZ_FUSE_TO_ETH) validTargets.push("mainnet");
-      if (layerzeroFees.LZ_FUSE_TO_CELO) validTargets.push("celo");
-    }
+  // Get the fees object for this provider
+  const providerFees = bridgeFees[bridgeProvider.toUpperCase()];
+  if (!providerFees) {
     return validTargets;
   }
 
-  // If no valid targets found for current provider, return empty array
+  // Check each possible target chain
+  const possibleTargets = DEFAULT_TARGET_CHAINS[source as keyof typeof DEFAULT_TARGET_CHAINS] || [];
+
+  for (const target of possibleTargets) {
+    const targetUpper = target.toUpperCase();
+    const routeKey = `${sourceUpper}_${targetUpper}` as keyof typeof routeMappings;
+    const feeProperty = routeMappings[routeKey];
+
+    if (feeProperty && providerFees[feeProperty]) {
+      validTargets.push(target);
+    }
+  }
+
   return validTargets;
 };
+
+// Fee mapping configuration for different bridge providers
+const FEE_MAPPINGS = {
+  axelar: {
+    CELO_MAINNET: "AXL_CELO_TO_ETH",
+    MAINNET_CELO: "AXL_ETH_TO_CELO"
+  },
+  layerzero: {
+    CELO_FUSE: "LZ_CELO_TO_FUSE",
+    FUSE_CELO: "LZ_FUSE_TO_CELO",
+    CELO_MAINNET: "LZ_CELO_TO_ETH",
+    MAINNET_CELO: "LZ_ETH_TO_CELO",
+    FUSE_MAINNET: "LZ_FUSE_TO_ETH",
+    MAINNET_FUSE: "LZ_ETH_TO_FUSE"
+  }
+} as const;
 
 // Get current bridge fee for display
 export const getCurrentBridgeFee = (
@@ -104,37 +130,26 @@ export const getCurrentBridgeFee = (
 
   const sourceUpper = sourceChain.toUpperCase();
   const targetUpper = targetChain.toUpperCase();
+  const routeKey = `${sourceUpper}_${targetUpper}` as keyof typeof FEE_MAPPINGS.axelar;
 
-  if (bridgeProvider === "axelar") {
-    const axelarFees = bridgeFees.AXELAR;
-    if (sourceUpper === "CELO" && targetUpper === "MAINNET" && axelarFees.AXL_CELO_TO_ETH) {
-      return axelarFees.AXL_CELO_TO_ETH;
-    }
-    if (sourceUpper === "MAINNET" && targetUpper === "CELO" && axelarFees.AXL_ETH_TO_CELO) {
-      return axelarFees.AXL_ETH_TO_CELO;
-    }
-  } else if (bridgeProvider === "layerzero") {
-    const layerzeroFees = bridgeFees.LAYERZERO;
-    // Check specific routes first to avoid wrong matches
-    if (sourceUpper === "CELO" && targetUpper === "FUSE" && layerzeroFees.LZ_CELO_TO_FUSE) {
-      return layerzeroFees.LZ_CELO_TO_FUSE;
-    }
-    if (sourceUpper === "FUSE" && targetUpper === "CELO" && layerzeroFees.LZ_FUSE_TO_CELO) {
-      return layerzeroFees.LZ_FUSE_TO_CELO;
-    }
-    if (sourceUpper === "CELO" && targetUpper === "MAINNET" && layerzeroFees.LZ_CELO_TO_ETH) {
-      return layerzeroFees.LZ_CELO_TO_ETH;
-    }
-    if (sourceUpper === "MAINNET" && targetUpper === "CELO" && layerzeroFees.LZ_ETH_TO_CELO) {
-      return layerzeroFees.LZ_ETH_TO_CELO;
-    }
-    if (sourceUpper === "FUSE" && targetUpper === "MAINNET" && layerzeroFees.LZ_FUSE_TO_ETH) {
-      return layerzeroFees.LZ_FUSE_TO_ETH;
-    }
-    if (sourceUpper === "MAINNET" && targetUpper === "FUSE" && layerzeroFees.LZ_ETH_TO_FUSE) {
-      return layerzeroFees.LZ_ETH_TO_FUSE;
-    }
+  // Get the fee mapping for the current bridge provider
+  const providerMappings = FEE_MAPPINGS[bridgeProvider as keyof typeof FEE_MAPPINGS];
+  if (!providerMappings) {
+    return "Fee not available";
   }
 
-  return "Fee not available";
+  // Get the fee property name for this route
+  const feeProperty = providerMappings[routeKey];
+  if (!feeProperty) {
+    return "Fee not available";
+  }
+
+  // Get the fees object for this provider
+  const providerFees = bridgeFees[bridgeProvider.toUpperCase()];
+  if (!providerFees) {
+    return "Fee not available";
+  }
+
+  // Return the fee value or fallback
+  return providerFees[feeProperty] || "Fee not available";
 };

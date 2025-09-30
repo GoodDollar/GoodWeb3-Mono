@@ -35,18 +35,47 @@ export const MPBBridgeController: React.FC<IMPBBridgeControllerProps> = ({ onBri
     return v.mul(ethers.BigNumber.from(10).pow(d - 18));
   };
 
+  // Validation configuration for better readability
+  const VALIDATION_RULES = {
+    MIN_AMOUNT: ethers.BigNumber.from("1000000000000000000000"), // 1000 G$
+    MAX_AMOUNT: ethers.BigNumber.from("1000000000000000000000000"), // 1M G$
+    REASONS: {
+      MIN_AMOUNT: "minAmount",
+      MAX_AMOUNT: "maxAmount",
+      INVALID_CHAIN: "invalidChain",
+      INSUFFICIENT_BALANCE: "insufficientBalance"
+    }
+  } as const;
+
+  // Validation helper functions for better readability
+  const validateAmount = (amount: ethers.BigNumber, min: ethers.BigNumber, max: ethers.BigNumber) => {
+    if (amount.lt(min)) return VALIDATION_RULES.REASONS.MIN_AMOUNT;
+    if (amount.gt(max)) return VALIDATION_RULES.REASONS.MAX_AMOUNT;
+    return null;
+  };
+
+  const validateChain = (chain: string) => {
+    const validChains = ["fuse", "celo", "mainnet"];
+    return validChains.includes(chain) ? null : VALIDATION_RULES.REASONS.INVALID_CHAIN;
+  };
+
   // Create a stable validation function that doesn't use hooks inside
   const useCanMPBBridge = useCallback((chain: string, amountWei: string) => {
-    // Basic validation without contract calls to avoid infinite loops
+    // Parse and validate input
     const amountBN = ethers.BigNumber.from(amountWei || "0");
-    const minAmount = ethers.BigNumber.from("1000000000000000000000"); // 1000 G$
-    const maxAmount = ethers.BigNumber.from("1000000000000000000000000"); // 1M G$
 
-    if (amountBN.lt(minAmount)) {
-      return { isValid: false, reason: "minAmount" };
-    }
-    if (amountBN.gt(maxAmount)) {
-      return { isValid: false, reason: "maxAmount" };
+    // Check each validation rule and return the first failure reason
+    const validationChecks = [
+      () => validateChain(chain),
+      () => validateAmount(amountBN, VALIDATION_RULES.MIN_AMOUNT, VALIDATION_RULES.MAX_AMOUNT)
+    ];
+
+    // Find the first validation failure
+    for (const check of validationChecks) {
+      const reason = check();
+      if (reason) {
+        return { isValid: false, reason };
+      }
     }
 
     return { isValid: true, reason: "" };

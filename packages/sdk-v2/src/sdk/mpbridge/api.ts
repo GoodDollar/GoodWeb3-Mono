@@ -12,20 +12,15 @@ export const fetchBridgeFees = async () => {
   }
 };
 
-// Helper function to convert fee to wei based on currency
 export const convertFeeToWei = (fee: string, currency: string): string => {
   const feeValue = parseFloat(fee);
 
-  switch (currency.toLowerCase()) {
-    case "eth":
-      return ethers.utils.parseEther(feeValue.toString()).toString();
-    case "celo":
-      return ethers.utils.parseEther(feeValue.toString()).toString();
-    case "fuse":
-      return ethers.utils.parseEther(feeValue.toString()).toString();
-    default:
-      return ethers.utils.parseEther(feeValue.toString()).toString();
-  }
+  console.log(`Converting ${feeValue} ${currency} to wei`);
+  return ethers.utils.parseEther(feeValue.toString()).toString();
+};
+
+export const convertFeeFromWei = (weiAmount: string): string => {
+  return ethers.utils.formatUnits(weiAmount, 18);
 };
 
 // Explorer link functions

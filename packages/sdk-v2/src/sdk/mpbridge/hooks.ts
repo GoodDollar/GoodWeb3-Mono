@@ -40,12 +40,14 @@ export const useMPBBridgeLimits = (amount: string, chainId?: number) => {
     onlyWhitelisted: boolean;
   } | null>(null);
 
-  const [canBridge, setCanBridge] = useState<boolean>(true); // Default to true
+  const [canBridge, setCanBridge] = useState<boolean>(false); // Default to false until proven by contract
   const [isLoading, setIsLoading] = useState<boolean>(false); // Start with false for immediate validation
+  const [error, setError] = useState<string | null>(null); // Add error state
 
   useEffect(() => {
     if (contract && account) {
       setIsLoading(true);
+      setError(null); // Clear previous errors
 
       // Get bridge limits from contract
       contract
@@ -61,14 +63,9 @@ export const useMPBBridgeLimits = (amount: string, chainId?: number) => {
         })
         .catch(error => {
           console.error("Error getting bridge limits:", error);
-          // Set fallback limits if contract call fails
-          setLimits({
-            dailyLimit: ethers.BigNumber.from("1000000000000000000000000"), // 1M G$
-            txLimit: ethers.BigNumber.from("1000000000000000000000000"), // 1M G$
-            accountDailyLimit: ethers.BigNumber.from("1000000000000000000000000"), // 1M G$
-            minAmount: ethers.BigNumber.from("1000000000000000000000"), // 1000 G$
-            onlyWhitelisted: false
-          });
+          // Don't set fallback limits - show error to user instead
+          setError("Something went wrong while determining transaction limits. Please try again later.");
+          setLimits(null); // Clear limits to prevent validation
         });
 
       // Check if user can bridge this amount
@@ -81,11 +78,13 @@ export const useMPBBridgeLimits = (amount: string, chainId?: number) => {
           })
           .catch(error => {
             console.error("Error checking canBridge:", error);
-            setCanBridge(true); // Default to true if check fails
+            setError("Unable to verify bridge eligibility. Please try again later.");
+            setCanBridge(false); // Set to false on error to prevent bridging
           });
       } else if (!contract) {
         console.error("Bridge contract is null - cannot check canBridge");
-        setCanBridge(true); // Default to true if contract is null
+        setError("Bridge service is currently unavailable. Please try again later.");
+        setCanBridge(false);
       }
 
       setIsLoading(false);
@@ -101,39 +100,43 @@ export const useMPBBridgeLimits = (amount: string, chainId?: number) => {
   const minAmount = ethers.BigNumber.from("1000000000000000000000"); // 1000 G$
   const maxAmount = ethers.BigNumber.from("1000000000000000000000000"); // 1M G$
 
-  // Validation in progress
+  // If there's an error, return invalid with error reason
+  if (error) {
+    return { isValid: false, reason: "error", errorMessage: error };
+  }
 
+  // Basic amount validation
   if (amountBN.lt(minAmount)) {
-    return { isValid: false, reason: "minAmount" };
+    return { isValid: false, reason: "minAmount", errorMessage: undefined };
   }
   if (amountBN.gt(maxAmount)) {
-    return { isValid: false, reason: "maxAmount" };
+    return { isValid: false, reason: "maxAmount", errorMessage: undefined };
   }
 
   // If still loading contract data, return valid for now
   if (isLoading) {
-    return { isValid: true, reason: "" };
+    return { isValid: true, reason: "", errorMessage: undefined };
   }
 
-  // If no limits loaded from contract, use fallback validation (already passed basic validation above)
+  // If no limits loaded from contract due to error, return invalid
   if (!limits) {
-    return { isValid: true, reason: "" };
+    return { isValid: false, reason: "error", errorMessage: "Transaction limits unavailable" };
   }
 
   // Use contract limits for validation
   if (amountBN.lt(limits.minAmount)) {
-    return { isValid: false, reason: "minAmount" };
+    return { isValid: false, reason: "minAmount", errorMessage: undefined };
   }
 
   if (amountBN.gt(limits.txLimit)) {
-    return { isValid: false, reason: "maxAmount" };
+    return { isValid: false, reason: "maxAmount", errorMessage: undefined };
   }
 
   if (!canBridge) {
-    return { isValid: false, reason: "cannotBridge" };
+    return { isValid: false, reason: "cannotBridge", errorMessage: undefined };
   }
 
-  return { isValid: true, reason: "" };
+  return { isValid: true, reason: "", errorMessage: undefined };
 };
 
 export const useGetMPBBridgeData = (
@@ -148,16 +151,24 @@ export const useGetMPBBridgeData = (
     nativeFee: null,
     zroFee: null
   });
-  const [bridgeLimits] = useState({
-    minAmount: ethers.BigNumber.from("1000000000000000000000"), // 1000 G$
-    maxAmount: ethers.BigNumber.from("1000000000000000000000000") // 1M G$
-  });
+  const [bridgeLimits, setBridgeLimits] = useState<{
+    minAmount: ethers.BigNumber;
+    maxAmount: ethers.BigNumber;
+  } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let isMounted = true;
 
     setIsLoading(true);
+    setError(null); // Clear previous errors
+
+    // Set fallback limits for basic validation
+    setBridgeLimits({
+      minAmount: ethers.BigNumber.from("1000000000000000000000"), // 1000 G$
+      maxAmount: ethers.BigNumber.from("1000000000000000000000000") // 1M G$
+    });
     fetchBridgeFees()
       .then(fees => {
         if (!isMounted) return; // Prevent state updates if component unmounted
@@ -208,6 +219,7 @@ export const useGetMPBBridgeData = (
             });
           } else {
             console.error(`❌ No fee found for ${sourceUpper}→${targetUpper} with ${bridgeProvider}`);
+            setError(`Bridge fees not available for ${sourceUpper}→${targetUpper} route`);
             setBridgeFees({
               nativeFee: null,
               zroFee: null
@@ -215,6 +227,7 @@ export const useGetMPBBridgeData = (
           }
         } else {
           console.error("❌ Failed to fetch fees from API");
+          setError("Failed to fetch bridge fees. Please try again later.");
           setBridgeFees({
             nativeFee: null,
             zroFee: null
@@ -226,6 +239,7 @@ export const useGetMPBBridgeData = (
         if (!isMounted) return; // Prevent state updates if component unmounted
 
         console.error("Failed to fetch bridge fees:", error);
+        setError("Something went wrong while fetching bridge fees. Please try again later.");
         setBridgeFees({
           nativeFee: null,
           zroFee: null
@@ -238,7 +252,7 @@ export const useGetMPBBridgeData = (
     };
   }, [sourceChain, targetChain, bridgeProvider]);
 
-  return { bridgeFees, bridgeLimits, isLoading };
+  return { bridgeFees, bridgeLimits, isLoading, error };
 };
 
 export const useMPBBridge = (bridgeProvider: "layerzero" | "axelar" = "axelar") => {
