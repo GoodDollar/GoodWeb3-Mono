@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useState } from "react";
+import React, { useEffect, useCallback, useState, useMemo } from "react";
 import { Box, Text, VStack } from "native-base";
 import { SupportedChains } from "@gooddollar/web3sdk-v2";
 import { ethers } from "ethers";
@@ -55,16 +55,31 @@ export const MPBBridge = ({
   const wei = gdValue.value.toString();
   const [bridgeWeiAmount, setBridgeAmount] = inputTransaction;
   const [, setPendingTransaction] = pendingTransaction;
-  const { isValid, reason } = useCanMPBBridge(sourceChain, bridgeWeiAmount);
+
+  // Debounce the bridge amount for validation and estimation
+  const [debouncedBridgeAmount, setDebouncedBridgeAmount] = useState(bridgeWeiAmount);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedBridgeAmount(bridgeWeiAmount);
+    }, 300); // 300ms debounce
+
+    return () => clearTimeout(timer);
+  }, [bridgeWeiAmount]);
+
+  const { isValid, reason } = useCanMPBBridge(sourceChain, debouncedBridgeAmount);
   const { minimumAmount, expectedToReceive, nativeFee } = useMPBBridgeEstimate({
     limits,
     fees,
-    inputWei: bridgeWeiAmount,
+    inputWei: debouncedBridgeAmount,
     sourceChain
   });
 
-  const hasBalance = ethers.BigNumber.from(bridgeWeiAmount).lte(ethers.BigNumber.from(wei));
-  const isValidInput = isValid && hasBalance;
+  const hasBalance = useMemo(
+    () => ethers.BigNumber.from(debouncedBridgeAmount).lte(ethers.BigNumber.from(wei)),
+    [debouncedBridgeAmount, wei]
+  );
+  const isValidInput = useMemo(() => isValid && hasBalance, [isValid, hasBalance]);
 
   useEffect(() => {
     const validTargets = getValidTargetChains(sourceChain, bridgeFees, bridgeProvider, feesLoading);
@@ -89,13 +104,11 @@ export const MPBBridge = ({
   // Handle source chain selection
   const handleSourceChainSelect = useCallback(
     (chain: string) => {
-      console.log("🔄 Source Chain Selected:", chain);
       setSourceChain(chain);
       // Reset target chain to first valid option based on current bridge provider
       const validTargets = getValidTargetChains(chain, bridgeFees, bridgeProvider, feesLoading);
       if (validTargets.length > 0) {
         setTargetChain(validTargets[0]);
-        console.log("🔄 Target Chain Set to:", validTargets[0]);
       } else {
         // If no valid targets for current provider, switch to LayerZero (which supports more routes)
         if (bridgeProvider === "axelar") {
@@ -120,22 +133,11 @@ export const MPBBridge = ({
   );
 
   const handleTargetChainSelect = useCallback((chain: string) => {
-    console.log("🔄 Target Chain Selected:", chain);
     setTargetChain(chain);
     setShowTargetDropdown(false);
   }, []);
 
   const triggerBridge = useCallback(async () => {
-    console.log("🚀 UI Bridge Trigger Debug:", {
-      sourceChain,
-      targetChain,
-      bridgeWeiAmount: bridgeWeiAmount?.toString?.() ?? bridgeWeiAmount,
-      bridgeProvider,
-      expectedToReceiveFormatted: expectedToReceive?.format(),
-      nativeFeeFormatted: nativeFee?.format(),
-      nativeFeeWei: (nativeFee as any)?._hex ?? nativeFee?.toString?.()
-    });
-
     setBridging(true);
     setBridgingStatus("Initiating bridge transaction...");
     setPendingTransaction({ bridgeWeiAmount, expectedToReceive, nativeFee, bridgeProvider });

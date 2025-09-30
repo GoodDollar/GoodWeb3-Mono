@@ -12,10 +12,8 @@ export const fetchBridgeFees = async () => {
   }
 };
 
-export const convertFeeToWei = (fee: string, currency: string): string => {
+export const convertFeeToWei = (fee: string): string => {
   const feeValue = parseFloat(fee);
-
-  console.log(`Converting ${feeValue} ${currency} to wei`);
   return ethers.utils.parseEther(feeValue.toString()).toString();
 };
 

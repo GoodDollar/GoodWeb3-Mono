@@ -174,7 +174,7 @@ export const useGetMPBBridgeData = (
         if (!isMounted) return; // Prevent state updates if component unmounted
 
         if (fees) {
-          console.log("🔍 Raw API fees:", fees);
+          // Raw API fees fetched successfully
 
           // Use dynamic route-specific parsing based on parameters
           const sourceUpper = (sourceChain || "celo").toUpperCase();
@@ -207,18 +207,17 @@ export const useGetMPBBridgeData = (
           }
 
           if (feeString && typeof feeString === "string") {
-            // Parse the fee string (e.g., "0.1344273492537784 CELO")
-            const [feeAmount, currency] = feeString.split(" ");
-            const nativeFee = convertFeeToWei(feeAmount, currency);
+            // Parse the fee amount from the fee string (e.g., "0.1344273492537784 CELO")
+            const nativeFee = convertFeeToWei(feeString.split(" ")[0]);
 
-            console.log(`✅ Parsed fee for ${sourceUpper}→${targetUpper}: ${feeAmount} ${currency} = ${nativeFee} wei`);
+            // Fee parsed successfully for route
 
             setBridgeFees({
               nativeFee: ethers.BigNumber.from(nativeFee),
               zroFee: ethers.BigNumber.from(0)
             });
           } else {
-            console.error(`❌ No fee found for ${sourceUpper}→${targetUpper} with ${bridgeProvider}`);
+            // No fee found for route
             setError(`Bridge fees not available for ${sourceUpper}→${targetUpper} route`);
             setBridgeFees({
               nativeFee: null,
@@ -226,7 +225,7 @@ export const useGetMPBBridgeData = (
             });
           }
         } else {
-          console.error("❌ Failed to fetch fees from API");
+          // Failed to fetch fees from API
           setError("Failed to fetch bridge fees. Please try again later.");
           setBridgeFees({
             nativeFee: null,
@@ -280,7 +279,6 @@ export const useMPBBridge = (bridgeProvider: "layerzero" | "axelar" = "axelar") 
     }
 
     const logs = transferAndCall.state.receipt.logs;
-    console.log("🔍 TransferAndCall logs:", logs);
 
     // Look for BridgeRequest event by checking the topic hash directly
     // BridgeRequest event signature: BridgeRequest(uint256,uint256,address,address,uint256,uint8,uint256)
@@ -288,17 +286,14 @@ export const useMPBBridge = (bridgeProvider: "layerzero" | "axelar" = "axelar") 
 
     for (const log of logs) {
       if (log.address === bridgeContract?.address && log.topics[0] === bridgeRequestTopic) {
-        console.log("📋 Found BridgeRequest event:", log);
         // Extract the bridge ID from the last topic (index 6)
         if (log.topics[6]) {
           const bridgeId = ethers.BigNumber.from(log.topics[6]).toString();
-          console.log("🆔 Bridge ID:", bridgeId);
           return bridgeId;
         }
       }
     }
 
-    console.log("❌ No BridgeRequest event found in logs");
     return undefined;
   }, [transferAndCall.state?.status, transferAndCall.state?.receipt?.logs, bridgeContract]);
 
@@ -442,9 +437,7 @@ export const useMPBBridge = (bridgeProvider: "layerzero" | "axelar" = "axelar") 
           }
 
           if (feeString && typeof feeString === "string") {
-            // Parse the fee string (e.g., "0.13447218229501165 CELO")
-            const [feeAmount, currency] = feeString.split(" ");
-            console.log(`✅ Bridge fee: ${feeAmount} ${currency}`);
+            // Bridge fee calculated successfully
 
             const bridgeService = bridgeProvider === "layerzero" ? BridgeService.LAYERZERO : BridgeService.AXELAR;
 
@@ -459,12 +452,10 @@ export const useMPBBridge = (bridgeProvider: "layerzero" | "axelar" = "axelar") 
             void transferAndCall.send(bridgeContract?.address, bridgeRequest.amount, encoded);
           } else {
             // No fee found for this route - throw error instead of using hardcoded fallback
-            console.error(`❌ No fee found for ${sourceUpper}→${targetUpper} with ${bridgeProvider}`);
             throw new Error(`Bridge fee not available for ${sourceUpper}→${targetUpper} route`);
           }
         })
         .catch(e => {
-          console.error("MPB Bridge error:", e);
           lock.current = false; // Reset lock on error
           throw e;
         });

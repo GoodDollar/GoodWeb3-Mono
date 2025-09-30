@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo, useMemo } from "react";
 import { Box, HStack, Pressable, ChevronDownIcon, Text, VStack } from "native-base";
 import { getChainIcon, getChainColor, getChainLabel, getValidTargetChains } from "./utils";
 
@@ -79,106 +79,57 @@ interface ChainSelectorProps {
   onTargetDropdownToggle: () => void;
 }
 
-export const ChainSelector: React.FC<ChainSelectorProps> = ({
-  sourceChain,
-  targetChain,
-  showSourceDropdown,
-  showTargetDropdown,
-  bridgeFees,
-  bridgeProvider,
-  feesLoading,
-  onSourceChainSelect,
-  onTargetChainSelect,
-  onSwap,
-  onSourceDropdownToggle,
-  onTargetDropdownToggle
-}) => {
-  const availableChains = ["fuse", "celo", "mainnet"];
+export const ChainSelector: React.FC<ChainSelectorProps> = memo(
+  ({
+    sourceChain,
+    targetChain,
+    showSourceDropdown,
+    showTargetDropdown,
+    bridgeFees,
+    bridgeProvider,
+    feesLoading,
+    onSourceChainSelect,
+    onTargetChainSelect,
+    onSwap,
+    onSourceDropdownToggle,
+    onTargetDropdownToggle
+  }) => {
+    const availableChains = useMemo(() => ["fuse", "celo", "mainnet"], []);
 
-  return (
-    <HStack space={4} alignItems="center" zIndex={1000}>
-      {/* Source Chain */}
-      <VStack {...chainContainerStyles}>
-        <HStack space={3} alignItems="center">
-          <Box bg={getChainColor(sourceChain)} {...chainIconStyles}>
-            <Text color="white" fontSize="sm" fontWeight="bold">
-              {getChainIcon(sourceChain)}
-            </Text>
-          </Box>
-          <Pressable onPress={onSourceDropdownToggle} {...chainPressableStyles}>
-            <Text color="goodGrey.700" fontSize="md" fontWeight="600">
-              {getChainLabel(sourceChain)}
-            </Text>
-            <Box style={{ transform: [{ rotate: showSourceDropdown ? "180deg" : "0deg" }] }}>
-              <ChevronDownIcon size="sm" color="goodGrey.400" />
+    const validTargetChains = useMemo(
+      () => getValidTargetChains(sourceChain, bridgeFees, bridgeProvider, feesLoading),
+      [sourceChain, bridgeFees, bridgeProvider, feesLoading]
+    );
+
+    return (
+      <HStack space={4} alignItems="center" zIndex={1000}>
+        {/* Source Chain */}
+        <VStack {...chainContainerStyles}>
+          <HStack space={3} alignItems="center">
+            <Box bg={getChainColor(sourceChain)} {...chainIconStyles}>
+              <Text color="white" fontSize="sm" fontWeight="bold">
+                {getChainIcon(sourceChain)}
+              </Text>
             </Box>
-          </Pressable>
-        </HStack>
+            <Pressable onPress={onSourceDropdownToggle} {...chainPressableStyles}>
+              <Text color="goodGrey.700" fontSize="md" fontWeight="600">
+                {getChainLabel(sourceChain)}
+              </Text>
+              <Box style={{ transform: [{ rotate: showSourceDropdown ? "180deg" : "0deg" }] }}>
+                <ChevronDownIcon size="sm" color="goodGrey.400" />
+              </Box>
+            </Pressable>
+          </HStack>
 
-        {/* Source Chain Dropdown */}
-        {showSourceDropdown && (
-          <Box {...dropdownStyles}>
-            {availableChains.map(chain => (
-              <Pressable
-                key={chain}
-                onPress={() => onSourceChainSelect(chain)}
-                {...dropdownItemStyles}
-                borderBottomWidth={chain === availableChains[availableChains.length - 1] ? 0 : 1}
-              >
-                <HStack space={3} alignItems="center">
-                  <Box bg={getChainColor(chain)} {...chainIconStyles} width="6" height="6">
-                    <Text color="white" fontSize="xs" fontWeight="bold">
-                      {getChainIcon(chain)}
-                    </Text>
-                  </Box>
-                  <Text color="goodGrey.700" fontSize="md" fontWeight="500">
-                    {getChainLabel(chain)}
-                  </Text>
-                </HStack>
-              </Pressable>
-            ))}
-          </Box>
-        )}
-      </VStack>
-
-      {/* Swap Arrow */}
-      <Pressable onPress={onSwap} {...swapButtonStyles}>
-        <Text fontSize="xl" color="goodGrey.600" fontWeight="bold">
-          ⇄
-        </Text>
-      </Pressable>
-
-      {/* Target Chain */}
-      <VStack {...chainContainerStyles}>
-        <HStack space={3} alignItems="center">
-          <Box bg={getChainColor(targetChain)} {...chainIconStyles}>
-            <Text color="white" fontSize="sm" fontWeight="bold">
-              {getChainIcon(targetChain)}
-            </Text>
-          </Box>
-          <Pressable onPress={onTargetDropdownToggle} {...chainPressableStyles}>
-            <Text color="goodGrey.700" fontSize="md" fontWeight="600">
-              {getChainLabel(targetChain)}
-            </Text>
-            <Box style={{ transform: [{ rotate: showTargetDropdown ? "180deg" : "0deg" }] }}>
-              <ChevronDownIcon size="sm" color="goodGrey.400" />
-            </Box>
-          </Pressable>
-        </HStack>
-
-        {/* Target Chain Dropdown */}
-        {showTargetDropdown && (
-          <Box {...dropdownStyles}>
-            {getValidTargetChains(sourceChain, bridgeFees, bridgeProvider, feesLoading).map(chain => {
-              const validTargets = getValidTargetChains(sourceChain, bridgeFees, bridgeProvider, feesLoading);
-              const isLastItem = chain === validTargets[validTargets.length - 1];
-
-              return (
+          {/* Source Chain Dropdown */}
+          {showSourceDropdown && (
+            <Box {...dropdownStyles}>
+              {availableChains.map(chain => (
                 <Pressable
                   key={chain}
-                  onPress={() => onTargetChainSelect(chain)}
+                  onPress={() => onSourceChainSelect(chain)}
                   {...dropdownItemStyles}
-                  borderBottomWidth={isLastItem ? 0 : 1}
+                  borderBottomWidth={chain === availableChains[availableChains.length - 1] ? 0 : 1}
                 >
                   <HStack space={3} alignItems="center">
                     <Box bg={getChainColor(chain)} {...chainIconStyles} width="6" height="6">
@@ -191,11 +142,66 @@ export const ChainSelector: React.FC<ChainSelectorProps> = ({
                     </Text>
                   </HStack>
                 </Pressable>
-              );
-            })}
-          </Box>
-        )}
-      </VStack>
-    </HStack>
-  );
-};
+              ))}
+            </Box>
+          )}
+        </VStack>
+
+        {/* Swap Arrow */}
+        <Pressable onPress={onSwap} {...swapButtonStyles}>
+          <Text fontSize="xl" color="goodGrey.600" fontWeight="bold">
+            ⇄
+          </Text>
+        </Pressable>
+
+        {/* Target Chain */}
+        <VStack {...chainContainerStyles}>
+          <HStack space={3} alignItems="center">
+            <Box bg={getChainColor(targetChain)} {...chainIconStyles}>
+              <Text color="white" fontSize="sm" fontWeight="bold">
+                {getChainIcon(targetChain)}
+              </Text>
+            </Box>
+            <Pressable onPress={onTargetDropdownToggle} {...chainPressableStyles}>
+              <Text color="goodGrey.700" fontSize="md" fontWeight="600">
+                {getChainLabel(targetChain)}
+              </Text>
+              <Box style={{ transform: [{ rotate: showTargetDropdown ? "180deg" : "0deg" }] }}>
+                <ChevronDownIcon size="sm" color="goodGrey.400" />
+              </Box>
+            </Pressable>
+          </HStack>
+
+          {/* Target Chain Dropdown */}
+          {showTargetDropdown && (
+            <Box {...dropdownStyles}>
+              {validTargetChains.map(chain => {
+                const isLastItem = chain === validTargetChains[validTargetChains.length - 1];
+
+                return (
+                  <Pressable
+                    key={chain}
+                    onPress={() => onTargetChainSelect(chain)}
+                    {...dropdownItemStyles}
+                    borderBottomWidth={isLastItem ? 0 : 1}
+                  >
+                    <HStack space={3} alignItems="center">
+                      <Box bg={getChainColor(chain)} {...chainIconStyles} width="6" height="6">
+                        <Text color="white" fontSize="xs" fontWeight="bold">
+                          {getChainIcon(chain)}
+                        </Text>
+                      </Box>
+                      <Text color="goodGrey.700" fontSize="md" fontWeight="500">
+                        {getChainLabel(chain)}
+                      </Text>
+                    </HStack>
+                  </Pressable>
+                );
+              })}
+            </Box>
+          )}
+        </VStack>
+      </HStack>
+    );
+  }
+);

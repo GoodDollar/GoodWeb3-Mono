@@ -85,22 +85,6 @@ export const MPBBridgeController: React.FC<IMPBBridgeControllerProps> = ({ onBri
     async (sourceChain: string, targetChain: string) => {
       const [inputWei] = inputTransaction;
 
-      console.log("🎯 Controller Bridge Start Debug:", {
-        inputWei,
-        sourceChain,
-        targetChain,
-        originChain: originChain[0],
-        currentChainId: chainId
-      });
-
-      // Extra sanity logs for fees and overrides (printed by UI component as well)
-      console.log("🔎 Bridge pre-flight checks:", {
-        hasNativeFee: Boolean(bridgeFees?.nativeFee),
-        hasZroFee: Boolean(bridgeFees?.zroFee),
-        nativeFeeWei: bridgeFees?.nativeFee?._hex ?? bridgeFees?.nativeFee?.toString?.(),
-        zroFeeWei: bridgeFees?.zroFee?._hex ?? bridgeFees?.zroFee?.toString?.()
-      });
-
       try {
         await sendMPBBridgeRequest(inputWei, sourceChain, targetChain);
       } catch (e: any) {
@@ -113,7 +97,6 @@ export const MPBBridgeController: React.FC<IMPBBridgeControllerProps> = ({ onBri
   useEffect(() => {
     if (bridgeRequestStatus?.status === "Exception") {
       // Handle error silently for now
-      console.error("Bridge request failed:", bridgeRequestStatus.errorMessage);
     }
   }, [bridgeRequestStatus]);
 

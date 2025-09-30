@@ -24,18 +24,34 @@ const DEFAULT_BRIDGE_PROVIDER = "layerzero";
 // Recent transaction threshold (30 days in seconds)
 const RECENT_TRANSACTION_THRESHOLD = 30 * 24 * 60 * 60;
 
+// Cache for bridge fees to prevent unnecessary API calls
+const feesCache = new Map<string, { data: any; timestamp: number }>();
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
 export const useBridgeFees = () => {
   const [fees, setFees] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const cacheKey = "bridge-fees";
+    const cached = feesCache.get(cacheKey);
+    const now = Date.now();
+
+    // Return cached data if it's still valid
+    if (cached && now - cached.timestamp < CACHE_DURATION) {
+      setFees(cached.data);
+      setLoading(false);
+      return;
+    }
+
     fetchBridgeFees()
       .then((feesData: any) => {
+        // Cache the fees data
+        feesCache.set(cacheKey, { data: feesData, timestamp: now });
         setFees(feesData);
         setLoading(false);
       })
-      .catch((error: any) => {
-        console.error("Error fetching bridge fees:", error);
+      .catch(() => {
         setLoading(false);
       });
   }, []);
@@ -63,41 +79,55 @@ export const useMPBBridgeEstimate = ({
   nativeFee: CurrencyValue;
   zroFee: CurrencyValue;
 } => {
-  const chain = sourceChain === "celo" ? 42220 : sourceChain === "mainnet" ? 1 : 122;
+  const chain = useMemo(() => (sourceChain === "celo" ? 42220 : sourceChain === "mainnet" ? 1 : 122), [sourceChain]);
   const { defaultEnv } = useGetEnvChainId(chain);
 
-  const { minimumAmount, maximumAmount, bridgeFee, input } = useG$Amounts(
-    {
+  const amountsConfig = useMemo(
+    () => ({
       minimumAmount: limits?.[sourceChain]?.minAmount,
       maximumAmount: limits?.[sourceChain]?.maxAmount,
       bridgeFee: fees?.[sourceChain]?.nativeFee,
       minFee: fees?.[sourceChain]?.nativeFee,
       maxFee: fees?.[sourceChain]?.nativeFee,
       input: BigNumber.from(inputWei)
-    },
-    "G$",
-    chain
+    }),
+    [limits, fees, sourceChain, inputWei]
   );
 
+  const { minimumAmount, maximumAmount, bridgeFee, input } = useG$Amounts(amountsConfig, "G$", chain);
+
   // For MPB, the fee is the native fee from LayerZero/Axelar
-  const expectedFee = fees?.[sourceChain]?.nativeFee
-    ? G$Amount("G$", fees[sourceChain].nativeFee, chain, defaultEnv)
-    : G$Amount("G$", BigNumber.from(0), chain, defaultEnv);
+  const expectedFee = useMemo(
+    () =>
+      fees?.[sourceChain]?.nativeFee
+        ? G$Amount("G$", fees[sourceChain].nativeFee, chain, defaultEnv)
+        : G$Amount("G$", BigNumber.from(0), chain, defaultEnv),
+    [fees, sourceChain, chain, defaultEnv]
+  );
 
   // The fee is paid in the native token (CELO, ETH, etc.), not in G$
-  const expectedToReceive = input;
+  const expectedToReceive = useMemo(() => input, [input]);
 
-  return {
-    expectedFee,
-    expectedToReceive,
-    minimumAmount,
-    maximumAmount,
-    bridgeFee,
-    nativeFee: expectedFee,
-    zroFee: fees?.[sourceChain]?.zroFee
-      ? G$Amount("G$", fees[sourceChain].zroFee, chain, defaultEnv)
-      : G$Amount("G$", BigNumber.from(0), chain, defaultEnv)
-  };
+  const zroFee = useMemo(
+    () =>
+      fees?.[sourceChain]?.zroFee
+        ? G$Amount("G$", fees[sourceChain].zroFee, chain, defaultEnv)
+        : G$Amount("G$", BigNumber.from(0), chain, defaultEnv),
+    [fees, sourceChain, chain, defaultEnv]
+  );
+
+  return useMemo(
+    () => ({
+      expectedFee,
+      expectedToReceive,
+      minimumAmount,
+      maximumAmount,
+      bridgeFee,
+      nativeFee: expectedFee,
+      zroFee
+    }),
+    [expectedFee, expectedToReceive, minimumAmount, maximumAmount, bridgeFee, zroFee]
+  );
 };
 
 // Hook to get balances for all chains
@@ -161,10 +191,13 @@ export const useDebouncedTransactionHistory = (delay = 1000) => {
     };
   }, [realTransactionHistory, delay]);
 
-  return {
-    realTransactionHistory: debouncedHistory,
-    historyLoading
-  };
+  return useMemo(
+    () => ({
+      realTransactionHistory: debouncedHistory,
+      historyLoading
+    }),
+    [debouncedHistory, historyLoading]
+  );
 };
 
 export const useConvertedTransactionHistory = (realTransactionHistory: any[] | undefined, sourceChain: string) => {
