@@ -9,7 +9,21 @@ import { TransactionStatus } from "@usedapp/core";
 import { useGetContract } from "../base/react";
 import { IGoodDollar } from "@gooddollar/goodprotocol/types";
 import { MPBBridgeABI, MPB_CONTRACTS, BridgeService, MPBBridgeData, BridgeRequest } from "./types";
-import { fetchBridgeFees, convertFeeToWei } from "./api";
+import { fetchBridgeFees } from "./api";
+import {
+  BRIDGE_CONSTANTS,
+  VALIDATION_REASONS,
+  ERROR_MESSAGES,
+  BridgeProvider,
+  safeBigNumber,
+  resetStates,
+  createEmptyBridgeFees,
+  handleError,
+  getChainName,
+  getTargetChainId,
+  getSourceChainId,
+  calculateBridgeFees
+} from "./constants";
 
 export const useGetMPBContracts = () => {
   const { library } = useEthers();
@@ -27,235 +41,258 @@ export const useGetMPBContracts = () => {
   };
 };
 
-export const useMPBBridgeLimits = (amount: string, chainId?: number) => {
+// Types for better readability
+interface BridgeLimits {
+  dailyLimit: ethers.BigNumber;
+  txLimit: ethers.BigNumber;
+  accountDailyLimit: ethers.BigNumber;
+  minAmount: ethers.BigNumber;
+  onlyWhitelisted: boolean;
+}
+
+interface ValidationResult {
+  isValid: boolean;
+  reason: string;
+  errorMessage?: string;
+}
+
+export const useMPBBridgeLimits = (amount: string, chainId?: number): ValidationResult => {
   const { account } = useEthers();
   const mpbContracts = useGetMPBContracts();
-  const contract = mpbContracts[chainId || 122];
+  const targetChainId = chainId || BRIDGE_CONSTANTS.DEFAULT_CHAIN_ID;
+  const bridgeContract = mpbContracts[targetChainId];
 
-  const [limits, setLimits] = useState<{
-    dailyLimit: ethers.BigNumber;
-    txLimit: ethers.BigNumber;
-    accountDailyLimit: ethers.BigNumber;
-    minAmount: ethers.BigNumber;
-    onlyWhitelisted: boolean;
-  } | null>(null);
+  const [bridgeLimits, setBridgeLimits] = useState<BridgeLimits | null>(null);
+  const [canUserBridge, setCanUserBridge] = useState<boolean>(false);
+  const [isLoadingLimits, setIsLoadingLimits] = useState<boolean>(false);
+  const [bridgeError, setBridgeError] = useState<string | null>(null);
 
-  const [canBridge, setCanBridge] = useState<boolean>(false); // Default to false until proven by contract
-  const [isLoading, setIsLoading] = useState<boolean>(false); // Start with false for immediate validation
-  const [error, setError] = useState<string | null>(null); // Add error state
-
-  useEffect(() => {
-    if (contract && account) {
-      setIsLoading(true);
-      setError(null); // Clear previous errors
-
-      // Get bridge limits from contract
-      contract
-        .bridgeLimits()
-        .then((bridgeLimits: any) => {
-          setLimits({
-            dailyLimit: bridgeLimits.dailyLimit,
-            txLimit: bridgeLimits.txLimit,
-            accountDailyLimit: bridgeLimits.accountDailyLimit,
-            minAmount: bridgeLimits.minAmount,
-            onlyWhitelisted: bridgeLimits.onlyWhitelisted
-          });
-        })
-        .catch(error => {
-          console.error("Error getting bridge limits:", error);
-          // Don't set fallback limits - show error to user instead
-          setError("Something went wrong while determining transaction limits. Please try again later.");
-          setLimits(null); // Clear limits to prevent validation
-        });
-
-      // Check if user can bridge this amount
-      const amountBN = ethers.BigNumber.from(amount || "0");
-      if (amountBN.gt(0) && contract) {
-        contract
-          .canBridge(account, amountBN)
-          .then(result => {
-            setCanBridge(result);
-          })
-          .catch(error => {
-            console.error("Error checking canBridge:", error);
-            setError("Unable to verify bridge eligibility. Please try again later.");
-            setCanBridge(false); // Set to false on error to prevent bridging
-          });
-      } else if (!contract) {
-        console.error("Bridge contract is null - cannot check canBridge");
-        setError("Bridge service is currently unavailable. Please try again later.");
-        setCanBridge(false);
+  // Helper function to validate bridge eligibility
+  const validateBridgeEligibility = useCallback(async (contract: any, account: string, amountWei: string) => {
+    try {
+      const amountBigNumber = safeBigNumber(amountWei);
+      if (amountBigNumber.gt(0)) {
+        const canBridge = await contract.canBridge(account, amountBigNumber);
+        setCanUserBridge(canBridge);
       }
-
-      setIsLoading(false);
-    } else {
-      setIsLoading(false);
+    } catch (error) {
+      handleError(error, "bridge eligibility", setBridgeError, setCanUserBridge, false);
     }
-  }, [contract, account, amount]);
+  }, []);
 
-  const amountBN = ethers.BigNumber.from(amount || "0");
+  // Helper function to fetch bridge limits
+  const fetchBridgeLimits = useCallback(async (contract: any) => {
+    try {
+      const limits = await contract.bridgeLimits();
+      setBridgeLimits({
+        dailyLimit: limits.dailyLimit,
+        txLimit: limits.txLimit,
+        accountDailyLimit: limits.accountDailyLimit,
+        minAmount: limits.minAmount,
+        onlyWhitelisted: limits.onlyWhitelisted
+      });
+    } catch (error) {
+      handleError(error, "bridge limits", setBridgeError, setBridgeLimits, null);
+    }
+  }, []);
 
-  // Always do basic validation first (immediate response)
-  // Use a higher minimum amount to match contract requirements
-  const minAmount = ethers.BigNumber.from("1000000000000000000000"); // 1000 G$
-  const maxAmount = ethers.BigNumber.from("1000000000000000000000000"); // 1M G$
+  // Main effect to load bridge data
+  useEffect(() => {
+    if (!bridgeContract || !account) {
+      setIsLoadingLimits(false);
+      return;
+    }
 
-  // If there's an error, return invalid with error reason
-  if (error) {
-    return { isValid: false, reason: "error", errorMessage: error };
+    setIsLoadingLimits(true);
+    setBridgeError(null);
+
+    const loadBridgeData = async () => {
+      await Promise.allSettled([
+        fetchBridgeLimits(bridgeContract),
+        validateBridgeEligibility(bridgeContract, account, amount)
+      ]);
+      setIsLoadingLimits(false);
+    };
+
+    void loadBridgeData();
+  }, [bridgeContract, account, amount, fetchBridgeLimits, validateBridgeEligibility]);
+
+  // Convert amount to BigNumber for validation
+  const amountBigNumber = safeBigNumber(amount);
+
+  // Helper function to validate amount against limits
+  const validateAmount = (amount: ethers.BigNumber, minAmount: ethers.BigNumber, maxAmount: ethers.BigNumber) => {
+    if (amount.lt(minAmount)) {
+      return { isValid: false, reason: VALIDATION_REASONS.MIN_AMOUNT };
+    }
+    if (amount.gt(maxAmount)) {
+      return { isValid: false, reason: VALIDATION_REASONS.MAX_AMOUNT };
+    }
+    return { isValid: true, reason: "" };
+  };
+
+  // Early return for errors
+  if (bridgeError) {
+    return {
+      isValid: false,
+      reason: VALIDATION_REASONS.ERROR,
+      errorMessage: bridgeError
+    };
   }
 
-  // Basic amount validation
-  if (amountBN.lt(minAmount)) {
-    return { isValid: false, reason: "minAmount", errorMessage: undefined };
-  }
-  if (amountBN.gt(maxAmount)) {
-    return { isValid: false, reason: "maxAmount", errorMessage: undefined };
+  // Basic amount validation with hardcoded limits
+  const basicValidation = validateAmount(amountBigNumber, BRIDGE_CONSTANTS.MIN_AMOUNT, BRIDGE_CONSTANTS.MAX_AMOUNT);
+  if (!basicValidation.isValid) {
+    return basicValidation;
   }
 
-  // If still loading contract data, return valid for now
-  if (isLoading) {
+  // Return valid while loading (optimistic validation)
+  if (isLoadingLimits) {
     return { isValid: true, reason: "", errorMessage: undefined };
   }
 
-  // If no limits loaded from contract due to error, return invalid
-  if (!limits) {
-    return { isValid: false, reason: "error", errorMessage: "Transaction limits unavailable" };
+  // Return error if limits couldn't be loaded
+  if (!bridgeLimits) {
+    return {
+      isValid: false,
+      reason: VALIDATION_REASONS.ERROR,
+      errorMessage: ERROR_MESSAGES.TRANSACTION_LIMITS_UNAVAILABLE
+    };
   }
 
-  // Use contract limits for validation
-  if (amountBN.lt(limits.minAmount)) {
-    return { isValid: false, reason: "minAmount", errorMessage: undefined };
+  // Validate against contract limits
+  const contractValidation = validateAmount(amountBigNumber, bridgeLimits.minAmount, bridgeLimits.txLimit);
+  if (!contractValidation.isValid) {
+    return contractValidation;
   }
 
-  if (amountBN.gt(limits.txLimit)) {
-    return { isValid: false, reason: "maxAmount", errorMessage: undefined };
-  }
-
-  if (!canBridge) {
-    return { isValid: false, reason: "cannotBridge", errorMessage: undefined };
+  // Check bridge eligibility
+  if (!canUserBridge) {
+    return {
+      isValid: false,
+      reason: VALIDATION_REASONS.CANNOT_BRIDGE,
+      errorMessage: undefined
+    };
   }
 
   return { isValid: true, reason: "", errorMessage: undefined };
 };
 
+// Types for better readability
+interface BridgeFees {
+  nativeFee: ethers.BigNumber | null;
+  zroFee: ethers.BigNumber | null;
+}
+
+interface BridgeLimitsData {
+  minAmount: ethers.BigNumber;
+  maxAmount: ethers.BigNumber;
+}
+
 export const useGetMPBBridgeData = (
   sourceChain?: string,
   targetChain?: string,
-  bridgeProvider: "layerzero" | "axelar" = "layerzero"
+  bridgeProvider: BridgeProvider = "layerzero"
 ): MPBBridgeData => {
-  const [bridgeFees, setBridgeFees] = useState<{
-    nativeFee: ethers.BigNumber | null;
-    zroFee: ethers.BigNumber | null;
-  }>({
-    nativeFee: null,
-    zroFee: null
-  });
-  const [bridgeLimits, setBridgeLimits] = useState<{
-    minAmount: ethers.BigNumber;
-    maxAmount: ethers.BigNumber;
-  } | null>(null);
+  const [bridgeFees, setBridgeFees] = useState<BridgeFees>(createEmptyBridgeFees());
+  const [bridgeLimits, setBridgeLimits] = useState<BridgeLimitsData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Helper function to set fallback limits
+  const setFallbackLimits = useCallback(() => {
+    setBridgeLimits({
+      minAmount: BRIDGE_CONSTANTS.MIN_AMOUNT,
+      maxAmount: BRIDGE_CONSTANTS.MAX_AMOUNT
+    });
+  }, []);
+
+  // Helper function to calculate fees using the service
+  const calculateFees = useCallback((fees: any, source: string, target: string, provider: BridgeProvider) => {
+    const calculatedFees = calculateBridgeFees(fees, provider, source, target);
+
+    if (calculatedFees.nativeFee) {
+      setBridgeFees(calculatedFees);
+    } else {
+      const sourceUpper = source.toUpperCase();
+      const targetUpper = target.toUpperCase();
+      setError(`Bridge fees not available for ${sourceUpper}→${targetUpper} route`);
+      setBridgeFees(createEmptyBridgeFees());
+    }
+  }, []);
+
+  // Helper function to handle fee fetching errors
+  const handleFeeError = useCallback((error: any) => {
+    handleError(error, "bridge fees", setError, setBridgeFees, createEmptyBridgeFees());
+  }, []);
+
+  // Main effect to load bridge data
   useEffect(() => {
     let isMounted = true;
 
-    setIsLoading(true);
-    setError(null); // Clear previous errors
+    resetStates(setIsLoading, setError);
+    setFallbackLimits();
 
-    // Set fallback limits for basic validation
-    setBridgeLimits({
-      minAmount: ethers.BigNumber.from("1000000000000000000000"), // 1000 G$
-      maxAmount: ethers.BigNumber.from("1000000000000000000000000") // 1M G$
-    });
-    fetchBridgeFees()
-      .then(fees => {
-        if (!isMounted) return; // Prevent state updates if component unmounted
+    const loadBridgeData = async () => {
+      try {
+        const fees = await fetchBridgeFees();
+
+        if (!isMounted) return;
 
         if (fees) {
-          // Raw API fees fetched successfully
-
-          // Use dynamic route-specific parsing based on parameters
-          const sourceUpper = (sourceChain || "celo").toUpperCase();
-          const targetUpper = (targetChain || "fuse").toUpperCase();
-          let feeString: string | null = null;
-
-          if (bridgeProvider === "axelar") {
-            const axelarFees = fees.AXELAR;
-            if (sourceUpper === "CELO" && targetUpper === "MAINNET" && axelarFees.AXL_CELO_TO_ETH) {
-              feeString = axelarFees.AXL_CELO_TO_ETH;
-            }
-            if (sourceUpper === "MAINNET" && targetUpper === "CELO" && axelarFees.AXL_ETH_TO_CELO) {
-              feeString = axelarFees.AXL_ETH_TO_CELO;
-            }
-          } else if (bridgeProvider === "layerzero") {
-            const layerzeroFees = fees.LAYERZERO;
-            if (sourceUpper === "CELO" && targetUpper === "FUSE" && layerzeroFees.LZ_CELO_TO_FUSE) {
-              feeString = layerzeroFees.LZ_CELO_TO_FUSE;
-            } else if (sourceUpper === "FUSE" && targetUpper === "CELO" && layerzeroFees.LZ_FUSE_TO_CELO) {
-              feeString = layerzeroFees.LZ_FUSE_TO_CELO;
-            } else if (sourceUpper === "CELO" && targetUpper === "MAINNET" && layerzeroFees.LZ_CELO_TO_ETH) {
-              feeString = layerzeroFees.LZ_CELO_TO_ETH;
-            } else if (sourceUpper === "MAINNET" && targetUpper === "CELO" && layerzeroFees.LZ_ETH_TO_CELO) {
-              feeString = layerzeroFees.LZ_ETH_TO_CELO;
-            } else if (sourceUpper === "FUSE" && targetUpper === "MAINNET" && layerzeroFees.LZ_FUSE_TO_ETH) {
-              feeString = layerzeroFees.LZ_FUSE_TO_ETH;
-            } else if (sourceUpper === "MAINNET" && targetUpper === "FUSE" && layerzeroFees.LZ_ETH_TO_FUSE) {
-              feeString = layerzeroFees.LZ_ETH_TO_FUSE;
-            }
-          }
-
-          if (feeString && typeof feeString === "string") {
-            // Parse the fee amount from the fee string (e.g., "0.1344273492537784 CELO")
-            const nativeFee = convertFeeToWei(feeString.split(" ")[0]);
-
-            // Fee parsed successfully for route
-
-            setBridgeFees({
-              nativeFee: ethers.BigNumber.from(nativeFee),
-              zroFee: ethers.BigNumber.from(0)
-            });
-          } else {
-            // No fee found for route
-            setError(`Bridge fees not available for ${sourceUpper}→${targetUpper} route`);
-            setBridgeFees({
-              nativeFee: null,
-              zroFee: null
-            });
-          }
+          const sourceChainName = sourceChain || "celo";
+          const targetChainName = targetChain || "fuse";
+          calculateFees(fees, sourceChainName, targetChainName, bridgeProvider);
         } else {
-          // Failed to fetch fees from API
-          setError("Failed to fetch bridge fees. Please try again later.");
-          setBridgeFees({
-            nativeFee: null,
-            zroFee: null
-          });
+          setError(ERROR_MESSAGES.BRIDGE_FEES_ERROR);
+          setBridgeFees(createEmptyBridgeFees());
         }
-        setIsLoading(false);
-      })
-      .catch(error => {
-        if (!isMounted) return; // Prevent state updates if component unmounted
+      } catch (error) {
+        if (isMounted) {
+          handleFeeError(error);
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    };
 
-        console.error("Failed to fetch bridge fees:", error);
-        setError("Something went wrong while fetching bridge fees. Please try again later.");
-        setBridgeFees({
-          nativeFee: null,
-          zroFee: null
-        });
-        setIsLoading(false);
-      });
+    void loadBridgeData();
 
     return () => {
       isMounted = false;
     };
-  }, [sourceChain, targetChain, bridgeProvider]);
+  }, [sourceChain, targetChain, bridgeProvider, setFallbackLimits, calculateFees, handleFeeError]);
 
   return { bridgeFees, bridgeLimits, isLoading, error };
 };
 
-export const useMPBBridge = (bridgeProvider: "layerzero" | "axelar" = "axelar") => {
-  const lock = useRef(false);
+// Helper function to extract bridge request ID from logs
+const extractBridgeRequestId = (logs: any[], bridgeContract: any): string | undefined => {
+  const bridgeRequestTopic = BRIDGE_CONSTANTS.BRIDGE_REQUEST_TOPIC;
+
+  for (const log of logs) {
+    if (log.address === bridgeContract?.address && log.topics[0] === bridgeRequestTopic) {
+      const bridgeIdTopicIndex = BRIDGE_CONSTANTS.BRIDGE_ID_TOPIC_INDEX;
+      if (log.topics[bridgeIdTopicIndex]) {
+        return safeBigNumber(log.topics[bridgeIdTopicIndex]).toString();
+      }
+    }
+  }
+  return undefined;
+};
+
+// Helper function to get chain names from IDs
+const getChainNames = (sourceChainId: number, targetChainId: number) => {
+  return {
+    source: getChainName(sourceChainId),
+    target: getChainName(targetChainId)
+  };
+};
+
+export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar") => {
+  const bridgeLock = useRef(false);
   const { switchNetwork } = useSwitchNetwork();
   const { account, chainId } = useEthers();
   const mpbContracts = useGetMPBContracts();
@@ -266,35 +303,18 @@ export const useMPBBridge = (bridgeProvider: "layerzero" | "axelar" = "axelar") 
   const gdContract = useGetContract("GoodDollar", true, "base", chainId) as IGoodDollar;
 
   // Use transferAndCall on the G$ token contract to transfer and call bridge in one transaction
-  const bridgeContract = mpbContracts[chainId || 122];
+  const bridgeContract = mpbContracts[chainId || BRIDGE_CONSTANTS.DEFAULT_CHAIN_ID];
   const transferAndCall = useContractFunction(gdContract, "transferAndCall", {
     transactionName: "MPBBridgeTransfer"
   });
 
   // Extract bridge request ID from transferAndCall logs
-  // Only run this when we have a successful transaction
   const bridgeRequestId = useMemo(() => {
     if (transferAndCall.state?.status !== "Success" || !transferAndCall.state?.receipt?.logs) {
       return undefined;
     }
 
-    const logs = transferAndCall.state.receipt.logs;
-
-    // Look for BridgeRequest event by checking the topic hash directly
-    // BridgeRequest event signature: BridgeRequest(uint256,uint256,address,address,uint256,uint8,uint256)
-    const bridgeRequestTopic = "0x4246d22454f5bd543c70e6ffcca20eed2dcf09d3beef6d39e415385538b02d0a";
-
-    for (const log of logs) {
-      if (log.address === bridgeContract?.address && log.topics[0] === bridgeRequestTopic) {
-        // Extract the bridge ID from the last topic (index 6)
-        if (log.topics[6]) {
-          const bridgeId = ethers.BigNumber.from(log.topics[6]).toString();
-          return bridgeId;
-        }
-      }
-    }
-
-    return undefined;
+    return extractBridgeRequestId(transferAndCall.state.receipt.logs, bridgeContract);
   }, [transferAndCall.state?.status, transferAndCall.state?.receipt?.logs, bridgeContract]);
 
   // Poll target chain for bridge completion
@@ -344,32 +364,22 @@ export const useMPBBridge = (bridgeProvider: "layerzero" | "axelar" = "axelar") 
   const sendMPBBridgeRequest = useCallback(
     async (amount: string, sourceChain: string, targetChain: string, target = account) => {
       setBridgeRequest(undefined);
-      lock.current = false;
+      bridgeLock.current = false;
       transferAndCall.resetState();
 
-      const targetChainId =
-        targetChain === "fuse"
-          ? SupportedChains.FUSE
-          : targetChain === "celo"
-          ? SupportedChains.CELO
-          : SupportedChains.MAINNET;
-      const sourceChainId =
-        sourceChain === "fuse"
-          ? SupportedChains.FUSE
-          : sourceChain === "celo"
-          ? SupportedChains.CELO
-          : SupportedChains.MAINNET;
+      const targetChainId = getTargetChainId(targetChain);
+      const sourceChainId = getSourceChainId(sourceChain);
 
-      await (async () => {
+      try {
         if (sourceChainId !== chainId) {
           await switchNetwork(sourceChainId);
         }
 
         setBridgeRequest({ amount, sourceChainId, targetChainId, target });
-      })().catch(e => {
-        console.error("MPB Bridge error:", e);
-        throw e;
-      });
+      } catch (error) {
+        console.error("MPB Bridge error:", error);
+        throw error;
+      }
     },
     [account, transferAndCall, chainId, switchNetwork]
   );
@@ -378,89 +388,58 @@ export const useMPBBridge = (bridgeProvider: "layerzero" | "axelar" = "axelar") 
   useEffect(() => {
     if (transferAndCall.state.status === "Exception") {
       console.error("TransferAndCall failed:", transferAndCall.state.errorMessage);
-      lock.current = false; // Reset lock so user can try again
+      bridgeLock.current = false; // Reset lock so user can try again
     }
   }, [transferAndCall.state.status]);
 
+  // Helper function to execute bridge transaction
+  const executeBridgeTransaction = useCallback(
+    async (bridgeRequest: BridgeRequest, fees: any) => {
+      const { source, target } = getChainNames(bridgeRequest.sourceChainId, bridgeRequest.targetChainId);
+
+      const calculatedFees = calculateBridgeFees(fees, bridgeProvider, source, target);
+
+      if (!calculatedFees.nativeFee) {
+        const sourceUpper = source.toUpperCase();
+        const targetUpper = target.toUpperCase();
+        throw new Error(`Bridge fee not available for ${sourceUpper}→${targetUpper} route`);
+      }
+
+      const bridgeService = bridgeProvider === "layerzero" ? BridgeService.LAYERZERO : BridgeService.AXELAR;
+
+      // Encode the bridge parameters for transferAndCall
+      const encoded = ethers.utils.defaultAbiCoder.encode(
+        ["uint256", "address", "uint8"],
+        [bridgeRequest.targetChainId, bridgeRequest.target || account, bridgeService]
+      );
+
+      // Use transferAndCall to transfer tokens and call bridge in one transaction
+      void transferAndCall.send(bridgeContract?.address, bridgeRequest.amount, encoded);
+    },
+    [bridgeProvider, bridgeContract, account]
+  );
+
   // Trigger the bridge request using transferAndCall
   useEffect(() => {
-    if (transferAndCall.state.status === "None" && bridgeRequest && account && !lock.current) {
-      lock.current = true;
+    if (transferAndCall.state.status === "None" && bridgeRequest && account && !bridgeLock.current) {
+      bridgeLock.current = true;
       console.log("🌉 Starting bridge process with transferAndCall...");
 
-      // Get fee estimate from GoodDollar Bridge API
       fetchBridgeFees()
         .then(fees => {
-          // Get the correct fee based on source, target, and bridge provider
-          const sourceChainName =
-            bridgeRequest.sourceChainId === SupportedChains.FUSE
-              ? "fuse"
-              : bridgeRequest.sourceChainId === SupportedChains.CELO
-              ? "celo"
-              : "mainnet";
-          const targetChainName =
-            bridgeRequest.targetChainId === SupportedChains.FUSE
-              ? "fuse"
-              : bridgeRequest.targetChainId === SupportedChains.CELO
-              ? "celo"
-              : "mainnet";
-
-          // Use the same fee parsing logic as the UI component
-          const sourceUpper = sourceChainName.toUpperCase();
-          const targetUpper = targetChainName.toUpperCase();
-          let feeString: string | null = null;
-
-          if (bridgeProvider === "axelar") {
-            const axelarFees = fees.AXELAR;
-            if (sourceUpper === "CELO" && targetUpper === "MAINNET" && axelarFees.AXL_CELO_TO_ETH) {
-              feeString = axelarFees.AXL_CELO_TO_ETH;
-            }
-            if (sourceUpper === "MAINNET" && targetUpper === "CELO" && axelarFees.AXL_ETH_TO_CELO) {
-              feeString = axelarFees.AXL_ETH_TO_CELO;
-            }
-          } else if (bridgeProvider === "layerzero") {
-            const layerzeroFees = fees.LAYERZERO;
-            // Check specific routes first to avoid wrong matches
-            if (sourceUpper === "CELO" && targetUpper === "FUSE" && layerzeroFees.LZ_CELO_TO_FUSE) {
-              feeString = layerzeroFees.LZ_CELO_TO_FUSE;
-            } else if (sourceUpper === "FUSE" && targetUpper === "CELO" && layerzeroFees.LZ_FUSE_TO_CELO) {
-              feeString = layerzeroFees.LZ_FUSE_TO_CELO;
-            } else if (sourceUpper === "CELO" && targetUpper === "MAINNET" && layerzeroFees.LZ_CELO_TO_ETH) {
-              feeString = layerzeroFees.LZ_CELO_TO_ETH;
-            } else if (sourceUpper === "MAINNET" && targetUpper === "CELO" && layerzeroFees.LZ_ETH_TO_CELO) {
-              feeString = layerzeroFees.LZ_ETH_TO_CELO;
-            } else if (sourceUpper === "FUSE" && targetUpper === "MAINNET" && layerzeroFees.LZ_FUSE_TO_ETH) {
-              feeString = layerzeroFees.LZ_FUSE_TO_ETH;
-            } else if (sourceUpper === "MAINNET" && targetUpper === "FUSE" && layerzeroFees.LZ_ETH_TO_FUSE) {
-              feeString = layerzeroFees.LZ_ETH_TO_FUSE;
-            }
-          }
-
-          if (feeString && typeof feeString === "string") {
-            // Bridge fee calculated successfully
-
-            const bridgeService = bridgeProvider === "layerzero" ? BridgeService.LAYERZERO : BridgeService.AXELAR;
-
-            // Encode the bridge parameters for transferAndCall
-            const encoded = ethers.utils.defaultAbiCoder.encode(
-              ["uint256", "address", "uint8"],
-              [bridgeRequest.targetChainId, bridgeRequest.target || account, bridgeService]
-            );
-
-            // Use transferAndCall to transfer tokens and call bridge in one transaction
-            // Note: Native fees are handled by the bridge contract internally
-            void transferAndCall.send(bridgeContract?.address, bridgeRequest.amount, encoded);
+          if (fees) {
+            return executeBridgeTransaction(bridgeRequest, fees);
           } else {
-            // No fee found for this route - throw error instead of using hardcoded fallback
-            throw new Error(`Bridge fee not available for ${sourceUpper}→${targetUpper} route`);
+            throw new Error("Failed to fetch bridge fees");
           }
         })
-        .catch(e => {
-          lock.current = false; // Reset lock on error
-          throw e;
+        .catch(error => {
+          bridgeLock.current = false; // Reset lock on error
+          console.error("Bridge execution error:", error);
+          throw error;
         });
     }
-  }, [transferAndCall.state.status, bridgeRequest, account, bridgeProvider, bridgeContract]);
+  }, [transferAndCall.state.status, bridgeRequest, account, executeBridgeTransaction]);
 
   return {
     sendMPBBridgeRequest,

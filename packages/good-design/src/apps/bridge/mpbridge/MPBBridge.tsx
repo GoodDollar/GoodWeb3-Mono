@@ -82,8 +82,8 @@ export const MPBBridge = ({
   const isValidInput = useMemo(() => isValid && hasBalance, [isValid, hasBalance]);
 
   useEffect(() => {
-    const validTargets = getValidTargetChains(sourceChain, bridgeFees, bridgeProvider, feesLoading);
-    if (validTargets.length > 0 && !validTargets.includes(targetChain)) {
+    const validTargets = getValidTargetChains(sourceChain as any, bridgeFees, bridgeProvider, feesLoading);
+    if (validTargets.length > 0 && !validTargets.includes(targetChain as any)) {
       setTargetChain(validTargets[0]);
     } else if (validTargets.length === 0 && bridgeProvider === "axelar" && sourceChain === "fuse") {
       setBridgeProvider("layerzero");
@@ -273,7 +273,7 @@ export const MPBBridge = ({
               setBridgeAmount={setBridgeAmount}
               minimumAmount={minimumAmount}
               isValid={isValid}
-              reason={reason}
+              reason={reason as any}
               balance={getBalanceForChain(sourceChain)}
             />
 

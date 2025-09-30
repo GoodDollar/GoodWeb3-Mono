@@ -161,39 +161,32 @@ const MPBTransactionDetailsContent = ({ transaction }: { transaction: BridgeTran
   const txDate = date ? new Date(date).toLocaleDateString() + " " + new Date(date).toLocaleTimeString() : "";
 
   // Determine progress based on status
-  const getProgressSteps = () => {
-    switch (status) {
-      case "completed":
-        return {
-          sourceGateway: "completed" as const,
-          destGateway: "completed" as const,
-          executed: "completed" as const
-        };
-      case "pending":
-        return {
-          sourceGateway: "completed" as const,
-          destGateway: "pending" as const,
-          executed: "pending" as const
-        };
-      case "bridging":
-        return {
-          sourceGateway: "completed" as const,
-          destGateway: "bridging" as const,
-          executed: "pending" as const
-        };
-      case "failed":
-        return {
-          sourceGateway: "completed" as const,
-          destGateway: "failed" as const,
-          executed: "failed" as const
-        };
-      default:
-        return {
-          sourceGateway: "pending" as const,
-          destGateway: "pending" as const,
-          executed: "pending" as const
-        };
+  // Status to progress steps mapping (DRY principle)
+  const STATUS_PROGRESS_MAP = {
+    completed: {
+      sourceGateway: "completed" as const,
+      destGateway: "completed" as const,
+      executed: "completed" as const
+    },
+    pending: {
+      sourceGateway: "completed" as const,
+      destGateway: "pending" as const,
+      executed: "pending" as const
+    },
+    bridging: {
+      sourceGateway: "completed" as const,
+      destGateway: "bridging" as const,
+      executed: "pending" as const
+    },
+    failed: {
+      sourceGateway: "completed" as const,
+      destGateway: "failed" as const,
+      executed: "failed" as const
     }
+  } as const;
+
+  const getProgressSteps = () => {
+    return STATUS_PROGRESS_MAP[status] || STATUS_PROGRESS_MAP.pending;
   };
 
   const progress = getProgressSteps();
