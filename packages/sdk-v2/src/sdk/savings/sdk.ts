@@ -11,9 +11,7 @@ export class SavingsSDK extends BaseSDK {
     }
   }
 
-  async onTokenTransfer(
-    amount: string,
-  ): Promise<ethers.ContractTransaction | undefined> {
+  async onTokenTransfer(amount: string): Promise<ethers.ContractTransaction | undefined> {
     const contract = this.getContract("GoodDollar");
     const stakeContract = this.getContract("GoodDollarStaking");
 
@@ -31,10 +29,7 @@ export class SavingsSDK extends BaseSDK {
     }
   }
 
-  async withdraw(
-    amount: string,
-    isFullWithdraw: boolean,
-  ): Promise<ethers.ContractTransaction | undefined> {
+  async withdraw(amount: string, isFullWithdraw: boolean): Promise<ethers.ContractTransaction | undefined> {
     const contract = this.getContract("GoodDollarStaking");
     try {
       //note: if tx fails on limit, up the gasLimitBufferPercentage (see context config))

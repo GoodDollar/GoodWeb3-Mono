@@ -80,7 +80,7 @@ const FaceId = ({ ...props }) => {
             variant="outlined"
             innerText={{ fontSize: 14, color: "gdPrimary" }}
             innerIndicatorText={{ fontSize: 14, color: "gdPrimary" }}
-            supportedChains={[SupportedChains.FUSE, SupportedChains.CELO]}
+            supportedChains={[SupportedChains.FUSE, SupportedChains.CELO, SupportedChains.XDC]}
           />
         ) : (
           <HStack space={2}>
