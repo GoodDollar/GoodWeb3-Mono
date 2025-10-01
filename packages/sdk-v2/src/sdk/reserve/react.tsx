@@ -75,11 +75,11 @@ export const useSwapMeta = (
   output?: BigNumber,
   refresh: QueryParams["refresh"] = 5
 ) => {
-  const { connectedEnv } = useGetEnvChainId();
+  const { connectedEnv, chainId } = useGetEnvChainId();
   const refreshOrNever = useRefreshOrNever(refresh);
 
   const g$Price = useG$Price(refresh);
-  const [G$] = useG$Tokens();
+  const [G$] = useG$Tokens(chainId);
   const cUSD = contractAddresses[connectedEnv].CUSD || "0xeed145D8d962146AFc568E9579948576f63D5Dc2";
 
   const exchangeProviderAddress =
