@@ -18,7 +18,7 @@ const brokerAbi = [
   "function swapOut(address exchangeProvider,bytes32 exchangeId,address tokenIn,address tokenOut,uint256 amountOut,uint256 amountInMax) external returns (uint256 amountIn)"
 ];
 
-export const useExchangeId = () => {
+export const useExchange = () => {
   const { connectedEnv, chainId } = useGetEnvChainId();
 
   const mentoExchange = new Contract(
@@ -35,6 +35,11 @@ export const useExchangeId = () => {
   );
 
   const exchange = exchanges?.value?.pools?.find(e => e.assets.includes(contractAddresses[connectedEnv].GoodDollar));
+  return exchange;
+};
+
+export const useExchangeId = () => {
+  const exchange = useExchange();
   const exchangeId = exchange?.exchangeId;
   return exchangeId;
 };
