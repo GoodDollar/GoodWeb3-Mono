@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { ComponentStory, ComponentMeta } from "@storybook/react";
 import { useEthers } from "@usedapp/core";
 import { ethers } from "ethers";
-
-import { useExchangeId, useG$Price, useSwapMeta, useSwap } from "../../sdk/reserve/react";
+import { useSwitchNetwork } from "../../contexts";
+import { useExchangeId, useG$Price, useSwapMeta, useSwap, useReserveToken } from "../../sdk/reserve/react";
 import { W3Wrapper } from "../W3Wrapper";
 
 export interface PageProps {
@@ -11,14 +11,24 @@ export interface PageProps {
   outputToken: string;
   input: number;
   minAmountOut: number;
+  chainId: number;
 }
 
 const Web3Component = (props: PageProps) => {
-  const { account = "0x" } = useEthers();
+  const { account = "0x", chainId } = useEthers();
+  const switchNetwork = useSwitchNetwork();
+  console.log({ chainId, inputChain: props.chainId });
   const [swapError, setError] = useState(undefined);
 
   const price = useG$Price();
-  const buyingMeta = useSwapMeta(account, true, 0.1, ethers.utils.parseEther("1000"), undefined);
+  const reserveAsset = useReserveToken();
+  const buyingMeta = useSwapMeta(
+    account,
+    true,
+    0.1,
+    ethers.utils.parseUnits(String(props.input) || "1000", reserveAsset.decimals),
+    undefined
+  );
   const sellingMeta = useSwapMeta(account, false, 0.1, ethers.utils.parseEther("1000"), undefined);
   const exchangeId = useExchangeId();
   const swap = useSwap(
@@ -29,6 +39,10 @@ const Web3Component = (props: PageProps) => {
       minAmountOut: ethers.utils.parseEther(String(props.minAmountOut)).toString()
     }
   );
+
+  useEffect(() => {
+    void switchNetwork.switchNetwork(props.chainId).then(_ => console.log("switched:", _));
+  }, [props.chainId]);
 
   useEffect(() => {
     const { state } = swap.swap;
@@ -100,7 +114,8 @@ export default {
     inputToken: "0xeed145D8d962146AFc568E9579948576f63D5Dc2",
     outputToken: "0xFa51eFDc0910CCdA91732e6806912Fa12e2FD475",
     input: 1000,
-    minAmountOut: 0
+    minAmountOut: 0,
+    chainId: 50
   }
 } as ComponentMeta<typeof Page>;
 
