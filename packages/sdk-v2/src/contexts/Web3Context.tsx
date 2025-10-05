@@ -51,7 +51,7 @@ export const Web3Context = createContext<IWeb3Context>({
   setSwitchNetwork: (_cb: SwitchNetwork) => undefined, // eslint-disable-line @typescript-eslint/no-unused-vars
   connectWallet: () => undefined,
   txEmitter,
-  env: "production",
+  env: "development-celo",
   web3Provider: undefined
 });
 
