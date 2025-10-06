@@ -11,7 +11,6 @@ export const fetchBridgeFees = async (retries = 1, delay = 1000) => {
 
       // If rate limited (429), don't retry, just return null immediately
       if (response.status === 429) {
-        console.log("Rate limited, using fallback fees instead of retrying");
         return null;
       }
 

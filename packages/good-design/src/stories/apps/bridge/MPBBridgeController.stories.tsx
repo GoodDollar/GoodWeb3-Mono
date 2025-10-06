@@ -30,6 +30,3 @@ export const MPBBridgeControllerStory = {
     onBridgeFailed: (error: Error) => console.log("Bridge failed:", error)
   }
 };
-
-// Also export with kebab-case name for compatibility
-export const MPBBridgeControllerStoryKebab = MPBBridgeControllerStory;

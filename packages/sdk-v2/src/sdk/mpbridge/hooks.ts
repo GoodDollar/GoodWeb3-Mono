@@ -209,17 +209,13 @@ export const useGetMPBBridgeData = (
 
   // Helper function to calculate fees using the service
   const calculateFees = useCallback((fees: any, source: string, target: string, provider: BridgeProvider) => {
-    console.log("calculateFees called with:", { fees, source, target, provider });
     const calculatedFees = calculateBridgeFees(fees, provider, source, target);
-    console.log("calculatedFees:", calculatedFees);
 
     if (calculatedFees.nativeFee) {
-      console.log("Setting bridge fees:", calculatedFees);
       setBridgeFees(calculatedFees);
     } else {
       const sourceUpper = source.toUpperCase();
       const targetUpper = target.toUpperCase();
-      console.log("No native fee found, setting error");
       setError(`Bridge fees not available for ${sourceUpper}→${targetUpper} route`);
       setBridgeFees(createEmptyBridgeFees());
     }
@@ -227,7 +223,6 @@ export const useGetMPBBridgeData = (
 
   // Main effect to load bridge data
   useEffect(() => {
-    console.log("useGetMPBBridgeData effect running with:", { sourceChain, targetChain, bridgeProvider });
     let isMounted = true;
 
     resetStates(setIsLoading, setError);
@@ -250,27 +245,21 @@ export const useGetMPBBridgeData = (
       };
 
       try {
-        console.log("Fetching live bridge fees...");
         const fees = await fetchBridgeFees();
-        console.log("Fetched live fees:", fees);
 
         if (!isMounted) return;
 
         if (fees) {
-          console.log("Using live fees");
           calculateFees(fees, sourceChainName, targetChainName, bridgeProvider);
         } else {
-          console.log("No live fees received, using fallback fees");
           calculateFees(fallbackFees, sourceChainName, targetChainName, bridgeProvider);
         }
       } catch (error) {
-        console.log("Live fees fetch failed, using fallback fees:", error);
         if (isMounted) {
           calculateFees(fallbackFees, sourceChainName, targetChainName, bridgeProvider);
         }
       } finally {
         if (isMounted) {
-          console.log("Setting isLoading to false");
           setIsLoading(false);
         }
       }

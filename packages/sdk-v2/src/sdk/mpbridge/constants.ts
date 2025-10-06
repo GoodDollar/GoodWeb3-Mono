@@ -177,6 +177,7 @@ export const getFeeString = (
   const feeKey = FEE_ROUTES[provider]?.[route];
   // Handle case mismatch between provider key and API response
   const providerKey = provider.toUpperCase();
+
   return feeKey ? fees[providerKey]?.[feeKey] : null;
 };
 

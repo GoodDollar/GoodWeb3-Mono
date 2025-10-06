@@ -21,7 +21,7 @@ export const MPBBridgeController: React.FC<IMPBBridgeControllerProps> = ({ onBri
   const pendingTransaction = useState<any>(false);
   const originChain = useState<string>(chainId === 122 ? "fuse" : chainId === 42220 ? "celo" : "mainnet");
   const currentChain = chainId === 122 ? "fuse" : chainId === 42220 ? "celo" : "mainnet";
-  const { bridgeFees, bridgeLimits, isLoading } = useGetMPBBridgeData(currentChain, "fuse", "layerzero");
+  const { bridgeFees, bridgeLimits } = useGetMPBBridgeData(currentChain, "fuse", "layerzero");
 
   // Per-chain decimals to scale 18-decimal limits to the active chain units
   const fuseDecimals = useG$Decimals("G$", 122);
@@ -102,14 +102,7 @@ export const MPBBridgeController: React.FC<IMPBBridgeControllerProps> = ({ onBri
   }, [bridgeRequestStatus]);
 
   // Check if bridge data is loaded and fees are available
-  console.log("MPBBridgeController render:", { bridgeFees, bridgeLimits, isLoading });
   if (!bridgeFees?.nativeFee || !bridgeLimits) {
-    console.log("Showing loading spinner because:", {
-      hasNativeFee: !!bridgeFees?.nativeFee,
-      hasBridgeLimits: !!bridgeLimits,
-      bridgeFees,
-      bridgeLimits
-    });
     return <Spinner variant="page-loader" size="lg" />;
   }
 
