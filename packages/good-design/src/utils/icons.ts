@@ -29,9 +29,7 @@ const transactionStateIcons = {
   send: TxRedIcon
 };
 
-export const getContractIcon = (displayName: string) =>
-  displayName?.includes("GoodDollar") ? contractIcons.GoodDollar : contractIcons.RedTent;
-
+export const getContractIcon = () => contractIcons.GoodDollar;
 
 export const getTransactionIcon = (transaction: any) => {
   const { type, status } = transaction;
