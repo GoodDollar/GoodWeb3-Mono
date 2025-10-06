@@ -209,50 +209,68 @@ export const useGetMPBBridgeData = (
 
   // Helper function to calculate fees using the service
   const calculateFees = useCallback((fees: any, source: string, target: string, provider: BridgeProvider) => {
+    console.log("calculateFees called with:", { fees, source, target, provider });
     const calculatedFees = calculateBridgeFees(fees, provider, source, target);
+    console.log("calculatedFees:", calculatedFees);
 
     if (calculatedFees.nativeFee) {
+      console.log("Setting bridge fees:", calculatedFees);
       setBridgeFees(calculatedFees);
     } else {
       const sourceUpper = source.toUpperCase();
       const targetUpper = target.toUpperCase();
+      console.log("No native fee found, setting error");
       setError(`Bridge fees not available for ${sourceUpper}→${targetUpper} route`);
       setBridgeFees(createEmptyBridgeFees());
     }
   }, []);
 
-  // Helper function to handle fee fetching errors
-  const handleFeeError = useCallback((error: any) => {
-    handleError(error, "bridge fees", setError, setBridgeFees, createEmptyBridgeFees());
-  }, []);
-
   // Main effect to load bridge data
   useEffect(() => {
+    console.log("useGetMPBBridgeData effect running with:", { sourceChain, targetChain, bridgeProvider });
     let isMounted = true;
 
     resetStates(setIsLoading, setError);
     setFallbackLimits();
 
     const loadBridgeData = async () => {
+      const sourceChainName = sourceChain || "celo";
+      const targetChainName = targetChain || "fuse";
+
+      // Fallback fees to use if API fails
+      const fallbackFees = {
+        LAYERZERO: {
+          LZ_ETH_TO_CELO: "0.000313656721807939 ETH",
+          LZ_ETH_TO_FUSE: "0.000192497159840898 ETH",
+          LZ_CELO_TO_ETH: "37.03567383217732 Celo",
+          LZ_CELO_TO_FUSE: "0.09256173546554455 CELO",
+          LZ_FUSE_TO_ETH: "579.0125764968107 Fuse",
+          LZ_FUSE_TO_CELO: "5.0301068434398175 Fuse"
+        }
+      };
+
       try {
+        console.log("Fetching live bridge fees...");
         const fees = await fetchBridgeFees();
+        console.log("Fetched live fees:", fees);
 
         if (!isMounted) return;
 
         if (fees) {
-          const sourceChainName = sourceChain || "celo";
-          const targetChainName = targetChain || "fuse";
+          console.log("Using live fees");
           calculateFees(fees, sourceChainName, targetChainName, bridgeProvider);
         } else {
-          setError(ERROR_MESSAGES.BRIDGE_FEES_ERROR);
-          setBridgeFees(createEmptyBridgeFees());
+          console.log("No live fees received, using fallback fees");
+          calculateFees(fallbackFees, sourceChainName, targetChainName, bridgeProvider);
         }
       } catch (error) {
+        console.log("Live fees fetch failed, using fallback fees:", error);
         if (isMounted) {
-          handleFeeError(error);
+          calculateFees(fallbackFees, sourceChainName, targetChainName, bridgeProvider);
         }
       } finally {
         if (isMounted) {
+          console.log("Setting isLoading to false");
           setIsLoading(false);
         }
       }
@@ -263,7 +281,7 @@ export const useGetMPBBridgeData = (
     return () => {
       isMounted = false;
     };
-  }, [sourceChain, targetChain, bridgeProvider, setFallbackLimits, calculateFees, handleFeeError]);
+  }, [sourceChain, targetChain, bridgeProvider, setFallbackLimits, calculateFees]);
 
   return { bridgeFees, bridgeLimits, isLoading, error };
 };

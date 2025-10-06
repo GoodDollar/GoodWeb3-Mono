@@ -175,7 +175,9 @@ export const getFeeString = (
 ): string | null => {
   const route = `${sourceChain.toUpperCase()}_${targetChain.toUpperCase()}`;
   const feeKey = FEE_ROUTES[provider]?.[route];
-  return feeKey ? fees[provider]?.[feeKey] : null;
+  // Handle case mismatch between provider key and API response
+  const providerKey = provider.toUpperCase();
+  return feeKey ? fees[providerKey]?.[feeKey] : null;
 };
 
 export const parseFeeToWei = (feeString: string): ethers.BigNumber => {
