@@ -17,13 +17,12 @@ import {
   ERROR_MESSAGES,
   BridgeProvider,
   safeBigNumber,
-  resetStates,
-  createEmptyBridgeFees,
   handleError,
   getChainName,
   getTargetChainId,
   getSourceChainId,
-  calculateBridgeFees
+  calculateBridgeFees,
+  DEFAULT_BRIDGE_FEES
 } from "./constants";
 
 /**
@@ -203,18 +202,20 @@ export const useGetMPBBridgeData = (
   targetChain?: string,
   bridgeProvider: BridgeProvider = "layerzero"
 ): MPBBridgeData => {
-  const [bridgeFees, setBridgeFees] = useState<BridgeFees>(createEmptyBridgeFees());
-  const [bridgeLimits, setBridgeLimits] = useState<BridgeLimitsData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  // OPTIMIZATION: Start with fallback data for instant rendering
+  const [bridgeFees, setBridgeFees] = useState<BridgeFees>(() => {
+    const source = sourceChain || "celo";
+    const target = targetChain || "fuse";
+    return calculateBridgeFees(DEFAULT_BRIDGE_FEES, bridgeProvider, source, target);
+  });
 
-  // Helper function to set fallback limits
-  const setFallbackLimits = useCallback(() => {
-    setBridgeLimits({
-      minAmount: BRIDGE_CONSTANTS.MIN_AMOUNT,
-      maxAmount: BRIDGE_CONSTANTS.MAX_AMOUNT
-    });
-  }, []);
+  const [bridgeLimits] = useState<BridgeLimitsData>({
+    minAmount: BRIDGE_CONSTANTS.MIN_AMOUNT,
+    maxAmount: BRIDGE_CONSTANTS.MAX_AMOUNT
+  });
+
+  const [isLoading] = useState(false); // Start as false
+  const [error, setError] = useState<string | null>(null);
 
   // Helper function to calculate fees using the service
   const calculateFees = useCallback((fees: any, source: string, target: string, provider: BridgeProvider) => {
@@ -226,33 +227,20 @@ export const useGetMPBBridgeData = (
       const sourceUpper = source.toUpperCase();
       const targetUpper = target.toUpperCase();
       setError(`Bridge fees not available for ${sourceUpper}→${targetUpper} route`);
-      setBridgeFees(createEmptyBridgeFees());
     }
   }, []);
 
-  // Main effect to load bridge data
+  // Main effect to load bridge data in background
   useEffect(() => {
     let isMounted = true;
 
-    resetStates(setIsLoading, setError);
-    setFallbackLimits();
+    setError(null);
 
     const loadBridgeData = async () => {
       const sourceChainName = sourceChain || "celo";
       const targetChainName = targetChain || "fuse";
 
-      // Fallback fees to use if API fails
-      const fallbackFees = {
-        LAYERZERO: {
-          LZ_ETH_TO_CELO: "0.000313656721807939 ETH",
-          LZ_ETH_TO_FUSE: "0.000192497159840898 ETH",
-          LZ_CELO_TO_ETH: "37.03567383217732 Celo",
-          LZ_CELO_TO_FUSE: "0.09256173546554455 CELO",
-          LZ_FUSE_TO_ETH: "579.0125764968107 Fuse",
-          LZ_FUSE_TO_CELO: "5.0301068434398175 Fuse"
-        }
-      };
-
+      // OPTIMIZATION: Fetch in background, UI already rendered with fallbacks
       try {
         const fees = await fetchBridgeFees();
 
@@ -260,17 +248,10 @@ export const useGetMPBBridgeData = (
 
         if (fees) {
           calculateFees(fees, sourceChainName, targetChainName, bridgeProvider);
-        } else {
-          calculateFees(fallbackFees, sourceChainName, targetChainName, bridgeProvider);
         }
       } catch (error) {
-        if (isMounted) {
-          calculateFees(fallbackFees, sourceChainName, targetChainName, bridgeProvider);
-        }
-      } finally {
-        if (isMounted) {
-          setIsLoading(false);
-        }
+        // Silent fail - UI already has fallback fees
+        console.warn("Failed to fetch bridge fees, using fallbacks");
       }
     };
 
@@ -279,7 +260,7 @@ export const useGetMPBBridgeData = (
     return () => {
       isMounted = false;
     };
-  }, [sourceChain, targetChain, bridgeProvider, setFallbackLimits, calculateFees]);
+  }, [sourceChain, targetChain, bridgeProvider, calculateFees]);
 
   return { bridgeFees, bridgeLimits, isLoading, error };
 };

@@ -24,6 +24,7 @@ interface AmountInputProps {
   isValid: boolean;
   reason: ValidationReason;
   balance: CurrencyValue;
+  toggleState?: any;
 }
 
 export const AmountInput: React.FC<AmountInputProps> = ({
@@ -34,7 +35,8 @@ export const AmountInput: React.FC<AmountInputProps> = ({
   minimumAmount,
   isValid,
   reason,
-  balance
+  balance,
+  toggleState
 }) => {
   return (
     <VStack space={3}>
@@ -51,6 +53,7 @@ export const AmountInput: React.FC<AmountInputProps> = ({
         onChange={setBridgeAmount}
         gdValue={gdValue}
         minAmountWei={minimumAmount?.toString()}
+        toggleState={toggleState}
       />
       {!isValid && bridgeWeiAmount && (
         <Text color="red.500" fontSize="sm" fontWeight="500">

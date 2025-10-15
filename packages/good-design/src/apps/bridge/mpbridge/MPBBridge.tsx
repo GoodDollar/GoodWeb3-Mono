@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useState, useMemo } from "react";
+import React, { useEffect, useCallback, useState, useMemo, useRef } from "react";
 import { Box, Text, VStack } from "native-base";
 import { SupportedChains } from "@gooddollar/web3sdk-v2";
 import { ethers } from "ethers";
@@ -37,6 +37,13 @@ export const MPBBridge = ({
 }: MPBBridgeProps) => {
   const [isBridging, setBridging] = useState(false);
   const [bridgeProvider, setBridgeProvider] = useState<BridgeProvider>("axelar");
+
+  // Wrapper function to close dropdowns when bridge provider changes
+  const handleBridgeProviderChange = useCallback((provider: BridgeProvider) => {
+    setBridgeProvider(provider);
+    setShowSourceDropdown(false);
+    setShowTargetDropdown(false);
+  }, []);
   const [bridgingStatus, setBridgingStatus] = useState<string>("");
   const [sourceChain, setSourceChain] = originChain;
   const [targetChain, setTargetChain] = useState(
@@ -44,6 +51,7 @@ export const MPBBridge = ({
   );
   const [showSourceDropdown, setShowSourceDropdown] = useState(false);
   const [showTargetDropdown, setShowTargetDropdown] = useState(false);
+  const [toggleState, setToggleState] = useState<boolean>(false);
 
   const { fees: bridgeFees, loading: feesLoading } = useBridgeFees();
 
@@ -58,6 +66,7 @@ export const MPBBridge = ({
 
   // Debounce the bridge amount for validation and estimation
   const [debouncedBridgeAmount, setDebouncedBridgeAmount] = useState(bridgeWeiAmount);
+  const prevSourceChainRef = useRef(sourceChain);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -66,6 +75,15 @@ export const MPBBridge = ({
 
     return () => clearTimeout(timer);
   }, [bridgeWeiAmount]);
+
+  // Force immediate update of debounced amount when source chain changes
+  // This prevents validation mismatch after chain swap
+  useEffect(() => {
+    if (prevSourceChainRef.current !== sourceChain) {
+      setDebouncedBridgeAmount(bridgeWeiAmount);
+      prevSourceChainRef.current = sourceChain;
+    }
+  }, [sourceChain, bridgeWeiAmount]);
 
   const { isValid, reason } = useCanMPBBridge(sourceChain, debouncedBridgeAmount);
   const { minimumAmount, expectedToReceive, nativeFee } = useMPBBridgeEstimate({
@@ -91,19 +109,28 @@ export const MPBBridge = ({
     }
   }, [bridgeProvider, sourceChain, bridgeFees, feesLoading, targetChain]);
 
-  // Swap functionality
+  // Swap functionality - reset amount and input display to avoid decimal format mismatch
   const handleSwap = useCallback(() => {
     const newSourceChain = targetChain;
     const newTargetChain = sourceChain;
+
+    // Reset amount to avoid decimal format mismatch between chains
+    setBridgeAmount("0");
+    // Toggle state to reset TokenInput display
+    setToggleState(prevState => !prevState);
     setSourceChain(newSourceChain);
     setTargetChain(newTargetChain);
     setShowSourceDropdown(false);
     setShowTargetDropdown(false);
-  }, [targetChain, sourceChain]);
+  }, [targetChain, sourceChain, setBridgeAmount]);
 
-  // Handle source chain selection
+  // Handle source chain selection - reset amount and input display to avoid decimal format mismatch
   const handleSourceChainSelect = useCallback(
     (chain: string) => {
+      // Reset amount to avoid decimal format mismatch when changing chains
+      setBridgeAmount("0");
+      // Toggle state to reset TokenInput display
+      setToggleState(prevState => !prevState);
       setSourceChain(chain);
       // Reset target chain to first valid option based on current bridge provider
       const validTargets = getValidTargetChains(chain, bridgeFees, bridgeProvider, feesLoading);
@@ -128,13 +155,15 @@ export const MPBBridge = ({
         }
       }
       setShowSourceDropdown(false);
+      setShowTargetDropdown(false);
     },
-    [bridgeProvider, bridgeFees, feesLoading]
+    [bridgeProvider, bridgeFees, feesLoading, setBridgeAmount]
   );
 
   const handleTargetChainSelect = useCallback((chain: string) => {
     setTargetChain(chain);
     setShowTargetDropdown(false);
+    setShowSourceDropdown(false);
   }, []);
 
   const triggerBridge = useCallback(async () => {
@@ -245,7 +274,7 @@ export const MPBBridge = ({
       <Box borderRadius="xl" borderWidth="1" padding="8" backgroundColor="white" shadow="lg" borderColor="goodGrey.200">
         <VStack space={8}>
           {/* Bridge Provider Selection */}
-          <BridgeProviderSelector bridgeProvider={bridgeProvider} onProviderChange={setBridgeProvider} />
+          <BridgeProviderSelector bridgeProvider={bridgeProvider} onProviderChange={handleBridgeProviderChange} />
 
           {/* Token Exchange Interface */}
           <VStack space={6}>
@@ -275,6 +304,7 @@ export const MPBBridge = ({
               isValid={isValid}
               reason={reason as any}
               balance={getBalanceForChain(sourceChain)}
+              toggleState={toggleState}
             />
 
             {/* Expected Output */}
