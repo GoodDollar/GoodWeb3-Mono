@@ -13,6 +13,7 @@ import GoodDollarABI from "@gooddollar/goodprotocol/artifacts/abis/IGoodDollar.m
 import FaucetABI from "@gooddollar/goodprotocol/artifacts/abis/Faucet.min.json";
 import GReputationABI from "@gooddollar/goodprotocol/artifacts/abis/GReputation.min.json";
 import GoodReserveCDaiABI from "@gooddollar/goodprotocol/artifacts/abis/GoodReserveCDai.min.json";
+import MPBBridgeABI from "@gooddollar/bridge-contracts/release/mpb.json";
 
 import {
   IdentityV2,
@@ -36,7 +37,8 @@ export const CONTRACT_TO_ABI: { [key: string]: any } = {
   Faucet: FaucetABI,
   FuseFaucet: FaucetABI,
   GReputation: GReputationABI,
-  GoodReserveCDai: GoodReserveCDaiABI
+  GoodReserveCDai: GoodReserveCDaiABI,
+  MPBBridge: { abi: MPBBridgeABI["1"][0]?.contracts?.MessagePassingBridge?.abi || [] }
 };
 
 export type EnvKey = string;

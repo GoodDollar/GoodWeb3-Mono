@@ -8,7 +8,8 @@ import { SupportedChains } from "../constants";
 import { TransactionStatus } from "@usedapp/core";
 import { useGetContract } from "../base/react";
 import { IGoodDollar } from "@gooddollar/goodprotocol/types";
-import { MPBBridgeABI, MPB_CONTRACTS, BridgeService, MPBBridgeData, BridgeRequest } from "./types";
+import { CONTRACT_TO_ABI } from "../base/sdk";
+import { MPB_CONTRACTS, BridgeService, MPBBridgeData, BridgeRequest } from "./types";
 import { fetchBridgeFees } from "./api";
 import {
   BRIDGE_CONSTANTS,
@@ -25,20 +26,28 @@ import {
   calculateBridgeFees
 } from "./constants";
 
+/**
+ * Hook to get MPB Bridge contracts for all supported chains
+ * Uses the centralized CONTRACT_TO_ABI mapping for consistency
+ */
 export const useGetMPBContracts = () => {
   const { library } = useEthers();
+  const mpbABI = CONTRACT_TO_ABI["MPBBridge"]?.abi || [];
 
-  return {
-    [SupportedChains.FUSE]: library
-      ? (new ethers.Contract(MPB_CONTRACTS[SupportedChains.FUSE], MPBBridgeABI, library) as ethers.Contract)
-      : null,
-    [SupportedChains.CELO]: library
-      ? (new ethers.Contract(MPB_CONTRACTS[SupportedChains.CELO], MPBBridgeABI, library) as ethers.Contract)
-      : null,
-    [SupportedChains.MAINNET]: library
-      ? (new ethers.Contract(MPB_CONTRACTS[SupportedChains.MAINNET], MPBBridgeABI, library) as ethers.Contract)
-      : null
-  };
+  return useMemo(
+    () => ({
+      [SupportedChains.FUSE]: library
+        ? (new ethers.Contract(MPB_CONTRACTS[SupportedChains.FUSE], mpbABI, library) as ethers.Contract)
+        : null,
+      [SupportedChains.CELO]: library
+        ? (new ethers.Contract(MPB_CONTRACTS[SupportedChains.CELO], mpbABI, library) as ethers.Contract)
+        : null,
+      [SupportedChains.MAINNET]: library
+        ? (new ethers.Contract(MPB_CONTRACTS[SupportedChains.MAINNET], mpbABI, library) as ethers.Contract)
+        : null
+    }),
+    [library, mpbABI]
+  );
 };
 
 // Types for better readability

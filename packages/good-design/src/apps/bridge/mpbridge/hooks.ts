@@ -5,11 +5,11 @@ import { BigNumber } from "ethers";
 import { fetchBridgeFees, useBridgeHistory } from "@gooddollar/web3sdk-v2";
 import type { IMPBFees, IMPBLimits } from "./types";
 
-// Chain configuration for bridge direction mapping
-const CHAIN_MAPPING = {
-  122: { source: "Celo", target: "Fuse" },
-  42220: { source: "Fuse", target: "Celo" },
-  1: { source: "Unknown", target: "Unknown" }
+// Chain ID to chain name mapping - single source of truth
+const CHAIN_ID_TO_NAME: Record<number, string> = {
+  122: "Fuse",
+  42220: "Celo",
+  1: "Mainnet"
 } as const;
 
 // Bridge service mapping (0 = LayerZero, 1 = Axelar)
@@ -23,6 +23,11 @@ const DEFAULT_BRIDGE_PROVIDER = "layerzero";
 
 // Recent transaction threshold (30 days in seconds)
 const RECENT_TRANSACTION_THRESHOLD = 30 * 24 * 60 * 60;
+
+// Helper function to get chain name from chain ID
+const getChainName = (chainId: number): string => {
+  return CHAIN_ID_TO_NAME[chainId] || "Unknown";
+};
 
 // Cache for bridge fees to prevent unnecessary API calls
 const feesCache = new Map<string, { data: any; timestamp: number }>();
@@ -153,9 +158,20 @@ export const useChainBalances = () => {
   return { getBalanceForChain };
 };
 
-// Hook to get transaction history - Use microbridge history directly
+/**
+ * Hook to get transaction history
+ *
+ * TODO: This currently uses microbridge history (useBridgeHistory) which listens to
+ * BridgeRequest/ExecutedTransfer events from the old TokenBridge contract.
+ *
+ * For MPB (Message Passing Bridge), we should create a dedicated useMPBBridgeHistory hook
+ * that listens to the correct MPB events (BridgeRequest/BridgeCompleted from MessagePassingBridge).
+ *
+ * @see packages/sdk-v2/src/sdk/microbridge/react.ts:289 for microbridge implementation
+ * @see packages/sdk-v2/src/sdk/mpbridge/hooks.ts for where MPB history should be implemented
+ */
 export const useTransactionHistory = () => {
-  // Use microbridge history directly
+  // TEMPORARY: Using microbridge history until useMPBBridgeHistory is implemented
   const { historySorted: realTransactionHistory } = useBridgeHistory() ?? {};
 
   // Memoize the result to prevent unnecessary re-renders
@@ -207,16 +223,12 @@ export const useConvertedTransactionHistory = (realTransactionHistory: any[] | u
   return useMemo(() => {
     const converted =
       realTransactionHistory?.slice(0, 5).map(tx => {
+        const sourceChainId = tx.data?.sourceChainId?.toNumber();
         const targetChainId = tx.data?.targetChainId?.toNumber();
 
-        // Determine source and target chains based on the bridge direction using dictionary lookup
-        const chainInfo =
-          CHAIN_MAPPING[targetChainId as keyof typeof CHAIN_MAPPING] ||
-          ({
-            source: "Unknown",
-            target: "Unknown"
-          } as const);
-        const { source: sourceChainName, target: targetChainName } = chainInfo;
+        // Get chain names using dictionary lookup (DRY principle)
+        const sourceChainName = getChainName(sourceChainId);
+        const targetChainName = getChainName(targetChainId);
 
         // Get bridge provider from transaction data using dictionary lookup
         const bridgeService = tx.data?.bridge;

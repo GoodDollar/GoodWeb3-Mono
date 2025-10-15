@@ -12,6 +12,31 @@ interface MPBTransactionDetailsModalProps {
   transaction: BridgeTransaction;
 }
 
+const iconBoxStyles = {
+  w: "8",
+  h: "8",
+  borderRadius: "50%",
+  alignItems: "center",
+  justifyContent: "center",
+  borderWidth: "2px",
+  shadow: "md"
+};
+
+const textColorMap = {
+  completed: "goodGrey.900",
+  bridging: "goodBlue.600",
+  pending: "goodGrey.400",
+  failed: "goodRed.500"
+};
+
+const iconConfigMap = {
+  completed: { bg: "green.500", borderColor: "green.300", content: "✓", spinner: false },
+  bridging: { bg: "blue.500", borderColor: "blue.300", content: null, spinner: true },
+  pending: { bg: "gray.200", borderColor: "gray.300", content: "○", spinner: false },
+  failed: { bg: "red.500", borderColor: "red.300", content: "✕", spinner: false },
+  default: { bg: "gray.200", borderColor: "gray.300", content: "○", spinner: false }
+};
+
 const StepIndicator = ({
   status,
   text,
@@ -21,122 +46,25 @@ const StepIndicator = ({
   text: string;
   isLast?: boolean;
 }) => {
-  const getIcon = () => {
-    switch (status) {
-      case "completed":
-        return (
-          <Box
-            w="8"
-            h="8"
-            borderRadius="50%"
-            bg="green.500"
-            alignItems="center"
-            justifyContent="center"
-            borderWidth="2px"
-            borderColor="green.300"
-            shadow="md"
-          >
-            <Text color="white" fontSize="sm" fontWeight="bold">
-              ✓
-            </Text>
-          </Box>
-        );
-      case "bridging":
-        return (
-          <Box
-            w="8"
-            h="8"
-            borderRadius="50%"
-            bg="blue.500"
-            alignItems="center"
-            justifyContent="center"
-            borderWidth="2px"
-            borderColor="blue.300"
-            shadow="md"
-          >
-            <Spinner size="sm" color="white" />
-          </Box>
-        );
-      case "pending":
-        return (
-          <Box
-            w="8"
-            h="8"
-            borderRadius="50%"
-            bg="gray.200"
-            alignItems="center"
-            justifyContent="center"
-            borderWidth="2px"
-            borderColor="gray.300"
-            shadow="md"
-          >
-            <Text color="gray.600" fontSize="sm" fontWeight="bold">
-              ○
-            </Text>
-          </Box>
-        );
-      case "failed":
-        return (
-          <Box
-            w="8"
-            h="8"
-            borderRadius="50%"
-            bg="red.500"
-            alignItems="center"
-            justifyContent="center"
-            borderWidth="2px"
-            borderColor="red.300"
-            shadow="md"
-          >
-            <Text color="white" fontSize="sm" fontWeight="bold">
-              ✕
-            </Text>
-          </Box>
-        );
-      default:
-        return (
-          <Box
-            w="8"
-            h="8"
-            borderRadius="50%"
-            bg="gray.200"
-            alignItems="center"
-            justifyContent="center"
-            borderWidth="2px"
-            borderColor="gray.300"
-            shadow="md"
-          >
-            <Text color="gray.600" fontSize="sm" fontWeight="bold">
-              ○
-            </Text>
-          </Box>
-        );
-    }
-  };
+  const config = iconConfigMap[status] || iconConfigMap.default;
 
-  let textColor = "goodGrey.500";
-  switch (status) {
-    case "completed":
-      textColor = "goodGrey.900";
-      break;
-    case "bridging":
-      textColor = "goodBlue.600";
-      break;
-    case "pending":
-      textColor = "goodGrey.400";
-      break;
-    case "failed":
-      textColor = "goodRed.500";
-      break;
-    default:
-      textColor = "goodGrey.400";
-  }
+  const getIcon = () => (
+    <Box {...iconBoxStyles} bg={config.bg} borderColor={config.borderColor}>
+      {config.spinner ? (
+        <Spinner size="sm" color="white" />
+      ) : (
+        <Text color="white" fontSize="sm" fontWeight="bold">
+          {config.content}
+        </Text>
+      )}
+    </Box>
+  );
 
   return (
     <VStack alignItems="flex-start" space={2} position="relative">
       <HStack alignItems="center" space={3}>
         {getIcon()}
-        <Text fontSize="sm" color={textColor} fontWeight="medium">
+        <Text fontSize="sm" color={textColorMap[status]} fontWeight="medium">
           {text}
         </Text>
       </HStack>
@@ -161,32 +89,20 @@ const MPBTransactionDetailsContent = ({ transaction }: { transaction: BridgeTran
   const txDate = date ? new Date(date).toLocaleDateString() + " " + new Date(date).toLocaleTimeString() : "";
 
   // Determine progress based on status
-  // Status to progress steps mapping (DRY principle)
-  const STATUS_PROGRESS_MAP = {
-    completed: {
-      sourceGateway: "completed" as const,
-      destGateway: "completed" as const,
-      executed: "completed" as const
-    },
-    pending: {
-      sourceGateway: "completed" as const,
-      destGateway: "pending" as const,
-      executed: "pending" as const
-    },
-    bridging: {
-      sourceGateway: "completed" as const,
-      destGateway: "bridging" as const,
-      executed: "pending" as const
-    },
-    failed: {
-      sourceGateway: "completed" as const,
-      destGateway: "failed" as const,
-      executed: "failed" as const
-    }
-  } as const;
-
   const getProgressSteps = () => {
-    return STATUS_PROGRESS_MAP[status] || STATUS_PROGRESS_MAP.pending;
+    const progressMap = {
+      completed: {
+        sourceGateway: "completed" as const,
+        destGateway: "completed" as const,
+        executed: "completed" as const
+      },
+      pending: { sourceGateway: "completed" as const, destGateway: "pending" as const, executed: "pending" as const },
+      bridging: { sourceGateway: "completed" as const, destGateway: "bridging" as const, executed: "pending" as const },
+      failed: { sourceGateway: "completed" as const, destGateway: "failed" as const, executed: "failed" as const },
+      default: { sourceGateway: "pending" as const, destGateway: "pending" as const, executed: "pending" as const }
+    };
+
+    return progressMap[status] || progressMap.default;
   };
 
   const progress = getProgressSteps();

@@ -1,14 +1,11 @@
 import { ethers } from "ethers";
 import { SupportedChains } from "../constants";
 import bridgeContracts from "@gooddollar/bridge-contracts/release/deployment.json";
-import mpbABI from "@gooddollar/bridge-contracts/release/mpb.json";
 
 export enum BridgeService {
   LAYERZERO = 0,
   AXELAR = 1
 }
-
-export const MPBBridgeABI = mpbABI["1"][0]?.contracts?.MessagePassingBridge?.abi || [];
 
 // MPB Contract addresses - Imported from @gooddollar/bridge-contracts package
 export const MPB_CONTRACTS = {

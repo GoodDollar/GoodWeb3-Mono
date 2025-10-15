@@ -189,8 +189,8 @@ export const BridgeTransactionList = ({ transactions, onTxDetailsPress, limit = 
     persistentScrollbar={true}
     nestedScrollEnabled={true}
   >
-    {transactions?.map((tx: BridgeTransaction, i: any) => (
-      <BridgeTransactionCard key={i} {...{ transaction: tx, onTxDetailsPress }} />
+    {transactions?.map((tx: BridgeTransaction) => (
+      <BridgeTransactionCard key={tx.id ?? tx.transactionHash} {...{ transaction: tx, onTxDetailsPress }} />
     ))}
   </ScrollView>
 );
