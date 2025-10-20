@@ -4,12 +4,10 @@ import { useSwitchNetwork } from "../../contexts";
 import { useRefreshOrNever } from "../../hooks";
 import { useLogs } from "@usedapp/core";
 import { ethers } from "ethers";
-import { SupportedChains } from "../constants";
 import { TransactionStatus } from "@usedapp/core";
 import { useGetContract } from "../base/react";
 import { IGoodDollar } from "@gooddollar/goodprotocol/types";
-import { CONTRACT_TO_ABI } from "../base/sdk";
-import { MPB_CONTRACTS, BridgeService, MPBBridgeData, BridgeRequest } from "./types";
+import { MPB_CONTRACTS, BridgeService, MPBBridgeData, BridgeRequest, UseMPBBridgeReturn } from "./types";
 import { fetchBridgeFees } from "./api";
 import {
   BRIDGE_CONSTANTS,
@@ -23,29 +21,21 @@ import {
   getSourceChainId,
   calculateBridgeFees
 } from "./constants";
+import { CONTRACT_TO_ABI } from "../base/sdk";
 
 /**
- * Hook to get MPB Bridge contracts for all supported chains
- * Uses the centralized CONTRACT_TO_ABI mapping for consistency
+ * Hook to get MPB Bridge contract for a specific chain
+ * Uses centralized ABI but MPB-specific addresses from @gooddollar/bridge-contracts
  */
-export const useGetMPBContracts = () => {
+const useGetMPBContract = (chainId?: number) => {
   const { library } = useEthers();
   const mpbABI = CONTRACT_TO_ABI["MPBBridge"]?.abi || [];
+  const targetChainId = chainId || BRIDGE_CONSTANTS.DEFAULT_CHAIN_ID;
 
-  return useMemo(
-    () => ({
-      [SupportedChains.FUSE]: library
-        ? (new ethers.Contract(MPB_CONTRACTS[SupportedChains.FUSE], mpbABI, library) as ethers.Contract)
-        : null,
-      [SupportedChains.CELO]: library
-        ? (new ethers.Contract(MPB_CONTRACTS[SupportedChains.CELO], mpbABI, library) as ethers.Contract)
-        : null,
-      [SupportedChains.MAINNET]: library
-        ? (new ethers.Contract(MPB_CONTRACTS[SupportedChains.MAINNET], mpbABI, library) as ethers.Contract)
-        : null
-    }),
-    [library, mpbABI]
-  );
+  return useMemo(() => {
+    if (!library || !MPB_CONTRACTS[targetChainId]) return null;
+    return new ethers.Contract(MPB_CONTRACTS[targetChainId], mpbABI, library);
+  }, [library, mpbABI, targetChainId]);
 };
 
 // Types for better readability
@@ -65,9 +55,8 @@ interface ValidationResult {
 
 export const useMPBBridgeLimits = (amount: string, chainId?: number): ValidationResult => {
   const { account } = useEthers();
-  const mpbContracts = useGetMPBContracts();
   const targetChainId = chainId || BRIDGE_CONSTANTS.DEFAULT_CHAIN_ID;
-  const bridgeContract = mpbContracts[targetChainId];
+  const bridgeContract = useGetMPBContract(targetChainId);
 
   const [bridgeLimits, setBridgeLimits] = useState<BridgeLimits | null>(null);
   const [canUserBridge, setCanUserBridge] = useState<boolean>(false);
@@ -286,19 +275,21 @@ const getChainNames = (sourceChainId: number, targetChainId: number) => {
   };
 };
 
-export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar") => {
+export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBBridgeReturn => {
   const bridgeLock = useRef(false);
   const { switchNetwork } = useSwitchNetwork();
   const { account, chainId } = useEthers();
-  const mpbContracts = useGetMPBContracts();
 
   const [bridgeRequest, setBridgeRequest] = useState<BridgeRequest | undefined>();
+  const [isSwitchingChain, setIsSwitchingChain] = useState(false);
+  const [switchChainError, setSwitchChainError] = useState<string | undefined>();
 
   // Get G$ token contract for the current chain
   const gdContract = useGetContract("GoodDollar", true, "base", chainId) as IGoodDollar;
 
-  // Use transferAndCall on the G$ token contract to transfer and call bridge in one transaction
-  const bridgeContract = mpbContracts[chainId || BRIDGE_CONSTANTS.DEFAULT_CHAIN_ID];
+  // Get MPB bridge contract for the current chain
+  const bridgeContract = useGetMPBContract(chainId);
+
   const transferAndCall = useContractFunction(gdContract, "transferAndCall", {
     transactionName: "MPBBridgeTransfer"
   });
@@ -312,11 +303,15 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar") => {
     return extractBridgeRequestId(transferAndCall.state.receipt.logs, bridgeContract);
   }, [transferAndCall.state?.status, transferAndCall.state?.receipt?.logs, bridgeContract]);
 
+  // Get target chain bridge contract for polling completion
+  const targetBridgeContract = useGetMPBContract(bridgeRequest?.targetChainId);
+
   // Poll target chain for bridge completion
   const bridgeCompletedEvent = useLogs(
     bridgeRequest &&
-      bridgeRequestId && {
-        contract: mpbContracts[bridgeRequest.targetChainId] ?? { address: ethers.constants.AddressZero },
+      bridgeRequestId &&
+      targetBridgeContract && {
+        contract: targetBridgeContract,
         event: "BridgeCompleted",
         args: [null, null, null, bridgeRequestId]
       },
@@ -329,6 +324,15 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar") => {
 
   // Bridge status based on local transaction status and bridge completion
   const bridgeStatus: Partial<TransactionStatus> | undefined = (() => {
+    // Show chain switching status
+    if (isSwitchingChain) {
+      return {
+        chainId: bridgeRequest?.sourceChainId,
+        status: "PendingSignature", // Use PendingSignature to indicate user action needed
+        errorMessage: switchChainError
+      } as TransactionStatus;
+    }
+
     if (transferAndCall.state.status === "Mining" || transferAndCall.state.status === "PendingSignature") {
       return {
         chainId: bridgeRequest?.sourceChainId,
@@ -353,25 +357,68 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar") => {
       } as TransactionStatus;
     }
 
+    // If we have a switchChainError, show it
+    if (switchChainError) {
+      return {
+        chainId: bridgeRequest?.sourceChainId,
+        status: "Fail",
+        errorMessage: switchChainError
+      } as TransactionStatus;
+    }
+
     return undefined;
   })();
 
   const sendMPBBridgeRequest = useCallback(
     async (amount: string, sourceChain: string, targetChain: string, target = account) => {
-      setBridgeRequest(undefined);
-      bridgeLock.current = false;
-      transferAndCall.resetState();
+      // Don't reset if transaction is currently being mined
+      const isActivelyMining = transferAndCall.state.status === "Mining";
+
+      if (!isActivelyMining) {
+        // Always reset state for a new bridge attempt
+        console.log("🔄 Resetting bridge state for new attempt");
+        setBridgeRequest(undefined);
+        bridgeLock.current = false;
+        transferAndCall.resetState();
+        setSwitchChainError(undefined);
+        setIsSwitchingChain(false);
+      } else {
+        console.log("⚠️ Transaction already mining, ignoring new bridge request");
+        return;
+      }
 
       const targetChainId = getTargetChainId(targetChain);
       const sourceChainId = getSourceChainId(sourceChain);
 
       try {
         if (sourceChainId !== chainId) {
+          setIsSwitchingChain(true);
+          console.log(`🔄 Switching network from ${chainId} to ${sourceChainId}...`);
           await switchNetwork(sourceChainId);
+          setIsSwitchingChain(false);
         }
 
         setBridgeRequest({ amount, sourceChainId, targetChainId, target });
-      } catch (error) {
+      } catch (error: any) {
+        setIsSwitchingChain(false);
+        const errorMessage = error?.message || "Failed to switch network";
+
+        // Check if user rejected the chain switch
+        const isUserRejection =
+          errorMessage.toLowerCase().includes("user rejected") ||
+          errorMessage.toLowerCase().includes("user denied") ||
+          errorMessage.toLowerCase().includes("user cancelled");
+
+        if (isUserRejection) {
+          console.log("👤 User rejected chain switch, resetting state");
+          // Reset all state on user rejection
+          setBridgeRequest(undefined);
+          bridgeLock.current = false;
+          setSwitchChainError(undefined);
+        } else {
+          setSwitchChainError(errorMessage);
+        }
+
         console.error("MPB Bridge error:", error);
         throw error;
       }
@@ -379,13 +426,43 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar") => {
     [account, transferAndCall, chainId, switchNetwork]
   );
 
-  // Handle transferAndCall errors
+  // Handle transferAndCall errors and completion
   useEffect(() => {
     if (transferAndCall.state.status === "Exception") {
-      console.error("TransferAndCall failed:", transferAndCall.state.errorMessage);
-      bridgeLock.current = false; // Reset lock so user can try again
+      const errorMessage = transferAndCall.state.errorMessage || "";
+      console.error("TransferAndCall failed:", errorMessage);
+
+      // Check if user rejected the transaction
+      const isUserRejection =
+        errorMessage.toLowerCase().includes("user rejected") ||
+        errorMessage.toLowerCase().includes("user denied") ||
+        errorMessage.toLowerCase().includes("rejected") ||
+        errorMessage.toLowerCase().includes("cancelled");
+
+      if (isUserRejection) {
+        console.log("👤 User rejected transaction, fully resetting state");
+        // Fully reset state on user rejection
+        setBridgeRequest(undefined);
+        bridgeLock.current = false;
+        transferAndCall.resetState();
+      } else {
+        // For other errors, just reset the lock
+        bridgeLock.current = false;
+      }
     }
-  }, [transferAndCall.state.status]);
+
+    // Reset lock on success to allow new transactions
+    if (transferAndCall.state.status === "Success") {
+      bridgeLock.current = false;
+    }
+  }, [transferAndCall.state.status, transferAndCall]);
+
+  // Reset chain switching state when chain successfully changes
+  useEffect(() => {
+    if (isSwitchingChain && bridgeRequest && chainId === bridgeRequest.sourceChainId) {
+      setIsSwitchingChain(false);
+    }
+  }, [chainId, bridgeRequest, isSwitchingChain]);
 
   // Helper function to execute bridge transaction
   const executeBridgeTransaction = useCallback(
@@ -409,16 +486,31 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar") => {
       );
 
       // Use transferAndCall to transfer tokens and call bridge in one transaction
-      void transferAndCall.send(bridgeContract?.address, bridgeRequest.amount, encoded);
+      if (bridgeContract?.address) {
+        void transferAndCall.send(bridgeContract.address, bridgeRequest.amount, encoded);
+      }
     },
     [bridgeProvider, bridgeContract, account]
   );
 
   // Trigger the bridge request using transferAndCall
   useEffect(() => {
-    if (transferAndCall.state.status === "None" && bridgeRequest && account && !bridgeLock.current) {
+    // Only execute if:
+    // 1. No transaction in progress (status is "None")
+    // 2. We have a bridge request
+    // 3. We have an account
+    // 4. The bridge lock is not set
+    // 5. We're not currently switching chains
+    const shouldExecute =
+      transferAndCall.state.status === "None" && bridgeRequest && account && !bridgeLock.current && !isSwitchingChain;
+
+    if (shouldExecute) {
       bridgeLock.current = true;
-      console.log("🌉 Starting bridge process with transferAndCall...");
+      console.log("🌉 Starting bridge process with transferAndCall...", {
+        bridgeRequest,
+        account,
+        chainId
+      });
 
       fetchBridgeFees()
         .then(fees => {
@@ -431,15 +523,16 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar") => {
         .catch(error => {
           bridgeLock.current = false; // Reset lock on error
           console.error("Bridge execution error:", error);
-          throw error;
+          // Don't throw - let the state management handle it
         });
     }
-  }, [transferAndCall.state.status, bridgeRequest, account, executeBridgeTransaction]);
+  }, [transferAndCall.state.status, bridgeRequest, account, executeBridgeTransaction, isSwitchingChain, chainId]);
 
   return {
     sendMPBBridgeRequest,
     bridgeRequestStatus: transferAndCall.state,
     bridgeStatus,
-    bridgeRequest
+    bridgeRequest,
+    isSwitchingChain
   };
 };

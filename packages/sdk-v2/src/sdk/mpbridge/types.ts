@@ -1,4 +1,5 @@
 import { ethers } from "ethers";
+import { TransactionStatus } from "@usedapp/core";
 import { SupportedChains } from "../constants";
 import bridgeContracts from "@gooddollar/bridge-contracts/release/deployment.json";
 
@@ -50,4 +51,12 @@ export type BridgeHistoryItem = {
   timestamp: number;
   transactionHash: string;
   blockNumber: number;
+};
+
+export type UseMPBBridgeReturn = {
+  sendMPBBridgeRequest: (amount: string, sourceChain: string, targetChain: string, target?: string) => Promise<void>;
+  bridgeRequestStatus: TransactionStatus;
+  bridgeStatus: Partial<TransactionStatus> | undefined;
+  bridgeRequest: BridgeRequest | undefined;
+  isSwitchingChain: boolean;
 };

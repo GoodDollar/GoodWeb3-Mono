@@ -186,16 +186,24 @@ export const MPBBridge = ({
     const { status = "" } = bridgeStatus ?? {};
     const isSuccess = status === "Success";
     const isFailed = ["Fail", "Exception"].includes(status);
-    const isBridgingActive = !isFailed && !isSuccess && ["Mining", "PendingSignature", "Success"].includes(status);
+    const isBridgingActive = !isFailed && !isSuccess && ["Mining", "PendingSignature"].includes(status);
 
-    setBridging(isBridgingActive);
-
-    if (bridgeStatus?.status === "Mining") {
-      setBridgingStatus("Bridging in progress...");
+    // Keep bridging state active while any transaction is in progress
+    if (bridgeStatus) {
+      setBridging(isBridgingActive || status === "Mining" || status === "PendingSignature");
     }
 
     if (bridgeStatus?.status === "PendingSignature") {
-      setBridgingStatus("Waiting for signature...");
+      // Check if this is a chain switch or transaction signature
+      if (bridgeStatus?.errorMessage) {
+        setBridgingStatus("Switching network. Please approve in your wallet...");
+      } else {
+        setBridgingStatus("Please sign the transaction in your wallet...");
+      }
+    }
+
+    if (bridgeStatus?.status === "Mining") {
+      setBridgingStatus("Transaction submitted. Waiting for confirmation...");
     }
 
     if (bridgeStatus?.status === "Success") {
@@ -208,13 +216,35 @@ export const MPBBridge = ({
     }
 
     if (isFailed) {
-      setBridgingStatus("Bridge failed");
-      setTimeout(() => {
-        setBridging(false);
-        setBridgingStatus("");
-      }, 3000);
-      const exception = new Error(bridgeStatus?.errorMessage ?? "Failed to bridge");
-      onBridgeFailed?.(exception);
+      const errorMsg = bridgeStatus?.errorMessage || "Failed to bridge";
+      // Check if it's a user rejection
+      const isUserRejection =
+        errorMsg.toLowerCase().includes("user rejected") ||
+        errorMsg.toLowerCase().includes("user denied") ||
+        errorMsg.toLowerCase().includes("rejected") ||
+        errorMsg.toLowerCase().includes("cancelled");
+
+      if (isUserRejection) {
+        setBridgingStatus("Transaction cancelled");
+        // Reset immediately for user rejections so they can retry
+        setTimeout(() => {
+          setBridging(false);
+          setBridgingStatus("");
+        }, 2000);
+      } else {
+        setBridgingStatus(`Bridge failed: ${errorMsg}`);
+        // Give user more time to read actual errors
+        setTimeout(() => {
+          setBridging(false);
+          setBridgingStatus("");
+        }, 5000);
+      }
+
+      // Only call onBridgeFailed for actual errors, not user cancellations
+      if (!isUserRejection) {
+        const exception = new Error(errorMsg);
+        onBridgeFailed?.(exception);
+      }
     }
   }, [bridgeStatus, onBridgeSuccess, onBridgeFailed]);
 

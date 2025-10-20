@@ -44,7 +44,6 @@ export const MPBBridgeController: React.FC<IMPBBridgeControllerProps> = ({ onBri
     return v.mul(ethers.BigNumber.from(10).pow(d - 18));
   };
 
-  // OPTIMIZATION: Fallback limits for instant UI rendering
   const FALLBACK_LIMITS = {
     minAmount: ethers.BigNumber.from("1000000000000000000000"), // 1000 G$ in 18 decimals
     maxAmount: ethers.BigNumber.from("1000000000000000000000000") // 1M G$ in 18 decimals
@@ -97,19 +96,21 @@ export const MPBBridgeController: React.FC<IMPBBridgeControllerProps> = ({ onBri
       try {
         await sendMPBBridgeRequest(inputWei, sourceChain, targetChain);
       } catch (e: any) {
-        onBridgeFailed?.(e);
+        // Error handling is done in the hook and UI component
+        // Just log it here for debugging
+        console.error("Bridge start error:", e);
       }
     },
-    [inputTransaction, sendMPBBridgeRequest, onBridgeFailed, originChain, chainId, bridgeFees]
+    [inputTransaction, sendMPBBridgeRequest]
   );
 
   useEffect(() => {
     if (bridgeRequestStatus?.status === "Exception") {
-      // Handle error silently for now
+      // The error is now handled in the bridge hook and propagated through bridgeStatus
+      console.error("Bridge transaction exception:", bridgeRequestStatus.errorMessage);
     }
   }, [bridgeRequestStatus]);
 
-  // OPTIMIZATION: Prepare fallback fees for instant rendering
   const effectiveFees = bridgeFees || { nativeFee: ethers.BigNumber.from(0), zroFee: ethers.BigNumber.from(0) };
 
   return (
