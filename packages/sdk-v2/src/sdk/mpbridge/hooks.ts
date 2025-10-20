@@ -21,8 +21,7 @@ import {
   getChainName,
   getTargetChainId,
   getSourceChainId,
-  calculateBridgeFees,
-  DEFAULT_BRIDGE_FEES
+  calculateBridgeFees
 } from "./constants";
 
 /**
@@ -202,19 +201,12 @@ export const useGetMPBBridgeData = (
   targetChain?: string,
   bridgeProvider: BridgeProvider = "layerzero"
 ): MPBBridgeData => {
-  // OPTIMIZATION: Start with fallback data for instant rendering
-  const [bridgeFees, setBridgeFees] = useState<BridgeFees>(() => {
-    const source = sourceChain || "celo";
-    const target = targetChain || "fuse";
-    return calculateBridgeFees(DEFAULT_BRIDGE_FEES, bridgeProvider, source, target);
-  });
-
+  const [bridgeFees, setBridgeFees] = useState<BridgeFees>({ nativeFee: null, zroFee: null });
   const [bridgeLimits] = useState<BridgeLimitsData>({
     minAmount: BRIDGE_CONSTANTS.MIN_AMOUNT,
     maxAmount: BRIDGE_CONSTANTS.MAX_AMOUNT
   });
-
-  const [isLoading] = useState(false); // Start as false
+  const [isLoading, setIsLoading] = useState(true); // Start as true while fetching
   const [error, setError] = useState<string | null>(null);
 
   // Helper function to calculate fees using the service
@@ -230,17 +222,17 @@ export const useGetMPBBridgeData = (
     }
   }, []);
 
-  // Main effect to load bridge data in background
+  // Main effect to load bridge data
   useEffect(() => {
     let isMounted = true;
 
     setError(null);
+    setIsLoading(true);
 
     const loadBridgeData = async () => {
       const sourceChainName = sourceChain || "celo";
       const targetChainName = targetChain || "fuse";
 
-      // OPTIMIZATION: Fetch in background, UI already rendered with fallbacks
       try {
         const fees = await fetchBridgeFees();
 
@@ -248,10 +240,16 @@ export const useGetMPBBridgeData = (
 
         if (fees) {
           calculateFees(fees, sourceChainName, targetChainName, bridgeProvider);
+          setIsLoading(false);
+        } else {
+          setError("We were unable to fetch bridge fees. Try again later or contact support.");
+          setIsLoading(false);
         }
       } catch (error) {
-        // Silent fail - UI already has fallback fees
-        console.warn("Failed to fetch bridge fees, using fallbacks");
+        if (isMounted) {
+          setError("We were unable to fetch bridge fees. Try again later or contact support.");
+          setIsLoading(false);
+        }
       }
     };
 

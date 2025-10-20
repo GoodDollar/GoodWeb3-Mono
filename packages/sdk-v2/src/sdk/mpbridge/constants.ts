@@ -99,18 +99,6 @@ export const REVERSE_CHAIN_MAPPING: Record<ChainName, number> = {
   mainnet: SupportedChains.MAINNET
 } as const;
 
-// Default fallback fees for instant UI rendering (single source of truth)
-export const DEFAULT_BRIDGE_FEES = {
-  LAYERZERO: {
-    LZ_ETH_TO_CELO: "0.000313656721807939 ETH",
-    LZ_ETH_TO_FUSE: "0.000192497159840898 ETH",
-    LZ_CELO_TO_ETH: "37.03567383217732 Celo",
-    LZ_CELO_TO_FUSE: "0.09256173546554455 CELO",
-    LZ_FUSE_TO_ETH: "579.0125764968107 Fuse",
-    LZ_FUSE_TO_CELO: "5.0301068434398175 Fuse"
-  }
-} as const;
-
 // Fee route mappings for different bridge providers (DRY - single source of truth)
 export const FEE_ROUTES: Record<BridgeProvider, Record<string, string>> = {
   [BRIDGE_PROVIDERS.AXELAR]: {

@@ -53,7 +53,7 @@ export const MPBBridge = ({
   const [showTargetDropdown, setShowTargetDropdown] = useState(false);
   const [toggleState, setToggleState] = useState<boolean>(false);
 
-  const { fees: bridgeFees, loading: feesLoading } = useBridgeFees();
+  const { fees: bridgeFees, loading: feesLoading, error: feesError } = useBridgeFees();
 
   const { realTransactionHistory, historyLoading } = useDebouncedTransactionHistory(2000);
 
@@ -270,6 +270,15 @@ export const MPBBridge = ({
       {/* Bridging Status Banner */}
       <BridgingStatusBanner isBridging={isBridging} bridgingStatus={bridgingStatus} />
 
+      {/* Fee Error Banner */}
+      {feesError && (
+        <Box bg="red.50" borderRadius="lg" padding="4" borderWidth="1" borderColor="red.300">
+          <Text color="red.600" fontSize="sm" fontWeight="500">
+            {feesError}
+          </Text>
+        </Box>
+      )}
+
       {/* Bridge Functionality Card */}
       <Box borderRadius="xl" borderWidth="1" padding="8" backgroundColor="white" shadow="lg" borderColor="goodGrey.200">
         <VStack space={8}>
@@ -317,7 +326,7 @@ export const MPBBridge = ({
             {/* Bridge Button */}
             <Web3ActionButton
               web3Action={triggerBridge}
-              disabled={!isValidInput || isBridging}
+              disabled={!isValidInput || isBridging || !!feesError}
               isLoading={isBridging}
               text={
                 isBridging ? "Bridging..." : `Bridge to ${targetChain.charAt(0).toUpperCase() + targetChain.slice(1)}`

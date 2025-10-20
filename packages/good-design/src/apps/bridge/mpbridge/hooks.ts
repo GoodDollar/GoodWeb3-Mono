@@ -5,19 +5,6 @@ import { BigNumber } from "ethers";
 import { fetchBridgeFees, useBridgeHistory } from "@gooddollar/web3sdk-v2";
 import type { IMPBFees, IMPBLimits } from "./types";
 
-// Note: This constant is defined in @gooddollar/web3sdk-v2/sdk/mpbridge/constants.ts (DEFAULT_BRIDGE_FEES)
-// Imported directly here until SDK types are rebuilt. Single source of truth is in the SDK.
-const FALLBACK_FEES = {
-  LAYERZERO: {
-    LZ_ETH_TO_CELO: "0.000313656721807939 ETH",
-    LZ_ETH_TO_FUSE: "0.000192497159840898 ETH",
-    LZ_CELO_TO_ETH: "37.03567383217732 Celo",
-    LZ_CELO_TO_FUSE: "0.09256173546554455 CELO",
-    LZ_FUSE_TO_ETH: "579.0125764968107 Fuse",
-    LZ_FUSE_TO_CELO: "5.0301068434398175 Fuse"
-  }
-};
-
 // Chain ID to chain name mapping - single source of truth
 const CHAIN_ID_TO_NAME: Record<number, string> = {
   122: "Fuse",
@@ -73,20 +60,20 @@ const setStoredCache = (data: any) => {
 };
 
 export const useBridgeFees = () => {
-  // OPTIMIZATION: Start with fallback fees for instant UI (defined in SDK)
-  const [fees, setFees] = useState<any>(FALLBACK_FEES);
-  const [loading] = useState(false);
-  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [fees, setFees] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const cached = getStoredCache();
     const now = Date.now();
     const isCacheValid = cached && cached.data && now - cached.timestamp < CACHE_DURATION;
 
-    // OPTIMIZATION 1: Show cached data immediately (stale-while-revalidate)
+    // Show cached data immediately if available (stale-while-revalidate)
     if (cached && cached.data) {
       console.log("⚡ Using cached bridge fees (age:", Math.round((now - cached.timestamp) / 1000), "seconds)");
       setFees(cached.data);
+      setLoading(false);
 
       // If cache is still valid, no need to fetch
       if (isCacheValid) {
@@ -94,27 +81,31 @@ export const useBridgeFees = () => {
       }
     }
 
-    // OPTIMIZATION 2: Fetch in background (non-blocking)
-    // Either cache is stale or doesn't exist
-    setIsRefreshing(true);
-    console.log("🔄 Refreshing bridge fees in background...");
+    // Fetch fresh data
+    console.log("🔄 Fetching bridge fees from API...");
 
     fetchBridgeFees()
       .then((feesData: any) => {
-        // Cache the fees data in localStorage
-        setStoredCache(feesData);
-        setFees(feesData);
-        setIsRefreshing(false);
-        console.log("✅ Bridge fees updated from API");
+        if (feesData) {
+          // Cache the fees data in localStorage
+          setStoredCache(feesData);
+          setFees(feesData);
+          setLoading(false);
+          setError(null);
+          console.log("✅ Bridge fees fetched successfully");
+        } else {
+          setError("We were unable to fetch bridge fees. Try again later or contact support.");
+          setLoading(false);
+        }
       })
-      .catch(error => {
-        console.error("❌ Failed to fetch bridge fees:", error);
-        console.log("ℹ️ Using fallback fees");
-        setIsRefreshing(false);
+      .catch(err => {
+        console.error("❌ Failed to fetch bridge fees:", err);
+        setError("We were unable to fetch bridge fees. Try again later or contact support.");
+        setLoading(false);
       });
   }, []);
 
-  return { fees, loading, isRefreshing };
+  return { fees, loading, error };
 };
 
 // Hook to get bridge estimate
