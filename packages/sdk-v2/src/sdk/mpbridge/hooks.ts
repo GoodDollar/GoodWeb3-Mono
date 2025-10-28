@@ -38,6 +38,44 @@ const useGetMPBContract = (chainId?: number) => {
   }, [library, mpbABI, targetChainId]);
 };
 
+/**
+ * Hook to get bridge topic from contract
+ * Reads BRIDGE_TOPIC constant from the contract instead of using hardcoded value
+ */
+export const useBridgeTopic = (chainId?: number) => {
+  const bridgeContract = useGetMPBContract(chainId);
+  const [bridgeTopic, setBridgeTopic] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!bridgeContract) {
+      setIsLoading(false);
+      return;
+    }
+
+    const fetchBridgeTopic = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        const topic = await bridgeContract.BRIDGE_TOPIC();
+        setBridgeTopic(topic);
+      } catch (err: any) {
+        console.error("Failed to fetch bridge topic:", err);
+        setError(err.message || "Failed to fetch bridge topic");
+        // Fallback to hardcoded value if contract call fails
+        setBridgeTopic(BRIDGE_CONSTANTS.BRIDGE_REQUEST_TOPIC);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    void fetchBridgeTopic();
+  }, [bridgeContract]);
+
+  return { bridgeTopic, isLoading, error };
+};
+
 // Types for better readability
 interface BridgeLimits {
   dailyLimit: ethers.BigNumber;
@@ -76,7 +114,7 @@ export const useMPBBridgeLimits = (amount: string, chainId?: number): Validation
     }
   }, []);
 
-  // Helper function to fetch bridge limits
+  // Helper function to fetch bridge limits from contract
   const fetchBridgeLimits = useCallback(async (contract: any) => {
     try {
       const limits = await contract.bridgeLimits();
@@ -136,12 +174,6 @@ export const useMPBBridgeLimits = (amount: string, chainId?: number): Validation
     };
   }
 
-  // Basic amount validation with hardcoded limits
-  const basicValidation = validateAmount(amountBigNumber, BRIDGE_CONSTANTS.MIN_AMOUNT, BRIDGE_CONSTANTS.MAX_AMOUNT);
-  if (!basicValidation.isValid) {
-    return basicValidation;
-  }
-
   // Return valid while loading (optimistic validation)
   if (isLoadingLimits) {
     return { isValid: true, reason: "", errorMessage: undefined };
@@ -156,7 +188,7 @@ export const useMPBBridgeLimits = (amount: string, chainId?: number): Validation
     };
   }
 
-  // Validate against contract limits
+  // Validate against contract limits (now using actual contract values)
   const contractValidation = validateAmount(amountBigNumber, bridgeLimits.minAmount, bridgeLimits.txLimit);
   if (!contractValidation.isValid) {
     return contractValidation;
@@ -191,12 +223,31 @@ export const useGetMPBBridgeData = (
   bridgeProvider: BridgeProvider = "layerzero"
 ): MPBBridgeData => {
   const [bridgeFees, setBridgeFees] = useState<BridgeFees>({ nativeFee: null, zroFee: null });
-  const [bridgeLimits] = useState<BridgeLimitsData>({
-    minAmount: BRIDGE_CONSTANTS.MIN_AMOUNT,
-    maxAmount: BRIDGE_CONSTANTS.MAX_AMOUNT
-  });
+  const [bridgeLimits, setBridgeLimits] = useState<BridgeLimitsData | null>(null);
   const [isLoading, setIsLoading] = useState(true); // Start as true while fetching
   const [error, setError] = useState<string | null>(null);
+
+  // Get contract for the source chain to fetch limits
+  const sourceChainId = getSourceChainId(sourceChain || "celo");
+  const bridgeContract = useGetMPBContract(sourceChainId);
+
+  // Helper function to fetch bridge limits from contract
+  const fetchContractLimits = useCallback(async (contract: any) => {
+    try {
+      const limits = await contract.bridgeLimits();
+      setBridgeLimits({
+        minAmount: limits.minAmount,
+        maxAmount: limits.txLimit // Use txLimit as maxAmount
+      });
+    } catch (error) {
+      console.error("Failed to fetch contract limits:", error);
+      // Fallback to hardcoded limits if contract call fails
+      setBridgeLimits({
+        minAmount: BRIDGE_CONSTANTS.MIN_AMOUNT,
+        maxAmount: BRIDGE_CONSTANTS.MAX_AMOUNT
+      });
+    }
+  }, []);
 
   // Helper function to calculate fees using the service
   const calculateFees = useCallback((fees: any, source: string, target: string, provider: BridgeProvider) => {
@@ -223,20 +274,28 @@ export const useGetMPBBridgeData = (
       const targetChainName = targetChain || "fuse";
 
       try {
-        const fees = await fetchBridgeFees();
+        // Fetch both fees and limits in parallel
+        const [fees, limitsResult] = await Promise.allSettled([
+          fetchBridgeFees(),
+          bridgeContract ? fetchContractLimits(bridgeContract) : Promise.resolve()
+        ]);
 
         if (!isMounted) return;
 
-        if (fees) {
-          calculateFees(fees, sourceChainName, targetChainName, bridgeProvider);
-          setIsLoading(false);
+        if (fees.status === "fulfilled" && fees.value) {
+          calculateFees(fees.value, sourceChainName, targetChainName, bridgeProvider);
         } else {
           setError("We were unable to fetch bridge fees. Try again later or contact support.");
-          setIsLoading(false);
         }
+
+        if (limitsResult.status === "rejected") {
+          console.error("Failed to fetch bridge limits:", limitsResult.reason);
+        }
+
+        setIsLoading(false);
       } catch (error) {
         if (isMounted) {
-          setError("We were unable to fetch bridge fees. Try again later or contact support.");
+          setError("We were unable to fetch bridge data. Try again later or contact support.");
           setIsLoading(false);
         }
       }
@@ -247,14 +306,14 @@ export const useGetMPBBridgeData = (
     return () => {
       isMounted = false;
     };
-  }, [sourceChain, targetChain, bridgeProvider, calculateFees]);
+  }, [sourceChain, targetChain, bridgeProvider, calculateFees, bridgeContract, fetchContractLimits]);
 
   return { bridgeFees, bridgeLimits, isLoading, error };
 };
 
 // Helper function to extract bridge request ID from logs
-const extractBridgeRequestId = (logs: any[], bridgeContract: any): string | undefined => {
-  const bridgeRequestTopic = BRIDGE_CONSTANTS.BRIDGE_REQUEST_TOPIC;
+const extractBridgeRequestId = (logs: any[], bridgeContract: any, bridgeTopic?: string): string | undefined => {
+  const bridgeRequestTopic = bridgeTopic || BRIDGE_CONSTANTS.BRIDGE_REQUEST_TOPIC;
 
   for (const log of logs) {
     if (log.address === bridgeContract?.address && log.topics[0] === bridgeRequestTopic) {
@@ -284,6 +343,9 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
   const [isSwitchingChain, setIsSwitchingChain] = useState(false);
   const [switchChainError, setSwitchChainError] = useState<string | undefined>();
 
+  // Get bridge topic from contract
+  const { bridgeTopic } = useBridgeTopic(chainId);
+
   // Get G$ token contract for the current chain
   const gdContract = useGetContract("GoodDollar", true, "base", chainId) as IGoodDollar;
 
@@ -300,8 +362,8 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
       return undefined;
     }
 
-    return extractBridgeRequestId(transferAndCall.state.receipt.logs, bridgeContract);
-  }, [transferAndCall.state?.status, transferAndCall.state?.receipt?.logs, bridgeContract]);
+    return extractBridgeRequestId(transferAndCall.state.receipt.logs, bridgeContract, bridgeTopic || undefined);
+  }, [transferAndCall.state?.status, transferAndCall.state?.receipt?.logs, bridgeContract, bridgeTopic]);
 
   // Get target chain bridge contract for polling completion
   const targetBridgeContract = useGetMPBContract(bridgeRequest?.targetChainId);

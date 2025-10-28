@@ -44,13 +44,8 @@ export const MPBBridgeController: React.FC<IMPBBridgeControllerProps> = ({ onBri
     return v.mul(ethers.BigNumber.from(10).pow(d - 18));
   };
 
-  const FALLBACK_LIMITS = {
-    minAmount: ethers.BigNumber.from("1000000000000000000000"), // 1000 G$ in 18 decimals
-    maxAmount: ethers.BigNumber.from("1000000000000000000000000") // 1M G$ in 18 decimals
-  };
-
-  // Use actual contract limits for validation, with fallback
-  const effectiveLimits = bridgeLimits || FALLBACK_LIMITS;
+  // Use contract limits directly (hook handles fallback internally)
+  const effectiveLimits = bridgeLimits;
 
   // Validation configuration
   const VALIDATION_REASONS = {
@@ -66,6 +61,11 @@ export const MPBBridgeController: React.FC<IMPBBridgeControllerProps> = ({ onBri
       const validChains = ["fuse", "celo", "mainnet"];
       if (!validChains.includes(chain)) {
         return { isValid: false, reason: VALIDATION_REASONS.INVALID_CHAIN };
+      }
+
+      // Return valid while loading limits
+      if (!effectiveLimits) {
+        return { isValid: true, reason: "" };
       }
 
       // Parse amount
@@ -121,18 +121,33 @@ export const MPBBridgeController: React.FC<IMPBBridgeControllerProps> = ({ onBri
         inputTransaction={inputTransaction}
         pendingTransaction={pendingTransaction}
         limits={{
-          fuse: {
-            minAmount: scaleFrom18(effectiveLimits.minAmount, fuseDecimals),
-            maxAmount: scaleFrom18(effectiveLimits.maxAmount, fuseDecimals)
-          },
-          celo: {
-            minAmount: scaleFrom18(effectiveLimits.minAmount, celoDecimals),
-            maxAmount: scaleFrom18(effectiveLimits.maxAmount, celoDecimals)
-          },
-          mainnet: {
-            minAmount: scaleFrom18(effectiveLimits.minAmount, mainnetDecimals),
-            maxAmount: scaleFrom18(effectiveLimits.maxAmount, mainnetDecimals)
-          }
+          fuse: effectiveLimits
+            ? {
+                minAmount: scaleFrom18(effectiveLimits.minAmount, fuseDecimals),
+                maxAmount: scaleFrom18(effectiveLimits.maxAmount, fuseDecimals)
+              }
+            : {
+                minAmount: ethers.BigNumber.from("1000000000000000000000"), // Fallback: 1000 G$
+                maxAmount: ethers.BigNumber.from("1000000000000000000000000") // Fallback: 1M G$
+              },
+          celo: effectiveLimits
+            ? {
+                minAmount: scaleFrom18(effectiveLimits.minAmount, celoDecimals),
+                maxAmount: scaleFrom18(effectiveLimits.maxAmount, celoDecimals)
+              }
+            : {
+                minAmount: ethers.BigNumber.from("1000000000000000000000"), // Fallback: 1000 G$
+                maxAmount: ethers.BigNumber.from("1000000000000000000000000") // Fallback: 1M G$
+              },
+          mainnet: effectiveLimits
+            ? {
+                minAmount: scaleFrom18(effectiveLimits.minAmount, mainnetDecimals),
+                maxAmount: scaleFrom18(effectiveLimits.maxAmount, mainnetDecimals)
+              }
+            : {
+                minAmount: ethers.BigNumber.from("1000000000000000000000"), // Fallback: 1000 G$
+                maxAmount: ethers.BigNumber.from("1000000000000000000000000") // Fallback: 1M G$
+              }
         }}
         fees={{
           fuse: {
