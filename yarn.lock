@@ -5470,7 +5470,7 @@ __metadata:
     "@babel/runtime": ^7.18.9
     "@formatjs/intl-locale": ^4.0.0
     "@formatjs/intl-pluralrules": ^5.2.14
-    "@gooddollar/goodprotocol": ^2.0.34-beta.1
+    "@gooddollar/goodprotocol": ^2.1.0
     "@gooddollar/web3sdk-v2": "*"
     "@lingui/core": ^4.11.2
     "@lingui/react": ^4.11.2
@@ -5554,6 +5554,12 @@ __metadata:
     uuid: ^11.0.3
     wagmi: ^2.12.25
     webpack: ^5.74.0
+  peerDependencies:
+    "@usedapp/core": "*"
+    ethers: 5.*
+    react: ^18.*
+    react-native-paper: "*"
+    uuid: "*"
   languageName: unknown
   linkType: soft
 
@@ -5619,10 +5625,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gooddollar/goodprotocol@npm:^2.0.34-beta.1":
-  version: 2.0.34-beta.1
-  resolution: "@gooddollar/goodprotocol@npm:2.0.34-beta.1"
-  checksum: a86bd81d9eb3f350d1d3238dc95b60696f409d2ac8f0bea939838e6d8e371235483a6ccb150fb4c544ba3dacc5b76322ac3ce43b2e90a540cb094c5b022e5be4
+"@gooddollar/goodprotocol@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "@gooddollar/goodprotocol@npm:2.1.0"
+  checksum: c17efae892b2d6bd6a3a98eeaf40f3b4686a3b7b2985a1dedc6d61c946636511eaf9fae92401f9d914d39e883e69760a9a99f6e536393b62e164f958c687f046
   languageName: node
   linkType: hard
 
@@ -5644,7 +5650,7 @@ __metadata:
     "@gooddollar/bridge-contracts": ^1.0.17
     "@gooddollar/goodcollective-contracts": ^1.3.0
     "@gooddollar/goodcollective-sdk": ^1.3.3
-    "@gooddollar/goodprotocol": ^2.0.34-beta.1
+    "@gooddollar/goodprotocol": ^2.1.0
     "@orbisclub/orbis-sdk": ^0.4.87
     "@react-native-async-storage/async-storage": 1.17.10
     "@react-native-community/geolocation": 3.1.0
@@ -5798,7 +5804,7 @@ __metadata:
   resolution: "@gooddollar/web3sdk@workspace:packages/sdk"
   dependencies:
     "@apollo/client": ^3.2.0
-    "@gooddollar/goodprotocol": ^2.0.34-beta.1
+    "@gooddollar/goodprotocol": ^2.1.0
     "@rollup/plugin-alias": ^3.1.9
     "@rollup/plugin-commonjs": ^22.0.0
     "@rollup/plugin-eslint": ^9.0.5
