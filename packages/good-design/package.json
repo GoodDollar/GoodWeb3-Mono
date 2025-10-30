@@ -77,9 +77,10 @@
     "wagmi": "^2.12.25",
     "webpack": "^5.74.0"
   },
-  "peerDepedencies": {
+  "peerDependencies": {
     "@usedapp/core": "*",
     "ethers": "5.*",
+    "react": "^18.*",
     "react-native-paper": "*",
     "uuid": "*"
   },
@@ -89,7 +90,7 @@
     "@babel/runtime": "^7.18.9",
     "@formatjs/intl-locale": "^4.0.0",
     "@formatjs/intl-pluralrules": "^5.2.14",
-    "@gooddollar/goodprotocol": "^2.0.34-beta.1",
+    "@gooddollar/goodprotocol": "^2.1.0",
     "@gooddollar/web3sdk-v2": "*",
     "@lingui/core": "^4.11.2",
     "@lingui/react": "^4.11.2",
