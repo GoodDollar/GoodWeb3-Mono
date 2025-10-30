@@ -19,6 +19,9 @@ export const MPB_CONTRACTS = {
 export type MPBBridgeData = {
   bridgeFees: { nativeFee: ethers.BigNumber | null; zroFee: ethers.BigNumber | null };
   bridgeLimits: { minAmount: ethers.BigNumber; maxAmount: ethers.BigNumber } | null;
+  // Protocol fee taken by the bridge contract in basis points (bps) divided by 10000.
+  // For example, 15 => 0.15%.
+  protocolFeePercent: number | null;
   isLoading: boolean;
   error: string | null;
 };

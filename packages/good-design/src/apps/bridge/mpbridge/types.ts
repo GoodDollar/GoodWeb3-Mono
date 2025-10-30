@@ -22,6 +22,7 @@ export interface MPBBridgeProps {
   originChain: [string, (chain: string) => void];
   inputTransaction: [string, (amount: string) => void];
   pendingTransaction: [any, (transaction: any) => void];
+  protocolFeePercent?: number; // Protocol fee displayed for UI purposes only
   limits?: IMPBLimits;
   fees?: IMPBFees;
   bridgeStatus?: {

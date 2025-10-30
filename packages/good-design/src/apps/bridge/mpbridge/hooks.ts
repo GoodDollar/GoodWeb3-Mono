@@ -32,7 +32,7 @@ const getChainName = (chainId: number): string => {
 // Cache for bridge fees to prevent unnecessary API calls
 // Using localStorage for persistence across page reloads
 const CACHE_KEY = "mpb-bridge-fees-cache";
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+const CACHE_DURATION = 5 * 60 * 1000;
 
 // Helper functions for localStorage cache
 const getStoredCache = () => {
@@ -202,20 +202,7 @@ export const useChainBalances = () => {
   return { getBalanceForChain };
 };
 
-/**
- * Hook to get transaction history
- *
- * TODO: This currently uses microbridge history (useBridgeHistory) which listens to
- * BridgeRequest/ExecutedTransfer events from the old TokenBridge contract.
- *
- * For MPB (Message Passing Bridge), we should create a dedicated useMPBBridgeHistory hook
- * that listens to the correct MPB events (BridgeRequest/BridgeCompleted from MessagePassingBridge).
- *
- * @see packages/sdk-v2/src/sdk/microbridge/react.ts:289 for microbridge implementation
- * @see packages/sdk-v2/src/sdk/mpbridge/hooks.ts for where MPB history should be implemented
- */
 export const useTransactionHistory = () => {
-  // TEMPORARY: Using microbridge history until useMPBBridgeHistory is implemented
   const { historySorted: realTransactionHistory } = useBridgeHistory() ?? {};
 
   // Memoize the result to prevent unnecessary re-renders

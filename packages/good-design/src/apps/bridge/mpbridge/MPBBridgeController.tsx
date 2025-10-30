@@ -29,7 +29,9 @@ export const MPBBridgeController: React.FC<IMPBBridgeControllerProps> = ({ onBri
   }, [chainId, setSourceChain]);
 
   const currentChain = chainId === 122 ? "fuse" : chainId === 42220 ? "celo" : "mainnet";
-  const { bridgeFees, bridgeLimits } = useGetMPBBridgeData(currentChain, "fuse", "layerzero");
+  const bridgeData = useGetMPBBridgeData(currentChain, "fuse", "layerzero");
+  const { bridgeFees, bridgeLimits } = bridgeData;
+  const protocolFeePercent = (bridgeData as any).protocolFeePercent as number | null;
 
   // Per-chain decimals to scale 18-decimal limits to the active chain units
   const fuseDecimals = useG$Decimals("G$", 122);
@@ -44,17 +46,16 @@ export const MPBBridgeController: React.FC<IMPBBridgeControllerProps> = ({ onBri
     return v.mul(ethers.BigNumber.from(10).pow(d - 18));
   };
 
-  // Use contract limits directly (hook handles fallback internally)
   const effectiveLimits = bridgeLimits;
 
   // Validation configuration
   const VALIDATION_REASONS = {
     MIN_AMOUNT: "minAmount",
     MAX_AMOUNT: "maxAmount",
-    INVALID_CHAIN: "invalidChain"
+    INVALID_CHAIN: "invalidChain",
+    ERROR: "error"
   } as const;
 
-  // Create validation function that uses actual contract limits
   const useCanMPBBridge = useCallback(
     (chain: string, amountWei: string) => {
       // Validate chain
@@ -63,9 +64,9 @@ export const MPBBridgeController: React.FC<IMPBBridgeControllerProps> = ({ onBri
         return { isValid: false, reason: VALIDATION_REASONS.INVALID_CHAIN };
       }
 
-      // Return valid while loading limits
+      // Return invalid if limits not available from contract
       if (!effectiveLimits) {
-        return { isValid: true, reason: "" };
+        return { isValid: false, reason: VALIDATION_REASONS.ERROR };
       }
 
       // Parse amount
@@ -96,8 +97,6 @@ export const MPBBridgeController: React.FC<IMPBBridgeControllerProps> = ({ onBri
       try {
         await sendMPBBridgeRequest(inputWei, sourceChain, targetChain);
       } catch (e: any) {
-        // Error handling is done in the hook and UI component
-        // Just log it here for debugging
         console.error("Bridge start error:", e);
       }
     },
@@ -120,35 +119,25 @@ export const MPBBridgeController: React.FC<IMPBBridgeControllerProps> = ({ onBri
         originChain={originChain}
         inputTransaction={inputTransaction}
         pendingTransaction={pendingTransaction}
-        limits={{
-          fuse: effectiveLimits
+        protocolFeePercent={protocolFeePercent || 0}
+        limits={
+          effectiveLimits
             ? {
-                minAmount: scaleFrom18(effectiveLimits.minAmount, fuseDecimals),
-                maxAmount: scaleFrom18(effectiveLimits.maxAmount, fuseDecimals)
+                fuse: {
+                  minAmount: scaleFrom18(effectiveLimits.minAmount, fuseDecimals),
+                  maxAmount: scaleFrom18(effectiveLimits.maxAmount, fuseDecimals)
+                },
+                celo: {
+                  minAmount: scaleFrom18(effectiveLimits.minAmount, celoDecimals),
+                  maxAmount: scaleFrom18(effectiveLimits.maxAmount, celoDecimals)
+                },
+                mainnet: {
+                  minAmount: scaleFrom18(effectiveLimits.minAmount, mainnetDecimals),
+                  maxAmount: scaleFrom18(effectiveLimits.maxAmount, mainnetDecimals)
+                }
               }
-            : {
-                minAmount: ethers.BigNumber.from("1000000000000000000000"), // Fallback: 1000 G$
-                maxAmount: ethers.BigNumber.from("1000000000000000000000000") // Fallback: 1M G$
-              },
-          celo: effectiveLimits
-            ? {
-                minAmount: scaleFrom18(effectiveLimits.minAmount, celoDecimals),
-                maxAmount: scaleFrom18(effectiveLimits.maxAmount, celoDecimals)
-              }
-            : {
-                minAmount: ethers.BigNumber.from("1000000000000000000000"), // Fallback: 1000 G$
-                maxAmount: ethers.BigNumber.from("1000000000000000000000000") // Fallback: 1M G$
-              },
-          mainnet: effectiveLimits
-            ? {
-                minAmount: scaleFrom18(effectiveLimits.minAmount, mainnetDecimals),
-                maxAmount: scaleFrom18(effectiveLimits.maxAmount, mainnetDecimals)
-              }
-            : {
-                minAmount: ethers.BigNumber.from("1000000000000000000000"), // Fallback: 1000 G$
-                maxAmount: ethers.BigNumber.from("1000000000000000000000000") // Fallback: 1M G$
-              }
-        }}
+            : undefined
+        }
         fees={{
           fuse: {
             nativeFee: effectiveFees.nativeFee || ethers.BigNumber.from(0),

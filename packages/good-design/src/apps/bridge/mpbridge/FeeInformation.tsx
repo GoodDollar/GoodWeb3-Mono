@@ -1,33 +1,23 @@
 import React from "react";
 import { Text, VStack } from "native-base";
-import { CurrencyValue } from "@usedapp/core";
-import { getCurrentBridgeFee } from "./utils";
 import type { BridgeProvider } from "./types";
 
-interface FeeInformationProps {
-  minimumAmount: CurrencyValue;
+export interface FeeInformationProps {
   sourceChain: string;
   targetChain: string;
   bridgeProvider: BridgeProvider;
-  bridgeFees: any;
-  feesLoading: boolean;
+  protocolFeePercent?: number;
 }
 
-export const FeeInformation: React.FC<FeeInformationProps> = ({
-  sourceChain,
-  targetChain,
-  bridgeProvider,
-  bridgeFees,
-  feesLoading
-}) => {
+export const FeeInformation: React.FC<FeeInformationProps> = props => {
+  const { bridgeProvider, protocolFeePercent } = props;
   return (
     <VStack space={2} padding={4} bg="goodGrey.50" borderRadius="lg" borderWidth="1" borderColor="goodGrey.200">
-      <Text fontFamily="subheading" fontSize="sm" color="goodGrey.600">
-        Minimum amount to bridge: 1000 G$
-      </Text>
-      <Text fontFamily="subheading" fontSize="sm" color="goodGrey.600">
-        Bridge Fee: {getCurrentBridgeFee(sourceChain, targetChain, bridgeProvider, bridgeFees, feesLoading)}
-      </Text>
+      {typeof protocolFeePercent === "number" && (
+        <Text fontFamily="subheading" fontSize="sm" color="goodGrey.600">
+          Protocol Fee: {(protocolFeePercent * 100).toFixed(2)}% of bridged G$ amount
+        </Text>
+      )}
       <Text fontFamily="subheading" fontSize="sm" color="goodGrey.600">
         Provider: {bridgeProvider.charAt(0).toUpperCase() + bridgeProvider.slice(1)}
       </Text>

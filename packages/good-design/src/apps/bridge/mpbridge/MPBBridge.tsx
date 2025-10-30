@@ -14,7 +14,7 @@ import {
   useDebouncedTransactionHistory,
   useConvertedTransactionHistory
 } from "./hooks";
-import { getValidTargetChains } from "./utils";
+import { getValidTargetChains, getProviderSupportedPairs, isRouteSupportedByProvider } from "./utils";
 import { ChainSelector } from "./ChainSelector";
 import { BridgeProviderSelector } from "./BridgeProviderSelector";
 import { AmountInput } from "./AmountInput";
@@ -28,6 +28,7 @@ export const MPBBridge = ({
   originChain,
   inputTransaction,
   pendingTransaction,
+  protocolFeePercent,
   limits,
   fees,
   bridgeStatus,
@@ -37,23 +38,47 @@ export const MPBBridge = ({
 }: MPBBridgeProps) => {
   const [isBridging, setBridging] = useState(false);
   const [bridgeProvider, setBridgeProvider] = useState<BridgeProvider>("axelar");
-
-  // Wrapper function to close dropdowns when bridge provider changes
-  const handleBridgeProviderChange = useCallback((provider: BridgeProvider) => {
-    setBridgeProvider(provider);
-    setShowSourceDropdown(false);
-    setShowTargetDropdown(false);
-  }, []);
   const [bridgingStatus, setBridgingStatus] = useState<string>("");
   const [sourceChain, setSourceChain] = originChain;
   const [targetChain, setTargetChain] = useState(
     sourceChain === "fuse" ? "celo" : sourceChain === "celo" ? "mainnet" : "fuse"
   );
+  const { fees: bridgeFees, loading: feesLoading, error: feesError } = useBridgeFees();
+
+  // Wrapper function to close dropdowns when bridge provider changes
+  const handleBridgeProviderChange = useCallback(
+    (provider: BridgeProvider) => {
+      setBridgeProvider(provider);
+
+      // If current route isn't supported by selected provider, auto-select a supported pair
+      const routeSupported = isRouteSupportedByProvider(sourceChain, targetChain, provider);
+      if (!routeSupported) {
+        const pairs = getProviderSupportedPairs(provider);
+        // Prefer a pair that preserves the current target if possible
+        const preferred = pairs.find(([, dst]) => dst === (targetChain as any)) || pairs[0];
+        if (preferred) {
+          setSourceChain(preferred[0]);
+          setTargetChain(preferred[1]);
+        }
+      } else {
+        // Route supported: ensure target is within valid targets (based on fees availability)
+        let validTargets = getValidTargetChains(sourceChain as any, bridgeFees, provider, feesLoading);
+        if (validTargets.length === 0) {
+          // Fallback to static provider support if runtime fees are unavailable
+          validTargets = getValidTargetChains(sourceChain as any, undefined as any, provider, true);
+        }
+        if (validTargets.length > 0) {
+          setTargetChain(prev => (validTargets.includes(prev as any) ? prev : validTargets[0]));
+        }
+      }
+      setShowSourceDropdown(false);
+      setShowTargetDropdown(false);
+    },
+    [bridgeFees, feesLoading, sourceChain, targetChain, setSourceChain]
+  );
   const [showSourceDropdown, setShowSourceDropdown] = useState(false);
   const [showTargetDropdown, setShowTargetDropdown] = useState(false);
   const [toggleState, setToggleState] = useState<boolean>(false);
-
-  const { fees: bridgeFees, loading: feesLoading, error: feesError } = useBridgeFees();
 
   const { realTransactionHistory, historyLoading } = useDebouncedTransactionHistory(2000);
 
@@ -63,8 +88,6 @@ export const MPBBridge = ({
   const wei = gdValue.value.toString();
   const [bridgeWeiAmount, setBridgeAmount] = inputTransaction;
   const [, setPendingTransaction] = pendingTransaction;
-
-  // Debounce the bridge amount for validation and estimation
   const [debouncedBridgeAmount, setDebouncedBridgeAmount] = useState(bridgeWeiAmount);
   const prevSourceChainRef = useRef(sourceChain);
 
@@ -76,8 +99,6 @@ export const MPBBridge = ({
     return () => clearTimeout(timer);
   }, [bridgeWeiAmount]);
 
-  // Force immediate update of debounced amount when source chain changes
-  // This prevents validation mismatch after chain swap
   useEffect(() => {
     if (prevSourceChainRef.current !== sourceChain) {
       setDebouncedBridgeAmount(bridgeWeiAmount);
@@ -100,12 +121,12 @@ export const MPBBridge = ({
   const isValidInput = useMemo(() => isValid && hasBalance, [isValid, hasBalance]);
 
   useEffect(() => {
-    const validTargets = getValidTargetChains(sourceChain as any, bridgeFees, bridgeProvider, feesLoading);
+    let validTargets = getValidTargetChains(sourceChain as any, bridgeFees, bridgeProvider, feesLoading);
+    if (validTargets.length === 0) {
+      validTargets = getValidTargetChains(sourceChain as any, undefined as any, bridgeProvider, true);
+    }
     if (validTargets.length > 0 && !validTargets.includes(targetChain as any)) {
       setTargetChain(validTargets[0]);
-    } else if (validTargets.length === 0 && bridgeProvider === "axelar" && sourceChain === "fuse") {
-      setBridgeProvider("layerzero");
-      setTargetChain("celo");
     }
   }, [bridgeProvider, sourceChain, bridgeFees, feesLoading, targetChain]);
 
@@ -240,7 +261,6 @@ export const MPBBridge = ({
         }, 5000);
       }
 
-      // Only call onBridgeFailed for actual errors, not user cancellations
       if (!isUserRejection) {
         const exception = new Error(errorMsg);
         onBridgeFailed?.(exception);
@@ -368,12 +388,10 @@ export const MPBBridge = ({
 
             {/* Fee Information */}
             <FeeInformation
-              minimumAmount={minimumAmount}
               sourceChain={sourceChain}
               targetChain={targetChain}
               bridgeProvider={bridgeProvider}
-              bridgeFees={bridgeFees}
-              feesLoading={feesLoading}
+              protocolFeePercent={protocolFeePercent}
             />
 
             {/* Recent Transactions */}

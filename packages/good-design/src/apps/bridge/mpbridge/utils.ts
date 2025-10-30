@@ -1,3 +1,5 @@
+import { FEE_ROUTES } from "@gooddollar/web3sdk-v2";
+
 // Types for better type safety
 type ChainName = "celo" | "fuse" | "mainnet";
 type BridgeProvider = "axelar" | "layerzero";
@@ -47,21 +49,31 @@ const DEFAULT_TARGET_CHAINS: Record<ChainName, ChainName[]> = {
   mainnet: ["fuse", "celo"] as ChainName[]
 };
 
-// Fee mapping configuration (single source of truth)
-const FEE_MAPPINGS: Record<BridgeProvider, Record<string, string>> = {
-  axelar: {
-    CELO_MAINNET: "AXL_CELO_TO_ETH",
-    MAINNET_CELO: "AXL_ETH_TO_CELO"
-  },
-  layerzero: {
-    CELO_FUSE: "LZ_CELO_TO_FUSE",
-    FUSE_CELO: "LZ_FUSE_TO_CELO",
-    CELO_MAINNET: "LZ_CELO_TO_ETH",
-    MAINNET_CELO: "LZ_ETH_TO_CELO",
-    FUSE_MAINNET: "LZ_FUSE_TO_ETH",
-    MAINNET_FUSE: "LZ_ETH_TO_FUSE"
-  }
-} as const;
+// Use centralized provider route mapping from sdk-v2 (avoid duplication)
+const PROVIDER_ROUTES = FEE_ROUTES as Record<BridgeProvider, Record<string, string>>;
+
+// Utility: list all provider-supported source/target pairs (static capability, independent of fee API)
+export const getProviderSupportedPairs = (provider: BridgeProvider): [ChainName, ChainName][] => {
+  const mappings = PROVIDER_ROUTES[provider] || {};
+  return Object.keys(mappings).reduce<[ChainName, ChainName][]>((pairs, key) => {
+    const [src, dst] = key.split("_");
+    const source = src.toLowerCase() as ChainName;
+    const target = dst.toLowerCase() as ChainName;
+    if (
+      (["celo", "fuse", "mainnet"] as string[]).includes(source) &&
+      (["celo", "fuse", "mainnet"] as string[]).includes(target)
+    ) {
+      pairs.push([source as ChainName, target as ChainName]);
+    }
+    return pairs;
+  }, []);
+};
+
+// Utility: check if the static mapping supports a given route for a provider
+export const isRouteSupportedByProvider = (source: string, target: string, provider: BridgeProvider): boolean => {
+  const routeKey = `${source.toUpperCase()}_${target.toUpperCase()}`;
+  return Boolean(PROVIDER_ROUTES[provider]?.[routeKey]);
+};
 
 // Helper function to check if a route has available fees
 const hasRouteFees = (source: string, target: string, bridgeProvider: string, bridgeFees: any): boolean => {
@@ -69,7 +81,7 @@ const hasRouteFees = (source: string, target: string, bridgeProvider: string, br
   const targetUpper = target.toUpperCase();
   const routeKey = `${sourceUpper}_${targetUpper}`;
 
-  const routeMappings = FEE_MAPPINGS[bridgeProvider as BridgeProvider];
+  const routeMappings = PROVIDER_ROUTES[bridgeProvider as BridgeProvider];
   if (!routeMappings) return false;
 
   const feeProperty = routeMappings[routeKey];
@@ -85,14 +97,18 @@ export const getValidTargetChains = (
   bridgeProvider: string,
   feesLoading: boolean
 ): ChainName[] => {
-  // Return default targets if no fees or still loading
-  if (!bridgeFees || feesLoading) {
-    return DEFAULT_TARGET_CHAINS[source as ChainName] || ["celo", "mainnet"];
-  }
-
   const possibleTargets = DEFAULT_TARGET_CHAINS[source as ChainName] || [];
 
-  // Filter targets that have available fees
+  // While fees are loading or absent, fall back to static provider support (based on configured routes)
+  if (!bridgeFees || feesLoading) {
+    const providerMappings = PROVIDER_ROUTES[bridgeProvider as BridgeProvider] || {};
+    return possibleTargets.filter(target => {
+      const routeKey = `${source.toUpperCase()}_${target.toUpperCase()}`;
+      return Boolean(providerMappings[routeKey]);
+    });
+  }
+
+  // With fees available, ensure the route also has current fee data
   return possibleTargets.filter(target => hasRouteFees(source, target, bridgeProvider, bridgeFees));
 };
 
@@ -114,7 +130,7 @@ export const getCurrentBridgeFee = (
   const targetUpper = targetChain.toUpperCase();
   const routeKey = `${sourceUpper}_${targetUpper}`;
 
-  const providerMappings = FEE_MAPPINGS[bridgeProvider as BridgeProvider];
+  const providerMappings = PROVIDER_ROUTES[bridgeProvider as BridgeProvider];
   const feeProperty = providerMappings[routeKey];
   const providerFees = bridgeFees[bridgeProvider.toUpperCase()];
 

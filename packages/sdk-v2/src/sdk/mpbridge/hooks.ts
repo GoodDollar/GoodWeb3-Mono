@@ -63,8 +63,7 @@ export const useBridgeTopic = (chainId?: number) => {
       } catch (err: any) {
         console.error("Failed to fetch bridge topic:", err);
         setError(err.message || "Failed to fetch bridge topic");
-        // Fallback to hardcoded value if contract call fails
-        setBridgeTopic(BRIDGE_CONSTANTS.BRIDGE_REQUEST_TOPIC);
+        setBridgeTopic(null);
       } finally {
         setIsLoading(false);
       }
@@ -224,6 +223,7 @@ export const useGetMPBBridgeData = (
 ): MPBBridgeData => {
   const [bridgeFees, setBridgeFees] = useState<BridgeFees>({ nativeFee: null, zroFee: null });
   const [bridgeLimits, setBridgeLimits] = useState<BridgeLimitsData | null>(null);
+  const [protocolFeePercent, setProtocolFeePercent] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true); // Start as true while fetching
   const [error, setError] = useState<string | null>(null);
 
@@ -241,11 +241,20 @@ export const useGetMPBBridgeData = (
       });
     } catch (error) {
       console.error("Failed to fetch contract limits:", error);
-      // Fallback to hardcoded limits if contract call fails
-      setBridgeLimits({
-        minAmount: BRIDGE_CONSTANTS.MIN_AMOUNT,
-        maxAmount: BRIDGE_CONSTANTS.MAX_AMOUNT
-      });
+      setBridgeLimits(null);
+    }
+  }, []);
+
+  // Helper to fetch protocol fee (bps) from contract and convert to percent
+  const fetchProtocolFee = useCallback(async (contract: any) => {
+    try {
+      const fees = await contract.bridgeFees();
+      // fees.fee is in basis points (bps). 15 => 0.15%
+      const bps = Number(fees.fee?.toString() || "0");
+      setProtocolFeePercent(bps / 10000);
+    } catch (error) {
+      console.error("Failed to fetch protocol fee:", error);
+      setProtocolFeePercent(null);
     }
   }, []);
 
@@ -274,10 +283,11 @@ export const useGetMPBBridgeData = (
       const targetChainName = targetChain || "fuse";
 
       try {
-        // Fetch both fees and limits in parallel
-        const [fees, limitsResult] = await Promise.allSettled([
+        // Fetch third-party fees, contract limits, and protocol fee in parallel
+        const [fees, limitsResult, protoFeeResult] = await Promise.allSettled([
           fetchBridgeFees(),
-          bridgeContract ? fetchContractLimits(bridgeContract) : Promise.resolve()
+          bridgeContract ? fetchContractLimits(bridgeContract) : Promise.resolve(),
+          bridgeContract ? fetchProtocolFee(bridgeContract) : Promise.resolve()
         ]);
 
         if (!isMounted) return;
@@ -290,6 +300,9 @@ export const useGetMPBBridgeData = (
 
         if (limitsResult.status === "rejected") {
           console.error("Failed to fetch bridge limits:", limitsResult.reason);
+        }
+        if (protoFeeResult.status === "rejected") {
+          console.error("Failed to fetch protocol fee:", protoFeeResult.reason);
         }
 
         setIsLoading(false);
@@ -308,15 +321,18 @@ export const useGetMPBBridgeData = (
     };
   }, [sourceChain, targetChain, bridgeProvider, calculateFees, bridgeContract, fetchContractLimits]);
 
-  return { bridgeFees, bridgeLimits, isLoading, error };
+  return { bridgeFees, bridgeLimits, protocolFeePercent, isLoading, error };
 };
 
 // Helper function to extract bridge request ID from logs
 const extractBridgeRequestId = (logs: any[], bridgeContract: any, bridgeTopic?: string): string | undefined => {
-  const bridgeRequestTopic = bridgeTopic || BRIDGE_CONSTANTS.BRIDGE_REQUEST_TOPIC;
+  if (!bridgeTopic) {
+    console.error("Bridge topic not available, cannot extract bridge request ID");
+    return undefined;
+  }
 
   for (const log of logs) {
-    if (log.address === bridgeContract?.address && log.topics[0] === bridgeRequestTopic) {
+    if (log.address === bridgeContract?.address && log.topics[0] === bridgeTopic) {
       const bridgeIdTopicIndex = BRIDGE_CONSTANTS.BRIDGE_ID_TOPIC_INDEX;
       if (log.topics[bridgeIdTopicIndex]) {
         return safeBigNumber(log.topics[bridgeIdTopicIndex]).toString();
@@ -358,11 +374,11 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
 
   // Extract bridge request ID from transferAndCall logs
   const bridgeRequestId = useMemo(() => {
-    if (transferAndCall.state?.status !== "Success" || !transferAndCall.state?.receipt?.logs) {
+    if (transferAndCall.state?.status !== "Success" || !transferAndCall.state?.receipt?.logs || !bridgeTopic) {
       return undefined;
     }
 
-    return extractBridgeRequestId(transferAndCall.state.receipt.logs, bridgeContract, bridgeTopic || undefined);
+    return extractBridgeRequestId(transferAndCall.state.receipt.logs, bridgeContract, bridgeTopic);
   }, [transferAndCall.state?.status, transferAndCall.state?.receipt?.logs, bridgeContract, bridgeTopic]);
 
   // Get target chain bridge contract for polling completion

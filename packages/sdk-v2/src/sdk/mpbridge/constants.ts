@@ -5,17 +5,8 @@ import { SupportedChains } from "../constants";
  * Bridge configuration constants
  */
 export const BRIDGE_CONSTANTS = {
-  // Amount limits (in wei) - FALLBACK VALUES ONLY
-  // These are now read from contract via useMPBBridgeLimits hook
-  MIN_AMOUNT: ethers.BigNumber.from("1000000000000000000000"), // 1000 G$
-  MAX_AMOUNT: ethers.BigNumber.from("1000000000000000000000000"), // 1M G$
-
   // Default chain IDs
   DEFAULT_CHAIN_ID: 122, // Fuse
-
-  // Event topic hashes - FALLBACK VALUE ONLY
-  // This is now read from contract via useBridgeTopic hook
-  BRIDGE_REQUEST_TOPIC: "0x4246d22454f5bd543c70e6ffcca20eed2dcf09d3beef6d39e415385538b02d0a",
 
   // Timing constants
   DEBOUNCE_DELAY: 300, // ms
@@ -101,7 +92,6 @@ export const REVERSE_CHAIN_MAPPING: Record<ChainName, number> = {
   mainnet: SupportedChains.MAINNET
 } as const;
 
-// Fee route mappings for different bridge providers (DRY - single source of truth)
 export const FEE_ROUTES: Record<BridgeProvider, Record<string, string>> = {
   [BRIDGE_PROVIDERS.AXELAR]: {
     CELO_MAINNET: "AXL_CELO_TO_ETH",
