@@ -13,6 +13,7 @@ export interface FVFlowProps {
   refresh?: "everyBlock" | "never" | number | undefined;
   handleConnect?: () => Promise<boolean>;
   onEvent?: (event: string) => void;
+  supportedChains?: number[];
 }
 
 export type FVModalProps = IModalProps & FVFlowProps;
