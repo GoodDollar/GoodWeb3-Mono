@@ -1,18 +1,44 @@
 import { ethers } from "ethers";
 import { TransactionStatus } from "@usedapp/core";
-import { SupportedChains } from "../constants";
-import bridgeContracts from "@gooddollar/bridge-contracts/release/deployment.json";
+import bridgeContracts from "@gooddollar/bridge-contracts/release/mpb.json";
 
 export enum BridgeService {
   LAYERZERO = 0,
   AXELAR = 1
 }
 
-// MPB Contract addresses - Imported from @gooddollar/bridge-contracts package
-export const MPB_CONTRACTS = {
-  [SupportedChains.FUSE]: bridgeContracts.fuse.fuseBridge,
-  [SupportedChains.CELO]: bridgeContracts.fuse.celoBridge,
-  [SupportedChains.MAINNET]: bridgeContracts.production.fuseBridge
+/**
+ * Helper function to get MPB contract address from mpb.json structure
+ * mpb.json is organized as: { chainId: [{ name: "envName", contracts: { MessagePassingBridge: { address: "0x..." } } }] }
+ *
+ * @param chainId - The chain ID to get the contract for
+ * @param envName - The environment name (e.g., "fuse", "celo", "mainnet", "alfajores", "fuse_testnet")
+ * @returns The contract address or undefined if not found
+ */
+export const getMPBContractAddress = (chainId: number, envName: string): string | undefined => {
+  const chainDeployments = (bridgeContracts as any)[chainId.toString()];
+
+  if (!chainDeployments || !Array.isArray(chainDeployments)) {
+    console.error(`No deployments found for chain ID ${chainId} in mpb.json`);
+    return undefined;
+  }
+
+  // Find the deployment matching the environment name
+  const deployment = chainDeployments.find((d: any) => d.name === envName);
+
+  if (!deployment) {
+    console.error(`No deployment found for environment "${envName}" on chain ${chainId}`);
+    return undefined;
+  }
+
+  const contractAddress = deployment.contracts?.MessagePassingBridge?.address;
+
+  if (!contractAddress) {
+    console.error(`MessagePassingBridge address not found for ${envName} on chain ${chainId}`);
+    return undefined;
+  }
+
+  return contractAddress;
 };
 
 // Types
