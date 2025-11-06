@@ -134,6 +134,15 @@ export async function getTokens(
     tokenList.set("GDAO", GDAO[supportedChainId]);
   }
 
+  tokenLogos.set(
+    "G$",
+    "https://raw.githubusercontent.com/GoodDollar/GoodProtocolUI/master/src/assets/images/tokens/gd-logo.png"
+  );
+  tokenLogos.set(
+    "GDAO",
+    "https://raw.githubusercontent.com/GoodDollar/GoodProtocolUI/master/src/assets/images/tokens/good-logo.png"
+  );
+
   cachedTokens.set(supportedChainId, tokenList);
   cachedTokenLogos.set(supportedChainId, tokenLogos);
 
