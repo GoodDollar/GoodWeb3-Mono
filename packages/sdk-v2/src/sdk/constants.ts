@@ -1,8 +1,7 @@
 import { EnvKey } from "./base/sdk";
 import { Currency, CurrencyValue, Token } from "@usedapp/core";
 import contractsAddresses from "@gooddollar/goodprotocol/releases/deployment.json";
-import { BigNumber } from "ethers";
-
+import { BigNumber, constants as EthersConstants } from "ethers";
 /* List of supported chains for this sdk. */
 export enum SupportedChains {
   MAINNET = 1,
@@ -157,10 +156,8 @@ export function G$ContractAddresses<T = ObjectLike>(name: string, env: EnvKey): 
   }
 
   if (!(contractsAddresses as any)[env][name]) {
-    if (env === "development-xdc") {
-      return "" as unknown as T;
-    }
-    throw new Error(`Inappropriate contract name ${name} in ${env}`);
+    console.warn(`missing contract address ${name} in ${env}`);
+    return EthersConstants.AddressZero as unknown as T;
   }
 
   return (contractsAddresses as any)[env][name] as unknown as T;

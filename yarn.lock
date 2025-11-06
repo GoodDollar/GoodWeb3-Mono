@@ -5555,6 +5555,7 @@ __metadata:
     wagmi: ^2.12.25
     webpack: ^5.74.0
   peerDependencies:
+    "@gooddollar/web3sdk-v2": "*"
     "@usedapp/core": "*"
     ethers: 5.*
     react: ^18.*
