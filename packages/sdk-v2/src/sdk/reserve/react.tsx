@@ -18,8 +18,8 @@ const brokerAbi = [
   "function swapOut(address exchangeProvider,bytes32 exchangeId,address tokenIn,address tokenOut,uint256 amountOut,uint256 amountInMax) external returns (uint256 amountIn)"
 ];
 
-export const useExchangeId = () => {
-  const { connectedEnv, chainId } = useGetEnvChainId();
+export const useExchangeId = (requiredChainId?: number) => {
+  const { connectedEnv, chainId } = useGetEnvChainId(requiredChainId);
 
   const mentoExchange = new Contract(
     contractAddresses[connectedEnv].MentoExchangeProvider || "0x558eC7E55855FAC9403De3ADB3aa1e588234A92C",
@@ -39,16 +39,16 @@ export const useExchangeId = () => {
   return exchangeId;
 };
 
-export const useG$Price = (refresh: QueryParams["refresh"] = 12): BigNumber | undefined => {
+export const useG$Price = (refresh: QueryParams["refresh"] = 12, requiredChainId?: number): BigNumber | undefined => {
   const refreshOrNever = useRefreshOrNever(refresh);
-  const { connectedEnv, chainId } = useGetEnvChainId();
+  const { connectedEnv, chainId } = useGetEnvChainId(requiredChainId);
 
   const mentoReserve = new Contract(
     contractAddresses[connectedEnv].MentoExchangeProvider || "0x558eC7E55855FAC9403De3ADB3aa1e588234A92C",
     exchangeAbi
   );
 
-  const exchangeId = useExchangeId();
+  const exchangeId = useExchangeId(requiredChainId);
 
   const price = useCall(
     exchangeId && {
