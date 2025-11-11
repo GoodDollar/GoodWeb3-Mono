@@ -42,7 +42,7 @@ interface ClaimProviderProps {
   onSendTx?: () => void;
   onSwitchChain?: (chainId: number) => Promise<void>;
   withNewsFeed: boolean;
-  newsProps?: Omit<INewsFeedProvider, "children">;
+  newsProps: Omit<INewsFeedProvider, "children">;
 }
 
 export const ClaimProvider: FC<PropsWithChildren<ClaimProviderProps>> = ({
