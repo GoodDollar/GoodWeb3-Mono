@@ -13,6 +13,7 @@ import GoodDollarABI from "@gooddollar/goodprotocol/artifacts/abis/IGoodDollar.m
 import FaucetABI from "@gooddollar/goodprotocol/artifacts/abis/Faucet.min.json";
 import GReputationABI from "@gooddollar/goodprotocol/artifacts/abis/GReputation.min.json";
 import GoodReserveCDaiABI from "@gooddollar/goodprotocol/artifacts/abis/GoodReserveCDai.min.json";
+import MPBBridgeABI from "@gooddollar/bridge-contracts/artifacts/contracts/messagePassingBridge/MessagePassingBridge.sol/MessagePassingBridge.json";
 
 import {
   IdentityV2,
@@ -36,12 +37,10 @@ export const CONTRACT_TO_ABI: { [key: string]: any } = {
   Faucet: FaucetABI,
   FuseFaucet: FaucetABI,
   GReputation: GReputationABI,
-  GoodReserveCDai: GoodReserveCDaiABI
+  GoodReserveCDai: GoodReserveCDaiABI,
+  MPBBridge: MPBBridgeABI
 };
 
-// export type EnvKey = keyof typeof Contracts;
-// export type EnvValue = typeof Contracts[EnvKey] & { networkId: number };
-// export type ContractKey = keyof EnvValue;
 export type EnvKey = string;
 export type EnvValue = any;
 
@@ -89,6 +88,7 @@ export class BaseSDK {
   getContract(contractName: "Faucet"): Faucet;
   getContract(contractName: "GReputation"): GReputation;
   getContract(contractName: "GoodReserveCDai"): GoodReserveCDai;
+  getContract(contractName: "MPBBridge"): Contract;
   getContract(contractName: string): Contract;
   getContract(contractName: string) {
     if (!this.contracts?.[contractName]) return;
@@ -154,6 +154,12 @@ export class BaseSDK {
           CONTRACT_TO_ABI["GoodReserveCDai"].abi,
           this.signer || this.provider
         ) as any;
+      case "MPBBridge":
+        return new Contract(
+          this.contracts["MPBBridge"],
+          CONTRACT_TO_ABI["MPBBridge"].abi,
+          this.signer || this.provider
+        );
       default:
         return new Contract(
           this.contracts[contractName],
