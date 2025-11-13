@@ -211,7 +211,7 @@ export class StrapiCachedFeed {
       content: post.content ?? "",
       title: post.title ?? "",
       link: post.link ?? "",
-      picture: post.picture ? post.picture.url : "",
+      picture: post.picture?.url ?? "",
       published,
       updated,
       sponsored_link: post.sponsored_link ?? post.sponsored?.link ?? "",
@@ -253,6 +253,15 @@ export class StrapiCachedFeed {
   private _arrayBufferToBase64(buffer: ArrayBuffer) {
     if (typeof Buffer !== "undefined") {
       return Buffer.from(buffer).toString("base64");
+    } else {
+      // Browser environment: convert ArrayBuffer to binary string, then to Base64
+      let binary = "";
+      const bytes = new Uint8Array(buffer);
+      const len = bytes.byteLength;
+      for (let i = 0; i < len; i++) {
+        binary += String.fromCharCode(bytes[i]);
+      }
+      return btoa(binary);
     }
   }
 }
