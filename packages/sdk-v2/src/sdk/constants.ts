@@ -65,7 +65,7 @@ export const Envs: { [key: EnvKey]: { [key: string]: string } } = {
     backend: "https://goodserver-qa.herokuapp.com",
     // goodCollectiveUrl: "https://staging-goodcollective.vercel.app/"
     goodCollectiveUrl: "https://dev-goodcollective.vercel.app/",
-    newsfeed: "https://feed-dev.gooddollar.org/api/ceramic-feed/posts/"
+    newsfeed: "https://feed.gooddollar.org/api/ceramic-feed/posts/"
   },
   development: {
     dappUrl: "https://dev.gooddollar.org",
