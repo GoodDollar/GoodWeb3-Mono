@@ -92,7 +92,7 @@
     "@babel/runtime": "^7.18.9",
     "@formatjs/intl-locale": "^4.0.0",
     "@formatjs/intl-pluralrules": "^5.2.14",
-    "@gooddollar/goodprotocol": "^2.1.0",
+    "@gooddollar/goodprotocol": "^2.1.1",
     "@lingui/core": "^4.11.2",
     "@lingui/react": "^4.11.2",
     "@magiklabs/react-sdk": "^1.0.8",
