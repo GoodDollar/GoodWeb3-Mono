@@ -29,16 +29,44 @@ import Contracts from "@gooddollar/goodprotocol/releases/deployment.json";
 
 import { Envs } from "../constants";
 
+const sanitizeEvents = <T extends { abi?: any[] }>(artifact: T): T => {
+  if (!artifact?.abi) {
+    return artifact;
+  }
+
+  const seen = new Set<string>();
+
+  const sanitizedAbi = artifact.abi.filter(fragment => {
+    if (!fragment || fragment.type !== "event" || !fragment.name) {
+      return true;
+    }
+
+    if (seen.has(fragment.name)) {
+      return false;
+    }
+
+    seen.add(fragment.name);
+    return true;
+  });
+
+  artifact.abi = sanitizedAbi;
+
+  return artifact;
+};
+
+const SanitizedGoodDollarABI = sanitizeEvents(GoodDollarABI);
+const SanitizedMPBBridgeABI = sanitizeEvents(MPBBridgeABI);
+
 export const CONTRACT_TO_ABI: { [key: string]: any } = {
   Identity: IdentityV2ABI,
   UBIScheme: UBISchemeABI,
   GoodDollarStaking: GoodDollarStakingABI,
-  GoodDollar: GoodDollarABI,
+  GoodDollar: SanitizedGoodDollarABI,
   Faucet: FaucetABI,
   FuseFaucet: FaucetABI,
   GReputation: GReputationABI,
   GoodReserveCDai: GoodReserveCDaiABI,
-  MPBBridge: MPBBridgeABI
+  MPBBridge: SanitizedMPBBridgeABI
 };
 
 export type EnvKey = string;

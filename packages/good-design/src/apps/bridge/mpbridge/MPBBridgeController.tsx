@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { VStack } from "native-base";
 import { useEthers } from "@usedapp/core";
 import { ethers } from "ethers";
@@ -33,20 +33,51 @@ export const MPBBridgeController: React.FC<IMPBBridgeControllerProps> = ({ onBri
   const { bridgeFees, bridgeLimits } = bridgeData;
   const protocolFeePercent = (bridgeData as any).protocolFeePercent as number | null;
 
-  // Per-chain decimals to scale 18-decimal limits to the active chain units
   const fuseDecimals = useG$Decimals("G$", 122);
   const celoDecimals = useG$Decimals("G$", 42220);
   const mainnetDecimals = useG$Decimals("G$", 1);
 
-  const scaleFrom18 = (value18?: ethers.BigNumber, targetDecimals?: number): ethers.BigNumber => {
-    const v = value18 ?? ethers.BigNumber.from(0);
-    const d = targetDecimals ?? 18;
-    if (d === 18) return v;
-    if (d < 18) return v.div(ethers.BigNumber.from(10).pow(18 - d));
-    return v.mul(ethers.BigNumber.from(10).pow(d - 18));
-  };
+  const scaleFrom18 = useCallback((value18?: ethers.BigNumber, targetDecimals?: number): ethers.BigNumber => {
+    const value = value18 ?? ethers.BigNumber.from(0);
+    const decimals = targetDecimals ?? 18;
 
-  const effectiveLimits = bridgeLimits;
+    if (decimals === 18) {
+      return value;
+    }
+
+    if (decimals < 18) {
+      return value.div(ethers.BigNumber.from(10).pow(18 - decimals));
+    }
+
+    return value.mul(ethers.BigNumber.from(10).pow(decimals - 18));
+  }, []);
+
+  const limitsByChain = useMemo(() => {
+    if (!bridgeLimits) {
+      return undefined;
+    }
+
+    const toMinimum = (decimals?: number) => {
+      const targetDecimals = decimals ?? 18;
+      const hardMinimum = ethers.utils.parseUnits("1000", targetDecimals);
+      const contractMinimum = scaleFrom18(bridgeLimits.minAmount, targetDecimals);
+      return contractMinimum.gte(hardMinimum) ? contractMinimum : hardMinimum;
+    };
+
+    const buildLimits = (decimals?: number) => {
+      const targetDecimals = decimals ?? 18;
+      return {
+        minAmount: toMinimum(targetDecimals),
+        maxAmount: scaleFrom18(bridgeLimits.maxAmount, targetDecimals)
+      };
+    };
+
+    return {
+      fuse: buildLimits(fuseDecimals),
+      celo: buildLimits(celoDecimals),
+      mainnet: buildLimits(mainnetDecimals)
+    };
+  }, [bridgeLimits, fuseDecimals, celoDecimals, mainnetDecimals, scaleFrom18]);
 
   // Validation configuration
   const VALIDATION_REASONS = {
@@ -65,29 +96,28 @@ export const MPBBridgeController: React.FC<IMPBBridgeControllerProps> = ({ onBri
       }
 
       // Return invalid if limits not available from contract
-      if (!effectiveLimits) {
+      if (!limitsByChain) {
         return { isValid: false, reason: VALIDATION_REASONS.ERROR };
       }
 
       // Parse amount
       const amountBN = ethers.BigNumber.from(amountWei || "0");
 
-      // Get limits for the source chain (need to scale from 18 decimals to chain decimals)
-      const chainDecimals = chain === "fuse" ? fuseDecimals : chain === "celo" ? celoDecimals : mainnetDecimals;
-      const minAmount = scaleFrom18(effectiveLimits.minAmount, chainDecimals);
-      const maxAmount = scaleFrom18(effectiveLimits.maxAmount, chainDecimals);
+      const chainLimits = limitsByChain?.[chain as keyof typeof limitsByChain];
+      if (!chainLimits) {
+        return { isValid: false, reason: VALIDATION_REASONS.ERROR };
+      }
+
+      const minAmount = chainLimits.minAmount ?? ethers.BigNumber.from(0);
 
       // Validate amount against actual contract limits
       if (amountBN.lt(minAmount)) {
         return { isValid: false, reason: VALIDATION_REASONS.MIN_AMOUNT };
       }
-      if (amountBN.gt(maxAmount)) {
-        return { isValid: false, reason: VALIDATION_REASONS.MAX_AMOUNT };
-      }
 
       return { isValid: true, reason: "" };
     },
-    [effectiveLimits, fuseDecimals, celoDecimals, mainnetDecimals]
+    [limitsByChain]
   );
 
   const onBridgeStartHandler = useCallback(
@@ -120,24 +150,7 @@ export const MPBBridgeController: React.FC<IMPBBridgeControllerProps> = ({ onBri
         inputTransaction={inputTransaction}
         pendingTransaction={pendingTransaction}
         protocolFeePercent={protocolFeePercent || 0}
-        limits={
-          effectiveLimits
-            ? {
-                fuse: {
-                  minAmount: scaleFrom18(effectiveLimits.minAmount, fuseDecimals),
-                  maxAmount: scaleFrom18(effectiveLimits.maxAmount, fuseDecimals)
-                },
-                celo: {
-                  minAmount: scaleFrom18(effectiveLimits.minAmount, celoDecimals),
-                  maxAmount: scaleFrom18(effectiveLimits.maxAmount, celoDecimals)
-                },
-                mainnet: {
-                  minAmount: scaleFrom18(effectiveLimits.minAmount, mainnetDecimals),
-                  maxAmount: scaleFrom18(effectiveLimits.maxAmount, mainnetDecimals)
-                }
-              }
-            : undefined
-        }
+        limits={limitsByChain}
         fees={{
           fuse: {
             nativeFee: effectiveFees.nativeFee || ethers.BigNumber.from(0),

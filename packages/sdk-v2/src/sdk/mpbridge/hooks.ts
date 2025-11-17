@@ -19,7 +19,8 @@ import {
   getChainName,
   getTargetChainId,
   getSourceChainId,
-  calculateBridgeFees
+  calculateBridgeFees,
+  createEmptyBridgeFees
 } from "./constants";
 import { CONTRACT_TO_ABI } from "../base/sdk";
 import { SupportedChains } from "../constants";
@@ -364,12 +365,14 @@ const getChainNames = (sourceChainId: number, targetChainId: number) => {
 
 export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBBridgeReturn => {
   const bridgeLock = useRef(false);
+  const bridgeToTriggered = useRef(false);
   const { switchNetwork } = useSwitchNetwork();
   const { account, chainId } = useEthers();
 
   const [bridgeRequest, setBridgeRequest] = useState<BridgeRequest | undefined>();
   const [isSwitchingChain, setIsSwitchingChain] = useState(false);
   const [switchChainError, setSwitchChainError] = useState<string | undefined>();
+  const [tokenDecimals, setTokenDecimals] = useState<number | undefined>();
 
   // Get G$ token contract for the current chain
   const gdContract = useGetContract("GoodDollar", true, "base", chainId) as IGoodDollar;
@@ -413,6 +416,56 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
       fromBlock: -1000
     }
   );
+
+  useEffect(() => {
+    let isMounted = true;
+
+    if (!gdContract) {
+      setTokenDecimals(undefined);
+      return;
+    }
+
+    gdContract
+      .decimals()
+      .then(dec => {
+        if (isMounted) {
+          setTokenDecimals(Number(dec));
+        }
+      })
+      .catch(error => {
+        console.error("Failed to load token decimals:", error);
+        if (isMounted) {
+          setTokenDecimals(undefined);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [gdContract]);
+
+  const normalizeAmountTo18 = useCallback((amount: ethers.BigNumber, decimals?: number) => {
+    if (!amount) {
+      return ethers.BigNumber.from(0);
+    }
+
+    const tokenDec = decimals ?? 18;
+
+    if (tokenDec === 18) {
+      return amount;
+    }
+
+    const diff = Math.abs(tokenDec - 18);
+    const scale = ethers.BigNumber.from(10).pow(diff);
+
+    if (tokenDec < 18) {
+      return amount.mul(scale);
+    }
+
+    return amount.div(scale);
+  }, []);
+
+  const layerZeroAdapterParams = useMemo(() => ethers.utils.solidityPack(["uint16", "uint256"], [1, 400000]), []);
 
   // Bridge status based on local transaction status and bridge completion
   const bridgeStatus: Partial<TransactionStatus> | undefined = (() => {
@@ -479,6 +532,68 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
     return undefined;
   })();
 
+  const computeLayerZeroFee = useCallback(
+    async (request: BridgeRequest, fallbackFee?: ethers.BigNumber | null): Promise<ethers.BigNumber | undefined> => {
+      if (!bridgeContract || bridgeProvider !== "layerzero" || !account) {
+        return fallbackFee ?? undefined;
+      }
+
+      try {
+        let lzChainId;
+        try {
+          lzChainId = await bridgeContract.toLzChainId(request.targetChainId);
+          // If toLzChainId returns 0 or falsy, use fallback fee - proxy will handle routing
+          if (!lzChainId || lzChainId.toString() === "0") {
+            console.warn(
+              `LayerZero chain ID not configured for target chain ${request.targetChainId}, using fallback fee`
+            );
+            return fallbackFee ?? undefined;
+          }
+        } catch (error) {
+          console.warn("Failed to get LayerZero chain ID, using fallback fee:", error);
+          return fallbackFee ?? undefined;
+        }
+
+        let decimals = tokenDecimals;
+
+        if (decimals === undefined && gdContract) {
+          const fetchedDecimals = await gdContract.decimals();
+          decimals = Number(fetchedDecimals);
+          setTokenDecimals(decimals);
+        }
+
+        const normalizedAmount = normalizeAmountTo18(ethers.BigNumber.from(request.amount), decimals);
+        const destination = request.target || account;
+
+        const [nativeFee] = await bridgeContract.estimateSendFee(
+          lzChainId,
+          account,
+          destination,
+          normalizedAmount,
+          false,
+          layerZeroAdapterParams
+        );
+
+        if (!fallbackFee) {
+          return nativeFee;
+        }
+
+        return nativeFee.gt(fallbackFee) ? nativeFee : fallbackFee;
+      } catch (error: any) {
+        // If fee estimation fails, return fallback fee instead of throwing
+        // The proxy contract will handle routing when the transaction is sent
+        const errorMessage = error?.message || "";
+        if (errorMessage.includes("not configured") || errorMessage.includes("routing")) {
+          console.warn("Contract rejected fee estimation, using fallback fee:", errorMessage);
+        } else {
+          console.warn("LayerZero fee estimation failed, using fallback fee:", error);
+        }
+        return fallbackFee ?? undefined;
+      }
+    },
+    [account, bridgeContract, bridgeProvider, gdContract, layerZeroAdapterParams, normalizeAmountTo18, tokenDecimals]
+  );
+
   const sendMPBBridgeRequest = useCallback(
     async (amount: string, sourceChain: string, targetChain: string, target = account) => {
       // Don't reset if transaction is currently being mined
@@ -489,6 +604,7 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
         console.log("🔄 Resetting bridge state for new attempt");
         setBridgeRequest(undefined);
         bridgeLock.current = false;
+        bridgeToTriggered.current = false;
         approve.resetState();
         bridgeTo.resetState();
         setSwitchChainError(undefined);
@@ -539,9 +655,75 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
 
   // Handle approve and bridgeTo errors and completion
   useEffect(() => {
-    const handleTransactionError = (status: string, errorMessage: string, txName: string) => {
+    const handleTransactionError = (
+      status: string,
+      errorMessage: string,
+      txName: string,
+      details?: any,
+      stack?: string
+    ) => {
       if (status === "Exception") {
         console.error(`${txName} failed:`, errorMessage);
+
+        // Try to extract error data from various possible locations
+        // The error structure from useContractFunction has errorHash.data
+        console.log("🔍 Attempting to extract error data from:", {
+          hasErrorHash: !!details?.errorHash,
+          errorHashData: details?.errorHash?.data,
+          hasError: !!details?.error,
+          errorData: details?.error?.data,
+          hasData: !!details?.data
+        });
+
+        const errorData =
+          details?.errorHash?.data || // Primary location (from useContractFunction)
+          details?.error?.data?.data || // Nested error data
+          details?.error?.data || // Direct error data
+          details?.data?.data || // Nested data
+          details?.data || // Direct data
+          details?.error?.error?.data || // Deeply nested
+          (details?.error?.message?.includes("0x") ? details.error.message.match(/0x[a-fA-F0-9]+/)?.[0] : null); // Extract from message
+
+        console.log("🔍 Extracted error data:", errorData);
+
+        if (errorData) {
+          if (typeof errorData === "string" && errorData.startsWith("0x")) {
+            console.error(`❌ Contract error code: ${errorData}`);
+
+            // Try to decode the error using the contract interface
+            try {
+              if (bridgeContract?.interface) {
+                const decodedError = bridgeContract.interface.parseError(errorData);
+                if (decodedError) {
+                  console.error(`❌ Decoded error: ${decodedError.name}(${decodedError.args.join(", ")})`);
+                }
+              }
+            } catch (decodeError) {
+              // Error couldn't be decoded, that's okay - we'll show generic message
+              console.warn("Could not decode error using contract interface:", decodeError);
+            }
+
+            // Common error codes:
+            // 0x10ecdf44 - might be a custom error, need contract ABI to decode
+            if (errorData === "0x10ecdf44") {
+              console.error("❌ Contract reverted with error 0x10ecdf44. This might indicate:");
+              console.error("  - Invalid bridge parameters (chain ID, service, etc.)");
+              console.error("  - Contract validation failed (limits, whitelist, etc.)");
+              console.error("  - LayerZero routing not configured in contract");
+              console.error("  - Insufficient balance or allowance");
+              console.error("  - Bridge service (LayerZero/Axelar) not properly configured");
+              console.error("  - Target chain not supported or not configured");
+            }
+          }
+        } else {
+          console.warn("⚠️ Could not extract error code from error details");
+        }
+
+        // Log full details for debugging
+        console.error(`📋 ${txName} full error details:`, details);
+        if (stack) {
+          console.error(`${txName} stack:`, stack);
+        }
 
         // Check if user rejected the transaction
         const isUserRejection =
@@ -561,23 +743,47 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
           // For other errors, just reset the lock
           bridgeLock.current = false;
         }
+
+        bridgeToTriggered.current = false;
       }
 
       // Reset lock on success to allow new transactions
       if (status === "Success") {
         bridgeLock.current = false;
+        bridgeToTriggered.current = false;
       }
     };
 
-    handleTransactionError(approve.state.status, approve.state.errorMessage || "", "Approve");
-    handleTransactionError(bridgeTo.state.status, bridgeTo.state.errorMessage || "", "BridgeTo");
+    handleTransactionError(
+      approve.state.status,
+      approve.state.errorMessage || "",
+      "Approve",
+      (approve.state as any)?.error?.data,
+      (approve.state as any)?.error?.stack
+    );
+    // Log the full error state for debugging
+    if (bridgeTo.state.status === "Exception") {
+      const bridgeToState = bridgeTo.state as any;
+      console.error("🔍 Full bridgeTo error state:", JSON.stringify(bridgeToState, null, 2));
+      console.error("🔍 bridgeTo.state.error:", bridgeToState.error);
+      console.error("🔍 bridgeTo.state.errorMessage:", bridgeToState.errorMessage);
+    }
+
+    handleTransactionError(
+      bridgeTo.state.status,
+      bridgeTo.state.errorMessage || "",
+      "BridgeTo",
+      bridgeTo.state as any, // Pass the entire state object to access all error data
+      (bridgeTo.state as any)?.error?.stack
+    );
   }, [
     approve.state.status,
     approve.state.errorMessage,
     bridgeTo.state.status,
     bridgeTo.state.errorMessage,
     approve,
-    bridgeTo
+    bridgeTo,
+    bridgeContract
   ]);
 
   // Reset chain switching state when chain successfully changes
@@ -591,6 +797,9 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
   const executeBridgeTransaction = useCallback(
     async (bridgeRequest: BridgeRequest, fees: any) => {
       const { source, target } = getChainNames(bridgeRequest.sourceChainId, bridgeRequest.targetChainId);
+
+      // No need to check toLzChainId - the proxy contract handles routing internally
+      // The proxy at 0xa3247276DbCC76Dd7705273f766eB3E8a5ecF4a5 manages routing configuration
 
       const calculatedFees = calculateBridgeFees(fees, bridgeProvider, source, target);
 
@@ -673,38 +882,100 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
 
   // Trigger bridgeTo after approve succeeds
   useEffect(() => {
-    if (approve.state.status === "Success" && bridgeRequest && bridgeContract) {
-      console.log("✅ Approval successful! Step 2: Calling bridgeTo...");
+    const isApproveSuccess = approve.state.status === "Success";
+    const isBridgeIdle = bridgeTo.state.status === "None";
 
-      fetchBridgeFees()
-        .then(fees => {
-          if (!fees) {
-            throw new Error("Failed to fetch bridge fees");
-          }
-
-          const { source, target } = getChainNames(bridgeRequest.sourceChainId, bridgeRequest.targetChainId);
-          const calculatedFees = calculateBridgeFees(fees, bridgeProvider, source, target);
-
-          if (!calculatedFees.nativeFee) {
-            throw new Error(`Bridge fee not available for ${source}→${target} route`);
-          }
-
-          const bridgeService = bridgeProvider === "layerzero" ? BridgeService.LAYERZERO : BridgeService.AXELAR;
-
-          console.log("🌉 Calling bridgeTo with native fee:", calculatedFees.nativeFee.toString());
-          void bridgeTo.send(
-            bridgeRequest.target || account,
-            bridgeRequest.targetChainId,
-            bridgeRequest.amount,
-            bridgeService,
-            { value: calculatedFees.nativeFee } // Pass native fee as msg.value
-          );
-        })
-        .catch(error => {
-          console.error("BridgeTo preparation error:", error);
-        });
+    if (!isApproveSuccess || !isBridgeIdle || !bridgeRequest || !bridgeContract) {
+      return;
     }
-  }, [approve.state.status, bridgeRequest, bridgeContract, bridgeTo, account, bridgeProvider]);
+
+    if (bridgeToTriggered.current) {
+      return;
+    }
+
+    let isMounted = true;
+    bridgeToTriggered.current = true;
+
+    const proceed = async () => {
+      try {
+        console.log("✅ Approval successful! Step 2: Calling bridgeTo...");
+
+        const fees = await fetchBridgeFees();
+        const { source, target } = getChainNames(bridgeRequest.sourceChainId, bridgeRequest.targetChainId);
+        const calculatedFees = fees
+          ? calculateBridgeFees(fees, bridgeProvider, source, target)
+          : createEmptyBridgeFees();
+
+        let nativeFee = calculatedFees.nativeFee ?? ethers.BigNumber.from(0);
+
+        if (bridgeProvider === "layerzero") {
+          nativeFee = (await computeLayerZeroFee(bridgeRequest, nativeFee)) ?? nativeFee;
+        }
+
+        if (!nativeFee || nativeFee.isZero()) {
+          throw new Error("Bridge fee not available for the selected route.");
+        }
+
+        // Add a 5% buffer to reduce the odds of underpaying due to fee estimation drift
+        const bufferedFee = nativeFee.mul(105).div(100);
+        const bridgeService = bridgeProvider === "layerzero" ? BridgeService.LAYERZERO : BridgeService.AXELAR;
+
+        // Verify allowance before calling bridgeTo
+        if (gdContract && bridgeContract && account) {
+          try {
+            const allowance = await gdContract.allowance(account, bridgeContract.address);
+            const amountBN = ethers.BigNumber.from(bridgeRequest.amount);
+            console.log("🔍 Checking allowance:", {
+              allowance: allowance.toString(),
+              required: amountBN.toString(),
+              sufficient: allowance.gte(amountBN)
+            });
+
+            if (allowance.lt(amountBN)) {
+              throw new Error(
+                `Insufficient allowance. Approved: ${allowance.toString()}, Required: ${amountBN.toString()}`
+              );
+            }
+          } catch (allowanceError: any) {
+            console.error("❌ Allowance check failed:", allowanceError);
+            throw allowanceError;
+          }
+        }
+
+        console.log("🌉 Calling bridgeTo with:", {
+          target: bridgeRequest.target || account,
+          targetChainId: bridgeRequest.targetChainId,
+          amount: bridgeRequest.amount,
+          bridgeService,
+          nativeFee: bufferedFee.toString()
+        });
+
+        if (!isMounted) {
+          return;
+        }
+
+        // Try to call bridgeTo - if it fails, the error will be caught and handled
+        void bridgeTo.send(
+          bridgeRequest.target || account,
+          bridgeRequest.targetChainId,
+          bridgeRequest.amount,
+          bridgeService,
+          { value: bufferedFee }
+        );
+      } catch (error: any) {
+        console.error("BridgeTo preparation error:", error);
+        bridgeLock.current = false;
+        bridgeToTriggered.current = false;
+        setSwitchChainError(error?.message || "Failed to prepare bridge transaction");
+      }
+    };
+
+    void proceed();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [account, approve.state.status, bridgeContract, bridgeProvider, bridgeRequest, bridgeTo, computeLayerZeroFee]);
 
   return {
     sendMPBBridgeRequest,

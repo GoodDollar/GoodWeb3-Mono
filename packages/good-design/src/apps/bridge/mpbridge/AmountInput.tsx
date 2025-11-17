@@ -7,7 +7,7 @@ import { CurrencyValue } from "@usedapp/core";
 type ValidationReason = "minAmount" | "maxAmount" | "cannotBridge" | "error" | "insufficientBalance" | "invalidChain";
 
 const VALIDATION_ERROR_MESSAGES: Record<ValidationReason, string> = {
-  minAmount: "Minimum amount is 1000 G$",
+  minAmount: "Minimum amount not available",
   maxAmount: "Amount exceeds maximum limit",
   cannotBridge: "Bridge not available for this amount",
   error: "Invalid amount",
@@ -21,6 +21,7 @@ interface AmountInputProps {
   bridgeWeiAmount: string;
   setBridgeAmount: (amount: string) => void;
   minimumAmount: CurrencyValue;
+  maximumAmount?: CurrencyValue;
   isValid: boolean;
   reason: ValidationReason;
   balance: CurrencyValue;
@@ -33,6 +34,7 @@ export const AmountInput: React.FC<AmountInputProps> = ({
   bridgeWeiAmount,
   setBridgeAmount,
   minimumAmount,
+  maximumAmount,
   isValid,
   reason,
   balance,
@@ -57,7 +59,11 @@ export const AmountInput: React.FC<AmountInputProps> = ({
       />
       {!isValid && bridgeWeiAmount && (
         <Text color="red.500" fontSize="sm" fontWeight="500">
-          {VALIDATION_ERROR_MESSAGES[reason]}
+          {reason === "minAmount" && minimumAmount?.format
+            ? `Minimum amount is ${minimumAmount.format()}`
+            : reason === "maxAmount" && maximumAmount?.format
+            ? `Maximum amount is ${maximumAmount.format()}`
+            : VALIDATION_ERROR_MESSAGES[reason]}
         </Text>
       )}
     </VStack>
