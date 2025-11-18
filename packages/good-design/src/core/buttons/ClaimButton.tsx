@@ -20,6 +20,7 @@ const ClaimButton = ({
   handleConnect,
   onEvent,
   redirectUrl,
+  supportedChains = [SupportedChains.CELO, SupportedChains.FUSE, SupportedChains.XDC],
   ...props
 }: FVFlowProps) => {
   const { account } = useEthers();
@@ -76,7 +77,7 @@ const ClaimButton = ({
   }, [claiming]);
 
   const buttonTitle = useMemo(() => {
-    if (!isWhitelisted || !claimAmount) {
+    if (!isWhitelisted || !claimAmount || (chainId && !supportedChains.includes(chainId))) {
       return "CLAIM NOW";
     }
 
@@ -116,7 +117,7 @@ const ClaimButton = ({
           web3Action={handleModalOpen}
           disabled={claimed}
           variant="round"
-          supportedChains={[SupportedChains.CELO, SupportedChains.FUSE, SupportedChains.XDC]}
+          supportedChains={supportedChains}
           handleConnect={handleConnect}
           w="220"
           h="220"

@@ -1,8 +1,7 @@
 import { EnvKey } from "./base/sdk";
 import { Currency, CurrencyValue, Token } from "@usedapp/core";
 import contractsAddresses from "@gooddollar/goodprotocol/releases/deployment.json";
-import { BigNumber } from "ethers";
-
+import { BigNumber, constants as EthersConstants } from "ethers";
 /* List of supported chains for this sdk. */
 export enum SupportedChains {
   MAINNET = 1,
@@ -57,20 +56,23 @@ export const Envs: { [key: EnvKey]: { [key: string]: string } } = {
     dappUrl: "https://wallet.gooddollar.org",
     identityUrl: "https://goodid.gooddollar.org",
     backend: "https://goodserver.gooddollar.org",
-    goodCollectiveUrl: "https://goodcollective.xyz/"
+    goodCollectiveUrl: "https://goodcollective.xyz/",
+    newsfeed: "https://feed.gooddollar.org/api/ceramic-feed/posts/"
   },
   staging: {
     dappUrl: "https://qa.gooddollar.org",
     identityUrl: "https://goodid-qa.vercel.app",
     backend: "https://goodserver-qa.herokuapp.com",
     // goodCollectiveUrl: "https://staging-goodcollective.vercel.app/"
-    goodCollectiveUrl: "https://dev-goodcollective.vercel.app/"
+    goodCollectiveUrl: "https://dev-goodcollective.vercel.app/",
+    newsfeed: "https://feed.gooddollar.org/api/ceramic-feed/posts/"
   },
   development: {
     dappUrl: "https://dev.gooddollar.org",
     identityUrl: "https://goodid-dev.vercel.app",
     backend: "https://good-server.herokuapp.com",
-    goodCollectiveUrl: "https://dev-goodcollective.vercel.app/"
+    goodCollectiveUrl: "https://dev-goodcollective.vercel.app/",
+    newsfeed: "https://feed-dev.gooddollar.org/api/ceramic-feed/posts/"
   }
 };
 
@@ -157,10 +159,8 @@ export function G$ContractAddresses<T = ObjectLike>(name: string, env: EnvKey): 
   }
 
   if (!(contractsAddresses as any)[env][name]) {
-    if (env === "development-xdc") {
-      return "" as unknown as T;
-    }
-    throw new Error(`Inappropriate contract name ${name} in ${env}`);
+    console.warn(`missing contract address ${name} in ${env}`);
+    return EthersConstants.AddressZero as unknown as T;
   }
 
   return (contractsAddresses as any)[env][name] as unknown as T;

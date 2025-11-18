@@ -4,7 +4,6 @@ import contractAddresses from "@gooddollar/goodprotocol/releases/deployment.json
 import { useContractFunctionWithDefaultGasFees, useG$Tokens, useGetEnvChainId } from "../../sdk";
 import { useRefreshOrNever } from "../../hooks";
 
-const chainId = 42220;
 const exchangeAbi = [
   "function currentPrice(bytes32 exchangeId) external view returns (uint256 price)",
   "function getExchangeIds() external view returns (bytes32[] ids)",
@@ -19,8 +18,8 @@ const brokerAbi = [
   "function swapOut(address exchangeProvider,bytes32 exchangeId,address tokenIn,address tokenOut,uint256 amountOut,uint256 amountInMax) external returns (uint256 amountIn)"
 ];
 
-export const useExchangeId = () => {
-  const { connectedEnv } = useGetEnvChainId(chainId);
+export const useExchangeId = (requiredChainId?: number) => {
+  const { connectedEnv, chainId } = useGetEnvChainId(requiredChainId);
 
   const mentoExchange = new Contract(
     contractAddresses[connectedEnv].MentoExchangeProvider || "0x558eC7E55855FAC9403De3ADB3aa1e588234A92C",
@@ -40,16 +39,16 @@ export const useExchangeId = () => {
   return exchangeId;
 };
 
-export const useG$Price = (refresh: QueryParams["refresh"] = 12): BigNumber | undefined => {
+export const useG$Price = (refresh: QueryParams["refresh"] = 12, requiredChainId?: number): BigNumber | undefined => {
   const refreshOrNever = useRefreshOrNever(refresh);
-  const { connectedEnv } = useGetEnvChainId(chainId);
+  const { connectedEnv, chainId } = useGetEnvChainId(requiredChainId);
 
   const mentoReserve = new Contract(
     contractAddresses[connectedEnv].MentoExchangeProvider || "0x558eC7E55855FAC9403De3ADB3aa1e588234A92C",
     exchangeAbi
   );
 
-  const exchangeId = useExchangeId();
+  const exchangeId = useExchangeId(requiredChainId);
 
   const price = useCall(
     exchangeId && {
@@ -71,7 +70,7 @@ export const useSwapMeta = (
   output?: BigNumber,
   refresh: QueryParams["refresh"] = 5
 ) => {
-  const { connectedEnv } = useGetEnvChainId(42220);
+  const { connectedEnv } = useGetEnvChainId();
   const refreshOrNever = useRefreshOrNever(refresh);
 
   const g$Price = useG$Price(refresh);
@@ -133,7 +132,7 @@ export const useSwap = (
 ) => {
   if (exactInput && exactOutput) throw new Error("Only one of exactInput or exactOutput can be specified");
 
-  const { connectedEnv } = useGetEnvChainId(42220);
+  const { connectedEnv } = useGetEnvChainId();
   const exchangeId = useExchangeId();
 
   const exchangeProviderAddress =

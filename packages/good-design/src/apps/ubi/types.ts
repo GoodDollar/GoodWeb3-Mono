@@ -55,7 +55,7 @@ export interface ClaimContextProps {
   supportedChains: SupportedChains[];
   txDetails: { transaction: any; isOpen: boolean };
   withNewsFeed?: boolean;
-  newsProps?: Omit<INewsFeedProvider, "children">;
+  newsProps: Omit<INewsFeedProvider, "children">;
   onNews: () => void;
   onReset: () => void;
   setTxDetails: (tx: any) => void;

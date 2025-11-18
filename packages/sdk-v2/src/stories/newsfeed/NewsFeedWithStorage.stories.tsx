@@ -7,7 +7,7 @@ import { NewsFeedContext, NewsFeedProvider } from "../../contexts/newsfeed/NewsF
 // export interface PageProps
 
 const NewsFeedStorageWrapper = ({ children }) => {
-  return <NewsFeedProvider env={"qa"}>{children}</NewsFeedProvider>;
+  return <NewsFeedProvider env={"development"}>{children}</NewsFeedProvider>;
 };
 
 const Web3Component = () => {
