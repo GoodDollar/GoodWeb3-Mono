@@ -20,7 +20,8 @@ import {
   getTargetChainId,
   getSourceChainId,
   calculateBridgeFees,
-  createEmptyBridgeFees
+  createEmptyBridgeFees,
+  isSupportedChain
 } from "./constants";
 import { CONTRACT_TO_ABI } from "../base/sdk";
 import { SupportedChains } from "../constants";
@@ -367,7 +368,7 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
   const bridgeLock = useRef(false);
   const bridgeToTriggered = useRef(false);
   const { switchNetwork } = useSwitchNetwork();
-  const { account, chainId } = useEthers();
+  const { account, chainId, library } = useEthers();
 
   const [bridgeRequest, setBridgeRequest] = useState<BridgeRequest | undefined>();
   const [isSwitchingChain, setIsSwitchingChain] = useState(false);
@@ -691,11 +692,26 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
             console.error(`❌ Contract error code: ${errorData}`);
 
             // Try to decode the error using the contract interface
+            let decodedErrorName: string | null = null;
             try {
               if (bridgeContract?.interface) {
                 const decodedError = bridgeContract.interface.parseError(errorData);
                 if (decodedError) {
+                  decodedErrorName = decodedError.name;
                   console.error(`❌ Decoded error: ${decodedError.name}(${decodedError.args.join(", ")})`);
+
+                  // Handle specific errors
+                  if (decodedError.name === "UNSUPPORTED_CHAIN") {
+                    const chainId = decodedError.args[0]?.toString();
+                    console.error(`❌ Target chain ${chainId} is not supported by the bridge contract`);
+                    console.error(`Supported chains: ${Object.values(SupportedChains).join(", ")}`);
+                  } else if (decodedError.name === "INVALID_TARGET_OR_CHAINID") {
+                    console.error(`❌ Invalid target address or chain ID`);
+                    console.error(`Target: ${decodedError.args[0]}, Chain ID: ${decodedError.args[1]}`);
+                  } else if (decodedError.name === "LZ_FEE") {
+                    console.error(`❌ Insufficient LayerZero fee`);
+                    console.error(`Required: ${decodedError.args[0]}, Sent: ${decodedError.args[1]}`);
+                  }
                 }
               }
             } catch (decodeError) {
@@ -703,9 +719,9 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
               console.warn("Could not decode error using contract interface:", decodeError);
             }
 
-            // Common error codes:
+            // Common error codes (if decoding failed):
             // 0x10ecdf44 - might be a custom error, need contract ABI to decode
-            if (errorData === "0x10ecdf44") {
+            if (!decodedErrorName && errorData === "0x10ecdf44") {
               console.error("❌ Contract reverted with error 0x10ecdf44. This might indicate:");
               console.error("  - Invalid bridge parameters (chain ID, service, etc.)");
               console.error("  - Contract validation failed (limits, whitelist, etc.)");
@@ -793,10 +809,220 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
     }
   }, [chainId, bridgeRequest, isSwitchingChain]);
 
+  // Comprehensive pre-flight validation function
+  const validateBridgeTransaction = useCallback(
+    async (bridgeRequest: BridgeRequest, fees: any) => {
+      console.log("🔍 Running pre-flight validation checks...");
+
+      if (!account) {
+        throw new Error("Wallet not connected");
+      }
+
+      if (!gdContract) {
+        throw new Error("Token contract not available");
+      }
+
+      if (!bridgeContract) {
+        throw new Error("Bridge contract not available");
+      }
+
+      const amountBN = ethers.BigNumber.from(bridgeRequest.amount);
+      const calculatedFees = calculateBridgeFees(
+        fees,
+        bridgeProvider,
+        getChainName(bridgeRequest.sourceChainId),
+        getChainName(bridgeRequest.targetChainId)
+      );
+      const nativeFee = calculatedFees.nativeFee || ethers.BigNumber.from(0);
+
+      // ✅ Check 1: User has sufficient token balance
+      try {
+        const balance = await gdContract.balanceOf(account);
+        console.log("🔍 Check 1 - Token balance:", {
+          balance: balance.toString(),
+          required: amountBN.toString(),
+          sufficient: balance.gte(amountBN)
+        });
+
+        if (balance.lt(amountBN)) {
+          const balanceFormatted = ethers.utils.formatUnits(balance, tokenDecimals || 18);
+          const amountFormatted = ethers.utils.formatUnits(amountBN, tokenDecimals || 18);
+          throw new Error(`Insufficient balance. You have ${balanceFormatted} G$ but need ${amountFormatted} G$`);
+        }
+      } catch (error: any) {
+        if (error.message.includes("Insufficient balance")) {
+          throw error;
+        }
+        console.warn("Could not check token balance:", error.message);
+      }
+
+      // ✅ Check 2: Token allowance is sufficient
+      try {
+        const allowance = await gdContract.allowance(account, bridgeContract.address);
+        console.log("🔍 Check 2 - Token allowance:", {
+          allowance: allowance.toString(),
+          required: amountBN.toString(),
+          sufficient: allowance.gte(amountBN)
+        });
+
+        if (allowance.lt(amountBN)) {
+          const allowanceFormatted = ethers.utils.formatUnits(allowance, tokenDecimals || 18);
+          const amountFormatted = ethers.utils.formatUnits(amountBN, tokenDecimals || 18);
+          throw new Error(
+            `Insufficient allowance. Approved: ${allowanceFormatted} G$, Required: ${amountFormatted} G$. Please approve tokens first.`
+          );
+        }
+      } catch (error: any) {
+        if (error.message.includes("Insufficient allowance")) {
+          throw error;
+        }
+        console.warn("Could not check token allowance:", error.message);
+      }
+
+      // ✅ Check 3: Destination chain is supported
+      if (!isSupportedChain(bridgeRequest.sourceChainId)) {
+        throw new Error(
+          `Unsupported source chain: ${bridgeRequest.sourceChainId}. Supported chains: ${Object.values(
+            SupportedChains
+          ).join(", ")}`
+        );
+      }
+
+      if (!isSupportedChain(bridgeRequest.targetChainId)) {
+        throw new Error(
+          `Unsupported target chain: ${bridgeRequest.targetChainId}. Supported chains: ${Object.values(
+            SupportedChains
+          ).join(", ")}`
+        );
+      }
+
+      // Check with contract if method exists
+      try {
+        if (typeof bridgeContract.isSupportedChain === "function") {
+          const isSupported = await bridgeContract.isSupportedChain(bridgeRequest.targetChainId);
+          if (!isSupported) {
+            throw new Error(`Chain ${bridgeRequest.targetChainId} is not supported for bridging`);
+          }
+        }
+      } catch (checkError: any) {
+        if (checkError.message.includes("not supported")) {
+          throw checkError;
+        }
+        console.warn("Could not check chain support with contract:", checkError.message);
+      }
+
+      // ✅ Check 4: Bridge is not paused
+      try {
+        if (typeof bridgeContract.paused === "function") {
+          const isPaused = await bridgeContract.paused();
+          if (isPaused) {
+            throw new Error("Bridge is currently paused. Please try again later.");
+          }
+        }
+      } catch (checkError: any) {
+        if (checkError.message.includes("paused")) {
+          throw checkError;
+        }
+        console.warn("Could not check pause status:", checkError.message);
+      }
+
+      // ✅ Check 5: User has enough native token for gas
+      try {
+        if (library && account) {
+          const nativeBalance = await library.getBalance(account);
+          // Minimum 0.01 native token (CELO, ETH, etc.)
+          const minGasBalance = ethers.utils.parseEther("0.01");
+          // Add buffer for the bridge fee
+          const requiredBalance = minGasBalance.add(nativeFee);
+
+          console.log("🔍 Check 5 - Native token balance:", {
+            balance: nativeBalance.toString(),
+            required: requiredBalance.toString(),
+            fee: nativeFee.toString(),
+            sufficient: nativeBalance.gte(requiredBalance)
+          });
+
+          if (nativeBalance.lt(requiredBalance)) {
+            const balanceFormatted = ethers.utils.formatEther(nativeBalance);
+            const requiredFormatted = ethers.utils.formatEther(requiredBalance);
+            const chainName = getChainName(bridgeRequest.sourceChainId);
+            throw new Error(
+              `Insufficient ${
+                chainName === "celo" ? "CELO" : chainName === "fuse" ? "FUSE" : "ETH"
+              } for gas. You have ${balanceFormatted} but need at least ${requiredFormatted} (including bridge fee)`
+            );
+          }
+        }
+      } catch (error: any) {
+        if (error.message.includes("Insufficient")) {
+          throw error;
+        }
+        console.warn("Could not check native token balance:", error.message);
+      }
+
+      // ✅ Check 6: Amount meets minimum requirements
+      try {
+        const limits = await bridgeContract.bridgeLimits();
+        const minAmount = limits.minAmount;
+        console.log("🔍 Check 6 - Minimum amount:", {
+          amount: amountBN.toString(),
+          minAmount: minAmount.toString(),
+          meetsMinimum: amountBN.gte(minAmount)
+        });
+
+        if (amountBN.lt(minAmount)) {
+          const minFormatted = ethers.utils.formatUnits(minAmount, tokenDecimals || 18);
+          throw new Error(`Amount too small. Minimum: ${minFormatted} G$`);
+        }
+      } catch (error: any) {
+        if (error.message.includes("Amount too small") || error.message.includes("Minimum")) {
+          throw error;
+        }
+        console.warn("Could not check minimum amount:", error.message);
+      }
+
+      // ✅ Check 7: User hasn't exceeded bridge limits
+      try {
+        const limits = await bridgeContract.bridgeLimits();
+        const txLimit = limits.txLimit;
+        console.log("🔍 Check 7 - Transaction limit:", {
+          amount: amountBN.toString(),
+          txLimit: txLimit.toString(),
+          withinLimit: amountBN.lte(txLimit)
+        });
+
+        if (amountBN.gt(txLimit)) {
+          const limitFormatted = ethers.utils.formatUnits(txLimit, tokenDecimals || 18);
+          throw new Error(`Amount exceeds transaction limit. Maximum: ${limitFormatted} G$`);
+        }
+
+        // Check daily limits if available
+        if (typeof bridgeContract.canBridge === "function") {
+          const canBridge = await bridgeContract.canBridge(account, amountBN);
+          if (!canBridge) {
+            throw new Error("Bridge limit exceeded. Please check your daily limits or try a smaller amount.");
+          }
+        }
+      } catch (error: any) {
+        if (error.message.includes("limit") || error.message.includes("exceeded")) {
+          throw error;
+        }
+        console.warn("Could not check bridge limits:", error.message);
+      }
+
+      console.log("✅ All pre-flight checks passed!");
+      return true;
+    },
+    [account, gdContract, bridgeContract, bridgeProvider, tokenDecimals, library]
+  );
+
   // Helper function to execute bridge transaction
   const executeBridgeTransaction = useCallback(
     async (bridgeRequest: BridgeRequest, fees: any) => {
       const { source, target } = getChainNames(bridgeRequest.sourceChainId, bridgeRequest.targetChainId);
+
+      // 🚀 PRE-FLIGHT VALIDATION
+      await validateBridgeTransaction(bridgeRequest, fees);
 
       // No need to check toLzChainId - the proxy contract handles routing internally
       // The proxy at 0xa3247276DbCC76Dd7705273f766eB3E8a5ecF4a5 manages routing configuration
