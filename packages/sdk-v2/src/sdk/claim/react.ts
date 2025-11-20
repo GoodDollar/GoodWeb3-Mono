@@ -397,8 +397,10 @@ export const useWhitelistSync = () => {
   const [syncStatus, setSyncStatus] = useState<Promise<boolean> | undefined>();
   const { baseEnv } = useGetEnvChainId();
   const { account, chainId } = useEthers();
+  const otherChainId = chainId === SupportedChains.CELO ? SupportedChains.XDC : chainId;
+
   const identity = useGetContract("Identity", true, "claim", SupportedChains.CELO) as IIdentity;
-  const identity2 = useGetContract("Identity", true, "claim", chainId) as IIdentity;
+  const identity2 = useGetContract("Identity", true, "claim", otherChainId) as IIdentity;
   const baseEnvRef = useRef<typeof baseEnv>();
 
   useEffect(() => {
@@ -423,15 +425,19 @@ export const useWhitelistSync = () => {
         method: "isWhitelisted",
         args: [account]
       }
-    ].filter(_ => _.contract && chainId != SupportedChains.CELO),
-    { refresh: "never", chainId }
+    ],
+    { refresh: "never", chainId: otherChainId as unknown as ChainId }
   );
+
   useEffect(() => {
     const whitelistSync = async () => {
       const isSynced = await AsyncStorage.getItem(`${account}-${chainId}-whitelistedSync`);
+      const whitelistCelo = first(celoResult?.value);
+      const whitelistOther = first(otherResult?.value);
 
       // not need for sync when already synced or user whitelisted on both chains
-      if (isSynced || (first(celoResult?.value) && first(otherResult?.value))) {
+      // or
+      if (isSynced || (whitelistCelo && whitelistOther)) {
         return setSyncStatus(Promise.resolve(true));
       }
 
@@ -439,7 +445,7 @@ export const useWhitelistSync = () => {
       if (syncInProgress) return;
 
       // if whitelisted on fuse but not on celo then sync
-      if (first(celoResult?.value) && first(otherResult?.value) === false) {
+      if (whitelistCelo && whitelistOther === false) {
         syncInProgress = true;
         const { current: baseEnv } = baseEnvRef;
         const devEnv = baseEnvRef.current === "fuse" ? "development" : baseEnv;
