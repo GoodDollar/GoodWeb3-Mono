@@ -927,6 +927,9 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
       }
 
       // ✅ Check 2: Token allowance is sufficient
+      // Note: We don't throw an error here if allowance is insufficient because
+      // the approval will be handled automatically in the bridge flow.
+      // This check is just for logging/informational purposes.
       try {
         const allowance = await gdContract.allowance(account, bridgeContract.address);
         console.log("🔍 Check 2 - Token allowance:", {
@@ -938,14 +941,13 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
         if (allowance.lt(amountBN)) {
           const allowanceFormatted = ethers.utils.formatUnits(allowance, tokenDecimals || 18);
           const amountFormatted = ethers.utils.formatUnits(amountBN, tokenDecimals || 18);
-          throw new Error(
-            `Insufficient allowance. Approved: ${allowanceFormatted} G$, Required: ${amountFormatted} G$. Please approve tokens first.`
+          console.log(
+            `ℹ️ Allowance insufficient (${allowanceFormatted} G$ < ${amountFormatted} G$). Approval will be requested automatically.`
           );
+          // Don't throw - approval will be handled automatically
         }
       } catch (error: any) {
-        if (error.message.includes("Insufficient allowance")) {
-          throw error;
-        }
+        // Don't throw on allowance check failure - just log it
         console.warn("Could not check token allowance:", error.message);
       }
 

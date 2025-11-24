@@ -68,9 +68,8 @@ export const MPBBridgeController: React.FC<IMPBBridgeControllerProps> = ({ onBri
 
     const toMinimum = (decimals?: number) => {
       const targetDecimals = decimals ?? 18;
-      const hardMinimum = ethers.utils.parseUnits("1000", targetDecimals);
-      const contractMinimum = scaleFrom18(bridgeLimits.minAmount, targetDecimals);
-      return contractMinimum.gte(hardMinimum) ? contractMinimum : hardMinimum;
+      // Use the contract's actual minimum - no hardcoded override
+      return scaleFrom18(bridgeLimits.minAmount, targetDecimals);
     };
 
     const buildLimits = (decimals?: number) => {
