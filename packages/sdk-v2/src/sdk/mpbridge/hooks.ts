@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useContractFunction, useEthers } from "@usedapp/core";
+import { useContractFunction, useEthers, useTokenAllowance, useCalls, CurrencyValue, QueryParams } from "@usedapp/core";
 import { useSwitchNetwork } from "../../contexts";
-import { useRefreshOrNever } from "../../hooks";
+import { useRefreshOrNever, useReadOnlyProvider } from "../../hooks";
 import { useLogs } from "@usedapp/core";
-import { ethers } from "ethers";
+import { ethers, BigNumber } from "ethers";
 import { TransactionStatus } from "@usedapp/core";
-import { useGetContract, useGetEnvChainId } from "../base/react";
+import { useGetEnvChainId, useG$Amount } from "../base/react";
 import { IGoodDollar } from "@gooddollar/goodprotocol/types";
 import { BridgeService, MPBBridgeData, BridgeRequest, UseMPBBridgeReturn, getMPBContractAddress } from "./types";
 import { fetchBridgeFees } from "./api";
@@ -15,7 +15,6 @@ import {
   ERROR_MESSAGES,
   BridgeProvider,
   safeBigNumber,
-  handleError,
   getChainName,
   getTargetChainId,
   getSourceChainId,
@@ -60,14 +59,16 @@ const getDeploymentName = (baseEnv: string, chainId: number): string => {
  * Uses centralized ABI but MPB-specific addresses from @gooddollar/bridge-contracts mpb.json
  * Dynamically selects the correct contract address based on the current environment
  */
-const useGetMPBContract = (chainId?: number) => {
+const useGetMPBContract = (chainId?: number, readOnly = false) => {
   const { library } = useEthers();
   const { baseEnv } = useGetEnvChainId();
   const mpbABI = CONTRACT_TO_ABI["MPBBridge"]?.abi || [];
   const targetChainId = chainId || BRIDGE_CONSTANTS.DEFAULT_CHAIN_ID;
+  const readOnlyProvider = useReadOnlyProvider(targetChainId);
 
   return useMemo(() => {
-    if (!library) return null;
+    const provider = readOnly ? readOnlyProvider : library;
+    if (!provider) return null;
 
     // Get the deployment name for this chain and environment
     const deploymentName = getDeploymentName(baseEnv, targetChainId);
@@ -83,8 +84,101 @@ const useGetMPBContract = (chainId?: number) => {
     }
 
     console.log(`Using MPB bridge contract for chain ${targetChainId}, env ${baseEnv}: ${contractAddress}`);
-    return new ethers.Contract(contractAddress, mpbABI, library);
-  }, [library, mpbABI, targetChainId, baseEnv]);
+    return new ethers.Contract(contractAddress, mpbABI, provider);
+  }, [library, mpbABI, targetChainId, baseEnv, readOnly, readOnlyProvider]);
+};
+
+/**
+ * Hook to get the native token contract that the bridge uses
+ * Queries the bridge contract's nativeToken() to ensure we use the correct token
+ * Falls back to production G$ address if query fails (always use production token)
+ */
+const useNativeTokenContract = (chainId?: number, readOnly = false): IGoodDollar | null => {
+  const { library } = useEthers();
+  const bridgeContract = useGetMPBContract(chainId, readOnly);
+  const [nativeTokenAddress, setNativeTokenAddress] = useState<string | null>(null);
+  const readOnlyProvider = useReadOnlyProvider(chainId || BRIDGE_CONSTANTS.DEFAULT_CHAIN_ID);
+
+  // Query the bridge contract's nativeToken address
+  useEffect(() => {
+    let isMounted = true;
+
+    if (!bridgeContract) {
+      console.warn(`⚠️ No bridge contract available for chain ${chainId}, using production G$ fallback`);
+      // Use production G$ as fallback
+      setNativeTokenAddress(BRIDGE_CONSTANTS.PRODUCTION_GDOLLAR_ADDRESS);
+      return;
+    }
+
+    // Log bridge contract details for debugging
+    console.log(`🔍 Bridge contract for chain ${chainId}:`, {
+      address: bridgeContract.address,
+      hasnativeTokenMethod: typeof bridgeContract.nativeToken === "function",
+      availableFunctions: Object.keys(bridgeContract.functions || {})
+        .filter(key => !key.includes("("))
+        .slice(0, 10)
+    });
+
+    // Check if nativeToken method exists
+    if (typeof bridgeContract.nativeToken !== "function") {
+      console.error(`❌ Bridge contract at ${bridgeContract.address} does not have nativeToken() method`);
+      console.error(`Available methods:`, Object.keys(bridgeContract.functions || {}));
+      setNativeTokenAddress(BRIDGE_CONSTANTS.PRODUCTION_GDOLLAR_ADDRESS);
+      return;
+    }
+
+    bridgeContract
+      .nativeToken()
+      .then((address: string) => {
+        if (isMounted) {
+          console.log(`✅ Bridge contract nativeToken for chain ${chainId}: ${address}`);
+          setNativeTokenAddress(address);
+        }
+      })
+      .catch((error: any) => {
+        console.error(
+          `❌ Failed to query bridge nativeToken on chain ${chainId}, using production G$ fallback: ${BRIDGE_CONSTANTS.PRODUCTION_GDOLLAR_ADDRESS}`
+        );
+        console.error(`Bridge contract address: ${bridgeContract.address}`);
+        console.error(`Error details:`, {
+          message: error.message,
+          code: error.code,
+          data: error.data,
+          reason: error.reason,
+          transaction: error.transaction
+        });
+        if (isMounted) {
+          // Always fallback to production G$, never dev G$
+          setNativeTokenAddress(BRIDGE_CONSTANTS.PRODUCTION_GDOLLAR_ADDRESS);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [bridgeContract, chainId]);
+
+  // Create token contract instance for the queried or fallback address
+  return useMemo(() => {
+    if (!nativeTokenAddress) return null;
+
+    const provider = readOnly ? readOnlyProvider : library;
+    if (!provider) return null;
+
+    console.log(`💰 Using native token address for chain ${chainId}: ${nativeTokenAddress}`);
+
+    // Use minimal ERC20 ABI that includes the methods we need
+    const tokenABI = [
+      "function balanceOf(address owner) view returns (uint256)",
+      "function allowance(address owner, address spender) view returns (uint256)",
+      "function approve(address spender, uint256 amount) returns (bool)",
+      "function decimals() view returns (uint8)",
+      "function transfer(address to, uint256 amount) returns (bool)",
+      "function transferFrom(address from, address to, uint256 amount) returns (bool)"
+    ];
+
+    return new ethers.Contract(nativeTokenAddress, tokenABI, provider) as IGoodDollar;
+  }, [nativeTokenAddress, library, readOnly, readOnlyProvider, chainId]);
 };
 
 const getBridgeRequestTopic = (): string => {
@@ -93,134 +187,13 @@ const getBridgeRequestTopic = (): string => {
 };
 
 // Types for better readability
-interface BridgeLimits {
-  dailyLimit: ethers.BigNumber;
-  txLimit: ethers.BigNumber;
-  accountDailyLimit: ethers.BigNumber;
-  minAmount: ethers.BigNumber;
-  onlyWhitelisted: boolean;
-}
-
 interface ValidationResult {
   isValid: boolean;
   reason: string;
   errorMessage?: string;
+  canBridge: boolean;
+  hasAllowance: boolean;
 }
-
-export const useMPBBridgeLimits = (amount: string, chainId?: number): ValidationResult => {
-  const { account } = useEthers();
-  const targetChainId = chainId || BRIDGE_CONSTANTS.DEFAULT_CHAIN_ID;
-  const bridgeContract = useGetMPBContract(targetChainId);
-
-  const [bridgeLimits, setBridgeLimits] = useState<BridgeLimits | null>(null);
-  const [canUserBridge, setCanUserBridge] = useState<boolean>(false);
-  const [isLoadingLimits, setIsLoadingLimits] = useState<boolean>(false);
-  const [bridgeError, setBridgeError] = useState<string | null>(null);
-
-  // Helper function to validate bridge eligibility
-  const validateBridgeEligibility = useCallback(async (contract: any, account: string, amountWei: string) => {
-    try {
-      const amountBigNumber = safeBigNumber(amountWei);
-      if (amountBigNumber.gt(0)) {
-        const canBridge = await contract.canBridge(account, amountBigNumber);
-        setCanUserBridge(canBridge);
-      }
-    } catch (error) {
-      handleError(error, "bridge eligibility", setBridgeError, setCanUserBridge, false);
-    }
-  }, []);
-
-  // Helper function to fetch bridge limits from contract
-  const fetchBridgeLimits = useCallback(async (contract: any) => {
-    try {
-      const limits = await contract.bridgeLimits();
-      setBridgeLimits({
-        dailyLimit: limits.dailyLimit,
-        txLimit: limits.txLimit,
-        accountDailyLimit: limits.accountDailyLimit,
-        minAmount: limits.minAmount,
-        onlyWhitelisted: limits.onlyWhitelisted
-      });
-    } catch (error) {
-      handleError(error, "bridge limits", setBridgeError, setBridgeLimits, null);
-    }
-  }, []);
-
-  // Main effect to load bridge data
-  useEffect(() => {
-    if (!bridgeContract || !account) {
-      setIsLoadingLimits(false);
-      return;
-    }
-
-    setIsLoadingLimits(true);
-    setBridgeError(null);
-
-    const loadBridgeData = async () => {
-      await Promise.allSettled([
-        fetchBridgeLimits(bridgeContract),
-        validateBridgeEligibility(bridgeContract, account, amount)
-      ]);
-      setIsLoadingLimits(false);
-    };
-
-    void loadBridgeData();
-  }, [bridgeContract, account, amount, fetchBridgeLimits, validateBridgeEligibility]);
-
-  // Convert amount to BigNumber for validation
-  const amountBigNumber = safeBigNumber(amount);
-
-  // Helper function to validate amount against limits
-  const validateAmount = (amount: ethers.BigNumber, minAmount: ethers.BigNumber, maxAmount: ethers.BigNumber) => {
-    if (amount.lt(minAmount)) {
-      return { isValid: false, reason: VALIDATION_REASONS.MIN_AMOUNT };
-    }
-    if (amount.gt(maxAmount)) {
-      return { isValid: false, reason: VALIDATION_REASONS.MAX_AMOUNT };
-    }
-    return { isValid: true, reason: "" };
-  };
-
-  // Early return for errors
-  if (bridgeError) {
-    return {
-      isValid: false,
-      reason: VALIDATION_REASONS.ERROR,
-      errorMessage: bridgeError
-    };
-  }
-
-  // Return valid while loading (optimistic validation)
-  if (isLoadingLimits) {
-    return { isValid: true, reason: "", errorMessage: undefined };
-  }
-
-  // Return error if limits couldn't be loaded
-  if (!bridgeLimits) {
-    return {
-      isValid: false,
-      reason: VALIDATION_REASONS.ERROR,
-      errorMessage: ERROR_MESSAGES.TRANSACTION_LIMITS_UNAVAILABLE
-    };
-  }
-
-  // Validate against contract limits (now using actual contract values)
-  const contractValidation = validateAmount(amountBigNumber, bridgeLimits.minAmount, bridgeLimits.txLimit);
-  if (!contractValidation.isValid) {
-    return contractValidation;
-  }
-
-  // Check bridge eligibility
-  if (!canUserBridge) {
-    return {
-      isValid: false,
-      reason: VALIDATION_REASONS.CANNOT_BRIDGE,
-      errorMessage: undefined
-    };
-  }
-
-  return { isValid: true, reason: "", errorMessage: undefined };
-};
 
 // Types for better readability
 interface BridgeFees {
@@ -236,17 +209,31 @@ interface BridgeLimitsData {
 export const useGetMPBBridgeData = (
   sourceChain?: string,
   targetChain?: string,
-  bridgeProvider: BridgeProvider = "layerzero"
-): MPBBridgeData => {
+  bridgeProvider: BridgeProvider = "layerzero",
+  amount = "0",
+  address?: string
+): MPBBridgeData & { validation: ValidationResult } => {
   const [bridgeFees, setBridgeFees] = useState<BridgeFees>({ nativeFee: null, zroFee: null });
   const [bridgeLimits, setBridgeLimits] = useState<BridgeLimitsData | null>(null);
   const [protocolFeePercent, setProtocolFeePercent] = useState<number | null>(null);
+  const [canUserBridge, setCanUserBridge] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(true); // Start as true while fetching
   const [error, setError] = useState<string | null>(null);
 
+  const { account } = useEthers();
+  const effectiveAccount = address || account;
+
   // Get contract for the source chain to fetch limits
   const sourceChainId = getSourceChainId(sourceChain || "celo");
-  const bridgeContract = useGetMPBContract(sourceChainId);
+  const bridgeContract = useGetMPBContract(sourceChainId, true);
+
+  // Get the native token contract that the bridge uses (instead of hardcoded dev G$)
+  const gdContract = useNativeTokenContract(sourceChainId, true);
+  const tokenAddress = gdContract?.address;
+  const spenderAddress = bridgeContract?.address;
+
+  // Check allowance
+  const allowance = useTokenAllowance(tokenAddress, effectiveAccount, spenderAddress, { chainId: sourceChainId });
 
   // Helper function to fetch bridge limits from contract
   const fetchContractLimits = useCallback(async (contract: any) => {
@@ -259,6 +246,22 @@ export const useGetMPBBridgeData = (
     } catch (error) {
       console.error("Failed to fetch contract limits:", error);
       setBridgeLimits(null);
+    }
+  }, []);
+
+  // Helper function to validate bridge eligibility
+  const validateBridgeEligibility = useCallback(async (contract: any, account: string, amountWei: string) => {
+    try {
+      const amountBigNumber = safeBigNumber(amountWei);
+      if (amountBigNumber.gt(0)) {
+        const canBridge = await contract.canBridge(account, amountBigNumber);
+        setCanUserBridge(canBridge);
+      } else {
+        setCanUserBridge(true); // Default to true if amount is 0
+      }
+    } catch (error) {
+      console.error("Failed to validate bridge eligibility:", error);
+      setCanUserBridge(false);
     }
   }, []);
 
@@ -300,11 +303,14 @@ export const useGetMPBBridgeData = (
       const targetChainName = targetChain || "fuse";
 
       try {
-        // Fetch third-party fees, contract limits, and protocol fee in parallel
+        // Fetch third-party fees, contract limits, protocol fee, and eligibility in parallel
         const [fees, limitsResult, protoFeeResult] = await Promise.allSettled([
           fetchBridgeFees(),
           bridgeContract ? fetchContractLimits(bridgeContract) : Promise.resolve(),
-          bridgeContract ? fetchProtocolFee(bridgeContract) : Promise.resolve()
+          bridgeContract ? fetchProtocolFee(bridgeContract) : Promise.resolve(),
+          bridgeContract && effectiveAccount
+            ? validateBridgeEligibility(bridgeContract, effectiveAccount, amount)
+            : Promise.resolve()
         ]);
 
         if (!isMounted) return;
@@ -336,9 +342,69 @@ export const useGetMPBBridgeData = (
     return () => {
       isMounted = false;
     };
-  }, [sourceChain, targetChain, bridgeProvider, calculateFees, bridgeContract, fetchContractLimits]);
+  }, [
+    sourceChain,
+    targetChain,
+    bridgeProvider,
+    calculateFees,
+    bridgeContract,
+    fetchContractLimits,
+    fetchProtocolFee,
+    validateBridgeEligibility,
+    effectiveAccount,
+    amount
+  ]);
 
-  return { bridgeFees, bridgeLimits, protocolFeePercent, isLoading, error };
+  // Calculate validation result
+  const validation = useMemo<ValidationResult>(() => {
+    const amountBN = safeBigNumber(amount);
+    const hasAllowance = allowance ? allowance.gte(amountBN) : false;
+
+    if (error) {
+      return { isValid: false, reason: VALIDATION_REASONS.ERROR, errorMessage: error, canBridge: false, hasAllowance };
+    }
+
+    if (!bridgeLimits) {
+      return {
+        isValid: false,
+        reason: VALIDATION_REASONS.ERROR,
+        errorMessage: ERROR_MESSAGES.TRANSACTION_LIMITS_UNAVAILABLE,
+        canBridge: false,
+        hasAllowance
+      };
+    }
+
+    if (amountBN.lt(bridgeLimits.minAmount)) {
+      return {
+        isValid: false,
+        reason: VALIDATION_REASONS.MIN_AMOUNT,
+        canBridge: canUserBridge,
+        hasAllowance
+      };
+    }
+
+    if (amountBN.gt(bridgeLimits.maxAmount)) {
+      return {
+        isValid: false,
+        reason: VALIDATION_REASONS.MAX_AMOUNT,
+        canBridge: canUserBridge,
+        hasAllowance
+      };
+    }
+
+    if (!canUserBridge) {
+      return {
+        isValid: false,
+        reason: VALIDATION_REASONS.CANNOT_BRIDGE,
+        canBridge: false,
+        hasAllowance
+      };
+    }
+
+    return { isValid: true, reason: "", canBridge: true, hasAllowance };
+  }, [amount, bridgeLimits, canUserBridge, error, allowance]);
+
+  return { bridgeFees, bridgeLimits, protocolFeePercent, isLoading, error, validation };
 };
 
 // Helper function to extract bridge request ID from logs
@@ -375,8 +441,8 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
   const [switchChainError, setSwitchChainError] = useState<string | undefined>();
   const [tokenDecimals, setTokenDecimals] = useState<number | undefined>();
 
-  // Get G$ token contract for the current chain
-  const gdContract = useGetContract("GoodDollar", true, "base", chainId) as IGoodDollar;
+  // Get the native token contract that the bridge uses (instead of hardcoded dev G$)
+  const gdContract = useNativeTokenContract(chainId);
 
   // Get MPB bridge contract for the current chain
   const bridgeContract = useGetMPBContract(chainId);
@@ -564,7 +630,11 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
         }
 
         const normalizedAmount = normalizeAmountTo18(ethers.BigNumber.from(request.amount), decimals);
-        const destination = request.target || account;
+        const destination = request.target;
+        if (!destination) {
+          console.warn("Target address is missing for fee estimation");
+          return fallbackFee ?? undefined;
+        }
 
         const [nativeFee] = await bridgeContract.estimateSendFee(
           lzChainId,
@@ -596,7 +666,7 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
   );
 
   const sendMPBBridgeRequest = useCallback(
-    async (amount: string, sourceChain: string, targetChain: string, target = account) => {
+    async (amount: string, sourceChain: string, targetChain: string, target?: string) => {
       // Don't reset if transaction is currently being mined
       const isActivelyMining = approve.state.status === "Mining" || bridgeTo.state.status === "Mining";
 
@@ -1168,8 +1238,12 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
           }
         }
 
+        if (!bridgeRequest.target) {
+          throw new Error("Target address is required");
+        }
+
         console.log("🌉 Calling bridgeTo with:", {
-          target: bridgeRequest.target || account,
+          target: bridgeRequest.target,
           targetChainId: bridgeRequest.targetChainId,
           amount: bridgeRequest.amount,
           bridgeService,
@@ -1181,18 +1255,15 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
         }
 
         // Try to call bridgeTo - if it fails, the error will be caught and handled
-        void bridgeTo.send(
-          bridgeRequest.target || account,
-          bridgeRequest.targetChainId,
-          bridgeRequest.amount,
-          bridgeService,
-          { value: bufferedFee }
-        );
+        void bridgeTo.send(bridgeRequest.target, bridgeRequest.targetChainId, bridgeRequest.amount, bridgeService, {
+          value: bufferedFee
+        });
       } catch (error: any) {
         console.error("BridgeTo preparation error:", error);
         bridgeLock.current = false;
         bridgeToTriggered.current = false;
         setSwitchChainError(error?.message || "Failed to prepare bridge transaction");
+        setBridgeRequest(undefined);
       }
     };
 
@@ -1211,3 +1282,59 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
     isSwitchingChain
   };
 };
+
+/**
+ * Hook to query production G$ balance for a specific chain
+ * This is specifically for MPBBridge UI to show production G$ balances
+ * Since bridge operations use production G$ token, the UI should also display production G$ balance
+ *
+ * @param refresh - Refresh interval for balance queries
+ * @param chainId - Chain ID to query balance on
+ * @returns Production G$ balance in CurrencyValue format
+ */
+export function useProductionG$Balance(refresh: QueryParams["refresh"] = "never", requiredChainId?: number) {
+  const refreshOrNever = useRefreshOrNever(refresh);
+  const { account } = useEthers();
+  const { chainId: envChainId } = useGetEnvChainId(requiredChainId);
+  const chainId = requiredChainId || envChainId;
+
+  // Use production G$ token address instead of contract from deployment.json
+  const productionG$Address = BRIDGE_CONSTANTS.PRODUCTION_GDOLLAR_ADDRESS;
+
+  // Create a contract instance for production G$
+  const readOnlyProvider = useReadOnlyProvider(chainId);
+  const productionG$Contract = useMemo(() => {
+    if (!readOnlyProvider) return null;
+
+    const tokenABI = [
+      "function balanceOf(address owner) view returns (uint256)",
+      "function decimals() view returns (uint8)"
+    ];
+
+    return new ethers.Contract(productionG$Address, tokenABI, readOnlyProvider);
+  }, [readOnlyProvider, productionG$Address]);
+
+  // Query balance
+  const results = useCalls(
+    productionG$Contract && account
+      ? [
+          {
+            contract: productionG$Contract,
+            method: "balanceOf",
+            args: [account]
+          }
+        ]
+      : [],
+    {
+      refresh: refreshOrNever,
+      chainId
+    }
+  );
+
+  const g$Value = results[0]?.value?.[0] as BigNumber | undefined;
+
+  // Format balance as CurrencyValue matching useG$Balance interface
+  const g$Balance = useG$Amount(g$Value, "G$", chainId) as CurrencyValue;
+
+  return { G$: g$Balance };
+}

@@ -4,7 +4,14 @@ import { useEthers } from "@usedapp/core";
 import { ethers } from "ethers";
 
 import { MPBBridge } from "./MPBBridge";
-import { useMPBBridge, useGetMPBBridgeData, useG$Decimals } from "@gooddollar/web3sdk-v2";
+import {
+  useMPBBridge,
+  useGetMPBBridgeData,
+  useG$Decimals,
+  SupportedChains,
+  VALIDATION_REASONS
+} from "@gooddollar/web3sdk-v2";
+import { BridgeProvider } from "./types";
 
 interface IMPBBridgeControllerProps {
   withHistory?: boolean;
@@ -14,23 +21,25 @@ interface IMPBBridgeControllerProps {
 }
 
 export const MPBBridgeController: React.FC<IMPBBridgeControllerProps> = ({ onBridgeSuccess, onBridgeFailed }) => {
-  const { chainId } = useEthers();
-  const { sendMPBBridgeRequest, bridgeRequestStatus, bridgeStatus } = useMPBBridge("layerzero");
+  const { chainId, account } = useEthers();
+  const [bridgeProvider, setBridgeProvider] = useState<BridgeProvider>("layerzero");
+  const { sendMPBBridgeRequest, bridgeRequestStatus, bridgeStatus } = useMPBBridge(bridgeProvider);
 
   const inputTransaction = useState<string>("0");
   const pendingTransaction = useState<any>(false);
-  const originChain = useState<string>(chainId === 122 ? "fuse" : chainId === 42220 ? "celo" : "mainnet");
-  const [, setSourceChain] = originChain;
+  const [sourceChain, setSourceChain] = useState<string>(
+    chainId && SupportedChains[chainId] ? SupportedChains[chainId].toLowerCase() : "celo"
+  );
 
   // Update sourceChain when user switches chains
   useEffect(() => {
-    const currentChain = chainId === 122 ? "fuse" : chainId === 42220 ? "celo" : "mainnet";
-    setSourceChain(currentChain);
-  }, [chainId, setSourceChain]);
+    if (chainId && SupportedChains[chainId]) {
+      setSourceChain(SupportedChains[chainId].toLowerCase());
+    }
+  }, [chainId]);
 
-  const currentChain = chainId === 122 ? "fuse" : chainId === 42220 ? "celo" : "mainnet";
-  const bridgeData = useGetMPBBridgeData(currentChain, "fuse", "layerzero");
-  const { bridgeFees, bridgeLimits } = bridgeData;
+  const bridgeData = useGetMPBBridgeData(sourceChain, "fuse", bridgeProvider, inputTransaction[0], account);
+  const { bridgeFees, bridgeLimits, validation } = bridgeData;
   const protocolFeePercent = (bridgeData as any).protocolFeePercent as number | null;
 
   const fuseDecimals = useG$Decimals("G$", 122);
@@ -72,52 +81,34 @@ export const MPBBridgeController: React.FC<IMPBBridgeControllerProps> = ({ onBri
       };
     };
 
+    // Only return limits for the current source chain
+    // We can't assume limits are the same for all chains
     return {
-      fuse: buildLimits(fuseDecimals),
-      celo: buildLimits(celoDecimals),
-      mainnet: buildLimits(mainnetDecimals)
+      [sourceChain]: buildLimits(
+        sourceChain === "fuse" ? fuseDecimals : sourceChain === "celo" ? celoDecimals : mainnetDecimals
+      )
     };
-  }, [bridgeLimits, fuseDecimals, celoDecimals, mainnetDecimals, scaleFrom18]);
-
-  // Validation configuration
-  const VALIDATION_REASONS = {
-    MIN_AMOUNT: "minAmount",
-    MAX_AMOUNT: "maxAmount",
-    INVALID_CHAIN: "invalidChain",
-    ERROR: "error"
-  } as const;
+  }, [bridgeLimits, fuseDecimals, celoDecimals, mainnetDecimals, scaleFrom18, sourceChain]);
 
   const useCanMPBBridge = useCallback(
     (chain: string, amountWei: string) => {
-      // Validate chain
-      const validChains = ["fuse", "celo", "mainnet"];
-      if (!validChains.includes(chain)) {
-        return { isValid: false, reason: VALIDATION_REASONS.INVALID_CHAIN };
+      // We rely on the validation from useGetMPBBridgeData which uses the current input
+      // If the passed amount matches the current input, return the validation result
+      if (amountWei === inputTransaction[0]) {
+        if (!validation.isValid) {
+          return { isValid: false, reason: validation.reason, errorMessage: validation.errorMessage };
+        }
+        if (!validation.canBridge) {
+          return { isValid: false, reason: VALIDATION_REASONS.CANNOT_BRIDGE };
+        }
+        return { isValid: true, reason: "" };
       }
 
-      // Return invalid if limits not available from contract
-      if (!limitsByChain) {
-        return { isValid: false, reason: VALIDATION_REASONS.ERROR };
-      }
-
-      // Parse amount
-      const amountBN = ethers.BigNumber.from(amountWei || "0");
-
-      const chainLimits = limitsByChain?.[chain as keyof typeof limitsByChain];
-      if (!chainLimits) {
-        return { isValid: false, reason: VALIDATION_REASONS.ERROR };
-      }
-
-      const minAmount = chainLimits.minAmount ?? ethers.BigNumber.from(0);
-
-      // Validate amount against actual contract limits
-      if (amountBN.lt(minAmount)) {
-        return { isValid: false, reason: VALIDATION_REASONS.MIN_AMOUNT };
-      }
-
+      // Fallback for when amount doesn't match (shouldn't happen often in current UI flow)
+      // We can't validate accurately without calling the hook with new amount
       return { isValid: true, reason: "" };
     },
-    [limitsByChain]
+    [validation, inputTransaction]
   );
 
   const onBridgeStartHandler = useCallback(
@@ -125,7 +116,7 @@ export const MPBBridgeController: React.FC<IMPBBridgeControllerProps> = ({ onBri
       const [inputWei] = inputTransaction;
 
       try {
-        await sendMPBBridgeRequest(inputWei, sourceChain, targetChain);
+        await sendMPBBridgeRequest(inputWei, sourceChain, targetChain, account);
       } catch (e: any) {
         console.error("Bridge start error:", e);
       }
@@ -146,7 +137,7 @@ export const MPBBridgeController: React.FC<IMPBBridgeControllerProps> = ({ onBri
     <VStack space={4} width="100%">
       <MPBBridge
         useCanMPBBridge={useCanMPBBridge}
-        originChain={originChain}
+        originChain={[sourceChain, setSourceChain]}
         inputTransaction={inputTransaction}
         pendingTransaction={pendingTransaction}
         protocolFeePercent={protocolFeePercent || 0}
@@ -169,6 +160,8 @@ export const MPBBridgeController: React.FC<IMPBBridgeControllerProps> = ({ onBri
         onBridgeStart={onBridgeStartHandler}
         onBridgeFailed={onBridgeFailed}
         onBridgeSuccess={onBridgeSuccess}
+        bridgeProvider={bridgeProvider}
+        onBridgeProviderChange={setBridgeProvider}
       />
     </VStack>
   );

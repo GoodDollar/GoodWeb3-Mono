@@ -34,10 +34,13 @@ export const MPBBridge = ({
   bridgeStatus,
   onBridgeStart,
   onBridgeFailed,
-  onBridgeSuccess
+  onBridgeSuccess,
+  bridgeProvider: propBridgeProvider,
+  onBridgeProviderChange
 }: MPBBridgeProps) => {
   const [isBridging, setBridging] = useState(false);
-  const [bridgeProvider, setBridgeProvider] = useState<BridgeProvider>("axelar");
+  const [localBridgeProvider, setLocalBridgeProvider] = useState<BridgeProvider>("axelar");
+  const bridgeProvider = propBridgeProvider || localBridgeProvider;
   const [bridgingStatus, setBridgingStatus] = useState<string>("");
   const [sourceChain, setSourceChain] = originChain;
   const [targetChain, setTargetChain] = useState(
@@ -48,7 +51,11 @@ export const MPBBridge = ({
   // Wrapper function to close dropdowns when bridge provider changes
   const handleBridgeProviderChange = useCallback(
     (provider: BridgeProvider) => {
-      setBridgeProvider(provider);
+      if (onBridgeProviderChange) {
+        onBridgeProviderChange(provider);
+      } else {
+        setLocalBridgeProvider(provider);
+      }
 
       // If current route isn't supported by selected provider, auto-select a supported pair
       const routeSupported = isRouteSupportedByProvider(sourceChain, targetChain, provider);
@@ -160,7 +167,7 @@ export const MPBBridge = ({
       } else {
         // If no valid targets for current provider, switch to LayerZero (which supports more routes)
         if (bridgeProvider === "axelar") {
-          setBridgeProvider("layerzero");
+          handleBridgeProviderChange("layerzero");
           // Set a default target for LayerZero
           if (chain === "fuse") {
             setTargetChain("celo");

@@ -4,8 +4,8 @@ import bridgeContracts from "@gooddollar/bridge-contracts/release/mpb.json";
 import { SupportedChains } from "../constants";
 
 export enum BridgeService {
-  LAYERZERO = 0,
-  AXELAR = 1
+  AXELAR = 0,
+  LAYERZERO = 1
 }
 
 /**
@@ -16,18 +16,19 @@ export enum BridgeService {
  * the proxy to a new implementation.
  *
  * Structure: { chainId: { envName: proxyAddress } }
+ *
+ * NOTE: The proxy address is the same on all chains: 0xa3247276DbCC76Dd7705273f766eB3E8a5ecF4a5
  */
 const MPB_PROXY_ADDRESSES: Record<number, Record<string, string>> = {
+  [SupportedChains.FUSE]: {
+    fuse: "0xa3247276DbCC76Dd7705273f766eB3E8a5ecF4a5" // Fuse proxy (same on all chains)
+  },
   [SupportedChains.CELO]: {
-    celo: "0xa3247276DbCC76Dd7705273f766eB3E8a5ecF4a5" // Celo mainnet proxy
+    celo: "0xa3247276DbCC76Dd7705273f766eB3E8a5ecF4a5" // Celo mainnet proxy (same on all chains)
+  },
+  [SupportedChains.MAINNET]: {
+    mainnet: "0xa3247276DbCC76Dd7705273f766eB3E8a5ecF4a5" // Ethereum mainnet proxy (same on all chains)
   }
-  // Add proxy addresses for other chains as they become available
-  // [SupportedChains.FUSE]: {
-  //   fuse: "0x...", // Fuse proxy address
-  // },
-  // [SupportedChains.MAINNET]: {
-  //   mainnet: "0x...", // Mainnet proxy address
-  // },
 };
 
 /**
@@ -87,6 +88,13 @@ export type MPBBridgeData = {
   protocolFeePercent: number | null;
   isLoading: boolean;
   error: string | null;
+  validation: {
+    isValid: boolean;
+    reason: string;
+    errorMessage?: string;
+    canBridge: boolean;
+    hasAllowance: boolean;
+  };
 };
 
 export type BridgeRequest = {

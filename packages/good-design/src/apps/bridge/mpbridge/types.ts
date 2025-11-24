@@ -33,4 +33,6 @@ export interface MPBBridgeProps {
   onBridgeStart?: (sourceChain: string, targetChain: string) => Promise<void>;
   onBridgeFailed?: (error: Error) => void;
   onBridgeSuccess?: () => void;
+  bridgeProvider?: BridgeProvider;
+  onBridgeProviderChange?: (provider: BridgeProvider) => void;
 }

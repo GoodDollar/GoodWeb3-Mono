@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { CurrencyValue } from "@usedapp/core";
-import { useG$Amounts, useG$Balance, G$Amount, useGetEnvChainId } from "@gooddollar/web3sdk-v2";
+import { useG$Amounts, useProductionG$Balance, G$Amount, useGetEnvChainId } from "@gooddollar/web3sdk-v2";
 import { BigNumber } from "ethers";
 import { fetchBridgeFees, useBridgeHistory } from "@gooddollar/web3sdk-v2";
 import type { IMPBFees, IMPBLimits } from "./types";
@@ -181,10 +181,11 @@ export const useMPBBridgeEstimate = ({
 
 // Hook to get balances for all chains
 export const useChainBalances = () => {
-  // Query balances every 5 blocks, so balance is updated after bridging
-  const { G$: fuseBalance } = useG$Balance(5, 122);
-  const { G$: celoBalance } = useG$Balance(5, 42220);
-  const { G$: mainnetBalance } = useG$Balance(5, 1);
+  // Query production G$ balances every 5 blocks, so balance is updated after bridging
+  // Using production G$ to match what bridge operations use (not dev G$)
+  const { G$: fuseBalance } = useProductionG$Balance(5, 122);
+  const { G$: celoBalance } = useProductionG$Balance(5, 42220);
+  const { G$: mainnetBalance } = useProductionG$Balance(5, 1);
 
   const getBalanceForChain = (chain: string) => {
     switch (chain) {

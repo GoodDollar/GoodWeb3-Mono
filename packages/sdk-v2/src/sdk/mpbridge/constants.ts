@@ -13,7 +13,10 @@ export const BRIDGE_CONSTANTS = {
   POLLING_INTERVAL: 5000, // ms
 
   // Bridge request topic index
-  BRIDGE_ID_TOPIC_INDEX: 6
+  BRIDGE_ID_TOPIC_INDEX: 6,
+
+  // Production G$ token address (used as fallback when bridge doesn't have nativeToken)
+  PRODUCTION_GDOLLAR_ADDRESS: "0x62B8B11039FcfE5aB0C56E502b1C372A3d2a9c7A"
 } as const;
 
 /**
