@@ -1492,96 +1492,80 @@ export const useMPBBridgeHistory = () => {
       return e.data?.id || e.transactionHash;
     });
 
-    // Process Fuse bridge requests
-    const fuseHistory = (fuseBridgeRequests.value || []).map((e: any) => {
-      // Log the raw event data to debug bridge service identification
-      console.log("🔍 Fuse BridgeRequest Event:", {
-        id: e.data?.id?.toString(),
-        bridge: e.data?.bridge, // Check this field for bridge service (0=LZ, 1=Axelar)
-        txHash: e.transactionHash,
-        args: e.args
-      });
-
-      type BridgeEvent = typeof e & { completedEvent: any; amount: string };
-      const extended = e as BridgeEvent;
-      // Try to find matching completed event
-      // BridgeRequest ID is in the event data
-      const requestId = e.data?.id?.toString();
-      extended.completedEvent = requestId && celoCompleted[requestId] ? first(celoCompleted[requestId]) : undefined;
-      extended.completedEvent =
-        extended.completedEvent ||
-        (requestId && mainnetCompleted[requestId] ? first(mainnetCompleted[requestId]) : undefined);
-
-      // Format amount - MPB bridge normalizes amounts to 18 decimals
-      extended.amount = formatAmount(e.data?.amount || ethers.BigNumber.from(0), 18, 18);
-
-      // Ensure source and target chain IDs are set
-      if (!extended.data.sourceChainId) {
-        extended.data.sourceChainId = { toNumber: () => SupportedChains.FUSE } as any;
-      }
-      if (!extended.data.targetChainId) {
-        // Default target for Fuse is Celo
-        extended.data.targetChainId = { toNumber: () => SupportedChains.CELO } as any;
-      }
-
-      return extended;
-    });
-
-    // Process Celo bridge requests
-    const celoHistory = (celoBridgeRequests.value || []).map((e: any) => {
-      console.log("🔍 Celo BridgeRequest Event:", {
-        id: e.data?.id?.toString(),
-        bridge: e.data?.bridge,
+    /**
+     * Helper function to process bridge request events for any chain
+     * Extracts data from the event array and creates a properly structured object
+     */
+    const processBridgeRequestEvent = (e: any, sourceChainId: number, completedEventsMap: Record<string, any[]>) => {
+      // BridgeRequest event data comes as an array:
+      // [0] from, [1] to, [2] targetChainId, [3] amount, [4] timestamp, [5] bridge, [6] id
+      console.log(`🔍 Processing BridgeRequest Event from chain ${sourceChainId}:`, {
+        fullData: e.data,
+        isArray: Array.isArray(e.data),
+        amount: e.data?.[3],
+        amountHex: e.data?.[3]?.hex,
+        bridge: e.data?.[5],
+        id: e.data?.[6],
         txHash: e.transactionHash
       });
 
       type BridgeEvent = typeof e & { completedEvent: any; amount: string };
       const extended = e as BridgeEvent;
-      const requestId = e.data?.id?.toString();
-      extended.completedEvent = requestId && fuseCompleted[requestId] ? first(fuseCompleted[requestId]) : undefined;
+
+      // Extract amount from data array at index 3
+      const amountBN = e.data?.[3] || ethers.BigNumber.from(0);
+
+      // Try to find matching completed event using bridge request ID from data[6]
+      const requestId = e.data?.[6]?.toString();
+
+      // Check all possible target chains for completion
       extended.completedEvent =
-        extended.completedEvent ||
-        (requestId && mainnetCompleted[requestId] ? first(mainnetCompleted[requestId]) : undefined);
+        requestId && completedEventsMap[requestId] ? first(completedEventsMap[requestId]) : undefined;
 
-      extended.amount = formatAmount(e.data?.amount || ethers.BigNumber.from(0), 18, 18);
+      // Format amount with 2 decimal places for display
+      extended.amount = formatAmount(amountBN, 18, 2);
+      console.log(
+        `✅ Formatted amount for chain ${sourceChainId}:`,
+        extended.amount,
+        "from BigNumber:",
+        amountBN.toString()
+      );
 
-      if (!extended.data.sourceChainId) {
-        extended.data.sourceChainId = { toNumber: () => SupportedChains.CELO } as any;
-      }
-      if (!extended.data.targetChainId) {
-        extended.data.targetChainId = { toNumber: () => SupportedChains.FUSE } as any;
-      }
+      // Create a proper data object with named properties (instead of modifying the array)
+      // This ensures sourceChainId and targetChainId are accessible in the UI layer
+      const targetChainIdValue = e.data?.[2]?.toNumber?.() || SupportedChains.CELO;
+      extended.data = {
+        ...e.data, // Spread array elements
+        from: e.data?.[0],
+        to: e.data?.[1],
+        targetChainId: { toNumber: () => targetChainIdValue },
+        amount: amountBN,
+        timestamp: e.data?.[4]?.toNumber?.() || 0,
+        bridge: e.data?.[5],
+        id: e.data?.[6],
+        sourceChainId: { toNumber: () => sourceChainId } // Event came from this chain
+      } as any;
 
       return extended;
-    });
+    };
 
-    // Process Mainnet bridge requests
-    const mainnetHistory = (mainnetBridgeRequests.value || []).map((e: any) => {
-      console.log("🔍 Mainnet BridgeRequest Event:", {
-        id: e.data?.id?.toString(),
-        bridge: e.data?.bridge,
-        txHash: e.transactionHash
-      });
+    // Process Fuse bridge requests - check Celo and Mainnet for completions
+    const fuseCompletedMap = { ...celoCompleted, ...mainnetCompleted };
+    const fuseHistory = (fuseBridgeRequests.value || []).map((e: any) =>
+      processBridgeRequestEvent(e, SupportedChains.FUSE, fuseCompletedMap)
+    );
 
-      type BridgeEvent = typeof e & { completedEvent: any; amount: string };
-      const extended = e as BridgeEvent;
-      const requestId = e.data?.id?.toString();
-      extended.completedEvent = requestId && fuseCompleted[requestId] ? first(fuseCompleted[requestId]) : undefined;
-      extended.completedEvent =
-        extended.completedEvent ||
-        (requestId && celoCompleted[requestId] ? first(celoCompleted[requestId]) : undefined);
+    // Process Celo bridge requests - check Fuse and Mainnet for completions
+    const celoCompletedMap = { ...fuseCompleted, ...mainnetCompleted };
+    const celoHistory = (celoBridgeRequests.value || []).map((e: any) =>
+      processBridgeRequestEvent(e, SupportedChains.CELO, celoCompletedMap)
+    );
 
-      extended.amount = formatAmount(e.data?.amount || ethers.BigNumber.from(0), 18, 18);
-
-      if (!extended.data.sourceChainId) {
-        extended.data.sourceChainId = { toNumber: () => SupportedChains.MAINNET } as any;
-      }
-      if (!extended.data.targetChainId) {
-        extended.data.targetChainId = { toNumber: () => SupportedChains.CELO } as any;
-      }
-
-      return extended;
-    });
+    // Process Mainnet bridge requests - check Fuse and Celo for completions
+    const mainnetCompletedMap = { ...fuseCompleted, ...celoCompleted };
+    const mainnetHistory = (mainnetBridgeRequests.value || []).map((e: any) =>
+      processBridgeRequestEvent(e, SupportedChains.MAINNET, mainnetCompletedMap)
+    );
 
     // Combine all histories
     const historyCombined = [...fuseHistory, ...celoHistory, ...mainnetHistory];

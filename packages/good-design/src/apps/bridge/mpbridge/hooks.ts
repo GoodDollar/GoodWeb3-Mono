@@ -253,10 +253,36 @@ export const useConvertedTransactionHistory = (realTransactionHistory: any[] | u
 
   // Memoize the conversion to prevent unnecessary re-computations
   return useMemo(() => {
+    console.log("🔍 useConvertedTransactionHistory - Raw input:", {
+      historyLength: realTransactionHistory?.length,
+      sourceChain,
+      chain,
+      firstTx: realTransactionHistory?.[0]
+    });
+
     const converted =
-      realTransactionHistory?.slice(0, 5).map(tx => {
+      realTransactionHistory?.slice(0, 5).map((tx, index) => {
+        console.log(`🔍 Converting transaction ${index}:`, {
+          fullTx: tx,
+          amount: tx.amount,
+          data: tx.data,
+          dataAmount: tx.data?.amount,
+          dataAmountString: tx.data?.amount?.toString(),
+          relayEvent: tx.relayEvent,
+          completedEvent: tx.completedEvent
+        });
+
         const sourceChainId = tx.data?.sourceChainId?.toNumber();
         const targetChainId = tx.data?.targetChainId?.toNumber();
+
+        console.log(`🔍 Chain IDs for transaction ${index}:`, {
+          dataIsArray: Array.isArray(tx.data),
+          sourceChainIdRaw: tx.data?.sourceChainId,
+          sourceChainId,
+          targetChainIdRaw: tx.data?.targetChainId,
+          targetChainId,
+          hasToNumber: typeof tx.data?.sourceChainId?.toNumber === "function"
+        });
 
         // Get chain names using dictionary lookup (DRY principle)
         const sourceChainName = getChainName(sourceChainId);
@@ -278,10 +304,10 @@ export const useConvertedTransactionHistory = (realTransactionHistory: any[] | u
           bridgeProvider = isRecent ? "layerzero" : "axelar";
         }
 
-        // Determine status based on relayEvent (microbridge pattern)
-        const status = tx.relayEvent ? "completed" : "pending";
+        // Determine status based on completedEvent (MPB bridge pattern)
+        const status = tx.completedEvent ? "completed" : "pending";
 
-        return {
+        const converted = {
           id: tx.data?.id || tx.transactionHash,
           transactionHash: tx.transactionHash,
           sourceChain: sourceChainName,
@@ -299,8 +325,12 @@ export const useConvertedTransactionHistory = (realTransactionHistory: any[] | u
           type: status === "completed" ? "bridge-in" : "bridge-pending",
           isPool: false
         };
+
+        console.log(`✅ Converted transaction ${index}:`, converted);
+        return converted;
       }) || [];
 
+    console.log("✅ useConvertedTransactionHistory - Final output:", converted);
     return converted;
   }, [realTransactionHistory, chain]);
 };
