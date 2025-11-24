@@ -1,5 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useContractFunction, useEthers, useTokenAllowance, useCalls, CurrencyValue, QueryParams } from "@usedapp/core";
+import {
+  useContractFunction,
+  useEthers,
+  useTokenAllowance,
+  useCalls,
+  CurrencyValue,
+  QueryParams,
+  ChainId
+} from "@usedapp/core";
 import { useSwitchNetwork } from "../../contexts";
 import { useRefreshOrNever, useReadOnlyProvider } from "../../hooks";
 import { useLogs } from "@usedapp/core";
@@ -23,7 +31,8 @@ import {
   isSupportedChain
 } from "./constants";
 import { CONTRACT_TO_ABI } from "../base/sdk";
-import { SupportedChains } from "../constants";
+import { SupportedChains, formatAmount } from "../constants";
+import { first, groupBy, sortBy } from "lodash";
 
 /**
  * Maps SDK environment names to mpb.json deployment names for each chain
@@ -785,8 +794,7 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
                 }
               }
             } catch (decodeError) {
-              // Error couldn't be decoded, that's okay - we'll show generic message
-              console.warn("Could not decode error using contract interface:", decodeError);
+              console.warn("Failed to decode error:", decodeError);
             }
 
             // Common error codes (if decoding failed):
@@ -840,6 +848,7 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
       }
     };
 
+    // Call handleTransactionError for approve
     handleTransactionError(
       approve.state.status,
       approve.state.errorMessage || "",
@@ -847,6 +856,7 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
       (approve.state as any)?.error?.data,
       (approve.state as any)?.error?.stack
     );
+
     // Log the full error state for debugging
     if (bridgeTo.state.status === "Exception") {
       const bridgeToState = bridgeTo.state as any;
@@ -855,6 +865,7 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
       console.error("🔍 bridgeTo.state.errorMessage:", bridgeToState.errorMessage);
     }
 
+    // Call handleTransactionError for bridgeTo
     handleTransactionError(
       bridgeTo.state.status,
       bridgeTo.state.errorMessage || "",
@@ -862,15 +873,7 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
       bridgeTo.state as any, // Pass the entire state object to access all error data
       (bridgeTo.state as any)?.error?.stack
     );
-  }, [
-    approve.state.status,
-    approve.state.errorMessage,
-    bridgeTo.state.status,
-    bridgeTo.state.errorMessage,
-    approve,
-    bridgeTo,
-    bridgeContract
-  ]);
+  }, [approve.state, bridgeTo.state, approve, bridgeTo, bridgeContract]);
 
   // Reset chain switching state when chain successfully changes
   useEffect(() => {
@@ -1340,3 +1343,269 @@ export function useProductionG$Balance(refresh: QueryParams["refresh"] = "never"
 
   return { G$: g$Balance };
 }
+
+/**
+ * Hook to get MPBridge transaction history
+ * Queries BridgeRequest events from all MPB bridge contracts (Fuse, Celo, Mainnet)
+ * and matches them with BridgeCompleted events to determine transaction status
+ *
+ * @returns Bridge history sorted by timestamp (most recent first)
+ */
+export const useMPBBridgeHistory = () => {
+  const { account } = useEthers();
+  console.log("useMPBBridgeHistory account:", account);
+  const refresh = useRefreshOrNever(5);
+  const { baseEnv } = useGetEnvChainId();
+  console.log("useMPBBridgeHistory baseEnv:", baseEnv);
+
+  // Get bridge contracts for all supported chains (read-only)
+  const fuseBridgeContract = useGetMPBContract(SupportedChains.FUSE, true);
+  const celoBridgeContract = useGetMPBContract(SupportedChains.CELO, true);
+  const mainnetBridgeContract = useGetMPBContract(SupportedChains.MAINNET, true);
+
+  // Query BridgeRequest events from all chains
+  const fuseBridgeRequests = useLogs(
+    fuseBridgeContract
+      ? {
+          contract: fuseBridgeContract,
+          event: "BridgeRequest",
+          args: []
+        }
+      : undefined,
+    {
+      chainId: SupportedChains.FUSE as unknown as ChainId,
+      fromBlock: -5000,
+      refresh
+    }
+  );
+
+  const celoBridgeRequests = useLogs(
+    celoBridgeContract
+      ? {
+          contract: celoBridgeContract,
+          event: "BridgeRequest",
+          args: []
+        }
+      : undefined,
+    {
+      chainId: SupportedChains.CELO as unknown as ChainId,
+      fromBlock: -5000,
+      refresh
+    }
+  );
+
+  const mainnetBridgeRequests = useLogs(
+    mainnetBridgeContract
+      ? {
+          contract: mainnetBridgeContract,
+          event: "BridgeRequest",
+          args: []
+        }
+      : undefined,
+    {
+      chainId: SupportedChains.MAINNET as unknown as ChainId,
+      fromBlock: -5000,
+      refresh
+    }
+  );
+
+  // Query BridgeCompleted events from all chains
+  const fuseBridgeCompleted = useLogs(
+    fuseBridgeContract
+      ? {
+          contract: fuseBridgeContract,
+          event: "BridgeCompleted",
+          args: []
+        }
+      : undefined,
+    {
+      chainId: SupportedChains.FUSE as unknown as ChainId,
+      fromBlock: -5000,
+      refresh
+    }
+  );
+
+  const celoBridgeCompleted = useLogs(
+    celoBridgeContract
+      ? {
+          contract: celoBridgeContract,
+          event: "BridgeCompleted",
+          args: []
+        }
+      : undefined,
+    {
+      chainId: SupportedChains.CELO as unknown as ChainId,
+      fromBlock: -5000,
+      refresh
+    }
+  );
+
+  const mainnetBridgeCompleted = useLogs(
+    mainnetBridgeContract
+      ? {
+          contract: mainnetBridgeContract,
+          event: "BridgeCompleted",
+          args: []
+        }
+      : undefined,
+    {
+      chainId: SupportedChains.MAINNET as unknown as ChainId,
+      fromBlock: -5000,
+      refresh
+    }
+  );
+
+  return useMemo(() => {
+    // Wait for all logs to load
+    if (
+      !fuseBridgeRequests ||
+      !celoBridgeRequests ||
+      !mainnetBridgeRequests ||
+      !fuseBridgeCompleted ||
+      !celoBridgeCompleted ||
+      !mainnetBridgeCompleted
+    ) {
+      console.log("useMPBBridgeHistory: logs not ready");
+      return { historySorted: undefined };
+    }
+
+    console.log("useMPBBridgeHistory: logs ready", {
+      fuseRequests: fuseBridgeRequests.value?.length,
+      celoRequests: celoBridgeRequests.value?.length,
+      mainnetRequests: mainnetBridgeRequests.value?.length
+    });
+
+    // Group completed events by bridge request ID (the last parameter in BridgeCompleted event)
+    // BridgeCompleted event signature: BridgeCompleted(address,address,uint256,uint256)
+    // The bridge request ID is typically in the event data, we need to extract it from the parsed event
+    const fuseCompleted = groupBy(fuseBridgeCompleted.value || [], (e: any) => {
+      // Extract bridge request ID from event - it's typically the last indexed parameter
+      // We'll use the transaction hash as a fallback grouping key
+      return e.data?.id || e.transactionHash;
+    });
+
+    const celoCompleted = groupBy(celoBridgeCompleted.value || [], (e: any) => {
+      return e.data?.id || e.transactionHash;
+    });
+
+    const mainnetCompleted = groupBy(mainnetBridgeCompleted.value || [], (e: any) => {
+      return e.data?.id || e.transactionHash;
+    });
+
+    // Process Fuse bridge requests
+    const fuseHistory = (fuseBridgeRequests.value || []).map((e: any) => {
+      // Log the raw event data to debug bridge service identification
+      console.log("🔍 Fuse BridgeRequest Event:", {
+        id: e.data?.id?.toString(),
+        bridge: e.data?.bridge, // Check this field for bridge service (0=LZ, 1=Axelar)
+        txHash: e.transactionHash,
+        args: e.args
+      });
+
+      type BridgeEvent = typeof e & { completedEvent: any; amount: string };
+      const extended = e as BridgeEvent;
+      // Try to find matching completed event
+      // BridgeRequest ID is in the event data
+      const requestId = e.data?.id?.toString();
+      extended.completedEvent = requestId && celoCompleted[requestId] ? first(celoCompleted[requestId]) : undefined;
+      extended.completedEvent =
+        extended.completedEvent ||
+        (requestId && mainnetCompleted[requestId] ? first(mainnetCompleted[requestId]) : undefined);
+
+      // Format amount - MPB bridge normalizes amounts to 18 decimals
+      extended.amount = formatAmount(e.data?.amount || ethers.BigNumber.from(0), 18, 18);
+
+      // Ensure source and target chain IDs are set
+      if (!extended.data.sourceChainId) {
+        extended.data.sourceChainId = { toNumber: () => SupportedChains.FUSE } as any;
+      }
+      if (!extended.data.targetChainId) {
+        // Default target for Fuse is Celo
+        extended.data.targetChainId = { toNumber: () => SupportedChains.CELO } as any;
+      }
+
+      return extended;
+    });
+
+    // Process Celo bridge requests
+    const celoHistory = (celoBridgeRequests.value || []).map((e: any) => {
+      console.log("🔍 Celo BridgeRequest Event:", {
+        id: e.data?.id?.toString(),
+        bridge: e.data?.bridge,
+        txHash: e.transactionHash
+      });
+
+      type BridgeEvent = typeof e & { completedEvent: any; amount: string };
+      const extended = e as BridgeEvent;
+      const requestId = e.data?.id?.toString();
+      extended.completedEvent = requestId && fuseCompleted[requestId] ? first(fuseCompleted[requestId]) : undefined;
+      extended.completedEvent =
+        extended.completedEvent ||
+        (requestId && mainnetCompleted[requestId] ? first(mainnetCompleted[requestId]) : undefined);
+
+      extended.amount = formatAmount(e.data?.amount || ethers.BigNumber.from(0), 18, 18);
+
+      if (!extended.data.sourceChainId) {
+        extended.data.sourceChainId = { toNumber: () => SupportedChains.CELO } as any;
+      }
+      if (!extended.data.targetChainId) {
+        extended.data.targetChainId = { toNumber: () => SupportedChains.FUSE } as any;
+      }
+
+      return extended;
+    });
+
+    // Process Mainnet bridge requests
+    const mainnetHistory = (mainnetBridgeRequests.value || []).map((e: any) => {
+      console.log("🔍 Mainnet BridgeRequest Event:", {
+        id: e.data?.id?.toString(),
+        bridge: e.data?.bridge,
+        txHash: e.transactionHash
+      });
+
+      type BridgeEvent = typeof e & { completedEvent: any; amount: string };
+      const extended = e as BridgeEvent;
+      const requestId = e.data?.id?.toString();
+      extended.completedEvent = requestId && fuseCompleted[requestId] ? first(fuseCompleted[requestId]) : undefined;
+      extended.completedEvent =
+        extended.completedEvent ||
+        (requestId && celoCompleted[requestId] ? first(celoCompleted[requestId]) : undefined);
+
+      extended.amount = formatAmount(e.data?.amount || ethers.BigNumber.from(0), 18, 18);
+
+      if (!extended.data.sourceChainId) {
+        extended.data.sourceChainId = { toNumber: () => SupportedChains.MAINNET } as any;
+      }
+      if (!extended.data.targetChainId) {
+        extended.data.targetChainId = { toNumber: () => SupportedChains.CELO } as any;
+      }
+
+      return extended;
+    });
+
+    // Combine all histories
+    const historyCombined = [...fuseHistory, ...celoHistory, ...mainnetHistory];
+
+    // Filter by account (from or to)
+    const historyFiltered = account
+      ? historyCombined.filter(
+          (tx: any) =>
+            tx.data?.from?.toLowerCase() === account?.toLowerCase() ||
+            tx.data?.target?.toLowerCase() === account?.toLowerCase()
+        )
+      : historyCombined;
+
+    // Sort by timestamp (most recent first)
+    const historySorted = sortBy(historyFiltered, (tx: any) => tx.data?.timestamp || 0).reverse();
+
+    return { historySorted };
+  }, [
+    fuseBridgeRequests,
+    celoBridgeRequests,
+    mainnetBridgeRequests,
+    fuseBridgeCompleted,
+    celoBridgeCompleted,
+    mainnetBridgeCompleted,
+    account
+  ]);
+};

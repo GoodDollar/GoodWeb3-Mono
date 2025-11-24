@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo, useRef } from "react";
 import { CurrencyValue } from "@usedapp/core";
 import { useG$Amounts, useProductionG$Balance, G$Amount, useGetEnvChainId } from "@gooddollar/web3sdk-v2";
 import { BigNumber } from "ethers";
-import { fetchBridgeFees, useBridgeHistory } from "@gooddollar/web3sdk-v2";
+import { fetchBridgeFees, useMPBBridgeHistory } from "@gooddollar/web3sdk-v2";
 import type { IMPBFees, IMPBLimits } from "./types";
 
 // Chain ID to chain name mapping - single source of truth
@@ -12,10 +12,10 @@ const CHAIN_ID_TO_NAME: Record<number, string> = {
   1: "Mainnet"
 } as const;
 
-// Bridge service mapping (0 = LayerZero, 1 = Axelar)
+// Bridge service mapping (0 = Axelar, 1 = LayerZero)
 const BRIDGE_SERVICE_MAPPING = {
-  0: "layerzero",
-  1: "axelar"
+  0: "axelar",
+  1: "layerzero"
 } as const;
 
 // Default bridge provider fallback
@@ -204,7 +204,7 @@ export const useChainBalances = () => {
 };
 
 export const useTransactionHistory = () => {
-  const { historySorted: realTransactionHistory } = useBridgeHistory() ?? {};
+  const { historySorted: realTransactionHistory } = useMPBBridgeHistory() ?? {};
 
   // Memoize the result to prevent unnecessary re-renders
   return useMemo(() => {
