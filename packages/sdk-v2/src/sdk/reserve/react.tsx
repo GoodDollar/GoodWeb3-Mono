@@ -47,7 +47,7 @@ export const useExchange = (requiredChainId?: number) => {
   const exchange = exchanges?.value?.pools?.find(e => e.assets.includes(contractAddresses[connectedEnv].GoodDollar));
 
   return useMemo(() => {
-    return { exchange, exchangeId: exchange?.id };
+    return { exchange, exchangeId: exchange?.exchangeId };
   }, [exchange?.assets?.toString()]);
 };
 
