@@ -26,7 +26,9 @@ export const TransactionHistory: React.FC<TransactionHistoryProps> = ({
           </Text>
         </Box>
       ) : realTransactionHistory.length > 0 ? (
-        <BridgeTransactionList transactions={realTransactionHistory} onTxDetailsPress={onTxDetailsPress} />
+        <Box maxH="300px" overflowY="auto">
+          <BridgeTransactionList transactions={realTransactionHistory} onTxDetailsPress={onTxDetailsPress} />
+        </Box>
       ) : (
         <Box p={4} bg="goodGrey.50" borderRadius="lg" alignItems="center">
           <Text fontSize="sm" color="goodGrey.600">

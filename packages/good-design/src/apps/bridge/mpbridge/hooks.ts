@@ -5,14 +5,12 @@ import { BigNumber } from "ethers";
 import { fetchBridgeFees, useMPBBridgeHistory } from "@gooddollar/web3sdk-v2";
 import type { IMPBFees, IMPBLimits } from "./types";
 
-// Chain ID to chain name mapping - single source of truth
 const CHAIN_ID_TO_NAME: Record<number, string> = {
   122: "Fuse",
   42220: "Celo",
   1: "Mainnet"
 } as const;
 
-// Bridge service mapping (0 = Axelar, 1 = LayerZero)
 const BRIDGE_SERVICE_MAPPING = {
   0: "axelar",
   1: "layerzero"
@@ -29,8 +27,6 @@ const getChainName = (chainId: number): string => {
   return CHAIN_ID_TO_NAME[chainId] || "Unknown";
 };
 
-// Cache for bridge fees to prevent unnecessary API calls
-// Using localStorage for persistence across page reloads
 const CACHE_KEY = "mpb-bridge-fees-cache";
 const CACHE_DURATION = 5 * 60 * 1000;
 
@@ -69,19 +65,16 @@ export const useBridgeFees = () => {
     const now = Date.now();
     const isCacheValid = cached && cached.data && now - cached.timestamp < CACHE_DURATION;
 
-    // Show cached data immediately if available (stale-while-revalidate)
     if (cached && cached.data) {
       console.log("⚡ Using cached bridge fees (age:", Math.round((now - cached.timestamp) / 1000), "seconds)");
       setFees(cached.data);
       setLoading(false);
 
-      // If cache is still valid, no need to fetch
       if (isCacheValid) {
         return;
       }
     }
 
-    // Fetch fresh data
     console.log("🔄 Fetching bridge fees from API...");
 
     fetchBridgeFees()
@@ -181,8 +174,6 @@ export const useMPBBridgeEstimate = ({
 
 // Hook to get balances for all chains
 export const useChainBalances = () => {
-  // Query production G$ balances every 5 blocks, so balance is updated after bridging
-  // Using production G$ to match what bridge operations use (not dev G$)
   const { G$: fuseBalance } = useProductionG$Balance(5, 122);
   const { G$: celoBalance } = useProductionG$Balance(5, 42220);
   const { G$: mainnetBalance } = useProductionG$Balance(5, 1);

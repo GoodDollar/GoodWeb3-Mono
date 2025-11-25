@@ -75,7 +75,6 @@ export const isRouteSupportedByProvider = (source: string, target: string, provi
   return Boolean(PROVIDER_ROUTES[provider]?.[routeKey]);
 };
 
-// Helper function to check if a route has available fees
 const hasRouteFees = (source: string, target: string, bridgeProvider: string, bridgeFees: any): boolean => {
   const sourceUpper = source.toUpperCase();
   const targetUpper = target.toUpperCase();

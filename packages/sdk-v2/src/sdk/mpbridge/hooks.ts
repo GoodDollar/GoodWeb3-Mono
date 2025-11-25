@@ -422,9 +422,16 @@ const extractBridgeRequestId = (logs: any[], bridgeContract: any): string | unde
 
   for (const log of logs) {
     if (log.address === bridgeContract?.address && log.topics[0] === bridgeTopic) {
-      const bridgeIdTopicIndex = BRIDGE_CONSTANTS.BRIDGE_ID_TOPIC_INDEX;
-      if (log.topics[bridgeIdTopicIndex]) {
-        return safeBigNumber(log.topics[bridgeIdTopicIndex]).toString();
+      try {
+        // Parse the log using the contract interface to handle non-indexed parameters in data
+        const parsedLog = bridgeContract.interface.parseLog(log);
+        // The ID is the last argument in the BridgeRequest event
+        // BridgeRequest(address indexed from, address indexed to, uint256 targetChainId, uint256 amount, uint256 timestamp, uint8 bridge, uint256 id)
+        if (parsedLog.args.id) {
+          return parsedLog.args.id.toString();
+        }
+      } catch (e) {
+        console.warn("Failed to parse bridge log:", e);
       }
     }
   }
@@ -478,20 +485,28 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
   const targetBridgeContract = useGetMPBContract(bridgeRequest?.targetChainId);
 
   // Poll target chain for bridge completion
-  const bridgeCompletedEvent = useLogs(
+  const bridgeCompletedLogs = useLogs(
     bridgeRequest &&
       bridgeRequestId &&
       targetBridgeContract && {
         contract: targetBridgeContract,
-        event: "BridgeCompleted",
-        args: [null, null, null, bridgeRequestId]
+        event: "ExecutedTransfer",
+        args: []
       },
     {
       refresh: useRefreshOrNever(bridgeRequestId ? 5 : "never"),
       chainId: bridgeRequest?.targetChainId,
-      fromBlock: -1000
+      fromBlock: -5000
     }
   );
+
+  const bridgeCompletedEvent = useMemo(() => {
+    if (!bridgeCompletedLogs?.value || !bridgeRequestId) return undefined;
+    return bridgeCompletedLogs.value.find(log => {
+      const id = log.data?.id || log.data?.[6];
+      return id?.toString() === bridgeRequestId.toString();
+    });
+  }, [bridgeCompletedLogs, bridgeRequestId]);
 
   useEffect(() => {
     let isMounted = true;
@@ -572,11 +587,11 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
       } as TransactionStatus;
     }
 
-    if (bridgeTo.state.status === "Success" && bridgeCompletedEvent?.value?.length) {
+    if (bridgeTo.state.status === "Success" && bridgeCompletedEvent) {
       return {
         chainId: bridgeRequest?.targetChainId,
         status: "Success",
-        transaction: { hash: bridgeCompletedEvent.value[0].transactionHash }
+        transaction: { hash: bridgeCompletedEvent.transactionHash }
       } as TransactionStatus;
     }
 
@@ -1168,7 +1183,7 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
         .catch(error => {
           bridgeLock.current = false; // Reset lock on error
           console.error("Bridge execution error:", error);
-          // Don't throw - let the state management handle it
+          setSwitchChainError(error?.message || "Bridge execution failed");
         });
     }
   }, [
@@ -1475,11 +1490,6 @@ export const useMPBBridgeHistory = () => {
       // Try to get ID from named property or array index
       // Based on signature: [0]=from, [1]=to, [2]=amount, [3]=fee, [4]=sourceChainId, [5]=bridge, [6]=id
       const id = e.data?.id || e.data?.[6];
-
-      // Log for debugging if needed, but keep it minimal to avoid console spam
-      if (!id && Math.random() < 0.01) {
-        console.log("⚠️ ExecutedTransfer event missing ID:", e);
-      }
 
       return id ? id.toString() : e.transactionHash;
     };

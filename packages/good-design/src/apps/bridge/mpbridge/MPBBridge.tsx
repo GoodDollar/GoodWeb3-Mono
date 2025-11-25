@@ -5,6 +5,7 @@ import { ethers } from "ethers";
 
 import { Web3ActionButton } from "../../../advanced";
 import { MPBTransactionDetailsModal } from "./MPBTransactionDetailsModal";
+import { ErrorModal } from "../../../core/web3/modals/ErrorModal";
 
 import type { MPBBridgeProps, BridgeProvider } from "./types";
 import {
@@ -47,6 +48,7 @@ export const MPBBridge = ({
     sourceChain === "fuse" ? "celo" : sourceChain === "celo" ? "mainnet" : "fuse"
   );
   const { fees: bridgeFees, loading: feesLoading, error: feesError } = useBridgeFees();
+  const [errorMessage, setErrorMessage] = useState("");
 
   // Wrapper function to close dropdowns when bridge provider changes
   const handleBridgeProviderChange = useCallback(
@@ -260,12 +262,9 @@ export const MPBBridge = ({
           setBridgingStatus("");
         }, 2000);
       } else {
-        setBridgingStatus(`Bridge failed: ${errorMsg}`);
-        // Give user more time to read actual errors
-        setTimeout(() => {
-          setBridging(false);
-          setBridgingStatus("");
-        }, 5000);
+        // Show ErrorModal for actual errors
+        setErrorMessage(errorMsg);
+        setBridging(false); // Stop the spinner/banner
       }
 
       if (!isUserRejection) {
@@ -305,6 +304,9 @@ export const MPBBridge = ({
       {txDetailsOpen && txDetails ? (
         <MPBTransactionDetailsModal open={txDetailsOpen} onClose={onTxDetailsClose} transaction={txDetails} />
       ) : null}
+
+      {/* Error Modal */}
+      <ErrorModal error={errorMessage} onClose={() => setErrorMessage("")} overlay="dark" />
 
       {/* Header */}
       <VStack space={3} alignItems="center">
@@ -386,7 +388,7 @@ export const MPBBridge = ({
               disabled={!isValidInput || isBridging || !!feesError}
               isLoading={isBridging}
               text={
-                isBridging ? "Bridging..." : `Bridge to ${targetChain.charAt(0).toUpperCase() + targetChain.slice(1)}`
+                isBridging ? "Bridging..." : `Bridge to ${targetChain.charAt(0).toUpperCase() + targetChain.slice(1)} `
               }
               supportedChains={[SupportedChains[sourceChain.toUpperCase() as keyof typeof SupportedChains]]}
               variant="primary"
