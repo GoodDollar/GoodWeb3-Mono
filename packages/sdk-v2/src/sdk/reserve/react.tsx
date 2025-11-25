@@ -1,9 +1,10 @@
+import { useMemo } from "react";
 import { BigNumber, Contract, ethers } from "ethers";
 import { ERC20Interface, QueryParams, useCall, useCalls, useTokenAllowance } from "@usedapp/core";
+
 import contractAddresses from "@gooddollar/goodprotocol/releases/deployment.json";
 import { useContractFunctionWithDefaultGasFees, useG$Tokens, useGetEnvChainId } from "../../sdk";
 import { useRefreshOrNever } from "../../hooks";
-import { useMemo } from "react";
 
 const exchangeAbi = [
   "function currentPrice(bytes32 exchangeId) external view returns (uint256 price)",
@@ -19,8 +20,8 @@ const brokerAbi = [
   "function swapOut(address exchangeProvider,bytes32 exchangeId,address tokenIn,address tokenOut,uint256 amountOut,uint256 amountInMax) external returns (uint256 amountIn)"
 ];
 
-export const useExchange = () => {
-  const { connectedEnv, chainId } = useGetEnvChainId();
+export const useExchange = (requiredChainId?: number) => {
+  const { connectedEnv, chainId } = useGetEnvChainId(requiredChainId);
 
   const mentoExchange = useMemo(
     () =>
@@ -45,12 +46,14 @@ export const useExchange = () => {
 
   const exchange = exchanges?.value?.pools?.find(e => e.assets.includes(contractAddresses[connectedEnv].GoodDollar));
 
-  return useMemo(() => exchange, [exchange?.assets?.toString()]);
+  return useMemo(() => {
+    return { exchange, exchangeId: exchange?.id };
+  }, [exchange?.assets?.toString()]);
 };
 
-export const useReserveToken = () => {
-  const { connectedEnv, chainId } = useGetEnvChainId();
-  const exchange = useExchange();
+export const useReserveToken = (requiredChainId?: number) => {
+  const { connectedEnv, chainId } = useGetEnvChainId(requiredChainId ?? 42220);
+  const { exchange } = useExchange(requiredChainId ?? 42220);
   const gdAddress = contractAddresses[connectedEnv].GoodDollar;
   const reserveAsset = exchange?.assets.find(_ => _.toLowerCase() !== gdAddress.toLowerCase());
   // console.log("useReserveToken:", { connectedEnv, exchange, gdAddress, reserveAsset });
@@ -86,22 +89,16 @@ export const useReserveToken = () => {
   );
 };
 
-export const useExchangeId = () => {
-  const exchange = useExchange();
-  const exchangeId = exchange?.exchangeId;
-  return exchangeId;
-};
-
-export const useG$Price = (refresh: QueryParams["refresh"] = 12): BigNumber | undefined => {
+export const useG$Price = (refresh: QueryParams["refresh"] = 12, requiredChainId?: number): BigNumber | undefined => {
   const refreshOrNever = useRefreshOrNever(refresh);
-  const { connectedEnv, chainId } = useGetEnvChainId();
+  const { connectedEnv, chainId } = useGetEnvChainId(requiredChainId);
 
   const mentoReserve = new Contract(
     contractAddresses[connectedEnv].MentoExchangeProvider || "0x558eC7E55855FAC9403De3ADB3aa1e588234A92C",
     exchangeAbi
   );
 
-  const exchangeId = useExchangeId();
+  const { exchangeId } = useExchange(requiredChainId);
 
   const callData = useMemo(
     () =>
@@ -145,7 +142,7 @@ export const useSwapMeta = (
   const g$Allowance = useTokenAllowance(G$.address, account, mentoBroker.address, { refresh: refreshOrNever });
   const cusdAllowance = useTokenAllowance(cUSD, account, mentoBroker.address, { refresh: refreshOrNever });
 
-  const exchangeId = useExchangeId();
+  const { exchangeId } = useExchange();
   const callData = useMemo(
     () => [
       exchangeId && {
@@ -198,7 +195,7 @@ export const useSwap = (
   if (exactInput && exactOutput) throw new Error("Only one of exactInput or exactOutput can be specified");
 
   const { connectedEnv } = useGetEnvChainId();
-  const exchangeId = useExchangeId();
+  const exchangeId = useExchange();
 
   const exchangeProviderAddress =
     contractAddresses[connectedEnv].MentoExchangeProvider || "0x558eC7E55855FAC9403De3ADB3aa1e588234A92C";

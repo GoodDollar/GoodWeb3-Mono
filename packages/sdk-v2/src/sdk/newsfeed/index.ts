@@ -1,2 +1,2 @@
-export * from "./OrbisCachedFeed";
+export * from "./StrapiCachedFeed";
 export * from "./utils";
