@@ -1374,7 +1374,7 @@ export const useMPBBridgeHistory = () => {
       : undefined,
     {
       chainId: SupportedChains.FUSE as unknown as ChainId,
-      fromBlock: -5000,
+      fromBlock: -20000,
       refresh
     }
   );
@@ -1389,7 +1389,7 @@ export const useMPBBridgeHistory = () => {
       : undefined,
     {
       chainId: SupportedChains.CELO as unknown as ChainId,
-      fromBlock: -5000,
+      fromBlock: -20000,
       refresh
     }
   );
@@ -1414,13 +1414,13 @@ export const useMPBBridgeHistory = () => {
     fuseBridgeContract
       ? {
           contract: fuseBridgeContract,
-          event: "BridgeCompleted",
+          event: "ExecutedTransfer",
           args: []
         }
       : undefined,
     {
       chainId: SupportedChains.FUSE as unknown as ChainId,
-      fromBlock: -5000,
+      fromBlock: -20000,
       refresh
     }
   );
@@ -1429,13 +1429,13 @@ export const useMPBBridgeHistory = () => {
     celoBridgeContract
       ? {
           contract: celoBridgeContract,
-          event: "BridgeCompleted",
+          event: "ExecutedTransfer",
           args: []
         }
       : undefined,
     {
       chainId: SupportedChains.CELO as unknown as ChainId,
-      fromBlock: -5000,
+      fromBlock: -20000,
       refresh
     }
   );
@@ -1444,7 +1444,7 @@ export const useMPBBridgeHistory = () => {
     mainnetBridgeContract
       ? {
           contract: mainnetBridgeContract,
-          event: "BridgeCompleted",
+          event: "ExecutedTransfer",
           args: []
         }
       : undefined,
@@ -1465,32 +1465,28 @@ export const useMPBBridgeHistory = () => {
       !celoBridgeCompleted ||
       !mainnetBridgeCompleted
     ) {
-      console.log("useMPBBridgeHistory: logs not ready");
       return { historySorted: undefined };
     }
 
-    console.log("useMPBBridgeHistory: logs ready", {
-      fuseRequests: fuseBridgeRequests.value?.length,
-      celoRequests: celoBridgeRequests.value?.length,
-      mainnetRequests: mainnetBridgeRequests.value?.length
-    });
-
-    // Group completed events by bridge request ID (the last parameter in BridgeCompleted event)
-    // BridgeCompleted event signature: BridgeCompleted(address,address,uint256,uint256)
+    // Group completed events by bridge request ID (the last parameter in ExecutedTransfer event)
+    // ExecutedTransfer event signature: ExecutedTransfer(address,address,uint256,uint256,uint256,uint8,uint256)
     // The bridge request ID is typically in the event data, we need to extract it from the parsed event
-    const fuseCompleted = groupBy(fuseBridgeCompleted.value || [], (e: any) => {
-      // Extract bridge request ID from event - it's typically the last indexed parameter
-      // We'll use the transaction hash as a fallback grouping key
-      return e.data?.id || e.transactionHash;
-    });
+    const getEventId = (e: any) => {
+      // Try to get ID from named property or array index
+      // Based on signature: [0]=from, [1]=to, [2]=amount, [3]=fee, [4]=sourceChainId, [5]=bridge, [6]=id
+      const id = e.data?.id || e.data?.[6];
 
-    const celoCompleted = groupBy(celoBridgeCompleted.value || [], (e: any) => {
-      return e.data?.id || e.transactionHash;
-    });
+      // Log for debugging if needed, but keep it minimal to avoid console spam
+      if (!id && Math.random() < 0.01) {
+        console.log("⚠️ ExecutedTransfer event missing ID:", e);
+      }
 
-    const mainnetCompleted = groupBy(mainnetBridgeCompleted.value || [], (e: any) => {
-      return e.data?.id || e.transactionHash;
-    });
+      return id ? id.toString() : e.transactionHash;
+    };
+
+    const fuseCompleted = groupBy(fuseBridgeCompleted.value || [], getEventId);
+    const celoCompleted = groupBy(celoBridgeCompleted.value || [], getEventId);
+    const mainnetCompleted = groupBy(mainnetBridgeCompleted.value || [], getEventId);
 
     /**
      * Helper function to process bridge request events for any chain
