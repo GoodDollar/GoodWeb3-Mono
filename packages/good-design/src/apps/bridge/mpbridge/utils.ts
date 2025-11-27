@@ -135,3 +135,70 @@ export const getCurrentBridgeFee = (
 
   return providerFees[feeProperty] || "Fee not available";
 };
+
+// Constants for transaction conversion
+export const CHAIN_ID_TO_NAME: Record<number, string> = {
+  122: "Fuse",
+  42220: "Celo",
+  1: "Mainnet"
+} as const;
+
+export const BRIDGE_SERVICE_MAPPING = {
+  0: "axelar",
+  1: "layerzero"
+} as const;
+
+export const DEFAULT_BRIDGE_PROVIDER = "layerzero";
+export const RECENT_TRANSACTION_THRESHOLD = 30 * 24 * 60 * 60;
+
+// Helper function to get chain name from chain ID
+export const getChainName = (chainId: number): string => {
+  return CHAIN_ID_TO_NAME[chainId] || "Unknown";
+};
+
+export const convertTransaction = (tx: any, currentChainId: number) => {
+  const sourceChainId = tx.data?.sourceChainId?.toNumber();
+  const targetChainId = tx.data?.targetChainId?.toNumber();
+
+  // Get chain names using dictionary lookup (DRY principle)
+  const sourceChainName = getChainName(sourceChainId);
+  const targetChainName = getChainName(targetChainId);
+
+  // Get bridge provider from transaction data using dictionary lookup
+  const bridgeService = tx.data?.bridge;
+  let bridgeProvider = DEFAULT_BRIDGE_PROVIDER;
+
+  if (bridgeService !== undefined) {
+    // MPB bridge data includes bridge service information
+    const serviceKey = bridgeService as keyof typeof BRIDGE_SERVICE_MAPPING;
+    bridgeProvider = BRIDGE_SERVICE_MAPPING[serviceKey] || DEFAULT_BRIDGE_PROVIDER;
+  } else {
+    const txTimestamp = tx.data?.timestamp || tx.timestamp || 0;
+    const now = Math.floor(Date.now() / 1000);
+    const isRecent = now - txTimestamp < RECENT_TRANSACTION_THRESHOLD;
+
+    bridgeProvider = isRecent ? "layerzero" : "axelar";
+  }
+
+  // Determine status based on completedEvent (MPB bridge pattern)
+  const status = tx.completedEvent ? "completed" : "pending";
+
+  return {
+    id: tx.data?.id || tx.transactionHash,
+    transactionHash: tx.transactionHash,
+    sourceChain: sourceChainName,
+    targetChain: targetChainName,
+    amount: tx.amount || "0",
+    bridgeProvider,
+    status,
+    date: new Date((tx.data?.timestamp || Date.now() / 1000) * 1000),
+    chainId: currentChainId,
+    network: targetChainName?.toUpperCase() || "FUSE",
+    displayName: "GoodDollar Bridge",
+    contractName: "GoodDollar",
+    contractAddress: tx.data?.to || "",
+    account: tx.data?.from || "",
+    type: status === "completed" ? "bridge-in" : "bridge-pending",
+    isPool: false
+  };
+};

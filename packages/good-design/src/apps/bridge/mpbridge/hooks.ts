@@ -4,28 +4,7 @@ import { useG$Amounts, useProductionG$Balance, G$Amount, useGetEnvChainId } from
 import { BigNumber } from "ethers";
 import { fetchBridgeFees, useMPBBridgeHistory } from "@gooddollar/web3sdk-v2";
 import type { IMPBFees, IMPBLimits } from "./types";
-
-const CHAIN_ID_TO_NAME: Record<number, string> = {
-  122: "Fuse",
-  42220: "Celo",
-  1: "Mainnet"
-} as const;
-
-const BRIDGE_SERVICE_MAPPING = {
-  0: "axelar",
-  1: "layerzero"
-} as const;
-
-// Default bridge provider fallback
-const DEFAULT_BRIDGE_PROVIDER = "layerzero";
-
-// Recent transaction threshold (30 days in seconds)
-const RECENT_TRANSACTION_THRESHOLD = 30 * 24 * 60 * 60;
-
-// Helper function to get chain name from chain ID
-const getChainName = (chainId: number): string => {
-  return CHAIN_ID_TO_NAME[chainId] || "Unknown";
-};
+import { convertTransaction } from "./utils";
 
 const CACHE_KEY = "mpb-bridge-fees-cache";
 const CACHE_DURATION = 5 * 60 * 1000;
@@ -263,62 +242,9 @@ export const useConvertedTransactionHistory = (realTransactionHistory: any[] | u
           completedEvent: tx.completedEvent
         });
 
-        const sourceChainId = tx.data?.sourceChainId?.toNumber();
-        const targetChainId = tx.data?.targetChainId?.toNumber();
-
-        console.log(`🔍 Chain IDs for transaction ${index}:`, {
-          dataIsArray: Array.isArray(tx.data),
-          sourceChainIdRaw: tx.data?.sourceChainId,
-          sourceChainId,
-          targetChainIdRaw: tx.data?.targetChainId,
-          targetChainId,
-          hasToNumber: typeof tx.data?.sourceChainId?.toNumber === "function"
-        });
-
-        // Get chain names using dictionary lookup (DRY principle)
-        const sourceChainName = getChainName(sourceChainId);
-        const targetChainName = getChainName(targetChainId);
-
-        // Get bridge provider from transaction data using dictionary lookup
-        const bridgeService = tx.data?.bridge;
-        let bridgeProvider = DEFAULT_BRIDGE_PROVIDER;
-
-        if (bridgeService !== undefined) {
-          // MPB bridge data includes bridge service information
-          const serviceKey = bridgeService as keyof typeof BRIDGE_SERVICE_MAPPING;
-          bridgeProvider = BRIDGE_SERVICE_MAPPING[serviceKey] || DEFAULT_BRIDGE_PROVIDER;
-        } else {
-          const txTimestamp = tx.data?.timestamp || tx.timestamp || 0;
-          const now = Math.floor(Date.now() / 1000);
-          const isRecent = now - txTimestamp < RECENT_TRANSACTION_THRESHOLD;
-
-          bridgeProvider = isRecent ? "layerzero" : "axelar";
-        }
-
-        // Determine status based on completedEvent (MPB bridge pattern)
-        const status = tx.completedEvent ? "completed" : "pending";
-
-        const converted = {
-          id: tx.data?.id || tx.transactionHash,
-          transactionHash: tx.transactionHash,
-          sourceChain: sourceChainName,
-          targetChain: targetChainName,
-          amount: tx.amount || "0",
-          bridgeProvider,
-          status,
-          date: new Date((tx.data?.timestamp || Date.now() / 1000) * 1000),
-          chainId: chain,
-          network: targetChainName?.toUpperCase() || "FUSE",
-          displayName: "GoodDollar Bridge",
-          contractName: "GoodDollar",
-          contractAddress: tx.data?.to || "",
-          account: tx.data?.from || "",
-          type: status === "completed" ? "bridge-in" : "bridge-pending",
-          isPool: false
-        };
-
-        console.log(`✅ Converted transaction ${index}:`, converted);
-        return converted;
+        const convertedTx = convertTransaction(tx, chain);
+        console.log(`✅ Converted transaction ${index}:`, convertedTx);
+        return convertedTx;
       }) || [];
 
     console.log("✅ useConvertedTransactionHistory - Final output:", converted);
