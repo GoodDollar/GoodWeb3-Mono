@@ -45,7 +45,6 @@ export const useBridgeFees = () => {
     const isCacheValid = cached && cached.data && now - cached.timestamp < CACHE_DURATION;
 
     if (cached && cached.data) {
-      console.log("⚡ Using cached bridge fees (age:", Math.round((now - cached.timestamp) / 1000), "seconds)");
       setFees(cached.data);
       setLoading(false);
 
@@ -53,8 +52,6 @@ export const useBridgeFees = () => {
         return;
       }
     }
-
-    console.log("🔄 Fetching bridge fees from API...");
 
     fetchBridgeFees()
       .then((feesData: any) => {
@@ -64,14 +61,13 @@ export const useBridgeFees = () => {
           setFees(feesData);
           setLoading(false);
           setError(null);
-          console.log("✅ Bridge fees fetched successfully");
         } else {
           setError("We were unable to fetch bridge fees. Try again later or contact support.");
           setLoading(false);
         }
       })
       .catch(err => {
-        console.error("❌ Failed to fetch bridge fees:", err);
+        console.error(" Failed to fetch bridge fees:", err);
         setError("We were unable to fetch bridge fees. Try again later or contact support.");
         setLoading(false);
       });
@@ -222,32 +218,14 @@ export const useConvertedTransactionHistory = (realTransactionHistory: any[] | u
   const chain = sourceChain === "celo" ? 42220 : sourceChain === "mainnet" ? 1 : 122;
 
   // Memoize the conversion to prevent unnecessary re-computations
+  // Memoize the conversion to prevent unnecessary re-computations
   return useMemo(() => {
-    console.log("🔍 useConvertedTransactionHistory - Raw input:", {
-      historyLength: realTransactionHistory?.length,
-      sourceChain,
-      chain,
-      firstTx: realTransactionHistory?.[0]
-    });
-
     const converted =
-      realTransactionHistory?.slice(0, 5).map((tx, index) => {
-        console.log(`🔍 Converting transaction ${index}:`, {
-          fullTx: tx,
-          amount: tx.amount,
-          data: tx.data,
-          dataAmount: tx.data?.amount,
-          dataAmountString: tx.data?.amount?.toString(),
-          relayEvent: tx.relayEvent,
-          completedEvent: tx.completedEvent
-        });
-
+      realTransactionHistory?.slice(0, 5).map(tx => {
         const convertedTx = convertTransaction(tx, chain);
-        console.log(`✅ Converted transaction ${index}:`, convertedTx);
         return convertedTx;
       }) || [];
 
-    console.log("✅ useConvertedTransactionHistory - Final output:", converted);
     return converted;
   }, [realTransactionHistory, chain]);
 };

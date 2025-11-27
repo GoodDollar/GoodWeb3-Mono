@@ -24,7 +24,6 @@ export const getMPBContractAddress = (chainId: number, envName: string): string 
   // First, check for proxy address (proxy stores data, implementation defines methods)
   const proxyAddresses = MPB_PROXY_ADDRESSES[chainId];
   if (proxyAddresses && proxyAddresses[envName]) {
-    console.log(`✅ Using MPB proxy contract for chain ${chainId}, env ${envName}: ${proxyAddresses[envName]}`);
     return proxyAddresses[envName];
   }
 
@@ -32,7 +31,6 @@ export const getMPBContractAddress = (chainId: number, envName: string): string 
   const chainDeployments = (bridgeContracts as any)[chainId.toString()];
 
   if (!chainDeployments || !Array.isArray(chainDeployments)) {
-    console.error(`No deployments found for chain ID ${chainId} in mpb.json`);
     return undefined;
   }
 
@@ -40,18 +38,15 @@ export const getMPBContractAddress = (chainId: number, envName: string): string 
   const deployment = chainDeployments.find((d: any) => d.name === envName);
 
   if (!deployment) {
-    console.error(`No deployment found for environment "${envName}" on chain ${chainId}`);
     return undefined;
   }
 
   const contractAddress = deployment.contracts?.MessagePassingBridge?.address;
 
   if (!contractAddress) {
-    console.error(`MessagePassingBridge address not found for ${envName} on chain ${chainId}`);
     return undefined;
   }
 
-  console.log(`⚠️ Using MPB implementation contract for chain ${chainId}, env ${envName}: ${contractAddress}`);
   return contractAddress;
 };
 

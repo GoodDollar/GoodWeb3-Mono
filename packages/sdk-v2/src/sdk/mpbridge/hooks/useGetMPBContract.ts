@@ -26,7 +26,6 @@ export const getDeploymentName = (baseEnv: string, chainId: number): string => {
     return "mainnet";
   }
 
-  console.warn(`Unknown chain ID ${chainId}, defaulting to mainnet deployment`);
   return "mainnet";
 };
 
@@ -48,13 +47,9 @@ export const useGetMPBContract = (chainId?: number, readOnly = false) => {
     const contractAddress = getMPBContractAddress(targetChainId, deploymentName);
 
     if (!contractAddress) {
-      console.error(
-        `No MPB bridge contract found for chain ${targetChainId} in environment ${baseEnv} (deployment: ${deploymentName})`
-      );
       return null;
     }
 
-    console.log(`Using MPB bridge contract for chain ${targetChainId}, env ${baseEnv}: ${contractAddress}`);
     return new ethers.Contract(contractAddress, mpbABI, provider);
   }, [library, mpbABI, targetChainId, baseEnv, readOnly, readOnlyProvider]);
 };
@@ -70,25 +65,13 @@ export const useNativeTokenContract = (chainId?: number, readOnly = false): IGoo
     let isMounted = true;
 
     if (!bridgeContract) {
-      console.warn(`⚠️ No bridge contract available for chain ${chainId}, using production G$ fallback`);
       // Use production G$ as fallback
       setNativeTokenAddress(BRIDGE_CONSTANTS.PRODUCTION_GDOLLAR_ADDRESS);
       return;
     }
 
-    // Log bridge contract details for debugging
-    console.log(`🔍 Bridge contract for chain ${chainId}:`, {
-      address: bridgeContract.address,
-      hasnativeTokenMethod: typeof bridgeContract.nativeToken === "function",
-      availableFunctions: Object.keys(bridgeContract.functions || {})
-        .filter(key => !key.includes("("))
-        .slice(0, 10)
-    });
-
     // Check if nativeToken method exists
     if (typeof bridgeContract.nativeToken !== "function") {
-      console.error(` Bridge contract at ${bridgeContract.address} does not have nativeToken() method`);
-      console.error(`Available methods:`, Object.keys(bridgeContract.functions || {}));
       setNativeTokenAddress(BRIDGE_CONSTANTS.PRODUCTION_GDOLLAR_ADDRESS);
       return;
     }
@@ -97,22 +80,10 @@ export const useNativeTokenContract = (chainId?: number, readOnly = false): IGoo
       .nativeToken()
       .then((address: string) => {
         if (isMounted) {
-          console.log(`✅ Bridge contract nativeToken for chain ${chainId}: ${address}`);
           setNativeTokenAddress(address);
         }
       })
-      .catch((error: any) => {
-        console.error(
-          `Failed to query bridge nativeToken on chain ${chainId}, using production G$ fallback: ${BRIDGE_CONSTANTS.PRODUCTION_GDOLLAR_ADDRESS}`
-        );
-        console.error(`Bridge contract address: ${bridgeContract.address}`);
-        console.error(`Error details:`, {
-          message: error.message,
-          code: error.code,
-          data: error.data,
-          reason: error.reason,
-          transaction: error.transaction
-        });
+      .catch(() => {
         if (isMounted) {
           // Always fallback to production G$, never dev G$
           setNativeTokenAddress(BRIDGE_CONSTANTS.PRODUCTION_GDOLLAR_ADDRESS);
@@ -122,15 +93,13 @@ export const useNativeTokenContract = (chainId?: number, readOnly = false): IGoo
     return () => {
       isMounted = false;
     };
-  }, [bridgeContract, chainId]);
+  }, [bridgeContract]);
 
   return useMemo(() => {
     if (!nativeTokenAddress) return null;
 
     const provider = readOnly ? readOnlyProvider : library;
     if (!provider) return null;
-
-    console.log(`💰 Using native token address for chain ${chainId}: ${nativeTokenAddress}`);
 
     const tokenABI = [
       "function balanceOf(address owner) view returns (uint256)",

@@ -15,8 +15,6 @@ export const useBridgeValidators = (
   // Comprehensive pre-flight validation function
   const validateBridgeTransaction = useCallback(
     async (bridgeRequest: BridgeRequest, fees: any) => {
-      console.log("🔍 Running pre-flight validation checks...");
-
       if (!account) {
         throw new Error("Wallet not connected");
       }
@@ -39,11 +37,6 @@ export const useBridgeValidators = (
       const nativeFee = calculatedFees.nativeFee || ethers.BigNumber.from(0);
       try {
         const balance = await gdContract.balanceOf(account);
-        console.log("🔍 Check 1 - Token balance:", {
-          balance: balance.toString(),
-          required: amountBN.toString(),
-          sufficient: balance.gte(amountBN)
-        });
 
         if (balance.lt(amountBN)) {
           const balanceFormatted = ethers.utils.formatUnits(balance, tokenDecimals || 18);
@@ -54,26 +47,16 @@ export const useBridgeValidators = (
         if (error.message.includes("Insufficient balance")) {
           throw error;
         }
-        console.warn("Could not check token balance:", error.message);
       }
 
       try {
         const allowance = await gdContract.allowance(account, bridgeContract.address);
-        console.log("🔍 Check 2 - Token allowance:", {
-          allowance: allowance.toString(),
-          required: amountBN.toString(),
-          sufficient: allowance.gte(amountBN)
-        });
 
         if (allowance.lt(amountBN)) {
-          const allowanceFormatted = ethers.utils.formatUnits(allowance, tokenDecimals || 18);
-          const amountFormatted = ethers.utils.formatUnits(amountBN, tokenDecimals || 18);
-          console.log(
-            `ℹ️ Allowance insufficient (${allowanceFormatted} G$ < ${amountFormatted} G$). Approval will be requested automatically.`
-          );
+          // Approval will be requested automatically
         }
       } catch (error: any) {
-        console.warn("Could not check token allowance:", error.message);
+        // Could not check token allowance, proceed with validation
       }
 
       // ✅ Check 3: Destination chain is supported
@@ -105,7 +88,6 @@ export const useBridgeValidators = (
         if (checkError.message.includes("not supported")) {
           throw checkError;
         }
-        console.warn("Could not check chain support with contract:", checkError.message);
       }
 
       // ✅ Check 4: Bridge is not paused
@@ -120,7 +102,6 @@ export const useBridgeValidators = (
         if (checkError.message.includes("paused")) {
           throw checkError;
         }
-        console.warn("Could not check pause status:", checkError.message);
       }
 
       // ✅ Check 5: User has enough native token for gas
@@ -131,13 +112,6 @@ export const useBridgeValidators = (
           const minGasBalance = ethers.utils.parseEther("0.01");
           // Add buffer for the bridge fee
           const requiredBalance = minGasBalance.add(nativeFee);
-
-          console.log("🔍 Check 5 - Native token balance:", {
-            balance: nativeBalance.toString(),
-            required: requiredBalance.toString(),
-            fee: nativeFee.toString(),
-            sufficient: nativeBalance.gte(requiredBalance)
-          });
 
           if (nativeBalance.lt(requiredBalance)) {
             const balanceFormatted = ethers.utils.formatEther(nativeBalance);
@@ -154,18 +128,12 @@ export const useBridgeValidators = (
         if (error.message.includes("Insufficient")) {
           throw error;
         }
-        console.warn("Could not check native token balance:", error.message);
       }
 
       // ✅ Check 6: Amount meets minimum requirements
       try {
         const limits = await bridgeContract.bridgeLimits();
         const minAmount = limits.minAmount;
-        console.log("🔍 Check 6 - Minimum amount:", {
-          amount: amountBN.toString(),
-          minAmount: minAmount.toString(),
-          meetsMinimum: amountBN.gte(minAmount)
-        });
 
         if (amountBN.lt(minAmount)) {
           const minFormatted = ethers.utils.formatUnits(minAmount, tokenDecimals || 18);
@@ -175,18 +143,12 @@ export const useBridgeValidators = (
         if (error.message.includes("Amount too small") || error.message.includes("Minimum")) {
           throw error;
         }
-        console.warn("Could not check minimum amount:", error.message);
       }
 
       // ✅ Check 7: User hasn't exceeded bridge limits
       try {
         const limits = await bridgeContract.bridgeLimits();
         const txLimit = limits.txLimit;
-        console.log("🔍 Check 7 - Transaction limit:", {
-          amount: amountBN.toString(),
-          txLimit: txLimit.toString(),
-          withinLimit: amountBN.lte(txLimit)
-        });
 
         if (amountBN.gt(txLimit)) {
           const limitFormatted = ethers.utils.formatUnits(txLimit, tokenDecimals || 18);
@@ -204,10 +166,8 @@ export const useBridgeValidators = (
         if (error.message.includes("limit") || error.message.includes("exceeded")) {
           throw error;
         }
-        console.warn("Could not check bridge limits:", error.message);
       }
 
-      console.log("✅ All pre-flight checks passed!");
       return true;
     },
     [account, gdContract, bridgeContract, bridgeProvider, tokenDecimals, library]

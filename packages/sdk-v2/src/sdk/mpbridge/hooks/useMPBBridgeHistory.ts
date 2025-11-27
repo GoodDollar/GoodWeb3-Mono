@@ -3,16 +3,12 @@ import { useEthers, useLogs, ChainId } from "@usedapp/core";
 import { ethers } from "ethers";
 import { first, groupBy, sortBy } from "lodash";
 import { useRefreshOrNever } from "../../../hooks";
-import { useGetEnvChainId } from "../../base/react";
 import { SupportedChains, formatAmount } from "../../constants";
 import { useGetMPBContract } from "./useGetMPBContract";
 
 export const useMPBBridgeHistory = () => {
   const { account } = useEthers();
-  console.log("useMPBBridgeHistory account:", account);
   const refresh = useRefreshOrNever(5);
-  const { baseEnv } = useGetEnvChainId();
-  console.log("useMPBBridgeHistory baseEnv:", baseEnv);
 
   // Get bridge contracts for all supported chains (read-only)
   const fuseBridgeContract = useGetMPBContract(SupportedChains.FUSE, true);
@@ -135,16 +131,6 @@ export const useMPBBridgeHistory = () => {
     const mainnetCompleted = groupBy(mainnetBridgeCompleted.value || [], getEventId);
 
     const processBridgeRequestEvent = (e: any, sourceChainId: number, completedEventsMap: Record<string, any[]>) => {
-      console.log(`🔍 Processing BridgeRequest Event from chain ${sourceChainId}:`, {
-        fullData: e.data,
-        isArray: Array.isArray(e.data),
-        amount: e.data?.[3],
-        amountHex: e.data?.[3]?.hex,
-        bridge: e.data?.[5],
-        id: e.data?.[6],
-        txHash: e.transactionHash
-      });
-
       type BridgeEvent = typeof e & { completedEvent: any; amount: string };
       const extended = e as BridgeEvent;
       const amountBN = e.data?.[3] || ethers.BigNumber.from(0);
@@ -152,12 +138,6 @@ export const useMPBBridgeHistory = () => {
       extended.completedEvent =
         requestId && completedEventsMap[requestId] ? first(completedEventsMap[requestId]) : undefined;
       extended.amount = formatAmount(amountBN, 18, 2);
-      console.log(
-        `✅ Formatted amount for chain ${sourceChainId}:`,
-        extended.amount,
-        "from BigNumber:",
-        amountBN.toString()
-      );
 
       const targetChainIdValue = e.data?.[2]?.toNumber?.() || SupportedChains.CELO;
       extended.data = {

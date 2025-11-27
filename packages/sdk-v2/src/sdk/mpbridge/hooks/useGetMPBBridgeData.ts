@@ -70,7 +70,6 @@ export const useGetMPBBridgeData = (
         maxAmount: limits.txLimit
       });
     } catch (error) {
-      console.error("Failed to fetch contract limits:", error);
       setBridgeLimits(null);
     }
   }, []);
@@ -86,7 +85,6 @@ export const useGetMPBBridgeData = (
         setCanUserBridge(true);
       }
     } catch (error) {
-      console.error("Failed to validate bridge eligibility:", error);
       setCanUserBridge(false);
     }
   }, []);
@@ -99,7 +97,6 @@ export const useGetMPBBridgeData = (
       const bps = Number(fees.fee?.toString() || "0");
       setProtocolFeePercent(bps / 10000);
     } catch (error) {
-      console.error("Failed to fetch protocol fee:", error);
       setProtocolFeePercent(null);
     }
   }, []);
@@ -148,10 +145,10 @@ export const useGetMPBBridgeData = (
         }
 
         if (limitsResult.status === "rejected") {
-          console.error("Failed to fetch bridge limits:", limitsResult.reason);
+          // Failed to fetch limits, already handled by setting null
         }
         if (protoFeeResult.status === "rejected") {
-          console.error("Failed to fetch protocol fee:", protoFeeResult.reason);
+          // Failed to fetch protocol fee, already handled by setting null
         }
 
         setIsLoading(false);

@@ -45,13 +45,9 @@ export const useLayerZeroFee = (
           lzChainId = await bridgeContract.toLzChainId(request.targetChainId);
           // If toLzChainId returns 0 or falsy, use fallback fee - proxy will handle routing
           if (!lzChainId || lzChainId.toString() === "0") {
-            console.warn(
-              `LayerZero chain ID not configured for target chain ${request.targetChainId}, using fallback fee`
-            );
             return fallbackFee ?? undefined;
           }
         } catch (error) {
-          console.warn("Failed to get LayerZero chain ID, using fallback fee:", error);
           return fallbackFee ?? undefined;
         }
 
@@ -65,7 +61,6 @@ export const useLayerZeroFee = (
         const normalizedAmount = normalizeAmountTo18(ethers.BigNumber.from(request.amount), decimals);
         const destination = request.target;
         if (!destination) {
-          console.warn("Target address is missing for fee estimation");
           return fallbackFee ?? undefined;
         }
 
@@ -84,12 +79,6 @@ export const useLayerZeroFee = (
 
         return nativeFee.gt(fallbackFee) ? nativeFee : fallbackFee;
       } catch (error: any) {
-        const errorMessage = error?.message || "";
-        if (errorMessage.includes("not configured") || errorMessage.includes("routing")) {
-          console.warn("Contract rejected fee estimation, using fallback fee:", errorMessage);
-        } else {
-          console.warn("LayerZero fee estimation failed, using fallback fee:", error);
-        }
         return fallbackFee ?? undefined;
       }
     },

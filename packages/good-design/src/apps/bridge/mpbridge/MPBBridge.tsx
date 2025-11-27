@@ -138,15 +138,10 @@ export const MPBBridge = ({
       setTargetChain(validTargets[0]);
     }
   }, [bridgeProvider, sourceChain, bridgeFees, feesLoading, targetChain]);
-
-  // Swap functionality - reset amount and input display to avoid decimal format mismatch
   const handleSwap = useCallback(() => {
     const newSourceChain = targetChain;
     const newTargetChain = sourceChain;
-
-    // Reset amount to avoid decimal format mismatch between chains
     setBridgeAmount("0");
-    // Toggle state to reset TokenInput display
     setToggleState(prevState => !prevState);
     setSourceChain(newSourceChain);
     setTargetChain(newTargetChain);
@@ -154,20 +149,15 @@ export const MPBBridge = ({
     setShowTargetDropdown(false);
   }, [targetChain, sourceChain, setBridgeAmount]);
 
-  // Handle source chain selection - reset amount and input display to avoid decimal format mismatch
   const handleSourceChainSelect = useCallback(
     (chain: string) => {
-      // Reset amount to avoid decimal format mismatch when changing chains
       setBridgeAmount("0");
-      // Toggle state to reset TokenInput display
       setToggleState(prevState => !prevState);
       setSourceChain(chain);
-      // Reset target chain to first valid option based on current bridge provider
       const validTargets = getValidTargetChains(chain, bridgeFees, bridgeProvider, feesLoading);
       if (validTargets.length > 0) {
         setTargetChain(validTargets[0]);
       } else {
-        // If no valid targets for current provider, switch to LayerZero (which supports more routes)
         if (bridgeProvider === "axelar") {
           handleBridgeProviderChange("layerzero");
           // Set a default target for LayerZero
@@ -218,13 +208,11 @@ export const MPBBridge = ({
     const isFailed = ["Fail", "Exception"].includes(status);
     const isBridgingActive = !isFailed && !isSuccess && ["Mining", "PendingSignature"].includes(status);
 
-    // Keep bridging state active while any transaction is in progress
     if (bridgeStatus) {
       setBridging(isBridgingActive || status === "Mining" || status === "PendingSignature");
     }
 
     if (bridgeStatus?.status === "PendingSignature") {
-      // Check if this is a chain switch or transaction signature
       if (bridgeStatus?.errorMessage) {
         setBridgingStatus("Switching network. Please approve in your wallet...");
       } else {
@@ -247,7 +235,7 @@ export const MPBBridge = ({
 
     if (isFailed) {
       const errorMsg = bridgeStatus?.errorMessage || "Failed to bridge";
-      // Check if it's a user rejection
+
       const isUserRejection =
         errorMsg.toLowerCase().includes("user rejected") ||
         errorMsg.toLowerCase().includes("user denied") ||

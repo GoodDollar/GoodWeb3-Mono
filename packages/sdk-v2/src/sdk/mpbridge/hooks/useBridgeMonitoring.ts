@@ -17,7 +17,7 @@ export const extractBridgeRequestId = (logs: any[], bridgeContract: any): string
           return parsedLog.args.id.toString();
         }
       } catch (e) {
-        console.warn("Failed to parse bridge log:", e);
+        // Failed to parse bridge log, skip it
       }
     }
   }
