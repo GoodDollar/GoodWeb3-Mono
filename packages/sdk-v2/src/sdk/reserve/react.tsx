@@ -1,5 +1,7 @@
-import { BigNumber, Contract } from "ethers";
+import { useMemo } from "react";
+import { BigNumber, Contract, ethers } from "ethers";
 import { ERC20Interface, QueryParams, useCall, useCalls, useTokenAllowance } from "@usedapp/core";
+
 import contractAddresses from "@gooddollar/goodprotocol/releases/deployment.json";
 import { useContractFunctionWithDefaultGasFees, useG$Tokens, useGetEnvChainId } from "../../sdk";
 import { useRefreshOrNever } from "../../hooks";
@@ -18,25 +20,73 @@ const brokerAbi = [
   "function swapOut(address exchangeProvider,bytes32 exchangeId,address tokenIn,address tokenOut,uint256 amountOut,uint256 amountInMax) external returns (uint256 amountIn)"
 ];
 
-export const useExchangeId = (requiredChainId?: number) => {
+export const useExchange = (requiredChainId?: number) => {
   const { connectedEnv, chainId } = useGetEnvChainId(requiredChainId);
 
-  const mentoExchange = new Contract(
-    contractAddresses[connectedEnv].MentoExchangeProvider || "0x558eC7E55855FAC9403De3ADB3aa1e588234A92C",
-    exchangeAbi
-  );
-  const exchanges = useCall(
-    mentoExchange && {
-      contract: mentoExchange,
-      method: "getExchanges",
-      args: []
-    },
-    { refresh: "never", chainId }
+  const mentoExchange = useMemo(
+    () =>
+      new Contract(
+        contractAddresses[connectedEnv]?.MentoExchangeProvider || "0x558eC7E55855FAC9403De3ADB3aa1e588234A92C",
+        exchangeAbi
+      ),
+    [connectedEnv, chainId]
   );
 
+  const callData = useMemo(
+    () =>
+      mentoExchange && {
+        contract: mentoExchange,
+        method: "getExchanges",
+        args: []
+      },
+    [mentoExchange.address]
+  );
+
+  const exchanges = useCall(callData, { refresh: "never", chainId });
+
   const exchange = exchanges?.value?.pools?.find(e => e.assets.includes(contractAddresses[connectedEnv].GoodDollar));
-  const exchangeId = exchange?.exchangeId;
-  return exchangeId;
+
+  return useMemo(() => {
+    return { exchange, exchangeId: exchange?.exchangeId };
+  }, [exchange?.assets?.toString()]);
+};
+
+export const useReserveToken = (requiredChainId?: number) => {
+  const { connectedEnv, chainId } = useGetEnvChainId(requiredChainId ?? 42220);
+  const { exchange } = useExchange(requiredChainId ?? 42220);
+  const gdAddress = contractAddresses[connectedEnv].GoodDollar;
+  const reserveAsset = exchange?.assets.find(_ => _.toLowerCase() !== gdAddress.toLowerCase());
+  // console.log("useReserveToken:", { connectedEnv, exchange, gdAddress, reserveAsset });
+  // 1) memoize the Contract
+  const contract = useMemo(
+    () => new Contract(reserveAsset || ethers.constants.AddressZero, ERC20Interface),
+    [reserveAsset]
+  );
+
+  // 2) build a stable calls array
+  const calls = useMemo(
+    () =>
+      reserveAsset
+        ? [
+            { contract, method: "decimals", args: [] },
+            { contract, method: "symbol", args: [] },
+            { contract, method: "name", args: [] }
+          ]
+        : [],
+    [reserveAsset, contract]
+  );
+
+  const results = useCalls(calls, { refresh: "never", chainId }) ?? [];
+
+  // 3) inline nullish fallbacks
+  const decimals = results[0]?.value?.[0] ?? 18;
+  const symbol = results[1]?.value?.[0] ?? "cUSD";
+  const name = results[2]?.value?.[0] ?? "Celo USD";
+
+  return useMemo(
+    () => ({ chainId, address: reserveAsset, decimals, symbol, name }),
+    [chainId, reserveAsset, decimals, symbol, name]
+  );
 };
 
 export const useG$Price = (refresh: QueryParams["refresh"] = 12, requiredChainId?: number): BigNumber | undefined => {
@@ -48,16 +98,18 @@ export const useG$Price = (refresh: QueryParams["refresh"] = 12, requiredChainId
     exchangeAbi
   );
 
-  const exchangeId = useExchangeId(requiredChainId);
+  const { exchangeId } = useExchange(requiredChainId);
 
-  const price = useCall(
-    exchangeId && {
-      contract: mentoReserve,
-      method: "currentPrice",
-      args: [exchangeId]
-    },
-    { refresh: refreshOrNever, chainId }
+  const callData = useMemo(
+    () =>
+      exchangeId && {
+        contract: mentoReserve,
+        method: "currentPrice",
+        args: [exchangeId]
+      },
+    [mentoReserve.address, exchangeId]
   );
+  const price = useCall(callData, { refresh: refreshOrNever, chainId });
 
   return price?.value?.price;
 };
@@ -70,12 +122,14 @@ export const useSwapMeta = (
   output?: BigNumber,
   refresh: QueryParams["refresh"] = 5
 ) => {
+  // console.log("useSwapMeta inputs:", { buying, input });
   const { connectedEnv } = useGetEnvChainId();
   const refreshOrNever = useRefreshOrNever(refresh);
 
   const g$Price = useG$Price(refresh);
   const [G$] = useG$Tokens();
-  const cUSD = contractAddresses[connectedEnv].CUSD || "0xeed145D8d962146AFc568E9579948576f63D5Dc2";
+  const reserveAsset = useReserveToken();
+  const cUSD = reserveAsset.address || "0xeed145D8d962146AFc568E9579948576f63D5Dc2";
 
   const exchangeProviderAddress =
     contractAddresses[connectedEnv].MentoExchangeProvider || "0x558eC7E55855FAC9403De3ADB3aa1e588234A92C";
@@ -88,26 +142,30 @@ export const useSwapMeta = (
   const g$Allowance = useTokenAllowance(G$.address, account, mentoBroker.address, { refresh: refreshOrNever });
   const cusdAllowance = useTokenAllowance(cUSD, account, mentoBroker.address, { refresh: refreshOrNever });
 
-  const exchangeId = useExchangeId();
-  const [exchange, amountOut, amountIn] = useCalls([
-    exchangeId && {
-      contract: mentoProvider,
-      method: "getPoolExchange",
-      args: [exchangeId]
-    },
-    exchangeId &&
-      input && {
-        contract: mentoBroker,
-        method: "getAmountOut",
-        args: [exchangeProviderAddress, exchangeId, buying ? cUSD : G$.address, buying ? G$.address : cUSD, input]
+  const { exchangeId } = useExchange();
+  const callData = useMemo(
+    () => [
+      exchangeId && {
+        contract: mentoProvider,
+        method: "getPoolExchange",
+        args: [exchangeId]
       },
-    exchangeId &&
-      output && {
-        contract: mentoBroker,
-        method: "getAmountIn",
-        args: [exchangeProviderAddress, exchangeId, buying ? cUSD : G$.address, buying ? G$.address : cUSD, output]
-      }
-  ]);
+      exchangeId &&
+        input && {
+          contract: mentoBroker,
+          method: "getAmountOut",
+          args: [exchangeProviderAddress, exchangeId, buying ? cUSD : G$.address, buying ? G$.address : cUSD, input]
+        },
+      exchangeId &&
+        output && {
+          contract: mentoBroker,
+          method: "getAmountIn",
+          args: [exchangeProviderAddress, exchangeId, buying ? cUSD : G$.address, buying ? G$.address : cUSD, output]
+        }
+    ],
+    [exchangeId, exchangeProviderAddress, buying, reserveAsset.address, G$.address, input?._hex, output?._hex]
+  );
+  const [exchange, amountOut, amountIn] = useCalls(callData);
 
   const minAmountOut = (output || amountOut?.value?.amountOut || BigNumber.from(0))
     .mul((10000 - slippageTolerance * 100).toFixed(0))
@@ -120,7 +178,11 @@ export const useSwapMeta = (
     cusdAllowance,
     exitContribution: exchange?.value?.pool?.exitContribution / 1e8,
     amountIn: amountIn?.value?.amountIn,
-    amountOut: amountOut?.value?.amountOut
+    amountOut: amountOut?.value?.amountOut,
+    exchangeId,
+    mentoBroker: mentoBroker.address,
+    reserveAsset: reserveAsset.address,
+    g$: G$.address
   };
 };
 
@@ -133,16 +195,21 @@ export const useSwap = (
   if (exactInput && exactOutput) throw new Error("Only one of exactInput or exactOutput can be specified");
 
   const { connectedEnv } = useGetEnvChainId();
-  const exchangeId = useExchangeId();
+  const exchangeId = useExchange();
 
   const exchangeProviderAddress =
     contractAddresses[connectedEnv].MentoExchangeProvider || "0x558eC7E55855FAC9403De3ADB3aa1e588234A92C";
-  const mentoBroker = new Contract(
-    contractAddresses[connectedEnv].MentoBroker || "0xE60cf1cb6a56131CE135c604D0BD67e84B57CA3C",
-    brokerAbi
+  const mentoBroker = useMemo(
+    () =>
+      new Contract(
+        contractAddresses[connectedEnv].MentoBroker || "0xE60cf1cb6a56131CE135c604D0BD67e84B57CA3C",
+        brokerAbi
+      ),
+    [contractAddresses[connectedEnv].MentoBroker]
   );
 
-  const approve = useContractFunctionWithDefaultGasFees(new Contract(inputToken, ERC20Interface), "approve");
+  const tokenContract = useMemo(() => new Contract(inputToken, ERC20Interface), [inputToken]);
+  const approve = useContractFunctionWithDefaultGasFees(tokenContract, "approve");
   const { send } = approve;
   approve.send = () => send(mentoBroker.address, exactInput ? exactInput.input : exactOutput?.maxAmountIn);
 
