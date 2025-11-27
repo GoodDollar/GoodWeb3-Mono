@@ -11,10 +11,8 @@ export function useProductionG$Balance(refresh: QueryParams["refresh"] = "never"
   const { chainId: envChainId } = useGetEnvChainId(requiredChainId);
   const chainId = requiredChainId || envChainId;
 
-  // Use production G$ token address instead of contract from deployment.json
   const productionG$Address = BRIDGE_CONSTANTS.PRODUCTION_GDOLLAR_ADDRESS;
 
-  // Create a contract instance for production G$
   const readOnlyProvider = useReadOnlyProvider(chainId);
   const productionG$Contract = useMemo(() => {
     if (!readOnlyProvider) return null;

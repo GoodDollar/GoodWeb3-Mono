@@ -12,25 +12,20 @@ import { SupportedChains } from "../../constants";
 export const getDeploymentName = (baseEnv: string, chainId: number): string => {
   // For Fuse chain (122)
   if (chainId === SupportedChains.FUSE) {
-    // production, staging, or fuse all use "fuse" deployment
     return "fuse";
   }
 
-  // For Celo chain (42220)
   if (chainId === SupportedChains.CELO) {
-    // production and staging use "celo", development uses "alfajores" testnet
     if (baseEnv === "production" || baseEnv === "staging") {
       return "celo";
     }
-    return "celo"; // Default to celo mainnet
+    return "celo";
   }
 
-  // For Ethereum mainnet (1)
   if (chainId === SupportedChains.MAINNET) {
     return "mainnet";
   }
 
-  // Fallback
   console.warn(`Unknown chain ID ${chainId}, defaulting to mainnet deployment`);
   return "mainnet";
 };
@@ -129,7 +124,6 @@ export const useNativeTokenContract = (chainId?: number, readOnly = false): IGoo
     };
   }, [bridgeContract, chainId]);
 
-  // Create token contract instance for the queried or fallback address
   return useMemo(() => {
     if (!nativeTokenAddress) return null;
 
@@ -138,7 +132,6 @@ export const useNativeTokenContract = (chainId?: number, readOnly = false): IGoo
 
     console.log(`💰 Using native token address for chain ${chainId}: ${nativeTokenAddress}`);
 
-    // Use minimal ERC20 ABI that includes the methods we need
     const tokenABI = [
       "function balanceOf(address owner) view returns (uint256)",
       "function allowance(address owner, address spender) view returns (uint256)",

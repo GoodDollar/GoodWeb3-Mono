@@ -37,8 +37,6 @@ export const useBridgeValidators = (
         getChainName(bridgeRequest.targetChainId)
       );
       const nativeFee = calculatedFees.nativeFee || ethers.BigNumber.from(0);
-
-      // ✅ Check 1: User has sufficient token balance
       try {
         const balance = await gdContract.balanceOf(account);
         console.log("🔍 Check 1 - Token balance:", {
@@ -59,10 +57,6 @@ export const useBridgeValidators = (
         console.warn("Could not check token balance:", error.message);
       }
 
-      // ✅ Check 2: Token allowance is sufficient
-      // Note: We don't throw an error here if allowance is insufficient because
-      // the approval will be handled automatically in the bridge flow.
-      // This check is just for logging/informational purposes.
       try {
         const allowance = await gdContract.allowance(account, bridgeContract.address);
         console.log("🔍 Check 2 - Token allowance:", {
@@ -77,10 +71,8 @@ export const useBridgeValidators = (
           console.log(
             `ℹ️ Allowance insufficient (${allowanceFormatted} G$ < ${amountFormatted} G$). Approval will be requested automatically.`
           );
-          // Don't throw - approval will be handled automatically
         }
       } catch (error: any) {
-        // Don't throw on allowance check failure - just log it
         console.warn("Could not check token allowance:", error.message);
       }
 

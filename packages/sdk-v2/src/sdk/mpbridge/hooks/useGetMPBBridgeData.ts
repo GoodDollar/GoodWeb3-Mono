@@ -230,5 +230,5 @@ export const useGetMPBBridgeData = (
     return { isValid: true, reason: "", canBridge: true, hasAllowance };
   }, [amount, bridgeLimits, canUserBridge, error, allowance]);
 
-  return { bridgeFees, bridgeLimits, protocolFeePercent, isLoading, error, validation };
+  return { bridgeFees, bridgeLimits, protocolFeePercent, isLoading, error, validation, allowance };
 };

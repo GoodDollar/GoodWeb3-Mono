@@ -12,10 +12,7 @@ export const extractBridgeRequestId = (logs: any[], bridgeContract: any): string
   for (const log of logs) {
     if (log.address === bridgeContract?.address && log.topics[0] === bridgeTopic) {
       try {
-        // Parse the log using the contract interface to handle non-indexed parameters in data
         const parsedLog = bridgeContract.interface.parseLog(log);
-        // The ID is the last argument in the BridgeRequest event
-        // BridgeRequest(address indexed from, address indexed to, uint256 targetChainId, uint256 amount, uint256 timestamp, uint8 bridge, uint256 id)
         if (parsedLog.args.id) {
           return parsedLog.args.id.toString();
         }
@@ -71,18 +68,15 @@ export const useBridgeMonitoring = (
     });
   }, [bridgeCompletedLogs, bridgeRequestId]);
 
-  // Bridge status based on local transaction status and bridge completion
-  const bridgeStatus: Partial<TransactionStatus> | undefined = (() => {
-    // Show chain switching status
+  const bridgeStatus: Partial<TransactionStatus> | undefined = useMemo(() => {
     if (isSwitchingChain) {
       return {
         chainId: bridgeRequest?.sourceChainId,
-        status: "PendingSignature", // Use PendingSignature to indicate user action needed
+        status: "PendingSignature",
         errorMessage: switchChainError
       } as TransactionStatus;
     }
 
-    // Show approve status
     if (approveState.status === "Mining" || approveState.status === "PendingSignature") {
       return {
         chainId: bridgeRequest?.sourceChainId,
@@ -91,7 +85,6 @@ export const useBridgeMonitoring = (
       } as TransactionStatus;
     }
 
-    // Show bridgeTo status
     if (bridgeToState.status === "Mining" || bridgeToState.status === "PendingSignature") {
       return {
         chainId: bridgeRequest?.sourceChainId,
@@ -134,7 +127,7 @@ export const useBridgeMonitoring = (
     }
 
     return undefined;
-  })();
+  }, [isSwitchingChain, switchChainError, approveState, bridgeToState, bridgeRequest, bridgeCompletedEvent]);
 
   return { bridgeStatus, bridgeRequestId, bridgeCompletedEvent };
 };

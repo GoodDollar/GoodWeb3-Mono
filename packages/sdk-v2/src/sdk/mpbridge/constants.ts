@@ -5,23 +5,13 @@ import { SupportedChains } from "../constants";
  * Bridge configuration constants
  */
 export const BRIDGE_CONSTANTS = {
-  // Default chain IDs
-  DEFAULT_CHAIN_ID: 122, // Fuse
-
-  // Timing constants
-  DEBOUNCE_DELAY: 300, // ms
-  POLLING_INTERVAL: 5000, // ms
-
-  // Bridge request topic index
+  DEFAULT_CHAIN_ID: 122,
+  DEBOUNCE_DELAY: 300,
+  POLLING_INTERVAL: 5000,
   BRIDGE_ID_TOPIC_INDEX: 6,
-
-  // Production G$ token address (used as fallback when bridge doesn't have nativeToken)
   PRODUCTION_GDOLLAR_ADDRESS: "0x62B8B11039FcfE5aB0C56E502b1C372A3d2a9c7A"
 } as const;
 
-/**
- * Validation reasons for better error handling
- */
 export const VALIDATION_REASONS = {
   MIN_AMOUNT: "minAmount",
   MAX_AMOUNT: "maxAmount",
@@ -31,9 +21,6 @@ export const VALIDATION_REASONS = {
   INVALID_CHAIN: "invalidChain"
 } as const;
 
-/**
- * Error messages for consistent user feedback
- */
 export const ERROR_MESSAGES = {
   BRIDGE_LIMITS_ERROR: "Something went wrong while determining transaction limits. Please try again later.",
   BRIDGE_ELIGIBILITY_ERROR: "Unable to verify bridge eligibility. Please try again later.",

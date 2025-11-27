@@ -294,7 +294,62 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
     }
   }, [chainId, bridgeRequest, isSwitchingChain]);
 
-  // Helper function to execute bridge transaction
+  // Helper function to execute the actual bridge transfer (bridgeTo)
+  const executeBridgeTransfer = useCallback(
+    async (request: BridgeRequest) => {
+      try {
+        console.log("✅ Proceeding to bridge transfer...", request);
+
+        const fees = await fetchBridgeFees();
+        const { source, target } = {
+          source: getChainName(request.sourceChainId),
+          target: getChainName(request.targetChainId)
+        };
+        const calculatedFees = fees
+          ? calculateBridgeFees(fees, bridgeProvider, source, target)
+          : createEmptyBridgeFees();
+
+        let nativeFee = calculatedFees.nativeFee ?? ethers.BigNumber.from(0);
+
+        if (bridgeProvider === "layerzero") {
+          nativeFee = (await computeLayerZeroFee(request, nativeFee)) ?? nativeFee;
+        }
+
+        if (!nativeFee || nativeFee.isZero()) {
+          throw new Error("Bridge fee not available for the selected route.");
+        }
+
+        // Add a 5% buffer to reduce the odds of underpaying due to fee estimation drift
+        const bufferedFee = nativeFee.mul(105).div(100);
+        const bridgeService = bridgeProvider === "layerzero" ? BridgeService.LAYERZERO : BridgeService.AXELAR;
+
+        if (!request.target) {
+          throw new Error("Target address is required");
+        }
+
+        console.log("🌉 Calling bridgeTo with:", {
+          target: request.target,
+          targetChainId: request.targetChainId,
+          amount: request.amount,
+          bridgeService,
+          nativeFee: bufferedFee.toString()
+        });
+
+        void bridgeTo.send(request.target, request.targetChainId, request.amount, bridgeService, {
+          value: bufferedFee
+        });
+      } catch (error: any) {
+        console.error("BridgeTo preparation error:", error);
+        bridgeLock.current = false;
+        bridgeToTriggered.current = false;
+        setSwitchChainError(error?.message || "Failed to prepare bridge transaction");
+        setBridgeRequest(undefined);
+      }
+    },
+    [bridgeProvider, bridgeTo, computeLayerZeroFee]
+  );
+
+  // Helper function to execute bridge transaction (approve if needed, then bridge)
   const executeBridgeTransaction = useCallback(
     async (bridgeRequest: BridgeRequest, fees: any) => {
       const { source, target } = {
@@ -312,14 +367,38 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
         throw new Error(`Bridge fee not available for ${sourceUpper}→${targetUpper} route`);
       }
 
-      const bridgeService = bridgeProvider === "layerzero" ? BridgeService.LAYERZERO : BridgeService.AXELAR;
-
       if (!bridgeContract?.address) {
         console.error("Bridge contract address is missing!", bridgeContract);
         return;
       }
 
-      console.log("Starting MPB bridge transaction:", {
+      // Check allowance first
+      if (gdContract && account) {
+        try {
+          const allowance = await gdContract.allowance(account, bridgeContract.address);
+          const amountBN = ethers.BigNumber.from(bridgeRequest.amount);
+
+          console.log("🔍 Checking existing allowance:", {
+            allowance: allowance.toString(),
+            required: amountBN.toString(),
+            sufficient: allowance.gte(amountBN)
+          });
+
+          if (allowance.gte(amountBN)) {
+            console.log("✅ Allowance sufficient, skipping approval step...");
+            // Skip approval and go straight to bridge
+            bridgeToTriggered.current = true; // Mark as triggered to prevent double execution
+            await executeBridgeTransfer(bridgeRequest);
+            return;
+          }
+        } catch (error) {
+          console.warn("Failed to check allowance, proceeding with approval flow:", error);
+        }
+      }
+
+      const bridgeService = bridgeProvider === "layerzero" ? BridgeService.LAYERZERO : BridgeService.AXELAR;
+
+      console.log("Starting MPB bridge transaction (needs approval):", {
         bridgeContractAddress: bridgeContract.address,
         amount: bridgeRequest.amount,
         targetChainId: bridgeRequest.targetChainId,
@@ -332,7 +411,7 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
       console.log("📝 Step 1: Approving bridge contract to spend G$ tokens...");
       void approve.send(bridgeContract.address, bridgeRequest.amount);
     },
-    [bridgeProvider, bridgeContract, account, approve, validateBridgeTransaction]
+    [bridgeProvider, bridgeContract, account, approve, validateBridgeTransaction, gdContract, executeBridgeTransfer]
   );
 
   useEffect(() => {
@@ -361,9 +440,10 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
           }
         })
         .catch(error => {
-          bridgeLock.current = false; // Reset lock on error
+          bridgeLock.current = false;
           console.error("Bridge execution error:", error);
           setSwitchChainError(error?.message || "Bridge execution failed");
+          setBridgeRequest(undefined);
         });
     }
   }, [
@@ -393,79 +473,27 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
     bridgeToTriggered.current = true;
 
     const proceed = async () => {
-      try {
-        console.log("✅ Approval successful! Step 2: Calling bridgeTo...");
+      console.log("✅ Approval successful! Step 2: Calling bridgeTo...");
 
-        const fees = await fetchBridgeFees();
-        const { source, target } = {
-          source: getChainName(bridgeRequest.sourceChainId),
-          target: getChainName(bridgeRequest.targetChainId)
-        };
-        const calculatedFees = fees
-          ? calculateBridgeFees(fees, bridgeProvider, source, target)
-          : createEmptyBridgeFees();
+      // Verify allowance before calling bridgeTo (double check)
+      if (gdContract && bridgeContract && account) {
+        try {
+          const allowance = await gdContract.allowance(account, bridgeContract.address);
+          const amountBN = ethers.BigNumber.from(bridgeRequest.amount);
 
-        let nativeFee = calculatedFees.nativeFee ?? ethers.BigNumber.from(0);
-
-        if (bridgeProvider === "layerzero") {
-          nativeFee = (await computeLayerZeroFee(bridgeRequest, nativeFee)) ?? nativeFee;
-        }
-
-        if (!nativeFee || nativeFee.isZero()) {
-          throw new Error("Bridge fee not available for the selected route.");
-        }
-
-        // Add a 5% buffer to reduce the odds of underpaying due to fee estimation drift
-        const bufferedFee = nativeFee.mul(105).div(100);
-        const bridgeService = bridgeProvider === "layerzero" ? BridgeService.LAYERZERO : BridgeService.AXELAR;
-
-        // Verify allowance before calling bridgeTo
-        if (gdContract && bridgeContract && account) {
-          try {
-            const allowance = await gdContract.allowance(account, bridgeContract.address);
-            const amountBN = ethers.BigNumber.from(bridgeRequest.amount);
-            console.log(" Checking allowance:", {
-              allowance: allowance.toString(),
-              required: amountBN.toString(),
-              sufficient: allowance.gte(amountBN)
-            });
-
-            if (allowance.lt(amountBN)) {
-              throw new Error(
-                `Insufficient allowance. Approved: ${allowance.toString()}, Required: ${amountBN.toString()}`
-              );
-            }
-          } catch (allowanceError: any) {
-            console.error(" Allowance check failed:", allowanceError);
-            throw allowanceError;
+          if (allowance.lt(amountBN)) {
+            throw new Error(
+              `Insufficient allowance. Approved: ${allowance.toString()}, Required: ${amountBN.toString()}`
+            );
           }
+        } catch (allowanceError: any) {
+          console.error(" Allowance check failed:", allowanceError);
+          throw allowanceError;
         }
+      }
 
-        if (!bridgeRequest.target) {
-          throw new Error("Target address is required");
-        }
-
-        console.log("🌉 Calling bridgeTo with:", {
-          target: bridgeRequest.target,
-          targetChainId: bridgeRequest.targetChainId,
-          amount: bridgeRequest.amount,
-          bridgeService,
-          nativeFee: bufferedFee.toString()
-        });
-
-        if (!isMounted) {
-          return;
-        }
-
-        void bridgeTo.send(bridgeRequest.target, bridgeRequest.targetChainId, bridgeRequest.amount, bridgeService, {
-          value: bufferedFee
-        });
-      } catch (error: any) {
-        console.error("BridgeTo preparation error:", error);
-        bridgeLock.current = false;
-        bridgeToTriggered.current = false;
-        setSwitchChainError(error?.message || "Failed to prepare bridge transaction");
-        setBridgeRequest(undefined);
+      if (isMounted) {
+        await executeBridgeTransfer(bridgeRequest);
       }
     };
 
@@ -474,7 +502,7 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
     return () => {
       isMounted = false;
     };
-  }, [account, approve.state.status, bridgeContract, bridgeProvider, bridgeRequest, bridgeTo, computeLayerZeroFee]);
+  }, [account, approve.state.status, bridgeContract, bridgeRequest, bridgeTo, executeBridgeTransfer, gdContract]);
 
   return {
     sendMPBBridgeRequest,

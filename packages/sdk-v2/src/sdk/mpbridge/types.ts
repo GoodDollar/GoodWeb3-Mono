@@ -8,42 +8,18 @@ export enum BridgeService {
   LAYERZERO = 1
 }
 
-/**
- * Proxy contract addresses for MPB contracts
- *
- * The proxy contract stores the actual data and delegates calls to the implementation contract.
- * The implementation contract defines the methods and events, but can be upgraded by pointing
- * the proxy to a new implementation.
- *
- * Structure: { chainId: { envName: proxyAddress } }
- *
- * NOTE: The proxy address is the same on all chains: 0xa3247276DbCC76Dd7705273f766eB3E8a5ecF4a5
- */
 const MPB_PROXY_ADDRESSES: Record<number, Record<string, string>> = {
   [SupportedChains.FUSE]: {
-    fuse: "0xa3247276DbCC76Dd7705273f766eB3E8a5ecF4a5" // Fuse proxy (same on all chains)
+    fuse: "0xa3247276DbCC76Dd7705273f766eB3E8a5ecF4a5"
   },
   [SupportedChains.CELO]: {
-    celo: "0xa3247276DbCC76Dd7705273f766eB3E8a5ecF4a5" // Celo mainnet proxy (same on all chains)
+    celo: "0xa3247276DbCC76Dd7705273f766eB3E8a5ecF4a5"
   },
   [SupportedChains.MAINNET]: {
-    mainnet: "0xa3247276DbCC76Dd7705273f766eB3E8a5ecF4a5" // Ethereum mainnet proxy (same on all chains)
+    mainnet: "0xa3247276DbCC76Dd7705273f766eB3E8a5ecF4a5"
   }
 };
 
-/**
- * Helper function to get MPB contract address (proxy or implementation)
- *
- * Priority:
- * 1. Proxy contract address (if available) - stores data, delegates to implementation
- * 2. Implementation contract address from mpb.json - defines methods/events
- *
- * mpb.json is organized as: { chainId: [{ name: "envName", contracts: { MessagePassingBridge: { address: "0x..." } } }] }
- *
- * @param chainId - The chain ID to get the contract for
- * @param envName - The environment name (e.g., "fuse", "celo", "mainnet", "alfajores", "fuse_testnet")
- * @returns The contract address (proxy if available, otherwise implementation) or undefined if not found
- */
 export const getMPBContractAddress = (chainId: number, envName: string): string | undefined => {
   // First, check for proxy address (proxy stores data, implementation defines methods)
   const proxyAddresses = MPB_PROXY_ADDRESSES[chainId];
@@ -83,8 +59,7 @@ export const getMPBContractAddress = (chainId: number, envName: string): string 
 export type MPBBridgeData = {
   bridgeFees: { nativeFee: ethers.BigNumber | null; zroFee: ethers.BigNumber | null };
   bridgeLimits: { minAmount: ethers.BigNumber; maxAmount: ethers.BigNumber } | null;
-  // Protocol fee taken by the bridge contract in basis points (bps) divided by 10000.
-  // For example, 15 => 0.15%.
+
   protocolFeePercent: number | null;
   isLoading: boolean;
   error: string | null;
@@ -95,6 +70,7 @@ export type MPBBridgeData = {
     canBridge: boolean;
     hasAllowance: boolean;
   };
+  allowance: ethers.BigNumber | undefined;
 };
 
 export type BridgeRequest = {
