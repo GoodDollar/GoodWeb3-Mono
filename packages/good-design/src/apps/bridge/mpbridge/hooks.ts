@@ -217,8 +217,6 @@ export const useDebouncedTransactionHistory = (delay = 1000) => {
 export const useConvertedTransactionHistory = (realTransactionHistory: any[] | undefined, sourceChain: string) => {
   const chain = sourceChain === "celo" ? 42220 : sourceChain === "mainnet" ? 1 : 122;
 
-  // Memoize the conversion to prevent unnecessary re-computations
-  // Memoize the conversion to prevent unnecessary re-computations
   return useMemo(() => {
     const converted =
       realTransactionHistory?.slice(0, 5).map(tx => {
