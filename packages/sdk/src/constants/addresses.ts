@@ -35,8 +35,9 @@ export function G$ContractAddresses<T = ObjectLike>(chainId: SupportedChainId, n
         deploymentName = CURRENT_NETWORK;
       }
       break;
-    case SupportedChainId.CELO:
-      deploymentName = CURRENT_NETWORK;
+    default:
+      const env = CURRENT_NETWORK.split("-")[0];
+      deploymentName = env+"-"+SupportedChainId[chainId].toLowerCase();
       break;
   }
 

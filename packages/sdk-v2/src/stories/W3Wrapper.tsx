@@ -5,7 +5,7 @@ import * as ethers from "ethers";
 import { ExternalProvider } from "@ethersproject/providers";
 
 import { Config, Mainnet, useEthers } from "@usedapp/core";
-import { Fuse, Celo } from "../contexts";
+import { Fuse, Celo, Xdc } from "../contexts";
 
 interface PageProps {
   children: any;
@@ -13,11 +13,12 @@ interface PageProps {
 }
 
 const config: Config = {
-  networks: [Mainnet, Fuse, Celo],
-  readOnlyChainId: Fuse.chainId,
+  networks: [Mainnet, Fuse, Celo, Xdc],
+  readOnlyChainId: Xdc.chainId,
   readOnlyUrls: {
     122: "https://rpc.fuse.io",
-    42220: "https://forno.celo.org"
+    42220: "https://forno.celo.org",
+    50: "https://rpc.xdc.network"
   }
 };
 
