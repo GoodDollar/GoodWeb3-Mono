@@ -15,7 +15,7 @@ import { BulletPointList, TransButton, TransText, TransTitle } from "../../../co
 import { YouSureModal } from "../../../core/web3/modals";
 import { useClaimContext } from "../../ubi";
 
-import RedTentCard from "../../../assets/images/redtentcard.png";
+import UBICard from "../../../assets/images/WomenUbiGoodDollar.png";
 import BillyPhone from "../../../assets/images/billy-phone.png";
 import { cardShadow } from "../../../theme";
 import { useSendAnalytics } from "@gooddollar/web3sdk-v2";
@@ -132,7 +132,7 @@ const RedtentOffer = ({
   const { goodCollectiveUrl } = Envs[devEnv];
 
   const offerTitle =
-    /*i18n*/ "Red Tent Women in " +
+    /*i18n*/ "GoodDollar UBI+ for Women in " +
     offerCriteria.location[offer.Location?.countryCode as keyof typeof offerCriteria.location];
 
   const offerLink = `${goodCollectiveUrl}collective/${activePoolAddresses[offer.Location?.countryCode || ""]}`;
@@ -177,7 +177,7 @@ const RedtentOffer = ({
           title={offerTitle}
           content={<CardContent offer={offer} />}
           footer={<CardFooter linkText={/*i18n*/ "Learn more>>"} />}
-          picture={RedTentCard}
+          picture={UBICard}
           link={offerLink}
           styles={{
             picture: { resizeMode: "cover" },

@@ -34,23 +34,25 @@ export interface SavingsStats {
 
 export function useSavingsBalance(refresh: QueryParams["refresh"] = "never", requiredChainId: number) {
   const refreshOrNever = useRefreshOrNever(refresh);
-  const { account } = useEthers();
+  const { account, chainId } = useEthers();
   const gooddollar = useGetContract("GoodDollar", true, "savings") as IGoodDollar;
   const gdStaking = useGetContract("GoodDollarStaking", true, "savings") as GoodDollarStaking;
 
   const results = useCalls(
-    [
-      {
-        contract: gooddollar,
-        method: "balanceOf",
-        args: [account]
-      },
-      {
-        contract: gdStaking,
-        method: "getSavings",
-        args: [account]
-      }
-    ],
+    chainId !== 50 && gooddollar && gdStaking
+      ? [
+          {
+            contract: gooddollar,
+            method: "balanceOf",
+            args: [account]
+          },
+          {
+            contract: gdStaking,
+            method: "getSavings",
+            args: [account]
+          }
+        ]
+      : [],
     {
       refresh: refreshOrNever,
       chainId: requiredChainId
@@ -113,23 +115,25 @@ export const useSavingsStats = (requiredChainId: number, refresh: QueryParams["r
   const gdStaking = useGetContract("GoodDollarStaking", true, "savings", chainId) as GoodDollarStaking;
 
   const results = useCalls(
-    [
-      {
-        contract: gdStaking,
-        method: "stats",
-        args: []
-      },
-      {
-        contract: gdStaking,
-        method: "getRewardsPerBlock",
-        args: []
-      },
-      {
-        contract: gdStaking,
-        method: "numberOfBlocksPerYear",
-        args: []
-      }
-    ],
+    chainId !== 50 && gdStaking
+      ? [
+          {
+            contract: gdStaking,
+            method: "stats",
+            args: []
+          },
+          {
+            contract: gdStaking,
+            method: "getRewardsPerBlock",
+            args: []
+          },
+          {
+            contract: gdStaking,
+            method: "numberOfBlocksPerYear",
+            args: []
+          }
+        ]
+      : [],
     { refresh: refreshOrNever, chainId: chainId as unknown as ChainId }
   );
 
@@ -181,18 +185,20 @@ export const useStakerInfo = (requiredChainId: number, refresh: QueryParams["ref
   const contract = useGetContract("GoodDollarStaking", true, "savings", chainId) as GoodDollarStaking;
 
   const results = useCalls(
-    [
-      {
-        contract: contract,
-        method: "getUserPendingReward(address)",
-        args: [account]
-      },
-      {
-        contract: contract,
-        method: "principle",
-        args: [account]
-      }
-    ],
+    chainId !== 50 && contract
+      ? [
+          {
+            contract: contract,
+            method: "getUserPendingReward(address)",
+            args: [account]
+          },
+          {
+            contract: contract,
+            method: "principle",
+            args: [account]
+          }
+        ]
+      : [],
     { refresh: refreshOrNever, chainId: chainId as unknown as ChainId }
   );
 

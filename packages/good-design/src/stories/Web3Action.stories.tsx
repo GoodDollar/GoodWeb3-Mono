@@ -1,17 +1,18 @@
 import React, { useEffect, useCallback, useState } from "react";
 import { Web3ActionButton } from "../advanced/web3action/Web3Action";
 import { Mainnet, DAppProvider, Config, useEthers } from "@usedapp/core";
-import { useClaim, Fuse, Celo, Web3Provider } from "@gooddollar/web3sdk-v2";
+import { useClaim, Fuse, Celo, Web3Provider, Xdc } from "@gooddollar/web3sdk-v2";
 import { getDefaultProvider, ethers } from "ethers";
 import { ExternalProvider } from "@ethersproject/providers";
 
 const config: Config = {
-  networks: [Mainnet, Fuse, Celo],
+  networks: [Mainnet, Fuse, Celo, Xdc],
   readOnlyChainId: Mainnet.chainId,
   readOnlyUrls: {
     [Mainnet.chainId]: getDefaultProvider("https://mainnet.infura.io/v3/12207372b62941dfb1efd4fe26b95ccc"),
     122: "https://rpc.fuse.io",
-    42220: "https://forno.celo.org"
+    42220: "https://forno.celo.org",
+    50: "https://rpc.xdc.network"
   }
 };
 

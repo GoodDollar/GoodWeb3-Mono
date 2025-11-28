@@ -20,6 +20,7 @@ const ClaimButton = ({
   handleConnect,
   onEvent,
   redirectUrl,
+  supportedChains = [SupportedChains.CELO, SupportedChains.FUSE, SupportedChains.XDC],
   ...props
 }: FVFlowProps) => {
   const { account } = useEthers();
@@ -30,7 +31,7 @@ const ClaimButton = ({
   const { isWhitelisted, claimAmount } = useClaim(refresh);
   const isVerified = useQueryParam("verified", true);
   const { chainId: defaultChainId, defaultEnv } = useGetEnvChainId();
-  const { fuseWhitelisted, syncStatus } = useWhitelistSync();
+  const { celoWhitelisted, syncStatus } = useWhitelistSync();
 
   const handleClaim = useCallback(async () => {
     const success = await claim();
@@ -55,7 +56,7 @@ const ClaimButton = ({
       setFaceVerifying(true);
     }
 
-    if (fuseWhitelisted && syncStatus) {
+    if (celoWhitelisted && syncStatus) {
       const success = await syncStatus;
 
       if (!success) {
@@ -64,7 +65,7 @@ const ClaimButton = ({
 
       await handleClaim();
     }
-  }, [isWhitelisted, fuseWhitelisted, syncStatus, faceVerifying, setClaimConfirming, setWhitelistLoading, handleClaim]);
+  }, [isWhitelisted, celoWhitelisted, syncStatus, faceVerifying, setClaimConfirming, setWhitelistLoading, handleClaim]);
 
   useEffect(() => {
     if (claiming?.status === "PendingSignature") {
@@ -76,7 +77,7 @@ const ClaimButton = ({
   }, [claiming]);
 
   const buttonTitle = useMemo(() => {
-    if (!isWhitelisted || !claimAmount) {
+    if (!isWhitelisted || !claimAmount || (chainId && !supportedChains.includes(chainId))) {
       return "CLAIM NOW";
     }
 
@@ -116,7 +117,7 @@ const ClaimButton = ({
           web3Action={handleModalOpen}
           disabled={claimed}
           variant="round"
-          supportedChains={[SupportedChains.CELO, SupportedChains.FUSE]}
+          supportedChains={supportedChains}
           handleConnect={handleConnect}
           w="220"
           h="220"

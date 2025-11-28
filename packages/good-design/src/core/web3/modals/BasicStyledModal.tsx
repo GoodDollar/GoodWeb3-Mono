@@ -13,6 +13,7 @@ import { LinkButton } from "../../buttons/StyledLinkButton";
 import { SpinnerCheckMark } from "../../animated";
 import BillyCelebration from "../../../assets/images/billy-celebration.png";
 import BillyOops from "../../../assets/images/billy-oops.png";
+import { SocialShareBar } from "../../../advanced/socialshare";
 
 const LocalText = ({ ...props }) => <Text {...props} />;
 
@@ -111,11 +112,17 @@ export const ModalFooterCtaX = ({ extUrl, buttonText }: { extUrl: string; button
   </Center>
 );
 
-export const ModalFooterSocial = () => (
+export const ModalFooterSocial = ({
+  message = "I just did my first claim(s) of G$ this week!",
+  url = "https://gooddollar.org"
+}: {
+  message?: string;
+  url?: string;
+} = {}) => (
   <Center padding="0" w="100%">
     <Center>
       <Image source={BillyCelebration} w={135} h={135} style={{ resizeMode: "contain" }} />
-      {/* todo: add socials share bar */}
+      <SocialShareBar message={message} url={url} />
     </Center>
   </Center>
 );
