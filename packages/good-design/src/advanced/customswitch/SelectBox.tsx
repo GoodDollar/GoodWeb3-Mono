@@ -3,6 +3,7 @@ import { withTheme } from "../../theme/hoc/withTheme";
 import { Pressable, ChevronDownIcon, Text } from "native-base";
 import FuseIcon from "../../assets/svg/fuse.svg";
 import CeloIcon from "../../assets/svg/celo.svg";
+import XdcIcon from "../../assets/svg/xdc.svg";
 
 type SelectBoxProps = {
   text: string;
@@ -14,7 +15,8 @@ type SelectBoxProps = {
 // TODO: make imports from .svg work
 const IconList: { [key: string]: string } = {
   Fuse: FuseIcon,
-  Celo: CeloIcon
+  Celo: CeloIcon,
+  XDC: XdcIcon
 };
 
 const SelectBox: FC<SelectBoxProps> = withTheme({ name: "SelectBox" })(({ text, press, isListItem, ...props }) => (

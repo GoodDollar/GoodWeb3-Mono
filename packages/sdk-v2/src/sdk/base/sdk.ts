@@ -91,7 +91,7 @@ export class BaseSDK {
   getContract(contractName: "GoodReserveCDai"): GoodReserveCDai;
   getContract(contractName: string): Contract;
   getContract(contractName: string) {
-    if (!this.contracts[contractName]) return;
+    if (!this.contracts?.[contractName]) return;
     switch (contractName) {
       case "UBIScheme": {
         const contract = new Contract(

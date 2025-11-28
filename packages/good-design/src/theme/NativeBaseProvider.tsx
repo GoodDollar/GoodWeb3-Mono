@@ -28,6 +28,7 @@ export const NativeBaseProvider = ({ children, ...props }: NativeBaseProviderPro
 
   return (
     <BaseProvider {...rest}>
+      {/* @ts-ignore - Helmet is valid in web environment */}
       <Helmet>
         {loadFonts.length && [
           <link key="gapis" rel="preconnect" href="//fonts.googleapis.com" />,
