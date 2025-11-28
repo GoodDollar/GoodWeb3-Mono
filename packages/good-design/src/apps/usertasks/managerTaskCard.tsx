@@ -1,30 +1,18 @@
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import React, { useState, useEffect, useMemo, useCallback, FC } from "react";
 import { VStack, HStack, Pressable, Box, Spinner, useToast } from "native-base";
 import { Linking } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import moment from "moment";
 import { TransText, TransButton } from "../../core/layout";
 import { SAMPLE_TASKS } from "./mockData";
+import BasicStyledModal from "../../core/web3/modals/BasicStyledModal";
+import { noop } from "lodash";
 
 
 export interface TaskReward {
   type: "points" | "tokens" | "badge";
   amount?: number;
   description: string;
-}
-
-export interface ClaimerTask {
-  id: string;
-  title: string;
-  description: string;
-  category: "social" | "donation" | "referral" | "engagement";
-  priority: "main" | "secondary";
-  reward?: TaskReward;
-  duration: { startDate: string; endDate: string };
-  actionUrl?: string;
-  icon?: string;
-  rewardAmount?: string;
-  rewardColor?: string;
 }
 
 export const useClaimerTasks = () => {
@@ -164,30 +152,44 @@ export const useClaimerTasks = () => {
   };
 };
 
-const SimpleTaskItem: React.FC<{
-  task: ClaimerTask;
-  onPress: () => void;
+
+export interface ClaimerTask {
+  type: "noTasks" | "activeTasks" | "secondaryTasks" | "modalContent" | "learn";
+  taskId?: string;
+  content?: string;
+  id: string;
+  title: string;
+  description: string;
+  category: "social" | "donation" | "referral" | "engagement";
+  reward?: TaskReward;
+  duration: { startDate: string; endDate: string };
+  actionUrl?: string;
+  icon?: string;
+  rewardAmount?: string;
+  rewardColor?: string;
+  priority?: "main" | "secondary";
+}
+
+interface ManagerTaskProps {
+  type: ClaimerTask["type"];
+  task?: ClaimerTask;
+  isPending: boolean;
+  customTitle?: string;
+  onClose?: () => void;
+  onPress?: () => void;
   fontStyles?: any;
-}> = ({ task, onPress, fontStyles }) => {
+}
+
+const TaskModalContent: React.FC<{ task: ClaimerTask; fontStyles?: any }> = ({ task, fontStyles }) => {
   const { subHeading, subContent } = fontStyles ?? {};
 
   return (
-    <Pressable
-      onPress={onPress}
-      _pressed={{ bg: "gray.50" }}
-      px={4}
-      py={4}
-      bg="white"
-      borderRadius="xl"
-      borderWidth={1}
-      borderColor="gray.200"
-      testID={`task-${task.id}`}
-    >
-      <HStack alignItems="center" space={4} justifyContent="space-between">
-        {/* Icon */}
+    <VStack space={4} px={2}>
+      {/* Icon */}
+      <Box alignSelf="center">
         <Box
-          w={10}
-          h={10}
+          w={16}
+          h={16}
           borderRadius="full"
           bg="gray.100"
           alignItems="center"
@@ -195,38 +197,92 @@ const SimpleTaskItem: React.FC<{
         >
           <TransText 
             t={task.icon || "🎯"} 
-            fontSize="lg"
+            fontSize="3xl"
           />
         </Box>
-        
-        {/* Task content */}
-        <VStack flex={1} space={1}>
-          <TransText 
-            t={task.title} 
-            fontSize="md" 
-            fontWeight="semibold"
-            color="gray.800" 
-            {...subHeading} 
-          />
-          <TransText 
-            t={task.description} 
-            fontSize="sm" 
-            color="gray.500" 
-            {...subContent} 
-          />
-        </VStack>
+      </Box>
 
-        {/* Reward */}
-        <VStack alignItems="flex-end">
+      {/* Task Title */}
+      <TransText 
+        t={task.title} 
+        fontSize="lg" 
+        fontWeight="bold"
+        color="gray.800" 
+        textAlign="center"
+        {...subHeading} 
+      />
+
+      {/* Task Description */}
+      <TransText 
+        t={task.description}
+        fontSize="md"
+        color="gray.600"
+        textAlign="center"
+        {...subContent}
+      />
+
+      {/* Reward */}
+      {task.rewardAmount && (
+        <HStack justifyContent="center" space={2} alignItems="center">
+          <TransText
+            t="Reward:"
+            fontSize="sm" 
+            color="gray.500"
+          />
           <TransText 
             t={task.rewardAmount || task.reward?.description || "+0 G$"}
-            fontSize="md"
+            fontSize="lg"
             fontWeight="bold"
             color={task.rewardColor || (task.rewardAmount?.includes('-') ? "red.500" : "green.500")}
           />
-        </VStack>
-      </HStack>
-    </Pressable>
+        </HStack>
+      )}
+    </VStack>
+  );
+};
+
+export const ManagerTask: FC<ManagerTaskProps> = ({
+  type,
+  onClose = noop,
+  task,
+  isPending,
+  customTitle,
+  onPress,
+  fontStyles,
+  ...props
+}) => {
+  if (!task) return null;
+
+  return (
+    <BasicStyledModal
+      {...props}
+      type="learn"
+      show={isPending}
+      onClose={onClose}
+      title={customTitle || task.title}
+      body={<TaskModalContent task={task} fontStyles={fontStyles} />}
+      withOverlay="dark"
+      withCloseButton={true}
+      footer={
+        onPress && (
+          <TransButton
+            t={task.reward?.description || "Complete Task"}
+            onPress={onPress}
+            testID={`task-action-${task.id}`}
+            borderRadius="2xl"
+            bg="cyan.400"
+            _text={{ 
+              color: "white", 
+              fontSize: "md", 
+              fontWeight: "semibold" 
+            }}
+            py={4}
+            mx={6}
+            mb={4}
+          />
+        )
+      }
+    />
   );
 };
 
@@ -235,84 +291,89 @@ interface ClaimerTasksCardProps {
   onTaskComplete?: (taskId: string) => void;
   onTaskDismiss?: (taskId: string) => void;
   fontStyles?: any;
+  ContentComponent?: any;
+  showAsModal?: boolean;
 }
 
-export const ClaimerTasksCard: React.FC<ClaimerTasksCardProps> = ({ onTaskComplete, onTaskDismiss, fontStyles }) => {
-  const { mainTask, secondaryTasks, loading, dismissing, hasActiveTasks, dismissAllTasks, completeTask } = useClaimerTasks();
-  const { title, subContent, footer } = fontStyles ?? {};
+const ManagerModalContent = ({ content }: { content: string }) => (
+  <TransText t={content} variant="sm-grey-650" paddingLeft={2} paddingRight={2} />
+);
 
-  const handleDismissAll = async () => {
-    const taskIds = [...(mainTask ? [mainTask.id] : []), ...secondaryTasks.map(task => task.id)];
-    if (taskIds.length > 0) {
-      await dismissAllTasks(taskIds, onTaskDismiss);
-    }
-  };
+const ManagerContentDismiss = () => (
+  <VStack space={2} paddingX={2}>
+    <TransText t="🎉" fontSize="4xl" textAlign="center" />
+    <TransText
+      t={/*i18n*/ "All caught up!."}
+      variant="sm-grey-650"
+      fontWeight="bold"
+    />
+    <TransText
+      t={/*i18n*/ "Check back later for new tasks and rewards."}
+      variant="sm-grey-650"
+      fontWeight="bold"
+    />
+  </VStack>
+);
 
-  const openTask = useCallback(async (task: ClaimerTask) => {
-    if (task.actionUrl) {
-      try {
-        await Linking.openURL(task.actionUrl);
-        await completeTask(task.id);
-        if (onTaskComplete) onTaskComplete(task.id);
-      } catch (error) {
-        console.warn("Failed to open task URL:", error);
-      }
-    }
-  }, [completeTask, onTaskComplete]);
+const ManagerSecondaryTasks = () => (
+  <VStack space={2} paddingX={2}>
+    <TransText
+      t={/*i18n*/ "More ways to use G$:!."}
+      variant="sm-grey-650"
+      fontWeight="bold"
+    />
+  </VStack>
+);
 
-  if (loading) {
-    return (
-      <Box bg="white" borderRadius="3xl" p={6} shadow="sm" mx={4}>
-        <HStack space={2} justifyContent="center" alignItems="center">
-          <Spinner color="cyan.400" size="sm" />
-          <TransText t="Loading Tasks..." color="gray.500" {...subContent} />
-        </HStack>
-      </Box>
-    );
-  }
+const ManagerDoNextTasks = () => (
+  <VStack space={2} paddingX={2}>
+    <TransText
+      t={/*i18n*/ "Keep the momentum going!."}
+      variant="sm-grey-650"
+      fontWeight="bold"
+    />
+     <TransText
+      t={/*i18n*/ "Here's what you can do next:"}
+      variant="sm-grey-650"
+      fontWeight="light"
+    />
+  </VStack>
+);
 
-  if (!hasActiveTasks) {
-    return (
-      <Box bg="white" borderRadius="3xl" p={8} shadow="sm" mx={4}>
-        <VStack alignItems="center" space={3}>
-          <TransText t="🎉" fontSize="4xl" textAlign="center" />
-          <TransText t="All caught up!" fontSize="lg" fontWeight="bold" textAlign="center" {...title} />
-          <TransText
-            t="Check back later for new tasks and rewards"
-            color="gray.500"
-            textAlign="center"
-            fontSize="sm"
-            {...footer}
-          />
-        </VStack>
-      </Box>
-    );
-  }
+const DefaultContentComponent = {
+  noTasks: ManagerContentDismiss,
+  activeTasks: ManagerDoNextTasks,
+  secondaryTasks: ManagerSecondaryTasks,
+  modalContent: ManagerModalContent
+};
+
+
+const TasksCardContent: React.FC<{
+  mainTask?: ClaimerTask;
+  secondaryTasks: ClaimerTask[];
+  dismissing: boolean;
+  fontStyles?: any;
+  ContentComponent: any;
+  onTaskSelect: (task: ClaimerTask) => void;
+  onDismissAll: () => void;
+  ManagerModalContent: any;
+}> = ({
+  mainTask,
+  secondaryTasks,
+  dismissing,
+  fontStyles,
+  ContentComponent,
+  onTaskSelect,
+  onDismissAll,
+  ManagerModalContent
+}) => {
+  const { secondaryTasks: ManagerSecondaryTasks } = ContentComponent;
 
   return (
-    <Box bg="white" borderRadius="3xl" shadow="sm" mx={4} overflow="hidden">
-      {/* Header */}
-      <VStack space={2} p={6} pb={4} alignItems="center">
-        <TransText 
-          t="Keep the momentum going!" 
-          fontSize="xl" 
-          fontWeight="bold" 
-          color="gray.800" 
-          textAlign="center"
-          {...title} 
-        />
-        <TransText 
-          t="Here's what you can do next." 
-          fontSize="md" 
-          color="gray.500" 
-          textAlign="center"
-          {...subContent} 
-        />
-      </VStack>
-
+    <VStack space={6} w="100%">
       {/* Main Task */}
       {mainTask && (
-        <VStack space={4} px={6} pb={6}>
+        <VStack space={4} w="100%">
           {/* Icon */}
           <Box alignSelf="center">
             <Box
@@ -328,84 +389,264 @@ export const ClaimerTasksCard: React.FC<ClaimerTasksCardProps> = ({ onTaskComple
           </Box>
 
           {/* Task Title */}
-          <VStack space={2} alignItems="center">
-            <TransText 
-              t={mainTask.title} 
-              fontSize="lg" 
-              fontWeight="bold" 
-              color="gray.800" 
-              textAlign="center"
-              {...title} 
-            />
-            <TransText 
-              t={mainTask.description} 
-              fontSize="sm" 
-              color="gray.500" 
-              textAlign="center"
-              {...subContent} 
-            />
-          </VStack>
+          <Box w="100%">
+            <ManagerModalContent content={mainTask.title} />
+          </Box>
+          <Box w="100%">
+            <ManagerModalContent content={mainTask.description} />
+          </Box>
 
           {/* CTA Button */}
-          <TransButton
-            t={mainTask.reward?.description || "Cast My Vote"}
-            onPress={() => openTask(mainTask)}
-            testID="main-task-button"
-            borderRadius="2xl"
-            bg="cyan.400"
-            _text={{ 
-              color: "white", 
-              fontSize: "md", 
-              fontWeight: "semibold" 
-            }}
-            py={4}
-          />
+          <Box w="100%">
+            <TransButton
+              t={mainTask.reward?.description || "Cast My Vote"}
+              onPress={() => onTaskSelect(mainTask)}
+              testID="main-task-button"
+              borderRadius="2xl"
+              bg="cyan.400"
+              _text={{ 
+                color: "white", 
+                fontSize: "md", 
+                fontWeight: "semibold" 
+              }}
+              py={4}
+            />
+          </Box>
         </VStack>
       )}
 
       {/* Secondary Tasks */}
       {secondaryTasks.length > 0 && (
-        <VStack space={4} px={6} pb={6}>
-          <TransText
-            t="More ways to use G$:"
-            fontSize="sm"
-            textAlign="center"
-            fontWeight="medium"
-            color="gray.600"
-            letterSpacing="wide"
-            {...subContent}
-          />
-          <VStack space={3}>
+        <VStack space={4} w="100%">
+          <Box w="100%">
+            <ManagerSecondaryTasks />
+          </Box>
+          <VStack space={3} w="100%">
             {secondaryTasks.map(task => (
-              <SimpleTaskItem 
-                key={task.id} 
-                task={task} 
-                onPress={() => openTask(task)} 
-                fontStyles={fontStyles}
-              />
+              <Pressable
+                key={task.id}
+                onPress={() => onTaskSelect(task)}
+                _pressed={{ bg: "gray.50" }}
+                px={4}
+                py={4}
+                bg="white"
+                borderRadius="xl"
+                borderWidth={1}
+                borderColor="gray.200"
+                testID={`task-${task.id}`}
+                w="100%"
+              >
+                <HStack alignItems="center" space={4} justifyContent="space-between" w="100%">
+                  <Box
+                    w={10}
+                    h={10}
+                    borderRadius="full"
+                    bg="gray.100"
+                    alignItems="center"
+                    justifyContent="center"
+                    flexShrink={0}
+                  >
+                    <TransText 
+                      t={task.icon || "🎯"} 
+                      fontSize="lg"
+                    />
+                  </Box>
+                  
+                  <VStack flex={1} space={1} minW={0}>
+                    <TransText 
+                      t={task.title} 
+                      fontSize="md" 
+                      fontWeight="semibold"
+                      color="gray.800" 
+                      {...fontStyles?.subHeading} 
+                    />
+                    <TransText 
+                      t={task.description} 
+                      fontSize="sm" 
+                      color="gray.500" 
+                      {...fontStyles?.subContent} 
+                      numberOfLines={2}
+                    />
+                  </VStack>
+
+                  <VStack alignItems="flex-end" flexShrink={0}>
+                    <TransText 
+                      t={task.rewardAmount || task.reward?.description || "+0 G$"}
+                      fontSize="md"
+                      fontWeight="bold"
+                      color={task.rewardColor || (task.rewardAmount?.includes('-') ? "red.500" : "green.500")}
+                    />
+                  </VStack>
+                </HStack>
+              </Pressable>
             ))}
           </VStack>
         </VStack>
       )}
 
       {/* Footer Button */}
-      <VStack px={6} pb={6}>
+      <Box w="100%">
         <TransButton
           t="Maybe later"
-          onPress={handleDismissAll}
+          onPress={onDismissAll}
           testID="maybe-later-button"
           variant="ghost"
-          _text={{ 
-            color: "gray.500", 
-            fontSize: "md",
-            ...subContent 
-          }}
           isDisabled={dismissing}
           isLoading={dismissing}
           isLoadingText="Dismissing..."
         />
-      </VStack>
-    </Box>
+      </Box>
+    </VStack>
+  );
+};
+
+export const ClaimerTasksCard: React.FC<ClaimerTasksCardProps> = ({ 
+  onTaskComplete, 
+  onTaskDismiss, 
+  fontStyles, 
+  ContentComponent = DefaultContentComponent,
+  showAsModal = true 
+}) => {
+  const { mainTask, secondaryTasks, loading, dismissing, hasActiveTasks, dismissAllTasks, completeTask } = useClaimerTasks();
+  const [selectedTask, setSelectedTask] = useState<ClaimerTask | null>(null);
+  const [showMainModal, setShowMainModal] = useState(false);
+
+  const ManagerModalContent = ContentComponent.modalContent;
+  const ManagerContentDismiss = ContentComponent.noTasks;
+  const ManagerDoNextTasks = ContentComponent.activeTasks;
+
+  const handleDismissAll = async () => {
+    const taskIds = [...(mainTask ? [mainTask.id] : []), ...secondaryTasks.map(task => task.id)];
+    if (taskIds.length > 0) {
+      await dismissAllTasks(taskIds, onTaskDismiss);
+      setShowMainModal(false);
+    }
+  };
+
+  const openTask = useCallback(async (task: ClaimerTask) => {
+    if (task.actionUrl) {
+      try {
+        await Linking.openURL(task.actionUrl);
+        await completeTask(task.id);
+        if (onTaskComplete) onTaskComplete(task.id);
+        setSelectedTask(null);
+      } catch (error) {
+        console.warn("Failed to open task URL:", error);
+      }
+    }
+  }, [completeTask, onTaskComplete]);
+
+  const handleTaskSelect = (task: ClaimerTask) => {
+    if (task.id === mainTask?.id) {
+      openTask(task);
+    } else {
+      setSelectedTask(task);
+    }
+  };
+
+  useEffect(() => {
+    if (!loading && hasActiveTasks && showAsModal) {
+      setShowMainModal(true);
+    }
+  }, [loading, hasActiveTasks, showAsModal]);
+
+  if (loading) {
+    return (
+      <Box bg="white" borderRadius="3xl" p={6} shadow="sm" mx={4}>
+        <HStack space={2} justifyContent="center" alignItems="center">
+          <Spinner color="cyan.400" size="sm" />
+        </HStack>
+      </Box>
+    );
+  }
+
+  if (!hasActiveTasks) {
+    return (
+        <BasicStyledModal
+      type="learn"
+      show={true}
+      onClose={() => {/* handle close - maybe navigate away? */}}
+      title=""
+      body={<ManagerContentDismiss />}
+      withOverlay="dark"
+      withCloseButton={true}
+    />
+    );
+  }
+
+  if (!showAsModal) {
+    return (
+      <Box bg="white" borderRadius="3xl" shadow="sm" m={4} overflow="visible" width="100%" maxW="500px">
+        <VStack space={4} p={6} width="100%">
+          <Box width="100%">
+            <ManagerDoNextTasks />
+          </Box>
+          <TasksCardContent
+            mainTask={mainTask}
+            secondaryTasks={secondaryTasks}
+            dismissing={dismissing}
+            fontStyles={fontStyles}
+            ContentComponent={ContentComponent}
+            onTaskSelect={handleTaskSelect}
+            onDismissAll={handleDismissAll}
+            ManagerModalContent={ManagerModalContent}
+          />
+        </VStack>
+
+        {/* Individual Task Modal */}
+        {selectedTask && (
+          <ManagerTask
+            type="modalContent"
+            task={selectedTask}
+            isPending={!!selectedTask}
+            onClose={() => setSelectedTask(null)}
+            onPress={() => openTask(selectedTask)}
+            fontStyles={fontStyles}
+          />
+        )}
+      </Box>
+    );
+  }
+
+  return (
+    <>
+      {/* Main Tasks Modal */}
+      <BasicStyledModal
+        type="learn"
+        show={showMainModal}
+        onClose={() => setShowMainModal(false)}
+        title=""
+        body={
+          <VStack space={4}>
+            <ManagerDoNextTasks />
+            <TasksCardContent
+              mainTask={mainTask}
+              secondaryTasks={secondaryTasks}
+              dismissing={dismissing}
+              fontStyles={fontStyles}
+              ContentComponent={ContentComponent}
+              onTaskSelect={handleTaskSelect}
+              onDismissAll={handleDismissAll}
+              ManagerModalContent={ManagerModalContent}
+            />
+          </VStack>
+        }
+        withOverlay="dark"
+        withCloseButton={true}
+      />
+
+      {/* Individual Task Modal */}
+      {selectedTask && (
+        <ManagerTask
+          type="modalContent"
+          task={selectedTask}
+          isPending={!!selectedTask}
+          onClose={() => setSelectedTask(null)}
+          onPress={() => openTask(selectedTask)}
+          fontStyles={fontStyles}
+        />
+      )}
+    </>
   );
 };
 

@@ -1,5 +1,4 @@
 import { ClaimerTask } from "./managerTaskCard";
-
 export const SAMPLE_TASKS: ClaimerTask[] = [
   {
     id: "treasury-vote",
@@ -7,10 +6,11 @@ export const SAMPLE_TASKS: ClaimerTask[] = [
     description: "Your vote decides where 10 MG$ goes.",
     category: "engagement",
     priority: "main",
-    reward: { type: "tokens", amount: 10, description: "Cast My Vote" },
-    duration: { startDate: "2025-07-23", endDate: "2025-08-23" },
+    reward: {type: "tokens",amount: 10,description: "Cast My Vote"},
+    duration: {startDate: "2025-09-01",endDate: "2025-12-31"},
     actionUrl: "https://www.gooddollar.org/",
-    icon: "📦" // Blue box icon to match the design
+    icon: "📦",
+    type: "learn"
   },
   {
     id: "goodcollective-donate",
@@ -18,12 +18,13 @@ export const SAMPLE_TASKS: ClaimerTask[] = [
     description: "Support a verified cause",
     category: "donation",
     priority: "secondary",
-    reward: { type: "tokens", amount: -50, description: "Donate 50G$" },
-    duration: { startDate: "2025-07-23", endDate: "2025-08-30" },
+    reward: {type: "tokens",amount: -50,description: "Donate 50G$"},
+    duration: {startDate: "2025-09-01",endDate: "2025-12-31"},
     actionUrl: "https://www.gooddollar.org/",
     icon: "❤️",
     rewardAmount: "-50 G$",
-    rewardColor: "red.500"
+    rewardColor: "red.500",
+     type: "learn"
   },
   {
     id: "invite-friend",
@@ -31,11 +32,12 @@ export const SAMPLE_TASKS: ClaimerTask[] = [
     description: "You both get rewarded!",
     category: "referral",
     priority: "secondary",
-    reward: { type: "tokens", amount: 20, description: "Invite Friend" },
-    duration: { startDate: "2025-07-23", endDate: "2025-08-30" },
+    reward: {type: "tokens",amount: 20,description: "Invite Friend"},
+    duration: {startDate: "2025-09-01",endDate: "2025-12-31"},
     actionUrl: "https://www.gooddollar.org/",
     icon: "👥",
     rewardAmount: "+20 G$",
-    rewardColor: "green.500"
+    rewardColor: "green.500",
+    type: "learn"
   }
 ];
