@@ -5,6 +5,7 @@ import { ethers } from "ethers";
 
 import { Web3ActionButton } from "../../../advanced";
 import { MPBTransactionDetailsModal } from "./MPBTransactionDetailsModal";
+import { BridgeSuccessModal } from "./BridgeSuccessModal";
 import { ErrorModal } from "../../../core/web3/modals/ErrorModal";
 
 import type { MPBBridgeProps, BridgeProvider } from "./types";
@@ -88,6 +89,7 @@ export const MPBBridge = ({
   const [showSourceDropdown, setShowSourceDropdown] = useState(false);
   const [showTargetDropdown, setShowTargetDropdown] = useState(false);
   const [toggleState, setToggleState] = useState<boolean>(false);
+  const [successModalOpen, setSuccessModalOpen] = useState(false);
 
   const { realTransactionHistory, historyLoading } = useDebouncedTransactionHistory(2000);
 
@@ -226,8 +228,10 @@ export const MPBBridge = ({
 
     if (bridgeStatus?.status === "Success") {
       setBridgingStatus("Bridge completed successfully!");
+      setBridging(false);
+      setSuccessModalOpen(true);
+      
       setTimeout(() => {
-        setBridging(false);
         setBridgingStatus("");
       }, 3000);
       onBridgeSuccess?.();
@@ -286,12 +290,41 @@ export const MPBBridge = ({
   }, []);
   const onTxDetailsClose = useCallback(() => setTxDetailsOpen(false), []);
 
+  const [pendingTxData] = pendingTransaction;
+
+  const successModalData = useMemo(() => ({
+    bridgeProvider: pendingTxData?.bridgeProvider || bridgeProvider,
+    sourceChain,
+    targetChain,
+    amount: pendingTxData?.bridgeWeiAmount || "0",
+    protocolFeePercent,
+    networkFee: fees?.[sourceChain]?.nativeFee,
+    txHash: bridgeStatus?.transaction?.hash
+  }), [
+    pendingTxData,
+    bridgeProvider,
+    sourceChain,
+    targetChain,
+    protocolFeePercent,
+    fees,
+    bridgeStatus?.transaction?.hash
+  ]);
+
   return (
     <VStack space={8} alignSelf="center">
       {/* Transaction Details Modal */}
       {txDetailsOpen && txDetails ? (
         <MPBTransactionDetailsModal open={txDetailsOpen} onClose={onTxDetailsClose} transaction={txDetails} />
       ) : null}
+
+      <BridgeSuccessModal
+        open={successModalOpen}
+        onClose={() => setSuccessModalOpen(false)}
+        data={successModalData}
+        onTrackTransaction={() => {
+          setSuccessModalOpen(false);
+        }}
+      />
 
       {/* Error Modal */}
       <ErrorModal error={errorMessage} onClose={() => setErrorMessage("")} overlay="dark" />
