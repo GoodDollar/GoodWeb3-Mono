@@ -101,6 +101,7 @@ export const MPBBridge = ({
   const [, setPendingTransaction] = pendingTransaction;
   const [debouncedBridgeAmount, setDebouncedBridgeAmount] = useState(bridgeWeiAmount);
   const prevSourceChainRef = useRef(sourceChain);
+  const successHandled = useRef(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -210,6 +211,10 @@ export const MPBBridge = ({
     const isFailed = ["Fail", "Exception"].includes(status);
     const isBridgingActive = !isFailed && !isSuccess && ["Mining", "PendingSignature"].includes(status);
 
+    if (bridgeStatus?.status !== "Success") {
+      successHandled.current = false;
+    }
+
     if (bridgeStatus) {
       setBridging(isBridgingActive || status === "Mining" || status === "PendingSignature");
     }
@@ -224,9 +229,11 @@ export const MPBBridge = ({
 
     if (bridgeStatus?.status === "Mining") {
       setBridgingStatus("Transaction submitted. Waiting for confirmation...");
+      setSuccessModalOpen(true);
     }
 
-    if (bridgeStatus?.status === "Success") {
+    if (bridgeStatus?.status === "Success" && !successHandled.current) {
+      successHandled.current = true;
       setBridgingStatus("Bridge completed successfully!");
       setBridging(false);
       setSuccessModalOpen(true);
@@ -238,6 +245,7 @@ export const MPBBridge = ({
     }
 
     if (isFailed) {
+      setSuccessModalOpen(false);
       const errorMsg = bridgeStatus?.errorMessage || "Failed to bridge";
 
       const isUserRejection =
