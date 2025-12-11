@@ -80,20 +80,20 @@ const BridgeHistoryWithRelay = () => {
         justifyContent="center"
         mt="5"
       >
-        <Flex flex="1 1"></Flex>
-        <Flex flex="2 1">
+        <Flex flexGrow={1} flexShrink={1}></Flex>
+        <Flex flexGrow={2} flexShrink={1}>
           <Heading size="xs">Transaction Hash</Heading>
         </Flex>
-        <Flex flex="2 0">
+        <Flex flexGrow={2} flexShrink={0}>
           <Heading size="xs">From</Heading>
         </Flex>
-        <Flex flex="2 0">
+        <Flex flexGrow={2} flexShrink={0}>
           <Heading size="xs">To</Heading>
         </Flex>
-        <Flex flex="1 0">
+        <Flex flexGrow={1} flexShrink={0}>
           <Heading size="xs">Amount</Heading>
         </Flex>
-        <Flex flex="1 0">
+        <Flex flexGrow={1} flexShrink={0}>
           <Heading size="xs">Status</Heading>
         </Flex>
       </Stack>
@@ -111,10 +111,14 @@ const BridgeHistoryWithRelay = () => {
             padding={["2", "2", "0"]}
             borderRadius={["md", "md", "none"]}
           >
-            <HStack flex="1 1" alignItems="center">
-              <Text flex="1 0">{i.data.targetChainId.toNumber() === 122 ? "Celo" : "Fuse"}</Text>
-              <ArrowForwardIcon size="3" color="black" ml="1" mr="1" flex="auto 0" />
-              <Text flex="1 0">{i.data.targetChainId.toNumber() === 122 ? "Fuse" : "Celo"}</Text>
+            <HStack flexGrow={1} flexShrink={1} alignItems="center">
+              <Text flexGrow={1} flexShrink={0}>
+                {i.data.targetChainId.toNumber() === 122 ? "Celo" : "Fuse"}
+              </Text>
+              <ArrowForwardIcon size="3" color="black" ml="1" mr="1" flexShrink={0} />
+              <Text flexGrow={1} flexShrink={0}>
+                {i.data.targetChainId.toNumber() === 122 ? "Fuse" : "Celo"}
+              </Text>
             </HStack>
             <Flex flex={["1 1", "1 1", "2 0"]} maxWidth="100%">
               <ExplorerLink
@@ -170,11 +174,11 @@ const HistoryRowItem = ({ item, env }: { item: any; env: string }) => {
 
   return (
     <HStack space="3" marginTop="3">
-      <VStack flex="2 0 0%" textAlign="left">
+      <VStack flexGrow={2} flexShrink={0} flexBasis="0%" textAlign="left">
         <Text variant="xs-grey">{dateFormatted}</Text>
         <Text variant="xs-grey">{dateHours}</Text>
       </VStack>
-      <VStack flex="4 0 0%" alignItems="flex-start" textAlign="left">
+      <VStack flexGrow={4} flexShrink={0} flexBasis="0%" alignItems="flex-start" textAlign="left">
         <Text variant="xs-grey">G$ {amount}</Text>
         {feeFormatted ? (
           <HStack>
@@ -188,7 +192,7 @@ const HistoryRowItem = ({ item, env }: { item: any; env: string }) => {
           <Skeleton size="3" rounded="full" width="75%" />
         )}
       </VStack>
-      <VStack flex="7 0 0%" alignItems="flex-start">
+      <VStack flexGrow={7} flexShrink={0} flexBasis="0%" alignItems="flex-start">
         {relayEvent?.transactionHash && targetChain ? (
           <>
             <Text variant="xs-green">Completed</Text>
@@ -241,13 +245,34 @@ const BridgeHistory = ({ env }: { env: string }) => {
       </VStack>
       <VStack space="2" minWidth="360">
         <HStack borderBottomWidth={1} space={3} borderBottomColor="goodGrey.300:alpha.70" textAlign="left">
-          <Text fontFamily="subheading" flex="2 0 0%" variant="sm-grey-600" fontWeight="700">
+          <Text
+            fontFamily="subheading"
+            flexGrow={2}
+            flexShrink={0}
+            flexBasis="0%"
+            variant="sm-grey-600"
+            fontWeight="700"
+          >
             Date
           </Text>
-          <Text fontFamily="subheading" flex="4 0 0%" variant="sm-grey-600" fontWeight="700">
+          <Text
+            fontFamily="subheading"
+            flexGrow={4}
+            flexShrink={0}
+            flexBasis="0%"
+            variant="sm-grey-600"
+            fontWeight="700"
+          >
             Amount
           </Text>
-          <Text fontFamily="subheading" flex="7 0 0%" variant="sm-grey-600" fontWeight="700">
+          <Text
+            fontFamily="subheading"
+            flexGrow={7}
+            flexShrink={0}
+            flexBasis="0%"
+            variant="sm-grey-600"
+            fontWeight="700"
+          >
             Status
           </Text>
         </HStack>

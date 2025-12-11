@@ -237,7 +237,7 @@ export const MPBBridge = ({
       setBridgingStatus("Bridge completed successfully!");
       setBridging(false);
       setSuccessModalOpen(true);
-      
+
       setTimeout(() => {
         setBridgingStatus("");
       }, 3000);
@@ -300,23 +300,18 @@ export const MPBBridge = ({
 
   const [pendingTxData] = pendingTransaction;
 
-  const successModalData = useMemo(() => ({
-    bridgeProvider: pendingTxData?.bridgeProvider || bridgeProvider,
-    sourceChain,
-    targetChain,
-    amount: pendingTxData?.bridgeWeiAmount || "0",
-    protocolFeePercent,
-    networkFee: fees?.[sourceChain]?.nativeFee,
-    txHash: bridgeStatus?.transaction?.hash
-  }), [
-    pendingTxData,
-    bridgeProvider,
-    sourceChain,
-    targetChain,
-    protocolFeePercent,
-    fees,
-    bridgeStatus?.transaction?.hash
-  ]);
+  const successModalData = useMemo(
+    () => ({
+      bridgeProvider: pendingTxData?.bridgeProvider || bridgeProvider,
+      sourceChain,
+      targetChain,
+      amount: pendingTxData?.bridgeWeiAmount || "0",
+      protocolFeePercent,
+      networkFee: fees?.[sourceChain]?.nativeFee,
+      txHash: bridgeStatus?.transaction?.hash
+    }),
+    [pendingTxData, bridgeProvider, sourceChain, targetChain, protocolFeePercent, fees, bridgeStatus?.transaction?.hash]
+  );
 
   return (
     <VStack space={8} alignSelf="center">
