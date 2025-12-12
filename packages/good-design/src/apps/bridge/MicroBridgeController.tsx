@@ -178,9 +178,7 @@ const HistoryRowItem = ({ item, env }: { item: any; env: string }) => {
         <Text variant="xs-grey">G$ {amount}</Text>
         {feeFormatted ? (
           <HStack>
-            <Text variant="xs-grey" fontWeight="700">
-              Fees:{" "}
-            </Text>
+            <Text variant="xs-grey">Fees: </Text>
             <Text variant="xs-grey">{`G$ `}</Text>
             <GdAmount variant="xs-grey" fontFamily="subheading" withDefaultSuffix={false} amount={feeFormatted} />
           </HStack>
