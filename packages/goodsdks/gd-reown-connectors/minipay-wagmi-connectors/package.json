@@ -1,0 +1,28 @@
+{
+  "name": "@gooddollar/minipay-wagmi-connector",
+  "version": "0.1.0",
+  "description": "Wagmi connector for MiniPay wallet",
+  "license": "MIT",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "clean": "rm -rf dist",
+    "prebuild": "npm run clean",
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "@wagmi/core": "^2.14.1",
+    "viem": "^2.21.55"
+  },
+  "devDependencies": {
+    "@wagmi/core": "^2.16.3",
+    "typescript": "^5.8.3",
+    "viem": "^2.21.57"
+  }
+}

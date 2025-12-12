@@ -18,3 +18,4 @@ yalc.lock
 .vercel
 .continueignore
 e2e.log
+/test-minipay-app

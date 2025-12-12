@@ -2,7 +2,9 @@
   "name": "gooddollar",
   "workspaces": {
     "packages": [
-      "packages/*"
+      "packages/*",
+      "packages/goodsdks/gd-reown-connectors/*",
+      "test-minipay-app"
     ]
   },
   "private": true,
