@@ -128,7 +128,7 @@ export const MicroBridge = ({
     }
     if (isSuccess) {
       setBridging(false);
-      setBridgeAmount("0");
+      setBridgeAmount("");
       onBridgeSuccess?.();
     }
 
@@ -142,7 +142,7 @@ export const MicroBridge = ({
 
       onBridgeFailed?.(exception);
     }
-  }, [relayStatus, bridgeStatus, selfRelayStatus, onBridgeSuccess, onBridgeFailed, setBridgeAmount]);
+  }, [relayStatus, bridgeStatus, selfRelayStatus, onBridgeSuccess, onBridgeFailed, setBridgeAmount, setBridging]);
 
   const reasonMinAmount =
     reason === "minAmount"
