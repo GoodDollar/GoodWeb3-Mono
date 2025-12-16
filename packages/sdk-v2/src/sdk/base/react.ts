@@ -50,6 +50,8 @@ export const useGetEnvChainId = (requiredChainId?: number) => {
     case 50:
       connectedEnv = connectedEnv === "fuse" ? "development-xdc" : connectedEnv + "-xdc";
       break;
+    case 122:
+      break;
     default:
     case 42220:
       connectedEnv = connectedEnv === "fuse" ? "development-celo" : connectedEnv + "-celo";
