@@ -357,6 +357,13 @@ export const useBridgeHistory = () => {
     extended.relayEvent = first(celoExecuted[e.data.id]);
 
     extended.amount = formatAmount(e.data.amount, 18); //amount is normalized to 18 decimals in the bridge
+    // Add source and target chain IDs for Fuse -> Celo bridge transactions
+    if (!extended.data.sourceChainId) {
+      extended.data.sourceChainId = { toNumber: () => 122 } as any;
+    }
+    if (!extended.data.targetChainId) {
+      extended.data.targetChainId = { toNumber: () => 42220 } as any;
+    }
     return extended;
   });
 
@@ -365,6 +372,13 @@ export const useBridgeHistory = () => {
     const extended = e as BridgeEvent;
     extended.relayEvent = first(fuseExecuted[e.data.id]);
     extended.amount = formatAmount(e.data.amount, 18); //amount is normalized to 18 decimals in the bridge
+    // Add source and target chain IDs for Celo -> Fuse bridge transactions
+    if (!extended.data.sourceChainId) {
+      extended.data.sourceChainId = { toNumber: () => 42220 } as any;
+    }
+    if (!extended.data.targetChainId) {
+      extended.data.targetChainId = { toNumber: () => 122 } as any;
+    }
     return extended;
   });
 

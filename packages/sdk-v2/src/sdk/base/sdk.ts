@@ -13,6 +13,7 @@ import GoodDollarABI from "@gooddollar/goodprotocol/artifacts/abis/IGoodDollar.m
 import FaucetABI from "@gooddollar/goodprotocol/artifacts/abis/Faucet.min.json";
 import GReputationABI from "@gooddollar/goodprotocol/artifacts/abis/GReputation.min.json";
 import GoodReserveCDaiABI from "@gooddollar/goodprotocol/artifacts/abis/GoodReserveCDai.min.json";
+import MPBBridgeABI from "@gooddollar/bridge-contracts/artifacts/contracts/messagePassingBridge/MessagePassingBridge.sol/MessagePassingBridge.json";
 
 import {
   IdentityV2,
@@ -28,20 +29,46 @@ import Contracts from "@gooddollar/goodprotocol/releases/deployment.json";
 
 import { Envs } from "../constants";
 
+const sanitizeEvents = <T extends { abi?: any[] }>(artifact: T): T => {
+  if (!artifact?.abi) {
+    return artifact;
+  }
+
+  const seen = new Set<string>();
+
+  const sanitizedAbi = artifact.abi.filter(fragment => {
+    if (!fragment || fragment.type !== "event" || !fragment.name) {
+      return true;
+    }
+
+    if (seen.has(fragment.name)) {
+      return false;
+    }
+
+    seen.add(fragment.name);
+    return true;
+  });
+
+  artifact.abi = sanitizedAbi;
+
+  return artifact;
+};
+
+const SanitizedGoodDollarABI = sanitizeEvents(GoodDollarABI);
+const SanitizedMPBBridgeABI = sanitizeEvents(MPBBridgeABI);
+
 export const CONTRACT_TO_ABI: { [key: string]: any } = {
   Identity: IdentityV2ABI,
   UBIScheme: UBISchemeABI,
   GoodDollarStaking: GoodDollarStakingABI,
-  GoodDollar: GoodDollarABI,
+  GoodDollar: SanitizedGoodDollarABI,
   Faucet: FaucetABI,
   FuseFaucet: FaucetABI,
   GReputation: GReputationABI,
-  GoodReserveCDai: GoodReserveCDaiABI
+  GoodReserveCDai: GoodReserveCDaiABI,
+  MPBBridge: SanitizedMPBBridgeABI
 };
 
-// export type EnvKey = keyof typeof Contracts;
-// export type EnvValue = typeof Contracts[EnvKey] & { networkId: number };
-// export type ContractKey = keyof EnvValue;
 export type EnvKey = string;
 export type EnvValue = any;
 
@@ -89,6 +116,7 @@ export class BaseSDK {
   getContract(contractName: "Faucet"): Faucet;
   getContract(contractName: "GReputation"): GReputation;
   getContract(contractName: "GoodReserveCDai"): GoodReserveCDai;
+  getContract(contractName: "MPBBridge"): Contract;
   getContract(contractName: string): Contract;
   getContract(contractName: string) {
     if (!this.contracts?.[contractName]) return;
@@ -154,6 +182,12 @@ export class BaseSDK {
           CONTRACT_TO_ABI["GoodReserveCDai"].abi,
           this.signer || this.provider
         ) as any;
+      case "MPBBridge":
+        return new Contract(
+          this.contracts["MPBBridge"],
+          CONTRACT_TO_ABI["MPBBridge"].abi,
+          this.signer || this.provider
+        );
       default:
         return new Contract(
           this.contracts[contractName],
