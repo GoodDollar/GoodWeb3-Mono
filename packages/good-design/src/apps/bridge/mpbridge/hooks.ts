@@ -147,24 +147,26 @@ export const useMPBBridgeEstimate = ({
   );
 };
 
-// Hook to get balances for all chains
 export const useChainBalances = () => {
   const { G$: fuseBalance } = useProductionG$Balance(5, 122);
   const { G$: celoBalance } = useProductionG$Balance(5, 42220);
   const { G$: mainnetBalance } = useProductionG$Balance(5, 1);
 
-  const getBalanceForChain = (chain: string) => {
-    switch (chain) {
-      case "fuse":
-        return fuseBalance;
-      case "celo":
-        return celoBalance;
-      case "mainnet":
-        return mainnetBalance;
-      default:
-        return fuseBalance;
-    }
-  };
+  const getBalanceForChain = useMemo(
+    () => (chain: string) => {
+      switch (chain) {
+        case "fuse":
+          return fuseBalance;
+        case "celo":
+          return celoBalance;
+        case "mainnet":
+          return mainnetBalance;
+        default:
+          return fuseBalance;
+      }
+    },
+    [fuseBalance, celoBalance, mainnetBalance]
+  );
 
   return { getBalanceForChain };
 };

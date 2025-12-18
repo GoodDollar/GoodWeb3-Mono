@@ -37,30 +37,44 @@ export const useReadOnlySDK = (type: SdkTypes, requiredChainId?: number): Reques
   return useSDK(true, type, requiredChainId);
 };
 
+const getEnvForChainId = (chainId: number, baseEnv: string): string => {
+  switch (chainId) {
+    case 1:
+      return "production-mainnet";
+    case 50:
+      return baseEnv === "fuse" ? "development-xdc" : baseEnv + "-xdc";
+    case 42220:
+      return baseEnv === "fuse" ? "development-celo" : baseEnv + "-celo";
+    case 122:
+    default:
+      return baseEnv;
+  }
+};
+
 export const useGetEnvChainId = (requiredChainId?: number) => {
   const { chainId } = useEthers();
   const web3Context = useContext(Web3Context);
   const baseEnv = web3Context.env || "";
-  let connectedEnv = baseEnv.split("-")[0]; // remove -celo/-xdc suffix if exists
+  const baseEnvName = baseEnv.split("-")[0];
 
-  switch (requiredChainId ?? chainId) {
-    case 1:
-      connectedEnv = "production-mainnet"; // temp untill dev contracts are released to sepolia
-      break;
-    case 50:
-      connectedEnv = connectedEnv === "fuse" ? "development-xdc" : connectedEnv + "-xdc";
-      break;
-    default:
-    case 42220:
-      connectedEnv = connectedEnv === "fuse" ? "development-celo" : connectedEnv + "-celo";
-      break;
+  if (requiredChainId !== undefined) {
+    const connectedEnv = getEnvForChainId(requiredChainId, baseEnvName);
+    return {
+      chainId: requiredChainId,
+      defaultEnv: connectedEnv,
+      baseEnv,
+      connectedEnv,
+      switchNetworkRequest: web3Context.switchNetwork
+    };
   }
 
-  const defaultEnv = connectedEnv;
+  const targetChainId = chainId ?? 42220;
+  const connectedEnv = getEnvForChainId(targetChainId, baseEnvName);
+  const resolvedChainId = Number((Contracts[connectedEnv as keyof typeof Contracts] as EnvValue)?.networkId);
 
   return {
-    chainId: Number((Contracts[defaultEnv as keyof typeof Contracts] as EnvValue)?.networkId),
-    defaultEnv,
+    chainId: resolvedChainId,
+    defaultEnv: connectedEnv,
     baseEnv,
     connectedEnv,
     switchNetworkRequest: web3Context.switchNetwork
