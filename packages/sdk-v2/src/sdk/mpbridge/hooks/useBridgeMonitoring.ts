@@ -5,7 +5,6 @@ import { useRefreshOrNever } from "../../../hooks";
 import { BridgeRequest } from "../types";
 import { useGetMPBContract } from "./useGetMPBContract";
 
-// Helper function to extract bridge request ID from logs
 export const extractBridgeRequestId = (logs: any[], bridgeContract: any): string | undefined => {
   const bridgeTopic = ethers.utils.id("BridgeRequest(address,address,uint256,uint256,uint256,uint8,uint256)");
 
@@ -32,25 +31,18 @@ export const useBridgeMonitoring = (
   isSwitchingChain: boolean,
   switchChainError: string | undefined
 ) => {
-  // Extract bridge request ID from bridgeTo logs
   const bridgeRequestId = useMemo(() => {
     if (bridgeToState.status !== "Success" || !bridgeToState.receipt?.logs) {
       return undefined;
     }
 
     const id = extractBridgeRequestId(bridgeToState.receipt.logs, bridgeContract);
-    console.log("[useBridgeMonitoring] bridgeTo succeeded on source chain, extracted bridgeRequestId", {
-      bridgeRequestId: id,
-      transactionHash: bridgeToState.receipt.transactionHash,
-      chainId: bridgeRequest?.sourceChainId
-    });
+
     return id;
   }, [bridgeToState.status, bridgeToState.receipt?.logs, bridgeContract, bridgeRequest]);
 
-  // Get target chain bridge contract for polling completion
   const targetBridgeContract = useGetMPBContract(bridgeRequest?.targetChainId);
 
-  // Poll target chain for bridge completion
   const bridgeCompletedLogs = useLogs(
     bridgeRequest &&
       bridgeRequestId &&
@@ -62,7 +54,7 @@ export const useBridgeMonitoring = (
     {
       refresh: useRefreshOrNever(bridgeRequestId ? 5 : "never"),
       chainId: bridgeRequest?.targetChainId,
-      fromBlock: -5000
+      fromBlock: -3000
     }
   );
 
@@ -111,18 +103,7 @@ export const useBridgeMonitoring = (
       } as TransactionStatus;
     }
 
-    // Show success when bridgeTo succeeds on source chain (don't wait for target chain completion)
     if (bridgeToState.status === "Success") {
-      console.log("[useBridgeMonitoring] bridgeTo succeeded on source chain - returning Success status", {
-        transactionHash: bridgeToState.transaction?.hash,
-        receiptHash: bridgeToState.receipt?.transactionHash,
-        sourceChainId: bridgeRequest?.sourceChainId,
-        targetChainId: bridgeRequest?.targetChainId,
-        hasBridgeCompletedEvent: !!bridgeCompletedEvent
-      });
-
-      // If we have the completed event on target chain, use that transaction hash
-      // Otherwise, use the source chain bridgeTo transaction hash
       const transactionHash =
         bridgeCompletedEvent?.transactionHash ||
         bridgeToState.receipt?.transactionHash ||

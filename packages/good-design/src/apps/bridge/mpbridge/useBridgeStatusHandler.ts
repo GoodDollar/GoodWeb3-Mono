@@ -40,19 +40,8 @@ export const useBridgeStatusHandler = (params: UseBridgeStatusHandlerParams, ref
     const isBridgingActive = !isFailed && !isSuccess && ["Mining", "PendingSignature"].includes(status);
     const currentTxHash = bridgeStatus?.transaction?.hash;
 
-    console.log("[MPBBridge] Bridge status changed:", {
-      status,
-      chainId: (bridgeStatus as any)?.chainId,
-      transactionHash: currentTxHash,
-      errorMessage: bridgeStatus?.errorMessage,
-      approveTxHash: approveTxHash.current,
-      bridgeToTxHash: bridgeToTxHash.current,
-      fullStatus: bridgeStatus
-    });
-
     if ((status === "Mining" || status === "PendingSignature") && currentTxHash && !approveTxHash.current) {
       approveTxHash.current = currentTxHash;
-      console.log("[MPBBridge] Approve transaction detected", { txHash: currentTxHash });
     }
 
     const isBridgeToExecuted =
@@ -63,10 +52,7 @@ export const useBridgeStatusHandler = (params: UseBridgeStatusHandlerParams, ref
 
     if (isBridgeToExecuted && !successModalDismissed.current) {
       bridgeToTxHash.current = currentTxHash;
-      console.log("[MPBBridge] bridgeTo executed - opening modal to track transaction stages", {
-        txHash: currentTxHash,
-        approveWasSkipped: !approveTxHash.current
-      });
+
       setSuccessModalOpen(true);
     }
 
@@ -79,7 +65,6 @@ export const useBridgeStatusHandler = (params: UseBridgeStatusHandlerParams, ref
     }
 
     if (bridgeStatus?.status === "PendingSignature") {
-      console.log("[MPBBridge] PendingSignature - waiting for user signature");
       if (bridgeStatus?.errorMessage) {
         setBridgingStatus("Switching network. Please approve in your wallet...");
       } else if (isBridgeToExecuted) {
@@ -90,7 +75,6 @@ export const useBridgeStatusHandler = (params: UseBridgeStatusHandlerParams, ref
     }
 
     if (bridgeStatus?.status === "Mining") {
-      console.log("[MPBBridge] Mining - transaction submitted, waiting for confirmation");
       if (isBridgeToExecuted) {
         setBridgingStatus("Bridge transaction submitted. Waiting for confirmation...");
       } else {
@@ -99,10 +83,6 @@ export const useBridgeStatusHandler = (params: UseBridgeStatusHandlerParams, ref
     }
 
     if (bridgeStatus?.status === "Success" && !successHandled.current) {
-      console.log("[MPBBridge] Success - bridgeTo transaction completed", {
-        transactionHash: bridgeStatus?.transaction?.hash,
-        chainId: (bridgeStatus as any)?.chainId
-      });
       successHandled.current = true;
       setBridgingStatus("Bridge completed successfully!");
       setBridging(false);
@@ -117,10 +97,6 @@ export const useBridgeStatusHandler = (params: UseBridgeStatusHandlerParams, ref
     }
 
     if (isFailed) {
-      console.log("[MPBBridge] Failed - bridge transaction failed", {
-        errorMessage: bridgeStatus?.errorMessage,
-        status
-      });
       setSuccessModalOpen(false);
       const errorMsg = bridgeStatus?.errorMessage || "Failed to bridge";
 

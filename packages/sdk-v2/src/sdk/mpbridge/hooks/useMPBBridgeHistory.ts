@@ -10,12 +10,10 @@ export const useMPBBridgeHistory = () => {
   const { account } = useEthers();
   const refresh = useRefreshOrNever(5);
 
-  // Get bridge contracts for all supported chains (read-only)
   const fuseBridgeContract = useGetMPBContract(SupportedChains.FUSE, true);
   const celoBridgeContract = useGetMPBContract(SupportedChains.CELO, true);
   const mainnetBridgeContract = useGetMPBContract(SupportedChains.MAINNET, true);
 
-  // Query BridgeRequest events from all chains
   const fuseBridgeRequests = useLogs(
     fuseBridgeContract
       ? {
@@ -26,7 +24,7 @@ export const useMPBBridgeHistory = () => {
       : undefined,
     {
       chainId: SupportedChains.FUSE as unknown as ChainId,
-      fromBlock: -20000,
+      fromBlock: -5000,
       refresh
     }
   );
@@ -41,7 +39,7 @@ export const useMPBBridgeHistory = () => {
       : undefined,
     {
       chainId: SupportedChains.CELO as unknown as ChainId,
-      fromBlock: -20000,
+      fromBlock: -5000,
       refresh
     }
   );
@@ -61,8 +59,6 @@ export const useMPBBridgeHistory = () => {
     }
   );
 
-  // Query BridgeCompleted events from all chains
-  // Use more frequent polling (every 2 seconds) and look back further to catch events faster
   const refreshFaster = useRefreshOrNever(2);
 
   const fuseBridgeCompleted = useLogs(
@@ -75,7 +71,7 @@ export const useMPBBridgeHistory = () => {
       : undefined,
     {
       chainId: SupportedChains.FUSE as unknown as ChainId,
-      fromBlock: -50000, // Increased from -20000 to catch events that might be further back
+      fromBlock: -5000,
       refresh: refreshFaster
     }
   );
@@ -90,7 +86,7 @@ export const useMPBBridgeHistory = () => {
       : undefined,
     {
       chainId: SupportedChains.CELO as unknown as ChainId,
-      fromBlock: -50000, // Increased from -20000 to catch events that might be further back
+      fromBlock: -5000,
       refresh: refreshFaster
     }
   );
@@ -105,7 +101,7 @@ export const useMPBBridgeHistory = () => {
       : undefined,
     {
       chainId: SupportedChains.MAINNET as unknown as ChainId,
-      fromBlock: -20000, // Increased from -5000 to catch events that might be further back
+      fromBlock: -5000,
       refresh: refreshFaster
     }
   );
@@ -158,28 +154,23 @@ export const useMPBBridgeHistory = () => {
       return extended;
     };
 
-    // Process Fuse bridge requests - check Celo and Mainnet for completions
     const fuseCompletedMap = { ...celoCompleted, ...mainnetCompleted };
     const fuseHistory = (fuseBridgeRequests.value || []).map((e: any) =>
       processBridgeRequestEvent(e, SupportedChains.FUSE, fuseCompletedMap)
     );
 
-    // Process Celo bridge requests - check Fuse and Mainnet for completions
     const celoCompletedMap = { ...fuseCompleted, ...mainnetCompleted };
     const celoHistory = (celoBridgeRequests.value || []).map((e: any) =>
       processBridgeRequestEvent(e, SupportedChains.CELO, celoCompletedMap)
     );
 
-    // Process Mainnet bridge requests - check Fuse and Celo for completions
     const mainnetCompletedMap = { ...fuseCompleted, ...celoCompleted };
     const mainnetHistory = (mainnetBridgeRequests.value || []).map((e: any) =>
       processBridgeRequestEvent(e, SupportedChains.MAINNET, mainnetCompletedMap)
     );
 
-    // Combine all histories
     const historyCombined = [...fuseHistory, ...celoHistory, ...mainnetHistory];
 
-    // Filter by account (from or to)
     const historyFiltered = account
       ? historyCombined.filter(
           (tx: any) =>
@@ -188,7 +179,6 @@ export const useMPBBridgeHistory = () => {
         )
       : historyCombined;
 
-    // Sort by timestamp (most recent first)
     const historySorted = sortBy(historyFiltered, (tx: any) => tx.data?.timestamp || 0).reverse();
 
     return { historySorted };

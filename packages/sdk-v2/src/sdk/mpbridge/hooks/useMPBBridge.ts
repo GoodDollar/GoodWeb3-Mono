@@ -332,16 +332,6 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
     const isApproveSuccess = approve.state.status === "Success";
     const isBridgeIdle = bridgeTo.state.status === "None";
 
-    console.log("[useMPBBridge] Checking if bridgeTo should be triggered", {
-      isApproveSuccess,
-      isBridgeIdle,
-      hasBridgeRequest: !!bridgeRequest,
-      hasBridgeContract: !!bridgeContract,
-      bridgeToTriggered: bridgeToTriggered.current,
-      approveStatus: approve.state.status,
-      bridgeToStatus: bridgeTo.state.status
-    });
-
     if (!isApproveSuccess || !isBridgeIdle || !bridgeRequest || !bridgeContract) {
       return;
     }
