@@ -1,5 +1,6 @@
 import React, { useEffect, useCallback, useState, useMemo, useRef } from "react";
 import { Box, Text, VStack } from "native-base";
+import { Platform } from "react-native";
 import { SupportedChains } from "@gooddollar/web3sdk-v2";
 import { ethers } from "ethers";
 
@@ -289,12 +290,12 @@ export const MPBBridge = ({
 
       {/* Header */}
       <VStack space={3} alignItems="center">
-        <Text fontFamily="heading" fontSize="4xl" fontWeight="700" color="goodBlue.600">
+        <Text fontFamily="heading" fontSize="2xl" fontWeight="700" color="goodBlue.600">
           Main Bridge
         </Text>
         <Text
           fontFamily="subheading"
-          fontSize="md"
+          fontSize="xs"
           color="goodGrey.100"
           textAlign="center"
           maxWidth="600"
@@ -306,7 +307,7 @@ export const MPBBridge = ({
       </VStack>
 
       {/* Bridging Status Banner */}
-      <BridgingStatusBanner isBridging={isBridging} bridgingStatus={bridgingStatus} />
+      {isBridging && <BridgingStatusBanner isBridging={isBridging} bridgingStatus={bridgingStatus} />}
 
       {/* Fee Error Banner */}
       {feesError && (
@@ -318,7 +319,23 @@ export const MPBBridge = ({
       )}
 
       {/* Bridge Functionality Card */}
-      <Box borderRadius="xl" borderWidth="1" padding="8" backgroundColor="white" shadow="lg" borderColor="goodGrey.200">
+      <Box
+        borderRadius="xl"
+        padding="8"
+        backgroundColor="white"
+        style={Platform.select({
+          web: {
+            boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.08)"
+          },
+          default: {
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.08,
+            shadowRadius: 12,
+            elevation: 8
+          }
+        })}
+      >
         <VStack space={8}>
           <BridgeProviderSelector
             bridgeProvider={bridgeProvider}
@@ -383,15 +400,33 @@ export const MPBBridge = ({
               bridgeProvider={bridgeProvider}
               protocolFeePercent={protocolFeePercent}
             />
-
-            {/* Recent Transactions */}
-            <TransactionHistory
-              realTransactionHistory={recentTransactions}
-              historyLoading={historyLoading}
-              onTxDetailsPress={onTxDetailsPress}
-            />
           </VStack>
         </VStack>
+      </Box>
+
+      {/* Transaction History Card */}
+      <Box
+        borderRadius="xl"
+        padding="8"
+        backgroundColor="white"
+        style={Platform.select({
+          web: {
+            boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.08)"
+          },
+          default: {
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.08,
+            shadowRadius: 12,
+            elevation: 8
+          }
+        })}
+      >
+        <TransactionHistory
+          realTransactionHistory={recentTransactions}
+          historyLoading={historyLoading}
+          onTxDetailsPress={onTxDetailsPress}
+        />
       </Box>
     </VStack>
   );

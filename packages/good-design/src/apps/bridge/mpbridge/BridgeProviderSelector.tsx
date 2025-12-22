@@ -10,7 +10,7 @@ interface BridgeProviderSelectorProps {
 export const BridgeProviderSelector: React.FC<BridgeProviderSelectorProps> = ({ bridgeProvider, onProviderChange }) => {
   return (
     <VStack space={4}>
-      <Text fontFamily="heading" fontSize="xl" fontWeight="700" color="goodGrey.800">
+      <Text fontFamily="heading" fontSize="lg" fontWeight="700" textAlign="center" color="goodGrey.500">
         Select Bridge Provider
       </Text>
       <HStack space={4}>
@@ -19,7 +19,7 @@ export const BridgeProviderSelector: React.FC<BridgeProviderSelectorProps> = ({ 
           onPress={() => onProviderChange("axelar")}
           bg={bridgeProvider === "axelar" ? "rgb(59, 130, 246)" : "goodGrey.100"}
           borderRadius="lg"
-          padding={5}
+          padding={3}
           alignItems="center"
           borderWidth={bridgeProvider === "axelar" ? 2 : 1}
           borderColor={bridgeProvider === "axelar" ? "rgb(59, 130, 246)" : "goodGrey.300"}
@@ -33,7 +33,7 @@ export const BridgeProviderSelector: React.FC<BridgeProviderSelectorProps> = ({ 
           onPress={() => onProviderChange("layerzero")}
           bg={bridgeProvider === "layerzero" ? "rgb(59, 130, 246)" : "goodGrey.100"}
           borderRadius="lg"
-          padding={5}
+          padding={3}
           alignItems="center"
           borderWidth={bridgeProvider === "layerzero" ? 2 : 1}
           borderColor={bridgeProvider === "layerzero" ? "rgb(59, 130, 246)" : "goodGrey.300"}
