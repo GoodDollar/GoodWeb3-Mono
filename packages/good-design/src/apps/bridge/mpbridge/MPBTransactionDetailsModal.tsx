@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Box, HStack, Text, VStack, Spinner } from "native-base";
 
 import BasicStyledModal from "../../../core/web3/modals/BasicStyledModal";
@@ -10,6 +10,7 @@ interface MPBTransactionDetailsModalProps {
   open: boolean;
   onClose: () => void;
   transaction: BridgeTransaction;
+  transactionHistory?: BridgeTransaction[];
 }
 
 const iconBoxStyles = {
@@ -83,8 +84,20 @@ const StepIndicator = ({
   );
 };
 
-const MPBTransactionDetailsContent = ({ transaction }: { transaction: BridgeTransaction }) => {
-  const { amount, bridgeProvider, status, date, transactionHash } = transaction;
+const MPBTransactionDetailsContent = ({
+  transaction,
+  transactionHistory
+}: {
+  transaction: BridgeTransaction;
+  transactionHistory?: BridgeTransaction[];
+}) => {
+  const { amount, bridgeProvider, date, transactionHash } = transaction;
+
+  const historyTx = useMemo(() => {
+    return transactionHistory?.find(tx => tx.transactionHash === transactionHash || tx.id === transactionHash);
+  }, [transactionHistory, transactionHash]);
+
+  const status = historyTx?.status || transaction.status;
 
   const txDate = date ? new Date(date).toLocaleDateString() + " " + new Date(date).toLocaleTimeString() : "";
 
@@ -96,7 +109,7 @@ const MPBTransactionDetailsContent = ({ transaction }: { transaction: BridgeTran
         destGateway: "completed" as const,
         executed: "completed" as const
       },
-      pending: { sourceGateway: "completed" as const, destGateway: "pending" as const, executed: "pending" as const },
+      pending: { sourceGateway: "completed" as const, destGateway: "bridging" as const, executed: "pending" as const },
       bridging: { sourceGateway: "completed" as const, destGateway: "bridging" as const, executed: "pending" as const },
       failed: { sourceGateway: "completed" as const, destGateway: "failed" as const, executed: "failed" as const },
       default: { sourceGateway: "pending" as const, destGateway: "pending" as const, executed: "pending" as const }
@@ -153,7 +166,12 @@ const MPBTransactionDetailsContent = ({ transaction }: { transaction: BridgeTran
   );
 };
 
-export const MPBTransactionDetailsModal = ({ open, onClose, transaction }: MPBTransactionDetailsModalProps) => {
+export const MPBTransactionDetailsModal = ({
+  open,
+  onClose,
+  transaction,
+  transactionHistory
+}: MPBTransactionDetailsModalProps) => {
   return (
     <BasicStyledModal
       type="ctaX"
@@ -169,7 +187,7 @@ export const MPBTransactionDetailsModal = ({ open, onClose, transaction }: MPBTr
       show={open}
       onClose={onClose}
       title="Transaction Details"
-      body={<MPBTransactionDetailsContent transaction={transaction} />}
+      body={<MPBTransactionDetailsContent transaction={transaction} transactionHistory={transactionHistory} />}
       withOverlay="dark"
       withCloseButton
     />

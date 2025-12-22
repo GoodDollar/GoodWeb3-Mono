@@ -19,9 +19,7 @@ export const createTransactionDetails = (params: CreateTransactionDetailsParams)
   const amountFormatted = utils.formatEther(amountBN);
 
   let status: "completed" | "pending" | "failed" | "bridging" = "pending";
-  if (bridgeStatus?.status === "Success") {
-    status = "completed";
-  } else if (bridgeStatus?.status === "Fail" || bridgeStatus?.status === "Exception") {
+  if (bridgeStatus?.status === "Fail" || bridgeStatus?.status === "Exception") {
     status = "failed";
   } else if (bridgeStatus?.status === "Mining") {
     status = "bridging";

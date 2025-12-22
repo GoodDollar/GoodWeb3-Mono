@@ -252,7 +252,12 @@ export const MPBBridge = ({
     <VStack space={8} alignSelf="center">
       {/* Transaction Details Modal */}
       {txDetailsOpen && txDetails ? (
-        <MPBTransactionDetailsModal open={txDetailsOpen} onClose={onTxDetailsClose} transaction={txDetails} />
+        <MPBTransactionDetailsModal
+          open={txDetailsOpen}
+          onClose={onTxDetailsClose}
+          transaction={txDetails}
+          transactionHistory={recentTransactions as any}
+        />
       ) : null}
 
       <BridgeSuccessModal

@@ -62,6 +62,9 @@ export const useMPBBridgeHistory = () => {
   );
 
   // Query BridgeCompleted events from all chains
+  // Use more frequent polling (every 2 seconds) and look back further to catch events faster
+  const refreshFaster = useRefreshOrNever(2);
+
   const fuseBridgeCompleted = useLogs(
     fuseBridgeContract
       ? {
@@ -72,8 +75,8 @@ export const useMPBBridgeHistory = () => {
       : undefined,
     {
       chainId: SupportedChains.FUSE as unknown as ChainId,
-      fromBlock: -20000,
-      refresh
+      fromBlock: -50000, // Increased from -20000 to catch events that might be further back
+      refresh: refreshFaster
     }
   );
 
@@ -87,8 +90,8 @@ export const useMPBBridgeHistory = () => {
       : undefined,
     {
       chainId: SupportedChains.CELO as unknown as ChainId,
-      fromBlock: -20000,
-      refresh
+      fromBlock: -50000, // Increased from -20000 to catch events that might be further back
+      refresh: refreshFaster
     }
   );
 
@@ -102,8 +105,8 @@ export const useMPBBridgeHistory = () => {
       : undefined,
     {
       chainId: SupportedChains.MAINNET as unknown as ChainId,
-      fromBlock: -5000,
-      refresh
+      fromBlock: -20000, // Increased from -5000 to catch events that might be further back
+      refresh: refreshFaster
     }
   );
 

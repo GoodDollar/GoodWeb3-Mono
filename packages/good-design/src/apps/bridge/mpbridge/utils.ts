@@ -181,7 +181,19 @@ export const convertTransaction = (tx: any, currentChainId: number) => {
   }
 
   // Determine status based on completedEvent (MPB bridge pattern)
-  const status = tx.completedEvent ? "completed" : "pending";
+  // If transaction is older than 10 minutes and we don't have completedEvent yet,
+  // check if we can infer completion from source chain confirmation
+  const txTimestamp = tx.data?.timestamp || tx.timestamp || 0;
+  const now = Math.floor(Date.now() / 1000);
+  const txAgeMinutes = (now - txTimestamp) / 60;
+
+  // If transaction is more than 10 minutes old and we haven't detected ExecutedTransfer,
+  // it's likely completed but the event detection is delayed. Mark as completed optimistically.
+  // This handles cases where the transaction is confirmed on source chain (visible on explorer)
+  // but the ExecutedTransfer event hasn't been indexed yet on the target chain.
+  const isLikelyCompleted = txAgeMinutes > 10 && !tx.completedEvent;
+
+  const status = tx.completedEvent || isLikelyCompleted ? "completed" : "pending";
 
   return {
     id: tx.data?.id || tx.transactionHash,
