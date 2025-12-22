@@ -1,9 +1,11 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { Center, HStack, Pressable, ScrollView, Text, VStack, Box, Spinner } from "native-base";
 import { Platform } from "react-native";
 import moment from "moment";
 
 import { withTheme } from "../../../theme/hoc";
+import { Image } from "../../../core/images";
+import { networkIcons } from "../../../utils/icons";
 
 export type BridgeTransaction = {
   id: string;
@@ -31,47 +33,63 @@ export const BridgeTransactionCard = withTheme({ name: "BridgeTransactionCard" }
     }, [transaction, onTxDetailsPress]);
 
     const txDate = date ? moment(date).local().format?.("MM.DD.YYYY HH:mm") : "";
-    const colorAmount = status === "failed" ? "goodRed.200" : "txGreen";
+    const colorAmount = status === "failed" ? "goodRed.500" : "txGreen";
     const amountPrefix = status === "failed" ? "" : "+";
 
-    // Get provider icon and color
-    const getProviderIcon = () => {
-      return bridgeProvider === "axelar" ? "A" : "L";
+    const sourceChainIcon = useMemo(() => {
+      const chainKey = sourceChain.toUpperCase() as keyof typeof networkIcons;
+      return networkIcons[chainKey];
+    }, [sourceChain]);
+
+    const targetChainIcon = useMemo(() => {
+      const chainKey = targetChain.toUpperCase() as keyof typeof networkIcons;
+      return networkIcons[chainKey];
+    }, [targetChain]);
+
+    const getChainInitial = (chain: string) => {
+      return chain.charAt(0).toUpperCase();
     };
 
-    const getProviderColor = () => {
-      return bridgeProvider === "axelar" ? "green.500" : "blue.500";
-    };
+    const providerLabel = bridgeProvider === "axelar" ? "Axelar" : "LayerZero";
+    const providerColor = bridgeProvider === "axelar" ? "goodBlue.600" : "goodBlue.500";
 
-    // Get status icon based on transaction status
     const getStatusIcon = () => {
       switch (status) {
         case "bridging":
           return (
-            <Box w="34" h="34" borderRadius="full" bg="blue.400" alignItems="center" justifyContent="center">
-              <Spinner size="xs" color="white" />
+            <Box
+              w="8"
+              h="8"
+              borderRadius="full"
+              bg="goodBlue.100"
+              borderWidth="2"
+              borderColor="goodBlue.500"
+              alignItems="center"
+              justifyContent="center"
+            >
+              <Spinner size="xs" color="goodBlue.600" />
             </Box>
           );
         case "completed":
           return (
-            <Box w="34" h="34" borderRadius="full" bg="green.400" alignItems="center" justifyContent="center">
-              <Text fontSize="xs" color="white">
+            <Box w="8" h="8" borderRadius="full" bg="txGreen" alignItems="center" justifyContent="center">
+              <Text fontSize="sm" color="white" fontWeight="bold">
                 ✓
               </Text>
             </Box>
           );
         case "failed":
           return (
-            <Box w="34" h="34" borderRadius="full" bg="red.400" alignItems="center" justifyContent="center">
-              <Text fontSize="xs" color="white">
+            <Box w="8" h="8" borderRadius="full" bg="goodRed.500" alignItems="center" justifyContent="center">
+              <Text fontSize="sm" color="white" fontWeight="bold">
                 ✕
               </Text>
             </Box>
           );
         case "pending":
           return (
-            <Box w="34" h="34" borderRadius="full" bg="yellow.400" alignItems="center" justifyContent="center">
-              <Text fontSize="xs" color="white">
+            <Box w="8" h="8" borderRadius="full" bg="goodGrey.300" alignItems="center" justifyContent="center">
+              <Text fontSize="sm" color="goodGrey.700">
                 ⏳
               </Text>
             </Box>
@@ -105,58 +123,94 @@ export const BridgeTransactionCard = withTheme({ name: "BridgeTransactionCard" }
       >
         <VStack
           space={1}
-          borderLeftWidth="10px"
-          borderColor={colorAmount}
-          backgroundColor="goodWhite.100"
-          borderRadius="5"
-          shadow="1"
+          borderLeftWidth="3px"
+          borderLeftColor={colorAmount}
+          backgroundColor="white"
+          borderRadius="lg"
+          borderWidth="1"
+          borderColor="goodGrey.200"
+          shadow="sm"
           width="100%"
-          justifyContent={"flex-start"}
+          justifyContent="flex-start"
         >
-          <HStack justifyContent="space-between" space={2} paddingX={2} paddingY={1}>
-            <Center>
-              <Box w="6" h="6" borderRadius="full" bg={getProviderColor()} alignItems="center" justifyContent="center">
-                <Text color="white" fontSize="xs" fontWeight="bold">
-                  {getProviderIcon()}
+          <HStack justifyContent="space-between" space={3} paddingX={3} paddingY={2}>
+            <HStack space={2} alignItems="center" flex={1}>
+              <Box px={2} py={1} borderRadius="md" bg={providerColor} alignItems="center" justifyContent="center">
+                <Text color="black" fontSize="2xs" fontWeight="bold" letterSpacing="0.5px">
+                  Bridged via {providerLabel}
                 </Text>
               </Box>
-            </Center>
-            <HStack flexShrink={1} justifyContent="space-between" width="100%" alignItems="center">
-              <Text fontSize="4xs">{txDate}</Text>
-              {amount ? (
-                <Text color={colorAmount} fontSize="sm" fontWeight="semibold">
-                  {amountPrefix}
-                  {amount} G$
-                </Text>
-              ) : null}
+              <Text fontSize="2xs" color="goodGrey.500" flex={1}>
+                {txDate}
+              </Text>
             </HStack>
+            {amount && (
+              <Text color={colorAmount} fontSize="sm" fontWeight="700">
+                {amountPrefix}
+                {amount} G$
+              </Text>
+            )}
           </HStack>
-          <HStack justifyContent="space-between" padding={2}>
-            <Center>
-              <Box w="8" h="8" borderRadius="full" bg="gray.300" alignItems="center" justifyContent="center">
-                <Text fontSize="xs" color="gray.600">
-                  ↔
+          <HStack justifyContent="space-between" paddingX={3} paddingBottom={3} alignItems="center">
+            <HStack space={2} alignItems="center" flex={1}>
+              {sourceChainIcon ? (
+                <Box w="6" h="6" borderRadius="full" overflow="hidden" borderWidth="1" borderColor="goodGrey.200">
+                  <Image source={sourceChainIcon} w="6" h="6" resizeMode="cover" />
+                </Box>
+              ) : (
+                <Box
+                  w="6"
+                  h="6"
+                  borderRadius="full"
+                  bg="goodGrey.300"
+                  alignItems="center"
+                  justifyContent="center"
+                  borderWidth="1"
+                  borderColor="goodGrey.200"
+                >
+                  <Text fontSize="2xs" color="goodGrey.700" fontWeight="bold">
+                    {getChainInitial(sourceChain)}
+                  </Text>
+                </Box>
+              )}
+              <Box w="4" h="4" alignItems="center" justifyContent="center">
+                <Text fontSize="xs" color="goodGrey.400" fontWeight="bold">
+                  →
                 </Text>
               </Box>
-            </Center>
-            <HStack flexShrink={1} justifyContent="space-between" width="100%" alignItems="flex-end">
-              <VStack space={0} paddingLeft={2}>
-                <Text variant="sm-grey" fontWeight="500">
-                  Bridged via {bridgeProvider === "axelar" ? "Axelar" : "LayerZero"}
-                </Text>
-                <Text fontSize="4xs" fontFamily="subheading" fontWeight="400" lineHeight={12} color="goodGrey.600">
-                  From {sourceChain} to {targetChain}
+              {targetChainIcon ? (
+                <Box w="6" h="6" borderRadius="full" overflow="hidden" borderWidth="1" borderColor="goodGrey.200">
+                  <Image source={targetChainIcon} w="6" h="6" resizeMode="cover" />
+                </Box>
+              ) : (
+                <Box
+                  w="6"
+                  h="6"
+                  borderRadius="full"
+                  bg="goodGrey.300"
+                  alignItems="center"
+                  justifyContent="center"
+                  borderWidth="1"
+                  borderColor="goodGrey.200"
+                >
+                  <Text fontSize="2xs" color="goodGrey.700" fontWeight="bold">
+                    {getChainInitial(targetChain)}
+                  </Text>
+                </Box>
+              )}
+              <VStack space={0.5} paddingLeft={2} flex={1}>
+                <Text fontSize="xs" fontFamily="subheading" fontWeight="500" color="goodGrey.700">
+                  {sourceChain.charAt(0).toUpperCase() + sourceChain.slice(1)} →{" "}
+                  {targetChain.charAt(0).toUpperCase() + targetChain.slice(1)}
                 </Text>
                 {status !== "completed" && (
-                  <Text fontSize="4xs" color={status === "failed" ? "red.500" : "blue.500"}>
+                  <Text fontSize="2xs" color={status === "failed" ? "goodRed.500" : "goodBlue.600"}>
                     {getStatusText()}
                   </Text>
                 )}
               </VStack>
-              <Center h={Platform.select({ web: "100%" })} justifyContent="center" alignItems="center">
-                {getStatusIcon()}
-              </Center>
             </HStack>
+            <Center>{getStatusIcon()}</Center>
           </HStack>
         </VStack>
       </Pressable>

@@ -38,8 +38,14 @@ export const useBridgeMonitoring = (
       return undefined;
     }
 
-    return extractBridgeRequestId(bridgeToState.receipt.logs, bridgeContract);
-  }, [bridgeToState.status, bridgeToState.receipt?.logs, bridgeContract]);
+    const id = extractBridgeRequestId(bridgeToState.receipt.logs, bridgeContract);
+    console.log("[useBridgeMonitoring] bridgeTo succeeded on source chain, extracted bridgeRequestId", {
+      bridgeRequestId: id,
+      transactionHash: bridgeToState.receipt.transactionHash,
+      chainId: bridgeRequest?.sourceChainId
+    });
+    return id;
+  }, [bridgeToState.status, bridgeToState.receipt?.logs, bridgeContract, bridgeRequest]);
 
   // Get target chain bridge contract for polling completion
   const targetBridgeContract = useGetMPBContract(bridgeRequest?.targetChainId);
@@ -62,11 +68,19 @@ export const useBridgeMonitoring = (
 
   const bridgeCompletedEvent = useMemo(() => {
     if (!bridgeCompletedLogs?.value || !bridgeRequestId) return undefined;
-    return bridgeCompletedLogs.value.find(log => {
+    const event = bridgeCompletedLogs.value.find(log => {
       const id = log.data?.id || log.data?.[6];
       return id?.toString() === bridgeRequestId.toString();
     });
-  }, [bridgeCompletedLogs, bridgeRequestId]);
+    if (event) {
+      console.log("[useBridgeMonitoring] ExecutedTransfer event found on target chain", {
+        bridgeRequestId,
+        transactionHash: event.transactionHash,
+        targetChainId: bridgeRequest?.targetChainId
+      });
+    }
+    return event;
+  }, [bridgeCompletedLogs, bridgeRequestId, bridgeRequest]);
 
   const bridgeStatus: Partial<TransactionStatus> | undefined = useMemo(() => {
     if (isSwitchingChain) {
@@ -86,6 +100,10 @@ export const useBridgeMonitoring = (
     }
 
     if (bridgeToState.status === "Mining" || bridgeToState.status === "PendingSignature") {
+      console.log("[useBridgeMonitoring] bridgeTo is mining/pending", {
+        status: bridgeToState.status,
+        transactionHash: bridgeToState.transaction?.hash
+      });
       return {
         chainId: bridgeRequest?.sourceChainId,
         status: bridgeToState.status,
@@ -93,15 +111,34 @@ export const useBridgeMonitoring = (
       } as TransactionStatus;
     }
 
-    if (bridgeToState.status === "Success" && bridgeCompletedEvent) {
+    // Show success when bridgeTo succeeds on source chain (don't wait for target chain completion)
+    if (bridgeToState.status === "Success") {
+      console.log("[useBridgeMonitoring] bridgeTo succeeded on source chain - returning Success status", {
+        transactionHash: bridgeToState.transaction?.hash,
+        receiptHash: bridgeToState.receipt?.transactionHash,
+        sourceChainId: bridgeRequest?.sourceChainId,
+        targetChainId: bridgeRequest?.targetChainId,
+        hasBridgeCompletedEvent: !!bridgeCompletedEvent
+      });
+
+      // If we have the completed event on target chain, use that transaction hash
+      // Otherwise, use the source chain bridgeTo transaction hash
+      const transactionHash =
+        bridgeCompletedEvent?.transactionHash ||
+        bridgeToState.receipt?.transactionHash ||
+        bridgeToState.transaction?.hash;
+
       return {
-        chainId: bridgeRequest?.targetChainId,
+        chainId: bridgeRequest?.sourceChainId,
         status: "Success",
-        transaction: { hash: bridgeCompletedEvent.transactionHash }
+        transaction: { hash: transactionHash }
       } as TransactionStatus;
     }
 
     if (approveState.status === "Exception") {
+      console.log("[useBridgeMonitoring] approve failed", {
+        errorMessage: approveState.errorMessage
+      });
       return {
         chainId: bridgeRequest?.sourceChainId,
         status: "Fail",
@@ -110,6 +147,9 @@ export const useBridgeMonitoring = (
     }
 
     if (bridgeToState.status === "Exception") {
+      console.log("[useBridgeMonitoring] bridgeTo failed", {
+        errorMessage: bridgeToState.errorMessage
+      });
       return {
         chainId: bridgeRequest?.sourceChainId,
         status: "Fail",

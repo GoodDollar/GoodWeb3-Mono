@@ -229,3 +229,5 @@ export const useConvertedTransactionHistory = (realTransactionHistory: any[] | u
     return converted;
   }, [realTransactionHistory, chain]);
 };
+
+export { useBridgeStatusHandler } from "./useBridgeStatusHandler";

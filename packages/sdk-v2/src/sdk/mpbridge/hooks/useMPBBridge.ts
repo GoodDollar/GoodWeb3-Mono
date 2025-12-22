@@ -197,6 +197,14 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
   const executeBridgeTransfer = useCallback(
     async (request: BridgeRequest) => {
       try {
+        console.log("[useMPBBridge] executeBridgeTransfer - preparing bridgeTo transaction", {
+          sourceChainId: request.sourceChainId,
+          targetChainId: request.targetChainId,
+          amount: request.amount,
+          target: request.target,
+          bridgeProvider
+        });
+
         const fees = await fetchBridgeFees();
         const { source, target } = {
           source: getChainName(request.sourceChainId),
@@ -224,10 +232,19 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
           throw new Error("Target address is required");
         }
 
+        console.log("[useMPBBridge] executeBridgeTransfer - calling bridgeTo.send", {
+          target: request.target,
+          targetChainId: request.targetChainId,
+          amount: request.amount,
+          bridgeService,
+          bufferedFee: bufferedFee.toString()
+        });
+
         void bridgeTo.send(request.target, request.targetChainId, request.amount, bridgeService, {
           value: bufferedFee
         });
       } catch (error: any) {
+        console.error("[useMPBBridge] executeBridgeTransfer - error", error);
         bridgeLock.current = false;
         bridgeToTriggered.current = false;
         setSwitchChainError(error?.message || "Failed to prepare bridge transaction");
@@ -315,22 +332,41 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
     const isApproveSuccess = approve.state.status === "Success";
     const isBridgeIdle = bridgeTo.state.status === "None";
 
+    console.log("[useMPBBridge] Checking if bridgeTo should be triggered", {
+      isApproveSuccess,
+      isBridgeIdle,
+      hasBridgeRequest: !!bridgeRequest,
+      hasBridgeContract: !!bridgeContract,
+      bridgeToTriggered: bridgeToTriggered.current,
+      approveStatus: approve.state.status,
+      bridgeToStatus: bridgeTo.state.status
+    });
+
     if (!isApproveSuccess || !isBridgeIdle || !bridgeRequest || !bridgeContract) {
       return;
     }
 
     if (bridgeToTriggered.current) {
+      console.log("[useMPBBridge] bridgeTo already triggered, skipping");
       return;
     }
 
     let isMounted = true;
     bridgeToTriggered.current = true;
 
+    console.log("[useMPBBridge] Approve succeeded, triggering bridgeTo");
+
     const proceed = async () => {
       // Verify allowance before calling bridgeTo (double check)
       if (gdContract && bridgeContract && account) {
         const allowance = await gdContract.allowance(account, bridgeContract.address);
         const amountBN = ethers.BigNumber.from(bridgeRequest.amount);
+
+        console.log("[useMPBBridge] Verifying allowance before bridgeTo", {
+          allowance: allowance.toString(),
+          required: amountBN.toString(),
+          sufficient: allowance.gte(amountBN)
+        });
 
         if (allowance.lt(amountBN)) {
           throw new Error(
