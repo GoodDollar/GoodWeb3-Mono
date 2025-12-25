@@ -70,7 +70,7 @@ export const ClaimFlow = {
               {...args}
             >
                <VStack space={4}>
-                <HStack>zz
+                <HStack>
                   <GoodButton onPress={() => setLanguage("en")} backgroundColor="gdPrimary" color="white" label="English" />
                   <GoodButton onPress={() => setLanguage("es-419")} backgroundColor="gdPrimary" color="white" label="spanish" />
                   <GoodButton
