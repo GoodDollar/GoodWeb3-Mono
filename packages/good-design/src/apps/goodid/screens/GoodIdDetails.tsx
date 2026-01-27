@@ -196,7 +196,7 @@ export const GoodIdDetails = withTheme({ name: "GoodIdDetails" })(
                 </Link>
               ),
               helperLink: (
-                <Link href="https://vksjkg.csb.app/" isExternal>
+                <Link href="https://h3n3kp.csb.app/" isExternal>
                   <Text variant="browse-wrap" style={{ textDecorationLine: "underline" }}>
                     {`this helper app`}
                   </Text>
