@@ -78,18 +78,58 @@ export class ClaimSDK extends BaseSDK {
     return { getLoginSig, getFvSig, getLink, deleteFvId };
   }
 
-  async isAddressVerified(address: string): Promise<boolean> {
+  /**
+   * Get the whitelisted root address for a given address.
+   * This supports connected wallets by returning the main whitelisted wallet address.
+   * @param address - The address to check (can be main wallet or connected wallet)
+   * @returns The whitelisted root address, or 0x0 if not whitelisted/connected
+   */
+  async getWhitelistedRootAddress(address: string): Promise<string> {
     const identity = this.getContract("Identity");
 
-    return identity.isWhitelisted(address);
+    try {
+      const rootAddress = await identity.getWhitelistedRoot(address);
+      return rootAddress;
+    } catch (error) {
+      console.error("Error getting whitelisted root:", error);
+      return "0x0000000000000000000000000000000000000000";
+    }
   }
 
+  /**
+   * Check if an address is verified (whitelisted or connected to a whitelisted account).
+   * @param address - The address to check
+   * @returns true if the address is whitelisted or connected to a whitelisted account
+   */
+  async isAddressVerified(address: string): Promise<boolean> {
+    const rootAddress = await this.getWhitelistedRootAddress(address);
+    const zeroAddress = "0x0000000000000000000000000000000000000000";
+
+    return rootAddress !== zeroAddress;
+  }
+
+  /**
+   * Check entitlement for an address.
+   * For connected wallets, this checks entitlement against the whitelisted root address.
+   * @param address - Optional address to check (if not provided, uses connected wallet)
+   * @returns The entitlement amount as BigNumber
+   */
   async checkEntitlement(address?: string): Promise<BigNumber> {
     const ubi = this.getContract("UBIScheme");
 
     try {
       if (address) {
-        return await ubi["checkEntitlement(address)"](address);
+        // Get the whitelisted root address to support connected wallets
+        const rootAddress = await this.getWhitelistedRootAddress(address);
+        const zeroAddress = "0x0000000000000000000000000000000000000000";
+
+        // If not whitelisted/connected, return 0
+        if (rootAddress === zeroAddress) {
+          return BigNumber.from("0");
+        }
+
+        // Check entitlement for the root address (main whitelisted wallet)
+        return await ubi["checkEntitlement(address)"](rootAddress);
       }
 
       return await ubi["checkEntitlement()"]();
