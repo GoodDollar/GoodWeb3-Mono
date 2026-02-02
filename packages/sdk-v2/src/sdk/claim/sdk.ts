@@ -79,20 +79,32 @@ export class ClaimSDK extends BaseSDK {
   }
 
   /**
-   * Get the whitelisted root address for a given address.
-   * This supports connected wallets by returning the main whitelisted wallet address.
-   * @param address - The address to check (can be main wallet or connected wallet)
-   * @returns The whitelisted root address, or 0x0 if not whitelisted/connected
+   * Get the whitelisted root address for an account.
+   * This enables connected accounts to claim on behalf of their main whitelisted account.
+   *
+   * Failure modes are normalized for predictable behavior:
+   * - Throws when no whitelisted root exists (contract returns 0x0)
+   * - Throws on network/contract errors
+   *
+   * @param {string} address Account address to check
+   * @returns {Promise<string>} The whitelisted root address
+   * @throws {Error} If account is not whitelisted or connected, or if resolution fails
    */
-  async getWhitelistedRootAddress(address: string): Promise<string> {
-    const identity = this.getContract("Identity");
-
+  async getWhitelistedRoot(address: string): Promise<string> {
     try {
-      const rootAddress = await identity.getWhitelistedRoot(address);
-      return rootAddress;
+      const identity = this.getContract("Identity");
+      const root = await identity.getWhitelistedRoot(address);
+
+      // Explicitly handle 0x0 - account is neither whitelisted nor connected
+      if (!root || root === "0x0000000000000000000000000000000000000000") {
+        throw new Error("No whitelisted root address found; the account may not be whitelisted or connected.");
+      }
+
+      return root;
     } catch (error) {
-      console.error("Error getting whitelisted root:", error);
-      return "0x0000000000000000000000000000000000000000";
+      // Normalize errors for predictable failure modes
+      const message = error instanceof Error ? error.message : String(error);
+      throw new Error(`Unable to resolve whitelisted root address: ${message}`);
     }
   }
 
@@ -102,10 +114,12 @@ export class ClaimSDK extends BaseSDK {
    * @returns true if the address is whitelisted or connected to a whitelisted account
    */
   async isAddressVerified(address: string): Promise<boolean> {
-    const rootAddress = await this.getWhitelistedRootAddress(address);
-    const zeroAddress = "0x0000000000000000000000000000000000000000";
-
-    return rootAddress !== zeroAddress;
+    try {
+      const root = await this.getWhitelistedRoot(address);
+      return root !== "0x0000000000000000000000000000000000000000";
+    } catch {
+      return false;
+    }
   }
 
   /**
@@ -118,22 +132,18 @@ export class ClaimSDK extends BaseSDK {
     const ubi = this.getContract("UBIScheme");
 
     try {
-      if (address) {
-        // Get the whitelisted root address to support connected wallets
-        const rootAddress = await this.getWhitelistedRootAddress(address);
-        const zeroAddress = "0x0000000000000000000000000000000000000000";
+      const signer = this.provider.getSigner();
+      const account = address || (await signer.getAddress());
 
-        // If not whitelisted/connected, return 0
-        if (rootAddress === zeroAddress) {
-          return BigNumber.from("0");
-        }
+      // Get whitelisted root for the address (or signer)
+      // This enables connected accounts to check entitlement of their main account
+      const whitelistedRoot = await this.getWhitelistedRoot(account);
 
-        // Check entitlement for the root address (main whitelisted wallet)
-        return await ubi["checkEntitlement(address)"](rootAddress);
-      }
-
-      return await ubi["checkEntitlement()"]();
-    } catch {
+      // Check entitlement for the root, not the connected address
+      return await ubi["checkEntitlement(address)"](whitelistedRoot);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.warn(`checkEntitlement failed: ${message}`);
       return BigNumber.from("0");
     }
   }
