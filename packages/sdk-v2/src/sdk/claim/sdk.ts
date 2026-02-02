@@ -8,6 +8,8 @@ import { FV_LOGIN_MSG, FV_IDENTIFIER_MSG2 } from "../constants";
 
 const DAY = 1000 * 60 * 60 * 24;
 
+import { isValidWhitelistedRoot } from "../utils/address";
+
 export class ClaimSDK extends BaseSDK {
   async generateFVLink(firstName: string, callbackUrl?: string, popupMode = false, chainId?: number) {
     const steps = this.getFVLink(chainId);
@@ -96,7 +98,7 @@ export class ClaimSDK extends BaseSDK {
       const root = await identity.getWhitelistedRoot(address);
 
       // Explicitly handle 0x0 - account is neither whitelisted nor connected
-      if (!root || root === "0x0000000000000000000000000000000000000000") {
+      if (!isValidWhitelistedRoot(root)) {
         throw new Error("No whitelisted root address found; the account may not be whitelisted or connected.");
       }
 
@@ -116,7 +118,7 @@ export class ClaimSDK extends BaseSDK {
   async isAddressVerified(address: string): Promise<boolean> {
     try {
       const root = await this.getWhitelistedRoot(address);
-      return root !== "0x0000000000000000000000000000000000000000";
+      return isValidWhitelistedRoot(root);
     } catch {
       return false;
     }
@@ -132,8 +134,14 @@ export class ClaimSDK extends BaseSDK {
     const ubi = this.getContract("UBIScheme");
 
     try {
-      const signer = this.provider.getSigner();
-      const account = address || (await signer.getAddress());
+      let account = address;
+
+      // Only attempt to get signer address if no address was provided
+      // This prevents crashes in read-only contexts when an address is explicitly passed
+      if (!account) {
+        const signer = this.provider.getSigner();
+        account = await signer.getAddress();
+      }
 
       // Get whitelisted root for the address (or signer)
       // This enables connected accounts to check entitlement of their main account

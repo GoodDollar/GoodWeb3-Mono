@@ -7,6 +7,9 @@ import { NETWORK_LABELS, SupportedChainId } from "constants/chains";
 import { InvalidChainId } from "utils/errors";
 import { identityContract } from "contracts/IdentityContract";
 
+const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
+const isZeroAddress = (address: string | null | undefined): boolean => !address || address === ZERO_ADDRESS;
+
 /**
  * Get the whitelisted root address for an account.
  * This enables connected accounts to claim on behalf of their main whitelisted account.
@@ -26,7 +29,7 @@ export async function getWhitelistedRoot(web3: Web3, account: string): Promise<s
     const root = await contract.methods.getWhitelistedRoot(account).call();
 
     // Explicitly handle 0x0 case - account is neither whitelisted nor connected
-    if (!root || root === "0x0000000000000000000000000000000000000000") {
+    if (isZeroAddress(root)) {
       throw new Error(
         "No whitelisted root address found; the account may not be whitelisted or connected."
       );
@@ -50,7 +53,7 @@ export async function getWhitelistedRoot(web3: Web3, account: string): Promise<s
 export async function isWhitelisted(web3: Web3, account: string): Promise<boolean> {
   try {
     const root = await getWhitelistedRoot(web3, account);
-    return root !== "0x0000000000000000000000000000000000000000";
+    return !isZeroAddress(root);
   } catch {
     return false;
   }

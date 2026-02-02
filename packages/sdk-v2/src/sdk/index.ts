@@ -13,3 +13,4 @@ export * from "./redtent";
 export * from "./reserve";
 export * from "./savings";
 export * from "./storage";
+export * from "./utils";

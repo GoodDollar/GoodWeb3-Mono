@@ -20,6 +20,8 @@ import { useContractFunctionWithDefaultGasFees, useGasFees } from "../base/hooks
 
 import { getContractsFromClaimPools, getPoolsDetails } from "./utils/pools";
 import { PoolDetails } from "./types";
+import { isValidWhitelistedRoot } from "../utils/address";
+import { useWhitelistedRoot, useEntitlementForRoot } from "./hooks";
 
 type UBIPoolsDetails = Awaited<ReturnType<GoodCollectiveSDK["getUBIPoolsDetails"]>>;
 
@@ -312,15 +314,13 @@ export const useClaim = (refresh: QueryParams["refresh"] = "never") => {
   const ubi = useGetContract("UBIScheme", true, "claim", chainId) as UBIScheme;
   const identity = useGetContract("Identity", true, "claim", chainId) as IIdentity;
   // const claimCall = useContractFunctionWithDefaultGasFees(ubi, "claim", { transactionName: "Claimed Daily UBI" });
-  // First, get the whitelisted root and basic UBI info
-  const baseResults = useCalls(
+  const whitelistedRoot = useWhitelistedRoot(identity, account, refreshOrNever, chainId);
+
+  // Then, use the whitelisted root for entitlement check
+  const entitlement = useEntitlementForRoot(ubi, whitelistedRoot, refreshOrNever, chainId);
+
+  const [currentDayResult, periodStartResult] = useCalls(
     [
-      identity &&
-        account && {
-          contract: identity,
-          method: "getWhitelistedRoot",
-          args: [account]
-        },
       ubi && {
         contract: ubi,
         method: "currentDay",
@@ -335,37 +335,21 @@ export const useClaim = (refresh: QueryParams["refresh"] = "never") => {
     { refresh: refreshOrNever, chainId }
   );
 
-  const whitelistedRoot = first(baseResults[0]?.value) as string;
-
-  // Then, use the whitelisted root for entitlement check
-  const entitlementResults = useCalls(
-    [
-      ubi &&
-        whitelistedRoot &&
-        whitelistedRoot !== "0x0000000000000000000000000000000000000000" && {
-          contract: ubi,
-          method: "checkEntitlement(address)",
-          args: [whitelistedRoot]
-        }
-    ],
-    { refresh: refreshOrNever, chainId }
-  );
-
-  const periodStart = (first(baseResults[2]?.value) || BigNumber.from("0")) as BigNumber;
-  const currentDay = (first(baseResults[1]?.value) || BigNumber.from("0")) as BigNumber;
+  const periodStart = (first(periodStartResult?.value) || BigNumber.from("0")) as BigNumber;
+  const currentDay = (first(currentDayResult?.value) || BigNumber.from("0")) as BigNumber;
   let startRef = new Date(periodStart.toNumber() * 1000 + currentDay.toNumber() * DAY);
 
   if (startRef < new Date()) {
     startRef = new Date(periodStart.toNumber() * 1000 + (currentDay.toNumber() + 1) * DAY);
   }
 
-  const isWhitelisted = whitelistedRoot ? whitelistedRoot !== "0x0000000000000000000000000000000000000000" : false;
+  const isWhitelisted = isValidWhitelistedRoot(whitelistedRoot);
 
   return {
     isWhitelisted,
     whitelistedRoot,
-    claimAmount: (first(entitlementResults[0]?.value) as BigNumber) || undefined,
-    hasClaimed: (first(entitlementResults[0]?.value) as BigNumber)?.isZero(),
+    claimAmount: entitlement,
+    hasClaimed: entitlement?.isZero(),
     nextClaimTime: startRef,
     address: ubi?.address,
     contract: ubi,
@@ -380,35 +364,10 @@ export const useHasClaimed = (requiredNetwork: keyof typeof SupportedV2Networks)
   const chainId = SupportedV2Networks[requiredNetwork] as unknown as ChainId;
 
   // First, get the whitelisted root
-  const [whitelistedRootResult] = useCalls(
-    [
-      identity &&
-        account && {
-          contract: identity,
-          method: "getWhitelistedRoot",
-          args: [account]
-        }
-    ],
-    { refresh: 8, chainId }
-  );
-
-  const whitelistedRoot = first(whitelistedRootResult?.value) as string;
+  const whitelistedRoot = useWhitelistedRoot(identity, account, 8, chainId);
 
   // Then, use the whitelisted root for entitlement check
-  const [entitlementResult] = useCalls(
-    [
-      ubi &&
-        whitelistedRoot &&
-        whitelistedRoot !== "0x0000000000000000000000000000000000000000" && {
-          contract: ubi,
-          method: "checkEntitlement(address)",
-          args: [whitelistedRoot]
-        }
-    ],
-    { refresh: 8, chainId }
-  );
-
-  return first(entitlementResult?.value);
+  return useEntitlementForRoot(ubi, whitelistedRoot, 8, chainId);
 };
 
 export const useClaimedAlt = (chainId: number | undefined) => {
@@ -448,39 +407,17 @@ export const useWhitelistSync = () => {
     baseEnvRef.current = baseEnv;
   }, [baseEnv]);
 
-  const [celoResult] = useCalls(
-    [
-      {
-        contract: identity,
-        method: "getWhitelistedRoot",
-        args: [account]
-      }
-    ],
-    { refresh: "never", chainId: SupportedChains.CELO as unknown as ChainId }
-  );
-
-  const [otherResult] = useCalls(
-    [
-      {
-        contract: identity2,
-        method: "getWhitelistedRoot",
-        args: [account]
-      }
-    ],
-    { refresh: "never", chainId: otherChainId as unknown as ChainId }
-  );
+  const celoRoot = useWhitelistedRoot(identity, account, "never", SupportedChains.CELO as unknown as ChainId);
+  const otherRoot = useWhitelistedRoot(identity2, account, "never", otherChainId as unknown as ChainId);
 
   useEffect(() => {
     const whitelistSync = async () => {
       const isSynced = await AsyncStorage.getItem(`${account}-${chainId}-whitelistedSync`);
-      const celoRoot = first(celoResult?.value);
-      const otherRoot = first(otherResult?.value);
 
-      const whitelistCelo = celoRoot && celoRoot !== "0x0000000000000000000000000000000000000000";
-      const whitelistOther = otherRoot && otherRoot !== "0x0000000000000000000000000000000000000000";
+      const whitelistCelo = isValidWhitelistedRoot(celoRoot);
+      const whitelistOther = isValidWhitelistedRoot(otherRoot);
 
       // not need for sync when already synced or user whitelisted on both chains
-      // or
       if (isSynced || (whitelistCelo && whitelistOther)) {
         return setSyncStatus(Promise.resolve(true));
       }
@@ -516,15 +453,11 @@ export const useWhitelistSync = () => {
     };
 
     whitelistSync().catch(noop);
-  }, [celoResult, otherResult, account, chainId, setSyncStatus]);
+  }, [celoRoot, otherRoot, account, chainId, setSyncStatus]);
 
   return {
-    celoWhitelisted:
-      first(celoResult?.value) !== undefined &&
-      first(celoResult?.value) !== "0x0000000000000000000000000000000000000000",
-    currentWhitelisted:
-      first(otherResult?.value) !== undefined &&
-      first(otherResult?.value) !== "0x0000000000000000000000000000000000000000",
+    celoWhitelisted: isValidWhitelistedRoot(celoRoot),
+    currentWhitelisted: isValidWhitelistedRoot(otherRoot),
     syncStatus
   };
 };
