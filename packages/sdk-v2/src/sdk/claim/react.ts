@@ -35,9 +35,16 @@ export const isTxReject = (errorMessage: string) => errorMessage === "user rejec
 export const useIsAddressVerified = (address: string, env?: EnvKey) => {
   const sdk = useReadOnlySDK("claim") as ClaimSDK;
 
-  const result = usePromise(() => {
-    if (address && sdk) return sdk.isAddressVerified(address);
-    return Promise.resolve(undefined);
+  const result = usePromise(async () => {
+    if (address && sdk) {
+      try {
+        const root = await sdk.getWhitelistedRoot(address);
+        return { isVerified: true, whitelistedRoot: root };
+      } catch {
+        return { isVerified: false, whitelistedRoot: null };
+      }
+    }
+    return { isVerified: false, whitelistedRoot: null };
   }, [address, env, sdk]);
 
   return result;
@@ -305,12 +312,13 @@ export const useClaim = (refresh: QueryParams["refresh"] = "never") => {
   const ubi = useGetContract("UBIScheme", true, "claim", chainId) as UBIScheme;
   const identity = useGetContract("Identity", true, "claim", chainId) as IIdentity;
   // const claimCall = useContractFunctionWithDefaultGasFees(ubi, "claim", { transactionName: "Claimed Daily UBI" });
-  const results = useCalls(
+  // First, get the whitelisted root and basic UBI info
+  const baseResults = useCalls(
     [
       identity &&
         account && {
           contract: identity,
-          method: "isWhitelisted",
+          method: "getWhitelistedRoot",
           args: [account]
         },
       ubi && {
@@ -322,29 +330,42 @@ export const useClaim = (refresh: QueryParams["refresh"] = "never") => {
         contract: ubi,
         method: "periodStart",
         args: []
-      },
+      }
+    ],
+    { refresh: refreshOrNever, chainId }
+  );
+
+  const whitelistedRoot = first(baseResults[0]?.value) as string;
+
+  // Then, use the whitelisted root for entitlement check
+  const entitlementResults = useCalls(
+    [
       ubi &&
-        account && {
+        whitelistedRoot &&
+        whitelistedRoot !== "0x0000000000000000000000000000000000000000" && {
           contract: ubi,
           method: "checkEntitlement(address)",
-          args: [account]
+          args: [whitelistedRoot]
         }
     ],
     { refresh: refreshOrNever, chainId }
   );
 
-  const periodStart = (first(results[2]?.value) || BigNumber.from("0")) as BigNumber;
-  const currentDay = (first(results[1]?.value) || BigNumber.from("0")) as BigNumber;
+  const periodStart = (first(baseResults[2]?.value) || BigNumber.from("0")) as BigNumber;
+  const currentDay = (first(baseResults[1]?.value) || BigNumber.from("0")) as BigNumber;
   let startRef = new Date(periodStart.toNumber() * 1000 + currentDay.toNumber() * DAY);
 
   if (startRef < new Date()) {
     startRef = new Date(periodStart.toNumber() * 1000 + (currentDay.toNumber() + 1) * DAY);
   }
 
+  const isWhitelisted = whitelistedRoot ? whitelistedRoot !== "0x0000000000000000000000000000000000000000" : false;
+
   return {
-    isWhitelisted: first(results[0]?.value) as boolean,
-    claimAmount: (first(results[3]?.value) as BigNumber) || undefined,
-    hasClaimed: (first(results[3]?.value) as BigNumber)?.isZero(),
+    isWhitelisted,
+    whitelistedRoot,
+    claimAmount: (first(entitlementResults[0]?.value) as BigNumber) || undefined,
+    hasClaimed: (first(entitlementResults[0]?.value) as BigNumber)?.isZero(),
     nextClaimTime: startRef,
     address: ubi?.address,
     contract: ubi,
@@ -355,19 +376,39 @@ export const useClaim = (refresh: QueryParams["refresh"] = "never") => {
 export const useHasClaimed = (requiredNetwork: keyof typeof SupportedV2Networks): BigNumber | undefined => {
   const { account } = useEthers();
   const ubi = useGetContract("UBIScheme", true, "claim", SupportedV2Networks[requiredNetwork]) as UBIScheme;
+  const identity = useGetContract("Identity", true, "claim", SupportedV2Networks[requiredNetwork]) as IIdentity;
+  const chainId = SupportedV2Networks[requiredNetwork] as unknown as ChainId;
 
-  const [hasClaimed] = useCalls(
+  // First, get the whitelisted root
+  const [whitelistedRootResult] = useCalls(
     [
-      {
-        contract: ubi,
-        method: "checkEntitlement(address)",
-        args: [account]
-      }
+      identity &&
+        account && {
+          contract: identity,
+          method: "getWhitelistedRoot",
+          args: [account]
+        }
     ],
-    { refresh: 8, chainId: SupportedV2Networks[requiredNetwork] as unknown as ChainId }
+    { refresh: 8, chainId }
   );
 
-  return first(hasClaimed?.value);
+  const whitelistedRoot = first(whitelistedRootResult?.value) as string;
+
+  // Then, use the whitelisted root for entitlement check
+  const [entitlementResult] = useCalls(
+    [
+      ubi &&
+        whitelistedRoot &&
+        whitelistedRoot !== "0x0000000000000000000000000000000000000000" && {
+          contract: ubi,
+          method: "checkEntitlement(address)",
+          args: [whitelistedRoot]
+        }
+    ],
+    { refresh: 8, chainId }
+  );
+
+  return first(entitlementResult?.value);
 };
 
 export const useClaimedAlt = (chainId: number | undefined) => {
@@ -411,7 +452,7 @@ export const useWhitelistSync = () => {
     [
       {
         contract: identity,
-        method: "isWhitelisted",
+        method: "getWhitelistedRoot",
         args: [account]
       }
     ],
@@ -422,7 +463,7 @@ export const useWhitelistSync = () => {
     [
       {
         contract: identity2,
-        method: "isWhitelisted",
+        method: "getWhitelistedRoot",
         args: [account]
       }
     ],
@@ -432,8 +473,11 @@ export const useWhitelistSync = () => {
   useEffect(() => {
     const whitelistSync = async () => {
       const isSynced = await AsyncStorage.getItem(`${account}-${chainId}-whitelistedSync`);
-      const whitelistCelo = first(celoResult?.value);
-      const whitelistOther = first(otherResult?.value);
+      const celoRoot = first(celoResult?.value);
+      const otherRoot = first(otherResult?.value);
+
+      const whitelistCelo = celoRoot && celoRoot !== "0x0000000000000000000000000000000000000000";
+      const whitelistOther = otherRoot && otherRoot !== "0x0000000000000000000000000000000000000000";
 
       // not need for sync when already synced or user whitelisted on both chains
       // or
@@ -475,8 +519,12 @@ export const useWhitelistSync = () => {
   }, [celoResult, otherResult, account, chainId, setSyncStatus]);
 
   return {
-    celoWhitelisted: first(celoResult?.value) as boolean,
-    currentWhitelisted: first(otherResult?.value) as boolean,
+    celoWhitelisted:
+      first(celoResult?.value) !== undefined &&
+      first(celoResult?.value) !== "0x0000000000000000000000000000000000000000",
+    currentWhitelisted:
+      first(otherResult?.value) !== undefined &&
+      first(otherResult?.value) !== "0x0000000000000000000000000000000000000000",
     syncStatus
   };
 };
