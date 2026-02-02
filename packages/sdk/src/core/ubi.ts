@@ -6,9 +6,8 @@ import { debug } from "utils/debug";
 import { NETWORK_LABELS, SupportedChainId } from "constants/chains";
 import { InvalidChainId } from "utils/errors";
 import { identityContract } from "contracts/IdentityContract";
+import { isZeroAddress, isValidWhitelistedRoot } from "../utils/address";
 
-const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
-const isZeroAddress = (address: string | null | undefined): boolean => !address || address === ZERO_ADDRESS;
 
 /**
  * Get the whitelisted root address for an account.
@@ -53,7 +52,7 @@ export async function getWhitelistedRoot(web3: Web3, account: string): Promise<s
 export async function isWhitelisted(web3: Web3, account: string): Promise<boolean> {
   try {
     const root = await getWhitelistedRoot(web3, account);
-    return !isZeroAddress(root);
+    return isValidWhitelistedRoot(root);
   } catch {
     return false;
   }
