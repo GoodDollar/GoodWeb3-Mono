@@ -20,7 +20,7 @@ import { useContractFunctionWithDefaultGasFees, useGasFees } from "../base/hooks
 
 import { getContractsFromClaimPools, getPoolsDetails } from "./utils/pools";
 import { PoolDetails } from "./types";
-import { isValidWhitelistedRoot } from "../utils/address";
+import { isNonZeroAddress } from "../utils/address";
 import { useWhitelistedRoot, useEntitlementForRoot } from "./hooks";
 
 type UBIPoolsDetails = Awaited<ReturnType<GoodCollectiveSDK["getUBIPoolsDetails"]>>;
@@ -343,7 +343,7 @@ export const useClaim = (refresh: QueryParams["refresh"] = "never") => {
     startRef = new Date(periodStart.toNumber() * 1000 + (currentDay.toNumber() + 1) * DAY);
   }
 
-  const isWhitelisted = isValidWhitelistedRoot(whitelistedRoot);
+  const isWhitelisted = isNonZeroAddress(whitelistedRoot);
 
   return {
     isWhitelisted,
@@ -414,8 +414,8 @@ export const useWhitelistSync = () => {
     const whitelistSync = async () => {
       const isSynced = await AsyncStorage.getItem(`${account}-${chainId}-whitelistedSync`);
 
-      const whitelistCelo = isValidWhitelistedRoot(celoRoot);
-      const whitelistOther = isValidWhitelistedRoot(otherRoot);
+      const whitelistCelo = isNonZeroAddress(celoRoot);
+      const whitelistOther = isNonZeroAddress(otherRoot);
 
       // not need for sync when already synced or user whitelisted on both chains
       if (isSynced || (whitelistCelo && whitelistOther)) {
@@ -456,8 +456,8 @@ export const useWhitelistSync = () => {
   }, [celoRoot, otherRoot, account, chainId, setSyncStatus]);
 
   return {
-    celoWhitelisted: isValidWhitelistedRoot(celoRoot),
-    currentWhitelisted: isValidWhitelistedRoot(otherRoot),
+    celoWhitelisted: isNonZeroAddress(celoRoot),
+    currentWhitelisted: isNonZeroAddress(otherRoot),
     syncStatus
   };
 };

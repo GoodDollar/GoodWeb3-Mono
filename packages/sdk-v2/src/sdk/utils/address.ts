@@ -14,6 +14,5 @@ export const isZeroAddress = (address: string | null | undefined): boolean => {
  * @param address - The address to check
  * @returns true if the address is not the zero address
  */
-export const isValidWhitelistedRoot = (address: string | null | undefined): boolean => {
-  return !isZeroAddress(address);
-};
+export const isValidWhitelistedRoot = (address: string | null | undefined): boolean => !isZeroAddress(address);
+export const isNonZeroAddress = (address: string | null | undefined): boolean => isValidWhitelistedRoot(address);

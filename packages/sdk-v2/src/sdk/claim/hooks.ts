@@ -2,7 +2,7 @@ import { IIdentity, UBIScheme } from "@gooddollar/goodprotocol/types";
 import { ChainId, QueryParams, useCalls } from "@usedapp/core";
 import { BigNumber } from "ethers";
 import { first } from "lodash";
-import { isValidWhitelistedRoot } from "../utils/address";
+import { isNonZeroAddress } from "../utils/address";
 
 /**
  * Resolved whitelisted root for an account.
@@ -30,7 +30,8 @@ export const useWhitelistedRoot = (
     { refresh, chainId }
   );
 
-  return first(result?.value) as string | undefined;
+  const root = first(result?.value) as string | undefined;
+  return isNonZeroAddress(root) ? root : undefined;
 };
 
 /**
@@ -50,7 +51,7 @@ export const useEntitlementForRoot = (
   const [result] = useCalls(
     [
       ubi &&
-        isValidWhitelistedRoot(root) && {
+        isNonZeroAddress(root) && {
           contract: ubi,
           method: "checkEntitlement(address)",
           args: [root]

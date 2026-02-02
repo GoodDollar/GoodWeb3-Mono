@@ -124,30 +124,39 @@ export class ClaimSDK extends BaseSDK {
     }
   }
 
-  /**
-   * Check entitlement for an address.
-   * For connected wallets, this checks entitlement against the whitelisted root address.
-   * @param address - Optional address to check (if not provided, uses connected wallet)
-   * @returns The entitlement amount as BigNumber
-   */
   async checkEntitlement(address?: string): Promise<BigNumber> {
     const ubi = this.getContract("UBIScheme");
 
     try {
-      let account = address;
-
-      // Only attempt to get signer address if no address was provided
-      // This prevents crashes in read-only contexts when an address is explicitly passed
-      if (!account) {
-        const signer = this.provider.getSigner();
-        account = await signer.getAddress();
+      // Optimization: If address is already whitelisted, use it directly (Sourcery Issue #1, pt 2)
+      if (address) {
+        try {
+          const res = await ubi["checkEntitlement(address)"](address);
+          if (res.gt(0)) return res;
+        } catch (e) {
+          // Fallback to identity lookup if direct check fails or reverts
+        }
       }
 
-      // Get whitelisted root for the address (or signer)
-      // This enables connected accounts to check entitlement of their main account
-      const whitelistedRoot = await this.getWhitelistedRoot(account);
+      let account = address;
 
-      // Check entitlement for the root, not the connected address
+      // Handle read-only context gracefully by using listAccounts instead of getSigner().getAddress()
+      // This prevents crashes when no signer is available (Sourcery Issue #1, pt 3)
+      if (!account) {
+        const accounts = await this.provider.listAccounts().catch(() => []);
+        account = accounts[0];
+      }
+
+      // Preserve original no-arg semantics if no account can be resolved (Sourcery Issue #1, pt 1)
+      if (!account) {
+        return await ubi["checkEntitlement()"]();
+      }
+
+      // Get whitelisted root for the address/account
+      // If the address is already a root or not connected, we fallback to the address itself
+      const whitelistedRoot = (await this.getWhitelistedRoot(account).catch(() => account)) as string;
+
+      // Check entitlement for the root (or fallbacked address)
       return await ubi["checkEntitlement(address)"](whitelistedRoot);
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
