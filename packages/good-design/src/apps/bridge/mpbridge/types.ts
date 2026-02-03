@@ -20,6 +20,7 @@ export interface MPBBridgeProps {
   useCanMPBBridge: (chain: string, amountWei: string) => { isValid: boolean; reason: string };
   onSetChain?: (chain: string) => void;
   originChain: [string, (chain: string) => void];
+  targetChainState: [string, (chain: string) => void];
   inputTransaction: [string, (amount: string) => void];
   pendingTransaction: [any, (transaction: any) => void];
   protocolFeePercent?: number; // Protocol fee displayed for UI purposes only

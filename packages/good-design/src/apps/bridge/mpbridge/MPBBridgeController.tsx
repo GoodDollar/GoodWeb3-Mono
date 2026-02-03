@@ -12,6 +12,7 @@ import {
   VALIDATION_REASONS
 } from "@gooddollar/web3sdk-v2";
 import { BridgeProvider } from "./types";
+import { getDefaultTargetChain } from "./utils/chainHelpers";
 
 interface IMPBBridgeControllerProps {
   withHistory?: boolean;
@@ -30,15 +31,17 @@ export const MPBBridgeController: React.FC<IMPBBridgeControllerProps> = ({ onBri
   const [sourceChain, setSourceChain] = useState<string>(
     chainId && SupportedChains[chainId] ? SupportedChains[chainId].toLowerCase() : "celo"
   );
+  const [targetChain, setTargetChain] = useState<string>("fuse");
 
-  // Update sourceChain when user switches chains
   useEffect(() => {
     if (chainId && SupportedChains[chainId]) {
-      setSourceChain(SupportedChains[chainId].toLowerCase());
+      const chain = SupportedChains[chainId].toLowerCase();
+      setSourceChain(chain);
+      setTargetChain(getDefaultTargetChain(chain));
     }
   }, [chainId]);
 
-  const bridgeData = useGetMPBBridgeData(sourceChain, "fuse", bridgeProvider, inputTransaction[0], account);
+  const bridgeData = useGetMPBBridgeData(sourceChain, targetChain, bridgeProvider, inputTransaction[0], account);
   const { bridgeFees, bridgeLimits, validation } = bridgeData;
   const protocolFeePercent = (bridgeData as any).protocolFeePercent as number | null;
 
@@ -137,6 +140,7 @@ export const MPBBridgeController: React.FC<IMPBBridgeControllerProps> = ({ onBri
       <MPBBridge
         useCanMPBBridge={useCanMPBBridge}
         originChain={[sourceChain, setSourceChain]}
+        targetChainState={[targetChain, setTargetChain]}
         inputTransaction={inputTransaction}
         pendingTransaction={pendingTransaction}
         protocolFeePercent={protocolFeePercent || 0}

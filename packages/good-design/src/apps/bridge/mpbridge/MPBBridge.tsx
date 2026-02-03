@@ -19,7 +19,7 @@ import {
   useBridgeStatusHandler
 } from "./hooks";
 import { getValidTargetChains } from "./utils";
-import { getDefaultTargetChain, handleSourceChainChange, handleProviderChange } from "./utils/chainHelpers";
+import { handleSourceChainChange, handleProviderChange } from "./utils/chainHelpers";
 import { createTransactionDetails } from "./utils/transactionHelpers";
 import { ChainSelector } from "./ChainSelector";
 import { BridgeProviderSelector } from "./BridgeProviderSelector";
@@ -32,6 +32,7 @@ import { BridgingStatusBanner } from "./BridgingStatusBanner";
 export const MPBBridge = ({
   useCanMPBBridge,
   originChain,
+  targetChainState,
   inputTransaction,
   pendingTransaction,
   protocolFeePercent,
@@ -49,7 +50,7 @@ export const MPBBridge = ({
   const bridgeProvider = propBridgeProvider || localBridgeProvider;
   const [bridgingStatus, setBridgingStatus] = useState<string>("");
   const [sourceChain, setSourceChain] = originChain;
-  const [targetChain, setTargetChain] = useState(getDefaultTargetChain(sourceChain));
+  const [targetChain, setTargetChain] = targetChainState;
   const { fees: bridgeFees, loading: feesLoading, error: feesError } = useBridgeFees();
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -176,7 +177,6 @@ export const MPBBridge = ({
     setBridgingStatus("Initiating bridge transaction...");
     setPendingTransaction({ bridgeWeiAmount, expectedToReceive, nativeFee, bridgeProvider });
     resetBridgeState();
-    console.log("[MPBBridge] Starting new bridge - reset transaction hash tracking");
     void onBridgeStart?.(sourceChain, targetChain);
   }, [
     setPendingTransaction,
@@ -278,11 +278,6 @@ export const MPBBridge = ({
             bridgeProvider: pendingTxData?.bridgeProvider || bridgeProvider,
             bridgeStatus: bridgeStatus as any,
             bridgeToTxHash: bridgeToTxHashRef.current
-          });
-
-          console.log("[MPBBridge] Track Transaction clicked - opening transaction details", {
-            transactionDetails,
-            bridgeStatus: bridgeStatus?.status
           });
 
           setTxDetails(transactionDetails);
@@ -404,6 +399,8 @@ export const MPBBridge = ({
               targetChain={targetChain}
               bridgeProvider={bridgeProvider}
               protocolFeePercent={protocolFeePercent}
+              bridgeFees={bridgeFees}
+              feesLoading={feesLoading}
             />
           </VStack>
         </VStack>
