@@ -128,7 +128,7 @@ export class ClaimSDK extends BaseSDK {
     const ubi = this.getContract("UBIScheme");
 
     try {
-      // Optimization: If address is already whitelisted, use it directly (Sourcery Issue #1, pt 2)
+      // Optimization: If address is already whitelisted, use it directly
       if (address) {
         try {
           const res = await ubi["checkEntitlement(address)"](address);
@@ -141,13 +141,13 @@ export class ClaimSDK extends BaseSDK {
       let account = address;
 
       // Handle read-only context gracefully by using listAccounts instead of getSigner().getAddress()
-      // This prevents crashes when no signer is available (Sourcery Issue #1, pt 3)
+      // This prevents crashes when no signer is available
       if (!account) {
         const accounts = await this.provider.listAccounts().catch(() => []);
         account = accounts[0];
       }
 
-      // Preserve original no-arg semantics if no account can be resolved (Sourcery Issue #1, pt 1)
+      // Preserve original no-arg semantics if no account can be resolved
       if (!account) {
         return await ubi["checkEntitlement()"]();
       }
