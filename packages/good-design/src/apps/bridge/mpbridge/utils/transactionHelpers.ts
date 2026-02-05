@@ -36,7 +36,6 @@ export const createTransactionDetails = (params: CreateTransactionDetailsParams)
     amount: parseFloat(amountFormatted).toFixed(2),
     bridgeProvider: bridgeProvider as "axelar" | "layerzero",
     status,
-    date: new Date(),
     chainId: sourceChainId
   };
 };

@@ -15,7 +15,7 @@ export type BridgeTransaction = {
   amount: string;
   bridgeProvider: "axelar" | "layerzero";
   status: "completed" | "pending" | "failed" | "bridging";
-  date: Date;
+  date?: Date;
   chainId: number;
 };
 
@@ -32,7 +32,7 @@ export const BridgeTransactionCard = withTheme({ name: "BridgeTransactionCard" }
       onTxDetailsPress?.(transaction);
     }, [transaction, onTxDetailsPress]);
 
-    const txDate = date ? moment(date).local().format?.("MM.DD.YYYY HH:mm") : "";
+    const txDate = date ? moment(date).local().format?.("MM.DD.YYYY HH:mm") : "Unknown";
     const colorAmount = status === "failed" ? "goodRed.500" : "txGreen";
     const amountPrefix = status === "failed" ? "" : "+";
 

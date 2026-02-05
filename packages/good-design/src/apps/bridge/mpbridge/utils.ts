@@ -195,6 +195,7 @@ export const convertTransaction = (tx: any, currentChainId: number) => {
 
   const status = tx.completedEvent || isLikelyCompleted ? "completed" : "pending";
 
+  const timestamp = tx.data?.timestamp || tx.timestamp;
   return {
     id: tx.data?.id || tx.transactionHash,
     transactionHash: tx.transactionHash,
@@ -203,7 +204,7 @@ export const convertTransaction = (tx: any, currentChainId: number) => {
     amount: tx.amount || "0",
     bridgeProvider,
     status,
-    date: new Date((tx.data?.timestamp || Date.now() / 1000) * 1000),
+    ...(timestamp ? { date: new Date(Number(timestamp) * 1000) } : {}),
     chainId: currentChainId,
     network: targetChainName?.toUpperCase() || "FUSE",
     displayName: "GoodDollar Bridge",

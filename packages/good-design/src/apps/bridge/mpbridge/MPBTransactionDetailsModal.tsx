@@ -103,7 +103,7 @@ const MPBTransactionDetailsContent = ({
 
   const status = historyTx?.status || transaction.status;
 
-  const txDate = date ? new Date(date).toLocaleDateString() + " " + new Date(date).toLocaleTimeString() : "";
+  const txDate = date ? new Date(date).toLocaleDateString() + " " + new Date(date).toLocaleTimeString() : "Unknown";
 
   // Determine progress based on status
   const getProgressSteps = () => {
