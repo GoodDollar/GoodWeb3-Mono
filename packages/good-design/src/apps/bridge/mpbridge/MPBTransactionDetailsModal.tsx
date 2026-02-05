@@ -24,14 +24,14 @@ const iconBoxStyles = {
 };
 
 const textColorMap = {
-  completed: "goodGrey.900",
-  bridging: "goodBlue.600",
-  pending: "goodGrey.400",
-  failed: "goodRed.500"
+  completed: "gray.900",
+  bridging: "blue.500",
+  pending: "gray.400",
+  failed: "red.500"
 };
 
 const iconConfigMap = {
-  completed: { bg: "green.500", borderColor: "green.300", content: "✓", spinner: false },
+  completed: { bg: "blue.500", borderColor: "blue.300", content: "✓", spinner: false },
   bridging: { bg: "blue.500", borderColor: "blue.300", content: null, spinner: true },
   pending: { bg: "gray.200", borderColor: "gray.300", content: "○", spinner: false },
   failed: { bg: "red.500", borderColor: "red.300", content: "✕", spinner: false },
@@ -76,13 +76,15 @@ const StepIndicator = ({
           left="4"
           width="2px"
           height="24"
-          bg={status === "completed" ? "goodBlue.600" : "goodGrey.300"}
+          bg={status === "completed" ? "blue.500" : "gray.300"}
           borderRadius="full"
         />
       )}
     </VStack>
   );
 };
+
+const capitalizeChain = (chain: string) => chain.charAt(0).toUpperCase() + chain.slice(1);
 
 const MPBTransactionDetailsContent = ({
   transaction,
@@ -91,7 +93,9 @@ const MPBTransactionDetailsContent = ({
   transaction: BridgeTransaction;
   transactionHistory?: BridgeTransaction[];
 }) => {
-  const { amount, bridgeProvider, date, transactionHash } = transaction;
+  const { amount, bridgeProvider, date, transactionHash, sourceChain, targetChain } = transaction;
+  const sourceChainLabel = capitalizeChain(sourceChain || "source");
+  const targetChainLabel = capitalizeChain(targetChain || "destination");
 
   const historyTx = useMemo(() => {
     return transactionHistory?.find(tx => tx.transactionHash === transactionHash || tx.id === transactionHash);
@@ -122,35 +126,35 @@ const MPBTransactionDetailsContent = ({
 
   return (
     <VStack space={6} width="100%" paddingX={4}>
-      {/* Header */}
-      <VStack space={3} alignItems="center">
-        <Text fontSize="xs" color="goodGrey.500">
+      {/* Header - align with success modal */}
+      <VStack space={2} alignItems="center">
+        <Text fontSize="xs" color="gray.500">
           Bridged via {bridgeProvider?.toUpperCase()}
         </Text>
-        <Text fontSize="3xl" fontWeight="bold" color="goodGrey.900">
+        <Text fontSize="2xl" fontWeight="bold" color="blue.500">
           +{amount} G$
         </Text>
-        <Text fontSize="sm" color="goodGrey.500">
+        <Text fontSize="md" color="gray.500">
           {txDate}
         </Text>
       </VStack>
 
       {/* Progress Steps */}
-      <VStack space={4} bg="goodGrey.50" padding={4} borderRadius="lg">
-        <Text fontSize="sm" fontWeight="semibold" color="goodGrey.800">
+      <VStack space={4} bg="gray.50" padding={4} borderRadius="lg">
+        <Text fontSize="sm" fontWeight="semibold" color="gray.800">
           Progress
         </Text>
         <VStack space={4} alignItems="flex-start">
-          <StepIndicator status={progress.sourceGateway} text="Source Gateway Called" />
-          <StepIndicator status={progress.destGateway} text="Dest. Gateway Approved" />
-          <StepIndicator status={progress.executed} text="Executed" isLast={true} />
+          <StepIndicator status={progress.sourceGateway} text={`G$'s sent from ${sourceChainLabel}`} />
+          <StepIndicator status={progress.destGateway} text="Transfer in progress" />
+          <StepIndicator status={progress.executed} text={`G$'s available on ${targetChainLabel}`} isLast={true} />
         </VStack>
       </VStack>
 
       {/* Transaction Details */}
       <VStack space={4}>
         <VStack space={2}>
-          <Text fontSize="sm" fontWeight="medium" color="goodGrey.600">
+          <Text fontSize="sm" fontWeight="medium" color="gray.500">
             Source Transaction
           </Text>
           <ExplorerLink
@@ -176,14 +180,15 @@ export const MPBTransactionDetailsModal = ({
     <BasicStyledModal
       type="ctaX"
       modalStyle={{
-        borderRadius: "10px",
-        width: "400px",
-        maxWidth: "400px",
-        minWidth: "400px",
+        borderRadius: "16px",
+        width: "450px",
+        maxWidth: "450px",
+        minWidth: "450px",
         boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.15)",
         marginLeft: "auto",
         marginRight: "auto"
       }}
+      bodyStyle={{ padding: 8, bg: "white" }}
       show={open}
       onClose={onClose}
       title="Transaction Details"
