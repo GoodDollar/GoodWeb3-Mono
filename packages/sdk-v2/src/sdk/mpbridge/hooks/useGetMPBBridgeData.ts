@@ -9,10 +9,13 @@ import {
   safeBigNumber,
   getSourceChainId,
   calculateBridgeFees,
-  normalizeAmountTo18
+  normalizeAmountTo18,
+  SOURCE_CHAIN_DECIMALS
 } from "../constants";
 import { MPBBridgeData } from "../types";
 import { useGetMPBContract, useNativeTokenContract } from "./useGetMPBContract";
+
+const THRESHOLD_18_DECIMALS = ethers.BigNumber.from(10).pow(15);
 
 // Types for better readability
 interface BridgeFees {
@@ -62,16 +65,32 @@ export const useGetMPBBridgeData = (
   // Check allowance
   const allowance = useTokenAllowance(tokenAddress, effectiveAccount, spenderAddress, { chainId: sourceChainId });
 
-  // Helper function to fetch bridge limits from contract
-  const fetchContractLimits = useCallback(async (contract: any) => {
+  const fetchContractLimits = useCallback(async (contract: any, chainId: number) => {
+    const sourceDecimals = SOURCE_CHAIN_DECIMALS[chainId] ?? 18;
+
+    const to18IfSourceDecimals = (value: ethers.BigNumber): ethers.BigNumber => {
+      if (value.lt(THRESHOLD_18_DECIMALS)) {
+        return normalizeAmountTo18(value, chainId);
+      }
+      return value;
+    };
+
     try {
       const limits = await contract.bridgeLimits();
-      setBridgeLimits({
-        minAmount: limits.minAmount,
-        maxAmount: limits.txLimit
-      });
+
+      const rawMin = limits.minAmount.gt(0) ? limits.minAmount : ethers.utils.parseUnits("10", sourceDecimals);
+      const rawMax = limits.txLimit.gt(0) ? limits.txLimit : ethers.constants.MaxUint256;
+
+      const minAmount = to18IfSourceDecimals(rawMin);
+      const maxAmount = to18IfSourceDecimals(rawMax);
+
+      setBridgeLimits({ minAmount, maxAmount });
     } catch (error) {
-      setBridgeLimits(null);
+      const fallbackMin = normalizeAmountTo18(ethers.utils.parseUnits("10", sourceDecimals), chainId);
+      setBridgeLimits({
+        minAmount: fallbackMin,
+        maxAmount: ethers.constants.MaxUint256
+      });
     }
   }, []);
 
@@ -94,7 +113,7 @@ export const useGetMPBBridgeData = (
   const fetchProtocolFee = useCallback(async (contract: any) => {
     try {
       const fees = await contract.bridgeFees();
-      // fees.fee is in basis points (bps). 15 => 0.15%
+      // fees.fee is in basis points (bps). e.g. 15 => 0.15%
       const bps = Number(fees.fee?.toString() || "0");
       setProtocolFeePercent(bps / 10000);
     } catch (error) {
@@ -130,7 +149,7 @@ export const useGetMPBBridgeData = (
         // Fetch third-party fees, contract limits, protocol fee, and eligibility in parallel
         const [fees, limitsResult, protoFeeResult] = await Promise.allSettled([
           fetchBridgeFees(),
-          bridgeContract ? fetchContractLimits(bridgeContract) : Promise.resolve(),
+          bridgeContract ? fetchContractLimits(bridgeContract, sourceChainId) : Promise.resolve(),
           bridgeContract ? fetchProtocolFee(bridgeContract) : Promise.resolve(),
           bridgeContract && effectiveAccount
             ? validateBridgeEligibility(bridgeContract, effectiveAccount, amount)
@@ -179,11 +198,11 @@ export const useGetMPBBridgeData = (
     amount
   ]);
 
-  // Calculate validation result: compare amount (in source-chain decimals) with contract limits (18 decimals)
+  // Validation: compare user input (in source chain decimals) with contract limits (in 18 decimals)
+  // We need to normalize the user input to 18 decimals for proper comparison
   const validation = useMemo<ValidationResult>(() => {
     const amountBN = safeBigNumber(amount);
     const hasAllowance = allowance ? allowance.gte(amountBN) : false;
-    const amountIn18 = normalizeAmountTo18(amountBN, sourceChainId);
 
     if (error) {
       return { isValid: false, reason: VALIDATION_REASONS.ERROR, errorMessage: error, canBridge: false, hasAllowance };
@@ -199,7 +218,12 @@ export const useGetMPBBridgeData = (
       };
     }
 
-    if (amountIn18.lt(bridgeLimits.minAmount)) {
+    // Normalize user input to 18 decimals for comparison with contract limits
+    const normalizedAmount = normalizeAmountTo18(amountBN, sourceChainId);
+    const belowMin = normalizedAmount.lt(bridgeLimits.minAmount);
+    const aboveMax = normalizedAmount.gt(bridgeLimits.maxAmount);
+
+    if (belowMin) {
       return {
         isValid: false,
         reason: VALIDATION_REASONS.MIN_AMOUNT,
@@ -208,7 +232,7 @@ export const useGetMPBBridgeData = (
       };
     }
 
-    if (amountIn18.gt(bridgeLimits.maxAmount)) {
+    if (aboveMax) {
       return {
         isValid: false,
         reason: VALIDATION_REASONS.MAX_AMOUNT,
