@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useContractFunction, useEthers } from "@usedapp/core";
 import { ethers } from "ethers";
 import { useSwitchNetwork } from "../../../contexts";
+import { useG$Decimals } from "../../base/react";
 import { BridgeService, BridgeRequest, UseMPBBridgeReturn } from "../types";
 import { fetchBridgeFees } from "../api";
 import {
@@ -13,7 +14,7 @@ import {
   createEmptyBridgeFees
 } from "../constants";
 
-import { useGetMPBContract, useNativeTokenContract } from "./useGetMPBContract";
+import { useGetMPBContract, useMPBG$TokenContract } from "./useGetMPBContract";
 import { useLayerZeroFee } from "./useLayerZeroFee";
 import { useBridgeMonitoring } from "./useBridgeMonitoring";
 import { useBridgeValidators } from "./useBridgeValidators";
@@ -27,15 +28,11 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
   const [bridgeRequest, setBridgeRequest] = useState<BridgeRequest | undefined>();
   const [isSwitchingChain, setIsSwitchingChain] = useState(false);
   const [switchChainError, setSwitchChainError] = useState<string | undefined>();
-  const [tokenDecimals, setTokenDecimals] = useState<number | undefined>();
 
-  // Get the native token contract that the bridge uses (instead of hardcoded dev G$)
-  const gdContract = useNativeTokenContract(chainId);
-
-  // Get MPB bridge contract for the current chain
+  const gdContract = useMPBG$TokenContract(chainId);
   const bridgeContract = useGetMPBContract(chainId);
+  const tokenDecimals = useG$Decimals("G$", chainId);
 
-  // MPB uses approve + bridgeTo pattern (not transferAndCall like the old TokenBridge)
   const approve = useContractFunction(gdContract, "approve", {
     transactionName: "MPBBridgeApprove"
   });
@@ -44,8 +41,7 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
     transactionName: "MPBBridgeTo"
   });
 
-  // Use extracted hooks
-  const { computeLayerZeroFee } = useLayerZeroFee(bridgeContract, bridgeProvider, account, tokenDecimals, gdContract);
+  const { computeLayerZeroFee } = useLayerZeroFee(bridgeContract, bridgeProvider, account);
 
   const { bridgeStatus } = useBridgeMonitoring(
     bridgeRequest,
@@ -64,32 +60,6 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
     tokenDecimals,
     library
   );
-
-  useEffect(() => {
-    let isMounted = true;
-
-    if (!gdContract) {
-      setTokenDecimals(undefined);
-      return;
-    }
-
-    gdContract
-      .decimals()
-      .then(dec => {
-        if (isMounted) {
-          setTokenDecimals(Number(dec));
-        }
-      })
-      .catch(() => {
-        if (isMounted) {
-          setTokenDecimals(undefined);
-        }
-      });
-
-    return () => {
-      isMounted = false;
-    };
-  }, [gdContract]);
 
   const sendMPBBridgeRequest = useCallback(
     async (amount: string, sourceChain: string, targetChain: string, target?: string) => {

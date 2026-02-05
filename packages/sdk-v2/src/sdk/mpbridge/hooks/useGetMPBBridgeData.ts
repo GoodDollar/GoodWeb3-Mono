@@ -13,7 +13,7 @@ import {
   SOURCE_CHAIN_DECIMALS
 } from "../constants";
 import { MPBBridgeData } from "../types";
-import { useGetMPBContract, useNativeTokenContract } from "./useGetMPBContract";
+import { useGetMPBContract, useMPBG$TokenContract } from "./useGetMPBContract";
 
 const THRESHOLD_18_DECIMALS = ethers.BigNumber.from(10).pow(15);
 
@@ -58,7 +58,7 @@ export const useGetMPBBridgeData = (
   const bridgeContract = useGetMPBContract(sourceChainId, true);
 
   // Get the native token contract that the bridge uses (instead of hardcoded dev G$)
-  const gdContract = useNativeTokenContract(sourceChainId, true);
+  const gdContract = useMPBG$TokenContract(sourceChainId, true);
   const tokenAddress = gdContract?.address;
   const spenderAddress = bridgeContract?.address;
 
