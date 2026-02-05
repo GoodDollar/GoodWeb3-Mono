@@ -12,7 +12,7 @@ export const useBridgeValidators = (
   tokenDecimals: number | undefined,
   library: any
 ) => {
-  // Comprehensive pre-flight validation function
+  // Pre-flight validation function
   const validateBridgeTransaction = useCallback(
     async (bridgeRequest: BridgeRequest, fees: any) => {
       if (!account) {
@@ -27,6 +27,10 @@ export const useBridgeValidators = (
         throw new Error("Bridge contract not available");
       }
 
+      if (!library) {
+        throw new Error("Provider not available");
+      }
+
       const amountBN = ethers.BigNumber.from(bridgeRequest.amount);
       const calculatedFees = calculateBridgeFees(
         fees,
@@ -35,6 +39,8 @@ export const useBridgeValidators = (
         getChainName(bridgeRequest.targetChainId)
       );
       const nativeFee = calculatedFees.nativeFee || ethers.BigNumber.from(0);
+
+      // ✅ Check 1: User has sufficient token balance
       try {
         const balance = await gdContract.balanceOf(account);
 
@@ -49,7 +55,7 @@ export const useBridgeValidators = (
         }
       }
 
-      // ✅ Check 3: Destination chain is supported
+      // ✅ Check 2: Source and destination chains are supported
       if (!isSupportedChain(bridgeRequest.sourceChainId)) {
         throw new Error(
           `Unsupported source chain: ${bridgeRequest.sourceChainId}. Supported chains: ${Object.values(
@@ -66,53 +72,21 @@ export const useBridgeValidators = (
         );
       }
 
-      // Check with contract if method exists
+      // ✅ Check 3: User has enough native token for gas
       try {
-        if (typeof bridgeContract.isSupportedChain === "function") {
-          const isSupported = await bridgeContract.isSupportedChain(bridgeRequest.targetChainId);
-          if (!isSupported) {
-            throw new Error(`Chain ${bridgeRequest.targetChainId} is not supported for bridging`);
-          }
-        }
-      } catch (checkError: any) {
-        if (checkError.message.includes("not supported")) {
-          throw checkError;
-        }
-      }
+        const nativeBalance = await library.getBalance(account);
+        const minGasBalance = ethers.utils.parseEther("0.01");
+        const requiredBalance = minGasBalance.add(nativeFee);
 
-      // ✅ Check 4: Bridge is not paused
-      try {
-        if (typeof bridgeContract.paused === "function") {
-          const isPaused = await bridgeContract.paused();
-          if (isPaused) {
-            throw new Error("Bridge is currently paused. Please try again later.");
-          }
-        }
-      } catch (checkError: any) {
-        if (checkError.message.includes("paused")) {
-          throw checkError;
-        }
-      }
-
-      // ✅ Check 5: User has enough native token for gas
-      try {
-        if (library && account) {
-          const nativeBalance = await library.getBalance(account);
-          // Minimum 0.01 native token (CELO, ETH, etc.)
-          const minGasBalance = ethers.utils.parseEther("0.01");
-          // Add buffer for the bridge fee
-          const requiredBalance = minGasBalance.add(nativeFee);
-
-          if (nativeBalance.lt(requiredBalance)) {
-            const balanceFormatted = ethers.utils.formatEther(nativeBalance);
-            const requiredFormatted = ethers.utils.formatEther(requiredBalance);
-            const chainName = getChainName(bridgeRequest.sourceChainId);
-            throw new Error(
-              `Insufficient ${
-                chainName === "celo" ? "CELO" : chainName === "fuse" ? "FUSE" : "ETH"
-              } for gas. You have ${balanceFormatted} but need at least ${requiredFormatted} (including bridge fee)`
-            );
-          }
+        if (nativeBalance.lt(requiredBalance)) {
+          const balanceFormatted = ethers.utils.formatEther(nativeBalance);
+          const requiredFormatted = ethers.utils.formatEther(requiredBalance);
+          const chainName = getChainName(bridgeRequest.sourceChainId);
+          throw new Error(
+            `Insufficient ${
+              chainName === "celo" ? "CELO" : chainName === "fuse" ? "FUSE" : "ETH"
+            } for gas. You have ${balanceFormatted} but need at least ${requiredFormatted} (including bridge fee)`
+          );
         }
       } catch (error: any) {
         if (error.message.includes("Insufficient")) {
@@ -120,13 +94,12 @@ export const useBridgeValidators = (
         }
       }
 
-      // ✅ Check 6: Amount meets minimum requirements
-      try {
-        const limits = await bridgeContract.bridgeLimits();
-        const minAmount = limits.minAmount;
+      const limits = await bridgeContract.bridgeLimits();
 
-        if (amountBN.lt(minAmount)) {
-          const minFormatted = ethers.utils.formatUnits(minAmount, tokenDecimals || 18);
+      // ✅ Check 4: Amount meets minimum requirements
+      try {
+        if (amountBN.lt(limits.minAmount)) {
+          const minFormatted = ethers.utils.formatUnits(limits.minAmount, tokenDecimals || 18);
           throw new Error(`Amount too small. Minimum: ${minFormatted} G$`);
         }
       } catch (error: any) {
@@ -135,17 +108,13 @@ export const useBridgeValidators = (
         }
       }
 
-      // ✅ Check 7: User hasn't exceeded bridge limits
+      // ✅ Check 5: User hasn't exceeded bridge limits
       try {
-        const limits = await bridgeContract.bridgeLimits();
-        const txLimit = limits.txLimit;
-
-        if (amountBN.gt(txLimit)) {
-          const limitFormatted = ethers.utils.formatUnits(txLimit, tokenDecimals || 18);
+        if (amountBN.gt(limits.txLimit)) {
+          const limitFormatted = ethers.utils.formatUnits(limits.txLimit, tokenDecimals || 18);
           throw new Error(`Amount exceeds transaction limit. Maximum: ${limitFormatted} G$`);
         }
 
-        // Check daily limits if available
         if (typeof bridgeContract.canBridge === "function") {
           const canBridge = await bridgeContract.canBridge(account, amountBN);
           if (!canBridge) {
