@@ -102,6 +102,26 @@ export const FEE_ROUTES: Record<BridgeProvider, Record<string, string>> = {
   }
 } as const;
 
+// G$ token decimals per chain (contract limits are in 18 decimals)
+export const SOURCE_CHAIN_DECIMALS: Record<number, number> = {
+  [SupportedChains.FUSE]: 2,
+  [SupportedChains.CELO]: 18,
+  [SupportedChains.MAINNET]: 18
+};
+
+const CONTRACT_DECIMALS = 18;
+
+export const normalizeAmountTo18 = (amount: ethers.BigNumber, sourceChainId: number): ethers.BigNumber => {
+  const decimals = SOURCE_CHAIN_DECIMALS[sourceChainId] ?? CONTRACT_DECIMALS;
+  if (decimals < CONTRACT_DECIMALS) {
+    return amount.mul(ethers.BigNumber.from(10).pow(CONTRACT_DECIMALS - decimals));
+  }
+  if (decimals > CONTRACT_DECIMALS) {
+    return amount.div(ethers.BigNumber.from(10).pow(decimals - CONTRACT_DECIMALS));
+  }
+  return amount;
+};
+
 // Utility functions (DRY principle)
 export const safeBigNumber = (value: string | number | undefined, fallback = "0"): ethers.BigNumber => {
   return ethers.BigNumber.from(value || fallback);

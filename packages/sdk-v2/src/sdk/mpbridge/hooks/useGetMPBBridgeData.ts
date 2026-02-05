@@ -8,7 +8,8 @@ import {
   BridgeProvider,
   safeBigNumber,
   getSourceChainId,
-  calculateBridgeFees
+  calculateBridgeFees,
+  normalizeAmountTo18
 } from "../constants";
 import { MPBBridgeData } from "../types";
 import { useGetMPBContract, useNativeTokenContract } from "./useGetMPBContract";
@@ -178,10 +179,11 @@ export const useGetMPBBridgeData = (
     amount
   ]);
 
-  // Calculate validation result
+  // Calculate validation result: compare amount (in source-chain decimals) with contract limits (18 decimals)
   const validation = useMemo<ValidationResult>(() => {
     const amountBN = safeBigNumber(amount);
     const hasAllowance = allowance ? allowance.gte(amountBN) : false;
+    const amountIn18 = normalizeAmountTo18(amountBN, sourceChainId);
 
     if (error) {
       return { isValid: false, reason: VALIDATION_REASONS.ERROR, errorMessage: error, canBridge: false, hasAllowance };
@@ -197,7 +199,7 @@ export const useGetMPBBridgeData = (
       };
     }
 
-    if (amountBN.lt(bridgeLimits.minAmount)) {
+    if (amountIn18.lt(bridgeLimits.minAmount)) {
       return {
         isValid: false,
         reason: VALIDATION_REASONS.MIN_AMOUNT,
@@ -206,7 +208,7 @@ export const useGetMPBBridgeData = (
       };
     }
 
-    if (amountBN.gt(bridgeLimits.maxAmount)) {
+    if (amountIn18.gt(bridgeLimits.maxAmount)) {
       return {
         isValid: false,
         reason: VALIDATION_REASONS.MAX_AMOUNT,
@@ -225,7 +227,7 @@ export const useGetMPBBridgeData = (
     }
 
     return { isValid: true, reason: "", canBridge: true, hasAllowance };
-  }, [amount, bridgeLimits, canUserBridge, error, allowance]);
+  }, [amount, bridgeLimits, canUserBridge, error, allowance, sourceChainId]);
 
   return { bridgeFees, bridgeLimits, protocolFeePercent, isLoading, error, validation, allowance };
 };
