@@ -63,7 +63,7 @@ const StepIndicator = ({
 
   return (
     <VStack alignItems="flex-start" space={2} position="relative">
-      <HStack alignItems="center" space={3}>
+      <HStack alignItems="center" zIndex={4} space={3}>
         {getIcon()}
         <Text fontSize="sm" color={textColorMap[status]} fontWeight="medium">
           {text}
@@ -72,10 +72,10 @@ const StepIndicator = ({
       {!isLast && (
         <Box
           position="absolute"
-          top="10"
+          top="10px"
           left="4"
           width="2px"
-          height="24"
+          height="56px"
           bg={status === "completed" ? "blue.500" : "gray.300"}
           borderRadius="full"
         />
