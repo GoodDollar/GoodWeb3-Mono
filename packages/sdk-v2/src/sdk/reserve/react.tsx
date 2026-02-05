@@ -52,9 +52,9 @@ export const useExchange = (requiredChainId?: number) => {
 };
 
 export const useReserveToken = (requiredChainId?: number) => {
-  const { connectedEnv, chainId } = useGetEnvChainId(requiredChainId ?? 42220);
-  const { exchange } = useExchange(requiredChainId ?? 42220);
-  const gdAddress = contractAddresses[connectedEnv].GoodDollar;
+  const { connectedEnv, chainId } = useGetEnvChainId(requiredChainId);
+  const { exchange } = useExchange(requiredChainId);
+  const gdAddress = contractAddresses[connectedEnv]?.GoodDollar;
   const reserveAsset = exchange?.assets.find(_ => _.toLowerCase() !== gdAddress.toLowerCase());
   // console.log("useReserveToken:", { connectedEnv, exchange, gdAddress, reserveAsset });
   // 1) memoize the Contract
