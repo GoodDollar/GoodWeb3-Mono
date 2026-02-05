@@ -1,47 +1,17 @@
 import { useMemo, useEffect, useState } from "react";
 import { useEthers } from "@usedapp/core";
 import { ethers } from "ethers";
-import { useGetContract, useGetEnvChainId } from "../../base/react";
-import { useReadOnlyProvider } from "../../../hooks";
-import { CONTRACT_TO_ABI } from "../../base/sdk";
 import { IGoodDollar } from "@gooddollar/goodprotocol/types";
+import { useGetContract } from "../../base/react";
+import { useReadOnlyProvider } from "../../../hooks";
 import { BRIDGE_CONSTANTS } from "../constants";
-import { getMPBContractAddress } from "../types";
-import { SupportedChains } from "../../constants";
-
-export const getDeploymentName = (baseEnv: string, chainId: number): string => {
-  if (chainId === SupportedChains.FUSE) return "fuse";
-  if (chainId === SupportedChains.CELO) return "celo";
-  if (chainId === SupportedChains.MAINNET) return "mainnet";
-  return "mainnet";
-};
-
-export const useGetMPBContract = (chainId?: number, readOnly = false): ethers.Contract | null => {
-  const effectiveChainId = chainId ?? BRIDGE_CONSTANTS.DEFAULT_CHAIN_ID;
-  const sdkContract = useGetContract("MPBBridge", readOnly, "base", effectiveChainId);
-  const { baseEnv } = useGetEnvChainId(effectiveChainId);
-  const readOnlyProvider = useReadOnlyProvider(effectiveChainId);
-  const { library } = useEthers();
-  const mpbABI = CONTRACT_TO_ABI["MPBBridge"]?.abi ?? [];
-  const deploymentName = getDeploymentName(baseEnv, effectiveChainId);
-  const address = getMPBContractAddress(effectiveChainId, deploymentName);
-
-  const fallbackContract = useMemo(() => {
-    if (sdkContract) return null;
-    const provider = readOnly ? readOnlyProvider : library;
-    if (!provider || !address) return null;
-    return new ethers.Contract(address, mpbABI, provider);
-  }, [sdkContract, readOnly, readOnlyProvider, library, address, mpbABI]);
-
-  return sdkContract ?? fallbackContract ?? null;
-};
 
 export const useMPBG$TokenContract = (chainId?: number, readOnly = false): IGoodDollar | null => {
   const { library } = useEthers();
-  const bridgeContract = useGetMPBContract(chainId, readOnly);
-  const [tokenAddress, setTokenAddress] = useState<string | null>(null);
   const effectiveChainId = chainId ?? BRIDGE_CONSTANTS.DEFAULT_CHAIN_ID;
+  const bridgeContract = useGetContract("MPBBridge", readOnly, "base", effectiveChainId);
   const readOnlyProvider = useReadOnlyProvider(effectiveChainId);
+  const [tokenAddress, setTokenAddress] = useState<string | null>(null);
 
   useEffect(() => {
     let isMounted = true;

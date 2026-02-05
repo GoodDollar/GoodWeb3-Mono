@@ -3,7 +3,7 @@ import { useLogs, TransactionStatus } from "@usedapp/core";
 import { ethers } from "ethers";
 import { useRefreshOrNever } from "../../../hooks";
 import { BridgeRequest } from "../types";
-import { useGetMPBContract } from "./useGetMPBContract";
+import { useGetContract } from "../../base/react";
 
 export const extractBridgeRequestId = (logs: any[], bridgeContract: any): string | undefined => {
   const bridgeTopic = ethers.utils.id("BridgeRequest(address,address,uint256,uint256,uint256,uint8,uint256)");
@@ -41,13 +41,13 @@ export const useBridgeMonitoring = (
     return id;
   }, [bridgeToState.status, bridgeToState.receipt?.logs, bridgeContract, bridgeRequest]);
 
-  const targetBridgeContract = useGetMPBContract(bridgeRequest?.targetChainId);
+  const targetMpbContract = useGetContract("MPBBridge", true, "base", bridgeRequest?.targetChainId);
 
   const bridgeCompletedLogs = useLogs(
     bridgeRequest &&
       bridgeRequestId &&
-      targetBridgeContract && {
-        contract: targetBridgeContract,
+      targetMpbContract && {
+        contract: targetMpbContract,
         event: "ExecutedTransfer",
         args: []
       },

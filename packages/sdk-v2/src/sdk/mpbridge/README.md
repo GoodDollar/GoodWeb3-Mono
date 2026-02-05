@@ -16,8 +16,7 @@ This module provides the SDK implementation for the Main Bridge (MPB) functional
 ### SDK Functions
 
 - `useMPBBridge()` - Main bridge hook for initiating bridge transactions
-- `useMPBBridgeLimits()` - Check if a bridge transaction is within limits
-- `useGetMPBBridgeData()` - Get bridge fees and limits data
+- `useGetMPBBridgeData()` - Get bridge fees, limits, and validation (isValid, reason)
 - `useMPBBridgeHistory()` - Get bridge transaction history
 - `getLayerZeroExplorerLink()` - Get LayerZero explorer link for a transaction
 - `getAxelarExplorerLink()` - Get Axelar explorer link for a transaction
@@ -41,12 +40,13 @@ const { sendMPBBridgeRequest, bridgeRequestStatus, bridgeStatus } = useMPBBridge
 await sendMPBBridgeRequest("1000000000000000000000", "fuse"); // 1000 G$ from Fuse to Celo
 ```
 
-### Check Bridge Limits
+### Check Bridge Limits / Validation
 
 ```typescript
-import { useMPBBridgeLimits } from "@gooddollar/web3sdk-v2";
+import { useGetMPBBridgeData } from "@gooddollar/web3sdk-v2";
 
-const { isValid, reason } = useMPBBridgeLimits("1000000000000000000000");
+const { validation } = useGetMPBBridgeData("fuse", "celo", "layerzero", "1000000000000000000000");
+const { isValid, reason } = validation;
 ```
 
 ### Get Bridge Data

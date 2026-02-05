@@ -13,7 +13,8 @@ import {
   SOURCE_CHAIN_DECIMALS
 } from "../constants";
 import { MPBBridgeData } from "../types";
-import { useGetMPBContract, useMPBG$TokenContract } from "./useGetMPBContract";
+import { useGetContract } from "../../base/react";
+import { useMPBG$TokenContract } from "./useMPBG$TokenContract";
 
 const THRESHOLD_18_DECIMALS = ethers.BigNumber.from(10).pow(15);
 
@@ -53,14 +54,12 @@ export const useGetMPBBridgeData = (
   const { account } = useEthers();
   const effectiveAccount = address || account;
 
-  // Get contract for the source chain to fetch limits
   const sourceChainId = getSourceChainId(sourceChain || "celo");
-  const bridgeContract = useGetMPBContract(sourceChainId, true);
+  const mpbContract = useGetContract("MPBBridge", true, "base", sourceChainId);
 
-  // Get the native token contract that the bridge uses (instead of hardcoded dev G$)
   const gdContract = useMPBG$TokenContract(sourceChainId, true);
   const tokenAddress = gdContract?.address;
-  const spenderAddress = bridgeContract?.address;
+  const spenderAddress = mpbContract?.address;
 
   // Check allowance
   const allowance = useTokenAllowance(tokenAddress, effectiveAccount, spenderAddress, { chainId: sourceChainId });
@@ -149,10 +148,10 @@ export const useGetMPBBridgeData = (
         // Fetch third-party fees, contract limits, protocol fee, and eligibility in parallel
         const [fees, limitsResult, protoFeeResult] = await Promise.allSettled([
           fetchBridgeFees(),
-          bridgeContract ? fetchContractLimits(bridgeContract, sourceChainId) : Promise.resolve(),
-          bridgeContract ? fetchProtocolFee(bridgeContract) : Promise.resolve(),
-          bridgeContract && effectiveAccount
-            ? validateBridgeEligibility(bridgeContract, effectiveAccount, amount)
+          mpbContract ? fetchContractLimits(mpbContract, sourceChainId) : Promise.resolve(),
+          mpbContract ? fetchProtocolFee(mpbContract) : Promise.resolve(),
+          mpbContract && effectiveAccount
+            ? validateBridgeEligibility(mpbContract, effectiveAccount, amount)
             : Promise.resolve()
         ]);
 
@@ -190,7 +189,7 @@ export const useGetMPBBridgeData = (
     targetChain,
     bridgeProvider,
     calculateFees,
-    bridgeContract,
+    mpbContract,
     fetchContractLimits,
     fetchProtocolFee,
     validateBridgeEligibility,

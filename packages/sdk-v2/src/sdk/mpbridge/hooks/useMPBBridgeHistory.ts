@@ -4,15 +4,15 @@ import { ethers } from "ethers";
 import { first, groupBy, sortBy } from "lodash";
 import { useRefreshOrNever } from "../../../hooks";
 import { SupportedChains, formatAmount } from "../../constants";
-import { useGetMPBContract } from "./useGetMPBContract";
+import { useGetContract } from "../../base/react";
 
 export const useMPBBridgeHistory = () => {
   const { account } = useEthers();
   const refresh = useRefreshOrNever(5);
 
-  const fuseBridgeContract = useGetMPBContract(SupportedChains.FUSE, true);
-  const celoBridgeContract = useGetMPBContract(SupportedChains.CELO, true);
-  const mainnetBridgeContract = useGetMPBContract(SupportedChains.MAINNET, true);
+  const fuseBridgeContract = useGetContract("MPBBridge", true, "base", SupportedChains.FUSE);
+  const celoBridgeContract = useGetContract("MPBBridge", true, "base", SupportedChains.CELO);
+  const mainnetBridgeContract = useGetContract("MPBBridge", true, "base", SupportedChains.MAINNET);
 
   const fuseBridgeRequests = useLogs(
     fuseBridgeContract

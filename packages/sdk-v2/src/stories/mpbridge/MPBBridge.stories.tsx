@@ -1,6 +1,7 @@
 import React from "react";
 import { W3Wrapper } from "../W3Wrapper";
-import { useMPBBridgeLimits, useGetMPBBridgeData, useMPBBridgeHistory } from "../../sdk/mpbridge/react";
+import { useGetMPBBridgeData, useMPBBridgeHistory } from "../../sdk/mpbridge";
+import { getChainName } from "../../sdk/mpbridge/constants";
 
 export interface PageProps {
   address: string;
@@ -9,9 +10,12 @@ export interface PageProps {
 }
 
 const MPBBridgeHooksTest = (params: PageProps) => {
-  const limits = useMPBBridgeLimits(params.chainId, params.address, params.amount.toString());
-  const bridgeInfo = useGetMPBBridgeData(params.chainId, params.address);
+  const sourceChain = getChainName(params.chainId);
+  const bridgeInfo = useGetMPBBridgeData(sourceChain, undefined, "layerzero", params.amount.toString(), params.address);
   const bridgeHistory = useMPBBridgeHistory();
+  const limits = bridgeInfo?.validation
+    ? { isValid: bridgeInfo.validation.isValid, reason: bridgeInfo.validation.reason }
+    : null;
 
   return (
     <>

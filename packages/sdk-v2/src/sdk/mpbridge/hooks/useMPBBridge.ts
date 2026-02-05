@@ -14,7 +14,8 @@ import {
   createEmptyBridgeFees
 } from "../constants";
 
-import { useGetMPBContract, useMPBG$TokenContract } from "./useGetMPBContract";
+import { useGetContract } from "../../base/react";
+import { useMPBG$TokenContract } from "./useMPBG$TokenContract";
 import { useLayerZeroFee } from "./useLayerZeroFee";
 import { useBridgeMonitoring } from "./useBridgeMonitoring";
 import { useBridgeValidators } from "./useBridgeValidators";
@@ -31,22 +32,23 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
   const [switchChainError, setSwitchChainError] = useState<string | undefined>();
 
   const gdContract = useMPBG$TokenContract(chainId);
-  const bridgeContract = useGetMPBContract(chainId);
+  const bridgeContract = useGetContract("MPBBridge", false, "base", chainId);
+  const bridgeContractOrNull = bridgeContract ?? null;
   const tokenDecimals = useG$Decimals("G$", chainId);
 
   const approve = useContractFunction(gdContract, "approve", {
     transactionName: "MPBBridgeApprove"
   });
 
-  const bridgeTo = useContractFunction(bridgeContract, "bridgeTo", {
+  const bridgeTo = useContractFunction(bridgeContractOrNull, "bridgeTo", {
     transactionName: "MPBBridgeTo"
   });
 
-  const { computeLayerZeroFee } = useLayerZeroFee(bridgeContract, bridgeProvider, account);
+  const { computeLayerZeroFee } = useLayerZeroFee(bridgeContractOrNull, bridgeProvider, account);
 
   const { bridgeStatus } = useBridgeMonitoring(
     bridgeRequest,
-    bridgeContract,
+    bridgeContractOrNull,
     approve.state,
     bridgeTo.state,
     isSwitchingChain,
@@ -56,7 +58,7 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
   const { validateBridgeTransaction } = useBridgeValidators(
     account,
     gdContract,
-    bridgeContract,
+    bridgeContractOrNull,
     bridgeProvider,
     tokenDecimals,
     library
