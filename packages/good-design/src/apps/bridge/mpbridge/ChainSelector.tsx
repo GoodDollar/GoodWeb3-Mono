@@ -1,6 +1,8 @@
 import React, { memo, useMemo } from "react";
 import { Box, HStack, Pressable, ChevronDownIcon, Text, VStack } from "native-base";
-import { getChainIcon, getChainColor, getChainLabel, getValidTargetChains } from "./utils";
+import { Image, SvgXml } from "../../../core/images";
+import { getBridgeNetworkIcon } from "../../../utils/icons";
+import { getChainColor, getChainLabel, getValidTargetChains } from "./utils";
 
 // Style objects defined outside component for reusability and cleaner renders
 const chainContainerStyles = {
@@ -21,6 +23,18 @@ const chainIconStyles = {
   alignItems: "center",
   justifyContent: "center",
   shadow: "sm"
+} as const;
+
+const chainIconImageStyles = {
+  borderRadius: "full",
+  width: "8",
+  height: "8"
+} as const;
+
+const dropdownChainIconImageStyles = {
+  borderRadius: "full",
+  width: "6",
+  height: "6"
 } as const;
 
 const chainPressableStyles = {
@@ -106,11 +120,27 @@ export const ChainSelector: React.FC<ChainSelectorProps> = memo(
         {/* Source Chain */}
         <VStack {...chainContainerStyles}>
           <HStack space={3} alignItems="center">
-            <Box bg={getChainColor(sourceChain)} {...chainIconStyles}>
-              <Text color="white" fontSize="sm" fontWeight="bold">
-                {getChainIcon(sourceChain)}
-              </Text>
-            </Box>
+            {getBridgeNetworkIcon(sourceChain) ? (
+              <Box
+                key={sourceChain}
+                overflow="hidden"
+                {...chainIconImageStyles}
+                borderWidth="1"
+                borderColor="goodGrey.200"
+              >
+                {sourceChain === "celo" ? (
+                  <SvgXml key={sourceChain} src={getBridgeNetworkIcon(sourceChain)} width={32} height={32} />
+                ) : (
+                  <Image key={sourceChain} source={getBridgeNetworkIcon(sourceChain)} w="8" h="8" resizeMode="cover" />
+                )}
+              </Box>
+            ) : (
+              <Box bg={getChainColor(sourceChain)} {...chainIconStyles}>
+                <Text color="white" fontSize="sm" fontWeight="bold">
+                  {sourceChain.charAt(0).toUpperCase()}
+                </Text>
+              </Box>
+            )}
             <Pressable onPress={onSourceDropdownToggle} {...chainPressableStyles}>
               <Text color="goodGrey.700" fontSize="md" fontWeight="600">
                 {getChainLabel(sourceChain)}
@@ -132,11 +162,26 @@ export const ChainSelector: React.FC<ChainSelectorProps> = memo(
                   borderBottomWidth={chain === availableChains[availableChains.length - 1] ? 0 : 1}
                 >
                   <HStack space={3} alignItems="center">
-                    <Box bg={getChainColor(chain)} {...chainIconStyles} width="6" height="6">
-                      <Text color="white" fontSize="xs" fontWeight="bold">
-                        {getChainIcon(chain)}
-                      </Text>
-                    </Box>
+                    {getBridgeNetworkIcon(chain) ? (
+                      <Box
+                        overflow="hidden"
+                        {...dropdownChainIconImageStyles}
+                        borderWidth="1"
+                        borderColor="goodGrey.200"
+                      >
+                        {chain === "celo" ? (
+                          <SvgXml src={getBridgeNetworkIcon(chain)} width={24} height={24} />
+                        ) : (
+                          <Image source={getBridgeNetworkIcon(chain)} w="6" h="6" resizeMode="cover" />
+                        )}
+                      </Box>
+                    ) : (
+                      <Box bg={getChainColor(chain)} {...chainIconStyles} width="6" height="6">
+                        <Text color="white" fontSize="xs" fontWeight="bold">
+                          {chain.charAt(0).toUpperCase()}
+                        </Text>
+                      </Box>
+                    )}
                     <Text color="goodGrey.700" fontSize="md" fontWeight="500">
                       {getChainLabel(chain)}
                     </Text>
@@ -157,11 +202,27 @@ export const ChainSelector: React.FC<ChainSelectorProps> = memo(
         {/* Target Chain */}
         <VStack {...chainContainerStyles}>
           <HStack space={3} alignItems="center">
-            <Box bg={getChainColor(targetChain)} {...chainIconStyles}>
-              <Text color="white" fontSize="sm" fontWeight="bold">
-                {getChainIcon(targetChain)}
-              </Text>
-            </Box>
+            {getBridgeNetworkIcon(targetChain) ? (
+              <Box
+                key={targetChain}
+                overflow="hidden"
+                {...chainIconImageStyles}
+                borderWidth="1"
+                borderColor="goodGrey.200"
+              >
+                {targetChain === "celo" ? (
+                  <SvgXml key={targetChain} src={getBridgeNetworkIcon(targetChain)} width={32} height={32} />
+                ) : (
+                  <Image key={targetChain} source={getBridgeNetworkIcon(targetChain)} w="8" h="8" resizeMode="cover" />
+                )}
+              </Box>
+            ) : (
+              <Box bg={getChainColor(targetChain)} {...chainIconStyles}>
+                <Text color="white" fontSize="sm" fontWeight="bold">
+                  {targetChain.charAt(0).toUpperCase()}
+                </Text>
+              </Box>
+            )}
             <Pressable onPress={onTargetDropdownToggle} {...chainPressableStyles}>
               <Text color="goodGrey.700" fontSize="md" fontWeight="600">
                 {getChainLabel(targetChain)}
@@ -186,11 +247,26 @@ export const ChainSelector: React.FC<ChainSelectorProps> = memo(
                     borderBottomWidth={isLastItem ? 0 : 1}
                   >
                     <HStack space={3} alignItems="center">
-                      <Box bg={getChainColor(chain)} {...chainIconStyles} width="6" height="6">
-                        <Text color="white" fontSize="xs" fontWeight="bold">
-                          {getChainIcon(chain)}
-                        </Text>
-                      </Box>
+                      {getBridgeNetworkIcon(chain) ? (
+                        <Box
+                          overflow="hidden"
+                          {...dropdownChainIconImageStyles}
+                          borderWidth="1"
+                          borderColor="goodGrey.200"
+                        >
+                          {chain === "celo" ? (
+                            <SvgXml src={getBridgeNetworkIcon(chain)} width={24} height={24} />
+                          ) : (
+                            <Image source={getBridgeNetworkIcon(chain)} w="6" h="6" resizeMode="cover" />
+                          )}
+                        </Box>
+                      ) : (
+                        <Box bg={getChainColor(chain)} {...chainIconStyles} width="6" height="6">
+                          <Text color="white" fontSize="xs" fontWeight="bold">
+                            {chain.charAt(0).toUpperCase()}
+                          </Text>
+                        </Box>
+                      )}
                       <Text color="goodGrey.700" fontSize="md" fontWeight="500">
                         {getChainLabel(chain)}
                       </Text>

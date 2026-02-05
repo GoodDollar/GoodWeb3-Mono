@@ -4,8 +4,8 @@ import { Platform } from "react-native";
 import moment from "moment";
 
 import { withTheme } from "../../../theme/hoc";
-import { Image } from "../../../core/images";
-import { networkIcons } from "../../../utils/icons";
+import { Image, SvgXml } from "../../../core/images";
+import { getBridgeNetworkIcon } from "../../../utils/icons";
 
 export type BridgeTransaction = {
   id: string;
@@ -36,15 +36,8 @@ export const BridgeTransactionCard = withTheme({ name: "BridgeTransactionCard" }
     const colorAmount = status === "failed" ? "goodRed.500" : "txGreen";
     const amountPrefix = status === "failed" ? "" : "+";
 
-    const sourceChainIcon = useMemo(() => {
-      const chainKey = sourceChain.toUpperCase() as keyof typeof networkIcons;
-      return networkIcons[chainKey];
-    }, [sourceChain]);
-
-    const targetChainIcon = useMemo(() => {
-      const chainKey = targetChain.toUpperCase() as keyof typeof networkIcons;
-      return networkIcons[chainKey];
-    }, [targetChain]);
+    const sourceChainIcon = useMemo(() => getBridgeNetworkIcon(sourceChain), [sourceChain]);
+    const targetChainIcon = useMemo(() => getBridgeNetworkIcon(targetChain), [targetChain]);
 
     const getChainInitial = (chain: string) => {
       return chain.charAt(0).toUpperCase();
@@ -155,7 +148,11 @@ export const BridgeTransactionCard = withTheme({ name: "BridgeTransactionCard" }
             <HStack space={2} alignItems="center" flex={1}>
               {sourceChainIcon ? (
                 <Box w="6" h="6" borderRadius="full" overflow="hidden" borderWidth="1" borderColor="goodGrey.200">
-                  <Image source={sourceChainIcon} w="6" h="6" resizeMode="cover" />
+                  {sourceChain === "celo" ? (
+                    <SvgXml src={sourceChainIcon} width={24} height={24} />
+                  ) : (
+                    <Image source={sourceChainIcon} w="6" h="6" resizeMode="cover" />
+                  )}
                 </Box>
               ) : (
                 <Box
@@ -180,7 +177,11 @@ export const BridgeTransactionCard = withTheme({ name: "BridgeTransactionCard" }
               </Box>
               {targetChainIcon ? (
                 <Box w="6" h="6" borderRadius="full" overflow="hidden" borderWidth="1" borderColor="goodGrey.200">
-                  <Image source={targetChainIcon} w="6" h="6" resizeMode="cover" />
+                  {targetChain === "celo" ? (
+                    <SvgXml src={targetChainIcon} width={24} height={24} />
+                  ) : (
+                    <Image source={targetChainIcon} w="6" h="6" resizeMode="cover" />
+                  )}
                 </Box>
               ) : (
                 <Box
