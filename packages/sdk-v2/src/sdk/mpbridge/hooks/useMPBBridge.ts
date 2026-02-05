@@ -22,6 +22,7 @@ import { useBridgeValidators } from "./useBridgeValidators";
 export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBBridgeReturn => {
   const bridgeLock = useRef(false);
   const bridgeToTriggered = useRef(false);
+  const bridgeToSending = useRef(false);
   const { switchNetwork } = useSwitchNetwork();
   const { account, chainId, library } = useEthers();
 
@@ -72,6 +73,7 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
         setBridgeRequest(undefined);
         bridgeLock.current = false;
         bridgeToTriggered.current = false;
+        bridgeToSending.current = false;
         approve.resetState();
         bridgeTo.resetState();
         setSwitchChainError(undefined);
@@ -117,43 +119,67 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
     [account, approve, bridgeTo, chainId, switchNetwork]
   );
 
-  // Handle approve and bridgeTo errors and completion
   useEffect(() => {
-    const handleTransactionError = (status: string, errorMessage: string) => {
+    const handleApproveState = () => {
+      const { status, errorMessage } = approve.state;
+
       if (status === "Exception") {
-        // Check if user rejected the transaction
         const isUserRejection =
-          errorMessage.toLowerCase().includes("user rejected") ||
-          errorMessage.toLowerCase().includes("user denied") ||
-          errorMessage.toLowerCase().includes("rejected") ||
-          errorMessage.toLowerCase().includes("cancelled");
+          (errorMessage || "").toLowerCase().includes("user rejected") ||
+          (errorMessage || "").toLowerCase().includes("user denied") ||
+          (errorMessage || "").toLowerCase().includes("rejected") ||
+          (errorMessage || "").toLowerCase().includes("cancelled");
 
         if (isUserRejection) {
-          // Fully reset state on user rejection
           setBridgeRequest(undefined);
           bridgeLock.current = false;
+          bridgeToTriggered.current = false;
           approve.resetState();
           bridgeTo.resetState();
         } else {
-          // For other errors, just reset the lock
           bridgeLock.current = false;
+          bridgeToTriggered.current = false;
         }
-
-        bridgeToTriggered.current = false;
       }
 
-      // Reset lock on success to allow new transactions
       if (status === "Success") {
         bridgeLock.current = false;
-        bridgeToTriggered.current = false;
       }
     };
 
-    // Call handleTransactionError for approve
-    handleTransactionError(approve.state.status, approve.state.errorMessage || "");
+    const handleBridgeToState = () => {
+      const { status, errorMessage } = bridgeTo.state;
 
-    // Call handleTransactionError for bridgeTo
-    handleTransactionError(bridgeTo.state.status, bridgeTo.state.errorMessage || "");
+      if (status === "Exception") {
+        const isUserRejection =
+          (errorMessage || "").toLowerCase().includes("user rejected") ||
+          (errorMessage || "").toLowerCase().includes("user denied") ||
+          (errorMessage || "").toLowerCase().includes("rejected") ||
+          (errorMessage || "").toLowerCase().includes("cancelled");
+
+        if (isUserRejection) {
+          setBridgeRequest(undefined);
+          bridgeLock.current = false;
+          bridgeToTriggered.current = false;
+          bridgeToSending.current = false;
+          approve.resetState();
+          bridgeTo.resetState();
+        } else {
+          bridgeLock.current = false;
+          bridgeToTriggered.current = false;
+          bridgeToSending.current = false;
+        }
+      }
+
+      if (status === "Success") {
+        bridgeLock.current = false;
+        bridgeToTriggered.current = false;
+        bridgeToSending.current = false;
+      }
+    };
+
+    handleApproveState();
+    handleBridgeToState();
   }, [approve.state, bridgeTo.state, approve, bridgeTo]);
 
   // Reset chain switching state when chain successfully changes
@@ -163,9 +189,14 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
     }
   }, [chainId, bridgeRequest, isSwitchingChain]);
 
-  // Helper function to execute the actual bridge transfer (bridgeTo)
   const executeBridgeTransfer = useCallback(
     async (request: BridgeRequest) => {
+      if (bridgeToSending.current) {
+        console.log("[useMPBBridge] executeBridgeTransfer - already sending, skipping duplicate call");
+        return;
+      }
+      bridgeToSending.current = true;
+
       try {
         console.log("[useMPBBridge] executeBridgeTransfer - preparing bridgeTo transaction", {
           sourceChainId: request.sourceChainId,
@@ -217,6 +248,7 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
         console.error("[useMPBBridge] executeBridgeTransfer - error", error);
         bridgeLock.current = false;
         bridgeToTriggered.current = false;
+        bridgeToSending.current = false;
         setSwitchChainError(error?.message || "Failed to prepare bridge transaction");
         setBridgeRequest(undefined);
       }
@@ -253,8 +285,8 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
           const amountBN = ethers.BigNumber.from(bridgeRequest.amount);
 
           if (allowance.gte(amountBN)) {
-            // Skip approval and go straight to bridge
-            bridgeToTriggered.current = true; // Mark as triggered to prevent double execution
+            bridgeToTriggered.current = true;
+            bridgeToSending.current = true;
             await executeBridgeTransfer(bridgeRequest);
             return;
           }
@@ -297,7 +329,6 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
     }
   }, [approve.state.status, bridgeTo.state.status, bridgeRequest, account, executeBridgeTransaction, isSwitchingChain]);
 
-  // Trigger bridgeTo after approve succeeds
   useEffect(() => {
     const isApproveSuccess = approve.state.status === "Success";
     const isBridgeIdle = bridgeTo.state.status === "None";
@@ -306,46 +337,53 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
       return;
     }
 
-    if (bridgeToTriggered.current) {
-      console.log("[useMPBBridge] bridgeTo already triggered, skipping");
+    if (bridgeToTriggered.current || bridgeToSending.current) {
+      console.log("[useMPBBridge] bridgeTo already triggered or sending, skipping");
       return;
     }
 
-    let isMounted = true;
     bridgeToTriggered.current = true;
+    bridgeToSending.current = true;
 
     console.log("[useMPBBridge] Approve succeeded, triggering bridgeTo");
 
     const proceed = async () => {
-      // Verify allowance before calling bridgeTo (double check)
-      if (gdContract && bridgeContract && account) {
-        const allowance = await gdContract.allowance(account, bridgeContract.address);
-        const amountBN = ethers.BigNumber.from(bridgeRequest.amount);
+      try {
+        if (gdContract && bridgeContract && account) {
+          const allowance = await gdContract.allowance(account, bridgeContract.address);
+          const amountBN = ethers.BigNumber.from(bridgeRequest.amount);
 
-        console.log("[useMPBBridge] Verifying allowance before bridgeTo", {
-          allowance: allowance.toString(),
-          required: amountBN.toString(),
-          sufficient: allowance.gte(amountBN)
-        });
+          console.log("[useMPBBridge] Verifying allowance before bridgeTo", {
+            allowance: allowance.toString(),
+            required: amountBN.toString(),
+            sufficient: allowance.gte(amountBN)
+          });
 
-        if (allowance.lt(amountBN)) {
-          throw new Error(
-            `Insufficient allowance. Approved: ${allowance.toString()}, Required: ${amountBN.toString()}`
-          );
+          if (allowance.lt(amountBN)) {
+            throw new Error(
+              `Insufficient allowance. Approved: ${allowance.toString()}, Required: ${amountBN.toString()}`
+            );
+          }
         }
-      }
 
-      if (isMounted) {
         await executeBridgeTransfer(bridgeRequest);
+      } catch (error: any) {
+        console.error("[useMPBBridge] post-approve proceed error", error);
+        bridgeToSending.current = false;
+        bridgeToTriggered.current = false;
       }
     };
 
     void proceed();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [account, approve.state.status, bridgeContract, bridgeRequest, bridgeTo, executeBridgeTransfer, gdContract]);
+  }, [
+    account,
+    approve.state.status,
+    bridgeContract,
+    bridgeRequest,
+    bridgeTo.state.status,
+    executeBridgeTransfer,
+    gdContract
+  ]);
 
   return {
     sendMPBBridgeRequest,

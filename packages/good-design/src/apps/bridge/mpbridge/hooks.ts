@@ -7,9 +7,8 @@ import type { IMPBFees, IMPBLimits } from "./types";
 import { convertTransaction } from "./utils";
 
 const CACHE_KEY = "mpb-bridge-fees-cache";
-const CACHE_DURATION = 5 * 60 * 1000;
+const CACHE_DURATION_MS = 5 * 60 * 1000;
 
-// Helper functions for localStorage cache
 const getStoredCache = () => {
   try {
     const stored = localStorage.getItem(CACHE_KEY);
@@ -42,7 +41,7 @@ export const useBridgeFees = () => {
   useEffect(() => {
     const cached = getStoredCache();
     const now = Date.now();
-    const isCacheValid = cached && cached.data && now - cached.timestamp < CACHE_DURATION;
+    const isCacheValid = cached && cached.data && now - cached.timestamp < CACHE_DURATION_MS;
 
     if (cached && cached.data) {
       setFees(cached.data);
@@ -56,7 +55,6 @@ export const useBridgeFees = () => {
     fetchBridgeFees()
       .then((feesData: any) => {
         if (feesData) {
-          // Cache the fees data in localStorage
           setStoredCache(feesData);
           setFees(feesData);
           setLoading(false);
@@ -76,7 +74,6 @@ export const useBridgeFees = () => {
   return { fees, loading, error };
 };
 
-// Hook to get bridge estimate
 export const useMPBBridgeEstimate = ({
   limits,
   fees,
@@ -113,7 +110,6 @@ export const useMPBBridgeEstimate = ({
 
   const { minimumAmount, maximumAmount, bridgeFee, input } = useG$Amounts(amountsConfig, "G$", chain);
 
-  // For MPB, the fee is the native fee from LayerZero/Axelar
   const expectedFee = useMemo(
     () =>
       fees?.[sourceChain]?.nativeFee
@@ -122,7 +118,6 @@ export const useMPBBridgeEstimate = ({
     [fees, sourceChain, chain, defaultEnv]
   );
 
-  // The fee is paid in the native token (CELO, ETH, etc.), not in G$
   const expectedToReceive = useMemo(() => input, [input]);
 
   const zroFee = useMemo(
@@ -171,63 +166,31 @@ export const useChainBalances = () => {
   return { getBalanceForChain };
 };
 
-export const useTransactionHistory = () => {
-  const { historySorted: realTransactionHistory } = useMPBBridgeHistory() ?? {};
-
-  // Memoize the result to prevent unnecessary re-renders
-  return useMemo(() => {
-    return {
-      realTransactionHistory,
-      historyLoading: !realTransactionHistory
-    };
-  }, [realTransactionHistory]);
-};
-
 export const useDebouncedTransactionHistory = (delay = 1000) => {
-  const { realTransactionHistory, historyLoading } = useTransactionHistory();
+  const { historySorted: realTransactionHistory } = useMPBBridgeHistory() ?? {};
   const [debouncedHistory, setDebouncedHistory] = useState(realTransactionHistory);
   const timeoutRef = useRef<NodeJS.Timeout>();
 
   useEffect(() => {
-    // Clear existing timeout
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
-
-    // Set new timeout
-    timeoutRef.current = setTimeout(() => {
-      setDebouncedHistory(realTransactionHistory);
-    }, delay);
-
-    // Cleanup on unmount
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    timeoutRef.current = setTimeout(() => setDebouncedHistory(realTransactionHistory), delay);
     return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
   }, [realTransactionHistory, delay]);
 
-  return useMemo(
-    () => ({
-      realTransactionHistory: debouncedHistory,
-      historyLoading
-    }),
-    [debouncedHistory, historyLoading]
-  );
+  return {
+    realTransactionHistory: debouncedHistory,
+    historyLoading: !realTransactionHistory
+  };
 };
 
 export const useConvertedTransactionHistory = (realTransactionHistory: any[] | undefined, sourceChain: string) => {
   const chain = sourceChain === "celo" ? 42220 : sourceChain === "mainnet" ? 1 : 122;
-
-  return useMemo(() => {
-    const converted =
-      realTransactionHistory?.slice(0, 5).map(tx => {
-        const convertedTx = convertTransaction(tx, chain);
-        return convertedTx;
-      }) || [];
-
-    return converted;
-  }, [realTransactionHistory, chain]);
+  return useMemo(
+    () => realTransactionHistory?.slice(0, 5).map(tx => convertTransaction(tx, chain)) ?? [],
+    [realTransactionHistory, chain]
+  );
 };
 
 export { useBridgeStatusHandler } from "./useBridgeStatusHandler";

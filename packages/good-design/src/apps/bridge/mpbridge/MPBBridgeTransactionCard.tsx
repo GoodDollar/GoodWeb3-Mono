@@ -6,18 +6,7 @@ import moment from "moment";
 import { withTheme } from "../../../theme/hoc";
 import { Image, SvgXml } from "../../../core/images";
 import { getBridgeNetworkIcon } from "../../../utils/icons";
-
-export type BridgeTransaction = {
-  id: string;
-  transactionHash: string;
-  sourceChain: string;
-  targetChain: string;
-  amount: string;
-  bridgeProvider: "axelar" | "layerzero";
-  status: "completed" | "pending" | "failed" | "bridging";
-  date?: Date;
-  chainId: number;
-};
+import type { BridgeTransaction } from "./types";
 
 export type BridgeTransactionCardProps = {
   transaction: BridgeTransaction;

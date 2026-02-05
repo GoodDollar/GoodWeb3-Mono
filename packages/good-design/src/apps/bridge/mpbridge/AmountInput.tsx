@@ -3,7 +3,6 @@ import { HStack, Text, VStack } from "native-base";
 import { TokenInput } from "../../../core";
 import { CurrencyValue } from "@usedapp/core";
 
-// Types and error messages (local definition)
 type ValidationReason = "minAmount" | "maxAmount" | "cannotBridge" | "error" | "insufficientBalance" | "invalidChain";
 
 const VALIDATION_ERROR_MESSAGES: Record<ValidationReason, string> = {

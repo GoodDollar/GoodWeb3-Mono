@@ -4,7 +4,6 @@ import { Image, SvgXml } from "../../../core/images";
 import { getBridgeNetworkIcon } from "../../../utils/icons";
 import { getChainColor, getChainLabel, getValidTargetChains } from "./utils";
 
-// Style objects defined outside component for reusability and cleaner renders
 const chainContainerStyles = {
   flex: 1,
   bg: "white",
@@ -117,7 +116,6 @@ export const ChainSelector: React.FC<ChainSelectorProps> = memo(
 
     return (
       <HStack space={4} alignItems="center" zIndex={1000}>
-        {/* Source Chain */}
         <VStack {...chainContainerStyles}>
           <HStack space={3} alignItems="center">
             {getBridgeNetworkIcon(sourceChain) ? (
@@ -151,7 +149,6 @@ export const ChainSelector: React.FC<ChainSelectorProps> = memo(
             </Pressable>
           </HStack>
 
-          {/* Source Chain Dropdown */}
           {showSourceDropdown && (
             <Box {...dropdownStyles}>
               {availableChains.map(chain => (
@@ -192,14 +189,12 @@ export const ChainSelector: React.FC<ChainSelectorProps> = memo(
           )}
         </VStack>
 
-        {/* Swap Arrow */}
         <Pressable onPress={onSwap} {...swapButtonStyles}>
           <Text fontSize="xl" color="goodGrey.600" fontWeight="bold">
             ⇄
           </Text>
         </Pressable>
 
-        {/* Target Chain */}
         <VStack {...chainContainerStyles}>
           <HStack space={3} alignItems="center">
             {getBridgeNetworkIcon(targetChain) ? (
@@ -233,7 +228,6 @@ export const ChainSelector: React.FC<ChainSelectorProps> = memo(
             </Pressable>
           </HStack>
 
-          {/* Target Chain Dropdown */}
           {showTargetDropdown && (
             <Box {...dropdownStyles}>
               {validTargetChains.map(chain => {

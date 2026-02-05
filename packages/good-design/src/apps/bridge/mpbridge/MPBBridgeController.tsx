@@ -71,7 +71,6 @@ export const MPBBridgeController: React.FC<IMPBBridgeControllerProps> = ({ onBri
 
     const toMinimum = (decimals?: number) => {
       const targetDecimals = decimals ?? 18;
-      // Use the contract's actual minimum - no hardcoded override
       return scaleFrom18(bridgeLimits.minAmount, targetDecimals);
     };
 
@@ -83,8 +82,6 @@ export const MPBBridgeController: React.FC<IMPBBridgeControllerProps> = ({ onBri
       };
     };
 
-    // Only return limits for the current source chain
-    // We can't assume limits are the same for all chains
     return {
       [sourceChain]: buildLimits(
         sourceChain === "fuse" ? fuseDecimals : sourceChain === "celo" ? celoDecimals : mainnetDecimals
@@ -94,8 +91,6 @@ export const MPBBridgeController: React.FC<IMPBBridgeControllerProps> = ({ onBri
 
   const useCanMPBBridge = useCallback(
     (chain: string, amountWei: string) => {
-      // We rely on the validation from useGetMPBBridgeData which uses the current input
-      // If the passed amount matches the current input, return the validation result
       if (amountWei === inputTransaction[0]) {
         if (!validation.isValid) {
           return { isValid: false, reason: validation.reason, errorMessage: validation.errorMessage };
@@ -105,9 +100,6 @@ export const MPBBridgeController: React.FC<IMPBBridgeControllerProps> = ({ onBri
         }
         return { isValid: true, reason: "" };
       }
-
-      // Fallback for when amount doesn't match (shouldn't happen often in current UI flow)
-      // We can't validate accurately without calling the hook with new amount
       return { isValid: true, reason: "" };
     },
     [validation, inputTransaction]
@@ -128,7 +120,6 @@ export const MPBBridgeController: React.FC<IMPBBridgeControllerProps> = ({ onBri
 
   useEffect(() => {
     if (bridgeRequestStatus?.status === "Exception") {
-      // The error is now handled in the bridge hook and propagated through bridgeStatus
       console.error("Bridge transaction exception:", bridgeRequestStatus.errorMessage);
     }
   }, [bridgeRequestStatus]);

@@ -1,7 +1,8 @@
 import { ethers, utils } from "ethers";
 import { getSourceChainId } from "@gooddollar/web3sdk-v2";
-import { BridgeTransaction } from "../MPBBridgeTransactionCard";
 import { TransactionStatus } from "@usedapp/core";
+import type { BridgeTransaction } from "../types";
+import { capitalizeChain } from "../utils";
 
 interface CreateTransactionDetailsParams {
   amountWei: string;
@@ -31,8 +32,8 @@ export const createTransactionDetails = (params: CreateTransactionDetailsParams)
   return {
     id: transactionHash,
     transactionHash,
-    sourceChain: sourceChain.charAt(0).toUpperCase() + sourceChain.slice(1),
-    targetChain: targetChain.charAt(0).toUpperCase() + targetChain.slice(1),
+    sourceChain: capitalizeChain(sourceChain),
+    targetChain: capitalizeChain(targetChain),
     amount: parseFloat(amountFormatted).toFixed(2),
     bridgeProvider: bridgeProvider as "axelar" | "layerzero",
     status,

@@ -4,7 +4,8 @@ import { Box, HStack, Text, VStack, Spinner } from "native-base";
 import BasicStyledModal from "../../../core/web3/modals/BasicStyledModal";
 import { ExplorerLink } from "../../../core";
 import { truncateMiddle } from "../../../utils/string";
-import { BridgeTransaction } from "./MPBBridgeTransactionCard";
+import type { BridgeTransaction } from "./types";
+import { capitalizeChain } from "./utils";
 
 interface MPBTransactionDetailsModalProps {
   open: boolean;
@@ -38,15 +39,22 @@ const iconConfigMap = {
   default: { bg: "gray.200", borderColor: "gray.300", content: "○", spinner: false }
 };
 
-const StepIndicator = ({
-  status,
-  text,
-  isLast = false
-}: {
-  status: "completed" | "pending" | "bridging" | "failed";
-  text: string;
-  isLast?: boolean;
-}) => {
+type StepStatus = "completed" | "pending" | "bridging" | "failed";
+
+const PROGRESS_BY_STATUS: Record<string, { sourceGateway: StepStatus; destGateway: StepStatus; executed: StepStatus }> =
+  {
+    completed: { sourceGateway: "completed", destGateway: "completed", executed: "completed" },
+    pending: { sourceGateway: "completed", destGateway: "bridging", executed: "pending" },
+    bridging: { sourceGateway: "completed", destGateway: "bridging", executed: "pending" },
+    failed: { sourceGateway: "completed", destGateway: "failed", executed: "failed" }
+  };
+const DEFAULT_PROGRESS: { sourceGateway: StepStatus; destGateway: StepStatus; executed: StepStatus } = {
+  sourceGateway: "pending",
+  destGateway: "pending",
+  executed: "pending"
+};
+
+const StepIndicator = ({ status, text, isLast = false }: { status: StepStatus; text: string; isLast?: boolean }) => {
   const config = iconConfigMap[status] || iconConfigMap.default;
 
   const getIcon = () => (
@@ -84,8 +92,6 @@ const StepIndicator = ({
   );
 };
 
-const capitalizeChain = (chain: string) => chain.charAt(0).toUpperCase() + chain.slice(1);
-
 const MPBTransactionDetailsContent = ({
   transaction,
   transactionHistory
@@ -104,29 +110,10 @@ const MPBTransactionDetailsContent = ({
   const status = historyTx?.status || transaction.status;
 
   const txDate = date ? new Date(date).toLocaleDateString() + " " + new Date(date).toLocaleTimeString() : "Unknown";
-
-  // Determine progress based on status
-  const getProgressSteps = () => {
-    const progressMap = {
-      completed: {
-        sourceGateway: "completed" as const,
-        destGateway: "completed" as const,
-        executed: "completed" as const
-      },
-      pending: { sourceGateway: "completed" as const, destGateway: "bridging" as const, executed: "pending" as const },
-      bridging: { sourceGateway: "completed" as const, destGateway: "bridging" as const, executed: "pending" as const },
-      failed: { sourceGateway: "completed" as const, destGateway: "failed" as const, executed: "failed" as const },
-      default: { sourceGateway: "pending" as const, destGateway: "pending" as const, executed: "pending" as const }
-    };
-
-    return progressMap[status] || progressMap.default;
-  };
-
-  const progress = getProgressSteps();
+  const progress = PROGRESS_BY_STATUS[status] ?? DEFAULT_PROGRESS;
 
   return (
     <VStack space={6} width="100%" paddingX={4}>
-      {/* Header - align with success modal */}
       <VStack space={2} alignItems="center">
         <Text fontSize="xs" color="gray.500">
           Bridged via {bridgeProvider?.toUpperCase()}
@@ -139,7 +126,6 @@ const MPBTransactionDetailsContent = ({
         </Text>
       </VStack>
 
-      {/* Progress Steps */}
       <VStack space={4} bg="gray.50" padding={4} borderRadius="lg">
         <Text fontSize="sm" fontWeight="semibold" color="gray.800">
           Progress
@@ -151,7 +137,6 @@ const MPBTransactionDetailsContent = ({
         </VStack>
       </VStack>
 
-      {/* Transaction Details */}
       <VStack space={4}>
         <VStack space={2}>
           <Text fontSize="sm" fontWeight="medium" color="gray.500">

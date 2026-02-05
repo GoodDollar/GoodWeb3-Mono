@@ -1,6 +1,5 @@
 import { FEE_ROUTES } from "@gooddollar/web3sdk-v2";
 
-// Types for better type safety
 type ChainName = "celo" | "fuse" | "mainnet";
 type BridgeProvider = "axelar" | "layerzero";
 
@@ -10,7 +9,6 @@ interface ChainConfig {
   label: string;
 }
 
-// Chain configuration mapping (DRY principle)
 const CHAIN_CONFIG: Record<ChainName, ChainConfig> = {
   celo: {
     icon: "C",
@@ -29,7 +27,6 @@ const CHAIN_CONFIG: Record<ChainName, ChainConfig> = {
   }
 } as const;
 
-// Chain utility functions using the mapping
 export const getChainIcon = (chain: string): string => {
   return CHAIN_CONFIG[chain as ChainName]?.icon || "?";
 };
@@ -42,7 +39,6 @@ export const getChainLabel = (chain: string): string => {
   return CHAIN_CONFIG[chain as ChainName]?.label || "G$ Unknown";
 };
 
-// Default target chains for each source chain
 const DEFAULT_TARGET_CHAINS: Record<ChainName, ChainName[]> = {
   fuse: ["celo", "mainnet"] as ChainName[],
   celo: ["fuse", "mainnet"] as ChainName[],
@@ -52,7 +48,6 @@ const DEFAULT_TARGET_CHAINS: Record<ChainName, ChainName[]> = {
 // Use centralized provider route mapping from sdk-v2 (avoid duplication)
 const PROVIDER_ROUTES = FEE_ROUTES as Record<BridgeProvider, Record<string, string>>;
 
-// Utility: list all provider-supported source/target pairs (static capability, independent of fee API)
 export const getProviderSupportedPairs = (provider: BridgeProvider): [ChainName, ChainName][] => {
   const mappings = PROVIDER_ROUTES[provider] || {};
   return Object.keys(mappings).reduce<[ChainName, ChainName][]>((pairs, key) => {
@@ -69,7 +64,6 @@ export const getProviderSupportedPairs = (provider: BridgeProvider): [ChainName,
   }, []);
 };
 
-// Utility: check if the static mapping supports a given route for a provider
 export const isRouteSupportedByProvider = (source: string, target: string, provider: BridgeProvider): boolean => {
   const routeKey = `${source.toUpperCase()}_${target.toUpperCase()}`;
   return Boolean(PROVIDER_ROUTES[provider]?.[routeKey]);
@@ -98,7 +92,6 @@ export const getValidTargetChains = (
 ): ChainName[] => {
   const possibleTargets = DEFAULT_TARGET_CHAINS[source as ChainName] || [];
 
-  // While fees are loading or absent, fall back to static provider support (based on configured routes)
   if (!bridgeFees || feesLoading) {
     const providerMappings = PROVIDER_ROUTES[bridgeProvider as BridgeProvider] || {};
     return possibleTargets.filter(target => {
@@ -107,11 +100,9 @@ export const getValidTargetChains = (
     });
   }
 
-  // With fees available, ensure the route also has current fee data
   return possibleTargets.filter(target => hasRouteFees(source, target, bridgeProvider, bridgeFees));
 };
 
-// Get current bridge fee for display
 export const getCurrentBridgeFee = (
   sourceChain: string,
   targetChain: string,
@@ -136,7 +127,6 @@ export const getCurrentBridgeFee = (
   return providerFees[feeProperty] || "Fee not available";
 };
 
-// Constants for transaction conversion
 export const CHAIN_ID_TO_NAME: Record<number, string> = {
   122: "Fuse",
   42220: "Celo",
@@ -151,47 +141,34 @@ export const BRIDGE_SERVICE_MAPPING = {
 export const DEFAULT_BRIDGE_PROVIDER = "layerzero";
 export const RECENT_TRANSACTION_THRESHOLD = 30 * 24 * 60 * 60;
 
-// Helper function to get chain name from chain ID
 export const getChainName = (chainId: number): string => {
   return CHAIN_ID_TO_NAME[chainId] || "Unknown";
 };
 
+export const capitalizeChain = (chain: string): string => chain.charAt(0).toUpperCase() + chain.slice(1);
+
 export const convertTransaction = (tx: any, currentChainId: number) => {
   const sourceChainId = tx.data?.sourceChainId?.toNumber();
   const targetChainId = tx.data?.targetChainId?.toNumber();
-
-  // Get chain names using dictionary lookup (DRY principle)
   const sourceChainName = getChainName(sourceChainId);
   const targetChainName = getChainName(targetChainId);
 
-  // Get bridge provider from transaction data using dictionary lookup
   const bridgeService = tx.data?.bridge;
   let bridgeProvider = DEFAULT_BRIDGE_PROVIDER;
+  const txTimestamp = tx.data?.timestamp || tx.timestamp || 0;
+  const now = Math.floor(Date.now() / 1000);
 
   if (bridgeService !== undefined) {
-    // MPB bridge data includes bridge service information
     const serviceKey = bridgeService as keyof typeof BRIDGE_SERVICE_MAPPING;
     bridgeProvider = BRIDGE_SERVICE_MAPPING[serviceKey] || DEFAULT_BRIDGE_PROVIDER;
   } else {
-    const txTimestamp = tx.data?.timestamp || tx.timestamp || 0;
-    const now = Math.floor(Date.now() / 1000);
     const isRecent = now - txTimestamp < RECENT_TRANSACTION_THRESHOLD;
-
     bridgeProvider = isRecent ? "layerzero" : "axelar";
   }
 
-  // Determine status based on completedEvent (MPB bridge pattern)
-  // If transaction is older than 10 minutes and we don't have completedEvent yet,
-  // check if we can infer completion from source chain confirmation
-  const txTimestamp = tx.data?.timestamp || tx.timestamp || 0;
-  const now = Math.floor(Date.now() / 1000);
   const txAgeMinutes = (now - txTimestamp) / 60;
-
-  // If transaction is more than 10 minutes old and we haven't detected ExecutedTransfer,
-  // it's likely completed but the event detection is delayed. Mark as completed optimistically.
-  // This handles cases where the transaction is confirmed on source chain (visible on explorer)
-  // but the ExecutedTransfer event hasn't been indexed yet on the target chain.
-  const isLikelyCompleted = txAgeMinutes > 10 && !tx.completedEvent;
+  const OPTIMISTIC_COMPLETION_AGE_MINUTES = 10;
+  const isLikelyCompleted = txAgeMinutes > OPTIMISTIC_COMPLETION_AGE_MINUTES && !tx.completedEvent;
 
   const status = tx.completedEvent || isLikelyCompleted ? "completed" : "pending";
 

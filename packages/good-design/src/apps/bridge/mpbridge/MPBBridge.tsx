@@ -18,7 +18,7 @@ import {
   useConvertedTransactionHistory,
   useBridgeStatusHandler
 } from "./hooks";
-import { getValidTargetChains } from "./utils";
+import { getValidTargetChains, capitalizeChain } from "./utils";
 import { handleSourceChainChange, handleProviderChange } from "./utils/chainHelpers";
 import { createTransactionDetails } from "./utils/transactionHelpers";
 import { ChainSelector } from "./ChainSelector";
@@ -28,6 +28,20 @@ import { ExpectedOutput } from "./ExpectedOutput";
 import { FeeInformation } from "./FeeInformation";
 import { TransactionHistory } from "./TransactionHistory";
 import { BridgingStatusBanner } from "./BridgingStatusBanner";
+
+const DEBOUNCE_MS = 300;
+const TRANSACTION_HISTORY_DEBOUNCE_MS = 2000;
+
+const cardShadowStyle = Platform.select({
+  web: { boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.08)" },
+  default: {
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 8
+  }
+});
 
 export const MPBBridge = ({
   useCanMPBBridge,
@@ -77,7 +91,7 @@ export const MPBBridge = ({
   const [toggleState, setToggleState] = useState<boolean>(false);
   const [successModalOpen, setSuccessModalOpen] = useState(false);
 
-  const { realTransactionHistory, historyLoading } = useDebouncedTransactionHistory(2000);
+  const { realTransactionHistory, historyLoading } = useDebouncedTransactionHistory(TRANSACTION_HISTORY_DEBOUNCE_MS);
 
   const { getBalanceForChain } = useChainBalances();
 
@@ -93,10 +107,7 @@ export const MPBBridge = ({
   const successModalDismissedRef = useRef(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedBridgeAmount(bridgeWeiAmount);
-    }, 300); // 300ms debounce
-
+    const timer = setTimeout(() => setDebouncedBridgeAmount(bridgeWeiAmount), DEBOUNCE_MS);
     return () => clearTimeout(timer);
   }, [bridgeWeiAmount]);
 
@@ -221,10 +232,8 @@ export const MPBBridge = ({
     }
   }, [showSourceDropdown, showTargetDropdown]);
 
-  // Convert real transaction history to the format expected by TransactionList
   const recentTransactions = useConvertedTransactionHistory(realTransactionHistory, sourceChain);
 
-  // Tx details modal state
   const [txDetailsOpen, setTxDetailsOpen] = useState(false);
   const [txDetails, setTxDetails] = useState<any | undefined>();
   const onTxDetailsPress = useCallback((tx: any) => {
@@ -250,7 +259,6 @@ export const MPBBridge = ({
 
   return (
     <VStack space={8} alignSelf="center">
-      {/* Transaction Details Modal */}
       {txDetailsOpen && txDetails ? (
         <MPBTransactionDetailsModal
           open={txDetailsOpen}
@@ -285,10 +293,8 @@ export const MPBBridge = ({
         }}
       />
 
-      {/* Error Modal */}
       <ErrorModal error={errorMessage} onClose={() => setErrorMessage("")} overlay="dark" />
 
-      {/* Header */}
       <VStack space={3} alignItems="center">
         <Text fontFamily="heading" fontSize="2xl" fontWeight="700" color="goodBlue.600">
           Main Bridge
@@ -306,10 +312,8 @@ export const MPBBridge = ({
         </Text>
       </VStack>
 
-      {/* Bridging Status Banner */}
       {isBridging && <BridgingStatusBanner isBridging={isBridging} bridgingStatus={bridgingStatus} />}
 
-      {/* Fee Error Banner */}
       {feesError && (
         <Box bg="red.50" borderRadius="lg" padding="4" borderWidth="1" borderColor="red.300">
           <Text color="red.600" fontSize="sm" fontWeight="500">
@@ -318,33 +322,14 @@ export const MPBBridge = ({
         </Box>
       )}
 
-      {/* Bridge Functionality Card */}
-      <Box
-        borderRadius="xl"
-        padding="8"
-        backgroundColor="white"
-        style={Platform.select({
-          web: {
-            boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.08)"
-          },
-          default: {
-            shadowColor: "#000",
-            shadowOffset: { width: 0, height: 4 },
-            shadowOpacity: 0.08,
-            shadowRadius: 12,
-            elevation: 8
-          }
-        })}
-      >
+      <Box borderRadius="xl" padding="8" backgroundColor="white" style={cardShadowStyle}>
         <VStack space={8}>
           <BridgeProviderSelector
             bridgeProvider={bridgeProvider}
             onProviderChange={handleBridgeProviderChangeCallback}
           />
 
-          {/* Token Exchange Interface */}
           <VStack space={6}>
-            {/* Token Selection Row */}
             <ChainSelector
               sourceChain={sourceChain}
               targetChain={targetChain}
@@ -360,7 +345,6 @@ export const MPBBridge = ({
               onTargetDropdownToggle={() => setShowTargetDropdown(!showTargetDropdown)}
             />
 
-            {/* Amount Input */}
             <AmountInput
               wei={wei}
               gdValue={gdValue}
@@ -373,27 +357,22 @@ export const MPBBridge = ({
               toggleState={toggleState}
             />
 
-            {/* Expected Output */}
             <ExpectedOutput
               expectedToReceive={expectedToReceive}
               targetChain={targetChain}
               balance={getBalanceForChain(targetChain)}
             />
 
-            {/* Bridge Button */}
             <Web3ActionButton
               web3Action={triggerBridge}
               disabled={!isValidInput || isBridging || !!feesError}
               isLoading={isBridging}
-              text={
-                isBridging ? "Bridging..." : `Bridge to ${targetChain.charAt(0).toUpperCase() + targetChain.slice(1)} `
-              }
+              text={isBridging ? "Bridging..." : `Bridge to ${capitalizeChain(targetChain)} `}
               supportedChains={[SupportedChains[sourceChain.toUpperCase() as keyof typeof SupportedChains]]}
               variant="primary"
               size="lg"
             />
 
-            {/* Fee Information */}
             <FeeInformation
               sourceChain={sourceChain}
               targetChain={targetChain}
@@ -406,24 +385,7 @@ export const MPBBridge = ({
         </VStack>
       </Box>
 
-      {/* Transaction History Card */}
-      <Box
-        borderRadius="xl"
-        padding="8"
-        backgroundColor="white"
-        style={Platform.select({
-          web: {
-            boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.08)"
-          },
-          default: {
-            shadowColor: "#000",
-            shadowOffset: { width: 0, height: 4 },
-            shadowOpacity: 0.08,
-            shadowRadius: 12,
-            elevation: 8
-          }
-        })}
-      >
+      <Box borderRadius="xl" padding="8" backgroundColor="white" style={cardShadowStyle}>
         <TransactionHistory
           realTransactionHistory={recentTransactions}
           historyLoading={historyLoading}

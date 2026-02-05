@@ -2,6 +2,18 @@ import { BigNumber } from "ethers";
 
 export type BridgeProvider = "axelar" | "layerzero";
 
+export type BridgeTransaction = {
+  id: string;
+  transactionHash: string;
+  sourceChain: string;
+  targetChain: string;
+  amount: string;
+  bridgeProvider: "axelar" | "layerzero";
+  status: "completed" | "pending" | "failed" | "bridging";
+  date?: Date;
+  chainId: number;
+};
+
 export interface IMPBLimits {
   [chain: string]: {
     minAmount: BigNumber;
@@ -23,7 +35,7 @@ export interface MPBBridgeProps {
   targetChainState: [string, (chain: string) => void];
   inputTransaction: [string, (amount: string) => void];
   pendingTransaction: [any, (transaction: any) => void];
-  protocolFeePercent?: number; // Protocol fee displayed for UI purposes only
+  protocolFeePercent?: number;
   limits?: IMPBLimits;
   fees?: IMPBFees;
   bridgeStatus?: {
