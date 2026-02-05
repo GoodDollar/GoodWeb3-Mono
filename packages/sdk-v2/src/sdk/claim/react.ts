@@ -430,7 +430,9 @@ export const useWhitelistSync = () => {
         syncInProgress = true;
         const { current: baseEnv } = baseEnvRef;
         const devEnv = baseEnvRef.current === "fuse" ? "development" : baseEnv;
-        const { backend } = Envs[devEnv as keyof typeof Envs];
+        const envConfig = Envs[devEnv as keyof typeof Envs];
+        if (!envConfig) return;
+        const { backend } = envConfig;
 
         setSyncStatus(
           fetch(backend + `/syncWhitelist/${account}`)
