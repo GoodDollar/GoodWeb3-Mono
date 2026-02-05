@@ -49,16 +49,6 @@ export const useBridgeValidators = (
         }
       }
 
-      try {
-        const allowance = await gdContract.allowance(account, bridgeContract.address);
-
-        if (allowance.lt(amountBN)) {
-          // Approval will be requested automatically
-        }
-      } catch (error: any) {
-        // Could not check token allowance, proceed with validation
-      }
-
       // ✅ Check 3: Destination chain is supported
       if (!isSupportedChain(bridgeRequest.sourceChainId)) {
         throw new Error(
