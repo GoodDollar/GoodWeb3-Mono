@@ -8,6 +8,8 @@ import { FV_LOGIN_MSG, FV_IDENTIFIER_MSG2 } from "../constants";
 
 const DAY = 1000 * 60 * 60 * 24;
 
+import { isValidWhitelistedRoot } from "../utils/address";
+
 export class ClaimSDK extends BaseSDK {
   async generateFVLink(firstName: string, callbackUrl?: string, popupMode = false, chainId?: number) {
     const steps = this.getFVLink(chainId);
@@ -78,22 +80,87 @@ export class ClaimSDK extends BaseSDK {
     return { getLoginSig, getFvSig, getLink, deleteFvId };
   }
 
-  async isAddressVerified(address: string): Promise<boolean> {
-    const identity = this.getContract("Identity");
+  /**
+   * Get the whitelisted root address for an account.
+   * This enables connected accounts to claim on behalf of their main whitelisted account.
+   *
+   * Failure modes are normalized for predictable behavior:
+   * - Throws when no whitelisted root exists (contract returns 0x0)
+   * - Throws on network/contract errors
+   *
+   * @param {string} address Account address to check
+   * @returns {Promise<string>} The whitelisted root address
+   * @throws {Error} If account is not whitelisted or connected, or if resolution fails
+   */
+  async getWhitelistedRoot(address: string): Promise<string> {
+    try {
+      const identity = this.getContract("Identity");
+      const root = await identity.getWhitelistedRoot(address);
 
-    return identity.isWhitelisted(address);
+      // Explicitly handle 0x0 - account is neither whitelisted nor connected
+      if (!isValidWhitelistedRoot(root)) {
+        throw new Error("No whitelisted root address found; the account may not be whitelisted or connected.");
+      }
+
+      return root;
+    } catch (error) {
+      // Normalize errors for predictable failure modes
+      const message = error instanceof Error ? error.message : String(error);
+      throw new Error(`Unable to resolve whitelisted root address: ${message}`);
+    }
+  }
+
+  /**
+   * Check if an address is verified (whitelisted or connected to a whitelisted account).
+   * @param address - The address to check
+   * @returns true if the address is whitelisted or connected to a whitelisted account
+   */
+  async isAddressVerified(address: string): Promise<boolean> {
+    try {
+      const root = await this.getWhitelistedRoot(address);
+      return isValidWhitelistedRoot(root);
+    } catch {
+      return false;
+    }
   }
 
   async checkEntitlement(address?: string): Promise<BigNumber> {
     const ubi = this.getContract("UBIScheme");
 
     try {
+      // Optimization: If address is already whitelisted, use it directly
       if (address) {
-        return await ubi["checkEntitlement(address)"](address);
+        try {
+          const res = await ubi["checkEntitlement(address)"](address);
+          if (res.gt(0)) return res;
+        } catch (e) {
+          // Fallback to identity lookup if direct check fails or reverts
+        }
       }
 
-      return await ubi["checkEntitlement()"]();
-    } catch {
+      let account = address;
+
+      // Handle read-only context gracefully by using listAccounts instead of getSigner().getAddress()
+      // This prevents crashes when no signer is available
+      if (!account) {
+        const accounts = await this.provider.listAccounts().catch(() => []);
+        account = accounts[0];
+      }
+
+      // Preserve original no-arg semantics if no account can be resolved
+      if (!account) {
+        return await ubi["checkEntitlement()"]();
+      }
+
+      // Get whitelisted root for the address/account
+      // If the address is already a root or not connected, we fallback to the address itself
+      const whitelistedRoot = (await this.getWhitelistedRoot(account).catch(() => account)) as string;
+
+      // Check entitlement for the root (or fallbacked address)
+      return await ubi["checkEntitlement(address)"](whitelistedRoot);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.warn(`checkEntitlement failed: ${message}`);
       return BigNumber.from("0");
     }
   }

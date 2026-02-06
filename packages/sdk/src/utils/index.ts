@@ -10,3 +10,4 @@ export * from "./memoize";
 export * from "./prices";
 export * from "./tokenBalance";
 export * from "./web3";
+export * from "./address";

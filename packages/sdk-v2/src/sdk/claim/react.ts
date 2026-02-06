@@ -20,6 +20,8 @@ import { useContractFunctionWithDefaultGasFees, useGasFees } from "../base/hooks
 
 import { getContractsFromClaimPools, getPoolsDetails } from "./utils/pools";
 import { PoolDetails } from "./types";
+import { isNonZeroAddress } from "../utils/address";
+import { useWhitelistedRoot, useEntitlementForRoot } from "./hooks";
 
 type UBIPoolsDetails = Awaited<ReturnType<GoodCollectiveSDK["getUBIPoolsDetails"]>>;
 
@@ -35,9 +37,16 @@ export const isTxReject = (errorMessage: string) => errorMessage === "user rejec
 export const useIsAddressVerified = (address: string, env?: EnvKey) => {
   const sdk = useReadOnlySDK("claim") as ClaimSDK;
 
-  const result = usePromise(() => {
-    if (address && sdk) return sdk.isAddressVerified(address);
-    return Promise.resolve(undefined);
+  const result = usePromise(async () => {
+    if (address && sdk) {
+      try {
+        const root = await sdk.getWhitelistedRoot(address);
+        return { isVerified: true, whitelistedRoot: root };
+      } catch {
+        return { isVerified: false, whitelistedRoot: null };
+      }
+    }
+    return { isVerified: false, whitelistedRoot: null };
   }, [address, env, sdk]);
 
   return result;
@@ -305,14 +314,13 @@ export const useClaim = (refresh: QueryParams["refresh"] = "never") => {
   const ubi = useGetContract("UBIScheme", true, "claim", chainId) as UBIScheme;
   const identity = useGetContract("Identity", true, "claim", chainId) as IIdentity;
   // const claimCall = useContractFunctionWithDefaultGasFees(ubi, "claim", { transactionName: "Claimed Daily UBI" });
-  const results = useCalls(
+  const whitelistedRoot = useWhitelistedRoot(identity, account, refreshOrNever, chainId);
+
+  // Then, use the whitelisted root for entitlement check
+  const entitlement = useEntitlementForRoot(ubi, whitelistedRoot, refreshOrNever, chainId);
+
+  const [currentDayResult, periodStartResult] = useCalls(
     [
-      identity &&
-        account && {
-          contract: identity,
-          method: "isWhitelisted",
-          args: [account]
-        },
       ubi && {
         contract: ubi,
         method: "currentDay",
@@ -322,29 +330,26 @@ export const useClaim = (refresh: QueryParams["refresh"] = "never") => {
         contract: ubi,
         method: "periodStart",
         args: []
-      },
-      ubi &&
-        account && {
-          contract: ubi,
-          method: "checkEntitlement(address)",
-          args: [account]
-        }
+      }
     ],
     { refresh: refreshOrNever, chainId }
   );
 
-  const periodStart = (first(results[2]?.value) || BigNumber.from("0")) as BigNumber;
-  const currentDay = (first(results[1]?.value) || BigNumber.from("0")) as BigNumber;
+  const periodStart = (first(periodStartResult?.value) || BigNumber.from("0")) as BigNumber;
+  const currentDay = (first(currentDayResult?.value) || BigNumber.from("0")) as BigNumber;
   let startRef = new Date(periodStart.toNumber() * 1000 + currentDay.toNumber() * DAY);
 
   if (startRef < new Date()) {
     startRef = new Date(periodStart.toNumber() * 1000 + (currentDay.toNumber() + 1) * DAY);
   }
 
+  const isWhitelisted = isNonZeroAddress(whitelistedRoot);
+
   return {
-    isWhitelisted: first(results[0]?.value) as boolean,
-    claimAmount: (first(results[3]?.value) as BigNumber) || undefined,
-    hasClaimed: (first(results[3]?.value) as BigNumber)?.isZero(),
+    isWhitelisted,
+    whitelistedRoot,
+    claimAmount: entitlement,
+    hasClaimed: entitlement?.isZero(),
     nextClaimTime: startRef,
     address: ubi?.address,
     contract: ubi,
@@ -355,19 +360,14 @@ export const useClaim = (refresh: QueryParams["refresh"] = "never") => {
 export const useHasClaimed = (requiredNetwork: keyof typeof SupportedV2Networks): BigNumber | undefined => {
   const { account } = useEthers();
   const ubi = useGetContract("UBIScheme", true, "claim", SupportedV2Networks[requiredNetwork]) as UBIScheme;
+  const identity = useGetContract("Identity", true, "claim", SupportedV2Networks[requiredNetwork]) as IIdentity;
+  const chainId = SupportedV2Networks[requiredNetwork] as unknown as ChainId;
 
-  const [hasClaimed] = useCalls(
-    [
-      {
-        contract: ubi,
-        method: "checkEntitlement(address)",
-        args: [account]
-      }
-    ],
-    { refresh: 8, chainId: SupportedV2Networks[requiredNetwork] as unknown as ChainId }
-  );
+  // First, get the whitelisted root
+  const whitelistedRoot = useWhitelistedRoot(identity, account, 8, chainId);
 
-  return first(hasClaimed?.value);
+  // Then, use the whitelisted root for entitlement check
+  return useEntitlementForRoot(ubi, whitelistedRoot, 8, chainId);
 };
 
 export const useClaimedAlt = (chainId: number | undefined) => {
@@ -407,36 +407,17 @@ export const useWhitelistSync = () => {
     baseEnvRef.current = baseEnv;
   }, [baseEnv]);
 
-  const [celoResult] = useCalls(
-    [
-      {
-        contract: identity,
-        method: "isWhitelisted",
-        args: [account]
-      }
-    ],
-    { refresh: "never", chainId: SupportedChains.CELO as unknown as ChainId }
-  );
-
-  const [otherResult] = useCalls(
-    [
-      {
-        contract: identity2,
-        method: "isWhitelisted",
-        args: [account]
-      }
-    ],
-    { refresh: "never", chainId: otherChainId as unknown as ChainId }
-  );
+  const celoRoot = useWhitelistedRoot(identity, account, "never", SupportedChains.CELO as unknown as ChainId);
+  const otherRoot = useWhitelistedRoot(identity2, account, "never", otherChainId as unknown as ChainId);
 
   useEffect(() => {
     const whitelistSync = async () => {
       const isSynced = await AsyncStorage.getItem(`${account}-${chainId}-whitelistedSync`);
-      const whitelistCelo = first(celoResult?.value);
-      const whitelistOther = first(otherResult?.value);
+
+      const whitelistCelo = isNonZeroAddress(celoRoot);
+      const whitelistOther = isNonZeroAddress(otherRoot);
 
       // not need for sync when already synced or user whitelisted on both chains
-      // or
       if (isSynced || (whitelistCelo && whitelistOther)) {
         return setSyncStatus(Promise.resolve(true));
       }
@@ -449,7 +430,9 @@ export const useWhitelistSync = () => {
         syncInProgress = true;
         const { current: baseEnv } = baseEnvRef;
         const devEnv = baseEnvRef.current === "fuse" ? "development" : baseEnv;
-        const { backend } = Envs[devEnv as keyof typeof Envs];
+        const envConfig = Envs[devEnv as keyof typeof Envs];
+        if (!envConfig) return;
+        const { backend } = envConfig;
 
         setSyncStatus(
           fetch(backend + `/syncWhitelist/${account}`)
@@ -472,11 +455,11 @@ export const useWhitelistSync = () => {
     };
 
     whitelistSync().catch(noop);
-  }, [celoResult, otherResult, account, chainId, setSyncStatus]);
+  }, [celoRoot, otherRoot, account, chainId, setSyncStatus]);
 
   return {
-    celoWhitelisted: first(celoResult?.value) as boolean,
-    currentWhitelisted: first(otherResult?.value) as boolean,
+    celoWhitelisted: isNonZeroAddress(celoRoot),
+    currentWhitelisted: isNonZeroAddress(otherRoot),
     syncStatus
   };
 };

@@ -6,9 +6,10 @@ import { Moment } from "moment";
 
 export type ClaimDetails = {
   isWhitelisted: boolean;
+  whitelistedRoot?: string | null;
   isRegistered?: boolean;
   claimAmount?: BigNumber;
-  hasClaimed: boolean;
+  hasClaimed?: boolean;
   nextClaimTime: Date;
   address?: string;
   contractName?: string;
