@@ -1,2 +1,2 @@
-export * from './CustomSwitch'
-export * from './SelectBox'
+export * from "./CustomSwitch";
+export * from "./SelectBox";

@@ -21,8 +21,8 @@ export const ExplorerLink = ({
   isPool?: boolean;
 }) => {
   const { networks } = useConfig();
-  const { baseEnv } = useGetEnvChainId();
-  const devEnv = baseEnv === "fuse" ? "development" : baseEnv;
+  const { baseEnv, connectedEnv } = useGetEnvChainId();
+  const devEnv = connectedEnv === "fuse" ? "development" : baseEnv.split("-")[0];
   const { goodCollectiveUrl } = Envs[devEnv];
 
   const network = (networks || []).find(_ => _.chainId === chainId);

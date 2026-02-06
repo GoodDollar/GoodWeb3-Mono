@@ -143,7 +143,7 @@ export const MicroBridge = ({
 
   const reasonMinAmount =
     reason === "minAmount"
-      ? " Minimum amount is " + Number(minimumAmount) / (sourceChain === "fuse" ? 1e2 : 1e18) + "G$"
+      ? ` Minimum amount is ${Number(minimumAmount.value) / (sourceChain === "fuse" ? 1e2 : 1e18)} G$`
       : undefined;
 
   const getActiveColor = useCallback(
@@ -242,7 +242,8 @@ export const MicroBridge = ({
       />
       <VStack space={1} mt={4} textAlign="left" width="100%">
         <Text fontFamily="subheading" fontSize="xs" color="goodGrey.400">
-          Minimum amount to bridge: 1,000 G$
+          Minimum amount to bridge:{" "}
+          {(Number(minimumAmount.value) / (sourceChain === "fuse" ? 1e2 : 1e18)).toLocaleString()} G$
         </Text>
         <Text fontFamily="subheading" fontSize="xs" color="goodGrey.400">
           Bridge Fee: <b>G$ 10 or 0.15%</b> of transaction <i>(See FAQs for more on Fees)</i>

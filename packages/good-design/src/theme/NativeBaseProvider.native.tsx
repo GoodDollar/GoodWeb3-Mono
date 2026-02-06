@@ -1,1 +1,1 @@
-export { NativeBaseProvider } from 'native-base'
+export { NativeBaseProvider } from "native-base";

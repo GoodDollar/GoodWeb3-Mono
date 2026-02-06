@@ -69,7 +69,7 @@ const BasicModal: FC<BasicModalProps> = ({
         dismissable={hasCloseButton}
         {..._modal}
         style={{
-          width: 343,
+          width: _modalContainer?.width || 343,
           padding: 0,
           marginHorizontal: "auto",
           marginLeft: "auto",
@@ -80,7 +80,7 @@ const BasicModal: FC<BasicModalProps> = ({
         <NBModal.Content
           style={{
             ..._modalContainer,
-            maxWidth: 343,
+            maxWidth: _modalContainer?.maxWidth || 343,
             paddingTop: 0,
             paddingBottom: footer ? 0 : 24,
             paddingLeft: 0,
