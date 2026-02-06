@@ -193,26 +193,20 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
 
   const executeBridgeTransfer = useCallback(
     async (request: BridgeRequest) => {
+      // Simple lock: if already sending, skip completely
       if (bridgeToSending.current) {
-        console.log("[useMPBBridge] executeBridgeTransfer - already sending, skipping duplicate call");
+        console.log("[useMPBBridge] Skipping executeBridgeTransfer - already sending");
         return;
       }
+      // Set the lock immediately before any async operations
       bridgeToSending.current = true;
+      bridgeToTriggered.current = true;
+      console.log("[useMPBBridge] executeBridgeTransfer started");
 
       try {
-        console.log("[useMPBBridge] executeBridgeTransfer - preparing bridgeTo transaction", {
-          sourceChainId: request.sourceChainId,
-          targetChainId: request.targetChainId,
-          amount: request.amount,
-          target: request.target,
-          bridgeProvider
-        });
-
         const fees = await fetchBridgeFees();
-        const { source, target } = {
-          source: getChainName(request.sourceChainId),
-          target: getChainName(request.targetChainId)
-        };
+        const source = getChainName(request.sourceChainId);
+        const target = getChainName(request.targetChainId);
         const calculatedFees = fees
           ? calculateBridgeFees(fees, bridgeProvider, source, target)
           : createEmptyBridgeFees();
@@ -227,27 +221,18 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
           throw new Error("Bridge fee not available for the selected route.");
         }
 
-        // Add a 5% buffer to reduce the odds of underpaying due to fee estimation drift
-        const bufferedFee = nativeFee.mul(105).div(100);
-        const bridgeService = bridgeProvider === "layerzero" ? BridgeService.LAYERZERO : BridgeService.AXELAR;
-
         if (!request.target) {
           throw new Error("Target address is required");
         }
 
-        console.log("[useMPBBridge] executeBridgeTransfer - calling bridgeTo.send", {
-          target: request.target,
-          targetChainId: request.targetChainId,
-          amount: request.amount,
-          bridgeService,
-          bufferedFee: bufferedFee.toString()
-        });
+        const bufferedFee = nativeFee.mul(105).div(100);
+        const bridgeService = bridgeProvider === "layerzero" ? BridgeService.LAYERZERO : BridgeService.AXELAR;
 
         void bridgeTo.send(request.target, request.targetChainId, request.amount, bridgeService, {
           value: bufferedFee
         });
       } catch (error: any) {
-        console.error("[useMPBBridge] executeBridgeTransfer - error", error);
+        console.error("[useMPBBridge] executeBridgeTransfer error", error);
         bridgeLock.current = false;
         bridgeToTriggered.current = false;
         bridgeToSending.current = false;
@@ -280,15 +265,15 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
         return;
       }
 
-      // Check allowance first
+      // Check allowance — skip approval when already sufficient
       if (gdContract && account) {
         try {
           const allowance = await gdContract.allowance(account, bridgeContract.address);
           const amountBN = ethers.BigNumber.from(bridgeRequest.amount);
 
           if (allowance.gte(amountBN)) {
-            bridgeToTriggered.current = true;
-            bridgeToSending.current = true;
+            console.log("[useMPBBridge] Allowance sufficient, executing bridgeTo directly");
+            // executeBridgeTransfer handles its own locking
             await executeBridgeTransfer(bridgeRequest);
             return;
           }
@@ -297,7 +282,6 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
         }
       }
 
-      // Step 1: Approve the bridge contract to spend tokens
       void approve.send(bridgeContract.address, bridgeRequest.amount);
     },
     [bridgeProvider, bridgeContract, account, approve, validateBridgeTransaction, gdContract, executeBridgeTransfer]
@@ -340,52 +324,17 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
     }
 
     if (bridgeToTriggered.current || bridgeToSending.current) {
-      console.log("[useMPBBridge] bridgeTo already triggered or sending, skipping");
       return;
     }
 
-    bridgeToTriggered.current = true;
-    bridgeToSending.current = true;
+    console.log("[useMPBBridge] Approval success, executing bridgeTo");
 
-    console.log("[useMPBBridge] Approve succeeded, triggering bridgeTo");
-
-    const proceed = async () => {
-      try {
-        if (gdContract && bridgeContract && account) {
-          const allowance = await gdContract.allowance(account, bridgeContract.address);
-          const amountBN = ethers.BigNumber.from(bridgeRequest.amount);
-
-          console.log("[useMPBBridge] Verifying allowance before bridgeTo", {
-            allowance: allowance.toString(),
-            required: amountBN.toString(),
-            sufficient: allowance.gte(amountBN)
-          });
-
-          if (allowance.lt(amountBN)) {
-            throw new Error(
-              `Insufficient allowance. Approved: ${allowance.toString()}, Required: ${amountBN.toString()}`
-            );
-          }
-        }
-
-        await executeBridgeTransfer(bridgeRequest);
-      } catch (error: any) {
-        console.error("[useMPBBridge] post-approve proceed error", error);
-        bridgeToSending.current = false;
-        bridgeToTriggered.current = false;
-      }
-    };
-
-    void proceed();
-  }, [
-    account,
-    approve.state.status,
-    bridgeContract,
-    bridgeRequest,
-    bridgeTo.state.status,
-    executeBridgeTransfer,
-    gdContract
-  ]);
+    // No allowance re-check here: approve.state.status === "Success" already
+    // guarantees the on-chain approval succeeded. Reading allowance via RPC
+    // right after mining is unreliable (stale reads) and causes retry loops.
+    // executeBridgeTransfer handles its own locking
+    void executeBridgeTransfer(bridgeRequest);
+  }, [approve.state.status, bridgeTo.state.status, bridgeRequest, bridgeContract, executeBridgeTransfer]);
 
   return {
     sendMPBBridgeRequest,

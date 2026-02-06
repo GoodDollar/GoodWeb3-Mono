@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import { SupportedChains } from "../constants";
+import { G$Decimals, SupportedChains } from "../constants";
 
 /**
  * Bridge configuration constants
@@ -102,17 +102,10 @@ export const FEE_ROUTES: Record<BridgeProvider, Record<string, string>> = {
   }
 } as const;
 
-// G$ token decimals per chain (must match sdk G$Decimals; contract limits are in 18 decimals)
-export const SOURCE_CHAIN_DECIMALS: Record<number, number> = {
-  [SupportedChains.FUSE]: 2,
-  [SupportedChains.CELO]: 18,
-  [SupportedChains.MAINNET]: 2
-};
-
 const CONTRACT_DECIMALS = 18;
 
 export const normalizeAmountTo18 = (amount: ethers.BigNumber, sourceChainId: number): ethers.BigNumber => {
-  const decimals = SOURCE_CHAIN_DECIMALS[sourceChainId] ?? CONTRACT_DECIMALS;
+  const decimals = G$Decimals["G$"][sourceChainId as SupportedChains] ?? CONTRACT_DECIMALS;
   if (decimals < CONTRACT_DECIMALS) {
     return amount.mul(ethers.BigNumber.from(10).pow(CONTRACT_DECIMALS - decimals));
   }

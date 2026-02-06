@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { useEthers, useTokenAllowance } from "@usedapp/core";
 import { ethers } from "ethers";
 import { fetchBridgeFees } from "../api";
+import { G$Decimals, SupportedChains } from "../../constants";
 import {
   VALIDATION_REASONS,
   ERROR_MESSAGES,
@@ -9,8 +10,7 @@ import {
   safeBigNumber,
   getSourceChainId,
   calculateBridgeFees,
-  normalizeAmountTo18,
-  SOURCE_CHAIN_DECIMALS
+  normalizeAmountTo18
 } from "../constants";
 import { MPBBridgeData } from "../types";
 import { useGetContract } from "../../base/react";
@@ -65,7 +65,7 @@ export const useGetMPBBridgeData = (
   const allowance = useTokenAllowance(tokenAddress, effectiveAccount, spenderAddress, { chainId: sourceChainId });
 
   const fetchContractLimits = useCallback(async (contract: any, chainId: number) => {
-    const sourceDecimals = SOURCE_CHAIN_DECIMALS[chainId] ?? 18;
+    const sourceDecimals = G$Decimals["G$"][chainId as SupportedChains] ?? 18;
 
     const to18IfSourceDecimals = (value: ethers.BigNumber): ethers.BigNumber => {
       if (value.lt(THRESHOLD_18_DECIMALS)) {
