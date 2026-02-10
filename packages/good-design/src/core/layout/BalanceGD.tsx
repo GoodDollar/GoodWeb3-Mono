@@ -101,7 +101,7 @@ export const GdAmount = ({
   color?: any;
   options?: any;
 } & ITextProps) => {
-  const { color, options } = props;
+  const { color, options, variant, fontSize: propFontSize, fontFamily, ...rest } = props;
   const formatOptions = {
     fixedPrecisionDigits: 2,
     useFixedPrecision: true,
@@ -118,22 +118,23 @@ export const GdAmount = ({
   const amountAbbr = abbreviateGd(formatAmount);
 
   const isLargeNumber = +formatAmount > 1e6;
-  const fontSize = isLargeNumber ? "sm" : "l";
+  const defaultFontSize = isLargeNumber ? "sm" : "l";
+  const fontSize = propFontSize ?? defaultFontSize;
 
   return (
     <HStack alignItems="flex-end">
       <Text
-        variant="l-grey-650"
+        variant={variant ?? "l-grey-650"}
         fontSize={fontSize}
-        fontFamily="heading"
+        fontFamily={fontFamily ?? "heading"}
         color={color}
-        {...props}
+        {...rest}
         textTransform="capitalize"
       >
         {withFullBalance ? amount?.format?.(formatOptions) : amountAbbr}
       </Text>
       {withDefaultSuffix ? (
-        <Text variant="sm-grey-650" color={color} fontWeight="700" {...props}>
+        <Text variant="sm-grey-650" color={color} fontWeight="700" {...rest}>
           {"G$"}
         </Text>
       ) : null}
