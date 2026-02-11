@@ -59,14 +59,42 @@ export const GdOnramperWidget = ({
   // console.log({ selfSwap, account, gdHelperAddress, accountCeloBalance, cusdBalance, celoBalance });
   /**
    * callback to get event from onramper iframe
+   * Optimized to avoid unnecessary parsing and improve error handling
    */
-  const callback = useCallback(async (event: WebViewMessageEvent) => {
-    if ((event.nativeEvent.data as any).title === "success") {
-      await AsyncStorage.setItem("gdOnrampSuccess", "true");
-      //start the stepper
-      setStep(2);
-    }
-  }, []);
+  const callback = useCallback(
+    async (event: WebViewMessageEvent) => {
+      const rawData = event.nativeEvent?.data;
+      if (!rawData) return;
+
+      let eventData;
+      try {
+        // Only parse if it's a string, otherwise use directly
+        eventData = typeof rawData === "string" ? JSON.parse(rawData) : rawData;
+      } catch (error) {
+        // Silent fail for invalid JSON - expected for non-JSON messages
+        return;
+      }
+
+      // Early return if no valid event data
+      if (!eventData?.type && !eventData?.title) return;
+
+      // Handle different Onramper event types
+      switch (eventData.type || eventData.title) {
+        case "initiated":
+        case "opened":
+          // User opened/interacted with the widget
+          onEvents("widget_clicked");
+          break;
+        case "success":
+          await AsyncStorage.setItem("gdOnrampSuccess", "true");
+          setStep(2);
+          break;
+        default:
+          break;
+      }
+    },
+    [onEvents]
+  );
 
   const triggerSwap = async () => {
     if (swapLock.current) return; //prevent from useEffect retriggering this
@@ -74,6 +102,9 @@ export const GdOnramperWidget = ({
 
     try {
       setStep(3);
+      // Emit swap_started event to animate progress bar step 2
+      onEvents("swap_started");
+
       //user sends swap tx
       if (selfSwap && gdHelperAddress && library && account) {
         const minAmount = 0; // we let contract use oracle for minamount, we might calculate it for more precision in the future
@@ -103,8 +134,11 @@ export const GdOnramperWidget = ({
       // when done set stepper at final step
       setStep(5);
       swapLock.current = false;
+      // Emit swap_completed event to move progress bar to step 3
+      onEvents("swap_completed");
       onEvents("buy_success");
     } catch (e: any) {
+      swapLock.current = false; // Reset lock on error
       console.log("swap error:", e.message, e);
       showModal();
       onEvents("buygd_swap_failed", e.message);
@@ -116,6 +150,8 @@ export const GdOnramperWidget = ({
   useEffect(() => {
     if (cusdBalance?.gt(0) || celoBalance?.gt(0)) {
       void AsyncStorage.removeItem("gdOnrampSuccess");
+      // Emit funds_received event to update progress bar to step 2
+      onEvents("funds_received");
       console.log("starting swap:", cusdBalance?.toString(), celoBalance?.toString());
       triggerSwap().catch(e => {
         showModal();
@@ -134,7 +170,7 @@ export const GdOnramperWidget = ({
           step={step}
           setStep={setStep}
           targetNetwork="CELO"
-          widgetParams={undefined}
+          widgetParams={{ onlyCryptos: "CUSD_CELO", isAddressEditable: false }}
           isTesting={isTesting}
           onGdEvent={onEvents}
           apiKey={apiKey}
