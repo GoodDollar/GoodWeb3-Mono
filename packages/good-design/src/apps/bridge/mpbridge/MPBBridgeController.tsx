@@ -42,7 +42,7 @@ export const MPBBridgeController: React.FC<IMPBBridgeControllerProps> = ({ onBri
   }, [chainId]);
 
   const bridgeData = useGetMPBBridgeData(sourceChain, targetChain, bridgeProvider, inputTransaction[0], account);
-  const { bridgeFees, bridgeLimits, validation } = bridgeData;
+  const { bridgeFees, bridgeLimits, validation, isLoading: bridgeDataLoading } = bridgeData;
   const protocolFeePercent = (bridgeData as any).protocolFeePercent as number | null;
 
   const fuseDecimals = useG$Decimals("G$", 122);
@@ -91,6 +91,10 @@ export const MPBBridgeController: React.FC<IMPBBridgeControllerProps> = ({ onBri
 
   const useCanMPBBridge = useCallback(
     (chain: string, amountWei: string) => {
+      // While bridge data is still loading, return neutral valid state
+      if (bridgeDataLoading) {
+        return { isValid: true, reason: "" };
+      }
       if (amountWei === inputTransaction[0]) {
         if (!validation.isValid) {
           return { isValid: false, reason: validation.reason, errorMessage: validation.errorMessage };
@@ -102,7 +106,7 @@ export const MPBBridgeController: React.FC<IMPBBridgeControllerProps> = ({ onBri
       }
       return { isValid: true, reason: "" };
     },
-    [validation, inputTransaction]
+    [validation, inputTransaction, bridgeDataLoading]
   );
 
   const onBridgeStartHandler = useCallback(

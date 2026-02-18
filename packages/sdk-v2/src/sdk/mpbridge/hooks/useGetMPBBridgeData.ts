@@ -203,6 +203,11 @@ export const useGetMPBBridgeData = (
     const amountBN = safeBigNumber(amount);
     const hasAllowance = allowance ? allowance.gte(amountBN) : false;
 
+    // While still loading bridge data, don't show validation errors
+    if (isLoading) {
+      return { isValid: true, reason: "", canBridge: true, hasAllowance };
+    }
+
     if (error) {
       return { isValid: false, reason: VALIDATION_REASONS.ERROR, errorMessage: error, canBridge: false, hasAllowance };
     }
@@ -250,7 +255,7 @@ export const useGetMPBBridgeData = (
     }
 
     return { isValid: true, reason: "", canBridge: true, hasAllowance };
-  }, [amount, bridgeLimits, canUserBridge, error, allowance, sourceChainId]);
+  }, [amount, bridgeLimits, canUserBridge, error, allowance, sourceChainId, isLoading]);
 
   return { bridgeFees, bridgeLimits, protocolFeePercent, isLoading, error, validation, allowance };
 };

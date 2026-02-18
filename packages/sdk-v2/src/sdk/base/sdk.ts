@@ -119,7 +119,13 @@ export class BaseSDK {
   getContract(contractName: "MPBBridge"): Contract;
   getContract(contractName: string): Contract;
   getContract(contractName: string) {
-    if (!this.contracts?.[contractName]) return;
+    // Map internal names to deployment.json keys where they differ
+    const deploymentKeyMap: Record<string, string> = {
+      MPBBridge: "MpbBridge"
+    };
+    const deploymentKey = deploymentKeyMap[contractName] || contractName;
+
+    if (!this.contracts?.[deploymentKey]) return;
     switch (contractName) {
       case "UBIScheme": {
         const contract = new Contract(
@@ -184,7 +190,7 @@ export class BaseSDK {
         ) as any;
       case "MPBBridge":
         return new Contract(
-          this.contracts["MPBBridge"],
+          this.contracts["MpbBridge"],
           CONTRACT_TO_ABI["MPBBridge"].abi,
           this.signer || this.provider
         );
