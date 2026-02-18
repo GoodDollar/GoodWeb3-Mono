@@ -46,7 +46,6 @@ export const useGetMPBBridgeData = (
   const [bridgeFees, setBridgeFees] = useState<BridgeFees>({ nativeFee: null, zroFee: null });
   const [bridgeLimits, setBridgeLimits] = useState<BridgeLimitsData | null>(null);
   const [protocolFeePercent, setProtocolFeePercent] = useState<number | null>(null);
-  const [canUserBridge, setCanUserBridge] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -91,24 +90,9 @@ export const useGetMPBBridgeData = (
     }
   }, []);
 
-  const validateBridgeEligibility = useCallback(async (contract: any, account: string, amountWei: string) => {
-    try {
-      const amountBigNumber = safeBigNumber(amountWei);
-      if (amountBigNumber.gt(0)) {
-        const canBridge = await contract.canBridge(account, amountBigNumber);
-        setCanUserBridge(canBridge);
-      } else {
-        setCanUserBridge(true);
-      }
-    } catch (error) {
-      setCanUserBridge(false);
-    }
-  }, []);
-
   const fetchProtocolFee = useCallback(async (contract: any) => {
     try {
       const fees = await contract.bridgeFees();
-
       const bps = Number(fees.fee?.toString() || "0");
       setProtocolFeePercent(bps / 10000);
     } catch (error) {
@@ -179,13 +163,8 @@ export const useGetMPBBridgeData = (
     sourceChainId
   ]);
 
-  // Bridge eligibility — re-runs when amount changes
-  useEffect(() => {
-    if (mpbContract && effectiveAccount) {
-      void validateBridgeEligibility(mpbContract, effectiveAccount, amount);
-    }
-  }, [amount, effectiveAccount, mpbContract, validateBridgeEligibility]);
-
+  // Local-only validation against cached limits — no network calls
+  // canBridge is checked at transaction time by useBridgeValidators
   const validation = useMemo<ValidationResult>(() => {
     const amountBN = safeBigNumber(amount);
     const hasAllowance = allowance ? allowance.gte(amountBN) : false;
@@ -209,38 +188,27 @@ export const useGetMPBBridgeData = (
     }
 
     const normalizedAmount = normalizeAmountTo18(amountBN, sourceChainId);
-    const belowMin = normalizedAmount.lt(bridgeLimits.minAmount);
-    const aboveMax = normalizedAmount.gt(bridgeLimits.maxAmount);
 
-    if (belowMin) {
+    if (normalizedAmount.lt(bridgeLimits.minAmount)) {
       return {
         isValid: false,
         reason: VALIDATION_REASONS.MIN_AMOUNT,
-        canBridge: canUserBridge,
+        canBridge: true,
         hasAllowance
       };
     }
 
-    if (aboveMax) {
+    if (normalizedAmount.gt(bridgeLimits.maxAmount)) {
       return {
         isValid: false,
         reason: VALIDATION_REASONS.MAX_AMOUNT,
-        canBridge: canUserBridge,
-        hasAllowance
-      };
-    }
-
-    if (!canUserBridge) {
-      return {
-        isValid: false,
-        reason: VALIDATION_REASONS.CANNOT_BRIDGE,
-        canBridge: false,
+        canBridge: true,
         hasAllowance
       };
     }
 
     return { isValid: true, reason: "", canBridge: true, hasAllowance };
-  }, [amount, bridgeLimits, canUserBridge, error, allowance, sourceChainId, isLoading]);
+  }, [amount, bridgeLimits, error, allowance, sourceChainId, isLoading]);
 
   return { bridgeFees, bridgeLimits, protocolFeePercent, isLoading, error, validation, allowance };
 };
