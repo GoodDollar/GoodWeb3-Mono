@@ -2,7 +2,7 @@ import { ethers } from "ethers";
 import { G$Decimals, SupportedChains } from "../constants";
 
 export const BRIDGE_CONSTANTS = {
-  DEFAULT_CHAIN_ID: 122,
+  DEFAULT_CHAIN_ID: 42220,
   DEBOUNCE_DELAY: 300,
   POLLING_INTERVAL: 5000,
   BRIDGE_ID_TOPIC_INDEX: 6,
@@ -108,10 +108,6 @@ export const normalizeAmountTo18 = (amount: ethers.BigNumber, sourceChainId: num
     return amount.div(ethers.BigNumber.from(10).pow(decimals - CONTRACT_DECIMALS));
   }
   return amount;
-};
-
-export const safeBigNumber = (value: string | number | undefined, fallback = "0"): ethers.BigNumber => {
-  return ethers.BigNumber.from(value || fallback);
 };
 
 export const resetStates = (setLoading: (loading: boolean) => void, setError: (error: string | null) => void) => {

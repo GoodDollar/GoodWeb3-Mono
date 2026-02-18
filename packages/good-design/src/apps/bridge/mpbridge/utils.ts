@@ -50,15 +50,13 @@ const PROVIDER_ROUTES = FEE_ROUTES as Record<BridgeProvider, Record<string, stri
 
 export const getProviderSupportedPairs = (provider: BridgeProvider): [ChainName, ChainName][] => {
   const mappings = PROVIDER_ROUTES[provider] || {};
+  const validChains = Object.keys(CHAIN_CONFIG);
   return Object.keys(mappings).reduce<[ChainName, ChainName][]>((pairs, key) => {
     const [src, dst] = key.split("_");
     const source = src.toLowerCase() as ChainName;
     const target = dst.toLowerCase() as ChainName;
-    if (
-      (["celo", "fuse", "mainnet"] as string[]).includes(source) &&
-      (["celo", "fuse", "mainnet"] as string[]).includes(target)
-    ) {
-      pairs.push([source as ChainName, target as ChainName]);
+    if (validChains.includes(source) && validChains.includes(target)) {
+      pairs.push([source, target]);
     }
     return pairs;
   }, []);

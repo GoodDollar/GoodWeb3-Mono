@@ -7,7 +7,6 @@ import {
   VALIDATION_REASONS,
   ERROR_MESSAGES,
   BridgeProvider,
-  safeBigNumber,
   getSourceChainId,
   calculateBridgeFees,
   normalizeAmountTo18
@@ -166,7 +165,7 @@ export const useGetMPBBridgeData = (
   // Local-only validation against cached limits — no network calls
   // canBridge is checked at transaction time by useBridgeValidators
   const validation = useMemo<ValidationResult>(() => {
-    const amountBN = safeBigNumber(amount);
+    const amountBN = ethers.BigNumber.from(amount || "0");
     const hasAllowance = allowance ? allowance.gte(amountBN) : false;
 
     if (isLoading) {
