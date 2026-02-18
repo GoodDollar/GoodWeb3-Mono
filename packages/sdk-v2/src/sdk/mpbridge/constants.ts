@@ -1,9 +1,6 @@
 import { ethers } from "ethers";
 import { G$Decimals, SupportedChains } from "../constants";
 
-/**
- * Bridge configuration constants
- */
 export const BRIDGE_CONSTANTS = {
   DEFAULT_CHAIN_ID: 122,
   DEBOUNCE_DELAY: 300,
@@ -64,7 +61,6 @@ export type ValidationReason =
   | "insufficientBalance"
   | "invalidChain";
 
-// Error message mappings (DRY principle)
 export const VALIDATION_ERROR_MESSAGES: Record<ValidationReason, string> = {
   minAmount: "Minimum amount is 1000 G$",
   maxAmount: "Amount exceeds maximum limit",
@@ -74,7 +70,6 @@ export const VALIDATION_ERROR_MESSAGES: Record<ValidationReason, string> = {
   invalidChain: "Invalid chain selection"
 } as const;
 
-// Chain mapping configuration (DRY principle)
 export const CHAIN_MAPPING: Record<number, ChainName> = {
   [SupportedChains.FUSE]: "fuse",
   [SupportedChains.CELO]: "celo",
@@ -115,7 +110,6 @@ export const normalizeAmountTo18 = (amount: ethers.BigNumber, sourceChainId: num
   return amount;
 };
 
-// Utility functions (DRY principle)
 export const safeBigNumber = (value: string | number | undefined, fallback = "0"): ethers.BigNumber => {
   return ethers.BigNumber.from(value || fallback);
 };
@@ -144,7 +138,6 @@ export const handleError = (
   }
 };
 
-// Chain utility functions
 export const getChainName = (chainId: number): ChainName => {
   return CHAIN_MAPPING[chainId] || "mainnet";
 };
@@ -166,7 +159,6 @@ export const isSupportedChain = (chainId: number): boolean => {
   return Object.values(SupportedChains).includes(chainId);
 };
 
-// Fee calculation functions
 export const getFeeString = (
   fees: any,
   provider: BridgeProvider,

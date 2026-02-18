@@ -12,7 +12,6 @@ export const useBridgeValidators = (
   tokenDecimals: number | undefined,
   library: any
 ) => {
-  // Pre-flight validation function
   const validateBridgeTransaction = useCallback(
     async (bridgeRequest: BridgeRequest, fees: any) => {
       if (!account) {
@@ -40,7 +39,6 @@ export const useBridgeValidators = (
       );
       const nativeFee = calculatedFees.nativeFee || ethers.BigNumber.from(0);
 
-      // ✅ Check 1: User has sufficient token balance
       try {
         const balance = await gdContract.balanceOf(account);
 
@@ -55,7 +53,6 @@ export const useBridgeValidators = (
         }
       }
 
-      // ✅ Check 2: Source and destination chains are supported
       if (!isSupportedChain(bridgeRequest.sourceChainId)) {
         throw new Error(
           `Unsupported source chain: ${bridgeRequest.sourceChainId}. Supported chains: ${Object.values(
@@ -72,7 +69,6 @@ export const useBridgeValidators = (
         );
       }
 
-      // ✅ Check 3: User has enough native token for gas
       try {
         const nativeBalance = await library.getBalance(account);
         const minGasBalance = ethers.utils.parseEther("0.01");
@@ -96,7 +92,6 @@ export const useBridgeValidators = (
 
       const limits = await bridgeContract.bridgeLimits();
 
-      // ✅ Check 4: Amount meets minimum requirements
       try {
         if (amountBN.lt(limits.minAmount)) {
           const minFormatted = ethers.utils.formatUnits(limits.minAmount, tokenDecimals || 18);
@@ -108,7 +103,6 @@ export const useBridgeValidators = (
         }
       }
 
-      // ✅ Check 5: User hasn't exceeded bridge limits
       try {
         if (amountBN.gt(limits.txLimit)) {
           const limitFormatted = ethers.utils.formatUnits(limits.txLimit, tokenDecimals || 18);

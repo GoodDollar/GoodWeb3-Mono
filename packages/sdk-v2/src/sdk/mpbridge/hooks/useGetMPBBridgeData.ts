@@ -18,7 +18,6 @@ import { useMPBG$TokenContract } from "./useMPBG$TokenContract";
 
 const THRESHOLD_18_DECIMALS = ethers.BigNumber.from(10).pow(15);
 
-// Types for better readability
 interface BridgeFees {
   nativeFee: ethers.BigNumber | null;
   zroFee: ethers.BigNumber | null;
@@ -61,7 +60,6 @@ export const useGetMPBBridgeData = (
   const tokenAddress = gdContract?.address;
   const spenderAddress = mpbContract?.address;
 
-  // Check allowance
   const allowance = useTokenAllowance(tokenAddress, effectiveAccount, spenderAddress, { chainId: sourceChainId });
 
   const fetchContractLimits = useCallback(async (contract: any, chainId: number) => {
@@ -93,7 +91,6 @@ export const useGetMPBBridgeData = (
     }
   }, []);
 
-  // Helper function to validate bridge eligibility
   const validateBridgeEligibility = useCallback(async (contract: any, account: string, amountWei: string) => {
     try {
       const amountBigNumber = safeBigNumber(amountWei);
@@ -108,11 +105,10 @@ export const useGetMPBBridgeData = (
     }
   }, []);
 
-  // Helper to fetch protocol fee (bps) from contract and convert to percent
   const fetchProtocolFee = useCallback(async (contract: any) => {
     try {
       const fees = await contract.bridgeFees();
-      // fees.fee is in basis points (bps). e.g. 15 => 0.15%
+
       const bps = Number(fees.fee?.toString() || "0");
       setProtocolFeePercent(bps / 10000);
     } catch (error) {
@@ -120,7 +116,6 @@ export const useGetMPBBridgeData = (
     }
   }, []);
 
-  // Helper function to calculate fees using the service
   const calculateFees = useCallback((fees: any, source: string, target: string, provider: BridgeProvider) => {
     const calculatedFees = calculateBridgeFees(fees, provider, source, target);
 
@@ -133,26 +128,22 @@ export const useGetMPBBridgeData = (
     }
   }, []);
 
-  // Main effect to load bridge data
+  // Static bridge data — only re-fetch when chain/provider/contract changes
   useEffect(() => {
     let isMounted = true;
 
     setError(null);
     setIsLoading(true);
 
-    const loadBridgeData = async () => {
+    const loadStaticBridgeData = async () => {
       const sourceChainName = sourceChain || "celo";
       const targetChainName = targetChain || "fuse";
 
       try {
-        // Fetch third-party fees, contract limits, protocol fee, and eligibility in parallel
-        const [fees, limitsResult, protoFeeResult] = await Promise.allSettled([
+        const [fees] = await Promise.allSettled([
           fetchBridgeFees(),
           mpbContract ? fetchContractLimits(mpbContract, sourceChainId) : Promise.resolve(),
-          mpbContract ? fetchProtocolFee(mpbContract) : Promise.resolve(),
-          mpbContract && effectiveAccount
-            ? validateBridgeEligibility(mpbContract, effectiveAccount, amount)
-            : Promise.resolve()
+          mpbContract ? fetchProtocolFee(mpbContract) : Promise.resolve()
         ]);
 
         if (!isMounted) return;
@@ -161,13 +152,6 @@ export const useGetMPBBridgeData = (
           calculateFees(fees.value, sourceChainName, targetChainName, bridgeProvider);
         } else {
           setError("We were unable to fetch bridge fees. Try again later or contact support.");
-        }
-
-        if (limitsResult.status === "rejected") {
-          // Failed to fetch limits, already handled by setting null
-        }
-        if (protoFeeResult.status === "rejected") {
-          // Failed to fetch protocol fee, already handled by setting null
         }
 
         setIsLoading(false);
@@ -179,7 +163,7 @@ export const useGetMPBBridgeData = (
       }
     };
 
-    void loadBridgeData();
+    void loadStaticBridgeData();
 
     return () => {
       isMounted = false;
@@ -192,18 +176,20 @@ export const useGetMPBBridgeData = (
     mpbContract,
     fetchContractLimits,
     fetchProtocolFee,
-    validateBridgeEligibility,
-    effectiveAccount,
-    amount
+    sourceChainId
   ]);
 
-  // Validation: compare user input (in source chain decimals) with contract limits (in 18 decimals)
-  // We need to normalize the user input to 18 decimals for proper comparison
+  // Bridge eligibility — re-runs when amount changes
+  useEffect(() => {
+    if (mpbContract && effectiveAccount) {
+      void validateBridgeEligibility(mpbContract, effectiveAccount, amount);
+    }
+  }, [amount, effectiveAccount, mpbContract, validateBridgeEligibility]);
+
   const validation = useMemo<ValidationResult>(() => {
     const amountBN = safeBigNumber(amount);
     const hasAllowance = allowance ? allowance.gte(amountBN) : false;
 
-    // While still loading bridge data, don't show validation errors
     if (isLoading) {
       return { isValid: true, reason: "", canBridge: true, hasAllowance };
     }
@@ -222,7 +208,6 @@ export const useGetMPBBridgeData = (
       };
     }
 
-    // Normalize user input to 18 decimals for comparison with contract limits
     const normalizedAmount = normalizeAmountTo18(amountBN, sourceChainId);
     const belowMin = normalizedAmount.lt(bridgeLimits.minAmount);
     const aboveMax = normalizedAmount.gt(bridgeLimits.maxAmount);
