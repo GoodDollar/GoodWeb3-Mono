@@ -28,14 +28,14 @@ export const BridgeTransactionCard = withTheme({ name: "BridgeTransactionCard" }
     const sourceChainIcon = useMemo(() => getBridgeNetworkIcon(sourceChain), [sourceChain]);
     const targetChainIcon = useMemo(() => getBridgeNetworkIcon(targetChain), [targetChain]);
 
-    const getChainInitial = (chain: string) => {
+    const getChainInitial = useCallback((chain: string) => {
       return chain.charAt(0).toUpperCase();
-    };
+    }, []);
 
     const providerLabel = bridgeProvider === "axelar" ? "Axelar" : "LayerZero";
     const providerColor = bridgeProvider === "axelar" ? "goodBlue.600" : "goodBlue.500";
 
-    const getStatusIcon = () => {
+    const getStatusIcon = useCallback(() => {
       switch (status) {
         case "bridging":
           return (
@@ -79,9 +79,9 @@ export const BridgeTransactionCard = withTheme({ name: "BridgeTransactionCard" }
         default:
           return null;
       }
-    };
+    }, [status]);
 
-    const getStatusText = () => {
+    const getStatusText = useCallback(() => {
       switch (status) {
         case "bridging":
           return "Bridging in progress...";
@@ -94,7 +94,7 @@ export const BridgeTransactionCard = withTheme({ name: "BridgeTransactionCard" }
         default:
           return "";
       }
-    };
+    }, [status]);
 
     return (
       <Pressable
