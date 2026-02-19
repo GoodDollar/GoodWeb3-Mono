@@ -12,7 +12,6 @@ packages/**/tsconfig.tsbuildinfo
 packages/**/index.ts.bak
 .vscode
 .DS_Store
-.cursorrules
 .yalc
 yalc.lock
 /dist/
