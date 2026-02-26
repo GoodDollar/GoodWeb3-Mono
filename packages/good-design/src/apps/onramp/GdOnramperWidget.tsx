@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Onramper } from "./Onramper";
 import { useEthers, useEtherBalance, useTokenBalance } from "@usedapp/core";
 import { WebViewMessageEvent } from "react-native-webview";
-import { AsyncStorage, useBuyGd } from "@gooddollar/web3sdk-v2";
+import { AsyncStorage, Envs, useBuyGd, useGetEnvChainId } from "@gooddollar/web3sdk-v2";
 import { noop } from "lodash";
 
 import { useModal } from "../../hooks/useModal";
@@ -24,8 +24,6 @@ interface IGdOnramperProps {
   donateOrExecTo?: string;
   callData?: string;
   apiKey?: string;
-  urlSignature?: string;
-  onUrlSignContentReady?: (signContent: string) => void;
 }
 
 export const GdOnramperWidget = ({
@@ -35,13 +33,14 @@ export const GdOnramperWidget = ({
   withSwap = true,
   donateOrExecTo = undefined,
   callData = "0x",
-  apiKey = undefined,
-  urlSignature = undefined,
-  onUrlSignContentReady = undefined
+  apiKey = undefined
 }: IGdOnramperProps) => {
   const cusd = "0x765de816845861e75a25fca122bb6898b8b1282a";
   const { account, library } = useEthers();
   const swapLock = useRef(false);
+  const { baseEnv } = useGetEnvChainId(42220);
+  const devEnv = baseEnv === "fuse" ? "development" : baseEnv;
+  const backend = Envs[devEnv]?.backend;
 
   const { createAndSwap, swap, swapState, createState, gdHelperAddress, triggerSwapTx } = useBuyGd({
     donateOrExecTo,
@@ -59,6 +58,8 @@ export const GdOnramperWidget = ({
   const { showModal, Modal } = useModal();
 
   const [step, setStep] = useState(0);
+  const [onramperSignContent, setOnramperSignContent] = useState("");
+  const [onramperUrlSignature, setOnramperUrlSignature] = useState<string | undefined>(undefined);
 
   // console.log({ selfSwap, account, gdHelperAddress, accountCeloBalance, cusdBalance, celoBalance });
   /**
@@ -164,6 +165,48 @@ export const GdOnramperWidget = ({
     }
   }, [celoBalance, cusdBalance]);
 
+  useEffect(() => {
+    if (!onramperSignContent) return;
+
+    if (!backend) {
+      setOnramperUrlSignature(undefined);
+      console.error("Onramper: Missing backend URL for signing request");
+      return;
+    }
+
+    setOnramperUrlSignature(undefined);
+
+    const requestSignature = async () => {
+      try {
+        const response = await fetch(`${backend}/verify/onramper/sign`, {
+          method: "POST",
+          headers: { "Content-type": "application/json" },
+          body: JSON.stringify({ signContent: onramperSignContent })
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+        const signature = data?.signature;
+
+        if (!signature) {
+          throw new Error("Invalid signature response");
+        }
+
+        setOnramperUrlSignature(signature);
+      } catch (e: any) {
+        setOnramperUrlSignature(undefined);
+        console.error("Onramper: failed to fetch URL signature", e?.message || e);
+      }
+    };
+
+    requestSignature().catch(e => {
+      console.error("Onramper: signature request failed", e);
+    });
+  }, [backend, onramperSignContent]);
+
   return (
     <>
       <Modal body={<ErrorModal />} _modalContainer={{ paddingBottom: 18, paddingLeft: 18, paddingRight: 18 }} />
@@ -178,8 +221,8 @@ export const GdOnramperWidget = ({
           isTesting={isTesting}
           onGdEvent={onEvents}
           apiKey={apiKey}
-          urlSignature={urlSignature}
-          onUrlSignContentReady={onUrlSignContentReady}
+          urlSignature={onramperUrlSignature}
+          onUrlSignContentReady={setOnramperSignContent}
         />
       </WalletAndChainGuard>
       <SignWalletModal txStatus={swapState?.status} />

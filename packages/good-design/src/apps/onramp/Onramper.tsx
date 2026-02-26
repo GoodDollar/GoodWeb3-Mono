@@ -218,6 +218,7 @@ export const Onramper = ({
   }, [apiKey, sensitiveParamsForSigning, signContent, widgetParams, urlSignature]);
 
   const { title } = useWindowFocus();
+  const shouldWaitForSignature = Boolean(signContent) && !urlSignature;
 
   // Cache AsyncStorage value to avoid repeated reads
   const [cachedOnrampStatus, setCachedOnrampStatus] = useState<string | null>(null);
@@ -307,35 +308,51 @@ export const Onramper = ({
       <Divider orientation="horizontal" w="100%" bg="borderGrey" mb={6} />
       <Stepper step={step} />
       <CentreBox maxWidth={widgetDimensions?.maxWidth} w={widgetDimensions?.width} h={widgetDimensions?.height} mb={6}>
-        <WebView
-          testID="onramper-widget-iframe-test"
-          style={{
-            borderRadius: 4,
-            borderWidth: 1,
-            borderColor: "#58585f",
-            borderStyle: "solid",
-            margin: "auto",
-            width: "100%",
-            height: "100%"
-          }}
-          scrollEnabled={false}
-          // injectedJavaScript={jsCode} // todo: add native/web webview implementation
-          webviewDebuggingEnabled={true}
-          source={{ uri }}
-          onMessage={onEvent}
-          onError={syntheticEvent => {
-            const { nativeEvent } = syntheticEvent;
-            console.error("Onramper WebView error:", nativeEvent);
-          }}
-          onHttpError={syntheticEvent => {
-            const { nativeEvent } = syntheticEvent;
-            console.error("Onramper HTTP error:", nativeEvent.statusCode, nativeEvent.description);
-          }}
-          height={widgetDimensions?.webViewHeight}
-          width={widgetDimensions?.webViewWidth}
-          title="Onramper widget"
-          allow="accelerometer; autoplay; camera; gyroscope; payment"
-        ></WebView>
+        {shouldWaitForSignature ? (
+          <CentreBox
+            borderRadius={4}
+            borderWidth={1}
+            borderColor="#58585f"
+            borderStyle="solid"
+            w="100%"
+            h="100%"
+            px={4}
+          >
+            <Text textAlign="center" color="goodGrey.700" fontFamily="subheading">
+              Preparing secure checkout...
+            </Text>
+          </CentreBox>
+        ) : (
+          <WebView
+            testID="onramper-widget-iframe-test"
+            style={{
+              borderRadius: 4,
+              borderWidth: 1,
+              borderColor: "#58585f",
+              borderStyle: "solid",
+              margin: "auto",
+              width: "100%",
+              height: "100%"
+            }}
+            scrollEnabled={false}
+            // injectedJavaScript={jsCode} // todo: add native/web webview implementation
+            webviewDebuggingEnabled={true}
+            source={{ uri }}
+            onMessage={onEvent}
+            onError={syntheticEvent => {
+              const { nativeEvent } = syntheticEvent;
+              console.error("Onramper WebView error:", nativeEvent);
+            }}
+            onHttpError={syntheticEvent => {
+              const { nativeEvent } = syntheticEvent;
+              console.error("Onramper HTTP error:", nativeEvent.statusCode, nativeEvent.description);
+            }}
+            height={widgetDimensions?.webViewHeight}
+            width={widgetDimensions?.webViewWidth}
+            title="Onramper widget"
+            allow="accelerometer; autoplay; camera; gyroscope; payment"
+          ></WebView>
+        )}
       </CentreBox>
       {isTesting && (
         <Box w={200} h={40} bg="gdPrimary" display="flex">
