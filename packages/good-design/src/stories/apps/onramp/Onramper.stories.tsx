@@ -14,14 +14,16 @@ import { W3Wrapper } from "../../W3Wrapper";
  * - AsyncStorage caching for better performance
  * - Built-in Stepper component with animations
  * - Error handling with modal display
+ * - Server-side URL signing for enhanced security
  *
- * Improvements in this version:
+ * Improvements in this version (fix/calculator-styling):
  * - Better event parsing (handles both 'type' and 'title' event fields)
  * - Fixed critical bug: swap lock now resets properly on error
- * - Added progress event emissions for UI updates
- * - URL memoization to prevent unnecessary reconstructions
- * - Responsive dimensions using breakpoints
- * - Enhanced error handling for WebView
+ * - Added progress event emissions for UI updates (funds_received, swap_started, swap_completed)
+ * - Server-side URL signing flow via backend /verify/onramper/sign endpoint
+ * - Enhanced error handling with proper lock cleanup
+ * - Dynamic backend URL detection based on environment (fuse/celo)
+ * - Improved event handling with early returns and proper type checking
  */
 export const OnramperWidget = {
   args: {
