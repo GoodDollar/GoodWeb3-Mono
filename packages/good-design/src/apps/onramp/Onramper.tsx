@@ -10,6 +10,9 @@ import { BaseButton } from "../../core";
 import { useWindowFocus } from "../../hooks";
 
 export type OnramperCallback = (event: WebViewMessageEvent) => void;
+const SENSITIVE_WIDGET_PARAMS = ["wallets", "walletAddressTags", "networkWallets"] as const;
+type SensitiveWidgetParam = (typeof SENSITIVE_WIDGET_PARAMS)[number];
+type WidgetParams = Record<string, string | number | boolean | undefined>;
 
 const stepValues = [0, 0, 50, 50, 100, 100];
 
@@ -90,6 +93,8 @@ export const Onramper = ({
   setStep,
   isTesting,
   apiKey,
+  urlSignature,
+  onUrlSignContentReady,
   widgetParams = { onlyCryptos: "CUSD_CELO", isAddressEditable: false },
   targetNetwork = "CELO",
   targetWallet
@@ -99,11 +104,80 @@ export const Onramper = ({
   step: number;
   setStep: (step: number) => void;
   isTesting: boolean;
-  widgetParams?: any;
+  widgetParams?: WidgetParams;
   targetWallet?: string;
   targetNetwork?: string;
   apiKey?: string;
+  urlSignature?: string;
+  onUrlSignContentReady?: (signContent: string) => void;
 }) => {
+  /**
+   * Onramper URL-signing guide:
+   * - sort nested mapping keys alphabetically (e.g. "bitcoin:...,ethereum:...")
+   * - keep values unencoded while preparing signContent
+   */
+  const sortNestedMappingValueAlphabetically = useCallback((value: string) => {
+    return value
+      .split(",")
+      .filter(Boolean)
+      .map(entry => entry.trim())
+      .filter(Boolean)
+      .map(entry => {
+        const [rawKey, ...rawRest] = entry.split(":");
+        if (!rawKey || rawRest.length === 0) return undefined;
+        return [rawKey.trim().toLowerCase(), rawRest.join(":").trim()] as const;
+      })
+      .filter((pair): pair is readonly [string, string] => Boolean(pair))
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([key, mappedValue]) => `${key}:${mappedValue}`)
+      .join(",");
+  }, []);
+
+  const sensitiveParamsForSigning = useMemo(() => {
+    const params: Partial<Record<SensitiveWidgetParam, string>> = {};
+
+    if (targetWallet) {
+      params.networkWallets = `${targetNetwork.toLowerCase()}:${targetWallet}`;
+    }
+
+    SENSITIVE_WIDGET_PARAMS.forEach(paramKey => {
+      const widgetValue = widgetParams[paramKey];
+      if (widgetValue !== undefined) {
+        params[paramKey] = String(widgetValue);
+      }
+    });
+
+    SENSITIVE_WIDGET_PARAMS.forEach(paramKey => {
+      const sensitiveValue = params[paramKey];
+      if (sensitiveValue) {
+        params[paramKey] = sortNestedMappingValueAlphabetically(sensitiveValue);
+      }
+    });
+
+    return params;
+  }, [sortNestedMappingValueAlphabetically, targetNetwork, targetWallet, widgetParams]);
+
+  /**
+   * Onramper URL-signing guide:
+   * - signContent is ONLY sensitive params subset:
+   *   wallets, networkWallets, walletAddressTags
+   * - sort top-level keys alphabetically
+   * - keep this string unencoded before signing
+   */
+  const signContent = useMemo(() => {
+    return Object.entries(sensitiveParamsForSigning)
+      .filter(([, value]) => Boolean(value))
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([key, value]) => `${key}=${value}`)
+      .join("&");
+  }, [sensitiveParamsForSigning]);
+
+  useEffect(() => {
+    if (onUrlSignContentReady && signContent) {
+      onUrlSignContentReady(signContent);
+    }
+  }, [signContent, onUrlSignContentReady]);
+
   // Memoize URL construction to avoid reconstruction on every render
   const uri = useMemo(() => {
     const url = new URL("https://buy.onramper.com/");
@@ -120,15 +194,28 @@ export const Onramper = ({
     } else {
       console.warn("Onramper: No API key provided");
     }
-    url.searchParams.set("networkWallets", `${targetNetwork}:${targetWallet}`);
+    Object.entries(sensitiveParamsForSigning).forEach(([key, value]) => {
+      if (value) {
+        url.searchParams.set(key, value);
+      }
+    });
+
     Object.entries(widgetParams).forEach(([k, v]: [string, any]) => {
-      if (v !== undefined) {
+      if (v !== undefined && !SENSITIVE_WIDGET_PARAMS.includes(k as SensitiveWidgetParam)) {
         url.searchParams.set(k, String(v));
       }
     });
 
+    if (urlSignature) {
+      url.searchParams.set("signature", urlSignature);
+    } else if (signContent) {
+      console.warn(
+        "Onramper: Sensitive wallet params are present but no urlSignature was provided. Checkout may be restricted."
+      );
+    }
+
     return url.toString();
-  }, [apiKey, targetNetwork, targetWallet, widgetParams]);
+  }, [apiKey, sensitiveParamsForSigning, signContent, widgetParams, urlSignature]);
 
   const { title } = useWindowFocus();
 
