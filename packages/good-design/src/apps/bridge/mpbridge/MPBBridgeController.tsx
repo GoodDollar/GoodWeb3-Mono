@@ -125,6 +125,8 @@ export const MPBBridgeController: React.FC<IMPBBridgeControllerProps> = ({ onBri
   useEffect(() => {
     if (bridgeRequestStatus?.status === "Exception") {
       console.error("Bridge transaction exception:", bridgeRequestStatus.errorMessage);
+      pendingTransaction[1](false);
+      onBridgeFailed?.(new Error(bridgeRequestStatus.errorMessage || "Bridge transaction failed"));
     }
   }, [bridgeRequestStatus]);
 

@@ -2,7 +2,7 @@ import { noop, sortBy } from "lodash";
 import { BridgeSDK } from "@gooddollar/bridge-app/dist/sdk.js";
 import TokenBridgeABI from "@gooddollar/bridge-contracts/artifacts/contracts/bridge/TokenBridge.sol/TokenBridge.json";
 import bridgeContracts from "@gooddollar/bridge-contracts/release/deployment.json";
-import { TokenBridge } from "@gooddollar/bridge-contracts/typechain-types";
+import { TokenBridge } from "@gooddollar/bridge-contracts/typechain-types/contracts/bridge/TokenBridge.sol/TokenBridge";
 import { IGoodDollar } from "@gooddollar/goodprotocol/types";
 import { ChainId, TransactionStatus, useCalls, useEthers, useLogs } from "@usedapp/core";
 import { BigNumber, Contract, ethers } from "ethers";
@@ -357,13 +357,6 @@ export const useBridgeHistory = () => {
     extended.relayEvent = first(celoExecuted[e.data.id]);
 
     extended.amount = formatAmount(e.data.amount, 18); //amount is normalized to 18 decimals in the bridge
-    // Add source and target chain IDs for Fuse -> Celo bridge transactions
-    if (!extended.data.sourceChainId) {
-      extended.data.sourceChainId = { toNumber: () => 122 } as any;
-    }
-    if (!extended.data.targetChainId) {
-      extended.data.targetChainId = { toNumber: () => 42220 } as any;
-    }
     return extended;
   });
 
@@ -372,13 +365,6 @@ export const useBridgeHistory = () => {
     const extended = e as BridgeEvent;
     extended.relayEvent = first(fuseExecuted[e.data.id]);
     extended.amount = formatAmount(e.data.amount, 18); //amount is normalized to 18 decimals in the bridge
-    // Add source and target chain IDs for Celo -> Fuse bridge transactions
-    if (!extended.data.sourceChainId) {
-      extended.data.sourceChainId = { toNumber: () => 42220 } as any;
-    }
-    if (!extended.data.targetChainId) {
-      extended.data.targetChainId = { toNumber: () => 122 } as any;
-    }
     return extended;
   });
 

@@ -52,7 +52,7 @@ export const useGetMPBBridgeData = (
   const effectiveAccount = address || account;
 
   const sourceChainId = getSourceChainId(sourceChain || "celo");
-  const mpbContract = useGetContract("MPBBridge", true, "base", sourceChainId);
+  const mpbContract = useGetContract("MpbBridge", true, "base", sourceChainId);
 
   const gdContract = useMPBG$TokenContract(sourceChainId, true);
   const tokenAddress = gdContract?.address;

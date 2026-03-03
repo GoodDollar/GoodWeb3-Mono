@@ -66,7 +66,7 @@ export const CONTRACT_TO_ABI: { [key: string]: any } = {
   FuseFaucet: FaucetABI,
   GReputation: GReputationABI,
   GoodReserveCDai: GoodReserveCDaiABI,
-  MPBBridge: SanitizedMPBBridgeABI
+  MpbBridge: SanitizedMPBBridgeABI
 };
 
 export type EnvKey = string;
@@ -116,16 +116,10 @@ export class BaseSDK {
   getContract(contractName: "Faucet"): Faucet;
   getContract(contractName: "GReputation"): GReputation;
   getContract(contractName: "GoodReserveCDai"): GoodReserveCDai;
-  getContract(contractName: "MPBBridge"): Contract;
+  getContract(contractName: "MpbBridge"): Contract;
   getContract(contractName: string): Contract;
   getContract(contractName: string) {
-    // Map internal names to deployment.json keys where they differ
-    const deploymentKeyMap: Record<string, string> = {
-      MPBBridge: "MpbBridge"
-    };
-    const deploymentKey = deploymentKeyMap[contractName] || contractName;
-
-    if (!this.contracts?.[deploymentKey]) return;
+    if (!this.contracts?.[contractName]) return;
     switch (contractName) {
       case "UBIScheme": {
         const contract = new Contract(
@@ -188,10 +182,10 @@ export class BaseSDK {
           CONTRACT_TO_ABI["GoodReserveCDai"].abi,
           this.signer || this.provider
         ) as any;
-      case "MPBBridge":
+      case "MpbBridge":
         return new Contract(
           this.contracts["MpbBridge"],
-          CONTRACT_TO_ABI["MPBBridge"].abi,
+          CONTRACT_TO_ABI["MpbBridge"].abi,
           this.signer || this.provider
         );
       default:

@@ -32,7 +32,7 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
   const [switchChainError, setSwitchChainError] = useState<string | undefined>();
 
   const gdContract = useMPBG$TokenContract(chainId);
-  const bridgeContract = useGetContract("MPBBridge", false, "base", chainId);
+  const bridgeContract = useGetContract("MpbBridge", false, "base", chainId);
   const bridgeContractOrNull = bridgeContract ?? null;
   const tokenDecimals = useG$Decimals("G$", chainId);
 

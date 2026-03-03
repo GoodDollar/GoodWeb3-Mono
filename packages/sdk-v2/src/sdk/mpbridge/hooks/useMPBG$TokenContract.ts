@@ -9,7 +9,7 @@ import { BRIDGE_CONSTANTS } from "../constants";
 export const useMPBG$TokenContract = (chainId?: number, readOnly = false): IGoodDollar | null => {
   const { library } = useEthers();
   const effectiveChainId = chainId ?? BRIDGE_CONSTANTS.DEFAULT_CHAIN_ID;
-  const bridgeContract = useGetContract("MPBBridge", readOnly, "base", effectiveChainId);
+  const bridgeContract = useGetContract("MpbBridge", readOnly, "base", effectiveChainId);
   const readOnlyProvider = useReadOnlyProvider(effectiveChainId);
   const [tokenAddress, setTokenAddress] = useState<string | null>(null);
 

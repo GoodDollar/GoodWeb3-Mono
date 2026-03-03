@@ -41,7 +41,7 @@ export const useBridgeMonitoring = (
     return id;
   }, [bridgeToState.status, bridgeToState.receipt?.logs, bridgeContract, bridgeRequest]);
 
-  const targetMpbContract = useGetContract("MPBBridge", true, "base", bridgeRequest?.targetChainId);
+  const targetMpbContract = useGetContract("MpbBridge", true, "base", bridgeRequest?.targetChainId);
 
   const bridgeCompletedLogs = useLogs(
     bridgeRequest &&

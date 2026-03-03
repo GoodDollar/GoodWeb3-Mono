@@ -10,9 +10,9 @@ export const useMPBBridgeHistory = () => {
   const { account } = useEthers();
   const refresh = useRefreshOrNever(5);
 
-  const fuseBridgeContract = useGetContract("MPBBridge", true, "base", SupportedChains.FUSE);
-  const celoBridgeContract = useGetContract("MPBBridge", true, "base", SupportedChains.CELO);
-  const mainnetBridgeContract = useGetContract("MPBBridge", true, "base", SupportedChains.MAINNET);
+  const fuseBridgeContract = useGetContract("MpbBridge", true, "base", SupportedChains.FUSE);
+  const celoBridgeContract = useGetContract("MpbBridge", true, "base", SupportedChains.CELO);
+  const mainnetBridgeContract = useGetContract("MpbBridge", true, "base", SupportedChains.MAINNET);
 
   const fuseBridgeRequests = useLogs(
     fuseBridgeContract
