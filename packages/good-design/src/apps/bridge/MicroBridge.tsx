@@ -73,7 +73,6 @@ export const MicroBridge = ({
   onBridgeSuccess
 }: MicroBridgeProps) => {
   const [isBridging, setBridging] = useState(false);
-  const [relayCompleted, setRelayCompleted] = useState(false);
   const { nextStep } = useWizard();
   const [sourceChain, setSourceChain] = originChain;
   const targetChain = sourceChain === "fuse" ? "celo" : "fuse";
@@ -120,16 +119,9 @@ export const MicroBridge = ({
     // when bridge is signing, mining or succeed but relay not done yet - we're still bridging
     // once relay has completed (success or fail), don't treat as bridging so user can start another
     const bridgeInProgress = ["Mining", "PendingSignature", "Success"].includes(bridgeStatus?.status ?? "");
-    const stillBridging = !relayCompleted && !isFailed && !isSuccess && bridgeInProgress;
+    const stillBridging = bridgeInProgress && !isFailed && !isSuccess;
 
     setBridging(stillBridging);
-
-    if (isSuccess || isFailed) {
-      setRelayCompleted(true);
-    }
-    if (bridgeStatus?.status === "PendingSignature") {
-      setRelayCompleted(false);
-    }
 
     // show next step only once user signs tx
     if (bridgeStatus?.status === "Mining") {
@@ -148,7 +140,7 @@ export const MicroBridge = ({
 
       onBridgeFailed?.(exception);
     }
-  }, [relayStatus, bridgeStatus, selfRelayStatus, onBridgeSuccess, onBridgeFailed, relayCompleted]);
+  }, [relayStatus, bridgeStatus, selfRelayStatus, onBridgeSuccess, onBridgeFailed]);
 
   const reasonMinAmount =
     reason === "minAmount"

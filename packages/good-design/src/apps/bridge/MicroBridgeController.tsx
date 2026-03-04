@@ -36,6 +36,20 @@ import { ExplorerLink } from "../../core/web3/ExplorerLink";
 import { BridgeWizard } from "./wizard/BridgeWizard";
 import { truncateMiddle } from "../../utils";
 
+const FUSE_CHAIN_ID = 122;
+const CELO_CHAIN_ID = 42220;
+
+/** Maps bridge target chain id to source/target chain ids and display names. */
+function getBridgeChainInfo(targetChainId: number) {
+  const isTargetFuse = targetChainId === FUSE_CHAIN_ID;
+  return {
+    sourceChainId: isTargetFuse ? CELO_CHAIN_ID : FUSE_CHAIN_ID,
+    targetChainId,
+    sourceChainName: isTargetFuse ? "Celo" : "Fuse",
+    targetChainName: isTargetFuse ? "Fuse" : "Celo"
+  };
+}
+
 const useCanBridge = (chain: "fuse" | "celo", amountWei: string) => {
   const { chainId } = useGetEnvChainId(chain === "fuse" ? SupportedChains.FUSE : SupportedChains.CELO);
   const { account } = useEthers();
@@ -54,11 +68,8 @@ const BridgeHistoryWithRelay = () => {
     async (i: any) => {
       setRelaying({ ...relaying, [i.transactionHash]: true });
       try {
-        const relayResult = await relayTx(
-          i.data.targetChainId.toNumber() === 42220 ? 122 : 42220,
-          i.data.targetChainId.toNumber(),
-          i.transactionHash
-        );
+        const { sourceChainId, targetChainId } = getBridgeChainInfo(i.data.targetChainId.toNumber());
+        const relayResult = await relayTx(sourceChainId, targetChainId, i.transactionHash);
         if (!relayResult.relayPromise) {
           setRelaying({ ...relaying, [i.transactionHash]: false });
         }
@@ -99,67 +110,70 @@ const BridgeHistoryWithRelay = () => {
       </Stack>
 
       {historySorted ? (
-        historySorted.map(i => (
-          <Stack
-            direction={["column", "column", "row"]}
-            alignContent="center"
-            alignItems={["flex-start", "flex-start", "center"]}
-            mt={2}
-            key={i.transactionHash}
-            space="2"
-            borderWidth={["1", "1", "0"]}
-            padding={["2", "2", "0"]}
-            borderRadius={["md", "md", "none"]}
-            overflow="hidden"
-          >
-            <HStack flex="1 1" minWidth="0" alignItems="center">
-              <Text flex="1 0" numberOfLines={1}>
-                {i.data.targetChainId.toNumber() === 122 ? "Celo" : "Fuse"}
-              </Text>
-              <ArrowForwardIcon size="3" color="black" ml="1" mr="1" flex="auto 0" />
-              <Text flex="1 0" numberOfLines={1}>
-                {i.data.targetChainId.toNumber() === 122 ? "Fuse" : "Celo"}
-              </Text>
-            </HStack>
-            <Flex flex={["1 1", "1 1", "2 0"]} minWidth="0" maxWidth="100%" overflow="hidden">
-              <ExplorerLink
-                chainId={i.data.targetChainId.toNumber() === 122 ? 42220 : 122}
-                addressOrTx={i.transactionHash}
-                text={truncateMiddle(i.transactionHash, 16)}
-              />
-            </Flex>
-            <Flex flex={["1 1", "1 1", "2 0"]} minWidth="0" maxWidth="100%" overflow="hidden">
-              <ExplorerLink
-                chainId={i.data.targetChainId.toNumber() === 122 ? 42220 : 122}
-                addressOrTx={i.data.from}
-                text={truncateMiddle(i.data.from, 16)}
-              />
-            </Flex>
-            <Flex flex={["1 1", "1 1", "2 0"]} minWidth="0" maxWidth="100%" overflow="hidden">
-              <ExplorerLink
-                chainId={i.data.targetChainId.toNumber() === 122 ? 42220 : 122}
-                addressOrTx={i.data.to}
-                text={truncateMiddle(i.data.to, 16)}
-              />
-            </Flex>
-            <Flex flex={["1 1", "1 1", "1 0"]} minWidth="0" maxWidth="100%">
-              <Text numberOfLines={1}>{i.amount} G$</Text>
-            </Flex>
-            <Flex flex={["1 1", "1 1", "1 0"]} minWidth="0" maxWidth="100%">
-              {(i as any).relayEvent ? (
+        historySorted.map(i => {
+          const chainInfo = getBridgeChainInfo(i.data.targetChainId.toNumber());
+          return (
+            <Stack
+              direction={["column", "column", "row"]}
+              alignContent="center"
+              alignItems={["flex-start", "flex-start", "center"]}
+              mt={2}
+              key={i.transactionHash}
+              space="2"
+              borderWidth={["1", "1", "0"]}
+              padding={["2", "2", "0"]}
+              borderRadius={["md", "md", "none"]}
+              overflow="hidden"
+            >
+              <HStack flex="1 1" minWidth="0" alignItems="center">
+                <Text flex="1 0" numberOfLines={1}>
+                  {chainInfo.sourceChainName}
+                </Text>
+                <ArrowForwardIcon size="3" color="black" ml="1" mr="1" flex="auto 0" />
+                <Text flex="1 0" numberOfLines={1}>
+                  {chainInfo.targetChainName}
+                </Text>
+              </HStack>
+              <Flex flex={["1 1", "1 1", "2 0"]} minWidth="0" maxWidth="100%" overflow="hidden">
                 <ExplorerLink
-                  chainId={i.data.targetChainId.toNumber()}
-                  addressOrTx={(i as any).relayEvent.transactionHash}
-                  text="Completed"
+                  chainId={chainInfo.sourceChainId}
+                  addressOrTx={i.transactionHash}
+                  text={truncateMiddle(i.transactionHash, 16)}
                 />
-              ) : (
-                <Button isLoading={relaying[i.transactionHash]} onPress={() => triggerRelay(i)}>
-                  Relay
-                </Button>
-              )}
-            </Flex>
-          </Stack>
-        ))
+              </Flex>
+              <Flex flex={["1 1", "1 1", "2 0"]} minWidth="0" maxWidth="100%" overflow="hidden">
+                <ExplorerLink
+                  chainId={chainInfo.sourceChainId}
+                  addressOrTx={i.data.from}
+                  text={truncateMiddle(i.data.from, 16)}
+                />
+              </Flex>
+              <Flex flex={["1 1", "1 1", "2 0"]} minWidth="0" maxWidth="100%" overflow="hidden">
+                <ExplorerLink
+                  chainId={chainInfo.sourceChainId}
+                  addressOrTx={i.data.to}
+                  text={truncateMiddle(i.data.to, 16)}
+                />
+              </Flex>
+              <Flex flex={["1 1", "1 1", "1 0"]} minWidth="0" maxWidth="100%">
+                <Text numberOfLines={1}>{i.amount} G$</Text>
+              </Flex>
+              <Flex flex={["1 1", "1 1", "1 0"]} minWidth="0" maxWidth="100%">
+                {(i as any).relayEvent ? (
+                  <ExplorerLink
+                    chainId={i.data.targetChainId.toNumber()}
+                    addressOrTx={(i as any).relayEvent.transactionHash}
+                    text="Completed"
+                  />
+                ) : (
+                  <Button isLoading={relaying[i.transactionHash]} onPress={() => triggerRelay(i)}>
+                    Relay
+                  </Button>
+                )}
+              </Flex>
+            </Stack>
+          );
+        })
       ) : (
         <Spinner variant="page-loader" size="lg" />
       )}
@@ -178,7 +192,7 @@ const HistoryRowItem = ({ item, env }: { item: any; env: string }) => {
   const dateHours = date.format("HH:mm");
 
   const targetChain = parseInt(targetChainId);
-  const sourceChain = targetChain === 122 ? 42220 : 122;
+  const { sourceChainId: sourceChain } = getBridgeChainInfo(targetChain);
 
   const feeFormatted = fee && targetChain ? G$Amount("G$", ethers.BigNumber.from(fee), targetChain, env) : null;
 
