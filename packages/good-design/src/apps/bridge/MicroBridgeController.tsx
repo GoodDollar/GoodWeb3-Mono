@@ -71,7 +71,7 @@ const BridgeHistoryWithRelay = () => {
   );
 
   return (
-    <Box borderRadius="md" mt="4" borderWidth="1" padding="5">
+    <Box borderRadius="md" mt="4" borderWidth="1" padding="5" overflow="hidden">
       <Heading size="sm">Transactions History</Heading>
       <Stack
         direction={["column", "column", "row"]}
@@ -80,20 +80,20 @@ const BridgeHistoryWithRelay = () => {
         justifyContent="center"
         mt="5"
       >
-        <Flex flex="1 1"></Flex>
-        <Flex flex="2 1">
+        <Flex flex="1 1" minWidth="0"></Flex>
+        <Flex flex="2 1" minWidth="0">
           <Heading size="xs">Transaction Hash</Heading>
         </Flex>
-        <Flex flex="2 0">
+        <Flex flex="2 0" minWidth="0">
           <Heading size="xs">From</Heading>
         </Flex>
-        <Flex flex="2 0">
+        <Flex flex="2 0" minWidth="0">
           <Heading size="xs">To</Heading>
         </Flex>
-        <Flex flex="1 0">
+        <Flex flex="1 0" minWidth="0">
           <Heading size="xs">Amount</Heading>
         </Flex>
-        <Flex flex="1 0">
+        <Flex flex="1 0" minWidth="0">
           <Heading size="xs">Status</Heading>
         </Flex>
       </Stack>
@@ -110,28 +110,42 @@ const BridgeHistoryWithRelay = () => {
             borderWidth={["1", "1", "0"]}
             padding={["2", "2", "0"]}
             borderRadius={["md", "md", "none"]}
+            overflow="hidden"
           >
-            <HStack flex="1 1" alignItems="center">
-              <Text flex="1 0">{i.data.targetChainId.toNumber() === 122 ? "Celo" : "Fuse"}</Text>
+            <HStack flex="1 1" minWidth="0" alignItems="center">
+              <Text flex="1 0" numberOfLines={1}>
+                {i.data.targetChainId.toNumber() === 122 ? "Celo" : "Fuse"}
+              </Text>
               <ArrowForwardIcon size="3" color="black" ml="1" mr="1" flex="auto 0" />
-              <Text flex="1 0">{i.data.targetChainId.toNumber() === 122 ? "Fuse" : "Celo"}</Text>
+              <Text flex="1 0" numberOfLines={1}>
+                {i.data.targetChainId.toNumber() === 122 ? "Fuse" : "Celo"}
+              </Text>
             </HStack>
-            <Flex flex={["1 1", "1 1", "2 0"]} maxWidth="100%">
+            <Flex flex={["1 1", "1 1", "2 0"]} minWidth="0" maxWidth="100%" overflow="hidden">
               <ExplorerLink
                 chainId={i.data.targetChainId.toNumber() === 122 ? 42220 : 122}
                 addressOrTx={i.transactionHash}
+                text={truncateMiddle(i.transactionHash, 16)}
               />
             </Flex>
-            <Flex flex={["1 1", "1 1", "2 0"]} maxWidth="100%">
-              <ExplorerLink chainId={i.data.targetChainId.toNumber() === 122 ? 42220 : 122} addressOrTx={i.data.from} />
+            <Flex flex={["1 1", "1 1", "2 0"]} minWidth="0" maxWidth="100%" overflow="hidden">
+              <ExplorerLink
+                chainId={i.data.targetChainId.toNumber() === 122 ? 42220 : 122}
+                addressOrTx={i.data.from}
+                text={truncateMiddle(i.data.from, 16)}
+              />
             </Flex>
-            <Flex flex={["1 1", "1 1", "2 0"]} maxWidth="100%">
-              <ExplorerLink chainId={i.data.targetChainId.toNumber() === 122 ? 42220 : 122} addressOrTx={i.data.to} />
+            <Flex flex={["1 1", "1 1", "2 0"]} minWidth="0" maxWidth="100%" overflow="hidden">
+              <ExplorerLink
+                chainId={i.data.targetChainId.toNumber() === 122 ? 42220 : 122}
+                addressOrTx={i.data.to}
+                text={truncateMiddle(i.data.to, 16)}
+              />
             </Flex>
-            <Flex flex={["1 1", "1 1", "1 0"]} maxWidth="100%">
-              <Text>{i.amount} G$</Text>
+            <Flex flex={["1 1", "1 1", "1 0"]} minWidth="0" maxWidth="100%">
+              <Text numberOfLines={1}>{i.amount} G$</Text>
             </Flex>
-            <Flex flex={["1 1", "1 1", "1 0"]} maxWidth="100%">
+            <Flex flex={["1 1", "1 1", "1 0"]} minWidth="0" maxWidth="100%">
               {(i as any).relayEvent ? (
                 <ExplorerLink
                   chainId={i.data.targetChainId.toNumber()}
@@ -182,7 +196,13 @@ const HistoryRowItem = ({ item, env }: { item: any; env: string }) => {
               Fees:{" "}
             </Text>
             <Text variant="xs-grey">{`G$ `}</Text>
-            <GdAmount variant="xs-grey" fontFamily="subheading" withDefaultSuffix={false} amount={feeFormatted} />
+            <GdAmount
+              variant="xs-grey"
+              fontSize="xs"
+              fontFamily="subheading"
+              withDefaultSuffix={false}
+              amount={feeFormatted}
+            />
           </HStack>
         ) : (
           <Skeleton size="3" rounded="full" width="75%" />
