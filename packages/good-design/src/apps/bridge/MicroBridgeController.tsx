@@ -181,6 +181,12 @@ const BridgeHistoryWithRelay = () => {
   );
 };
 
+/** Table column widths - fixed % so header and rows stay aligned */
+const COL_WIDTH_DATE = "18%";
+const COL_WIDTH_AMOUNT = "32%";
+const COL_WIDTH_STATUS = "50%";
+const TABLE_PADDING_X = 4;
+
 const HistoryRowItem = ({ item, env }: { item: any; env: string }) => {
   const { amount, data, relayEvent, transactionHash } = item;
   const { targetChainId, timestamp } = data || {};
@@ -197,36 +203,48 @@ const HistoryRowItem = ({ item, env }: { item: any; env: string }) => {
   const feeFormatted = fee && targetChain ? G$Amount("G$", ethers.BigNumber.from(fee), targetChain, env) : null;
 
   return (
-    <HStack space="3" marginTop="3">
-      <VStack flex="2 0 0%" textAlign="left">
-        <Text variant="xs-grey">{dateFormatted}</Text>
-        <Text variant="xs-grey">{dateHours}</Text>
-      </VStack>
-      <VStack flex="4 0 0%" alignItems="flex-start" textAlign="left">
-        <Text variant="xs-grey">G$ {amount}</Text>
-        {feeFormatted ? (
-          <HStack>
-            <Text variant="xs-grey" fontWeight="700">
-              Fees:{" "}
-            </Text>
-            <Text variant="xs-grey">{`G$ `}</Text>
-            <GdAmount
-              variant="xs-grey"
-              fontSize="xs"
-              fontFamily="subheading"
-              withDefaultSuffix={false}
-              amount={feeFormatted}
-            />
-          </HStack>
-        ) : (
-          <Skeleton size="3" rounded="full" width="75%" />
-        )}
-      </VStack>
-      <VStack flex="7 0 0%" alignItems="flex-start">
-        {relayEvent?.transactionHash && targetChain ? (
-          <>
-            <Text variant="xs-green">Completed</Text>
-            <VStack alignItems="flex-start">
+    <HStack
+      width="100%"
+      paddingX={TABLE_PADDING_X}
+      paddingY="3"
+      borderBottomWidth="1"
+      borderBottomColor="goodGrey.300:alpha.50"
+      alignItems="flex-start"
+      space="0"
+    >
+      <Box width={COL_WIDTH_DATE} flexShrink={0} overflow="hidden">
+        <VStack space="0" alignItems="flex-start">
+          <Text variant="xs-grey">{dateFormatted}</Text>
+          <Text variant="xs-grey">{dateHours}</Text>
+        </VStack>
+      </Box>
+      <Box width={COL_WIDTH_AMOUNT} flexShrink={0} overflow="hidden" pl="2">
+        <VStack space="0" alignItems="flex-start">
+          <Text variant="xs-grey">G$ {amount}</Text>
+          {feeFormatted ? (
+            <HStack flexWrap="wrap">
+              <Text variant="xs-grey" fontWeight="700">
+                Fees:{" "}
+              </Text>
+              <Text variant="xs-grey">{`G$ `}</Text>
+              <GdAmount
+                variant="xs-grey"
+                fontSize="xs"
+                fontFamily="subheading"
+                withDefaultSuffix={false}
+                amount={feeFormatted}
+              />
+            </HStack>
+          ) : (
+            <Skeleton size="3" rounded="full" width="75%" />
+          )}
+        </VStack>
+      </Box>
+      <Box width={COL_WIDTH_STATUS} flexShrink={0} overflow="hidden" pl="2">
+        <VStack space="0" alignItems="flex-start">
+          {relayEvent?.transactionHash && targetChain ? (
+            <>
+              <Text variant="xs-green">Completed</Text>
               <Text variant="xs-grey">{`(Bridged to ${SupportedChains[targetChain]})`}</Text>
               <ExplorerLink
                 fontStyle={{ fontSize: "xs", fontFamily: "subheading", fontWeight: 700 }}
@@ -235,15 +253,13 @@ const HistoryRowItem = ({ item, env }: { item: any; env: string }) => {
                 text={truncateMiddle(relayEvent.transactionHash, 11)}
                 withIcon={false}
               />
-            </VStack>
-          </>
-        ) : (
-          <>
-            <HStack space="2">
-              <Spinner variant="page-loader" size="sm" />
-              <Text variant="xs-grey">{`Waiting for bridge relayers to relay to target chain... \n (Can take a few minutes)`}</Text>
-            </HStack>
-            <VStack alignItems="flex-start">
+            </>
+          ) : (
+            <>
+              <HStack space="2" flexWrap="wrap">
+                <Spinner variant="page-loader" size="sm" />
+                <Text variant="xs-grey">{`Waiting for bridge relayers to relay to target chain... (Can take a few minutes)`}</Text>
+              </HStack>
               <Text variant="xs-grey">{`(Bridging from ${SupportedChains[sourceChain]})`}</Text>
               <ExplorerLink
                 fontStyle={{ fontSize: "xs", fontFamily: "subheading", fontWeight: 700 }}
@@ -252,10 +268,10 @@ const HistoryRowItem = ({ item, env }: { item: any; env: string }) => {
                 text={truncateMiddle(transactionHash, 11)}
                 withIcon={false}
               />
-            </VStack>
-          </>
-        )}
-      </VStack>
+            </>
+          )}
+        </VStack>
+      </Box>
     </HStack>
   );
 };
@@ -273,36 +289,59 @@ const BridgeHistory = ({ env }: { env: string }) => {
           It may take up to 30 seconds to load transactions.
         </Title>
       </VStack>
-      <VStack space="2" minWidth="360">
-        <HStack borderBottomWidth={1} space={3} borderBottomColor="goodGrey.300:alpha.70" textAlign="left">
-          <Text fontFamily="subheading" flex="2 0 0%" variant="sm-grey-600" fontWeight="700">
-            Date
-          </Text>
-          <Text fontFamily="subheading" flex="4 0 0%" variant="sm-grey-600" fontWeight="700">
-            Amount
-          </Text>
-          <Text fontFamily="subheading" flex="7 0 0%" variant="sm-grey-600" fontWeight="700">
-            Status
-          </Text>
+      <Box
+        minWidth="360"
+        width="100%"
+        borderWidth="1"
+        borderColor="goodGrey.300:alpha.50"
+        borderRadius="md"
+        overflow="hidden"
+      >
+        {/* Table header - same widths and padding as rows for column alignment */}
+        <HStack
+          width="100%"
+          paddingX={TABLE_PADDING_X}
+          paddingY="3"
+          borderBottomWidth="1"
+          borderBottomColor="goodGrey.300:alpha.70"
+          space="0"
+        >
+          <Box width={COL_WIDTH_DATE} flexShrink={0}>
+            <Text fontFamily="subheading" variant="sm-grey-600" fontWeight="700">
+              Date
+            </Text>
+          </Box>
+          <Box width={COL_WIDTH_AMOUNT} flexShrink={0} pl="2">
+            <Text fontFamily="subheading" variant="sm-grey-600" fontWeight="700">
+              Amount
+            </Text>
+          </Box>
+          <Box width={COL_WIDTH_STATUS} flexShrink={0} pl="2">
+            <Text fontFamily="subheading" variant="sm-grey-600" fontWeight="700">
+              Status
+            </Text>
+          </Box>
         </HStack>
+        {/* Table body - FlatList so each row aligns under the header */}
         {!historySorted ? (
-          <Spinner variant="page-loader" size="lg" />
+          <Box padding="6" alignItems="center">
+            <Spinner variant="page-loader" size="lg" />
+          </Box>
         ) : (
           <FlatList
-            shadow="1"
-            _contentContainerStyle={{
-              flexDirection: "column",
-              width: "100%",
-              minWidth: "384"
-            }}
             data={historySorted}
-            renderItem={({ item }) => <HistoryRowItem item={item} env={env} />}
+            keyExtractor={item => item.transactionHash ?? String(Math.random())}
+            renderItem={({ item }) => (
+              <Box width="100%" minWidth="0">
+                <HistoryRowItem item={item} env={env} />
+              </Box>
+            )}
             maxH="250"
             scrollEnabled={true}
-            horizontal={false}
+            _contentContainerStyle={{ width: "100%", minWidth: "100%" }}
           />
         )}
-      </VStack>
+      </Box>
     </VStack>
   );
 };
