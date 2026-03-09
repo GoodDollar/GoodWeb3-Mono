@@ -195,7 +195,7 @@ export const useSwap = (
   if (exactInput && exactOutput) throw new Error("Only one of exactInput or exactOutput can be specified");
 
   const { connectedEnv } = useGetEnvChainId();
-  const exchangeId = useExchange();
+  const { exchangeId } = useExchange();
 
   const exchangeProviderAddress =
     contractAddresses[connectedEnv].MentoExchangeProvider || "0x558eC7E55855FAC9403De3ADB3aa1e588234A92C";
