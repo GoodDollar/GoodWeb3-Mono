@@ -37,44 +37,26 @@ export const useReadOnlySDK = (type: SdkTypes, requiredChainId?: number): Reques
   return useSDK(true, type, requiredChainId);
 };
 
-const getEnvForChainId = (chainId: number, baseEnv: string): string => {
-  switch (chainId) {
-    case 1:
-      return "production-mainnet";
-    case 50:
-      return baseEnv === "fuse" ? "development-xdc" : baseEnv + "-xdc";
-    case 42220:
-      return baseEnv === "fuse" ? "development-celo" : baseEnv + "-celo";
-    case 122:
-    default:
-      return baseEnv;
-  }
-};
-
 export const useGetEnvChainId = (requiredChainId?: number) => {
   const { chainId } = useEthers();
   const web3Context = useContext(Web3Context);
   const baseEnv = web3Context.env || "";
-  const baseEnvName = baseEnv.split("-")[0];
+  let connectedEnv = baseEnv;
 
-  if (requiredChainId !== undefined) {
-    const connectedEnv = getEnvForChainId(requiredChainId, baseEnvName);
-    return {
-      chainId: requiredChainId,
-      defaultEnv: connectedEnv,
-      baseEnv,
-      connectedEnv,
-      switchNetworkRequest: web3Context.switchNetwork
-    };
+  switch (requiredChainId ?? chainId) {
+    case 1:
+      connectedEnv = "production-mainnet"; // temp untill dev contracts are released to sepolia
+      break;
+    case 42220:
+      connectedEnv = connectedEnv === "fuse" ? "development-celo" : connectedEnv + "-celo";
+      break;
   }
 
-  const targetChainId = chainId ?? 42220;
-  const connectedEnv = getEnvForChainId(targetChainId, baseEnvName);
-  const resolvedChainId = Number((Contracts[connectedEnv as keyof typeof Contracts] as EnvValue)?.networkId);
+  const defaultEnv = connectedEnv;
 
   return {
-    chainId: resolvedChainId,
-    defaultEnv: connectedEnv,
+    chainId: Number((Contracts[defaultEnv as keyof typeof Contracts] as EnvValue)?.networkId),
+    defaultEnv,
     baseEnv,
     connectedEnv,
     switchNetworkRequest: web3Context.switchNetwork
@@ -255,17 +237,12 @@ export function useG$Balance(refresh: QueryParams["refresh"] = "never", required
         method: "balanceOf",
         args: [account]
       },
-      ...(chainId !== 50 && goodContract
-        ? [
-            {
-              contract: goodContract,
-              method: "balanceOf",
-              args: [account]
-            }
-          ]
-        : [])
+      {
+        contract: goodContract,
+        method: "balanceOf",
+        args: [account]
+      }
     ],
-
     {
       refresh: refreshOrNever,
       chainId
