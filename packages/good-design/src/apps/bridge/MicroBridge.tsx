@@ -117,10 +117,11 @@ export const MicroBridge = ({
     // if bridge relayer failed or succeeded then we are done
     const isFailed = ["Fail", "Exception"].includes(status);
     // when bridge is signing, mining or succeed but relay not done yet - we're still bridging
-    const isBridging =
-      !isFailed && !isSuccess && ["Mining", "PendingSignature", "Success"].includes(bridgeStatus?.status ?? "");
+    // once relay has completed (success or fail), don't treat as bridging so user can start another
+    const bridgeInProgress = ["Mining", "PendingSignature", "Success"].includes(bridgeStatus?.status ?? "");
+    const stillBridging = bridgeInProgress && !isFailed && !isSuccess;
 
-    setBridging(isBridging);
+    setBridging(stillBridging);
 
     // show next step only once user signs tx
     if (bridgeStatus?.status === "Mining") {
