@@ -364,7 +364,7 @@ export const CheckAvailableOffersExample: Meta<AvailableOffersPropsAndArgs & Cla
               chainId={chainId}
               account={account ?? args.account}
               onDone={async () => {
-                alert("Finished demo");
+                console.log("Finished demo");
               }}
               withNavBar={true}
               isDev={true}
