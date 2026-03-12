@@ -9,7 +9,7 @@ export default {
   component: MPBBridgeController,
   decorators: [
     (Story: any) => (
-      <W3Wrapper withMetaMask={true} env="fuse">
+      <W3Wrapper withMetaMask={true} env="production">
         <SwitchChainModal>
           <VStack width="100%" alignItems={"center"}>
             <VStack width="800">
