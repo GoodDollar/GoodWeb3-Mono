@@ -27,7 +27,7 @@ interface BridgeLimitsData {
   maxAmount: ethers.BigNumber;
 }
 
-interface ValidationResult {
+export interface ValidationResult {
   isValid: boolean;
   reason: string;
   errorMessage?: string;

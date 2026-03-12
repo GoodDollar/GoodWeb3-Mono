@@ -10,7 +10,8 @@ export const BRIDGE_CONSTANTS = {
   GDOLLAR_ADDRESSES: {
     [SupportedChains.FUSE]: "0x495d133B938596C9984d462F007B676bDc57eCEC",
     [SupportedChains.CELO]: "0x62B8B11039FcfE5aB0C56E502b1C372A3d2a9c7A",
-    [SupportedChains.MAINNET]: "0x67c5870b4a41d4ebef24d2456547a03f1f3e094b"
+    [SupportedChains.MAINNET]: "0x67c5870b4a41d4ebef24d2456547a03f1f3e094b",
+    [SupportedChains.XDC]: "0xEC2136843a983885AebF2feB3931F73A8eBEe50c"
   }
 } as const;
 
@@ -39,7 +40,8 @@ export const ERROR_MESSAGES = {
 export const CHAIN_NAMES = {
   FUSE: "fuse",
   CELO: "celo",
-  MAINNET: "mainnet"
+  MAINNET: "mainnet",
+  XDC: "xdc"
 } as const;
 
 /**
@@ -51,7 +53,7 @@ export const BRIDGE_PROVIDERS = {
 } as const;
 
 // Types for better type safety
-export type ChainName = "fuse" | "celo" | "mainnet";
+export type ChainName = "fuse" | "celo" | "mainnet" | "xdc";
 export type BridgeProvider = "axelar" | "layerzero";
 export type ValidationReason =
   | "minAmount"
@@ -73,13 +75,15 @@ export const VALIDATION_ERROR_MESSAGES: Record<ValidationReason, string> = {
 export const CHAIN_MAPPING: Record<number, ChainName> = {
   [SupportedChains.FUSE]: "fuse",
   [SupportedChains.CELO]: "celo",
-  [SupportedChains.MAINNET]: "mainnet"
+  [SupportedChains.MAINNET]: "mainnet",
+  [SupportedChains.XDC]: "xdc"
 } as const;
 
 export const REVERSE_CHAIN_MAPPING: Record<ChainName, number> = {
   fuse: SupportedChains.FUSE,
   celo: SupportedChains.CELO,
-  mainnet: SupportedChains.MAINNET
+  mainnet: SupportedChains.MAINNET,
+  xdc: SupportedChains.XDC
 } as const;
 
 export const FEE_ROUTES: Record<BridgeProvider, Record<string, string>> = {
@@ -93,7 +97,13 @@ export const FEE_ROUTES: Record<BridgeProvider, Record<string, string>> = {
     CELO_MAINNET: "LZ_CELO_TO_ETH",
     MAINNET_CELO: "LZ_ETH_TO_CELO",
     FUSE_MAINNET: "LZ_FUSE_TO_ETH",
-    MAINNET_FUSE: "LZ_ETH_TO_FUSE"
+    MAINNET_FUSE: "LZ_ETH_TO_FUSE",
+    XDC_FUSE: "LZ_XDC_TO_FUSE",
+    FUSE_XDC: "LZ_FUSE_TO_XDC",
+    XDC_CELO: "LZ_XDC_TO_CELO",
+    CELO_XDC: "LZ_CELO_TO_XDC",
+    XDC_MAINNET: "LZ_XDC_TO_ETH",
+    MAINNET_XDC: "LZ_ETH_TO_XDC"
   }
 } as const;
 

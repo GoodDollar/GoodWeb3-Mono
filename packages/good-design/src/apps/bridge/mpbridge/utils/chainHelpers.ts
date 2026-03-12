@@ -4,6 +4,7 @@ import type { BridgeProvider } from "../types";
 export const getDefaultTargetChain = (sourceChain: string): string => {
   if (sourceChain === "fuse") return "celo";
   if (sourceChain === "celo") return "mainnet";
+  if (sourceChain === "xdc") return "fuse";
   return "fuse";
 };
 

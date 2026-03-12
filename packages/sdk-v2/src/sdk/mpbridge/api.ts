@@ -117,11 +117,29 @@ export const convertFeeFromWei = (weiAmount: string): string => {
 
 // Explorer link functions
 export const getLayerZeroExplorerLink = (txHash: string, chainId: number) => {
-  const chainName = chainId === 1 ? "ethereum" : chainId === 122 ? "fuse" : chainId === 42220 ? "celo" : "ethereum";
+  const chainName =
+    chainId === 1
+      ? "ethereum"
+      : chainId === 122
+      ? "fuse"
+      : chainId === 42220
+      ? "celo"
+      : chainId === 50
+      ? "xdc"
+      : "ethereum";
   return `https://layerzeroscan.com/${chainName}/tx/${txHash}`;
 };
 
 export const getAxelarExplorerLink = (txHash: string, chainId: number) => {
-  const chainName = chainId === 1 ? "ethereum" : chainId === 122 ? "fuse" : chainId === 42220 ? "celo" : "ethereum";
+  const chainName =
+    chainId === 1
+      ? "ethereum"
+      : chainId === 122
+      ? "fuse"
+      : chainId === 42220
+      ? "celo"
+      : chainId === 50
+      ? "xdc"
+      : "ethereum";
   return `https://axelarscan.io/${chainName}/tx/${txHash}`;
 };

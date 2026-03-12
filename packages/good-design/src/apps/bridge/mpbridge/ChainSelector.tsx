@@ -107,7 +107,7 @@ export const ChainSelector: React.FC<ChainSelectorProps> = memo(
     onSourceDropdownToggle,
     onTargetDropdownToggle
   }) => {
-    const availableChains = useMemo(() => ["fuse", "celo", "mainnet"], []);
+    const availableChains = useMemo(() => ["fuse", "celo", "mainnet", "xdc"], []);
 
     const validTargetChains = useMemo(
       () => getValidTargetChains(sourceChain, bridgeFees, bridgeProvider, feesLoading),

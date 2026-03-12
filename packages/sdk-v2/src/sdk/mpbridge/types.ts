@@ -17,6 +17,9 @@ const MPB_PROXY_ADDRESSES: Record<number, Record<string, string>> = {
   },
   [SupportedChains.MAINNET]: {
     mainnet: "0xa3247276DbCC76Dd7705273f766eB3E8a5ecF4a5"
+  },
+  [SupportedChains.XDC]: {
+    xdc: "0xa3247276DbCC76Dd7705273f766eB3E8a5ecF4a5"
   }
 };
 

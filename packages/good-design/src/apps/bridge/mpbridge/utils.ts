@@ -1,6 +1,6 @@
-import { FEE_ROUTES } from "@gooddollar/web3sdk-v2";
+import { FEE_ROUTES, getFeeString } from "@gooddollar/web3sdk-v2";
 
-type ChainName = "celo" | "fuse" | "mainnet";
+type ChainName = "celo" | "fuse" | "mainnet" | "xdc";
 type BridgeProvider = "axelar" | "layerzero";
 
 interface ChainConfig {
@@ -24,6 +24,11 @@ const CHAIN_CONFIG: Record<ChainName, ChainConfig> = {
     icon: "E",
     color: "red.500",
     label: "G$ Ethereum"
+  },
+  xdc: {
+    icon: "X",
+    color: "purple.500",
+    label: "G$ XDC"
   }
 } as const;
 
@@ -40,9 +45,10 @@ export const getChainLabel = (chain: string): string => {
 };
 
 const DEFAULT_TARGET_CHAINS: Record<ChainName, ChainName[]> = {
-  fuse: ["celo", "mainnet"] as ChainName[],
-  celo: ["fuse", "mainnet"] as ChainName[],
-  mainnet: ["fuse", "celo"] as ChainName[]
+  fuse: ["celo", "mainnet", "xdc"] as ChainName[],
+  celo: ["fuse", "mainnet", "xdc"] as ChainName[],
+  mainnet: ["fuse", "celo", "xdc"] as ChainName[],
+  xdc: ["fuse", "celo", "mainnet"] as ChainName[]
 };
 
 // Use centralized provider route mapping from sdk-v2 (avoid duplication)
@@ -68,18 +74,8 @@ export const isRouteSupportedByProvider = (source: string, target: string, provi
 };
 
 const hasRouteFees = (source: string, target: string, bridgeProvider: string, bridgeFees: any): boolean => {
-  const sourceUpper = source.toUpperCase();
-  const targetUpper = target.toUpperCase();
-  const routeKey = `${sourceUpper}_${targetUpper}`;
-
-  const routeMappings = PROVIDER_ROUTES[bridgeProvider as BridgeProvider];
-  if (!routeMappings) return false;
-
-  const feeProperty = routeMappings[routeKey];
-  if (!feeProperty) return false;
-
-  const providerFees = bridgeFees[bridgeProvider.toUpperCase()];
-  return !!(providerFees && providerFees[feeProperty]);
+  const feeString = getFeeString(bridgeFees, bridgeProvider as BridgeProvider, source, target);
+  return Boolean(feeString);
 };
 
 export const getValidTargetChains = (
@@ -110,25 +106,14 @@ export const getCurrentBridgeFee = (
 ): string => {
   if (!bridgeFees || feesLoading) return "Loading...";
 
-  if (!hasRouteFees(sourceChain, targetChain, bridgeProvider, bridgeFees)) {
-    return "Fee not available";
-  }
-
-  const sourceUpper = sourceChain.toUpperCase();
-  const targetUpper = targetChain.toUpperCase();
-  const routeKey = `${sourceUpper}_${targetUpper}`;
-
-  const providerMappings = PROVIDER_ROUTES[bridgeProvider as BridgeProvider];
-  const feeProperty = providerMappings[routeKey];
-  const providerFees = bridgeFees[bridgeProvider.toUpperCase()];
-
-  return providerFees[feeProperty] || "Fee not available";
+  return getFeeString(bridgeFees, bridgeProvider as BridgeProvider, sourceChain, targetChain) || "Fee not available";
 };
 
 export const CHAIN_ID_TO_NAME: Record<number, string> = {
   122: "Fuse",
   42220: "Celo",
-  1: "Mainnet"
+  1: "Mainnet",
+  50: "XDC"
 } as const;
 
 export const BRIDGE_SERVICE_MAPPING = {

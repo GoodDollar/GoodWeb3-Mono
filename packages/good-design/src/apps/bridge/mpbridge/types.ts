@@ -43,6 +43,22 @@ export interface MPBBridgeProps {
     errorMessage?: string;
     transaction?: { hash: string };
   };
+  bridgeFlow?: {
+    state: string;
+    statusLabel: string;
+    isBusy: boolean;
+    error?: {
+      code?: string;
+      message: string;
+    };
+    showSuccess: boolean;
+    currentTxHashes: {
+      approve?: string;
+      bridgeTo?: string;
+      final?: string;
+    };
+    canSubmit: boolean;
+  };
   onBridgeStart?: (sourceChain: string, targetChain: string) => Promise<void>;
   onBridgeFailed?: (error: Error) => void;
   onBridgeSuccess?: () => void;

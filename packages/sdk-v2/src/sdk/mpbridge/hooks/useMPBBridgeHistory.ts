@@ -13,6 +13,7 @@ export const useMPBBridgeHistory = () => {
   const fuseBridgeContract = useGetContract("MpbBridge", true, "base", SupportedChains.FUSE);
   const celoBridgeContract = useGetContract("MpbBridge", true, "base", SupportedChains.CELO);
   const mainnetBridgeContract = useGetContract("MpbBridge", true, "base", SupportedChains.MAINNET);
+  const xdcBridgeContract = useGetContract("MpbBridge", true, "base", SupportedChains.XDC);
 
   const fuseBridgeRequests = useLogs(
     fuseBridgeContract
@@ -54,6 +55,21 @@ export const useMPBBridgeHistory = () => {
       : undefined,
     {
       chainId: SupportedChains.MAINNET as unknown as ChainId,
+      fromBlock: -5000,
+      refresh
+    }
+  );
+
+  const xdcBridgeRequests = useLogs(
+    xdcBridgeContract
+      ? {
+          contract: xdcBridgeContract,
+          event: "BridgeRequest",
+          args: []
+        }
+      : undefined,
+    {
+      chainId: SupportedChains.XDC as unknown as ChainId,
       fromBlock: -5000,
       refresh
     }
@@ -106,15 +122,32 @@ export const useMPBBridgeHistory = () => {
     }
   );
 
+  const xdcBridgeCompleted = useLogs(
+    xdcBridgeContract
+      ? {
+          contract: xdcBridgeContract,
+          event: "ExecutedTransfer",
+          args: []
+        }
+      : undefined,
+    {
+      chainId: SupportedChains.XDC as unknown as ChainId,
+      fromBlock: -5000,
+      refresh: refreshFaster
+    }
+  );
+
   return useMemo(() => {
     // Wait for all logs to load
     if (
       !fuseBridgeRequests ||
       !celoBridgeRequests ||
       !mainnetBridgeRequests ||
+      !xdcBridgeRequests ||
       !fuseBridgeCompleted ||
       !celoBridgeCompleted ||
-      !mainnetBridgeCompleted
+      !mainnetBridgeCompleted ||
+      !xdcBridgeCompleted
     ) {
       return { historySorted: undefined };
     }
@@ -128,6 +161,7 @@ export const useMPBBridgeHistory = () => {
     const fuseCompleted = groupBy(fuseBridgeCompleted.value || [], getEventId);
     const celoCompleted = groupBy(celoBridgeCompleted.value || [], getEventId);
     const mainnetCompleted = groupBy(mainnetBridgeCompleted.value || [], getEventId);
+    const xdcCompleted = groupBy(xdcBridgeCompleted.value || [], getEventId);
 
     const processBridgeRequestEvent = (e: any, sourceChainId: number, completedEventsMap: Record<string, any[]>) => {
       type BridgeEvent = typeof e & { completedEvent: any; amount: string };
@@ -154,22 +188,27 @@ export const useMPBBridgeHistory = () => {
       return extended;
     };
 
-    const fuseCompletedMap = { ...celoCompleted, ...mainnetCompleted };
+    const fuseCompletedMap = { ...celoCompleted, ...mainnetCompleted, ...xdcCompleted };
     const fuseHistory = (fuseBridgeRequests.value || []).map((e: any) =>
       processBridgeRequestEvent(e, SupportedChains.FUSE, fuseCompletedMap)
     );
 
-    const celoCompletedMap = { ...fuseCompleted, ...mainnetCompleted };
+    const celoCompletedMap = { ...fuseCompleted, ...mainnetCompleted, ...xdcCompleted };
     const celoHistory = (celoBridgeRequests.value || []).map((e: any) =>
       processBridgeRequestEvent(e, SupportedChains.CELO, celoCompletedMap)
     );
 
-    const mainnetCompletedMap = { ...fuseCompleted, ...celoCompleted };
+    const mainnetCompletedMap = { ...fuseCompleted, ...celoCompleted, ...xdcCompleted };
     const mainnetHistory = (mainnetBridgeRequests.value || []).map((e: any) =>
       processBridgeRequestEvent(e, SupportedChains.MAINNET, mainnetCompletedMap)
     );
 
-    const historyCombined = [...fuseHistory, ...celoHistory, ...mainnetHistory];
+    const xdcCompletedMap = { ...fuseCompleted, ...celoCompleted, ...mainnetCompleted };
+    const xdcHistory = (xdcBridgeRequests.value || []).map((e: any) =>
+      processBridgeRequestEvent(e, SupportedChains.XDC, xdcCompletedMap)
+    );
+
+    const historyCombined = [...fuseHistory, ...celoHistory, ...mainnetHistory, ...xdcHistory];
 
     const historyFiltered = account
       ? historyCombined.filter(
@@ -186,9 +225,11 @@ export const useMPBBridgeHistory = () => {
     fuseBridgeRequests,
     celoBridgeRequests,
     mainnetBridgeRequests,
+    xdcBridgeRequests,
     fuseBridgeCompleted,
     celoBridgeCompleted,
     mainnetBridgeCompleted,
+    xdcBridgeCompleted,
     account
   ]);
 };

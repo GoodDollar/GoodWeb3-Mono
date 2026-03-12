@@ -8,6 +8,12 @@ import { convertTransaction } from "./utils";
 
 const CACHE_KEY = "mpb-bridge-fees-cache";
 const CACHE_DURATION_MS = 5 * 60 * 1000;
+const CHAIN_NAME_TO_ID: Record<string, number> = {
+  fuse: 122,
+  celo: 42220,
+  mainnet: 1,
+  xdc: 50
+};
 
 const getStoredCache = () => {
   try {
@@ -93,7 +99,7 @@ export const useMPBBridgeEstimate = ({
   nativeFee: CurrencyValue;
   zroFee: CurrencyValue;
 } => {
-  const chain = useMemo(() => (sourceChain === "celo" ? 42220 : sourceChain === "mainnet" ? 1 : 122), [sourceChain]);
+  const chain = useMemo(() => CHAIN_NAME_TO_ID[sourceChain] || 122, [sourceChain]);
   const { defaultEnv } = useGetEnvChainId(chain);
 
   const amountsConfig = useMemo(
@@ -146,6 +152,7 @@ export const useChainBalances = () => {
   const { G$: fuseBalance } = useProductionG$Balance(5, 122);
   const { G$: celoBalance } = useProductionG$Balance(5, 42220);
   const { G$: mainnetBalance } = useProductionG$Balance(5, 1);
+  const { G$: xdcBalance } = useProductionG$Balance(5, 50);
 
   const getBalanceForChain = useMemo(
     () => (chain: string) => {
@@ -156,11 +163,13 @@ export const useChainBalances = () => {
           return celoBalance;
         case "mainnet":
           return mainnetBalance;
+        case "xdc":
+          return xdcBalance;
         default:
           return fuseBalance;
       }
     },
-    [fuseBalance, celoBalance, mainnetBalance]
+    [fuseBalance, celoBalance, mainnetBalance, xdcBalance]
   );
 
   return { getBalanceForChain };
@@ -186,11 +195,9 @@ export const useDebouncedTransactionHistory = (delay = 1000) => {
 };
 
 export const useConvertedTransactionHistory = (realTransactionHistory: any[] | undefined, sourceChain: string) => {
-  const chain = sourceChain === "celo" ? 42220 : sourceChain === "mainnet" ? 1 : 122;
+  const chain = CHAIN_NAME_TO_ID[sourceChain] || 122;
   return useMemo(
     () => realTransactionHistory?.slice(0, 5).map(tx => convertTransaction(tx, chain)) ?? [],
     [realTransactionHistory, chain]
   );
 };
-
-export { useBridgeStatusHandler } from "./useBridgeStatusHandler";

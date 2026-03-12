@@ -80,7 +80,7 @@ export const useBridgeValidators = (
           const chainName = getChainName(bridgeRequest.sourceChainId);
           throw new Error(
             `Insufficient ${
-              chainName === "celo" ? "CELO" : chainName === "fuse" ? "FUSE" : "ETH"
+              chainName === "celo" ? "CELO" : chainName === "fuse" ? "FUSE" : chainName === "xdc" ? "XDC" : "ETH"
             } for gas. You have ${balanceFormatted} but need at least ${requiredFormatted} (including bridge fee)`
           );
         }

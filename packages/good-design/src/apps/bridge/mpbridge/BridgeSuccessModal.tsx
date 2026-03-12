@@ -53,7 +53,7 @@ export const BridgeSuccessModal = ({ open, onClose, data, onTrackTransaction }: 
             </Center>
 
             <VStack space={2} alignItems="center">
-              <Text fontSize="2xl" fontWeight="bold" color="blue.500" textAlign="center">
+              <Text fontSize="xl" fontWeight="bold" color="blue.500" textAlign="center">
                 Transaction Submitted!
               </Text>
               <Text fontSize="md" color="gray.500" textAlign="center">
