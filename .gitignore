@@ -18,3 +18,5 @@ yalc.lock
 .vercel
 .continueignore
 e2e.log
+docs/specs/**
+codex-resume

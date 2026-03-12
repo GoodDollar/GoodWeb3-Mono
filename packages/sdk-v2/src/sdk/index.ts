@@ -7,6 +7,7 @@ export * from "./faucet";
 export * from "./goodid";
 export * from "./ipfs";
 export * from "./microbridge";
+export * from "./mpbridge";
 export * from "./newsfeed";
 export * from "./onboard";
 export * from "./redtent";

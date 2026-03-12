@@ -2,7 +2,8 @@ import { ExternalProvider, JsonRpcProvider } from "@ethersproject/providers";
 import { Web3Provider } from "@gooddollar/web3sdk-v2";
 import * as ethers from "ethers";
 import { View } from "react-native";
-import React, { useState } from "react";
+import * as React from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { Celo, Fuse, Xdc } from "@gooddollar/web3sdk-v2";
 import { Config, Mainnet, useEthers } from "@usedapp/core";
@@ -24,25 +25,32 @@ const config: Config = {
 };
 
 export const W3Wrapper = ({ children, withMetaMask, env = "fuse" }: PageProps) => {
-  const ethereum = (window as any).ethereum;
+  const ethereum = useMemo(() => (window as any).ethereum, []);
   const { account } = useEthers();
-  const w: ethers.Wallet = ethers.Wallet.createRandom();
+  const wallet = useMemo(() => ethers.Wallet.createRandom(), []);
   const [newProvider, setProvider] = useState<JsonRpcProvider | undefined>();
 
-  if (!withMetaMask) {
-    const rpc = new ethers.providers.JsonRpcProvider("https://rpc.fuse.io");
+  useEffect(() => {
+    if (!withMetaMask) {
+      const rpc = new ethers.providers.JsonRpcProvider("https://rpc.fuse.io");
+      rpc.getSigner = () => wallet as any;
+      setProvider(rpc);
+      return;
+    }
 
-    rpc.getSigner = () => w as any;
-    setProvider(rpc);
-  }
-
-  if (withMetaMask && !account && !newProvider) {
-    ethereum.request({ method: "eth_requestAccounts" }).then((r: Array<string>) => {
-      if (r.length > 0) {
-        setProvider(new ethers.providers.Web3Provider(ethereum as ExternalProvider, "any"));
-      }
-    });
-  }
+    if (withMetaMask && !account && !newProvider && ethereum?.request) {
+      ethereum
+        .request({ method: "eth_requestAccounts" })
+        .then((r: Array<string>) => {
+          if (r.length > 0) {
+            setProvider(new ethers.providers.Web3Provider(ethereum as ExternalProvider, "any"));
+          }
+        })
+        .catch((err: Error) => {
+          console.error("Failed to request accounts:", err);
+        });
+    }
+  }, [withMetaMask, account, newProvider, ethereum, wallet]);
 
   return (
     <Web3Provider env={env} web3Provider={newProvider} config={config}>
