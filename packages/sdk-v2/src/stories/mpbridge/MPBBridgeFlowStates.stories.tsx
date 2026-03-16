@@ -1,5 +1,4 @@
 import React from "react";
-import { Box, Text, VStack } from "native-base";
 import { deriveMPBBridgeFlowState } from "../../sdk/mpbridge/flow/bridgeFlowState";
 
 interface FlowStateStoryProps {
@@ -28,20 +27,23 @@ const FlowStatePreview = ({
   });
 
   return (
-    <VStack space={3} p={4} bg="white" borderRadius="md" borderWidth={1} borderColor="coolGray.200">
-      <Text fontSize="sm" color="coolGray.600">
-        Input status: {status || "(none)"}
-      </Text>
-      <Text fontSize="sm" color="coolGray.600">
-        Flow state: {flow.state}
-      </Text>
-      <Text fontSize="sm" color="coolGray.600">
-        Label: {flow.statusLabel || "(empty)"}
-      </Text>
-      <Box bg="coolGray.50" p={3} borderRadius="sm">
+    <div
+      style={{
+        background: "white",
+        border: "1px solid #d2d6dc",
+        borderRadius: 8,
+        padding: 16,
+        display: "grid",
+        gap: 12
+      }}
+    >
+      <div style={{ fontSize: 14, color: "#4b5563" }}>Input status: {status || "(none)"}</div>
+      <div style={{ fontSize: 14, color: "#4b5563" }}>Flow state: {flow.state}</div>
+      <div style={{ fontSize: 14, color: "#4b5563" }}>Label: {flow.statusLabel || "(empty)"}</div>
+      <div style={{ background: "#f9fafb", padding: 12, borderRadius: 4 }}>
         <pre style={{ margin: 0, fontSize: 12 }}>{JSON.stringify(flow, null, 2)}</pre>
-      </Box>
-    </VStack>
+      </div>
+    </div>
   );
 };
 
