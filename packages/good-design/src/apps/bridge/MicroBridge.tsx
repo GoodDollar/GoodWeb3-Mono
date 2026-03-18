@@ -117,10 +117,11 @@ export const MicroBridge = ({
     // if bridge relayer failed or succeeded then we are done
     const isFailed = ["Fail", "Exception"].includes(status);
     // when bridge is signing, mining or succeed but relay not done yet - we're still bridging
-    const isBridging =
-      !isFailed && !isSuccess && ["Mining", "PendingSignature", "Success"].includes(bridgeStatus?.status ?? "");
+    // once relay has completed (success or fail), don't treat as bridging so user can start another
+    const bridgeInProgress = ["Mining", "PendingSignature", "Success"].includes(bridgeStatus?.status ?? "");
+    const stillBridging = bridgeInProgress && !isFailed && !isSuccess;
 
-    setBridging(isBridging);
+    setBridging(stillBridging);
 
     // show next step only once user signs tx
     if (bridgeStatus?.status === "Mining") {
@@ -143,7 +144,7 @@ export const MicroBridge = ({
 
   const reasonMinAmount =
     reason === "minAmount"
-      ? " Minimum amount is " + Number(minimumAmount) / (sourceChain === "fuse" ? 1e2 : 1e18) + "G$"
+      ? ` Minimum amount is ${Number(minimumAmount.value) / (sourceChain === "fuse" ? 1e2 : 1e18)} G$`
       : undefined;
 
   const getActiveColor = useCallback(
@@ -242,7 +243,8 @@ export const MicroBridge = ({
       />
       <VStack space={1} mt={4} textAlign="left" width="100%">
         <Text fontFamily="subheading" fontSize="xs" color="goodGrey.400">
-          Minimum amount to bridge: 1,000 G$
+          Minimum amount to bridge:{" "}
+          {(Number(minimumAmount.value) / (sourceChain === "fuse" ? 1e2 : 1e18)).toLocaleString()} G$
         </Text>
         <Text fontFamily="subheading" fontSize="xs" color="goodGrey.400">
           Bridge Fee: <b>G$ 10 or 0.15%</b> of transaction <i>(See FAQs for more on Fees)</i>
