@@ -54,6 +54,7 @@ export const useIsAddressVerified = (address: string, env?: EnvKey) => {
 
 export const useMultiClaim = (poolsDetails: PoolDetails[] | undefined) => {
   const { account, chainId, library } = useEthers();
+
   const [claimFlowStatus, setStatus] = useState<{
     isClaimingDone: boolean;
     remainingClaims: number | undefined;
@@ -74,8 +75,8 @@ export const useMultiClaim = (poolsDetails: PoolDetails[] | undefined) => {
   >([]);
   const { celoWhitelisted, syncStatus } = useWhitelistSync();
 
-  const { gasPrice = BigNumber.from(25.001e9) } = useGasFees();
-  const minBalance = BigNumber.from(chainId === 42220 ? "250000" : "150000").mul(gasPrice);
+  const fees = useGasFees();
+  const minBalance = BigNumber.from(chainId === 42220 ? "250000" : "150000").mul(fees?.gasPrice ?? 0);
   const signer = (library as ethers.providers.JsonRpcProvider)?.getSigner();
 
   const { resetState, state, send } = useContractFunctionWithDefaultGasFees(contract, "claim", {

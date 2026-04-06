@@ -14,7 +14,7 @@ interface PageProps {
 
 const config: Config = {
   networks: [Mainnet, Fuse, Celo, Xdc],
-  readOnlyChainId: Xdc.chainId,
+  readOnlyChainId: Celo.chainId,
   readOnlyUrls: {
     122: "https://rpc.fuse.io",
     42220: "https://forno.celo.org",

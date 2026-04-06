@@ -6073,8 +6073,6 @@ __metadata:
     "@types/react": ^18
     "@types/react-native": 0.70.4
     "@usedapp/core": ^1.2.16
-    "@walletconnect/client": ^1.8.0
-    "@walletconnect/qrcode-modal": ^1.8.0
     "@web3-onboard/coinbase": ^2.4.1
     "@web3-onboard/core": ^2.23.0
     "@web3-onboard/injected-wallets": ^2.11.2
