@@ -88,8 +88,6 @@
     "@sentry/browser": "7.16.0",
     "@sentry/react-native": "^5.15.1",
     "@solana/web3.js": "^1.72.0",
-    "@walletconnect/client": "^1.8.0",
-    "@walletconnect/qrcode-modal": "^1.8.0",
     "@web3-onboard/coinbase": "^2.4.1",
     "@web3-onboard/core": "^2.23.0",
     "@web3-onboard/injected-wallets": "^2.11.2",
