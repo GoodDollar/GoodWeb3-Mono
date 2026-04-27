@@ -35,7 +35,8 @@ export const useGasFees = () => {
 export function useContractFunctionWithDefaultGasFees<T extends TypedContract, FN extends ContractFunctionNames<T>>(
   contract: T | Falsy,
   functionName: FN,
-  options?: TransactionOptions
+  options?: TransactionOptions,
+  estGasEnabled = true
 ) {
   const { send, ...rest } = useContractFunction(contract, functionName, options);
   const gasFees = useGasFees();
@@ -47,12 +48,15 @@ export function useContractFunctionWithDefaultGasFees<T extends TypedContract, F
         const opts = hasOpts ? args[args.length - 1] : {};
         const modifiedArgs = hasOpts ? args.slice(0, args.length - 1) : args;
         // put default gas fees. use gasPrice value instead of maxFeePerGas because maxFeePerGas uses a very large buffer.
-        modifiedArgs.push(
-          pickBy(
-            { ...{ maxFeePerGas: gasFees?.gasPrice, maxPriorityFeePerGas: gasFees?.maxPriorityFeePerGas }, ...opts },
-            _ => _ != null
-          )
-        );
+        if (estGasEnabled) {
+          modifiedArgs.push(
+            pickBy(
+              { ...{ maxFeePerGas: gasFees?.gasPrice, maxPriorityFeePerGas: gasFees?.maxPriorityFeePerGas }, ...opts },
+              _ => _ != null
+            )
+          );
+        }
+
         return send(...(modifiedArgs as any));
       }
     },
