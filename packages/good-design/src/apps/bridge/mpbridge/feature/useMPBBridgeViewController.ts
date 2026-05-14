@@ -10,7 +10,7 @@ import {
   useDebouncedTransactionHistory,
   useConvertedTransactionHistory
 } from "../hooks";
-import { capitalizeChain, getValidTargetChains } from "../utils";
+import { capitalizeChain, getProviderSupportedSourceChains, getValidTargetChains } from "../utils";
 import { handleSourceChainChange, handleProviderChange } from "../utils/chainHelpers";
 import { createTransactionDetails } from "../utils/transactionHelpers";
 import { useMPBBridgeUiState } from "./useMPBBridgeUiState";
@@ -70,6 +70,7 @@ export interface MPBBridgeViewModel {
     bridgeFees: any;
     bridgeProvider: string;
     feesLoading: boolean;
+    availableSourceChains: string[];
     onSourceChainSelect: (chain: string) => void;
     onTargetChainSelect: (chain: string) => void;
     onSwap: () => void;
@@ -461,6 +462,10 @@ export const useMPBBridgeViewController = ({
   }, [showSourceDropdown, showTargetDropdown, setShowSourceDropdown, setShowTargetDropdown]);
 
   const recentTransactions = useConvertedTransactionHistory(realTransactionHistory, sourceChain);
+  const availableSourceChains = useMemo(
+    () => getProviderSupportedSourceChains(bridgeProvider as any),
+    [bridgeProvider]
+  );
 
   const successModalData = useMemo(
     () => ({
@@ -550,6 +555,7 @@ export const useMPBBridgeViewController = ({
       bridgeFees,
       bridgeProvider,
       feesLoading,
+      availableSourceChains,
       onSourceChainSelect: handleSourceChainSelect,
       onTargetChainSelect: handleTargetChainSelect,
       onSwap: handleSwap,

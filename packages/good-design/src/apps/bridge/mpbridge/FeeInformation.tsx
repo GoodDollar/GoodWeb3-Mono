@@ -1,7 +1,7 @@
 import React from "react";
 import { Text, VStack } from "native-base";
+import { getFeeString } from "@gooddollar/web3sdk-v2";
 import type { BridgeProvider } from "./types";
-import { getCurrentBridgeFee } from "./utils";
 
 export interface FeeInformationProps {
   sourceChain: string;
@@ -20,13 +20,10 @@ export const FeeInformation: React.FC<FeeInformationProps> = ({
   bridgeFees,
   feesLoading = false
 }) => {
-  const bridgeFeeDisplay = getCurrentBridgeFee(
-    sourceChain,
-    targetChain,
-    bridgeProvider,
-    bridgeFees ?? null,
-    feesLoading
-  );
+  const bridgeFeeDisplay =
+    !bridgeFees || feesLoading
+      ? "Loading..."
+      : getFeeString(bridgeFees, bridgeProvider, sourceChain, targetChain) || "Fee not available";
 
   return (
     <VStack space={2} padding={4} bg="goodGrey.50" borderRadius="lg">
@@ -39,7 +36,7 @@ export const FeeInformation: React.FC<FeeInformationProps> = ({
         Provider: {bridgeProvider.charAt(0).toUpperCase() + bridgeProvider.slice(1)}
       </Text>
       <Text fontFamily="subheading" fontSize="sm" color="goodGrey.600" textAlign="center">
-        Bridge fee (pre-execution): {bridgeFeeDisplay}
+        Bridge Fee: {bridgeFeeDisplay}
       </Text>
     </VStack>
   );

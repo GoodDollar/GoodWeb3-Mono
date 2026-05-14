@@ -68,6 +68,12 @@ export const getProviderSupportedPairs = (provider: BridgeProvider): [ChainName,
   }, []);
 };
 
+export const getProviderSupportedSourceChains = (provider: BridgeProvider): ChainName[] => {
+  const uniqueChains = new Set<ChainName>();
+  getProviderSupportedPairs(provider).forEach(([source]) => uniqueChains.add(source));
+  return Array.from(uniqueChains);
+};
+
 export const isRouteSupportedByProvider = (source: string, target: string, provider: BridgeProvider): boolean => {
   const routeKey = `${source.toUpperCase()}_${target.toUpperCase()}`;
   return Boolean(PROVIDER_ROUTES[provider]?.[routeKey]);
@@ -95,18 +101,6 @@ export const getValidTargetChains = (
   }
 
   return possibleTargets.filter(target => hasRouteFees(source, target, bridgeProvider, bridgeFees));
-};
-
-export const getCurrentBridgeFee = (
-  sourceChain: string,
-  targetChain: string,
-  bridgeProvider: string,
-  bridgeFees: any,
-  feesLoading: boolean
-): string => {
-  if (!bridgeFees || feesLoading) return "Loading...";
-
-  return getFeeString(bridgeFees, bridgeProvider as BridgeProvider, sourceChain, targetChain) || "Fee not available";
 };
 
 export const CHAIN_ID_TO_NAME: Record<number, string> = {

@@ -2,7 +2,7 @@ import React, { memo, useMemo } from "react";
 import { Box, HStack, Pressable, ChevronDownIcon, Text, VStack } from "native-base";
 import { Image, SvgXml } from "../../../core/images";
 import { getBridgeNetworkIcon } from "../../../utils/icons";
-import { getChainColor, getChainLabel, getValidTargetChains } from "./utils";
+import { getChainColor, getChainLabel, getProviderSupportedSourceChains, getValidTargetChains } from "./utils";
 
 const chainContainerStyles = {
   flex: 1,
@@ -85,6 +85,7 @@ interface ChainSelectorProps {
   bridgeFees: any;
   bridgeProvider: string;
   feesLoading: boolean;
+  availableSourceChains: string[];
   onSourceChainSelect: (chain: string) => void;
   onTargetChainSelect: (chain: string) => void;
   onSwap: () => void;
@@ -101,13 +102,20 @@ export const ChainSelector: React.FC<ChainSelectorProps> = memo(
     bridgeFees,
     bridgeProvider,
     feesLoading,
+    availableSourceChains,
     onSourceChainSelect,
     onTargetChainSelect,
     onSwap,
     onSourceDropdownToggle,
     onTargetDropdownToggle
   }) => {
-    const availableChains = useMemo(() => ["fuse", "celo", "mainnet", "xdc"], []);
+    const sourceChains = useMemo(
+      () =>
+        availableSourceChains.length > 0
+          ? availableSourceChains
+          : getProviderSupportedSourceChains(bridgeProvider as any),
+      [availableSourceChains, bridgeProvider]
+    );
 
     const validTargetChains = useMemo(
       () => getValidTargetChains(sourceChain, bridgeFees, bridgeProvider, feesLoading),
@@ -151,12 +159,12 @@ export const ChainSelector: React.FC<ChainSelectorProps> = memo(
 
           {showSourceDropdown && (
             <Box {...dropdownStyles}>
-              {availableChains.map(chain => (
+              {sourceChains.map(chain => (
                 <Pressable
                   key={chain}
                   onPress={() => onSourceChainSelect(chain)}
                   {...dropdownItemStyles}
-                  borderBottomWidth={chain === availableChains[availableChains.length - 1] ? 0 : 1}
+                  borderBottomWidth={chain === sourceChains[sourceChains.length - 1] ? 0 : 1}
                 >
                   <HStack space={3} alignItems="center">
                     {getBridgeNetworkIcon(chain) ? (

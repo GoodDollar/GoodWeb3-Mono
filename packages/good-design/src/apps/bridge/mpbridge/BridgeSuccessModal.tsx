@@ -1,6 +1,7 @@
 import React from "react";
 import { Modal, Text, VStack, HStack, Button, Center, Divider } from "native-base";
 import { BigNumber, utils } from "ethers";
+import { getNativeTokenSymbol } from "@gooddollar/web3sdk-v2";
 
 interface BridgeSuccessModalProps {
   open: boolean;
@@ -34,11 +35,8 @@ export const BridgeSuccessModal = ({ open, onClose, data, onTrackTransaction }: 
   const protocolFeeFormatted = utils.formatEther(protocolFeeBN);
 
   const networkFeeFormatted = utils.formatEther(networkFee);
-
-  const totalFeesBN = protocolFeeBN.add(networkFee);
-  const totalFeesFormatted = utils.formatEther(totalFeesBN);
-
-  const receiveAmountBN = amountBN.sub(totalFeesBN);
+  const nativeTokenSymbol = getNativeTokenSymbol(sourceChain);
+  const receiveAmountBN = amountBN.sub(protocolFeeBN);
   const receiveFormatted = utils.formatEther(receiveAmountBN.lt(0) ? 0 : receiveAmountBN);
 
   return (
@@ -86,18 +84,9 @@ export const BridgeSuccessModal = ({ open, onClose, data, onTrackTransaction }: 
             <Divider my={2} />
 
             <VStack space={2} width="100%">
-              <HStack justifyContent="space-between" alignItems="center">
-                <Text fontWeight="bold" fontSize="md">
-                  Total Fees
-                </Text>
-                <Text fontWeight="bold" fontSize="md">
-                  G$ {formatCurrency(totalFeesFormatted)}
-                </Text>
-              </HStack>
-
               <HStack justifyContent="space-between" pl={2} alignItems="center">
                 <Text color="gray.400" fontSize="sm">
-                  Bridge Fee ({(protocolFeePercent * 100).toFixed(2)}%)
+                  Protocol Fee ({(protocolFeePercent * 100).toFixed(2)}%)
                 </Text>
                 <Text color="gray.400" fontSize="sm">
                   {formatCurrency(protocolFeeFormatted)} G$
@@ -106,10 +95,10 @@ export const BridgeSuccessModal = ({ open, onClose, data, onTrackTransaction }: 
 
               <HStack justifyContent="space-between" pl={2} alignItems="center">
                 <Text color="gray.400" fontSize="sm">
-                  Network Fee
+                  Bridge Fee
                 </Text>
                 <Text color="gray.400" fontSize="sm">
-                  {formatCurrency(networkFeeFormatted)} G$
+                  {formatCurrency(networkFeeFormatted)} {nativeTokenSymbol}
                 </Text>
               </HStack>
             </VStack>

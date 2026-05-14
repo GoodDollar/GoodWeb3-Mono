@@ -25,7 +25,10 @@ export const BridgeProviderSelector: React.FC<BridgeProviderSelectorProps> = ({ 
           borderColor={bridgeProvider === "axelar" ? "rgb(59, 130, 246)" : "goodGrey.300"}
         >
           <Text color={bridgeProvider === "axelar" ? "white" : "goodGrey.700"} fontWeight="600" fontSize="lg">
-            Axelar
+            Axelar{" "}
+            <Text color={bridgeProvider === "axelar" ? "white" : "goodGrey.700"} fontWeight="600" fontSize="xs">
+              (CELO/ETH)
+            </Text>
           </Text>
         </Pressable>
         <Pressable
@@ -39,7 +42,10 @@ export const BridgeProviderSelector: React.FC<BridgeProviderSelectorProps> = ({ 
           borderColor={bridgeProvider === "layerzero" ? "rgb(59, 130, 246)" : "goodGrey.300"}
         >
           <Text color={bridgeProvider === "layerzero" ? "white" : "goodGrey.700"} fontWeight="600" fontSize="lg">
-            LayerZero
+            LayerZero{" "}
+            <Text color={bridgeProvider === "layerzero" ? "white" : "goodGrey.700"} fontWeight="600" fontSize="xs">
+              (CELO/ETH/XDC/FUSE)
+            </Text>
           </Text>
         </Pressable>
       </HStack>

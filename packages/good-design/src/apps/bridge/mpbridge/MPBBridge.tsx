@@ -51,8 +51,17 @@ export const MPBBridge = (props: MPBBridgeProps) => {
           maxWidth="600"
           lineHeight="lg"
         >
-          Seamlessly bridge G$ across Fuse, Celo, Ethereum and XDC, enabling versatile use of G$ across multiple
-          ecosystems.
+          Seamlessly bridge G$ across Fuse, Celo, Ethereum and XDC.
+        </Text>
+        <Text
+          fontFamily="subheading"
+          fontSize="xs"
+          color="goodGrey.100"
+          textAlign="center"
+          maxWidth="600"
+          lineHeight="lg"
+        >
+          Available bridge providers and routes may vary depending on the selected source and destination networks.
         </Text>
       </VStack>
 

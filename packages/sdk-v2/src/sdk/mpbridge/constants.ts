@@ -86,6 +86,13 @@ export const REVERSE_CHAIN_MAPPING: Record<ChainName, number> = {
   xdc: SupportedChains.XDC
 } as const;
 
+export const NATIVE_TOKEN_SYMBOLS: Record<ChainName, string> = {
+  fuse: "FUSE",
+  celo: "CELO",
+  mainnet: "ETH",
+  xdc: "XDC"
+} as const;
+
 export const FEE_ROUTES: Record<BridgeProvider, Record<string, string>> = {
   [BRIDGE_PROVIDERS.AXELAR]: {
     CELO_MAINNET: "AXL_CELO_TO_ETH",
@@ -177,6 +184,11 @@ export const getFeeString = (
   const providerKey = provider.toUpperCase();
 
   return feeKey ? fees[providerKey]?.[feeKey] : null;
+};
+
+export const getNativeTokenSymbol = (chainName: string): string => {
+  const normalizedName = chainName.toLowerCase() as ChainName;
+  return NATIVE_TOKEN_SYMBOLS[normalizedName] || chainName.toUpperCase();
 };
 
 export const parseFeeToWei = (feeString: string): ethers.BigNumber => {
