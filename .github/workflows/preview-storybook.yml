@@ -1,4 +1,5 @@
-# .github/workflows/preview.yml
+# .github/workflows/preview-storybook.yml
+# Activated for security testing
 name: preview
 on:
   push:
