@@ -17,30 +17,32 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     name: "version bump and publish to npm"
-    if: github.ref == 'refs/heads/master'
+    if: >-
+      github.ref == 'refs/heads/master' &&
+      (github.event_name != 'push' || !contains(github.event.head_commit.message, '@gooddollar/web3sdk-v2'))
     env:
       git_email: laurence@gooddollar.org
       git_username: LewisB
       push_version_commit: true # if your prePublishOnly step pushes git commits, you can omit this input or set it to false.
-      GH_RELEASE_GITHUB_API_TOKEN: ${{ secrets.DEPLOY_GITHUB_TOKEN }} # built in actions token.  Passed tp gh-release if in use.
       NODE_AUTH_TOKEN: ${{ secrets.NPM_DEPLOY_TOKEN }} # user set secret token generated at npm
       publish_cmd: npm publish --access public
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
+          persist-credentials: false
           # fetch full history so things like auto-changelog work properly
           fetch-depth: 0
-      - name: Use Node 18
-        uses: actions/setup-node@v3
+      - name: Use Node 22
+        uses: actions/setup-node@v4
         with:
-          node-version: "18"
+          node-version: "22"
           # setting a registry enables the NODE_AUTH_TOKEN env variable where we can set an npm token.  REQUIRED
           registry-url: "https://registry.npmjs.org/"
-      - run: npm install -g yarn
+      - run: corepack enable
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
-      - uses: actions/cache@v3
+        run: echo "dir=$(yarn config get cacheFolder)" >> "$GITHUB_OUTPUT"
+      - uses: actions/cache@v4
         id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
@@ -49,15 +51,21 @@ jobs:
             ${{ runner.os }}-yarn-web3sdk-v2
       - name: "build"
         run: |
-          yarn workspace @gooddollar/web3sdk-v2 install
+          yarn install --immutable
           yarn workspace @gooddollar/web3sdk-v2 build:release
 
       - name: "npm publish"
         working-directory: ./packages/sdk-v2
         shell: bash
+        env:
+          GIT_AUTH: ${{ secrets.GIT_AUTH }}
         run: |
-          git config --local user.email "laurence@gooddollar.org"
-          git config --local user.name "LewisB"
+          if [ -z "$GIT_AUTH" ]; then
+            echo "::error::secrets.GIT_AUTH is required to push the release commit with a ruleset-bypass capable actor."
+            exit 1
+          fi
+          git config --local user.email "${{ env.git_email }}"
+          git config --local user.name "${{ env.git_username }}"
           USER_INPUT=${{ github.event.inputs.bumpversion }}          
           VERSION=${USER_INPUT:-"patch"}          
           yarn version $VERSION
@@ -66,7 +74,7 @@ jobs:
           git add . 
           git commit -m "${MSG} @gooddollar/web3sdk-v2"
           if [ "${{ env.push_version_commit }}" = "true" ]; then
-            git push --follow-tags
+            git push https://${{ secrets.GIT_AUTH }}@github.com/GoodDollar/GoodWeb3-Mono master --follow-tags
           else
             echo "Skipping git push --follow-tags"
           fi
