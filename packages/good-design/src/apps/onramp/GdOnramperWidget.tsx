@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Onramper } from "./Onramper";
 import { useEthers, useEtherBalance, useTokenBalance } from "@usedapp/core";
 import { WebViewMessageEvent } from "react-native-webview";
-import { AsyncStorage, useBuyGd } from "@gooddollar/web3sdk-v2";
+import { AsyncStorage, Envs, useBuyGd, useGetEnvChainId } from "@gooddollar/web3sdk-v2";
 import { noop } from "lodash";
 
 import { useModal } from "../../hooks/useModal";
@@ -38,6 +38,9 @@ export const GdOnramperWidget = ({
   const cusd = "0x765de816845861e75a25fca122bb6898b8b1282a";
   const { account, library } = useEthers();
   const swapLock = useRef(false);
+  const { baseEnv } = useGetEnvChainId(42220);
+  const devEnv = baseEnv === "fuse" ? "development" : baseEnv;
+  const backend = Envs[devEnv]?.backend;
 
   const { createAndSwap, swap, swapState, createState, gdHelperAddress, triggerSwapTx } = useBuyGd({
     donateOrExecTo,
@@ -55,18 +58,48 @@ export const GdOnramperWidget = ({
   const { showModal, Modal } = useModal();
 
   const [step, setStep] = useState(0);
+  const [onramperSignContent, setOnramperSignContent] = useState("");
+  const [onramperUrlSignature, setOnramperUrlSignature] = useState<string | undefined>(undefined);
 
   // console.log({ selfSwap, account, gdHelperAddress, accountCeloBalance, cusdBalance, celoBalance });
   /**
    * callback to get event from onramper iframe
+   * Optimized to avoid unnecessary parsing and improve error handling
    */
-  const callback = useCallback(async (event: WebViewMessageEvent) => {
-    if ((event.nativeEvent.data as any).title === "success") {
-      await AsyncStorage.setItem("gdOnrampSuccess", "true");
-      //start the stepper
-      setStep(2);
-    }
-  }, []);
+  const callback = useCallback(
+    async (event: WebViewMessageEvent) => {
+      const rawData = event.nativeEvent?.data;
+      if (!rawData) return;
+
+      let eventData;
+      try {
+        // Only parse if it's a string, otherwise use directly
+        eventData = typeof rawData === "string" ? JSON.parse(rawData) : rawData;
+      } catch (error) {
+        // Silent fail for invalid JSON - expected for non-JSON messages
+        return;
+      }
+
+      // Early return if no valid event data
+      if (!eventData?.type && !eventData?.title) return;
+
+      // Handle different Onramper event types
+      switch (eventData.type || eventData.title) {
+        case "initiated":
+        case "opened":
+          // User opened/interacted with the widget
+          onEvents("widget_clicked");
+          break;
+        case "success":
+          await AsyncStorage.setItem("gdOnrampSuccess", "true");
+          setStep(2);
+          break;
+        default:
+          break;
+      }
+    },
+    [onEvents]
+  );
 
   const triggerSwap = async () => {
     if (swapLock.current) return; //prevent from useEffect retriggering this
@@ -74,6 +107,9 @@ export const GdOnramperWidget = ({
 
     try {
       setStep(3);
+      // Emit swap_started event to animate progress bar step 2
+      onEvents("swap_started");
+
       //user sends swap tx
       if (selfSwap && gdHelperAddress && library && account) {
         const minAmount = 0; // we let contract use oracle for minamount, we might calculate it for more precision in the future
@@ -103,8 +139,11 @@ export const GdOnramperWidget = ({
       // when done set stepper at final step
       setStep(5);
       swapLock.current = false;
+      // Emit swap_completed event to move progress bar to step 3
+      onEvents("swap_completed");
       onEvents("buy_success");
     } catch (e: any) {
+      swapLock.current = false; // Reset lock on error
       console.log("swap error:", e.message, e);
       showModal();
       onEvents("buygd_swap_failed", e.message);
@@ -116,6 +155,8 @@ export const GdOnramperWidget = ({
   useEffect(() => {
     if (cusdBalance?.gt(0) || celoBalance?.gt(0)) {
       void AsyncStorage.removeItem("gdOnrampSuccess");
+      // Emit funds_received event to update progress bar to step 2
+      onEvents("funds_received");
       console.log("starting swap:", cusdBalance?.toString(), celoBalance?.toString());
       triggerSwap().catch(e => {
         showModal();
@@ -123,6 +164,48 @@ export const GdOnramperWidget = ({
       });
     }
   }, [celoBalance, cusdBalance]);
+
+  useEffect(() => {
+    if (!onramperSignContent) return;
+
+    if (!backend) {
+      setOnramperUrlSignature(undefined);
+      console.error("Onramper: Missing backend URL for signing request");
+      return;
+    }
+
+    setOnramperUrlSignature(undefined);
+
+    const requestSignature = async () => {
+      try {
+        const response = await fetch(`${backend}/verify/onramper/sign`, {
+          method: "POST",
+          headers: { "Content-type": "application/json" },
+          body: JSON.stringify({ signContent: onramperSignContent })
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+        const signature = data?.signature;
+
+        if (!signature) {
+          throw new Error("Invalid signature response");
+        }
+
+        setOnramperUrlSignature(signature);
+      } catch (e: any) {
+        setOnramperUrlSignature(undefined);
+        console.error("Onramper: failed to fetch URL signature", e?.message || e);
+      }
+    };
+
+    requestSignature().catch(e => {
+      console.error("Onramper: signature request failed", e);
+    });
+  }, [backend, onramperSignContent]);
 
   return (
     <>
@@ -134,10 +217,12 @@ export const GdOnramperWidget = ({
           step={step}
           setStep={setStep}
           targetNetwork="CELO"
-          widgetParams={undefined}
+          widgetParams={{ onlyCryptos: "CUSD_CELO", isAddressEditable: false }}
           isTesting={isTesting}
           onGdEvent={onEvents}
           apiKey={apiKey}
+          urlSignature={onramperUrlSignature}
+          onUrlSignContentReady={setOnramperSignContent}
         />
       </WalletAndChainGuard>
       <SignWalletModal txStatus={swapState?.status} />
