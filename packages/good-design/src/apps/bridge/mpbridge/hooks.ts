@@ -176,7 +176,13 @@ export const useChainBalances = () => {
 };
 
 export const useDebouncedTransactionHistory = (delay = 1000) => {
-  const { historySorted: realTransactionHistory } = useMPBBridgeHistory() ?? {};
+  const {
+    historySorted: realTransactionHistory,
+    initialLoading,
+    refreshing,
+    errorsByChain,
+    refreshHistory
+  } = useMPBBridgeHistory() ?? {};
   const [debouncedHistory, setDebouncedHistory] = useState(realTransactionHistory);
   const timeoutRef = useRef<NodeJS.Timeout>();
 
@@ -190,7 +196,10 @@ export const useDebouncedTransactionHistory = (delay = 1000) => {
 
   return {
     realTransactionHistory: debouncedHistory,
-    historyLoading: !realTransactionHistory
+    historyLoading: Boolean(initialLoading),
+    historyRefreshing: Boolean(refreshing),
+    historyErrorsByChain: errorsByChain || {},
+    refreshHistory: refreshHistory || (() => undefined)
   };
 };
 
