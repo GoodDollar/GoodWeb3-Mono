@@ -33,8 +33,10 @@ export type MPBBridgeHistoryCache = {
   chains?: Partial<Record<number, ChainSyncState>>;
 };
 
+// The cache only keeps a rolling 30-day history so first paint stays useful without growing forever.
 export const HISTORY_WINDOW_DAYS = 30;
 export const HISTORY_WINDOW_SECONDS = HISTORY_WINDOW_DAYS * 24 * 60 * 60;
+// Public RPCs were failing on large getLogs windows, so every sync is split into small ranges.
 export const HISTORY_BLOCK_CHUNK_SIZE = 500;
 
 const getEventCacheKey = (event: CachedBridgeEvent) =>
@@ -52,6 +54,7 @@ export const createBlockChunks = (fromBlock: number, toBlock: number, chunkSize 
 
   const chunks: Array<{ fromBlock: number; toBlock: number }> = [];
 
+  // Build inclusive ranges so callers can safely fetch [fromBlock, toBlock] without gaps or overlaps.
   for (let cursor = fromBlock; cursor <= toBlock; cursor += chunkSize) {
     chunks.push({
       fromBlock: cursor,
@@ -77,6 +80,7 @@ export const mergeBridgeHistoryCache = (
   const mergedRequests = new Map<string, CachedBridgeEvent>();
   const mergedTransfers = new Map<string, CachedBridgeEvent>();
 
+  // Merge new rows into the cached window and let the event key dedupe repeated fetches across refreshes.
   pruneExpiredEvents((current.BridgeRequest || []).concat(nextEvents.BridgeRequest || []), minTimestamp).forEach(
     event => mergedRequests.set(getEventCacheKey(event), event)
   );
@@ -89,6 +93,7 @@ export const mergeBridgeHistoryCache = (
     BridgeRequest: sortBridgeEvents(Array.from(mergedRequests.values())),
     ExecutedTransfer: sortBridgeEvents(Array.from(mergedTransfers.values())),
     chains: {
+      // Per-chain sync state is merged independently so one failing RPC does not wipe successful cursors.
       ...(current.chains || {}),
       ...nextChains
     }

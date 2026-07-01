@@ -22,6 +22,7 @@ const CHAIN_IDS = [SupportedChains.FUSE, SupportedChains.CELO, SupportedChains.M
 const MAX_PARALLEL_CHUNKS = 3;
 
 const hydrateCachedEvent = (event: CachedBridgeEvent) => {
+  // Persist plain JSON in storage, then rebuild the BigNumber-shaped fields the rest of the hook expects.
   const targetChainId = ethers.BigNumber.from(event.targetChainId);
   const amount = ethers.BigNumber.from(event.amount);
   const timestamp = ethers.BigNumber.from(event.timestamp);
@@ -68,6 +69,7 @@ const getErrorMessage = (error: unknown) => {
 const runWithConcurrency = async <T>(tasks: Array<() => Promise<T>>, concurrency: number): Promise<T[]> => {
   const results: T[] = [];
 
+  // Batch chunk fetches instead of firing every getLogs request at once against the same public RPC.
   for (let index = 0; index < tasks.length; index += concurrency) {
     const nextResults = await Promise.all(tasks.slice(index, index + concurrency).map(task => task()));
     results.push(...nextResults);
@@ -200,6 +202,7 @@ const syncChainHistory = async (
   const chainState = currentCache.chains?.[chainId];
   const targetTimestamp = Math.floor(Date.now() / 1000) - HISTORY_WINDOW_SECONDS;
   const fromBlock =
+    // Warm cache: resume from the last synced block. Cold cache: backfill only the rolling history window.
     chainState?.lastSyncedBlock !== undefined
       ? chainState.lastSyncedBlock + 1
       : await findHistoryStartBlock(provider, latestBlock, targetTimestamp);
@@ -262,6 +265,7 @@ export const useMPBBridgeHistory = () => {
       ":"
     );
 
+    // Scope cache entries to the wallet and the deployed bridge addresses so network/config changes do not mix data.
     return `GD_MPBBridgeHistory_v${HISTORY_CACHE_VERSION}_${account.toLowerCase()}_${contractAddresses}`;
   }, [account, contracts]);
 
@@ -320,10 +324,12 @@ export const useMPBBridgeHistory = () => {
 
     let cancelled = false;
 
+    // Keep cached rows on screen and expose a separate refreshing state while each chain sync runs.
     setSyncing(true);
 
     const syncHistory = async () => {
       const currentCache = historyCacheRef.current;
+      // Sync every chain independently so a single failing RPC cannot block the others from updating cache.
       const settledChains = await Promise.allSettled(
         chainContracts.map(({ chainId, contract }) => syncChainHistory(chainId, contract, currentCache, account))
       );
@@ -340,12 +346,14 @@ export const useMPBBridgeHistory = () => {
         const { chainId } = chainContracts[index];
 
         if (result.status === "fulfilled") {
+          // Successful chains contribute rows and advance only their own cursor/error state.
           nextChains[chainId] = result.value.chainState;
           nextBridgeRequests.push(...result.value.bridgeRequests);
           nextExecutedTransfers.push(...result.value.executedTransfers);
           return;
         }
 
+        // Failed chains keep their last good cursor and surface a chain-specific error for the UI.
         nextChains[chainId] = {
           ...(currentCache.chains?.[chainId] || {}),
           error: {
@@ -366,6 +374,7 @@ export const useMPBBridgeHistory = () => {
 
       setHistoryCache(nextCache);
       historyCacheRef.current = nextCache;
+      // Persist the merged cache after every refresh so the next mount can render immediately from storage.
       void AsyncStorage.setItem(cacheKey, nextCache).catch(error =>
         console.warn("Failed to store MPB bridge history cache", error)
       );
@@ -426,6 +435,7 @@ export const useMPBBridgeHistory = () => {
       const requestId = event.data?.id?.toString();
       const sourceChainId = event.data.sourceChainId.toNumber();
 
+      // Match a request against completion events from the other chains to preserve the old merged UX.
       const completedEventsMap = CHAIN_IDS.filter(chainId => chainId !== sourceChainId).reduce((result, chainId) => {
         return { ...result, ...completedByTargetChain[chainId] };
       }, {} as Record<string, any[]>);
