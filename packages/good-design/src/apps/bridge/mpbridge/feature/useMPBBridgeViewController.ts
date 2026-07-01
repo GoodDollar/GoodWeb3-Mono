@@ -113,6 +113,9 @@ export interface MPBBridgeViewModel {
   transactionHistoryProps: {
     realTransactionHistory: any[];
     historyLoading: boolean;
+    historyRefreshing: boolean;
+    historyErrorsByChain: Record<number, string>;
+    onRefresh: () => void;
     onTxDetailsPress: (tx: any) => void;
   };
 }
@@ -162,7 +165,8 @@ export const useMPBBridgeViewController = ({
     closeAllDropdowns
   } = useMPBBridgeUiState();
 
-  const { realTransactionHistory, historyLoading } = useDebouncedTransactionHistory(TRANSACTION_HISTORY_DEBOUNCE_MS);
+  const { realTransactionHistory, historyLoading, historyRefreshing, historyErrorsByChain, refreshHistory } =
+    useDebouncedTransactionHistory(TRANSACTION_HISTORY_DEBOUNCE_MS);
   const { getBalanceForChain } = useChainBalances();
 
   const gdValue = getBalanceForChain(sourceChain);
@@ -380,6 +384,7 @@ export const useMPBBridgeViewController = ({
       successHandled.current = true;
       setBridgingStatus(effectiveFlow.statusLabel || "Bridge completed successfully!");
       setBridging(false);
+      refreshHistory?.();
 
       if (!successModalOpen && !successModalDismissedRef.current) {
         setSuccessModalOpen(true);
@@ -435,6 +440,7 @@ export const useMPBBridgeViewController = ({
     successModalOpen,
     onBridgeSuccess,
     onBridgeFailed,
+    refreshHistory,
     setBridging,
     setBridgingStatus,
     setSuccessModalOpen,
@@ -598,6 +604,9 @@ export const useMPBBridgeViewController = ({
     transactionHistoryProps: {
       realTransactionHistory: recentTransactions,
       historyLoading,
+      historyRefreshing,
+      historyErrorsByChain,
+      onRefresh: refreshHistory,
       onTxDetailsPress
     }
   };

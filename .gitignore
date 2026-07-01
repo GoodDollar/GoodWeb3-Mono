@@ -17,6 +17,8 @@ yalc.lock
 /dist/
 .vercel
 .continueignore
+.agents/
 e2e.log
 docs/specs/**
 codex-resume
+skills-lock.json
