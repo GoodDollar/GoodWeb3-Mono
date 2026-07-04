@@ -243,7 +243,7 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
     [bridgeProvider, bridgeTo, computeLayerZeroFee]
   );
 
-  // Helper function to execute bridge transaction (approve if needed, then bridge)
+  // Helper function to validate a bridge request, then ask for a fresh approval before bridging.
   const executeBridgeTransaction = useCallback(
     async (bridgeRequest: BridgeRequest, fees: any) => {
       const { source, target } = {
@@ -265,26 +265,9 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
         return;
       }
 
-      // Check allowance — skip approval when already sufficient
-      if (gdContract && account) {
-        try {
-          const allowance = await gdContract.allowance(account, bridgeContract.address);
-          const amountBN = ethers.BigNumber.from(bridgeRequest.amount);
-
-          if (allowance.gte(amountBN)) {
-            console.log("[useMPBBridge] Allowance sufficient, executing bridgeTo directly");
-            // executeBridgeTransfer handles its own locking
-            await executeBridgeTransfer(bridgeRequest);
-            return;
-          }
-        } catch (error) {
-          // Failed to check allowance, proceed with approval flow
-        }
-      }
-
       void approve.send(bridgeContract.address, bridgeRequest.amount);
     },
-    [bridgeProvider, bridgeContract, account, approve, validateBridgeTransaction, gdContract, executeBridgeTransfer]
+    [bridgeProvider, bridgeContract, approve, validateBridgeTransaction]
   );
 
   useEffect(() => {
