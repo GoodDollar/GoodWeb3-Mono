@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { useContractFunction, useEthers } from "@usedapp/core";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { TransactionStatus, useContractFunction, useEthers } from "@usedapp/core";
 import { ethers } from "ethers";
 import { useSwitchNetwork } from "../../../contexts";
 import { useG$Decimals } from "../../base/react";
@@ -19,6 +19,54 @@ import { useMPBG$TokenContract } from "./useMPBG$TokenContract";
 import { useLayerZeroFee } from "./useLayerZeroFee";
 import { useBridgeMonitoring } from "./useBridgeMonitoring";
 import { useBridgeValidators } from "./useBridgeValidators";
+import { getTransactionErrorMessage, isTransientBlockReadError } from "./useMPBBridge.helpers";
+
+const BRIDGE_TO_TRANSACTION_NAME = "MPBBridgeTo";
+
+const createIdleTransactionStatus = (transactionName: string): TransactionStatus => ({
+  status: "None",
+  transactionName
+});
+
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+const waitForReceiptAfterSubmission = async (
+  transaction: ethers.providers.TransactionResponse,
+  provider: ethers.providers.Provider
+) => {
+  let lastError: unknown;
+
+  for (let attempt = 0; attempt < 6; attempt++) {
+    try {
+      return await transaction.wait();
+    } catch (error) {
+      if (!isTransientBlockReadError(error)) {
+        throw error;
+      }
+
+      lastError = error;
+      await sleep(1000 * (attempt + 1));
+
+      try {
+        const receipt = await provider.getTransactionReceipt(transaction.hash);
+
+        if (receipt) {
+          return receipt;
+        }
+      } catch (receiptError) {
+        if (!isTransientBlockReadError(receiptError)) {
+          throw receiptError;
+        }
+
+        lastError = receiptError;
+      }
+    }
+  }
+
+  console.warn("[useMPBBridge] Receipt polling hit transient block read errors after submission", lastError);
+
+  return undefined;
+};
 
 export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBBridgeReturn => {
   const bridgeLock = useRef(false);
@@ -40,9 +88,88 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
     transactionName: "MPBBridgeApprove"
   });
 
-  const bridgeTo = useContractFunction(bridgeContractOrNull, "bridgeTo", {
-    transactionName: "MPBBridgeTo"
-  });
+  const [bridgeToState, setBridgeToState] = useState<TransactionStatus>(() =>
+    createIdleTransactionStatus(BRIDGE_TO_TRANSACTION_NAME)
+  );
+
+  const resetBridgeToState = useCallback(() => {
+    setBridgeToState(createIdleTransactionStatus(BRIDGE_TO_TRANSACTION_NAME));
+  }, []);
+
+  const sendBridgeTo = useCallback(
+    async (...args: any[]) => {
+      if (!bridgeContractOrNull || !library || !account || !chainId) {
+        const errorMessage = "Bridge contract is not ready";
+        setBridgeToState({
+          status: "Exception",
+          errorMessage,
+          chainId,
+          transactionName: BRIDGE_TO_TRANSACTION_NAME
+        });
+        return undefined;
+      }
+
+      let transaction: ethers.providers.TransactionResponse | undefined;
+
+      setBridgeToState({
+        status: "PendingSignature",
+        chainId,
+        transactionName: BRIDGE_TO_TRANSACTION_NAME
+      });
+
+      try {
+        const signer = (library as ethers.providers.Web3Provider).getSigner(account);
+        const bridgeContractWithSigner = bridgeContractOrNull.connect(signer);
+        const submittedTransaction = (await bridgeContractWithSigner.bridgeTo(
+          ...args
+        )) as ethers.providers.TransactionResponse;
+        transaction = submittedTransaction;
+
+        setBridgeToState({
+          status: "Mining",
+          transaction: submittedTransaction,
+          chainId,
+          transactionName: BRIDGE_TO_TRANSACTION_NAME
+        });
+
+        const receipt = await waitForReceiptAfterSubmission(submittedTransaction, library);
+        const didTransactionFail = receipt?.status === 0;
+
+        setBridgeToState({
+          status: didTransactionFail ? "Fail" : "Success",
+          transaction: submittedTransaction,
+          receipt,
+          errorMessage: didTransactionFail ? "Bridge transaction failed" : undefined,
+          chainId,
+          transactionName: BRIDGE_TO_TRANSACTION_NAME
+        });
+
+        return receipt;
+      } catch (error: any) {
+        const errorMessage = getTransactionErrorMessage(error);
+
+        setBridgeToState({
+          status: transaction ? "Fail" : "Exception",
+          transaction,
+          errorMessage,
+          chainId,
+          transactionName: BRIDGE_TO_TRANSACTION_NAME
+        });
+
+        return undefined;
+      }
+    },
+    [account, bridgeContractOrNull, chainId, library]
+  );
+
+  const bridgeTo = useMemo(
+    () => ({
+      state: bridgeToState,
+      send: sendBridgeTo,
+      resetState: resetBridgeToState
+    }),
+    [bridgeToState, sendBridgeTo, resetBridgeToState]
+  );
 
   const { computeLayerZeroFee } = useLayerZeroFee(bridgeContractOrNull, bridgeProvider, account);
 
