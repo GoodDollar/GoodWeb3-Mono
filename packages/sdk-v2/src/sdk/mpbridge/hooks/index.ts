@@ -2,6 +2,7 @@ export * from "./useBridgeMonitoring";
 export * from "./useBridgeValidators";
 export * from "./useGetMPBBridgeData";
 export * from "./useLayerZeroFee";
+export * from "./useMPBBridge.helpers";
 export * from "./useMPBBridge";
 export * from "./useMPBBridgeHistory.helpers";
 export * from "./useMPBBridgeHistory";
