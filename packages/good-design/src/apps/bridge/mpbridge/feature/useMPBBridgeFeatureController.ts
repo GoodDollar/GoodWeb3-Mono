@@ -3,13 +3,14 @@ import { useEthers } from "@usedapp/core";
 import { ethers } from "ethers";
 import { useMPBBridgeFlow, useG$Decimals, SupportedChains, VALIDATION_REASONS } from "@gooddollar/web3sdk-v2";
 
-import { BridgeProvider, MPBBridgeProps } from "../types";
+import { BridgeProvider, MPBBridgeProps, MPBBridgeReadOnlyUrls } from "../types";
 import { getDefaultTargetChain } from "../utils/chainHelpers";
 
 interface UseMPBBridgeFeatureControllerParams {
   onBridgeStart?: () => void;
   onBridgeSuccess?: () => void;
   onBridgeFailed?: (e: Error) => void;
+  bridgeReadOnlyUrls?: MPBBridgeReadOnlyUrls;
 }
 
 const ZERO_FEE = { nativeFee: ethers.BigNumber.from(0), zroFee: ethers.BigNumber.from(0) };
@@ -17,7 +18,8 @@ const ZERO_FEE = { nativeFee: ethers.BigNumber.from(0), zroFee: ethers.BigNumber
 export const useMPBBridgeFeatureController = ({
   onBridgeStart,
   onBridgeSuccess,
-  onBridgeFailed
+  onBridgeFailed,
+  bridgeReadOnlyUrls
 }: UseMPBBridgeFeatureControllerParams): MPBBridgeProps => {
   const { chainId, account } = useEthers();
   const [bridgeProvider, setBridgeProvider] = useState<BridgeProvider>("layerzero");
@@ -176,6 +178,7 @@ export const useMPBBridgeFeatureController = ({
     onBridgeStart: onBridgeStartHandler,
     onBridgeFailed,
     onBridgeSuccess,
+    bridgeReadOnlyUrls,
     bridgeProvider,
     onBridgeProviderChange: setBridgeProvider
   };

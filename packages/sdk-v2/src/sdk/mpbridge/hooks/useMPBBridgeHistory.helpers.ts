@@ -65,6 +65,41 @@ export const createBlockChunks = (fromBlock: number, toBlock: number, chunkSize 
   return chunks;
 };
 
+export const getAddressTopic = (address?: string) => {
+  if (!address) {
+    return undefined;
+  }
+
+  const normalizedAddress = address.toLowerCase();
+
+  if (!/^0x[0-9a-f]{40}$/.test(normalizedAddress)) {
+    return undefined;
+  }
+
+  return `0x${normalizedAddress.slice(2).padStart(64, "0")}`;
+};
+
+export const createAccountEventTopics = (eventTopic: string, account?: string) => {
+  const accountTopic = getAddressTopic(account);
+
+  if (!accountTopic) {
+    return [[eventTopic]];
+  }
+
+  return [
+    [eventTopic, accountTopic],
+    [eventTopic, null, accountTopic]
+  ];
+};
+
+export const dedupeLogs = <T extends { transactionHash: string; logIndex?: number }>(logs: T[]) => {
+  const logsByKey = new Map<string, T>();
+
+  logs.forEach(log => logsByKey.set(`${log.transactionHash}:${log.logIndex ?? 0}`, log));
+
+  return Array.from(logsByKey.values());
+};
+
 export const pruneExpiredEvents = (events: CachedBridgeEvent[], minTimestamp: number) =>
   events.filter(event => Number(event.timestamp || 0) >= minTimestamp);
 

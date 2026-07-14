@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useRef } from "react";
 
 import { Result } from "@ethersproject/abi";
 import { BigNumber } from "@ethersproject/bignumber";
-import { BaseProvider, JsonRpcProvider, Provider } from "@ethersproject/providers";
+import { BaseProvider, JsonRpcProvider, Provider, StaticJsonRpcProvider } from "@ethersproject/providers";
 import { Contract } from "ethers";
 import { noop } from "lodash";
 
@@ -86,7 +86,8 @@ export const useReadOnlyProvider = (chainId: number) => {
       return (factory as any)() as JsonRpcProvider;
     }
 
-    const provider = new JsonRpcProvider(factory as any);
+    // The chain is already known here, so avoid an extra network-detection RPC on rate-limited endpoints.
+    const provider = new StaticJsonRpcProvider(factory as any, chainId);
 
     provider.pollingInterval = pollingInterval;
     return provider;

@@ -1,7 +1,10 @@
 /* eslint-env jest */
 
 import {
+  createAccountEventTopics,
   createBlockChunks,
+  dedupeLogs,
+  getAddressTopic,
   getErrorsByChain,
   mergeBridgeHistoryCache,
   MPBBridgeHistoryCache
@@ -13,6 +16,35 @@ describe("useMPBBridgeHistory helpers", () => {
       { fromBlock: 100, toBlock: 599 },
       { fromBlock: 600, toBlock: 1099 },
       { fromBlock: 1100, toBlock: 1201 }
+    ]);
+  });
+
+  it("creates indexed account topics for bridge history log filters", () => {
+    const account = "0xc1bA0ACD3030321851889309497663998D87D8d6";
+    const accountTopic = "0x000000000000000000000000c1ba0acd3030321851889309497663998d87d8d6";
+
+    expect(getAddressTopic(account)).toBe(accountTopic);
+    expect(createAccountEventTopics("0xtopic", account)).toEqual([
+      ["0xtopic", accountTopic],
+      ["0xtopic", null, accountTopic]
+    ]);
+  });
+
+  it("falls back to the event topic when the account address is unavailable", () => {
+    expect(createAccountEventTopics("0xtopic")).toEqual([["0xtopic"]]);
+    expect(createAccountEventTopics("0xtopic", "invalid")).toEqual([["0xtopic"]]);
+  });
+
+  it("dedupes logs that match both indexed account filters", () => {
+    expect(
+      dedupeLogs([
+        { transactionHash: "0x1", logIndex: 2, value: "from-match" },
+        { transactionHash: "0x1", logIndex: 2, value: "to-match" },
+        { transactionHash: "0x2", logIndex: 1, value: "other" }
+      ])
+    ).toEqual([
+      { transactionHash: "0x1", logIndex: 2, value: "to-match" },
+      { transactionHash: "0x2", logIndex: 1, value: "other" }
     ]);
   });
 

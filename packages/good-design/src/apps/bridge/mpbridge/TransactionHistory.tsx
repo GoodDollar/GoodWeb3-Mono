@@ -21,6 +21,7 @@ export const TransactionHistory: React.FC<TransactionHistoryProps> = ({
   onTxDetailsPress
 }) => {
   const errorEntries = Object.entries(historyErrorsByChain || {});
+  const hasTransactionHistory = realTransactionHistory.length > 0;
 
   return (
     <VStack space={4} width="100%">
@@ -69,7 +70,7 @@ export const TransactionHistory: React.FC<TransactionHistoryProps> = ({
             Loading transaction history...
           </Text>
         </Box>
-      ) : realTransactionHistory.length > 0 ? (
+      ) : hasTransactionHistory ? (
         <Box maxH="400px" overflowY="auto">
           <BridgeTransactionList transactions={realTransactionHistory} onTxDetailsPress={onTxDetailsPress} />
         </Box>

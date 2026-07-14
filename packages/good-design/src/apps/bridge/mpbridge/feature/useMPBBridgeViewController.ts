@@ -17,6 +17,12 @@ import { useMPBBridgeUiState } from "./useMPBBridgeUiState";
 
 const DEBOUNCE_MS = 300;
 const TRANSACTION_HISTORY_DEBOUNCE_MS = 2000;
+const BRIDGE_HISTORY_CHAIN_IDS: SupportedChains[] = [
+  SupportedChains.CELO,
+  SupportedChains.FUSE,
+  SupportedChains.MAINNET,
+  SupportedChains.XDC
+];
 
 const FLOW_PENDING_STATES = new Set([
   "awaiting_network_switch",
@@ -134,6 +140,7 @@ export const useMPBBridgeViewController = ({
   onBridgeStart,
   onBridgeFailed,
   onBridgeSuccess,
+  bridgeReadOnlyUrls,
   bridgeProvider: propBridgeProvider,
   onBridgeProviderChange
 }: MPBBridgeProps): MPBBridgeViewModel => {
@@ -166,7 +173,7 @@ export const useMPBBridgeViewController = ({
   } = useMPBBridgeUiState();
 
   const { realTransactionHistory, historyLoading, historyRefreshing, historyErrorsByChain, refreshHistory } =
-    useDebouncedTransactionHistory(TRANSACTION_HISTORY_DEBOUNCE_MS);
+    useDebouncedTransactionHistory(TRANSACTION_HISTORY_DEBOUNCE_MS, bridgeReadOnlyUrls, BRIDGE_HISTORY_CHAIN_IDS);
   const { getBalanceForChain } = useChainBalances();
 
   const gdValue = getBalanceForChain(sourceChain);

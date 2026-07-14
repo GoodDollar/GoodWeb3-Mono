@@ -3,7 +3,7 @@ import { CurrencyValue } from "@usedapp/core";
 import { useG$Amounts, useProductionG$Balance, G$Amount, useGetEnvChainId } from "@gooddollar/web3sdk-v2";
 import { BigNumber } from "ethers";
 import { fetchBridgeFees, useMPBBridgeHistory } from "@gooddollar/web3sdk-v2";
-import type { IMPBFees, IMPBLimits } from "./types";
+import type { IMPBFees, IMPBLimits, MPBBridgeHistoryChainIds, MPBBridgeReadOnlyUrls } from "./types";
 import { convertTransaction } from "./utils";
 
 const CACHE_KEY = "mpb-bridge-fees-cache";
@@ -175,14 +175,21 @@ export const useChainBalances = () => {
   return { getBalanceForChain };
 };
 
-export const useDebouncedTransactionHistory = (delay = 1000) => {
+export const useDebouncedTransactionHistory = (
+  delay = 1000,
+  bridgeReadOnlyUrls?: MPBBridgeReadOnlyUrls,
+  bridgeHistoryChainIds?: MPBBridgeHistoryChainIds
+) => {
   const {
     historySorted: realTransactionHistory,
     initialLoading,
     refreshing,
     errorsByChain,
     refreshHistory
-  } = useMPBBridgeHistory() ?? {};
+  } = useMPBBridgeHistory({
+    readOnlyUrls: bridgeReadOnlyUrls,
+    chainIds: bridgeHistoryChainIds
+  }) ?? {};
   const [debouncedHistory, setDebouncedHistory] = useState(realTransactionHistory);
   const timeoutRef = useRef<NodeJS.Timeout>();
 
