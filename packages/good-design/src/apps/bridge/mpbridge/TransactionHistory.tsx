@@ -22,7 +22,6 @@ export const TransactionHistory: React.FC<TransactionHistoryProps> = ({
 }) => {
   const errorEntries = Object.entries(historyErrorsByChain || {});
   const hasTransactionHistory = realTransactionHistory.length > 0;
-  const showHistoryErrors = errorEntries.length > 0 && !hasTransactionHistory;
 
   return (
     <VStack space={4} width="100%">
@@ -50,7 +49,7 @@ export const TransactionHistory: React.FC<TransactionHistoryProps> = ({
           </Text>
         </HStack>
       ) : null}
-      {showHistoryErrors ? (
+      {errorEntries.length > 0 ? (
         <Box p={4} bg="yellow.50" borderRadius="lg" borderWidth="1" borderColor="yellow.200">
           <VStack space={2}>
             <Text fontSize="sm" color="yellow.800" fontWeight="600">

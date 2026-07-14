@@ -86,6 +86,7 @@ export const useReadOnlyProvider = (chainId: number) => {
       return (factory as any)() as JsonRpcProvider;
     }
 
+    // The chain is already known here, so avoid an extra network-detection RPC on rate-limited endpoints.
     const provider = new StaticJsonRpcProvider(factory as any, chainId);
 
     provider.pollingInterval = pollingInterval;

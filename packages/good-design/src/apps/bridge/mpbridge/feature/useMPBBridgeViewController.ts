@@ -17,12 +17,12 @@ import { useMPBBridgeUiState } from "./useMPBBridgeUiState";
 
 const DEBOUNCE_MS = 300;
 const TRANSACTION_HISTORY_DEBOUNCE_MS = 2000;
-const CHAIN_NAME_TO_ID: Record<string, SupportedChains> = {
-  fuse: SupportedChains.FUSE,
-  celo: SupportedChains.CELO,
-  mainnet: SupportedChains.MAINNET,
-  xdc: SupportedChains.XDC
-};
+const BRIDGE_HISTORY_CHAIN_IDS: SupportedChains[] = [
+  SupportedChains.CELO,
+  SupportedChains.FUSE,
+  SupportedChains.MAINNET,
+  SupportedChains.XDC
+];
 
 const FLOW_PENDING_STATES = new Set([
   "awaiting_network_switch",
@@ -172,12 +172,8 @@ export const useMPBBridgeViewController = ({
     closeAllDropdowns
   } = useMPBBridgeUiState();
 
-  const bridgeHistoryChainIds = useMemo(
-    () => Array.from(new Set([CHAIN_NAME_TO_ID[sourceChain], CHAIN_NAME_TO_ID[targetChain]].filter(Boolean))),
-    [sourceChain, targetChain]
-  );
   const { realTransactionHistory, historyLoading, historyRefreshing, historyErrorsByChain, refreshHistory } =
-    useDebouncedTransactionHistory(TRANSACTION_HISTORY_DEBOUNCE_MS, bridgeReadOnlyUrls, bridgeHistoryChainIds);
+    useDebouncedTransactionHistory(TRANSACTION_HISTORY_DEBOUNCE_MS, bridgeReadOnlyUrls, BRIDGE_HISTORY_CHAIN_IDS);
   const { getBalanceForChain } = useChainBalances();
 
   const gdValue = getBalanceForChain(sourceChain);
