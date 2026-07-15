@@ -1,6 +1,10 @@
 import { BigNumber } from "ethers";
+import type { SupportedChains } from "@gooddollar/web3sdk-v2";
 
 export type BridgeProvider = "axelar" | "layerzero";
+
+export type MPBBridgeReadOnlyUrls = Partial<Record<number, string>>;
+export type MPBBridgeHistoryChainIds = SupportedChains[];
 
 export type BridgeTransaction = {
   id: string;
@@ -62,6 +66,7 @@ export interface MPBBridgeProps {
   onBridgeStart?: (sourceChain: string, targetChain: string) => Promise<void>;
   onBridgeFailed?: (error: Error) => void;
   onBridgeSuccess?: () => void;
+  bridgeReadOnlyUrls?: MPBBridgeReadOnlyUrls;
   bridgeProvider?: BridgeProvider;
   onBridgeProviderChange?: (provider: BridgeProvider) => void;
 }

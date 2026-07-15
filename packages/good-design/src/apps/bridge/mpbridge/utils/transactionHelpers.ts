@@ -11,10 +11,11 @@ interface CreateTransactionDetailsParams {
   bridgeProvider: string;
   bridgeStatus: Partial<TransactionStatus> | undefined;
   bridgeToTxHash: string | undefined;
+  date?: Date;
 }
 
 export const createTransactionDetails = (params: CreateTransactionDetailsParams): BridgeTransaction => {
-  const { amountWei, sourceChain, targetChain, bridgeProvider, bridgeStatus, bridgeToTxHash } = params;
+  const { amountWei, sourceChain, targetChain, bridgeProvider, bridgeStatus, bridgeToTxHash, date } = params;
 
   const amountBN = ethers.BigNumber.from(amountWei || "0");
   const amountFormatted = utils.formatEther(amountBN);
@@ -37,6 +38,7 @@ export const createTransactionDetails = (params: CreateTransactionDetailsParams)
     amount: parseFloat(amountFormatted).toFixed(2),
     bridgeProvider: bridgeProvider as "axelar" | "layerzero",
     status,
+    date: date ?? new Date(),
     chainId: sourceChainId
   };
 };

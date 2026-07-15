@@ -1,4 +1,5 @@
 import { useEffect, useCallback, useState, useMemo, useRef } from "react";
+import { useEthers } from "@usedapp/core";
 import { SupportedChains, deriveMPBBridgeFlowState } from "@gooddollar/web3sdk-v2";
 import { ethers } from "ethers";
 
@@ -17,6 +18,12 @@ import { useMPBBridgeUiState } from "./useMPBBridgeUiState";
 
 const DEBOUNCE_MS = 300;
 const TRANSACTION_HISTORY_DEBOUNCE_MS = 2000;
+const BRIDGE_HISTORY_CHAIN_IDS: SupportedChains[] = [
+  SupportedChains.CELO,
+  SupportedChains.FUSE,
+  SupportedChains.MAINNET,
+  SupportedChains.XDC
+];
 
 const FLOW_PENDING_STATES = new Set([
   "awaiting_network_switch",
@@ -113,6 +120,11 @@ export interface MPBBridgeViewModel {
   transactionHistoryProps: {
     realTransactionHistory: any[];
     historyLoading: boolean;
+    historyRefreshing: boolean;
+    historyErrorsByChain: Record<number, string>;
+    explorerChainId?: number;
+    explorerAddress?: string;
+    onRefresh: () => void;
     onTxDetailsPress: (tx: any) => void;
   };
 }
@@ -131,9 +143,11 @@ export const useMPBBridgeViewController = ({
   onBridgeStart,
   onBridgeFailed,
   onBridgeSuccess,
+  bridgeReadOnlyUrls,
   bridgeProvider: propBridgeProvider,
   onBridgeProviderChange
 }: MPBBridgeProps): MPBBridgeViewModel => {
+  const { account, chainId } = useEthers();
   const [isBridging, setBridging] = useState(false);
   const [localBridgeProvider, setLocalBridgeProvider] = useState<BridgeProvider>("axelar");
   const bridgeProvider = propBridgeProvider || localBridgeProvider;
@@ -162,7 +176,8 @@ export const useMPBBridgeViewController = ({
     closeAllDropdowns
   } = useMPBBridgeUiState();
 
-  const { realTransactionHistory, historyLoading } = useDebouncedTransactionHistory(TRANSACTION_HISTORY_DEBOUNCE_MS);
+  const { realTransactionHistory, historyLoading, historyRefreshing, historyErrorsByChain, refreshHistory } =
+    useDebouncedTransactionHistory(TRANSACTION_HISTORY_DEBOUNCE_MS, bridgeReadOnlyUrls, BRIDGE_HISTORY_CHAIN_IDS);
   const { getBalanceForChain } = useChainBalances();
 
   const gdValue = getBalanceForChain(sourceChain);
@@ -380,6 +395,7 @@ export const useMPBBridgeViewController = ({
       successHandled.current = true;
       setBridgingStatus(effectiveFlow.statusLabel || "Bridge completed successfully!");
       setBridging(false);
+      refreshHistory?.();
 
       if (!successModalOpen && !successModalDismissedRef.current) {
         setSuccessModalOpen(true);
@@ -435,6 +451,7 @@ export const useMPBBridgeViewController = ({
     successModalOpen,
     onBridgeSuccess,
     onBridgeFailed,
+    refreshHistory,
     setBridging,
     setBridgingStatus,
     setSuccessModalOpen,
@@ -598,6 +615,11 @@ export const useMPBBridgeViewController = ({
     transactionHistoryProps: {
       realTransactionHistory: recentTransactions,
       historyLoading,
+      historyRefreshing,
+      historyErrorsByChain,
+      explorerChainId: chainId,
+      explorerAddress: account,
+      onRefresh: refreshHistory,
       onTxDetailsPress
     }
   };

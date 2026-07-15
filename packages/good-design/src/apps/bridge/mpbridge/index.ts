@@ -2,7 +2,15 @@ export { MPBBridge } from "./MPBBridge";
 export { MPBBridgeController } from "./MPBBridgeController";
 export { useMPBBridgeFeatureController } from "./feature/useMPBBridgeFeatureController";
 export { BridgeTransactionCard, BridgeTransactionList } from "./MPBBridgeTransactionCard";
-export type { MPBBridgeProps, IMPBLimits, IMPBFees, BridgeProvider, BridgeTransaction } from "./types";
+export type {
+  MPBBridgeProps,
+  MPBBridgeHistoryChainIds,
+  MPBBridgeReadOnlyUrls,
+  IMPBLimits,
+  IMPBFees,
+  BridgeProvider,
+  BridgeTransaction
+} from "./types";
 
 export { ChainSelector } from "./ChainSelector";
 export { BridgeProviderSelector } from "./BridgeProviderSelector";
