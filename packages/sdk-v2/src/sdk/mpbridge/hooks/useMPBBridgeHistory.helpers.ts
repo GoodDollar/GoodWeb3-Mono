@@ -33,11 +33,12 @@ export type MPBBridgeHistoryCache = {
   chains?: Partial<Record<number, ChainSyncState>>;
 };
 
-// The cache only keeps a rolling 30-day history so first paint stays useful without growing forever.
-export const HISTORY_WINDOW_DAYS = 30;
-export const HISTORY_WINDOW_SECONDS = HISTORY_WINDOW_DAYS * 24 * 60 * 60;
 // Public RPCs were failing on large getLogs windows, so every sync is split into small ranges.
 export const HISTORY_BLOCK_CHUNK_SIZE = 500;
+export const HISTORY_LOOKBACK_BLOCKS = 5000;
+
+export const getHistoryStartBlock = (latestBlock: number, lastSyncedBlock?: number) =>
+  Math.max(0, latestBlock - HISTORY_LOOKBACK_BLOCKS + 1, (lastSyncedBlock ?? -1) + 1);
 
 const getEventCacheKey = (event: CachedBridgeEvent) =>
   event.id ? `${event.sourceChainId}:${event.id}` : `${event.sourceChainId}:${event.transactionHash}`;
@@ -100,29 +101,21 @@ export const dedupeLogs = <T extends { transactionHash: string; logIndex?: numbe
   return Array.from(logsByKey.values());
 };
 
-export const pruneExpiredEvents = (events: CachedBridgeEvent[], minTimestamp: number) =>
-  events.filter(event => Number(event.timestamp || 0) >= minTimestamp);
-
-export const getHistoryWindowStartTimestamp = (nowMs = Date.now()) => Math.floor(nowMs / 1000) - HISTORY_WINDOW_SECONDS;
-
 export const mergeBridgeHistoryCache = (
   current: MPBBridgeHistoryCache,
   nextEvents: Partial<Record<BridgeEventName, CachedBridgeEvent[]>>,
-  nextChains: Partial<Record<number, ChainSyncState>>,
-  nowMs = Date.now()
+  nextChains: Partial<Record<number, ChainSyncState>>
 ): MPBBridgeHistoryCache => {
-  const minTimestamp = getHistoryWindowStartTimestamp(nowMs);
   const mergedRequests = new Map<string, CachedBridgeEvent>();
   const mergedTransfers = new Map<string, CachedBridgeEvent>();
 
-  // Merge new rows into the cached window and let the event key dedupe repeated fetches across refreshes.
-  pruneExpiredEvents((current.BridgeRequest || []).concat(nextEvents.BridgeRequest || []), minTimestamp).forEach(
-    event => mergedRequests.set(getEventCacheKey(event), event)
-  );
+  (current.BridgeRequest || [])
+    .concat(nextEvents.BridgeRequest || [])
+    .forEach(event => mergedRequests.set(getEventCacheKey(event), event));
 
-  pruneExpiredEvents((current.ExecutedTransfer || []).concat(nextEvents.ExecutedTransfer || []), minTimestamp).forEach(
-    event => mergedTransfers.set(getEventCacheKey(event), event)
-  );
+  (current.ExecutedTransfer || [])
+    .concat(nextEvents.ExecutedTransfer || [])
+    .forEach(event => mergedTransfers.set(getEventCacheKey(event), event));
 
   return {
     BridgeRequest: sortBridgeEvents(Array.from(mergedRequests.values())),

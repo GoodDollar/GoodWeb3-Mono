@@ -14,19 +14,17 @@ import {
   ChainSyncState,
   MPBBridgeHistoryCache,
   HISTORY_BLOCK_CHUNK_SIZE,
-  HISTORY_WINDOW_SECONDS,
   createAccountEventTopics,
   createBlockChunks,
   dedupeLogs,
   getErrorsByChain,
+  getHistoryStartBlock,
   mergeBridgeHistoryCache
 } from "./useMPBBridgeHistory.helpers";
 
-const HISTORY_CACHE_VERSION = 6;
+const HISTORY_CACHE_VERSION = 7;
 const CHAIN_IDS = [SupportedChains.FUSE, SupportedChains.CELO, SupportedChains.MAINNET, SupportedChains.XDC];
 const HISTORY_REQUEST_DELAY_MS = 500;
-// Celo is a fast chain, so one day of history is far more than a few thousand blocks.
-const HISTORY_FAST_SYNC_BLOCKS = HISTORY_BLOCK_CHUNK_SIZE * 240;
 
 export type MPBBridgeHistoryReadOnlyUrls = Partial<Record<number, string>>;
 
@@ -38,15 +36,13 @@ export type UseMPBBridgeHistoryOptions = {
 type ChainHistorySyncRange = {
   fromBlock: number;
   toBlock: number;
-  commitCursor: boolean;
 };
 
 type ChainHistoryEventSyncResult = {
   chainId: SupportedChains;
   eventName: BridgeEventName;
   events: CachedBridgeEvent[];
-  hasErrors: boolean;
-  chainState: ChainSyncState;
+  error?: string;
 };
 
 const useMPBBridgeHistoryContract = (chainId: SupportedChains, readOnlyUrls?: MPBBridgeHistoryReadOnlyUrls) => {
@@ -161,69 +157,6 @@ const getErrorMessage = (error: unknown) => {
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-const runSequentiallySettled = async <T>(
-  tasks: Array<() => Promise<T>>,
-  delayMs = HISTORY_REQUEST_DELAY_MS,
-  options: { stopOnError?: boolean } = {}
-) => {
-  const results: T[] = [];
-  const errors: unknown[] = [];
-
-  for (let index = 0; index < tasks.length; index += 1) {
-    let shouldStop = false;
-
-    try {
-      results.push(await tasks[index]());
-    } catch (error) {
-      errors.push(error);
-      shouldStop = Boolean(options.stopOnError);
-    }
-
-    if (shouldStop) {
-      break;
-    }
-
-    if (index < tasks.length - 1 && delayMs > 0) {
-      await delay(delayMs);
-    }
-  }
-
-  return { results, errors };
-};
-
-const findHistoryStartBlock = async (
-  provider: ethers.providers.Provider,
-  latestBlockNumber: number,
-  targetTimestamp: number
-) => {
-  const latestBlock = await provider.getBlock(latestBlockNumber);
-
-  if (!latestBlock || latestBlock.timestamp <= targetTimestamp) {
-    return latestBlockNumber;
-  }
-
-  let low = 0;
-  let high = latestBlockNumber;
-
-  // Binary search keeps the 30-day backfill exact without relying on chain-specific block-time guesses.
-  while (low < high) {
-    const mid = Math.floor((low + high) / 2);
-    const block = await provider.getBlock(mid);
-
-    if (!block) {
-      throw new Error(`Failed to fetch block ${mid} while backfilling bridge history`);
-    }
-
-    if (block.timestamp < targetTimestamp) {
-      low = mid + 1;
-    } else {
-      high = mid;
-    }
-  }
-
-  return low;
-};
-
 const normalizeProviderLogs = (
   contract: ethers.Contract,
   sourceChainId: SupportedChains,
@@ -308,33 +241,27 @@ const fetchEventLogs = async (
 
     for (let chunkIndex = 0; chunkIndex < chunks.length; chunkIndex += 1) {
       const chunk = chunks[chunkIndex];
-      const {
-        results: chunkLogsByTopic,
-        errors: chunkErrors
-      } = await runSequentiallySettled(
-        topicsForPass.map(
-          topics => () =>
+      try {
+        const chunkLogsByTopic = await Promise.all(
+          topicsForPass.map(topics =>
             provider.getLogs({
               address: contract.address,
               topics: topics as ethers.providers.Filter["topics"],
               fromBlock: chunk.fromBlock,
               toBlock: chunk.toBlock
             })
-        ),
-        HISTORY_REQUEST_DELAY_MS,
-        { stopOnError: true }
-      );
+          )
+        );
 
-      if (chunkErrors.length) {
-        errors.push(...chunkErrors);
+        const chunkLogs = dedupeLogs(chunkLogsByTopic.flat());
+        logsByChunk.push(...chunkLogs);
+
+        if (chunkLogs.length) {
+          onChunkLogs?.(chunkLogs);
+        }
+      } catch (error) {
+        errors.push(error);
         break;
-      }
-
-      const chunkLogs = dedupeLogs(chunkLogsByTopic.flat());
-      logsByChunk.push(...chunkLogs);
-
-      if (chunkLogs.length) {
-        onChunkLogs?.(chunkLogs);
       }
 
       if (chunkIndex < chunks.length - 1) {
@@ -372,23 +299,13 @@ const getChainHistorySyncPlan = async (
   const provider = contract.provider as ethers.providers.Provider;
   const latestBlock = await provider.getBlockNumber();
   const chainState = currentCache.chains?.[chainId];
-  const hasCachedChainEvents = Boolean(
-    currentCache.BridgeRequest?.some(event => event.sourceChainId === chainId) ||
-      currentCache.ExecutedTransfer?.some(event => event.sourceChainId === chainId)
-  );
-  const isWarmCache = chainState?.lastSyncedBlock !== undefined && hasCachedChainEvents;
-  const targetTimestamp = Math.floor(Date.now() / 1000) - HISTORY_WINDOW_SECONDS;
-  const fromBlock =
-    // Warm cache: resume from the last synced block. Cold cache: backfill the rolling history window.
-    isWarmCache
-      ? (chainState?.lastSyncedBlock as number) + 1
-      : await findHistoryStartBlock(provider, latestBlock, targetTimestamp);
+  const fromBlock = getHistoryStartBlock(latestBlock, chainState?.lastSyncedBlock);
 
   if (fromBlock > latestBlock) {
     return {
       chainId,
       latestBlock,
-      ranges: [] as ChainHistorySyncRange[],
+      range: undefined,
       chainState: {
         lastSyncedBlock: latestBlock,
         lastSuccessfulSyncAt: Date.now()
@@ -396,20 +313,11 @@ const getChainHistorySyncPlan = async (
     };
   }
 
-  const recentFromBlock = isWarmCache ? fromBlock : Math.max(fromBlock, latestBlock - HISTORY_FAST_SYNC_BLOCKS);
-  const ranges =
-    recentFromBlock > fromBlock
-      ? [
-          { fromBlock: recentFromBlock, toBlock: latestBlock, commitCursor: false },
-          { fromBlock, toBlock: recentFromBlock - 1, commitCursor: true }
-        ]
-      : [{ fromBlock, toBlock: latestBlock, commitCursor: true }];
-
   return {
     chainId,
     latestBlock,
     chainState,
-    ranges
+    range: { fromBlock, toBlock: latestBlock } satisfies ChainHistorySyncRange
   };
 };
 
@@ -418,51 +326,23 @@ const syncChainHistoryRange = async (
   contract: ethers.Contract,
   eventName: BridgeEventName,
   range: ChainHistorySyncRange,
-  latestBlock: number,
-  chainState?: ChainSyncState,
   account?: string,
   onEvents?: (eventName: BridgeEventName, events: CachedBridgeEvent[]) => void
 ): Promise<ChainHistoryEventSyncResult> => {
-  const eventResult = await fetchEventLogs(
-    contract,
-    eventName,
-    range.fromBlock,
-    range.toBlock,
-    account,
-    logs => {
-      const events = filterEventsForAccount(normalizeProviderLogs(contract, chainId, eventName, logs), account);
+  const eventResult = await fetchEventLogs(contract, eventName, range.fromBlock, range.toBlock, account, logs => {
+    const events = filterEventsForAccount(normalizeProviderLogs(contract, chainId, eventName, logs), account);
 
-      if (events.length) {
-        onEvents?.(eventName, events);
-      }
+    if (events.length) {
+      onEvents?.(eventName, events);
     }
-  );
+  });
   const errors = eventResult.errors;
 
   return {
     chainId,
     eventName,
     events: filterEventsForAccount(normalizeProviderLogs(contract, chainId, eventName, eventResult.logs), account),
-    hasErrors: errors.length > 0,
-    chainState:
-      errors.length > 0
-        ? ({
-            ...(chainState || {}),
-            error: {
-              message: getPartialHistoryErrorMessage(errors),
-              updatedAt: Date.now()
-            }
-          } satisfies ChainSyncState)
-        : !range.commitCursor
-        ? ({
-            ...(chainState || {}),
-            lastSuccessfulSyncAt: Date.now(),
-            error: undefined
-          } satisfies ChainSyncState)
-        : ({
-            lastSyncedBlock: latestBlock,
-            lastSuccessfulSyncAt: Date.now()
-          } satisfies ChainSyncState)
+    error: errors.length ? getPartialHistoryErrorMessage(errors) : undefined
   };
 };
 
@@ -473,6 +353,7 @@ export const useMPBBridgeHistory = ({ readOnlyUrls, chainIds }: UseMPBBridgeHist
   const [refreshTick, setRefreshTick] = useState(0);
   const [syncing, setSyncing] = useState(false);
   const historyCacheRef = useRef<MPBBridgeHistoryCache>({});
+  const storageWriteRef = useRef<Promise<void>>(Promise.resolve());
 
   const fuseBridgeContract = useMPBBridgeHistoryContract(SupportedChains.FUSE, readOnlyUrls);
   const celoBridgeContract = useMPBBridgeHistoryContract(SupportedChains.CELO, readOnlyUrls);
@@ -575,75 +456,93 @@ export const useMPBBridgeHistory = ({ readOnlyUrls, chainIds }: UseMPBBridgeHist
 
       setHistoryCache(nextCache);
       historyCacheRef.current = nextCache;
-      // Persist the merged cache after every refresh so the next mount can render immediately from storage.
-      void AsyncStorage.setItem(cacheKey, nextCache).catch(error =>
-        console.warn("Failed to store MPB bridge history cache", error)
-      );
+      storageWriteRef.current = storageWriteRef.current
+        .then(() => AsyncStorage.setItem(cacheKey, nextCache))
+        .catch(error => console.warn("Failed to store MPB bridge history cache", error));
     };
 
-    const syncHistory = async () => {
-      // Sync every chain independently and sequentially so one RPC cannot rate-limit the others.
-      for (const { chainId, contract } of chainContracts) {
-        try {
-          const plan = await getChainHistorySyncPlan(chainId, contract, historyCacheRef.current);
+    const syncChain = async ({ chainId, contract }: (typeof chainContracts)[number]) => {
+      try {
+        const plan = await getChainHistorySyncPlan(chainId, contract, historyCacheRef.current);
 
-          if (cancelled) {
-            return;
-          }
+        if (cancelled) {
+          return;
+        }
 
-          if (!plan.ranges.length) {
-            publishHistoryCache({}, { [chainId]: plan.chainState });
-            continue;
-          }
+        if (!plan.range) {
+          publishHistoryCache({}, { [chainId]: plan.chainState });
+          return;
+        }
 
-          let chainHadErrors = false;
+        let chainError: string | undefined;
 
-          for (const range of plan.ranges) {
-            for (const eventName of ["BridgeRequest", "ExecutedTransfer"] as BridgeEventName[]) {
-              const shouldCommitCursor = eventName === "ExecutedTransfer" && range.commitCursor && !chainHadErrors;
-              const result = await syncChainHistoryRange(
-                chainId,
-                contract,
-                eventName,
-                { ...range, commitCursor: shouldCommitCursor },
-                plan.latestBlock,
-                historyCacheRef.current.chains?.[chainId],
-                account,
-                (chunkEventName, events) => {
-                  if (!cancelled) {
-                    publishHistoryCache({ [chunkEventName]: events }, {});
-                  }
-                }
-              );
-
-              if (cancelled) {
-                return;
-              }
-
-              chainHadErrors = chainHadErrors || result.hasErrors;
-              publishHistoryCache({ [result.eventName]: result.events }, { [chainId]: result.chainState });
-            }
-          }
-        } catch (reason) {
-          if (cancelled) {
-            return;
-          }
-
-          // Failed chains keep their last good cursor and surface a chain-specific error for the UI.
-          publishHistoryCache(
-            {},
-            {
-              [chainId]: {
-                ...(historyCacheRef.current.chains?.[chainId] || {}),
-                error: {
-                  message: getErrorMessage(reason),
-                  updatedAt: Date.now()
-                }
+        for (const eventName of ["BridgeRequest", "ExecutedTransfer"] as BridgeEventName[]) {
+          const result = await syncChainHistoryRange(
+            chainId,
+            contract,
+            eventName,
+            plan.range,
+            account,
+            (chunkEventName, events) => {
+              if (!cancelled) {
+                publishHistoryCache({ [chunkEventName]: events }, {});
               }
             }
           );
+
+          if (cancelled) {
+            return;
+          }
+
+          chainError = chainError || result.error;
+          publishHistoryCache({ [result.eventName]: result.events }, {});
         }
+
+        publishHistoryCache(
+          {},
+          {
+            [chainId]: chainError
+              ? {
+                  ...(historyCacheRef.current.chains?.[chainId] || {}),
+                  error: { message: chainError, updatedAt: Date.now() }
+                }
+              : {
+                  lastSyncedBlock: plan.latestBlock,
+                  lastSuccessfulSyncAt: Date.now()
+                }
+          }
+        );
+      } catch (reason) {
+        if (cancelled) {
+          return;
+        }
+
+        publishHistoryCache(
+          {},
+          {
+            [chainId]: {
+              ...(historyCacheRef.current.chains?.[chainId] || {}),
+              error: {
+                message: getErrorMessage(reason),
+                updatedAt: Date.now()
+              }
+            }
+          }
+        );
       }
+    };
+
+    const syncHistory = async () => {
+      // Each chain has its own RPC, cursor, and error state, so bounded recent scans can run together.
+      await Promise.all(
+        chainContracts.map(async chainContract => {
+          try {
+            await syncChain(chainContract);
+          } catch (reason) {
+            console.warn("Unexpected MPB bridge history sync failure", reason);
+          }
+        })
+      );
     };
 
     void syncHistory().finally(() => {
@@ -658,8 +557,25 @@ export const useMPBBridgeHistory = ({ readOnlyUrls, chainIds }: UseMPBBridgeHist
   }, [account, activeChainIds, cacheKey, cacheLoaded, contracts, refreshTick]);
 
   const refreshHistory = useCallback(() => {
+    const clearedCache: MPBBridgeHistoryCache = {
+      ...historyCacheRef.current,
+      chains: Object.entries(historyCacheRef.current.chains || {}).reduce((result, [chainId, state]) => {
+        result[Number(chainId)] = { ...state, error: undefined };
+        return result;
+      }, {} as Partial<Record<number, ChainSyncState>>)
+    };
+
+    historyCacheRef.current = clearedCache;
+    setHistoryCache(clearedCache);
+
+    if (cacheKey) {
+      storageWriteRef.current = storageWriteRef.current
+        .then(() => AsyncStorage.setItem(cacheKey, clearedCache))
+        .catch(error => console.warn("Failed to clear MPB bridge history errors", error));
+    }
+
     setRefreshTick(current => current + 1);
-  }, []);
+  }, [cacheKey]);
 
   return useMemo(() => {
     const allErrorsByChain = getErrorsByChain(historyCache);

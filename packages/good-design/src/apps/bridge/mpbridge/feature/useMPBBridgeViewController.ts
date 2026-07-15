@@ -1,4 +1,5 @@
 import { useEffect, useCallback, useState, useMemo, useRef } from "react";
+import { useEthers } from "@usedapp/core";
 import { SupportedChains, deriveMPBBridgeFlowState } from "@gooddollar/web3sdk-v2";
 import { ethers } from "ethers";
 
@@ -121,6 +122,8 @@ export interface MPBBridgeViewModel {
     historyLoading: boolean;
     historyRefreshing: boolean;
     historyErrorsByChain: Record<number, string>;
+    explorerChainId?: number;
+    explorerAddress?: string;
     onRefresh: () => void;
     onTxDetailsPress: (tx: any) => void;
   };
@@ -144,6 +147,7 @@ export const useMPBBridgeViewController = ({
   bridgeProvider: propBridgeProvider,
   onBridgeProviderChange
 }: MPBBridgeProps): MPBBridgeViewModel => {
+  const { account, chainId } = useEthers();
   const [isBridging, setBridging] = useState(false);
   const [localBridgeProvider, setLocalBridgeProvider] = useState<BridgeProvider>("axelar");
   const bridgeProvider = propBridgeProvider || localBridgeProvider;
@@ -613,6 +617,8 @@ export const useMPBBridgeViewController = ({
       historyLoading,
       historyRefreshing,
       historyErrorsByChain,
+      explorerChainId: chainId,
+      explorerAddress: account,
       onRefresh: refreshHistory,
       onTxDetailsPress
     }

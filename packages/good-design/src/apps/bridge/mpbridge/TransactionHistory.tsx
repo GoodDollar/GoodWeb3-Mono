@@ -1,5 +1,6 @@
 import React from "react";
 import { Box, Button, HStack, Spinner, Text, VStack } from "native-base";
+import { ExplorerLink } from "../../../core";
 import { BridgeTransactionList } from "./MPBBridgeTransactionCard";
 import { capitalizeChain, getChainName } from "./utils";
 
@@ -8,6 +9,8 @@ interface TransactionHistoryProps {
   historyLoading: boolean;
   historyRefreshing: boolean;
   historyErrorsByChain: Record<number, string>;
+  explorerChainId?: number;
+  explorerAddress?: string;
   onRefresh: () => void;
   onTxDetailsPress: (tx: any) => void;
 }
@@ -17,6 +20,8 @@ export const TransactionHistory: React.FC<TransactionHistoryProps> = ({
   historyLoading,
   historyRefreshing,
   historyErrorsByChain,
+  explorerChainId,
+  explorerAddress,
   onRefresh,
   onTxDetailsPress
 }) => {
@@ -41,6 +46,22 @@ export const TransactionHistory: React.FC<TransactionHistoryProps> = ({
           Refresh
         </Button>
       </HStack>
+      <VStack space={1}>
+        <Text fontSize="xs" color="goodGrey.600">
+          History builds as you use this bridge. We check up to the latest 5,000 blocks on each supported network.
+        </Text>
+        <Text fontSize="xs" color="goodGrey.500">
+          Older transactions or activity from another device may not appear.
+        </Text>
+        {explorerChainId && explorerAddress ? (
+          <ExplorerLink
+            chainId={explorerChainId}
+            addressOrTx={explorerAddress}
+            text="View this wallet on the connected network explorer"
+            fontStyle={{ fontSize: "xs", fontFamily: "subheading", fontWeight: 600 }}
+          />
+        ) : null}
+      </VStack>
       {historyRefreshing && !historyLoading ? (
         <HStack alignItems="center" space={2}>
           <Spinner size="sm" color="goodBlue.500" />
@@ -53,11 +74,12 @@ export const TransactionHistory: React.FC<TransactionHistoryProps> = ({
         <Box p={4} bg="yellow.50" borderRadius="lg" borderWidth="1" borderColor="yellow.200">
           <VStack space={2}>
             <Text fontSize="sm" color="yellow.800" fontWeight="600">
-              Some networks could not refresh right now.
+              Some transaction history could not be refreshed.
             </Text>
-            {errorEntries.map(([chainId, message]) => (
+            {errorEntries.map(([chainId]) => (
               <Text key={chainId} fontSize="xs" color="yellow.700">
-                {capitalizeChain(getChainName(Number(chainId)))}: {message}
+                Could not fetch history for {capitalizeChain(getChainName(Number(chainId)))} at this time. You can try
+                to reload or try later.
               </Text>
             ))}
           </VStack>
@@ -77,7 +99,7 @@ export const TransactionHistory: React.FC<TransactionHistoryProps> = ({
       ) : (
         <Box p={6} bg="goodGrey.50" borderRadius="lg" alignItems="center">
           <Text fontSize="sm" color="goodGrey.600" textAlign="center">
-            No recent bridge transactions found
+            No bridge transactions found in the latest 5,000 blocks
           </Text>
           <Text fontSize="xs" color="goodGrey.500" mt={2} textAlign="center">
             Make sure your wallet is connected to see your bridge transactions

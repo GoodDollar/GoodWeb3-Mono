@@ -6,6 +6,7 @@ import {
   dedupeLogs,
   getAddressTopic,
   getErrorsByChain,
+  getHistoryStartBlock,
   mergeBridgeHistoryCache,
   MPBBridgeHistoryCache
 } from "./useMPBBridgeHistory.helpers";
@@ -17,6 +18,13 @@ describe("useMPBBridgeHistory helpers", () => {
       { fromBlock: 600, toBlock: 1099 },
       { fromBlock: 1100, toBlock: 1201 }
     ]);
+  });
+
+  it("limits cold and stale-cursor syncs to the latest 5,000 blocks", () => {
+    expect(getHistoryStartBlock(10_000)).toBe(5001);
+    expect(getHistoryStartBlock(10_000, 100)).toBe(5001);
+    expect(getHistoryStartBlock(10_000, 9800)).toBe(9801);
+    expect(getHistoryStartBlock(100)).toBe(0);
   });
 
   it("creates indexed account topics for bridge history log filters", () => {
@@ -48,10 +56,9 @@ describe("useMPBBridgeHistory helpers", () => {
     ]);
   });
 
-  it("merges history rows, prunes old cache entries, and keeps chain sync state", () => {
+  it("merges cached history rows and keeps chain sync state", () => {
     const nowMs = new Date("2026-06-29T00:00:00.000Z").getTime();
     const recentTimestamp = Math.floor(nowMs / 1000) - 60;
-    const oldTimestamp = Math.floor(nowMs / 1000) - 31 * 24 * 60 * 60;
     const currentCache: MPBBridgeHistoryCache = {
       BridgeRequest: [
         {
@@ -65,7 +72,7 @@ describe("useMPBBridgeHistory helpers", () => {
           to: "0xto",
           targetChainId: "42220",
           amount: "10",
-          timestamp: oldTimestamp.toString(),
+          timestamp: "1",
           id: "1"
         },
         {
@@ -142,12 +149,11 @@ describe("useMPBBridgeHistory helpers", () => {
             updatedAt: nowMs
           }
         }
-      },
-      nowMs
+      }
     );
 
-    expect(nextCache.BridgeRequest).toHaveLength(1);
-    expect(nextCache.BridgeRequest?.[0].transactionHash).toBe("0xkeep-updated");
+    expect(nextCache.BridgeRequest).toHaveLength(2);
+    expect(nextCache.BridgeRequest?.[1].transactionHash).toBe("0xkeep-updated");
     expect(nextCache.ExecutedTransfer).toHaveLength(1);
     expect(nextCache.chains?.[122]).toEqual({
       lastSyncedBlock: 40,
