@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { TransactionStatus, useContractFunction, useEthers } from "@usedapp/core";
+import { TransactionStatus, useEthers } from "@usedapp/core";
 import { ethers } from "ethers";
 import { useSwitchNetwork } from "../../../contexts";
 import { useG$Decimals } from "../../base/react";
@@ -21,6 +21,7 @@ import { useBridgeMonitoring } from "./useBridgeMonitoring";
 import { useBridgeValidators } from "./useBridgeValidators";
 import { getTransactionErrorMessage, isTransientBlockReadError } from "./useMPBBridge.helpers";
 
+const APPROVE_TRANSACTION_NAME = "MPBBridgeApprove";
 const BRIDGE_TO_TRANSACTION_NAME = "MPBBridgeTo";
 
 const createIdleTransactionStatus = (transactionName: string): TransactionStatus => ({
@@ -84,9 +85,87 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
   const bridgeContractOrNull = bridgeContract ?? null;
   const tokenDecimals = useG$Decimals("G$", chainId);
 
-  const approve = useContractFunction(gdContract, "approve", {
-    transactionName: "MPBBridgeApprove"
-  });
+  const [approveState, setApproveState] = useState<TransactionStatus>(() =>
+    createIdleTransactionStatus(APPROVE_TRANSACTION_NAME)
+  );
+
+  const resetApproveState = useCallback(() => {
+    setApproveState(createIdleTransactionStatus(APPROVE_TRANSACTION_NAME));
+  }, []);
+
+  const sendApprove = useCallback(
+    async (spender: string, amount: string) => {
+      if (!gdContract || !library || !account || !chainId) {
+        const errorMessage = "Token contract is not ready";
+        setApproveState({
+          status: "Exception",
+          errorMessage,
+          chainId,
+          transactionName: APPROVE_TRANSACTION_NAME
+        });
+        return undefined;
+      }
+
+      let transaction: ethers.providers.TransactionResponse | undefined;
+
+      setApproveState({
+        status: "PendingSignature",
+        chainId,
+        transactionName: APPROVE_TRANSACTION_NAME
+      });
+
+      try {
+        const signer = (library as ethers.providers.Web3Provider).getSigner(account);
+        const tokenContractWithSigner = gdContract.connect(signer);
+        const submittedTransaction = (await tokenContractWithSigner.approve(
+          spender,
+          amount
+        )) as ethers.providers.TransactionResponse;
+        transaction = submittedTransaction;
+
+        setApproveState({
+          status: "Mining",
+          transaction: submittedTransaction,
+          chainId,
+          transactionName: APPROVE_TRANSACTION_NAME
+        });
+
+        const receipt = await waitForReceiptAfterSubmission(submittedTransaction, library);
+        const didTransactionFail = receipt?.status === 0;
+
+        setApproveState({
+          status: didTransactionFail ? "Fail" : "Success",
+          transaction: submittedTransaction,
+          receipt,
+          errorMessage: didTransactionFail ? "Approval transaction failed" : undefined,
+          chainId,
+          transactionName: APPROVE_TRANSACTION_NAME
+        });
+
+        return receipt;
+      } catch (error: any) {
+        setApproveState({
+          status: transaction ? "Fail" : "Exception",
+          transaction,
+          errorMessage: getTransactionErrorMessage(error),
+          chainId,
+          transactionName: APPROVE_TRANSACTION_NAME
+        });
+
+        return undefined;
+      }
+    },
+    [account, chainId, gdContract, library]
+  );
+
+  const approve = useMemo(
+    () => ({
+      state: approveState,
+      send: sendApprove,
+      resetState: resetApproveState
+    }),
+    [approveState, resetApproveState, sendApprove]
+  );
 
   const [bridgeToState, setBridgeToState] = useState<TransactionStatus>(() =>
     createIdleTransactionStatus(BRIDGE_TO_TRANSACTION_NAME)
