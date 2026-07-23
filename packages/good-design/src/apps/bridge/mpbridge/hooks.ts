@@ -1,42 +1,16 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { CurrencyValue } from "@usedapp/core";
-import { useG$Amounts, useProductionG$Balance, G$Amount, useGetEnvChainId } from "@gooddollar/web3sdk-v2";
+import { useG$Amounts, G$Amount, useGetEnvChainId, useMPBBridgeBalances } from "@gooddollar/web3sdk-v2";
 import { BigNumber } from "ethers";
 import { fetchBridgeFees, useMPBBridgeHistory } from "@gooddollar/web3sdk-v2";
 import type { IMPBFees, IMPBLimits, MPBBridgeHistoryChainIds, MPBBridgeReadOnlyUrls } from "./types";
 import { convertTransaction } from "./utils";
 
-const CACHE_KEY = "mpb-bridge-fees-cache";
-const CACHE_DURATION_MS = 5 * 60 * 1000;
 const CHAIN_NAME_TO_ID: Record<string, number> = {
   fuse: 122,
   celo: 42220,
   mainnet: 1,
   xdc: 50
-};
-
-const getStoredCache = () => {
-  try {
-    const stored = localStorage.getItem(CACHE_KEY);
-    return stored ? JSON.parse(stored) : null;
-  } catch (error) {
-    console.warn("Failed to read bridge fees cache:", error);
-    return null;
-  }
-};
-
-const setStoredCache = (data: any) => {
-  try {
-    localStorage.setItem(
-      CACHE_KEY,
-      JSON.stringify({
-        data,
-        timestamp: Date.now()
-      })
-    );
-  } catch (error) {
-    console.warn("Failed to store bridge fees cache:", error);
-  }
 };
 
 export const useBridgeFees = () => {
@@ -45,23 +19,12 @@ export const useBridgeFees = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const cached = getStoredCache();
-    const now = Date.now();
-    const isCacheValid = cached && cached.data && now - cached.timestamp < CACHE_DURATION_MS;
-
-    if (cached && cached.data) {
-      setFees(cached.data);
-      setLoading(false);
-
-      if (isCacheValid) {
-        return;
-      }
-    }
-
+    // fetchBridgeFees owns the shared 20-minute cache and in-flight request.
+    // Keeping the cache in one layer prevents the view and transaction flow
+    // from making duplicate calls with different cache keys.
     fetchBridgeFees()
       .then((feesData: any) => {
         if (feesData) {
-          setStoredCache(feesData);
           setFees(feesData);
           setLoading(false);
           setError(null);
@@ -148,28 +111,17 @@ export const useMPBBridgeEstimate = ({
   );
 };
 
-export const useChainBalances = () => {
-  const { G$: fuseBalance } = useProductionG$Balance(5, 122);
-  const { G$: celoBalance } = useProductionG$Balance(5, 42220);
-  const { G$: mainnetBalance } = useProductionG$Balance(5, 1);
-  const { G$: xdcBalance } = useProductionG$Balance(5, 50);
+export const useChainBalances = (bridgeReadOnlyUrls?: MPBBridgeReadOnlyUrls) => {
+  // All four balances are intentionally preloaded. The SDK hook caches and
+  // refreshes them slowly, so source-chain switches remain immediate without
+  // polling every chain every five blocks.
+  const { balancesByChain } = useMPBBridgeBalances(bridgeReadOnlyUrls);
 
   const getBalanceForChain = useMemo(
     () => (chain: string) => {
-      switch (chain) {
-        case "fuse":
-          return fuseBalance;
-        case "celo":
-          return celoBalance;
-        case "mainnet":
-          return mainnetBalance;
-        case "xdc":
-          return xdcBalance;
-        default:
-          return fuseBalance;
-      }
+      return balancesByChain[chain as keyof typeof balancesByChain] || balancesByChain.fuse;
     },
-    [fuseBalance, celoBalance, mainnetBalance, xdcBalance]
+    [balancesByChain]
   );
 
   return { getBalanceForChain };

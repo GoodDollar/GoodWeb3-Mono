@@ -178,7 +178,7 @@ export const useMPBBridgeViewController = ({
 
   const { realTransactionHistory, historyLoading, historyRefreshing, historyErrorsByChain, refreshHistory } =
     useDebouncedTransactionHistory(TRANSACTION_HISTORY_DEBOUNCE_MS, bridgeReadOnlyUrls, BRIDGE_HISTORY_CHAIN_IDS);
-  const { getBalanceForChain } = useChainBalances();
+  const { getBalanceForChain } = useChainBalances(bridgeReadOnlyUrls);
 
   const gdValue = getBalanceForChain(sourceChain);
   const wei = gdValue.value.toString();

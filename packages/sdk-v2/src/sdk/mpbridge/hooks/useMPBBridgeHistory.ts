@@ -7,7 +7,8 @@ import { CONTRACT_TO_ABI } from "../../base/sdk";
 import { AsyncStorage } from "../../storage";
 import { SupportedChains, formatAmount } from "../../constants";
 import { useGetEnvChainId } from "../../base/react";
-import { useReadOnlyProvider } from "../../../hooks/useMulticallAtChain";
+import { MPBBridgeReadOnlyUrls } from "../types";
+import { useMPBBridgeReadOnlyProvider } from "./useMPBBridgeContracts";
 import {
   BridgeEventName,
   CachedBridgeEvent,
@@ -26,7 +27,7 @@ const HISTORY_CACHE_VERSION = 7;
 const CHAIN_IDS = [SupportedChains.FUSE, SupportedChains.CELO, SupportedChains.MAINNET, SupportedChains.XDC];
 const HISTORY_REQUEST_DELAY_MS = 500;
 
-export type MPBBridgeHistoryReadOnlyUrls = Partial<Record<number, string>>;
+export type MPBBridgeHistoryReadOnlyUrls = MPBBridgeReadOnlyUrls;
 
 export type UseMPBBridgeHistoryOptions = {
   readOnlyUrls?: MPBBridgeHistoryReadOnlyUrls;
@@ -47,16 +48,7 @@ type ChainHistoryEventSyncResult = {
 
 const useMPBBridgeHistoryContract = (chainId: SupportedChains, readOnlyUrls?: MPBBridgeHistoryReadOnlyUrls) => {
   const { defaultEnv } = useGetEnvChainId(chainId);
-  const fallbackProvider = useReadOnlyProvider(chainId);
-  const overrideUrl = readOnlyUrls?.[chainId];
-
-  const provider = useMemo(() => {
-    if (overrideUrl) {
-      return new ethers.providers.StaticJsonRpcProvider(overrideUrl, chainId);
-    }
-
-    return fallbackProvider;
-  }, [chainId, fallbackProvider, overrideUrl]);
+  const provider = useMPBBridgeReadOnlyProvider(chainId, readOnlyUrls);
 
   return useMemo(() => {
     const deployment = Contracts[defaultEnv as keyof typeof Contracts] as { MpbBridge?: string } | undefined;

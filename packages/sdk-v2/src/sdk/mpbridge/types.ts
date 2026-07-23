@@ -3,6 +3,8 @@ import { TransactionStatus } from "@usedapp/core";
 import bridgeContracts from "@gooddollar/bridge-contracts/release/mpb.json";
 import { SupportedChains } from "../constants";
 
+export type MPBBridgeReadOnlyUrls = Partial<Record<number, string>>;
+
 export enum BridgeService {
   AXELAR = 0,
   LAYERZERO = 1

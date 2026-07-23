@@ -1,3 +1,5 @@
+import { MPBBridgeReadOnlyUrls } from "../types";
+
 export type MPBBridgeFlowState =
   | "idle"
   | "awaiting_wallet_connection"
@@ -57,4 +59,5 @@ export interface UseMPBBridgeFlowParams {
   account?: string;
   canSubmit?: boolean;
   hasFeeError?: boolean;
+  readOnlyUrls?: MPBBridgeReadOnlyUrls;
 }

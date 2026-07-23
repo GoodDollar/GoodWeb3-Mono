@@ -3,6 +3,7 @@ import { ethers } from "ethers";
 import { BridgeRequest } from "../types";
 import { BridgeProvider, getChainName, calculateBridgeFees, isSupportedChain } from "../constants";
 import { SupportedChains } from "../../constants";
+import { fetchMPBStaticBridgeData } from "../cache";
 
 export const useBridgeValidators = (
   account: string | undefined | null,
@@ -10,7 +11,7 @@ export const useBridgeValidators = (
   bridgeContract: ethers.Contract | null,
   bridgeProvider: BridgeProvider,
   tokenDecimals: number | undefined,
-  library: any
+  readOnlyProvider: ethers.providers.Provider | undefined
 ) => {
   const validateBridgeTransaction = useCallback(
     async (bridgeRequest: BridgeRequest, fees: any) => {
@@ -26,7 +27,7 @@ export const useBridgeValidators = (
         throw new Error("Bridge contract not available");
       }
 
-      if (!library) {
+      if (!readOnlyProvider) {
         throw new Error("Provider not available");
       }
 
@@ -70,7 +71,7 @@ export const useBridgeValidators = (
       }
 
       try {
-        const nativeBalance = await library.getBalance(account);
+        const nativeBalance = await readOnlyProvider.getBalance(account);
         const minGasBalance = ethers.utils.parseEther("0.01");
         const requiredBalance = minGasBalance.add(nativeFee);
 
@@ -90,7 +91,10 @@ export const useBridgeValidators = (
         }
       }
 
-      const limits = await bridgeContract.bridgeLimits();
+      // Limits are static bridge configuration and are shared with the display
+      // hook through the 20-minute cache. Dynamic account eligibility below is
+      // still read fresh for every submission.
+      const limits = await fetchMPBStaticBridgeData(bridgeContract, bridgeRequest.sourceChainId);
 
       try {
         if (amountBN.lt(limits.minAmount)) {
@@ -123,7 +127,7 @@ export const useBridgeValidators = (
 
       return true;
     },
-    [account, gdContract, bridgeContract, bridgeProvider, tokenDecimals, library]
+    [account, gdContract, bridgeContract, bridgeProvider, tokenDecimals, readOnlyProvider]
   );
 
   return { validateBridgeTransaction };

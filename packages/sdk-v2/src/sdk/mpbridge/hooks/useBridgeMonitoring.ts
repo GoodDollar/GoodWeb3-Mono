@@ -1,9 +1,12 @@
-import { useMemo } from "react";
-import { useLogs, TransactionStatus } from "@usedapp/core";
+import { useEffect, useMemo, useState } from "react";
+import { TransactionStatus } from "@usedapp/core";
 import { ethers } from "ethers";
-import { useRefreshOrNever } from "../../../hooks";
-import { BridgeRequest } from "../types";
-import { useGetContract } from "../../base/react";
+import { useAppState } from "../../../hooks";
+import { BridgeRequest, MPBBridgeReadOnlyUrls } from "../types";
+import { useMPBBridgeContracts } from "./useMPBBridgeContracts";
+
+const COMPLETION_POLL_INTERVAL_MS = 15 * 1000;
+const INITIAL_COMPLETION_LOOKBACK_BLOCKS = 3000;
 
 export const extractBridgeRequestId = (logs: any[], bridgeContract: any): string | undefined => {
   const bridgeTopic = ethers.utils.id("BridgeRequest(address,address,uint256,uint256,uint256,uint8,uint256)");
@@ -29,8 +32,10 @@ export const useBridgeMonitoring = (
   approveState: TransactionStatus,
   bridgeToState: TransactionStatus,
   isSwitchingChain: boolean,
-  switchChainError: string | undefined
+  switchChainError: string | undefined,
+  readOnlyUrls?: MPBBridgeReadOnlyUrls
 ) => {
+  const { active } = useAppState();
   const bridgeRequestId = useMemo(() => {
     if (bridgeToState.status !== "Success" || !bridgeToState.receipt?.logs) {
       return undefined;
@@ -41,38 +46,67 @@ export const useBridgeMonitoring = (
     return id;
   }, [bridgeToState.status, bridgeToState.receipt?.logs, bridgeContract, bridgeRequest]);
 
-  const targetMpbContract = useGetContract("MpbBridge", true, "base", bridgeRequest?.targetChainId);
+  const targetChainId = bridgeRequest?.targetChainId || 42220;
+  const { bridgeContract: targetMpbContract } = useMPBBridgeContracts(targetChainId, readOnlyUrls);
+  const [bridgeCompletedEvent, setBridgeCompletedEvent] = useState<ethers.Event>();
 
-  const bridgeCompletedLogs = useLogs(
-    bridgeRequest &&
-      bridgeRequestId &&
-      targetMpbContract && {
-        contract: targetMpbContract,
-        event: "ExecutedTransfer",
-        args: []
-      },
-    {
-      refresh: useRefreshOrNever(bridgeRequestId ? 5 : "never"),
-      chainId: bridgeRequest?.targetChainId,
-      fromBlock: -3000
+  useEffect(() => {
+    let isMounted = true;
+    let nextBlock: number | undefined;
+
+    setBridgeCompletedEvent(undefined);
+
+    if (!active || !bridgeRequestId || !targetMpbContract) {
+      return;
     }
-  );
 
-  const bridgeCompletedEvent = useMemo(() => {
-    if (!bridgeCompletedLogs?.value || !bridgeRequestId) return undefined;
-    const event = bridgeCompletedLogs.value.find(log => {
-      const id = log.data?.id || log.data?.[6];
-      return id?.toString() === bridgeRequestId.toString();
+    const checkForCompletion = async () => {
+      try {
+        const latestBlock = await targetMpbContract.provider.getBlockNumber();
+        const fromBlock = nextBlock ?? Math.max(0, latestBlock - INITIAL_COMPLETION_LOOKBACK_BLOCKS);
+
+        if (fromBlock > latestBlock) {
+          return;
+        }
+
+        // The request id is indexed. Filtering by it avoids downloading and
+        // decoding every bridge completion in the lookback range.
+        const filter = targetMpbContract.filters.ExecutedTransfer(null, null, null, null, null, null, bridgeRequestId);
+        const events = await targetMpbContract.queryFilter(filter, fromBlock, latestBlock);
+        nextBlock = latestBlock + 1;
+
+        if (isMounted && events[0]) {
+          setBridgeCompletedEvent(events[0]);
+          clearInterval(interval);
+        }
+      } catch {
+        // Target-chain RPC failures are transient. Keep the source transaction
+        // status and retry the next small incremental range on the next poll.
+      }
+    };
+
+    void checkForCompletion();
+    const interval = setInterval(checkForCompletion, COMPLETION_POLL_INTERVAL_MS);
+
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
+  }, [active, bridgeRequestId, targetMpbContract]);
+
+  useEffect(() => {
+    if (!bridgeCompletedEvent) {
+      return;
+    }
+
+    console.log("[useBridgeMonitoring] ExecutedTransfer event found on target chain", {
+      bridgeRequestId,
+      transactionHash: bridgeCompletedEvent.transactionHash,
+      targetChainId: bridgeRequest?.targetChainId
     });
-    if (event) {
-      console.log("[useBridgeMonitoring] ExecutedTransfer event found on target chain", {
-        bridgeRequestId,
-        transactionHash: event.transactionHash,
-        targetChainId: bridgeRequest?.targetChainId
-      });
-    }
-    return event;
-  }, [bridgeCompletedLogs, bridgeRequestId, bridgeRequest]);
+  }, [bridgeCompletedEvent, bridgeRequest?.targetChainId, bridgeRequestId]);
+
+  const completionTransactionHash = useMemo(() => bridgeCompletedEvent?.transactionHash, [bridgeCompletedEvent]);
 
   const bridgeStatus: Partial<TransactionStatus> | undefined = useMemo(() => {
     if (isSwitchingChain) {
@@ -105,9 +139,7 @@ export const useBridgeMonitoring = (
 
     if (bridgeToState.status === "Success") {
       const transactionHash =
-        bridgeCompletedEvent?.transactionHash ||
-        bridgeToState.receipt?.transactionHash ||
-        bridgeToState.transaction?.hash;
+        completionTransactionHash || bridgeToState.receipt?.transactionHash || bridgeToState.transaction?.hash;
 
       return {
         chainId: bridgeRequest?.sourceChainId,
@@ -148,7 +180,7 @@ export const useBridgeMonitoring = (
     }
 
     return undefined;
-  }, [isSwitchingChain, switchChainError, approveState, bridgeToState, bridgeRequest, bridgeCompletedEvent]);
+  }, [isSwitchingChain, switchChainError, approveState, bridgeToState, bridgeRequest, completionTransactionHash]);
 
   return { bridgeStatus, bridgeRequestId, bridgeCompletedEvent };
 };

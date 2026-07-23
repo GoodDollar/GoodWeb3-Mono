@@ -16,17 +16,19 @@ export const useMPBBridgeFlow = ({
   amountWei = "0",
   account,
   canSubmit,
-  hasFeeError
+  hasFeeError,
+  readOnlyUrls
 }: UseMPBBridgeFlowParams = {}) => {
   const [txHashes, setTxHashes] = useState<MPBBridgeFlowTxHashes>({});
 
-  const bridge = useMPBBridge(bridgeProvider as BridgeProvider);
+  const bridge = useMPBBridge(bridgeProvider as BridgeProvider, readOnlyUrls);
   const bridgeData = useGetMPBBridgeData(
     sourceChain,
     targetChain,
     bridgeProvider as BridgeProvider,
     amountWei,
-    account
+    account,
+    readOnlyUrls
   );
 
   const flow = useMemo(() => {

@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
-import { useEthers, useTokenAllowance } from "@usedapp/core";
+import { useEthers } from "@usedapp/core";
 import { ethers } from "ethers";
 import { fetchBridgeFees } from "../api";
+import { fetchMPBStaticBridgeData } from "../cache";
 import { G$Decimals, SupportedChains } from "../../constants";
 import {
   VALIDATION_REASONS,
@@ -11,9 +12,8 @@ import {
   calculateBridgeFees,
   normalizeAmountTo18
 } from "../constants";
-import { MPBBridgeData } from "../types";
-import { useGetContract } from "../../base/react";
-import { useMPBG$TokenContract } from "./useMPBG$TokenContract";
+import { MPBBridgeData, MPBBridgeReadOnlyUrls } from "../types";
+import { useMPBBridgeContracts } from "./useMPBBridgeContracts";
 
 const THRESHOLD_18_DECIMALS = ethers.BigNumber.from(10).pow(15);
 
@@ -40,11 +40,13 @@ export const useGetMPBBridgeData = (
   targetChain?: string,
   bridgeProvider: BridgeProvider = "layerzero",
   amount = "0",
-  address?: string
+  address?: string,
+  readOnlyUrls?: MPBBridgeReadOnlyUrls
 ): MPBBridgeData & { validation: ValidationResult } => {
   const [bridgeFees, setBridgeFees] = useState<BridgeFees>({ nativeFee: null, zroFee: null });
   const [bridgeLimits, setBridgeLimits] = useState<BridgeLimitsData | null>(null);
   const [protocolFeePercent, setProtocolFeePercent] = useState<number | null>(null);
+  const [allowance, setAllowance] = useState<ethers.BigNumber>();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -52,52 +54,38 @@ export const useGetMPBBridgeData = (
   const effectiveAccount = address || account;
 
   const sourceChainId = getSourceChainId(sourceChain || "celo");
-  const mpbContract = useGetContract("MpbBridge", true, "base", sourceChainId);
+  const { bridgeContract: mpbContract, tokenContract: gdContract } = useMPBBridgeContracts(sourceChainId, readOnlyUrls);
 
-  const gdContract = useMPBG$TokenContract(sourceChainId, true);
-  const tokenAddress = gdContract?.address;
-  const spenderAddress = mpbContract?.address;
+  /**
+   * Allowance is informational in this flow because MPB currently requests a
+   * fresh approval before bridging. Read it once per account/source combination
+   * instead of subscribing to usedapp's block polling.
+   */
+  useEffect(() => {
+    let isMounted = true;
 
-  const allowance = useTokenAllowance(tokenAddress, effectiveAccount, spenderAddress, { chainId: sourceChainId });
+    if (!gdContract || !mpbContract || !effectiveAccount) {
+      setAllowance(undefined);
+      return;
+    }
 
-  const fetchContractLimits = useCallback(async (contract: any, chainId: number) => {
-    const sourceDecimals = G$Decimals["G$"][chainId as SupportedChains] ?? 18;
-
-    const to18IfSourceDecimals = (value: ethers.BigNumber): ethers.BigNumber => {
-      if (value.lt(THRESHOLD_18_DECIMALS)) {
-        return normalizeAmountTo18(value, chainId);
-      }
-      return value;
-    };
-
-    try {
-      const limits = await contract.bridgeLimits();
-
-      const rawMin = limits.minAmount.gt(0) ? limits.minAmount : ethers.utils.parseUnits("10", sourceDecimals);
-      const rawMax = limits.txLimit.gt(0) ? limits.txLimit : ethers.constants.MaxUint256;
-
-      const minAmount = to18IfSourceDecimals(rawMin);
-      const maxAmount = to18IfSourceDecimals(rawMax);
-
-      setBridgeLimits({ minAmount, maxAmount });
-    } catch (error) {
-      const fallbackMin = normalizeAmountTo18(ethers.utils.parseUnits("10", sourceDecimals), chainId);
-      setBridgeLimits({
-        minAmount: fallbackMin,
-        maxAmount: ethers.constants.MaxUint256
+    gdContract
+      .allowance(effectiveAccount, mpbContract.address)
+      .then((value: ethers.BigNumberish) => {
+        if (isMounted) {
+          setAllowance(ethers.BigNumber.from(value));
+        }
+      })
+      .catch(() => {
+        if (isMounted) {
+          setAllowance(undefined);
+        }
       });
-    }
-  }, []);
 
-  const fetchProtocolFee = useCallback(async (contract: any) => {
-    try {
-      const fees = await contract.bridgeFees();
-      const bps = Number(fees.fee?.toString() || "0");
-      setProtocolFeePercent(bps / 10000);
-    } catch (error) {
-      setProtocolFeePercent(null);
-    }
-  }, []);
+    return () => {
+      isMounted = false;
+    };
+  }, [effectiveAccount, gdContract, mpbContract]);
 
   const calculateFees = useCallback((fees: any, source: string, target: string, provider: BridgeProvider) => {
     const calculatedFees = calculateBridgeFees(fees, provider, source, target);
@@ -111,7 +99,9 @@ export const useGetMPBBridgeData = (
     }
   }, []);
 
-  // Static bridge data — only re-fetch when chain/provider/contract changes
+  // The static contract values and API fees each have a shared 20-minute cache.
+  // This effect can safely rerun when the route changes without producing
+  // duplicate network traffic.
   useEffect(() => {
     let isMounted = true;
 
@@ -121,15 +111,46 @@ export const useGetMPBBridgeData = (
     const loadStaticBridgeData = async () => {
       const sourceChainName = sourceChain || "celo";
       const targetChainName = targetChain || "fuse";
+      const sourceDecimals = G$Decimals["G$"][sourceChainId as SupportedChains] ?? 18;
 
       try {
-        const [fees] = await Promise.allSettled([
+        const [fees, staticContractData] = await Promise.allSettled([
           fetchBridgeFees(),
-          mpbContract ? fetchContractLimits(mpbContract, sourceChainId) : Promise.resolve(),
-          mpbContract ? fetchProtocolFee(mpbContract) : Promise.resolve()
+          mpbContract ? fetchMPBStaticBridgeData(mpbContract, sourceChainId) : Promise.reject()
         ]);
 
         if (!isMounted) return;
+
+        if (staticContractData.status === "fulfilled") {
+          const to18IfSourceDecimals = (value: ethers.BigNumber): ethers.BigNumber => {
+            if (value.lt(THRESHOLD_18_DECIMALS)) {
+              return normalizeAmountTo18(value, sourceChainId);
+            }
+
+            return value;
+          };
+
+          const rawMin = staticContractData.value.minAmount.gt(0)
+            ? staticContractData.value.minAmount
+            : ethers.utils.parseUnits("10", sourceDecimals);
+          const rawMax = staticContractData.value.txLimit.gt(0)
+            ? staticContractData.value.txLimit
+            : ethers.constants.MaxUint256;
+
+          setBridgeLimits({
+            minAmount: to18IfSourceDecimals(rawMin),
+            maxAmount: to18IfSourceDecimals(rawMax)
+          });
+          setProtocolFeePercent(staticContractData.value.protocolFeeBps.toNumber() / 10000);
+        } else {
+          // Preserve the existing conservative fallback so a temporary RPC
+          // outage does not leave the form without usable limits.
+          setBridgeLimits({
+            minAmount: normalizeAmountTo18(ethers.utils.parseUnits("10", sourceDecimals), sourceChainId),
+            maxAmount: ethers.constants.MaxUint256
+          });
+          setProtocolFeePercent(null);
+        }
 
         if (fees.status === "fulfilled" && fees.value) {
           calculateFees(fees.value, sourceChainName, targetChainName, bridgeProvider);
@@ -151,16 +172,7 @@ export const useGetMPBBridgeData = (
     return () => {
       isMounted = false;
     };
-  }, [
-    sourceChain,
-    targetChain,
-    bridgeProvider,
-    calculateFees,
-    mpbContract,
-    fetchContractLimits,
-    fetchProtocolFee,
-    sourceChainId
-  ]);
+  }, [sourceChain, targetChain, bridgeProvider, calculateFees, mpbContract, sourceChainId]);
 
   // Local-only validation against cached limits — no network calls
   // canBridge is checked at transaction time by useBridgeValidators

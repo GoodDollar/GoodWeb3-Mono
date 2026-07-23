@@ -74,6 +74,29 @@ const MyBridgePage = () => {
 };
 ```
 
+### Bridge-specific read-only RPCs
+
+`bridgeReadOnlyUrls` is a numeric chain-id-to-URL map. The same map is used for
+history, balances, limits, allowance, validation, fee estimation, and target
+chain completion monitoring. The connected wallet provider is still used for
+network switching, signing, transaction submission, and receipt polling.
+
+```typescript
+<MPBBridgeController
+  bridgeReadOnlyUrls={{
+    1: "https://your-ethereum-rpc.example",
+    50: "https://your-xdc-rpc.example",
+    122: "https://your-fuse-rpc.example",
+    42220: "https://your-celo-rpc.example"
+  }}
+/>
+```
+
+All four balances are preloaded so source-chain switching remains immediate,
+then refreshed at most once per minute. Bridge limits, the protocol fee, and
+GoodServer route fees are cached for 20 minutes; stale cached values are used
+when a temporary RPC or API failure would otherwise make the bridge unusable.
+
 ## Bridge Flow
 
 1. **User selects source and target chains** (Fuse ↔ Celo ↔ Mainnet)

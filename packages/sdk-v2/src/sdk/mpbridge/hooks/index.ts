@@ -4,6 +4,8 @@ export * from "./useGetMPBBridgeData";
 export * from "./useLayerZeroFee";
 export * from "./useMPBBridge.helpers";
 export * from "./useMPBBridge";
+export * from "./useMPBBridgeBalances";
+export * from "./useMPBBridgeContracts";
 export * from "./useMPBBridgeHistory.helpers";
 export * from "./useMPBBridgeHistory";
 export * from "./useMPBG$TokenContract";

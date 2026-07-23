@@ -44,7 +44,8 @@ export const useMPBBridgeFeatureController = ({
     sourceChain,
     targetChain,
     amountWei: inputTransaction[0],
-    account
+    account,
+    readOnlyUrls: bridgeReadOnlyUrls
   });
   const { bridgeFees, bridgeLimits, validation, isLoading: bridgeDataLoading } = bridgeData;
   const protocolFeePercent = (bridgeData as any).protocolFeePercent as number | null;

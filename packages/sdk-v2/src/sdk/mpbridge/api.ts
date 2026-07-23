@@ -1,109 +1,118 @@
 import { ethers } from "ethers";
 
 const BRIDGE_FEES_CACHE_KEY = "mpb_bridge_fees_cache";
-const CACHE_DURATION_MS = 5 * 60 * 1000; // 5 minutes
+export const BRIDGE_FEES_CACHE_DURATION_MS = 20 * 60 * 1000;
 
 interface CachedFees {
   data: any;
   timestamp: number;
 }
 
-// Get cached fees from localStorage
-const getCachedFees = (): any | null => {
+let inFlightFeesRequest: Promise<any | null> | undefined;
+let memoryFeesCache: CachedFees | null = null;
+
+/**
+ * The fee endpoint is shared by the route selector, validation, and final
+ * transaction preparation. A single cache here keeps every caller consistent
+ * and avoids each UI layer maintaining its own copy.
+ */
+const getCachedFees = (): CachedFees | null => {
+  if (memoryFeesCache) {
+    return memoryFeesCache;
+  }
+
+  if (typeof localStorage === "undefined") {
+    return null;
+  }
+
   try {
     const cached = localStorage.getItem(BRIDGE_FEES_CACHE_KEY);
     if (!cached) return null;
 
-    const { data, timestamp }: CachedFees = JSON.parse(cached);
-    const age = Date.now() - timestamp;
-
-    if (age < CACHE_DURATION_MS) {
-      console.log(`⚡ Using cached bridge fees (age: ${Math.floor(age / 1000)} seconds)`);
-      return data;
-    }
-
-    // Cache expired, remove it
-    localStorage.removeItem(BRIDGE_FEES_CACHE_KEY);
-    return null;
-  } catch (error) {
-    console.error("Error reading cached fees:", error);
+    memoryFeesCache = JSON.parse(cached);
+    return memoryFeesCache;
+  } catch {
     return null;
   }
 };
 
-// Save fees to cache
 const setCachedFees = (data: any): void => {
+  const cached: CachedFees = {
+    data,
+    timestamp: Date.now()
+  };
+  memoryFeesCache = cached;
+
+  if (typeof localStorage === "undefined") {
+    return;
+  }
+
   try {
-    const cached: CachedFees = {
-      data,
-      timestamp: Date.now()
-    };
     localStorage.setItem(BRIDGE_FEES_CACHE_KEY, JSON.stringify(cached));
-  } catch (error) {
-    console.error("Error caching fees:", error);
+  } catch {
+    // Storage can be unavailable in privacy modes. The in-memory cache still
+    // prevents duplicate requests during the current load.
   }
 };
 
-// GoodDollar Bridge API functions
-export const fetchBridgeFees = async (retries = 1, delay = 1000) => {
-  // Check cache first
-  const cachedFees = getCachedFees();
-  if (cachedFees) {
-    return cachedFees;
-  }
-
-  console.log("🔄 Fetching bridge fees from API...");
-
+const requestBridgeFees = async (retries: number, delay: number, staleFees: any | null) => {
   for (let i = 0; i < retries; i++) {
     try {
       const response = await fetch("https://goodserver.gooddollar.org/bridge/estimatefees");
 
       if (response.ok) {
         const data = await response.json();
-        // Cache the successful response
         setCachedFees(data);
-        console.log("✅ Bridge fees fetched successfully");
         return data;
       }
 
-      // If rate limited (429), return cached fees or null
       if (response.status === 429) {
-        console.warn("⚠️ Rate limited (429) - using cached fees if available");
-        // Try to return even expired cache
-        try {
-          const cached = localStorage.getItem(BRIDGE_FEES_CACHE_KEY);
-          if (cached) {
-            const { data } = JSON.parse(cached);
-            console.log("⚡ Using expired cache due to rate limiting");
-            return data;
-          }
-        } catch (e) {
-          // Ignore cache read errors
-        }
-        return null;
+        return staleFees;
       }
 
       throw new Error(`HTTP error! status: ${response.status}`);
     } catch (error) {
       console.error(`Error fetching bridge fees (attempt ${i + 1}/${retries}):`, error);
       if (i === retries - 1) {
-        // On final retry failure, try to use even expired cache
-        try {
-          const cached = localStorage.getItem(BRIDGE_FEES_CACHE_KEY);
-          if (cached) {
-            const { data } = JSON.parse(cached);
-            console.log("⚡ Using expired cache due to fetch error");
-            return data;
-          }
-        } catch (e) {
-          // Ignore cache read errors
-        }
-        return null;
+        return staleFees;
       }
       await new Promise(resolve => setTimeout(resolve, delay));
     }
   }
-  return null;
+
+  return staleFees;
+};
+
+export const fetchBridgeFees = async (retries = 1, delay = 1000) => {
+  const cached = getCachedFees();
+
+  if (cached?.data && Date.now() - cached.timestamp < BRIDGE_FEES_CACHE_DURATION_MS) {
+    return cached.data;
+  }
+
+  // Route selection and transaction preparation can request fees at nearly the
+  // same time. Sharing the active promise guarantees one HTTP request per cache
+  // refresh, while stale data remains available if the endpoint is rate-limited.
+  if (!inFlightFeesRequest) {
+    inFlightFeesRequest = requestBridgeFees(retries, delay, cached?.data ?? null).finally(() => {
+      inFlightFeesRequest = undefined;
+    });
+  }
+
+  return inFlightFeesRequest;
+};
+
+export const clearBridgeFeesCache = () => {
+  memoryFeesCache = null;
+  inFlightFeesRequest = undefined;
+
+  if (typeof localStorage !== "undefined") {
+    try {
+      localStorage.removeItem(BRIDGE_FEES_CACHE_KEY);
+    } catch {
+      // No action is required when storage is unavailable.
+    }
+  }
 };
 
 export const convertFeeToWei = (fee: string): string => {

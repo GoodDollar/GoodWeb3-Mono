@@ -3,7 +3,7 @@ import { TransactionStatus, useEthers } from "@usedapp/core";
 import { ethers } from "ethers";
 import { useSwitchNetwork } from "../../../contexts";
 import { useG$Decimals } from "../../base/react";
-import { BridgeService, BridgeRequest, UseMPBBridgeReturn } from "../types";
+import { BridgeService, BridgeRequest, MPBBridgeReadOnlyUrls, UseMPBBridgeReturn } from "../types";
 import { fetchBridgeFees } from "../api";
 import {
   BridgeProvider,
@@ -11,7 +11,8 @@ import {
   getTargetChainId,
   getSourceChainId,
   calculateBridgeFees,
-  createEmptyBridgeFees
+  createEmptyBridgeFees,
+  BRIDGE_CONSTANTS
 } from "../constants";
 
 import { useGetContract } from "../../base/react";
@@ -20,6 +21,7 @@ import { useLayerZeroFee } from "./useLayerZeroFee";
 import { useBridgeMonitoring } from "./useBridgeMonitoring";
 import { useBridgeValidators } from "./useBridgeValidators";
 import { getTransactionErrorMessage, isTransientBlockReadError } from "./useMPBBridge.helpers";
+import { useMPBBridgeContracts } from "./useMPBBridgeContracts";
 
 const APPROVE_TRANSACTION_NAME = "MPBBridgeApprove";
 const BRIDGE_TO_TRANSACTION_NAME = "MPBBridgeTo";
@@ -69,7 +71,10 @@ const waitForReceiptAfterSubmission = async (
   return undefined;
 };
 
-export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBBridgeReturn => {
+export const useMPBBridge = (
+  bridgeProvider: BridgeProvider = "axelar",
+  readOnlyUrls?: MPBBridgeReadOnlyUrls
+): UseMPBBridgeReturn => {
   const bridgeLock = useRef(false);
   const bridgeToTriggered = useRef(false);
   const bridgeToSending = useRef(false);
@@ -84,6 +89,12 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
   const bridgeContract = useGetContract("MpbBridge", false, "base", chainId);
   const bridgeContractOrNull = bridgeContract ?? null;
   const tokenDecimals = useG$Decimals("G$", chainId);
+  const readOnlyChainId = bridgeRequest?.sourceChainId ?? chainId ?? BRIDGE_CONSTANTS.DEFAULT_CHAIN_ID;
+  const {
+    provider: bridgeReadOnlyProvider,
+    bridgeContract: readOnlyBridgeContract,
+    tokenContract: readOnlyGdContract
+  } = useMPBBridgeContracts(readOnlyChainId, readOnlyUrls);
 
   const [approveState, setApproveState] = useState<TransactionStatus>(() =>
     createIdleTransactionStatus(APPROVE_TRANSACTION_NAME)
@@ -250,7 +261,7 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
     [bridgeToState, sendBridgeTo, resetBridgeToState]
   );
 
-  const { computeLayerZeroFee } = useLayerZeroFee(bridgeContractOrNull, bridgeProvider, account);
+  const { computeLayerZeroFee } = useLayerZeroFee(readOnlyBridgeContract, bridgeProvider, account);
 
   const { bridgeStatus } = useBridgeMonitoring(
     bridgeRequest,
@@ -258,16 +269,17 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
     approve.state,
     bridgeTo.state,
     isSwitchingChain,
-    switchChainError
+    switchChainError,
+    readOnlyUrls
   );
 
   const { validateBridgeTransaction } = useBridgeValidators(
     account,
-    gdContract,
-    bridgeContractOrNull,
+    readOnlyGdContract,
+    readOnlyBridgeContract,
     bridgeProvider,
     tokenDecimals,
-    library
+    bridgeReadOnlyProvider
   );
 
   const sendMPBBridgeRequest = useCallback(
@@ -483,7 +495,8 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
       bridgeRequest &&
       account &&
       !bridgeLock.current &&
-      !isSwitchingChain;
+      !isSwitchingChain &&
+      chainId === bridgeRequest.sourceChainId;
 
     if (shouldExecute) {
       bridgeLock.current = true;
@@ -502,7 +515,15 @@ export const useMPBBridge = (bridgeProvider: BridgeProvider = "axelar"): UseMPBB
           setBridgeRequest(undefined);
         });
     }
-  }, [approve.state.status, bridgeTo.state.status, bridgeRequest, account, executeBridgeTransaction, isSwitchingChain]);
+  }, [
+    approve.state.status,
+    bridgeTo.state.status,
+    bridgeRequest,
+    account,
+    executeBridgeTransaction,
+    isSwitchingChain,
+    chainId
+  ]);
 
   useEffect(() => {
     const isApproveSuccess = approve.state.status === "Success";
