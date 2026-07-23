@@ -3,7 +3,7 @@ import { Trans as LinguiTrans } from "@lingui/react";
 
 import { Heading, IButtonProps, ITextProps, IHeadingProps, Text } from "native-base";
 import Title from "./Title";
-import GoodButton from "../buttons/GoodButton";
+import { GoodButton } from "../buttons";
 
 /**
  * Use this component when wanting to apply Text variants (see theme.tsx)

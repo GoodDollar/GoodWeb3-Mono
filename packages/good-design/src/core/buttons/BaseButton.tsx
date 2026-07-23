@@ -2,8 +2,7 @@ import { IButtonProps, ITextProps, View } from "native-base";
 import { IViewProps } from "native-base/lib/typescript/components/basic/View/types";
 import React from "react";
 
-import GoodButton from "./GoodButton";
-import { TransText } from "../layout/Trans";
+import { GoodButton, TransText } from "../";
 import { withTheme } from "../../theme/hoc/withTheme";
 
 export interface BaseButtonProps extends IButtonProps {
