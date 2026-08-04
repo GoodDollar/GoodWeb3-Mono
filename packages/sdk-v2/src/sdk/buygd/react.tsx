@@ -28,7 +28,10 @@ export const useBuyGd = ({
   const { baseEnv, connectedEnv } = useGetEnvChainId(42220);
   const devEnv = baseEnv === "fuse" ? "development" : baseEnv;
   const { backend } = Envs[devEnv];
-  const buyGdFactory = new Contract(contractAddresses[connectedEnv].BuyGDFactoryV2, buygdAbi);
+  const buyGdFactory = new Contract(
+    contractAddresses[connectedEnv].BUYGDFactoryV3 ?? contractAddresses[connectedEnv].BuyGDFactoryV2,
+    buygdAbi
+  );
 
   const targetGDHelper = useCall(
     account &&
