@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Onramper } from "./Onramper";
 import { useEthers, useEtherBalance, useTokenBalance } from "@usedapp/core";
 import { WebViewMessageEvent } from "react-native-webview";
-import { AsyncStorage, Envs, useBuyGd, useGetEnvChainId } from "@gooddollar/web3sdk-v2";
+import { AsyncStorage, Envs, EnvKey, useBuyGd, useGetEnvChainId } from "@gooddollar/web3sdk-v2";
 import { noop } from "lodash";
 
 import { useModal } from "../../hooks/useModal";
@@ -18,6 +18,8 @@ const ErrorModal = () => (
 
 interface IGdOnramperProps {
   isTesting?: boolean;
+  /** Optional BuyGD contract environment override. The backend remains context-based. */
+  env?: EnvKey;
   onEvents: (action: string, data?: any, error?: string) => void;
   selfSwap?: boolean;
   withSwap?: boolean;
@@ -28,6 +30,7 @@ interface IGdOnramperProps {
 
 export const GdOnramperWidget = ({
   isTesting = false,
+  env,
   onEvents = noop,
   selfSwap = false,
   withSwap = true,
@@ -45,7 +48,8 @@ export const GdOnramperWidget = ({
   const { createAndSwap, swap, swapState, createState, gdHelperAddress, triggerSwapTx } = useBuyGd({
     donateOrExecTo,
     callData,
-    withSwap
+    withSwap,
+    env
   });
 
   const { SignWalletModal } = useSignWalletModal();

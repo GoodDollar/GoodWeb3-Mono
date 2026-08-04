@@ -3,7 +3,7 @@ import * as ethers from "ethers";
 import { useCall, useEthers } from "@usedapp/core";
 import contractAddresses from "@gooddollar/goodprotocol/releases/deployment.json";
 
-import { Envs } from "../../sdk";
+import { Envs, EnvKey } from "../../sdk";
 import { useGetEnvChainId } from "../../sdk";
 
 import { useContractFunctionWithDefaultGasFees } from "../../sdk";
@@ -18,18 +18,22 @@ const buygdAbi = [
 export const useBuyGd = ({
   donateOrExecTo,
   callData,
-  withSwap
+  withSwap,
+  env
 }: {
   donateOrExecTo?: string;
   callData?: string;
   withSwap?: boolean;
+  /** Optional contract environment override. The backend remains context-based. */
+  env?: EnvKey;
 }) => {
   const { account, chainId } = useEthers();
   const { baseEnv, connectedEnv } = useGetEnvChainId(42220);
   const devEnv = baseEnv === "fuse" ? "development" : baseEnv;
   const { backend } = Envs[devEnv];
+  const contractEnv = env ? (env.includes("-") ? env : `${env}-celo`) : connectedEnv;
   const buyGdFactory = new Contract(
-    contractAddresses[connectedEnv].BUYGDFactoryV3 ?? contractAddresses[connectedEnv].BuyGDFactoryV2,
+    contractAddresses[contractEnv].BUYGDFactoryV3 ?? contractAddresses[contractEnv].BuyGDFactoryV2,
     buygdAbi
   );
 
