@@ -19,24 +19,29 @@ interface CurrencyBoxProps {
 
 const CurrencyBox = ({ title, placeholder, logoSrc, currencyUnit, onBlur, onChangeText }: CurrencyBoxProps) => (
   <Box bg="goodWhite.100" p={4} borderRadius={2} mb={2} justifyContent="flex-start" justifyItems="flex-start">
-    <Text>{title}</Text>
+    <Text fontSize="sm" fontWeight="500" color="goodGrey.600">
+      {title}
+    </Text>
     <Divider orientation="horizontal" w="100%" bg="goodGrey.400" mb={2} mt={2} />
     <CentreBox flexDirection="row" justifyContent="space-between">
       <CentreBox alignItems="flex-start">
         <Input
-          fontSize={6}
+          fontSize="2xl"
           maxW={220}
           ml={0}
           _focus={{ backgroundColor: "none" }}
           pl={0}
           fontWeight={700}
+          color="goodGrey.800"
           placeholder={placeholder}
           variant="unstyled"
           onBlur={onBlur}
           onChangeText={onChangeText}
           overflow="hidden"
         />
-        <Text>{currencyUnit}</Text>
+        <Text fontSize="md" fontWeight="600" color="goodGrey.600" mt={1}>
+          {currencyUnit}
+        </Text>
       </CentreBox>
       <CentreBox w="100" h="50" backgroundColor="white" flexDirection="row" justifyContent="space-around">
         <Image source={logoSrc} w="8" h="8" style={{ resizeMode: "contain" }} borderRadius="md" />
