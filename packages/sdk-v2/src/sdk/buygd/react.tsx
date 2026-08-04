@@ -29,7 +29,7 @@ export const useBuyGd = ({
   const devEnv = baseEnv === "fuse" ? "development" : baseEnv;
   const { backend } = Envs[devEnv];
   const buyGdFactory = new Contract(
-    contractAddresses[connectedEnv].BUYGDFactoryV3 || contractAddresses[connectedEnv].BuyGDFactoryV2,
+    contractAddresses[connectedEnv].BUYGDFactoryV3 ?? contractAddresses[connectedEnv].BuyGDFactoryV2,
     buygdAbi
   );
 
