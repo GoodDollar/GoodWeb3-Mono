@@ -9,3 +9,4 @@ export * from "./ErrorModal";
 export * from "./YouSureModal";
 export * from "./TxDetailsModal";
 export * from "./SwitchChainModal";
+export * from "./ReserveLimitModal";
