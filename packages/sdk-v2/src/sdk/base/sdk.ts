@@ -101,12 +101,14 @@ export class BaseSDK {
       })
       .catch(noop);
 
-    const signer = provider.getSigner();
-
-    signer
-      .getAddress()
-      .then(async () => void (this.signer = signer))
-      .catch(noop);
+    // Read-only BaseProviders (including FallbackProvider) do not expose a signer.
+    if (typeof provider.getSigner === "function") {
+      const signer = provider.getSigner();
+      signer
+        .getAddress()
+        .then(async () => void (this.signer = signer))
+        .catch(noop);
+    }
   }
 
   getContract(contractName: "UBIScheme"): UBIScheme;
