@@ -103,7 +103,7 @@ describe("MicroBridge transfer submission", () => {
     expect(latest.state.receipt).toBe(receipt);
   });
 
-  it("keeps genuine Safe bytecode on usedapp's Safe-aware path", async () => {
+  it("routes non-delegation contract code through usedapp's Safe-aware fallback", async () => {
     mockLibrary.getCode.mockResolvedValue("0x6001600055");
     render(<View />);
 
@@ -144,6 +144,28 @@ describe("MicroBridge transfer submission", () => {
     });
     expect(latest.state.status).toBe("Fail");
     expect(latest.state.receipt).toBe(revertedReceipt);
+  });
+
+  it("keeps mining state and the transaction hash when receipt tracking fails without a receipt", async () => {
+    mockLibrary.getCode.mockResolvedValue(eip7702Code);
+    ordinaryTransaction.wait.mockRejectedValue(new Error("RPC unavailable"));
+    render(<View />);
+
+    const submit = jest.fn().mockResolvedValue(ordinaryTransaction);
+    (mockContract.connect as jest.Mock).mockReturnValue({ transferAndCall: submit });
+    await act(async () => {
+      await latest.send("to", "amount", "data");
+    });
+    await act(async () => {
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    expect(latest.state.status).toBe("Mining");
+    expect(latest.state.transaction).toBe(ordinaryTransaction);
+    expect(latest.state.transaction?.hash).toBe(ordinaryTransaction.hash);
+    expect(latest.state.errorMessage).toMatch(/Unable to confirm transaction/);
+    expect(submit).toHaveBeenCalledTimes(1);
   });
 
   it("recognizes only the 23-byte EIP-7702 delegation designator", () => {
