@@ -103,6 +103,14 @@ export const useMicroBridgeTransfer = (contract: Contract) => {
                 transactionName: "BridgeTransfer",
                 errorMessage: error.cancelled || receipt.status === 0 ? "Bridge transaction failed" : undefined
               });
+            } else {
+              setWalletSignerState({
+                status: "Mining",
+                chainId,
+                transaction: submittedTransaction,
+                transactionName: "BridgeTransfer",
+                errorMessage: "Unable to confirm transaction. Check its status using the transaction hash."
+              });
             }
           });
         return transaction;
