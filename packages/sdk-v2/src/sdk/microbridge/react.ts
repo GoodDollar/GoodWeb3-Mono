@@ -13,8 +13,8 @@ import { useSwitchNetwork } from "../../contexts";
 import useRefreshOrNever from "../../hooks/useRefreshOrNever";
 import { useGetContract, useGetEnvChainId } from "../base/react";
 import { SupportedChains, formatAmount } from "../constants";
-import { useContractFunctionWithDefaultGasFees } from "../base/hooks/useGasFees";
 import { useMicroBridgeHistory } from "./useMicroBridgeHistory";
+import { useMicroBridgeTransfer } from "./useMicroBridgeTransfer";
 
 export const useGetBridgeContracts = () => {
   const { baseEnv } = useGetEnvChainId();
@@ -111,13 +111,7 @@ export const useBridge = (withRelay = false) => {
   const [selfRelayStatus, setSelfRelay] = useState<Partial<TransactionStatus> | undefined>();
 
   // const bridgeTo = useContractFunction(bridgeContract, "bridgeTo", {});
-  const transferAndCall = useContractFunctionWithDefaultGasFees(
-    chainId === 122 ? gdFuseContract : gdCeloContract,
-    "transferAndCall",
-    {
-      transactionName: "BridgeTransfer"
-    }
-  );
+  const transferAndCall = useMicroBridgeTransfer(chainId === 122 ? gdFuseContract : gdCeloContract);
   const bridgeRequestId = (transferAndCall.state?.receipt?.logs || [])
     .filter(log => log.address === bridgeContract.address)
     .map(log => bridgeContract.interface.parseLog(log))?.[0]?.args?.id;
@@ -180,6 +174,7 @@ export const useBridge = (withRelay = false) => {
         .send(bridgeContract.address, bridgeRequest.amount, encoded)
         .then(async sendTx => {
           if (sendTx && withRelay) {
+            const sendTxHash = "transactionHash" in sendTx ? sendTx.transactionHash : sendTx.hash;
             let relayTxHash = "";
 
             try {
@@ -190,7 +185,7 @@ export const useBridge = (withRelay = false) => {
               const { relayTxHash: txHash = "", relayPromise } = await relayTx(
                 chainId || 0,
                 bridgeRequest.targetChainId,
-                sendTx.transactionHash
+                sendTxHash
               );
               relayTxHash = txHash;
               setSelfRelay({
