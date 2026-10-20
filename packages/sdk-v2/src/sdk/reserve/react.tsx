@@ -9,6 +9,7 @@ import { useRefreshOrNever } from "../../hooks";
 import { getReserveLimitReason, RESERVE_LIMIT_ERROR, ReserveTransactionStatus } from "./errors";
 import { checkReserveAlternative, ReserveAlternative, withReserveCheckTimeout } from "./alternative";
 import { useReadOnlyProvider } from "../../hooks/useMulticallAtChain";
+import { useWeb3Context } from "../../contexts/Web3Context";
 
 const exchangeAbi = [
   "function currentPrice(bytes32 exchangeId) external view returns (uint256 price)",
@@ -194,6 +195,7 @@ export const useSwapMeta = (
 // including EOAs carrying an EIP-7702 delegation (for example MetaMask gas delegation).
 const useReserveContractFunction = (contract: Contract, functionName: string) => {
   const { account, chainId, library } = useEthers();
+  const { qa } = useWeb3Context();
   const gasFees = useGasFees();
   const [state, setState] = useState<ReserveTransactionStatus>({ status: "None" });
   const [events, setEvents] = useState<ethers.utils.LogDescription[] | undefined>();
@@ -208,9 +210,24 @@ const useReserveContractFunction = (contract: Contract, functionName: string) =>
 
       let transaction: ethers.providers.TransactionResponse | undefined;
       setEvents(undefined);
+      const forceTradeLimits = process.env.NODE_ENV === "development" && qa?.forceTradeLimits === true;
+      if (forceTradeLimits && functionName === "approve") {
+        setState({
+          status: "Exception",
+          chainId,
+          errorMessage: "Reserve approvals are disabled in QA force-trade-limits mode"
+        });
+        return undefined;
+      }
       setState({ status: "PendingSignature", chainId });
 
       try {
+        if (forceTradeLimits) {
+          if ((chainId === 42220 || chainId === 50) && (functionName === "swapIn" || functionName === "swapOut")) {
+            throw new Error("L0Out Exceeded");
+          }
+          throw new Error("Reserve submissions are disabled in QA force-trade-limits mode");
+        }
         const signer = (library as ethers.providers.Web3Provider).getSigner(account);
         const contractWithSigner = contract.connect(signer);
         const overrides: ethers.Overrides = {};
@@ -279,7 +296,7 @@ const useReserveContractFunction = (contract: Contract, functionName: string) =>
         return undefined;
       }
     },
-    [account, chainId, library, contract, functionName, gasFees]
+    [account, chainId, library, contract, functionName, gasFees, qa?.forceTradeLimits]
   );
 
   return { state, send, resetState, events };

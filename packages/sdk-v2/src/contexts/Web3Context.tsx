@@ -15,6 +15,18 @@ import { GReputation, IGoodDollar } from "@gooddollar/goodprotocol/types";
 export type SwitchNetwork = (id: number) => Promise<void>;
 export type SwitchCallback = (id: number, switchResult: any) => Promise<void>;
 
+export type Web3QaOptions = {
+  forceTradeLimits?: boolean;
+};
+
+export type EffectiveWeb3QaOptions = {
+  forceTradeLimits: boolean;
+};
+
+export const getEffectiveWeb3Qa = (qa?: Web3QaOptions): EffectiveWeb3QaOptions => ({
+  forceTradeLimits: process.env.NODE_ENV === "development" && qa?.forceTradeLimits === true
+});
+
 export type TxDetails = {
   txhash: string;
   title: string;
@@ -38,6 +50,7 @@ type IWeb3Context = {
   txEmitter: TxEmitter;
   env: EnvKey;
   web3Provider?: JsonRpcProvider | W3Provider;
+  qa: EffectiveWeb3QaOptions;
 };
 
 const ee = new EventEmitter<string>();
@@ -52,7 +65,8 @@ export const Web3Context = createContext<IWeb3Context>({
   connectWallet: () => undefined,
   txEmitter,
   env: "development-celo",
-  web3Provider: undefined
+  web3Provider: undefined,
+  qa: { forceTradeLimits: false }
 });
 
 export const useWeb3Context = () => useContext(Web3Context);
@@ -65,6 +79,7 @@ export type Props = {
   web3Provider?: JsonRpcProvider | W3Provider;
   env?: EnvKey;
   switchNetworkRequest?: SwitchNetwork;
+  qa?: Web3QaOptions;
 };
 
 export const Fuse: Chain = {
@@ -194,8 +209,9 @@ const defaultConfig: Config = {
   }
 };
 
-export const Web3Provider = ({ children, config: inConfig, web3Provider, env = "production" }: Props) => {
+export const Web3Provider = ({ children, config: inConfig, web3Provider, env = "production", qa }: Props) => {
   const config = defaultsDeep(inConfig, defaultConfig);
+  const effectiveQa = useMemo(() => getEffectiveWeb3Qa(qa), [qa]);
   const [switchNetwork, setSwitchNetwork] = useState<SwitchNetwork>();
   const [onSwitchNetwork, setOnSwitchNetwork] = useState<SwitchCallback>();
 
@@ -253,7 +269,8 @@ export const Web3Provider = ({ children, config: inConfig, web3Provider, env = "
           setOnSwitchNetwork,
           txEmitter,
           env,
-          web3Provider
+          web3Provider,
+          qa: effectiveQa
         }}
       >
         <TokenProvider>{children}</TokenProvider>
