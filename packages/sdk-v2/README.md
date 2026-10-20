@@ -21,6 +21,14 @@ import { Mainnet, Call } from "@usedapp/core";
 </Web3Provider>
 ```
 
+## Reserve-limit QA mode
+
+The shared opt-in API is `qa?: { forceTradeLimits?: boolean }` on the SDK `Web3Provider`. ProtocolUI should map `REACT_APP_QA_FORCE_TRADE_LIMITS=true` to `qa={{ forceTradeLimits: true }}` only in its development build, and gate the labelled QA flow on `useWeb3Context().qa?.forceTradeLimits === true`. Missing or false capability means the active SDK does not support this mode.
+
+The SDK additionally requires `NODE_ENV === "development"`; production builds always report the effective capability as false and do not activate the QA path. This build safeguard is independent of `env`, which selects contract deployments. Use Celo/XDC mainnet read-only RPC data rather than changing the deployment environment. On Celo/XDC, swapIn/swapOut calls raise the recognized `L0Out Exceeded` error through the existing classifier without requesting a signer or submitting a transaction. Direct approval and other Reserve submission calls are blocked with a separate QA-disabled error. Balances, allowances, success/receipt states, and live transaction execution are not simulated.
+
+Rebuild and yalc-publish the SDK with `yarn workspace @gooddollar/web3sdk-v2 build`. This runs ctix and TypeScript builds followed by `yalc publish --push --sig`; npm publication is not required for the paired QA workflow.
+
 ### emit TX
 Notify listeners about TX your compoent has done
 Listen to TXs by other components
