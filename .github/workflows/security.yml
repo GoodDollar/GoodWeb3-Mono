@@ -1,0 +1,57 @@
+name: Security Checks Workflow
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  security-checks:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0  # Ensure full history is available for security checks
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          yarn install --immutable
+        env:
+          NODE_ENV: production
+
+      - name: Run security checks
+        run: |
+          # Run comprehensive security checks
+          yarn run security-check || { echo "Security check failed"; exit 1; }
+          yarn run audit || { echo "Audit failed"; exit 1; }
+          yarn run snyk test || { echo "Snyk test failed"; exit 1; }
+        env:
+          CI: true
+          SECURITY_CHECKS: true
+
+      - name: Upload security report
+        uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: security-report
+          path: |
+            ./security-report.json
+            ./audit-report.json
+            ./snyk-report.json
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "Security checks failed. Please review the logs."
+          # Add additional notification logic here if needed
