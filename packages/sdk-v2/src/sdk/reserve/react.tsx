@@ -1,10 +1,15 @@
-import { useMemo } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { BigNumber, Contract, ethers } from "ethers";
-import { ERC20Interface, QueryParams, useCall, useCalls, useTokenAllowance } from "@usedapp/core";
+import { ERC20Interface, QueryParams, useCall, useCalls, useEthers, useTokenAllowance } from "@usedapp/core";
 
 import contractAddresses from "@gooddollar/goodprotocol/releases/deployment.json";
-import { useContractFunctionWithDefaultGasFees, useG$Tokens, useGetEnvChainId } from "../../sdk";
+import { useG$Tokens, useGetEnvChainId } from "../base/react";
+import { useGasFees } from "../base/hooks/useGasFees";
 import { useRefreshOrNever } from "../../hooks";
+import { getReserveLimitReason, RESERVE_LIMIT_ERROR, ReserveTransactionStatus } from "./errors";
+import { checkReserveAlternative, ReserveAlternative, withReserveCheckTimeout } from "./alternative";
+import { useReadOnlyProvider } from "../../hooks/useMulticallAtChain";
+import { useWeb3Context } from "../../contexts/Web3Context";
 
 const exchangeAbi = [
   "function currentPrice(bytes32 exchangeId) external view returns (uint256 price)",
@@ -186,6 +191,117 @@ export const useSwapMeta = (
   };
 };
 
+// Submit directly, as in MPBBridge: usedapp assumes every account with bytecode is a Safe,
+// including EOAs carrying an EIP-7702 delegation (for example MetaMask gas delegation).
+const useReserveContractFunction = (contract: Contract, functionName: string) => {
+  const { account, chainId, library } = useEthers();
+  const { qa } = useWeb3Context();
+  const gasFees = useGasFees();
+  const [state, setState] = useState<ReserveTransactionStatus>({ status: "None" });
+  const [events, setEvents] = useState<ethers.utils.LogDescription[] | undefined>();
+  const resetState = useCallback(() => setState({ status: "None" }), []);
+
+  const send = useCallback(
+    async (...args: any[]) => {
+      if (!library || !account || !chainId) {
+        setState({ status: "Exception", chainId, errorMessage: "Wallet is not connected" });
+        return undefined;
+      }
+
+      let transaction: ethers.providers.TransactionResponse | undefined;
+      setEvents(undefined);
+      const forceTradeLimits = process.env.NODE_ENV === "development" && qa?.forceTradeLimits === true;
+      if (forceTradeLimits && functionName === "approve") {
+        setState({
+          status: "Exception",
+          chainId,
+          errorMessage: "Reserve approvals are disabled in QA force-trade-limits mode"
+        });
+        return undefined;
+      }
+      setState({ status: "PendingSignature", chainId });
+
+      try {
+        if (forceTradeLimits) {
+          if ((chainId === 42220 || chainId === 50) && (functionName === "swapIn" || functionName === "swapOut")) {
+            throw new Error("L0Out Exceeded");
+          }
+          throw new Error("Reserve submissions are disabled in QA force-trade-limits mode");
+        }
+        const signer = (library as ethers.providers.Web3Provider).getSigner(account);
+        const contractWithSigner = contract.connect(signer);
+        const overrides: ethers.Overrides = {};
+        // Match useContractFunctionWithDefaultGasFees without entering usedapp's Safe detection.
+        if (gasFees.gasPrice != null) overrides.maxFeePerGas = gasFees.gasPrice;
+        if (gasFees.maxPriorityFeePerGas != null) overrides.maxPriorityFeePerGas = gasFees.maxPriorityFeePerGas;
+        transaction = (await contractWithSigner[functionName](
+          ...args,
+          overrides
+        )) as ethers.providers.TransactionResponse;
+        setState({ status: "Mining", transaction, chainId });
+
+        const receipt = await transaction.wait();
+        const failed = receipt.status === 0;
+        setState({
+          status: failed ? "Fail" : "Success",
+          transaction,
+          receipt,
+          chainId,
+          errorMessage: failed ? "Reserve transaction failed" : undefined
+        });
+        setEvents(
+          receipt.logs.reduce<ethers.utils.LogDescription[]>((parsed, log) => {
+            try {
+              if (log.address.toLowerCase() === contract.address.toLowerCase()) {
+                parsed.push(contract.interface.parseLog(log));
+              }
+            } catch {
+              // Ignore logs not described by the contract ABI.
+            }
+            return parsed;
+          }, [])
+        );
+        return receipt;
+      } catch (error: any) {
+        // ethers rejects wait() for mined reverts and replacement transactions.
+        const receipt = error?.receipt as ethers.providers.TransactionReceipt | undefined;
+        if (transaction && error?.code === "TRANSACTION_REPLACED" && !error.cancelled && receipt) {
+          setState({
+            status: receipt.status === 0 ? "Fail" : "Success",
+            transaction: error.replacement,
+            originalTransaction: transaction,
+            receipt,
+            chainId,
+            originalError: receipt.status === 0 ? error : undefined,
+            errorType: receipt.status === 0 && getReserveLimitReason(error) ? RESERVE_LIMIT_ERROR : undefined,
+            errorMessage: receipt.status === 0 ? "Reserve transaction failed" : undefined
+          });
+          return receipt;
+        }
+        setState({
+          status: transaction ? "Fail" : "Exception",
+          transaction,
+          receipt,
+          chainId,
+          originalError: error,
+          errorType: getReserveLimitReason(error) ? RESERVE_LIMIT_ERROR : undefined,
+          errorMessage:
+            error?.error?.data?.message ||
+            error?.error?.message ||
+            error?.reason ||
+            error?.data?.message ||
+            error?.message ||
+            "Reserve transaction failed"
+        });
+        return undefined;
+      }
+    },
+    [account, chainId, library, contract, functionName, gasFees, qa?.forceTradeLimits]
+  );
+
+  return { state, send, resetState, events };
+};
+
 export const useSwap = (
   inputToken: string,
   outputToken: string,
@@ -195,6 +311,20 @@ export const useSwap = (
   if (exactInput && exactOutput) throw new Error("Only one of exactInput or exactOutput can be specified");
 
   const { connectedEnv } = useGetEnvChainId();
+  const { chainId } = useEthers();
+  const otherChainId = chainId === 42220 ? 50 : 42220;
+  const { defaultEnv: otherEnv } = useGetEnvChainId(otherChainId);
+  const sourceProvider = useReadOnlyProvider(chainId ?? 42220);
+  const otherProvider = useReadOnlyProvider(otherChainId);
+  const lastAlternativeCheck = useRef<() => Promise<ReserveAlternative | undefined>>();
+  const checkAlternativeReserve = useCallback(async () => {
+    try {
+      return await withReserveCheckTimeout(lastAlternativeCheck.current?.() ?? Promise.resolve(undefined));
+    } catch {
+      // Missing deployments, unsupported pairs, failed or stale RPC reads use the generic UI suggestion.
+      return undefined;
+    }
+  }, []);
   const { exchangeId } = useExchange();
 
   const exchangeProviderAddress =
@@ -209,14 +339,37 @@ export const useSwap = (
   );
 
   const tokenContract = useMemo(() => new Contract(inputToken, ERC20Interface), [inputToken]);
-  const approve = useContractFunctionWithDefaultGasFees(tokenContract, "approve");
+  const approve = useReserveContractFunction(tokenContract, "approve");
   const { send } = approve;
   approve.send = () => send(mentoBroker.address, exactInput ? exactInput.input : exactOutput?.maxAmountIn);
 
-  const swap = useContractFunctionWithDefaultGasFees(mentoBroker, exactInput ? "swapIn" : "swapOut");
+  const swap = useReserveContractFunction(mentoBroker, exactInput ? "swapIn" : "swapOut");
   const { send: swapSend } = swap;
   // address exchangeProvider,bytes32 exchangeId,address tokenIn,address tokenOut,uint256 amountIn,uint256 amountOutMin
   swap.send = async () => {
+    // Snapshot the submitted swap: the legacy UI clears its amount fields once mining starts.
+    // These reads run only when requested after a limit error and never touch the wallet signer.
+    lastAlternativeCheck.current = async () => {
+      if (!sourceProvider || !otherProvider || (chainId !== 42220 && chainId !== 50)) return undefined;
+      const sourceGd = contractAddresses[connectedEnv]?.GoodDollar?.toLowerCase();
+      const buying = outputToken.toLowerCase() === sourceGd;
+      if (!buying && inputToken.toLowerCase() !== sourceGd) return undefined;
+      const [inputDecimals, outputDecimals] = (await Promise.all([
+        tokenContract.connect(sourceProvider).decimals(),
+        new Contract(outputToken, ERC20Interface, sourceProvider).decimals()
+      ])) as [number, number];
+      return checkReserveAlternative(otherProvider, otherChainId, contractAddresses[otherEnv], {
+        buying,
+        exactInput: exactInput && {
+          input: ethers.utils.formatUnits(exactInput.input, inputDecimals),
+          minAmountOut: ethers.utils.formatUnits(exactInput.minAmountOut, outputDecimals)
+        },
+        exactOutput: exactOutput && {
+          output: ethers.utils.formatUnits(exactOutput.output, outputDecimals),
+          maxAmountIn: ethers.utils.formatUnits(exactOutput.maxAmountIn, inputDecimals)
+        }
+      });
+    };
     return swapSend(
       exchangeProviderAddress,
       exchangeId,
@@ -226,5 +379,5 @@ export const useSwap = (
       exactInput?.minAmountOut || exactOutput?.maxAmountIn
     );
   };
-  return { approve, swap };
+  return { approve, swap, checkAlternativeReserve };
 };

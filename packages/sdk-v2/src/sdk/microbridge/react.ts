@@ -4,7 +4,7 @@ import TokenBridgeABI from "@gooddollar/bridge-contracts/artifacts/contracts/bri
 import bridgeContracts from "@gooddollar/bridge-contracts/release/deployment.json";
 import { TokenBridge } from "@gooddollar/bridge-contracts/typechain-types/contracts/bridge/TokenBridge.sol/TokenBridge";
 import { IGoodDollar } from "@gooddollar/goodprotocol/types";
-import { ChainId, TransactionStatus, useCalls, useEthers, useLogs } from "@usedapp/core";
+import { TransactionStatus, useCalls, useEthers, useLogs } from "@usedapp/core";
 import { BigNumber, Contract, ethers } from "ethers";
 import { first, groupBy, mapValues } from "lodash";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -13,7 +13,8 @@ import { useSwitchNetwork } from "../../contexts";
 import useRefreshOrNever from "../../hooks/useRefreshOrNever";
 import { useGetContract, useGetEnvChainId } from "../base/react";
 import { SupportedChains, formatAmount } from "../constants";
-import { useContractFunctionWithDefaultGasFees } from "../base/hooks/useGasFees";
+import { useMicroBridgeHistory } from "./useMicroBridgeHistory";
+import { useMicroBridgeTransfer } from "./useMicroBridgeTransfer";
 
 export const useGetBridgeContracts = () => {
   const { baseEnv } = useGetEnvChainId();
@@ -110,13 +111,7 @@ export const useBridge = (withRelay = false) => {
   const [selfRelayStatus, setSelfRelay] = useState<Partial<TransactionStatus> | undefined>();
 
   // const bridgeTo = useContractFunction(bridgeContract, "bridgeTo", {});
-  const transferAndCall = useContractFunctionWithDefaultGasFees(
-    chainId === 122 ? gdFuseContract : gdCeloContract,
-    "transferAndCall",
-    {
-      transactionName: "BridgeTransfer"
-    }
-  );
+  const transferAndCall = useMicroBridgeTransfer(chainId === 122 ? gdFuseContract : gdCeloContract);
   const bridgeRequestId = (transferAndCall.state?.receipt?.logs || [])
     .filter(log => log.address === bridgeContract.address)
     .map(log => bridgeContract.interface.parseLog(log))?.[0]?.args?.id;
@@ -179,6 +174,7 @@ export const useBridge = (withRelay = false) => {
         .send(bridgeContract.address, bridgeRequest.amount, encoded)
         .then(async sendTx => {
           if (sendTx && withRelay) {
+            const sendTxHash = "transactionHash" in sendTx ? sendTx.transactionHash : sendTx.hash;
             let relayTxHash = "";
 
             try {
@@ -189,7 +185,7 @@ export const useBridge = (withRelay = false) => {
               const { relayTxHash: txHash = "", relayPromise } = await relayTx(
                 chainId || 0,
                 bridgeRequest.targetChainId,
-                sendTx.transactionHash
+                sendTxHash
               );
               relayTxHash = txHash;
               setSelfRelay({
@@ -289,59 +285,8 @@ export const useRelayTx = () => {
 export const useBridgeHistory = () => {
   const { account } = useEthers();
   const bridgeContracts = useGetBridgeContracts();
-  const refresh = useRefreshOrNever(5);
-  const fuseChainId = 122 as ChainId;
-  const fuseOut = useLogs(
-    {
-      contract: bridgeContracts[122] as TokenBridge,
-      event: "BridgeRequest",
-      args: []
-    },
-    {
-      chainId: fuseChainId,
-      fromBlock: -2e4,
-      refresh
-    }
-  );
-
-  const fuseIn = useLogs(
-    {
-      contract: bridgeContracts[122] as TokenBridge,
-      event: "ExecutedTransfer",
-      args: []
-    },
-    {
-      chainId: fuseChainId,
-      fromBlock: -2e4,
-      refresh
-    }
-  );
-
-  const celoOut = useLogs(
-    {
-      contract: bridgeContracts[42220] as TokenBridge,
-      event: "BridgeRequest",
-      args: []
-    },
-    {
-      chainId: 42220,
-      fromBlock: -2e4,
-      refresh
-    }
-  );
-
-  const celoIn = useLogs(
-    {
-      contract: bridgeContracts[42220] as TokenBridge,
-      event: "ExecutedTransfer",
-      args: []
-    },
-    {
-      chainId: 42220,
-      fromBlock: -2e4,
-      refresh
-    }
-  );
+  const { requests: fuseOut, transfers: fuseIn } = useMicroBridgeHistory(122, bridgeContracts[122]);
+  const { requests: celoOut, transfers: celoIn } = useMicroBridgeHistory(42220, bridgeContracts[42220]);
 
   if (!fuseOut || !fuseIn || !celoOut || !celoIn) {
     return {};

@@ -7,12 +7,16 @@ import BasicStyledModal, { ModalErrorBody } from "./BasicStyledModal";
 export const ErrorModal = ({
   error,
   reason,
+  title = "Oops!",
+  footer,
   overlay,
   onClose,
   ...props
 }: {
   error: string;
   reason?: string;
+  title?: string;
+  footer?: React.ReactNode;
   overlay: "dark" | "blur";
   onClose: () => void;
 }) => {
@@ -33,7 +37,7 @@ export const ErrorModal = ({
     <BasicStyledModal
       {...props}
       type="cta"
-      title="Oops!"
+      title={title}
       show={show}
       onClose={handleClose}
       withCloseButton={true}
@@ -42,9 +46,7 @@ export const ErrorModal = ({
       body={<ModalErrorBody error={error} />}
       footer={
         <View w={"100%"}>
-          <Center>
-            <Text>{reason}</Text>
-          </Center>
+          <Center>{footer ?? <Text>{reason}</Text>}</Center>
         </View>
       }
     />
