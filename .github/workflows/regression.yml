@@ -1,0 +1,62 @@
+name: Regression Testing Workflow
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '24'
+
+      - name: Install Yarn
+        run: npm install --global yarn@3.6.1
+
+      - name: Clone GoodWeb3-Mono
+        run: |
+          git clone https://github.com/GoodDollar/GoodWeb3-Mono.git
+          cd GoodWeb3-Mono
+          git checkout reserve-and-bridge-fixes
+          yarn install --immutable
+
+      - name: Build GoodWeb3-Mono SDK
+        run: |
+          cd GoodWeb3-Mono/packages/sdk-v2
+          yarn build
+          yarn publish --push
+          cd ../good-design
+          yarn add -D @gooddollar/web3sdk-v2
+          yarn build
+
+      - name: Clone GoodProtocolUI
+        run: |
+          git clone https://github.com/GoodDollar/GoodProtocolUI.git
+          cd GoodProtocolUI
+          yarn install
+
+      - name: Run Tests
+        run: |
+          yarn test
+
+      - name: Generate Report
+        run: |
+          # Assuming a script exists to generate the report
+          ./generate_report.sh
+
+      - name: Upload Report
+        uses: actions/upload-artifact@v2
+        with:
+          name: regression-report
+          path: ./path/to/report
+
+      - name: Notify QA
+        run: |
+          echo "QA report generated and uploaded. Please review."
