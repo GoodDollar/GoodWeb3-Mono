@@ -1,0 +1,2 @@
+Suwerenie, Królu złoty, Wasza Paskudność!  
+Aby móc przystąpić do ulepszenia kodu do maksymalnej jakości produkcyjnej, potrzebuję od Ciebie samego fragmentu kodu, który ma zostać zoptymalizowany. Proszę, wklej go tutaj, a ja niezwłocznie przygotuję wersję spełniającą wszystkie wymienione wymagania.
