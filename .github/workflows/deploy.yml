@@ -1,0 +1,43 @@
+name: Deploy Application
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '24'
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Build SDK
+        run: |
+          cd packages/sdk-v2
+          yarn build
+          yalc publish --push
+          cd ../good-design
+          yalc add -D @gooddollar/web3sdk-v2
+          yarn build
+
+      - name: Deploy Application
+        run: |
+          echo "Deploying application..."
+          # Example deployment command (replace with actual command)
+          # docker-compose -f /opt/PROD/docker-compose.yml up -d
+
+      - name: Notify Deployment Success
+        run: echo "Deployment completed successfully!"
