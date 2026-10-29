@@ -83,14 +83,14 @@ export const getReserveLimitKey = (exchangeId: string, tokenAddress: string): st
 
 /** Read-only check of the target environment's pair, quote and every enabled limit on both legs. */
 export const checkReserveAlternative = async (
-  provider: providers.JsonRpcProvider,
+  provider: providers.Provider,
   chainId: number,
   deployment: { MentoBroker?: string; MentoExchangeProvider?: string; GoodDollar?: string } | undefined,
   request: ReserveAlternativeRequest
 ): Promise<ReserveAlternative | undefined> => {
   if (!deployment?.MentoBroker || !deployment.MentoExchangeProvider || !deployment.GoodDollar) return undefined;
   if (!!request.exactInput === !!request.exactOutput) return undefined;
-  const actualChainId = BigNumber.from(await provider.send("eth_chainId", [])).toNumber();
+  const { chainId: actualChainId } = await provider.getNetwork();
   if (actualChainId !== chainId) return undefined;
   const block = await provider.getBlock("latest");
   if (!block || Math.abs(Date.now() / 1000 - block.timestamp) > 60) return undefined;
