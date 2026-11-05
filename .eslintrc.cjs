@@ -41,6 +41,16 @@ module.exports = {
     JSX: true,
     NodeJS: true
   },
+  overrides: [
+    {
+      files: ["packages/sdk-v2/src/**/*.test.ts", "packages/sdk-v2/src/**/*.test.tsx"],
+      env: { jest: true, es2020: true },
+      parserOptions: { project: ["./packages/sdk-v2/tsconfig.tests.json"] },
+      rules: {
+        "@typescript-eslint/unbound-method": "off"
+      }
+    }
+  ],
   ignorePatterns: [
     "/packages/*/dist/**/*.js",
     "/packages/*/types/**/*.d.ts",
