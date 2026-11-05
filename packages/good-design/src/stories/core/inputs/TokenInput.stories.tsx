@@ -1,30 +1,36 @@
 import React from "react";
+import { Currency, CurrencyValue } from "@usedapp/core";
+import { NativeBaseProvider, Text } from "native-base";
 import { TokenInput } from "../../../core/inputs/TokenInput";
-import { NativeBaseProvider } from "native-base";
 
 export default {
   title: "Core/TokenInput",
-  component: TokenInput,
-  argTypes: {
-    decimals: {
-      description: "Token decimals"
-    },
-    balance: {
-      description: "Token decimals"
-    },
-    size: {
-      control: {
-        type: "inline-radio",
-        options: ["sm", "md", "lg"]
-      }
-    }
-  }
+  component: TokenInput
+};
+
+const goodDollar = new Currency("GoodDollar", "G$", 18);
+
+const TokenInputExample = (args: React.ComponentProps<typeof TokenInput>) => {
+  const [lastChange, setLastChange] = React.useState("0");
+  return (
+    <NativeBaseProvider>
+      <TokenInput
+        {...args}
+        onChange={(value: string) => {
+          setLastChange(value);
+          args.onChange(value);
+        }}
+      />
+      <Text>Last onChange (wei): {lastChange}</Text>
+    </NativeBaseProvider>
+  );
 };
 
 export const TokenInputStory = {
+  render: (args: React.ComponentProps<typeof TokenInput>) => <TokenInputExample {...args} />,
   args: {
-    size: "md",
-    decimals: 10,
-    balance: 300
+    balanceWei: "300000000000000000000",
+    gdValue: CurrencyValue.zero(goodDollar),
+    onChange: (_value: string) => {}
   }
 };
