@@ -1,5 +1,5 @@
 import { Box, Button, HStack, Input, Text } from "native-base";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { NumericFormat } from "react-number-format";
 import { CurrencyValue } from "@usedapp/core";
 import { ethers } from "ethers";
@@ -26,9 +26,11 @@ export const TokenInput = ({
   inputDebounceMs?: number;
 }) => {
   const _decimals = gdValue.currency.decimals;
-  const [input, setInput] = useState<number>(0);
+  const [input, setInput] = useState<number | string>(0);
   const balance = Number(balanceWei) / 10 ** _decimals;
   const minAmount = Number(minAmountWei) / 10 ** _decimals;
+  const activeDebounceRef = useRef<any>(null);
+
   const handleChange = useCallback(
     debounce((v: string) => {
       if (!/^\d+(?:\.\d{1,18})?$/.test(v)) {
@@ -36,17 +38,26 @@ export const TokenInput = ({
         console.error("Invalid input", v);
         return;
       }
-      setInput(Number(v));
+      setInput(v);
       onChange(ethers.utils.parseUnits(v, _decimals).toString());
     }, inputDebounceMs),
     [setInput, onChange, _decimals, inputDebounceMs]
   );
 
+  useEffect(() => {
+    activeDebounceRef.current = handleChange;
+    return () => {
+      handleChange.cancel?.();
+    };
+  }, [handleChange]);
+
   const setMax = useCallback(() => {
+    activeDebounceRef.current?.cancel?.();
     handleChange.cancel?.();
-    setInput(balance);
+    const formattedExact = ethers.utils.formatUnits(balanceWei || "0", _decimals);
+    setInput(formattedExact);
     onChange(balanceWei);
-  }, [balance, balanceWei, onChange, handleChange]);
+  }, [balanceWei, _decimals, onChange, handleChange]);
 
   useEffect(() => {
     setInput(0);
