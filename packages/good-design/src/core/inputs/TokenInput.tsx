@@ -29,12 +29,6 @@ export const TokenInput = ({
   const [input, setInput] = useState<number>(0);
   const balance = Number(balanceWei) / 10 ** _decimals;
   const minAmount = Number(minAmountWei) / 10 ** _decimals;
-  const setMax = useCallback(() => setInput(balance), [setInput, balance]);
-
-  useEffect(() => {
-    setInput(0);
-    onChange("0");
-  }, [/* used */ toggleState]);
 
   const handleChange = useCallback(
     debounce((v: string) => {
@@ -48,6 +42,20 @@ export const TokenInput = ({
     }, inputDebounceMs),
     [setInput, onChange, _decimals, inputDebounceMs]
   );
+
+  const setMax = useCallback(() => {
+    handleChange.cancel();
+    setInput(balance);
+    onChange(balanceWei || "0");
+  }, [handleChange, setInput, balance, balanceWei, onChange]);
+
+  useEffect(() => {
+    handleChange.cancel();
+    setInput(0);
+    onChange("0");
+  }, [/* used */ toggleState]);
+
+  useEffect(() => () => handleChange.cancel(), [handleChange]);
 
   return (
     <Box w="container" {...props} width="100%">
