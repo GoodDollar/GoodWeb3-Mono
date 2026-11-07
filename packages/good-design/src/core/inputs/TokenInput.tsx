@@ -1,5 +1,5 @@
 import { Box, Button, HStack, Input, Text } from "native-base";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { NumericFormat } from "react-number-format";
 import { CurrencyValue } from "@usedapp/core";
 import { ethers } from "ethers";
@@ -26,33 +26,63 @@ export const TokenInput = ({
   inputDebounceMs?: number;
 }) => {
   const _decimals = gdValue.currency.decimals;
-  const [input, setInput] = useState<number>(0);
+  const [input, setInput] = useState<string | number>(0);
   const balance = Number(balanceWei) / 10 ** _decimals;
   const minAmount = Number(minAmountWei) / 10 ** _decimals;
-  const setMax = useCallback(() => setInput(balance), [setInput, balance]);
+  const formattedBalance = useMemo(
+    () => ethers.utils.formatUnits(balanceWei || "0", _decimals),
+    [balanceWei, _decimals]
+  );
+
+  const onChangeRef = useRef(onChange);
+  onChangeRef.current = onChange;
+  const decimalsRef = useRef(_decimals);
+  decimalsRef.current = _decimals;
+
+  const handleChange = useMemo(
+    () =>
+      debounce((v: string) => {
+        if (!/^\d+(?:\.\d{1,18})?$/.test(v)) {
+          //todo: add error handler/message
+          console.error("Invalid input", v);
+          return;
+        }
+        setInput(v);
+        onChangeRef.current(ethers.utils.parseUnits(v, decimalsRef.current).toString());
+      }, inputDebounceMs),
+    [inputDebounceMs]
+  );
+
+  const setMax = useCallback(() => {
+    handleChange.cancel();
+    setInput(formattedBalance);
+    onChangeRef.current(balanceWei || "0");
+  }, [handleChange, formattedBalance, balanceWei]);
 
   useEffect(() => {
+    handleChange.cancel();
     setInput(0);
-    onChange("0");
-  }, [/* used */ toggleState]);
+    onChangeRef.current("0");
+  }, [/* used */ toggleState, handleChange]);
 
-  const handleChange = useCallback(
-    debounce((v: string) => {
-      if (!/^\d+(?:\.\d{1,18})?$/.test(v)) {
-        //todo: add error handler/message
-        console.error("Invalid input", v);
-        return;
-      }
-      setInput(Number(v));
-      onChange(ethers.utils.parseUnits(v, _decimals).toString());
-    }, inputDebounceMs),
-    [setInput, onChange, _decimals, inputDebounceMs]
-  );
+  useEffect(() => () => handleChange.cancel(), [handleChange]);
+
+  const isInvalid = useMemo(() => {
+    try {
+      const inputStr = String(input || "0");
+      const inputWei = ethers.utils.parseUnits(inputStr, _decimals);
+      const balanceBn = ethers.BigNumber.from(balanceWei || "0");
+      const minAmountBn = ethers.BigNumber.from(minAmountWei || "0");
+      return inputWei.gt(balanceBn) || inputWei.lt(minAmountBn);
+    } catch {
+      return Number(input) > balance || Number(input) < minAmount;
+    }
+  }, [input, _decimals, balanceWei, minAmountWei, balance, minAmount]);
 
   return (
     <Box w="container" {...props} width="100%">
       <NumericFormat
-        isInvalid={Number(input) > balance || Number(input) < minAmount}
+        isInvalid={isInvalid}
         onChangeText={handleChange}
         InputLeftElement={
           <HStack alignItems="center">
