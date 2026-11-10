@@ -198,9 +198,13 @@ export const useMPBBridgeViewController = ({
   const statusTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>();
 
   useEffect(() => {
+    if (bridgeWeiAmount === wei || bridgeWeiAmount === "0") {
+      setDebouncedBridgeAmount(bridgeWeiAmount);
+      return;
+    }
     const timer = setTimeout(() => setDebouncedBridgeAmount(bridgeWeiAmount), DEBOUNCE_MS);
     return () => clearTimeout(timer);
-  }, [bridgeWeiAmount]);
+  }, [bridgeWeiAmount, wei]);
 
   useEffect(() => {
     if (prevSourceChainRef.current !== sourceChain) {
@@ -209,19 +213,25 @@ export const useMPBBridgeViewController = ({
     }
   }, [sourceChain, bridgeWeiAmount]);
 
-  const { isValid, reason } = useCanMPBBridge(sourceChain, debouncedBridgeAmount);
+  const effectiveBridgeAmount =
+    bridgeWeiAmount === wei || bridgeWeiAmount === "0" ? bridgeWeiAmount : debouncedBridgeAmount;
+
+  const { isValid, reason } = useCanMPBBridge(sourceChain, effectiveBridgeAmount);
   const { minimumAmount, expectedToReceive, nativeFee } = useMPBBridgeEstimate({
     limits,
     fees,
-    inputWei: debouncedBridgeAmount,
+    inputWei: effectiveBridgeAmount,
     sourceChain
   });
 
   const hasBalance = useMemo(
-    () => ethers.BigNumber.from(debouncedBridgeAmount).lte(ethers.BigNumber.from(wei)),
-    [debouncedBridgeAmount, wei]
+    () => ethers.BigNumber.from(effectiveBridgeAmount).lte(ethers.BigNumber.from(wei)),
+    [effectiveBridgeAmount, wei]
   );
-  const isValidInput = useMemo(() => isValid && hasBalance, [isValid, hasBalance]);
+  const isValidInput = useMemo(
+    () => isValid && hasBalance && effectiveBridgeAmount === bridgeWeiAmount,
+    [isValid, hasBalance, effectiveBridgeAmount, bridgeWeiAmount]
+  );
 
   const effectiveFlow = useMemo(
     () =>
